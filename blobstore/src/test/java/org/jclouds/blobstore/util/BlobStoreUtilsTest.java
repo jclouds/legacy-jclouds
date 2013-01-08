@@ -40,7 +40,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.reflect.Invokable;
+import org.jclouds.reflect.Invokable;
 
 /**
  * Tests behavior of {@code BlobStoreUtils}

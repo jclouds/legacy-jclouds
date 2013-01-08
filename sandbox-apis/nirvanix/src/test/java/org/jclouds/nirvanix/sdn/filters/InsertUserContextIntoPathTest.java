@@ -55,7 +55,7 @@ public class InsertUserContextIntoPathTest extends RestClientTest<TestService> {
    private Method method;
 
    public void testRequestInvalid() {
-      HttpRequest request = processor.createRequest(method, URI.create("https://host/path"));
+      GeneratedHttpRequest request = processor.createRequest(method, URI.create("https://host/path"));
       request = filter.filter(request);
       request = filter.filter(request);
       assertEquals(request.getEndpoint().getPath(), "/sessiontoken/appname/username/path");
@@ -63,14 +63,14 @@ public class InsertUserContextIntoPathTest extends RestClientTest<TestService> {
    }
 
    public void testRequestNoSession() {
-      HttpRequest request = processor.createRequest(method, URI.create("https://host/path"));
+      GeneratedHttpRequest request = processor.createRequest(method, URI.create("https://host/path"));
       request = filter.filter(request);
       assertEquals(request.getEndpoint().getPath(), "/sessiontoken/appname/username/path");
       assertEquals(request.getEndpoint().getHost(), "host");
    }
 
    public void testRequestAlreadyHasSession() {
-      HttpRequest request = processor.createRequest(method, URI.create("https://host/sessiontoken/appname/username/path"));
+      GeneratedHttpRequest request = processor.createRequest(method, URI.create("https://host/sessiontoken/appname/username/path"));
       request = filter.filter(request);
       assertEquals(request.getEndpoint().getPath(), "/sessiontoken/appname/username/path");
       assertEquals(request.getEndpoint().getHost(), "host");

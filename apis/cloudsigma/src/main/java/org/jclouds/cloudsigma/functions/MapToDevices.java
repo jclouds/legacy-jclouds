@@ -31,8 +31,8 @@ import org.jclouds.cloudsigma.domain.SCSIDevice;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.Maps;
 
 /**
  * 

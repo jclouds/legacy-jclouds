@@ -26,8 +26,9 @@ import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.cim.OSType;
 import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.savvis.vpdc.domain.VMSpec;
 import org.jclouds.savvis.vpdc.xml.TaskHandler;
 import org.jclouds.savvis.vpdc.xml.TasksListHandler;
@@ -38,7 +39,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.reflect.Invokable;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
@@ -63,7 +63,7 @@ public class VMAsyncApiTest extends BaseVPDCAsyncApiTest<VMAsyncApi> {
 
       });
 
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://api.savvis.net/rest/api/v0.8/org/11/vdc/22"), VMSpec.builder().name(
                "DemoHost-1").networkTierName("VM Tier01").operatingSystem(os).build()));
 
@@ -93,7 +93,7 @@ public class VMAsyncApiTest extends BaseVPDCAsyncApiTest<VMAsyncApi> {
 
       });
 
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("11", "22", VMSpec.builder().operatingSystem(os).name(
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("11", "22", VMSpec.builder().operatingSystem(os).name(
                "DemoHost-1").networkTierName("VM Tier01").build()));
 
       assertRequestLineEquals(request, "GET https://api.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/ HTTP/1.1");
@@ -110,7 +110,7 @@ public class VMAsyncApiTest extends BaseVPDCAsyncApiTest<VMAsyncApi> {
    
    public void testCaptureVApp() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(VMAsyncApi.class.getMethod("captureVApp", String.class, String.class, URI.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("100000.0", "2736", URI.create("https://api.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/vApp/1001")));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("100000.0", "2736", URI.create("https://api.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/vApp/1001")));
 
       assertRequestLineEquals(request,
                "POST https://api.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/action/captureVApp HTTP/1.1");
@@ -126,7 +126,7 @@ public class VMAsyncApiTest extends BaseVPDCAsyncApiTest<VMAsyncApi> {
    
    public void testCloneVApp() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(VMAsyncApi.class.getMethod("cloneVApp", URI.class, String.class, String.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI.create("https://api.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/vApp/1001"), "clonedvm", "VM Tier01"));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI.create("https://api.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/vApp/1001"), "clonedvm", "VM Tier01"));
 
       assertRequestLineEquals(request,
                "POST https://api.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/vApp/1001/action/cloneVApp HTTP/1.1");
@@ -153,7 +153,7 @@ public class VMAsyncApiTest extends BaseVPDCAsyncApiTest<VMAsyncApi> {
 
       });
 
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://api.savvis.net/rest/api/v0.8/org/11/vdc/22"), ImmutableSet.of(VMSpec
                .builder().name("Test VM").networkTierName("VM Tier01").operatingSystem(os).build())));
 
@@ -184,7 +184,7 @@ public class VMAsyncApiTest extends BaseVPDCAsyncApiTest<VMAsyncApi> {
 
       });
 
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("11", "22", ImmutableSet.of(VMSpec.builder()
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("11", "22", ImmutableSet.of(VMSpec.builder()
                .operatingSystem(os).name("Test VM").networkTierName("VM Tier01").build())));
 
       assertRequestLineEquals(request, "GET https://api.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/ HTTP/1.1");
@@ -201,7 +201,7 @@ public class VMAsyncApiTest extends BaseVPDCAsyncApiTest<VMAsyncApi> {
 
    public void testRemoveVMFromVDC() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(VMAsyncApi.class.getMethod("removeVMFromVDC", String.class, String.class, String.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("11", "22", "33"));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("11", "22", "33"));
 
       assertRequestLineEquals(request,
                "DELETE https://api.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33 HTTP/1.1");
@@ -217,7 +217,7 @@ public class VMAsyncApiTest extends BaseVPDCAsyncApiTest<VMAsyncApi> {
 
    public void testRemoveVM() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(VMAsyncApi.class.getMethod("removeVM", URI.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://api.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33")));
 
       assertRequestLineEquals(request,
@@ -234,7 +234,7 @@ public class VMAsyncApiTest extends BaseVPDCAsyncApiTest<VMAsyncApi> {
 
    public void testPowerOffVM() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(VMAsyncApi.class.getMethod("powerOffVM", URI.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://api.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33")));
 
       assertRequestLineEquals(request,
@@ -251,7 +251,7 @@ public class VMAsyncApiTest extends BaseVPDCAsyncApiTest<VMAsyncApi> {
 
    public void testPowerOnVM() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(VMAsyncApi.class.getMethod("powerOnVM", URI.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://api.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33")));
 
       assertRequestLineEquals(request,

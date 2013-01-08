@@ -60,6 +60,7 @@ public class RestClientModule<S, A> extends RestModule {
                "unbound type variable: %s, use ctor that explicitly assigns this", type);
       return type;
    }
+
    /**
     * @see #RestClientModule(Map)
     */
@@ -90,8 +91,6 @@ public class RestClientModule<S, A> extends RestModule {
       bindErrorHandlers();
       bindRetryHandlers();
    }
-
-
 
    /**
     * overrides this to change the default retry handlers for the http engine

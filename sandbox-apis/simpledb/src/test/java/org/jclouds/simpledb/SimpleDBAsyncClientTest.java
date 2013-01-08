@@ -62,7 +62,7 @@ public class SimpleDBAsyncClientTest extends RestClientTest<SimpleDBAsyncClient>
    public void testListDomainsInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SimpleDBAsyncClient.class.getMethod("listDomainsInRegion", String.class,
                ListDomainsOptions[].class);
-      HttpRequest request = processor.createRequest(method);
+      GeneratedHttpRequest request = processor.createRequest(method);
 
       assertRequestLineEquals(request, "POST https://sdb.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: sdb.amazonaws.com\n");
@@ -77,7 +77,7 @@ public class SimpleDBAsyncClientTest extends RestClientTest<SimpleDBAsyncClient>
 
    public void testCreateDomainInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SimpleDBAsyncClient.class.getMethod("createDomainInRegion", String.class, String.class);
-      HttpRequest request = processor.createRequest(method, null, "domainName");
+      GeneratedHttpRequest request = processor.createRequest(method, null, "domainName");
 
       assertRequestLineEquals(request, "POST https://sdb.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: sdb.amazonaws.com\n");
@@ -95,7 +95,7 @@ public class SimpleDBAsyncClientTest extends RestClientTest<SimpleDBAsyncClient>
    @Test(enabled = false)
    public void testPutAttributes() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SimpleDBAsyncClient.class.getMethod("putAttributes", String.class, String.class, Map.class);
-      HttpRequest request = processor.createRequest(method, null, "domainName");
+      GeneratedHttpRequest request = processor.createRequest(method, null, "domainName");
 
       assertRequestLineEquals(request, "POST https://sdb.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: sdb.amazonaws.com\n");

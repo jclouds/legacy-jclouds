@@ -32,13 +32,13 @@ import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.reflect.Invocation;
-import org.jclouds.rest.internal.AsyncRestClientProxy;
+import org.jclouds.rest.internal.TransformerForRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
+import org.jclouds.reflect.Invokable;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -58,7 +58,7 @@ public abstract class BaseParserTest<T, G> {
    @SuppressWarnings("unchecked")
    protected Function<HttpResponse, T> parser(Injector i) {
       try {
-         return (Function<HttpResponse, T>) AsyncRestClientProxy.getTransformerForMethod(
+         return (Function<HttpResponse, T>) TransformerForRequest.getTransformerForMethod(
                Invocation.create(Invokable.from(getClass().getMethod("expected")), ImmutableList.of()), i);
       } catch (Exception e) {
          throw Throwables.propagate(e);

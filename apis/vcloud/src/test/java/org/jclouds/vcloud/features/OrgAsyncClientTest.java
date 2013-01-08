@@ -23,15 +23,15 @@ import java.net.URI;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.vcloud.internal.BaseVCloudAsyncClientTest;
 import org.jclouds.vcloud.xml.OrgHandler;
 import org.jclouds.vcloud.xml.OrgListHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code OrgAsyncClient}
@@ -45,7 +45,7 @@ public class OrgAsyncClientTest extends BaseVCloudAsyncClientTest<OrgAsyncClient
 
    public void testlistOrgs() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(OrgAsyncClient.class.getMethod("listOrgs"));
-      HttpRequest request = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(request, "GET https://vcenterprise.bluelock.com/api/v1.0/org HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.orgList+xml\n");
@@ -60,7 +60,7 @@ public class OrgAsyncClientTest extends BaseVCloudAsyncClientTest<OrgAsyncClient
 
    public void testOrg() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(OrgAsyncClient.class.getMethod("getOrg", URI.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/org/1")));
 
       assertRequestLineEquals(request, "GET https://vcenterprise.bluelock.com/api/v1.0/org/1 HTTP/1.1");
@@ -76,7 +76,7 @@ public class OrgAsyncClientTest extends BaseVCloudAsyncClientTest<OrgAsyncClient
 
    public void testFindOrgNamed() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(OrgAsyncClient.class.getMethod("findOrgNamed", String.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("org"));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("org"));
 
       assertRequestLineEquals(request, "GET https://vcenterprise.bluelock.com/api/v1.0/org/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.org+xml\n");

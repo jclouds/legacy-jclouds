@@ -21,12 +21,12 @@ package org.jclouds.cloudstack.features;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListStoragePoolsOptions;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code GlobalStoragePoolAsyncClient}
@@ -38,7 +38,7 @@ public class GlobalStoragePoolAsyncClientTest extends BaseCloudStackAsyncClientT
 
    public void testListStoragePools() throws NoSuchMethodException {
       Invokable<?, ?> method = Invokable.from(GlobalStoragePoolAsyncClient.class.getMethod("listStoragePools", ListStoragePoolsOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=listStoragePools&listAll=true HTTP/1.1");
@@ -54,7 +54,7 @@ public class GlobalStoragePoolAsyncClientTest extends BaseCloudStackAsyncClientT
 
    public void testListStoragePoolsOptions() throws NoSuchMethodException {
       Invokable<?, ?> method = Invokable.from(GlobalStoragePoolAsyncClient.class.getMethod("listStoragePools", ListStoragePoolsOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListStoragePoolsOptions.Builder.clusterId("3").id("4").ipAddress("192.168.42.42").keyword("fred").name("bob").path("/mnt/store42").podId("4").zoneId("5")));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListStoragePoolsOptions.Builder.clusterId("3").id("4").ipAddress("192.168.42.42").keyword("fred").name("bob").path("/mnt/store42").podId("4").zoneId("5")));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=listStoragePools&listAll=true&clusterid=3&id=4&ipaddress=192.168.42.42&keyword=fred&name=bob&path=/mnt/store42&podid=4&zoneid=5 HTTP/1.1");

@@ -46,8 +46,10 @@ public class BinderUtils {
     *           type type that returns {@link ListenableFuture}
     */
    public static <S, A> void bindClientAndAsyncClient(Binder binder, Class<S> sync, Class<A> async) {
-      bindAsyncClient(binder, async);
-      bindClient(binder, sync, async);
+      bindClass(binder, sync);
+      bindClass(binder, async);
+      bindAsyncClientProvider(binder, async);
+      bindClientProvider(binder, sync, async);
    }
 
    /**
@@ -64,9 +66,14 @@ public class BinderUtils {
     * @param async
     *           type type that returns {@link ListenableFuture}
     */
-   @SuppressWarnings("unchecked")
    public static <S, A> void bindClient(Binder binder, Class<S> sync, Class<A> async) {
       bindClass(binder, sync);
+      bindClass(binder, async);
+      bindClientProvider(binder, sync, async);
+   }
+
+   @SuppressWarnings("unchecked")
+   private static <S, A> void bindClientProvider(Binder binder, Class<S> sync, Class<A> async) {
       TypeToken<ClientProvider<S, A>> token = new TypeToken<ClientProvider<S, A>>() {
          private static final long serialVersionUID = 1L;
       }.where(new TypeParameter<S>() {
@@ -83,9 +90,13 @@ public class BinderUtils {
       }, sync).getType()))).toInstance(sync);
    }
 
-   @SuppressWarnings("unchecked")
-   private static <T> void bindAsyncClient(Binder binder, Class<T> async) {
+   public static <T> void bindAsyncClient(Binder binder, Class<T> async) {
       bindClass(binder, async);
+      bindAsyncClientProvider(binder, async);
+   }
+
+   @SuppressWarnings("unchecked")
+   private static <T> void bindAsyncClientProvider(Binder binder, Class<T> async) {
       TypeToken<AsyncClientProvider<T>> token = new TypeToken<AsyncClientProvider<T>>() {
          private static final long serialVersionUID = 1L;
       }.where(new TypeParameter<T>() {

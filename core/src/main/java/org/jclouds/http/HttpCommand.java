@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Objects;
-import com.google.common.reflect.Invokable;
 
 /**
  * Command whose endpoint is an http service.
@@ -134,9 +133,7 @@ public class HttpCommand {
    public String toString() {
       if (request instanceof GeneratedHttpRequest) {
          GeneratedHttpRequest gRequest = GeneratedHttpRequest.class.cast(request);
-         return String.format("[method=%s.%s, request=%s]",
-               gRequest.getInvocation().getInterfaceType().getSimpleName(), gRequest.getInvocation().getInvokable()
-                     .getName(), gRequest.getRequestLine());
+         return String.format("[method=%s, request=%s]", gRequest.getInvocation(), gRequest.getRequestLine());
       }
       return "[request=" + request.getRequestLine() + "]";
    }

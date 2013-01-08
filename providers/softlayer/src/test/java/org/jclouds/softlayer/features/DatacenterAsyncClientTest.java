@@ -22,13 +22,13 @@ import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseJson;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests annotation parsing of {@code DatacenterAsyncClient}
@@ -40,7 +40,7 @@ public class DatacenterAsyncClientTest extends BaseSoftLayerAsyncClientTest<Data
 
    public void testListDatacenters() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(DatacenterAsyncClient.class.getMethod("listDatacenters"));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET https://api.softlayer.com/rest/v3/SoftLayer_Location_Datacenter/Datacenters.json?objectMask=locationAddress%3Bregions HTTP/1.1");
@@ -48,8 +48,8 @@ public class DatacenterAsyncClientTest extends BaseSoftLayerAsyncClientTest<Data
       assertPayloadEquals(httpRequest, null, null, false);
 
       // now make sure request filters apply by replaying
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = (GeneratedHttpRequest) Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = (GeneratedHttpRequest) Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest,
             "GET https://api.softlayer.com/rest/v3/SoftLayer_Location_Datacenter/Datacenters.json?objectMask=locationAddress%3Bregions HTTP/1.1");
@@ -69,7 +69,7 @@ public class DatacenterAsyncClientTest extends BaseSoftLayerAsyncClientTest<Data
 
    public void testGetDatacenter() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(DatacenterAsyncClient.class.getMethod("getDatacenter", long.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(1234));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(1234));
 
       assertRequestLineEquals(httpRequest,
             "GET https://api.softlayer.com/rest/v3/SoftLayer_Location_Datacenter/1234.json?objectMask=locationAddress%3Bregions HTTP/1.1");

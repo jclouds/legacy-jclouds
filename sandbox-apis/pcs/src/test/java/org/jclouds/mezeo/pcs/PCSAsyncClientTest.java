@@ -70,7 +70,7 @@ public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
 
    public void testList() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSAsyncClient.class.getMethod("list");
-      HttpRequest request = processor.createRequest(method);
+      GeneratedHttpRequest request = processor.createRequest(method);
 
       assertRequestLineEquals(request, "GET http://root HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "X-Cloud-Depth: 2\n");
@@ -85,7 +85,7 @@ public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
 
    public void testCreateContainer() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSAsyncClient.class.getMethod("createContainer", String.class);
-      HttpRequest request = processor.createRequest(method, "container");
+      GeneratedHttpRequest request = processor.createRequest(method, "container");
 
       assertRequestLineEquals(request, "POST http://root/contents HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
@@ -102,7 +102,7 @@ public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
 
    public void testDeleteContainer() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSAsyncClient.class.getMethod("deleteContainer", URI.class);
-      HttpRequest request = processor.createRequest(method, URI.create("http://localhost/container/1234"));
+      GeneratedHttpRequest request = processor.createRequest(method, URI.create("http://localhost/container/1234"));
 
       assertRequestLineEquals(request, "DELETE http://localhost/container/1234 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
@@ -117,7 +117,7 @@ public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
 
    public void testListURI() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSAsyncClient.class.getMethod("list", URI.class);
-      HttpRequest request = processor.createRequest(method, URI.create("http://localhost/mycontainer"));
+      GeneratedHttpRequest request = processor.createRequest(method, URI.create("http://localhost/mycontainer"));
 
       assertRequestLineEquals(request, "GET http://localhost/mycontainer HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "X-Cloud-Depth: 2\n");
@@ -132,7 +132,7 @@ public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
 
    public void testGetFileInfo() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSAsyncClient.class.getMethod("getFileInfo", URI.class);
-      HttpRequest request = processor.createRequest(method, URI.create("http://localhost/myfile"));
+      GeneratedHttpRequest request = processor.createRequest(method, URI.create("http://localhost/myfile"));
 
       assertRequestLineEquals(request, "GET http://localhost/myfile HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "X-Cloud-Depth: 2\n");
@@ -147,7 +147,7 @@ public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
 
    public void testUploadFile() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSAsyncClient.class.getMethod("uploadFile", URI.class, PCSFile.class);
-      HttpRequest request = processor.createRequest(method, URI.create("http://localhost/mycontainer"), blobToPCSFile
+      GeneratedHttpRequest request = processor.createRequest(method, URI.create("http://localhost/mycontainer"), blobToPCSFile
             .apply(BindBlobToMultipartFormTest.TEST_BLOB));
 
       assertRequestLineEquals(request, "POST http://localhost/mycontainer/contents HTTP/1.1");
@@ -166,7 +166,7 @@ public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
    public void testUploadBlock() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSAsyncClient.class.getMethod("uploadBlock", URI.class, PCSFile.class, Array.newInstance(
             PutBlockOptions.class, 0).getClass());
-      HttpRequest request = processor.createRequest(method, URI.create("http://localhost/mycontainer"), blobToPCSFile
+      GeneratedHttpRequest request = processor.createRequest(method, URI.create("http://localhost/mycontainer"), blobToPCSFile
             .apply(BindBlobToMultipartFormTest.TEST_BLOB));
 
       assertRequestLineEquals(request, "PUT http://localhost/mycontainer/content HTTP/1.1");
@@ -182,7 +182,7 @@ public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
 
    public void testDownloadFile() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSAsyncClient.class.getMethod("downloadFile", URI.class);
-      HttpRequest request = processor.createRequest(method, URI.create("http://localhost/container"));
+      GeneratedHttpRequest request = processor.createRequest(method, URI.create("http://localhost/container"));
 
       assertRequestLineEquals(request, "GET http://localhost/container/content HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
@@ -198,7 +198,7 @@ public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
 
    public void testDeleteFile() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSAsyncClient.class.getMethod("deleteFile", URI.class);
-      HttpRequest request = processor.createRequest(method,
+      GeneratedHttpRequest request = processor.createRequest(method,
             new Object[] { URI.create("http://localhost/contents/file") });
 
       assertRequestLineEquals(request, "DELETE http://localhost/contents/file HTTP/1.1");
@@ -214,7 +214,7 @@ public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
 
    public void testPutMetadata() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSAsyncClient.class.getMethod("putMetadataItem", URI.class, String.class, String.class);
-      HttpRequest request = processor.createRequest(method, URI.create("http://localhost/contents/file"), "pow", "bar");
+      GeneratedHttpRequest request = processor.createRequest(method, URI.create("http://localhost/contents/file"), "pow", "bar");
 
       assertRequestLineEquals(request, "PUT http://localhost/contents/file/metadata/pow HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
@@ -230,7 +230,7 @@ public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
 
    public void testAddEntryToMap() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSAsyncClient.class.getMethod("addMetadataItemToMap", URI.class, String.class, Map.class);
-      HttpRequest request = processor.createRequest(method, URI.create("http://localhost/pow"), "newkey", ImmutableMap
+      GeneratedHttpRequest request = processor.createRequest(method, URI.create("http://localhost/pow"), "newkey", ImmutableMap
             .of("key", "value"));
 
       assertRequestLineEquals(request, "GET http://localhost/pow/metadata/newkey HTTP/1.1");

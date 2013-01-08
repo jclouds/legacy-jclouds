@@ -22,8 +22,9 @@ import java.io.IOException;
 import java.net.URI;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.vcloud.internal.BaseVCloudAsyncClientTest;
 import org.jclouds.vcloud.options.CatalogItemOptions;
 import org.jclouds.vcloud.xml.CatalogHandler;
@@ -31,7 +32,6 @@ import org.jclouds.vcloud.xml.CatalogItemHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code CatalogAsyncClient}
@@ -45,7 +45,7 @@ public class CatalogAsyncClientTest extends BaseVCloudAsyncClientTest<CatalogAsy
 
    public void testCatalog() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CatalogAsyncClient.class.getMethod("getCatalog", URI.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/catalog/1")));
 
       assertRequestLineEquals(request, "GET https://vcenterprise.bluelock.com/api/v1.0/catalog/1 HTTP/1.1");
@@ -61,7 +61,7 @@ public class CatalogAsyncClientTest extends BaseVCloudAsyncClientTest<CatalogAsy
 
    public void testCatalogInOrg() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CatalogAsyncClient.class.getMethod("findCatalogInOrgNamed", String.class, String.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("org", "catalog"));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("org", "catalog"));
 
       assertRequestLineEquals(request, "GET https://vcenterprise.bluelock.com/api/v1.0/catalog/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
@@ -76,7 +76,7 @@ public class CatalogAsyncClientTest extends BaseVCloudAsyncClientTest<CatalogAsy
 
    public void testCatalogItemURI() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CatalogAsyncClient.class.getMethod("getCatalogItem", URI.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/catalogItem/2")));
 
       assertRequestLineEquals(request, "GET https://vcenterprise.bluelock.com/api/v1.0/catalogItem/2 HTTP/1.1");
@@ -93,7 +93,7 @@ public class CatalogAsyncClientTest extends BaseVCloudAsyncClientTest<CatalogAsy
    public void testFindCatalogItemInOrgCatalogNamed() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CatalogAsyncClient.class.getMethod("findCatalogItemInOrgCatalogNamed", String.class,
                String.class, String.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("org", "catalog", "item"));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("org", "catalog", "item"));
 
       assertRequestLineEquals(request, "GET https://vcenterprise.bluelock.com/api/v1.0/catalogItem/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalogItem+xml\n");
@@ -110,7 +110,7 @@ public class CatalogAsyncClientTest extends BaseVCloudAsyncClientTest<CatalogAsy
             IOException {
       Invokable<?, ?> method = Invokable.from(CatalogAsyncClient.class.getMethod("addVAppTemplateOrMediaImageToCatalogAndNameItem", URI.class,
                URI.class, String.class, CatalogItemOptions[].class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI.create("http://fooentity"), URI
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI.create("http://fooentity"), URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/catalog/1"), "myname", CatalogItemOptions.Builder
                .description("mydescription")));
 

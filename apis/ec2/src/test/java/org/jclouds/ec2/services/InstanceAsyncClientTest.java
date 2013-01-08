@@ -39,12 +39,13 @@ import org.jclouds.ec2.xml.UnencodeStringValueHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code InstanceAsyncClient}
@@ -56,7 +57,7 @@ import com.google.common.reflect.Invokable;
 public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyncClient> {
    public void testDescribeInstances() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("describeInstancesInRegion", String.class, String[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -72,7 +73,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
 
    public void testDescribeInstancesArgs() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("describeInstancesInRegion", String.class, String[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -89,7 +90,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testTerminateInstances() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("terminateInstancesInRegion", String.class,
                String[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -106,7 +107,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testRunInstances() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("runInstancesInRegion", String.class, String.class,
                String.class, int.class, int.class, RunInstancesOptions[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, null, "ami-voo", 1, 1));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, null, "ami-voo", 1, 1));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -128,7 +129,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testRunInstancesOptions() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("runInstancesInRegion", String.class, String.class,
                String.class, int.class, int.class, RunInstancesOptions[].class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("eu-west-1", "eu-west-1a", "ami-voo",
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("eu-west-1", "eu-west-1a", "ami-voo",
                1, 5, new RunInstancesOptions().withKernelId("kernelId").withSecurityGroups("group1", "group2")));
 
       assertRequestLineEquals(request, "POST https://ec2.eu-west-1.amazonaws.com/ HTTP/1.1");
@@ -155,7 +156,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testStopInstances() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("stopInstancesInRegion", String.class, boolean.class,
                String[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, true, "1", "2"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, true, "1", "2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -171,7 +172,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
 
    public void testRebootInstances() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("rebootInstancesInRegion", String.class, String[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -187,7 +188,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
 
    public void testStartInstances() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("startInstancesInRegion", String.class, String[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -203,7 +204,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
 
    public void testGetUserDataForInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("getUserDataForInstanceInRegion", String.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -221,7 +222,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testGetRootDeviceNameForInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("getRootDeviceNameForInstanceInRegion", String.class,
                String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -238,7 +239,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
 
    public void testGetRamdiskForInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("getRamdiskForInstanceInRegion", String.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -257,7 +258,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
             IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("isApiTerminationDisabledForInstanceInRegion", String.class,
                String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -274,7 +275,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
 
    public void testGetKernelForInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("getKernelForInstanceInRegion", String.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -291,7 +292,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testGetInstanceTypeForInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("getInstanceTypeForInstanceInRegion", String.class,
                String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -310,7 +311,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
             NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("getInstanceInitiatedShutdownBehaviorForInstanceInRegion",
                String.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -330,7 +331,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
             IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("getBlockDeviceMappingForInstanceInRegion", String.class,
                String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -362,9 +363,9 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testSetUserDataForInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("setUserDataForInstanceInRegion", String.class, String.class,
                byte[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "test".getBytes()));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "test".getBytes()));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -395,9 +396,9 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testSetRamdiskForInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("setRamdiskForInstanceInRegion", String.class, String.class,
                String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "test"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "test"));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -428,9 +429,9 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testSetKernelForInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("setKernelForInstanceInRegion", String.class, String.class,
                String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "test"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "test"));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -462,9 +463,9 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
             IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("setApiTerminationDisabledForInstanceInRegion", String.class,
                String.class, boolean.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", true));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", true));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -495,9 +496,9 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testSetInstanceTypeForInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("setInstanceTypeForInstanceInRegion", String.class,
                String.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", InstanceType.C1_MEDIUM));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", InstanceType.C1_MEDIUM));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -529,9 +530,9 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
             NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("setInstanceInitiatedShutdownBehaviorForInstanceInRegion",
                String.class, String.class, InstanceInitiatedShutdownBehavior.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", InstanceInitiatedShutdownBehavior.TERMINATE));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", InstanceInitiatedShutdownBehavior.TERMINATE));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -552,7 +553,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
 
       Map<String, BlockDevice> mapping = Maps.newLinkedHashMap();
       mapping.put("/dev/sda1", new BlockDevice("vol-test1", true));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", mapping));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", mapping));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -574,7 +575,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
 
    public void testGetConsoleOutputForInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(InstanceAsyncClient.class.getMethod("getConsoleOutputForInstanceInRegion", String.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");

@@ -31,11 +31,12 @@ import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code VirtualMachineAsyncClient}
@@ -49,7 +50,7 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
    public void testListVirtualMachines() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(VirtualMachineAsyncClient.class.getMethod("listVirtualMachines",
             ListVirtualMachinesOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listVirtualMachines&listAll=true HTTP/1.1");
@@ -67,7 +68,7 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
    public void testListVirtualMachinesOptions() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(VirtualMachineAsyncClient.class.getMethod("listVirtualMachines",
             ListVirtualMachinesOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(
             ListVirtualMachinesOptions.Builder.accountInDomain("adrian", "6").usesVirtualNetwork(true)));
 
       assertRequestLineEquals(
@@ -86,7 +87,7 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
 
    public void testGetVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(VirtualMachineAsyncClient.class.getMethod("getVirtualMachine", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listVirtualMachines&listAll=true&id=5 HTTP/1.1");
@@ -113,7 +114,7 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
    public void testDeployVirtualMachineInZone() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(VirtualMachineAsyncClient.class.getMethod("deployVirtualMachineInZone", String.class, String.class,
             String.class, DeployVirtualMachineOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(6, 4, 5));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(6, 4, 5));
 
       assertRequestLineEquals(httpRequest, deployVirtualMachine.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
@@ -129,7 +130,7 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
 
    public void testRebootVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(VirtualMachineAsyncClient.class.getMethod("rebootVirtualMachine", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=rebootVirtualMachine&id=5 HTTP/1.1");
@@ -146,7 +147,7 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
 
    public void testStartVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(VirtualMachineAsyncClient.class.getMethod("startVirtualMachine", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=startVirtualMachine&id=5 HTTP/1.1");
@@ -163,7 +164,7 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
 
    public void testStopVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(VirtualMachineAsyncClient.class.getMethod("stopVirtualMachine", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=stopVirtualMachine&id=5 HTTP/1.1");
@@ -180,7 +181,7 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
 
    public void testResetPasswordForVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(VirtualMachineAsyncClient.class.getMethod("resetPasswordForVirtualMachine", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=resetPasswordForVirtualMachine&id=5 HTTP/1.1");
@@ -197,7 +198,7 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
 
    public void testChangeServiceForVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(VirtualMachineAsyncClient.class.getMethod("changeServiceForVirtualMachine", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=changeServiceForVirtualMachine&id=5 HTTP/1.1");
@@ -214,7 +215,7 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
 
    public void testUpdateVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(VirtualMachineAsyncClient.class.getMethod("updateVirtualMachine", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=updateVirtualMachine&id=5 HTTP/1.1");
@@ -231,7 +232,7 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
 
    public void testDestroyVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(VirtualMachineAsyncClient.class.getMethod("destroyVirtualMachine", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=destroyVirtualMachine&id=5 HTTP/1.1");
@@ -249,7 +250,7 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
    public void testAssignVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(VirtualMachineAsyncClient.class.getMethod("assignVirtualMachine", String.class,
             AssignVirtualMachineOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("abcd",
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("abcd",
             AssignVirtualMachineOptions.Builder.accountInDomain("adrian", "6")));
 
       assertRequestLineEquals(

@@ -42,7 +42,7 @@ import com.abiquo.server.core.pricing.PricingTemplatesDto;
 import com.abiquo.server.core.pricing.PricingTierDto;
 import com.abiquo.server.core.pricing.PricingTiersDto;
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
+import org.jclouds.reflect.Invokable;
 
 /**
  * Tests annotation parsing of {@code PricingAsyncApi}.

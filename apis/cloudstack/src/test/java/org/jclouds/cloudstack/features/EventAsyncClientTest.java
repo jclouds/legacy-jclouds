@@ -24,12 +24,12 @@ import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.cloudstack.functions.ParseEventTypesFromHttpResponse;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListEventsOptions;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code EventAsyncClient}
@@ -43,7 +43,7 @@ public class EventAsyncClientTest extends BaseCloudStackAsyncClientTest<EventAsy
 
    public void testListEventTypes() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(EventAsyncClient.class.getMethod("listEventTypes"));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&listAll=true&command=listEventTypes HTTP/1.1");
@@ -59,7 +59,7 @@ public class EventAsyncClientTest extends BaseCloudStackAsyncClientTest<EventAsy
 
    public void testListEvents() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(EventAsyncClient.class.getMethod("listEvents", ListEventsOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&listAll=true&command=listEvents HTTP/1.1");
@@ -76,7 +76,7 @@ public class EventAsyncClientTest extends BaseCloudStackAsyncClientTest<EventAsy
 
    public void testEventsListOptions() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(EventAsyncClient.class.getMethod("listEvents", ListEventsOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListEventsOptions.Builder.account("jclouds")));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListEventsOptions.Builder.account("jclouds")));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&listAll=true&command=listEvents&account=jclouds HTTP/1.1");
