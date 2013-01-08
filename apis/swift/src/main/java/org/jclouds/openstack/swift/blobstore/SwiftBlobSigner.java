@@ -46,6 +46,8 @@ import org.jclouds.openstack.swift.TemporaryUrlKey;
 import org.jclouds.openstack.swift.blobstore.functions.BlobToObject;
 import org.jclouds.openstack.swift.domain.SwiftObject;
 import org.jclouds.reflect.Invocation;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 import com.google.common.base.Supplier;
@@ -53,7 +55,6 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteProcessor;
-import com.google.common.reflect.Invokable;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
@@ -75,7 +76,6 @@ public class SwiftBlobSigner<T extends CommonSwiftAsyncClient> implements BlobRe
    private final Invokable<?, ?> getMethod;
    private final Invokable<?, ?> deleteMethod;
    private final Invokable<?, ?> createMethod;
-   private final Class<T> interfaceType;
 
    /**
     * create a signer for this subtype of swift
@@ -89,7 +89,6 @@ public class SwiftBlobSigner<T extends CommonSwiftAsyncClient> implements BlobRe
          @TemporaryUrlKey Supplier<String> temporaryUrlKeySupplier, RestAnnotationProcessor processor,
          Class<T> interfaceType) throws SecurityException, NoSuchMethodException {
       this.processor = checkNotNull(processor, "processor");
-      this.interfaceType = checkNotNull(interfaceType, "interfaceType");
       this.crypto = checkNotNull(crypto, "crypto");
 
       this.unixEpochTimestampProvider = checkNotNull(unixEpochTimestampProvider, "unixEpochTimestampProvider");
@@ -98,11 +97,11 @@ public class SwiftBlobSigner<T extends CommonSwiftAsyncClient> implements BlobRe
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
 
-      this.getMethod = TypeToken.of(interfaceType).method(
+      this.getMethod = Invokable.from(TypeToken.of(interfaceType),
             interfaceType.getMethod("getObject", String.class, String.class, GetOptions[].class));
-      this.deleteMethod = TypeToken.of(interfaceType).method(
+      this.deleteMethod = Invokable.from(TypeToken.of(interfaceType),
             interfaceType.getMethod("removeObject", String.class, String.class));
-      this.createMethod = TypeToken.of(interfaceType).method(
+      this.createMethod = Invokable.from(TypeToken.of(interfaceType),
             interfaceType.getMethod("putObject", String.class, SwiftObject.class));
    }
 
@@ -110,7 +109,7 @@ public class SwiftBlobSigner<T extends CommonSwiftAsyncClient> implements BlobRe
    public HttpRequest signGetBlob(String container, String name) {
       checkNotNull(container, "container");
       checkNotNull(name, "name");
-      return cleanRequest(processor.apply(Invocation.create(interfaceType, getMethod,
+      return cleanRequest(processor.apply(Invocation.create(getMethod,
             ImmutableList.<Object> of(container, name))));
    }
 
@@ -118,7 +117,7 @@ public class SwiftBlobSigner<T extends CommonSwiftAsyncClient> implements BlobRe
    public HttpRequest signGetBlob(String container, String name, long timeInSeconds) {
       checkNotNull(container, "container");
       checkNotNull(name, "name");
-      HttpRequest request = processor.apply(Invocation.create(interfaceType, getMethod,
+      GeneratedHttpRequest request = processor.apply(Invocation.create(getMethod,
             ImmutableList.<Object> of(container, name)));
       return cleanRequest(signForTemporaryAccess(request, timeInSeconds));
    }
@@ -127,7 +126,7 @@ public class SwiftBlobSigner<T extends CommonSwiftAsyncClient> implements BlobRe
    public HttpRequest signGetBlob(String container, String name, org.jclouds.blobstore.options.GetOptions options) {
       checkNotNull(container, "container");
       checkNotNull(name, "name");
-      return cleanRequest(processor.apply(Invocation.create(interfaceType, getMethod,
+      return cleanRequest(processor.apply(Invocation.create(getMethod,
             ImmutableList.of(container, name, blob2HttpGetOptions.apply(checkNotNull(options, "options"))))));
    }
 
@@ -135,7 +134,7 @@ public class SwiftBlobSigner<T extends CommonSwiftAsyncClient> implements BlobRe
    public HttpRequest signPutBlob(String container, Blob blob) {
       checkNotNull(container, "container");
       checkNotNull(blob, "blob");
-      return cleanRequest(processor.apply(Invocation.create(interfaceType, createMethod,
+      return cleanRequest(processor.apply(Invocation.create(createMethod,
             ImmutableList.<Object> of(container, blobToObject.apply(blob)))));
    }
 
@@ -143,7 +142,7 @@ public class SwiftBlobSigner<T extends CommonSwiftAsyncClient> implements BlobRe
    public HttpRequest signPutBlob(String container, Blob blob, long timeInSeconds) {
       checkNotNull(container, "container");
       checkNotNull(blob, "blob");
-      HttpRequest request = processor.apply(Invocation.create(interfaceType, createMethod,
+      GeneratedHttpRequest request = processor.apply(Invocation.create(createMethod,
             ImmutableList.<Object> of(container, blobToObject.apply(blob))));
       return cleanRequest(signForTemporaryAccess(request, timeInSeconds));
    }
@@ -152,7 +151,7 @@ public class SwiftBlobSigner<T extends CommonSwiftAsyncClient> implements BlobRe
    public HttpRequest signRemoveBlob(String container, String name) {
       checkNotNull(container, "container");
       checkNotNull(name, "name");
-      return cleanRequest(processor.apply(Invocation.create(interfaceType, deleteMethod,
+      return cleanRequest(processor.apply(Invocation.create(deleteMethod,
             ImmutableList.<Object> of(container, name))));
    }
 

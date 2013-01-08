@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.reflect.FunctionalReflection;
-import org.jclouds.rest.internal.AsyncRestClientProxy;
+import org.jclouds.rest.internal.InvokeAsyncApi;
 
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
@@ -34,10 +34,10 @@ import com.google.inject.TypeLiteral;
 @Singleton
 public class AsyncClientProvider<A> implements Provider<A> {
    private final Class<? super A> asyncClientType;
-   private final AsyncRestClientProxy proxy;
+   private final InvokeAsyncApi proxy;
 
    @Inject
-   private AsyncClientProvider(AsyncRestClientProxy proxy, TypeLiteral<A> asyncClientType) {
+   private AsyncClientProvider(InvokeAsyncApi proxy, TypeLiteral<A> asyncClientType) {
       this.proxy = proxy;
       this.asyncClientType = asyncClientType.getRawType();
    }

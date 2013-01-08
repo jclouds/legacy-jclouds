@@ -47,7 +47,7 @@ public class PCSCloudAsyncClientTest extends RestClientTest<PCSCloudAsyncClient>
 
    public void testAuthenticate() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSCloudAsyncClient.class.getMethod("authenticate");
-      HttpRequest request = processor.createRequest(method);
+      GeneratedHttpRequest request = processor.createRequest(method);
 
       assertRequestLineEquals(request, "GET http://localhost:8080/v3 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");

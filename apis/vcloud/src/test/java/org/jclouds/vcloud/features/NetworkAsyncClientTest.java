@@ -22,14 +22,14 @@ import java.io.IOException;
 import java.net.URI;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.vcloud.internal.BaseVCloudAsyncClientTest;
 import org.jclouds.vcloud.xml.OrgNetworkHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code NetworkAsyncClient}
@@ -43,7 +43,7 @@ public class NetworkAsyncClientTest extends BaseVCloudAsyncClientTest<NetworkAsy
 
    public void testNetwork() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(NetworkAsyncClient.class.getMethod("getNetwork", URI.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/network/2")));
 
       assertRequestLineEquals(request, "GET https://vcenterprise.bluelock.com/api/v1.0/network/2 HTTP/1.1");
@@ -60,7 +60,7 @@ public class NetworkAsyncClientTest extends BaseVCloudAsyncClientTest<NetworkAsy
    public void testFindNetworkInOrgVDCNamed() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(NetworkAsyncClient.class.getMethod("findNetworkInOrgVDCNamed", String.class, String.class,
                String.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("org", "vdc", "network"));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("org", "vdc", "network"));
 
       assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/network/1990 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.network+xml\n");

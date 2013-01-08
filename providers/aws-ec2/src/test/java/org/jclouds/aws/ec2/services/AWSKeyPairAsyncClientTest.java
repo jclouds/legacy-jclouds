@@ -26,10 +26,11 @@ import org.jclouds.ec2.xml.KeyPairResponseHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code AWSKeyPairAsyncClient}
@@ -42,7 +43,7 @@ public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyP
 
    public void testCreateKeyPair() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AWSKeyPairAsyncClient.class.getMethod("createKeyPairInRegion", String.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "mykey"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "mykey"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -72,9 +73,9 @@ public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyP
    public void testImportKeyPair() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AWSKeyPairAsyncClient.class.getMethod("importKeyPairInRegion", String.class, String.class,
             String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "mykey", "ssh-rsa AA"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "mykey", "ssh-rsa AA"));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -90,7 +91,7 @@ public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyP
 
    public void testDeleteKeyPair() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AWSKeyPairAsyncClient.class.getMethod("deleteKeyPairInRegion", String.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "mykey"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "mykey"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -107,7 +108,7 @@ public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyP
    public void testDescribeKeyPairs() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AWSKeyPairAsyncClient.class.getMethod("describeKeyPairsInRegion", String.class,
             String[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -124,7 +125,7 @@ public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyP
    public void testDescribeKeyPairsArgs() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AWSKeyPairAsyncClient.class.getMethod("describeKeyPairsInRegion", String.class,
             String[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");

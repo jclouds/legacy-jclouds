@@ -23,7 +23,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 
 import com.google.common.base.Optional;
-import com.google.common.reflect.Invokable;
+import org.jclouds.reflect.Invokable;
 import com.google.common.reflect.TypeToken;
 
 /**

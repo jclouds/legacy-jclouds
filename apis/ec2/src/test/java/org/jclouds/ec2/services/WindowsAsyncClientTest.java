@@ -26,10 +26,11 @@ import org.jclouds.ec2.xml.BundleTaskHandler;
 import org.jclouds.ec2.xml.DescribeBundleTasksResponseHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code WindowsAsyncClient}
@@ -59,7 +60,7 @@ public class WindowsAsyncClientTest extends BaseEC2AsyncClientTest<WindowsAsyncC
    public void testBundleInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(WindowsAsyncClient.class.getMethod("bundleInstanceInRegion", String.class, String.class,
                String.class, String.class, String.class, BundleInstanceS3StorageOptions[].class));
-      HttpRequest request = processor
+      GeneratedHttpRequest request = processor
                .createRequest(
                         method,
                         Lists.<Object> newArrayList(
@@ -69,7 +70,7 @@ public class WindowsAsyncClientTest extends BaseEC2AsyncClientTest<WindowsAsyncC
                         "my-bucket",
                         "{\"expiration\": \"2008-08-30T08:49:09Z\",\"conditions\": [{\"bucket\": \"my-bucket\"},[\"starts-with\", \"$key\", \"my-new-image\"]]}"));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -103,7 +104,7 @@ public class WindowsAsyncClientTest extends BaseEC2AsyncClientTest<WindowsAsyncC
    public void testBundleInstanceInRegionOptions() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(WindowsAsyncClient.class.getMethod("bundleInstanceInRegion", String.class, String.class,
                String.class, String.class, String.class, BundleInstanceS3StorageOptions[].class));
-      HttpRequest request = processor
+      GeneratedHttpRequest request = processor
                .createRequest(
                         method,
                         Lists.<Object> newArrayList(
@@ -114,7 +115,7 @@ public class WindowsAsyncClientTest extends BaseEC2AsyncClientTest<WindowsAsyncC
                         "{\"expiration\": \"2008-08-30T08:49:09Z\",\"conditions\": [{\"bucket\": \"my-bucket\"},[\"starts-with\", \"$key\", \"my-new-image\"]]}",
                         BundleInstanceS3StorageOptions.Builder.bucketOwnedBy("10QMXFEV71ZS32XQFTR2")));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -130,7 +131,7 @@ public class WindowsAsyncClientTest extends BaseEC2AsyncClientTest<WindowsAsyncC
 
    public void testDescribeBundleTasks() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(WindowsAsyncClient.class.getMethod("describeBundleTasksInRegion", String.class, String[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -146,7 +147,7 @@ public class WindowsAsyncClientTest extends BaseEC2AsyncClientTest<WindowsAsyncC
 
    public void testDescribeBundleTasksArgs() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(WindowsAsyncClient.class.getMethod("describeBundleTasksInRegion", String.class, String[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");

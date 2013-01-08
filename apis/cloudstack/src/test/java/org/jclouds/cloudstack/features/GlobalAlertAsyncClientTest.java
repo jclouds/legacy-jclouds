@@ -23,12 +23,12 @@ import java.io.IOException;
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListAlertsOptions;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code GlobalAlertsAsyncClient}
@@ -42,7 +42,7 @@ public class GlobalAlertAsyncClientTest extends BaseCloudStackAsyncClientTest<Gl
 
    public void testListAlerts() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(GlobalAlertAsyncClient.class.getMethod("listAlerts", ListAlertsOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listAlerts&listAll=true HTTP/1.1");
@@ -59,7 +59,7 @@ public class GlobalAlertAsyncClientTest extends BaseCloudStackAsyncClientTest<Gl
 
    public void testListAlertsOptions() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(GlobalAlertAsyncClient.class.getMethod("listAlerts", ListAlertsOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListAlertsOptions.Builder.id("42").keyword("jclouds").type("TEMPLATE")));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListAlertsOptions.Builder.id("42").keyword("jclouds").type("TEMPLATE")));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listAlerts&listAll=true&id=42&keyword=jclouds&type=TEMPLATE HTTP/1.1");

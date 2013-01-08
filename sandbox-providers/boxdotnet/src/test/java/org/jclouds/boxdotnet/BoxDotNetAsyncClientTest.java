@@ -49,15 +49,15 @@ public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClien
 
    public void testList() throws SecurityException, NoSuchMethodException, IOException {
       Method method = BoxDotNetAsyncClient.class.getMethod("list");
-      HttpRequest httpRequest = processor.createRequest(method);
+      GeneratedHttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest, "GET https://www.box.net/api/1.0/rest/items HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
       // now make sure request filters apply by replaying
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = (GeneratedHttpRequest) Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = (GeneratedHttpRequest) Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://www.box.net/api/1.0/rest/items HTTP/1.1");
       // for example, using basic authentication, we should get "only one"

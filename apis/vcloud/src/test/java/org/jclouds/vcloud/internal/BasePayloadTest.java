@@ -28,7 +28,7 @@ import org.nnsoft.guice.rocoto.Rocoto;
 import org.nnsoft.guice.rocoto.configuration.ConfigurationModule;
 
 import com.google.common.base.Throwables;
-import com.google.common.reflect.Invokable;
+import org.jclouds.reflect.Invokable;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 

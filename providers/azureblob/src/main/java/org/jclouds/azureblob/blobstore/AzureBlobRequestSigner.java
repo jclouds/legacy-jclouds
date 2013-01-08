@@ -33,10 +33,11 @@ import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.reflect.Invocation;
+import org.jclouds.reflect.Invokable;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
+import com.google.common.reflect.TypeToken;
 
 /**
  * 
@@ -58,12 +59,12 @@ public class AzureBlobRequestSigner implements BlobRequestSigner {
       this.processor = checkNotNull(processor, "processor");
       this.blobToBlob = checkNotNull(blobToBlob, "blobToBlob");
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
-      this.getMethod = Invokable.from(AzureBlobAsyncClient.class.getMethod("getBlob", String.class, String.class,
-            GetOptions[].class));
-      this.deleteMethod = Invokable
-            .from(AzureBlobAsyncClient.class.getMethod("deleteBlob", String.class, String.class));
-      this.createMethod = Invokable
-            .from(AzureBlobAsyncClient.class.getMethod("putBlob", String.class, AzureBlob.class));
+      this.getMethod = Invokable.from(TypeToken.of(AzureBlobAsyncClient.class),
+            AzureBlobAsyncClient.class.getMethod("getBlob", String.class, String.class, GetOptions[].class));
+      this.deleteMethod = Invokable.from(TypeToken.of(AzureBlobAsyncClient.class),
+            AzureBlobAsyncClient.class.getMethod("deleteBlob", String.class, String.class));
+      this.createMethod = Invokable.from(TypeToken.of(AzureBlobAsyncClient.class),
+            AzureBlobAsyncClient.class.getMethod("putBlob", String.class, AzureBlob.class));
    }
 
    @Override

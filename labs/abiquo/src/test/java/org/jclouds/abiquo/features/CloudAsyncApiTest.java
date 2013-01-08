@@ -77,7 +77,7 @@ import com.abiquo.server.core.infrastructure.storage.TiersDto;
 import com.abiquo.server.core.infrastructure.storage.VolumeManagementDto;
 import com.abiquo.server.core.infrastructure.storage.VolumesManagementDto;
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
+import org.jclouds.reflect.Invokable;
 
 /**
  * Tests annotation parsing of {@code CloudAsyncApi}

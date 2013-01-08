@@ -66,7 +66,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.ImmutableSet.Builder;
-import com.google.common.reflect.Invokable;
+import org.jclouds.reflect.Invokable;
 import com.google.inject.Inject;
 
 /**

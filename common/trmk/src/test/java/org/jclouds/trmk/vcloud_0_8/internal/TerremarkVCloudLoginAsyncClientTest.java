@@ -30,14 +30,15 @@ import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.location.Provider;
 import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.reflect.Invokable;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.trmk.vcloud_0_8.endpoints.VCloudLogin;
 import org.jclouds.trmk.vcloud_0_8.functions.ParseLoginResponseFromHeaders;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -54,7 +55,7 @@ public class TerremarkVCloudLoginAsyncClientTest extends BaseAsyncClientTest<Ter
 
    public void testLogin() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(TerremarkVCloudLoginAsyncClient.class.getMethod("login"));
-      HttpRequest request = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.of());
 
       assertEquals(request.getRequestLine(), "POST http://localhost:8080/login HTTP/1.1");
       assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT + ": application/vnd.vmware.vcloud.orgList+xml\n");

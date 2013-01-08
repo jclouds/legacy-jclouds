@@ -33,7 +33,7 @@ import com.abiquo.model.transport.SingleResourceTransportDto;
 import com.abiquo.server.core.task.TaskDto;
 import com.abiquo.server.core.task.TasksDto;
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
+import org.jclouds.reflect.Invokable;
 
 /**
  * Tests annotation parsing of {@code TaskAsyncApi}

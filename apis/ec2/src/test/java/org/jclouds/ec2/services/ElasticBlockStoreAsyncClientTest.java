@@ -36,11 +36,12 @@ import org.jclouds.ec2.xml.SnapshotHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code ElasticBlockStoreAsyncClient}
@@ -53,7 +54,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
 
    public void testDeleteVolume() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(ElasticBlockStoreAsyncClient.class.getMethod("deleteVolumeInRegion", String.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "id"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "id"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -81,9 +82,9 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
    public void testDescribeVolumes() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(ElasticBlockStoreAsyncClient.class.getMethod("describeVolumesInRegion", String.class,
             String[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -100,7 +101,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
    public void testDescribeVolumesArgs() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(ElasticBlockStoreAsyncClient.class.getMethod("describeVolumesInRegion", String.class,
                String[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -131,9 +132,9 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
    public void testAttachVolume() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(ElasticBlockStoreAsyncClient.class.getMethod("attachVolumeInRegion", String.class, String.class,
                String.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "id", "instanceId", "/device"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "id", "instanceId", "/device"));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -163,9 +164,9 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
    public void testDetachVolume() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(ElasticBlockStoreAsyncClient.class.getMethod("detachVolumeInRegion", String.class, String.class,
                boolean.class, DetachVolumeOptions[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "id", false));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "id", false));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -197,10 +198,10 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
    public void testDetachVolumeOptions() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(ElasticBlockStoreAsyncClient.class.getMethod("detachVolumeInRegion", String.class, String.class,
                boolean.class, DetachVolumeOptions[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "id", true, fromInstance("instanceId").fromDevice(
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "id", true, fromInstance("instanceId").fromDevice(
                "/device")));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -217,7 +218,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
    public void testCreateSnapshot() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(ElasticBlockStoreAsyncClient.class.getMethod("createSnapshotInRegion", String.class,
                String.class, CreateSnapshotOptions[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "volumeId"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "volumeId"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -234,7 +235,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
    public void testCreateSnapshotOptions() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(ElasticBlockStoreAsyncClient.class.getMethod("createSnapshotInRegion", String.class,
                String.class, CreateSnapshotOptions[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "volumeId", CreateSnapshotOptions.Builder
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "volumeId", CreateSnapshotOptions.Builder
                .withDescription("description")));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -253,7 +254,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
    public void testDescribeSnapshots() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(ElasticBlockStoreAsyncClient.class.getMethod("describeSnapshotsInRegion", String.class,
                DescribeSnapshotsOptions[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -270,7 +271,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
    public void testDescribeSnapshotsArgs() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(ElasticBlockStoreAsyncClient.class.getMethod("describeSnapshotsInRegion", String.class,
                DescribeSnapshotsOptions[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, ownedBy("o1", "o2").restorableBy("r1", "r2")
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, ownedBy("o1", "o2").restorableBy("r1", "r2")
                .snapshotIds("s1", "s2")));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -290,7 +291,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
    public void testGetCreateVolumePermissionForSnapshot() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(ElasticBlockStoreAsyncClient.class.getMethod("getCreateVolumePermissionForSnapshotInRegion",
                String.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "snapshotId"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "snapshotId"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -326,10 +327,10 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
    public void testAddCreateVolumePermissionsToSnapshot() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(ElasticBlockStoreAsyncClient.class.getMethod("addCreateVolumePermissionsToSnapshotInRegion",
                String.class, Iterable.class, Iterable.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, ImmutableList.of("bob", "sue"), ImmutableList
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, ImmutableList.of("bob", "sue"), ImmutableList
                .of("all"), "snapshotId"));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -364,10 +365,10 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
             IOException {
       Invokable<?, ?> method = Invokable.from(ElasticBlockStoreAsyncClient.class.getMethod("removeCreateVolumePermissionsFromSnapshotInRegion",
                String.class, Iterable.class, Iterable.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, ImmutableList.of("bob", "sue"), ImmutableList
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, ImmutableList.of("bob", "sue"), ImmutableList
                .of("all"), "snapshotId"));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -385,7 +386,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
             IOException {
       Invokable<?, ?> method = Invokable.from(ElasticBlockStoreAsyncClient.class.getMethod("resetCreateVolumePermissionsOnSnapshotInRegion",
                String.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "snapshotId"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "snapshotId"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");

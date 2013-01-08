@@ -21,12 +21,12 @@ package org.jclouds.softlayer.features;
 import java.io.IOException;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseJson;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests annotation parsing of {@code ProductPackageAsyncClient}
@@ -38,7 +38,7 @@ public class ProductPackageAsyncClientTest extends BaseSoftLayerAsyncClientTest<
 
    public void testGetProductPackage() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(ProductPackageAsyncClient.class.getMethod("getProductPackage", long.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(1234));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(1234));
 
       assertRequestLineEquals(
                httpRequest,

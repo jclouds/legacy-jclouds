@@ -29,11 +29,12 @@ import org.jclouds.ec2.xml.DescribeSecurityGroupsResponseHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code AWSSecurityGroupAsyncClient}
@@ -51,7 +52,7 @@ public class AWSSecurityGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<A
    public void testDeleteSecurityGroup() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AWSSecurityGroupAsyncClient.class.getMethod("deleteSecurityGroupInRegionById", String.class,
             String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "id"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "id"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -68,7 +69,7 @@ public class AWSSecurityGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<A
    public void testDescribeSecurityGroups() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AWSSecurityGroupAsyncClient.class.getMethod("describeSecurityGroupsInRegionById", String.class,
             String[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -85,7 +86,7 @@ public class AWSSecurityGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<A
    public void testDescribeSecurityGroupsArgs() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AWSSecurityGroupAsyncClient.class.getMethod("describeSecurityGroupsInRegionById", String.class,
             String[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -115,9 +116,9 @@ public class AWSSecurityGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<A
    public void testCreateSecurityGroup() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AWSSecurityGroupAsyncClient.class.getMethod("createSecurityGroupInRegion", String.class,
             String.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "description"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "description"));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -134,7 +135,7 @@ public class AWSSecurityGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<A
    public void testAuthorizeSecurityGroupIpPermission() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AWSSecurityGroupAsyncClient.class.getMethod("authorizeSecurityGroupIngressInRegion",
             String.class, String.class, IpPermission.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "group", IpPermissions.permitAnyProtocol()));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "group", IpPermissions.permitAnyProtocol()));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -153,7 +154,7 @@ public class AWSSecurityGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<A
    public void testAuthorizeSecurityGroupIpPermissions() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AWSSecurityGroupAsyncClient.class.getMethod("authorizeSecurityGroupIngressInRegion",
             String.class, String.class, Iterable.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "group", ImmutableSet.<IpPermission> of(IpPermissions
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "group", ImmutableSet.<IpPermission> of(IpPermissions
             .permit(IpProtocol.TCP).originatingFromCidrBlock("1.1.1.1/32"), IpPermissions.permitICMP().type(8).andCode(0)
             .originatingFromSecurityGroupId("groupId"))));
 
@@ -174,7 +175,7 @@ public class AWSSecurityGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<A
    public void testRevokeSecurityGroupIpPermission() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AWSSecurityGroupAsyncClient.class.getMethod("revokeSecurityGroupIngressInRegion", String.class,
             String.class, IpPermission.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "group", IpPermissions.permitAnyProtocol()));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "group", IpPermissions.permitAnyProtocol()));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -193,7 +194,7 @@ public class AWSSecurityGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<A
    public void testRevokeSecurityGroupIpPermissions() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AWSSecurityGroupAsyncClient.class.getMethod("revokeSecurityGroupIngressInRegion", String.class,
             String.class, Iterable.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "group", ImmutableSet.<IpPermission> of(IpPermissions
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "group", ImmutableSet.<IpPermission> of(IpPermissions
             .permit(IpProtocol.TCP).originatingFromCidrBlock("1.1.1.1/32"), IpPermissions.permitICMP().type(8).andCode(0)
             .originatingFromSecurityGroupId("groupId"))));
 

@@ -29,7 +29,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
+import org.jclouds.reflect.Invokable;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 

@@ -26,12 +26,13 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.openstack.functions.ParseAuthenticationResponseFromHeaders;
+import org.jclouds.reflect.Invokable;
 import org.jclouds.rest.AnonymousRestApiMetadata;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code OpenStackAuthAsyncClient}
@@ -44,7 +45,7 @@ public class OpenStackAuthAsyncClientTest extends BaseAsyncClientTest<OpenStackA
 
    public void testAuthenticate() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(OpenStackAuthAsyncClient.class.getMethod("authenticate", String.class, String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("foo", "bar"));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("foo", "bar"));
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/v1.0 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: */*\nHost: localhost:8080\nX-Auth-Key: bar\nX-Auth-User: foo\n");
@@ -58,7 +59,7 @@ public class OpenStackAuthAsyncClientTest extends BaseAsyncClientTest<OpenStackA
 
    public void testAuthenticateStorage() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(OpenStackAuthAsyncClient.class.getMethod("authenticateStorage", String.class, String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("foo", "bar"));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("foo", "bar"));
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/v1.0 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: */*\nHost: localhost:8080\nX-Storage-Pass: bar\nX-Storage-User: foo\n");

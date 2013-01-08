@@ -27,13 +27,13 @@ import java.util.Map;
 
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.reflect.Invocation;
+import org.jclouds.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.reflect.Invokable;
 import com.google.inject.Guice;
 
 /**

@@ -24,12 +24,12 @@ import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.cloudstack.domain.Capacity;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListCapacityOptions;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code GlobalCapacityAsyncClient}
@@ -43,7 +43,7 @@ public class GlobalCapacityAsyncClientTest extends BaseCloudStackAsyncClientTest
 
    public void testListCapacity() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(GlobalCapacityAsyncClient.class.getMethod("listCapacity", ListCapacityOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listCapacity&listAll=true HTTP/1.1");
@@ -59,7 +59,7 @@ public class GlobalCapacityAsyncClientTest extends BaseCloudStackAsyncClientTest
 
    public void testListCapacityOptions() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(GlobalCapacityAsyncClient.class.getMethod("listCapacity", ListCapacityOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListCapacityOptions.Builder.hostId("3").keyword("fred").podId("4").type(Capacity.Type.CPU_ALLOCATED_MHZ).zoneId("6")));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListCapacityOptions.Builder.hostId("3").keyword("fred").podId("4").type(Capacity.Type.CPU_ALLOCATED_MHZ).zoneId("6")));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listCapacity&listAll=true&hostid=3&keyword=fred&podid=4&type=1&zoneid=6 HTTP/1.1");

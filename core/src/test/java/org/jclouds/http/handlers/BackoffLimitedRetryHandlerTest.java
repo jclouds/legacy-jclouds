@@ -50,7 +50,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
+import org.jclouds.reflect.Invokable;
 
 @Test(groups = "unit", testName = "BackoffLimitedRetryHandlerTest")
 public class BackoffLimitedRetryHandlerTest {

@@ -38,7 +38,7 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.Invokable;
+import org.jclouds.reflect.Invokable;
 
 /**
  *

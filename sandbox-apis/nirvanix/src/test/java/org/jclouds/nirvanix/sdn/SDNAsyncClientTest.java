@@ -60,7 +60,7 @@ public class SDNAsyncClientTest extends RestClientTest<SDNAsyncClient> {
 
    public void testGetStorageNode() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SDNAsyncClient.class.getMethod("getStorageNode", String.class, long.class);
-      HttpRequest request = processor.createRequest(method, "adriansmovies", 734859264);
+      GeneratedHttpRequest request = processor.createRequest(method, "adriansmovies", 734859264);
 
       assertRequestLineEquals(
             request,
@@ -79,7 +79,7 @@ public class SDNAsyncClientTest extends RestClientTest<SDNAsyncClient> {
    public void testUpload() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SDNAsyncClient.class.getMethod("upload", URI.class, String.class, String.class, Blob.class);
       Blob blob = BindBlobToMultipartFormTest.TEST_BLOB;
-      HttpRequest request = processor.createRequest(method, URI.create("http://uploader"), "token", "adriansmovies",
+      GeneratedHttpRequest request = processor.createRequest(method, URI.create("http://uploader"), "token", "adriansmovies",
             blob);
 
       assertRequestLineEquals(request,
@@ -103,7 +103,7 @@ public class SDNAsyncClientTest extends RestClientTest<SDNAsyncClient> {
 
    public void testSetMetadata() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SDNAsyncClient.class.getMethod("setMetadata", String.class, Map.class);
-      HttpRequest request = processor.createRequest(method, "adriansmovies/sushi.avi", ImmutableMap.of("Chef",
+      GeneratedHttpRequest request = processor.createRequest(method, "adriansmovies/sushi.avi", ImmutableMap.of("Chef",
             "Kawasaki"));
 
       assertRequestLineEquals(
@@ -121,7 +121,7 @@ public class SDNAsyncClientTest extends RestClientTest<SDNAsyncClient> {
 
    public void testGetMetadata() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SDNAsyncClient.class.getMethod("getMetadata", String.class);
-      HttpRequest request = processor.createRequest(method, "adriansmovies/sushi.avi");
+      GeneratedHttpRequest request = processor.createRequest(method, "adriansmovies/sushi.avi");
 
       assertRequestLineEquals(request,
             "GET http://services.nirvanix.com/ws/Metadata/GetMetadata.ashx?output=json&path=adriansmovies/sushi.avi HTTP/1.1");
@@ -137,7 +137,7 @@ public class SDNAsyncClientTest extends RestClientTest<SDNAsyncClient> {
 
    public void testGetFile() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SDNAsyncClient.class.getMethod("getFile", String.class);
-      HttpRequest request = processor.createRequest(method, "adriansmovies/sushi.avi");
+      GeneratedHttpRequest request = processor.createRequest(method, "adriansmovies/sushi.avi");
 
       assertRequestLineEquals(request, "GET http://services.nirvanix.com/adriansmovies/sushi.avi?output=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");

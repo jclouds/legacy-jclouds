@@ -30,10 +30,11 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code NATAsyncClient}
@@ -46,7 +47,7 @@ import com.google.common.reflect.Invokable;
 public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncClient> {
    public void testListIPForwardingRules() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(NATAsyncClient.class.getMethod("listIPForwardingRules", ListIPForwardingRulesOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listIpForwardingRules&listAll=true HTTP/1.1");
@@ -63,7 +64,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
 
    public void testListIPForwardingRulesOptions() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(NATAsyncClient.class.getMethod("listIPForwardingRules", ListIPForwardingRulesOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(
             ListIPForwardingRulesOptions.Builder.virtualMachineId("3")));
 
       assertRequestLineEquals(httpRequest,
@@ -81,7 +82,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
 
    public void testGetIPForwardingRule() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(NATAsyncClient.class.getMethod("getIPForwardingRule", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listIpForwardingRules&listAll=true&id=5 HTTP/1.1");
@@ -107,7 +108,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
          IOException {
       Invokable<?, ?> method = Invokable.from(NATAsyncClient.class.getMethod("createIPForwardingRule", String.class, String.class, int.class,
             CreateIPForwardingRuleOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(7, "tcp", 22));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(7, "tcp", 22));
 
       assertRequestLineEquals(httpRequest, createIpForwardingRule.getRequestLine());
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
@@ -134,7 +135,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
          IOException {
       Invokable<?, ?> method = Invokable.from(NATAsyncClient.class.getMethod("createIPForwardingRule", String.class, String.class, int.class,
             CreateIPForwardingRuleOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(7, "tcp", 22,
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(7, "tcp", 22,
             CreateIPForwardingRuleOptions.Builder.endPort(22)));
 
       assertRequestLineEquals(httpRequest, createIpForwardingRuleOptions.getRequestLine());
@@ -151,7 +152,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
 
    public void testEnableStaticNATForVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(NATAsyncClient.class.getMethod("enableStaticNATForVirtualMachine", String.class, String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5, 6));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5, 6));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=enableStaticNat&virtualmachineid=5&ipaddressid=6 HTTP/1.1");
@@ -168,7 +169,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
 
    public void testDisableStaticNATOnPublicIP() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(NATAsyncClient.class.getMethod("disableStaticNATOnPublicIP", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=disableStaticNat&ipaddressid=5 HTTP/1.1");
@@ -185,7 +186,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
 
    public void testDeleteIPForwardingRule() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(NATAsyncClient.class.getMethod("deleteIPForwardingRule", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=deleteIpForwardingRule&id=5 HTTP/1.1");

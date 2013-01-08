@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Optional;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
+import org.jclouds.reflect.Invokable;
 
 /**
  * Allows you to use simple api version comparison to determine if a feature is

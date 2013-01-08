@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudsigma.util;
 
+import org.jclouds.cloudsigma.CloudSigmaClient;
 import org.jclouds.cloudsigma.domain.IDEDevice;
 import org.jclouds.cloudsigma.domain.Model;
 import org.jclouds.cloudsigma.domain.NIC;

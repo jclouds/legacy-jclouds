@@ -49,15 +49,15 @@ import com.google.inject.TypeLiteral;
 public class TwitterAsyncClientTest extends RestClientTest<TwitterAsyncClient> {
    public void testGetMyMentions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TwitterAsyncClient.class.getMethod("getMyMentions");
-      HttpRequest httpRequest = processor.createRequest(method);
+      GeneratedHttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest, "GET http://api.twitter.com/statuses/mentions.json HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       // now make sure request filters apply by replaying
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = (GeneratedHttpRequest) Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = (GeneratedHttpRequest) Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET http://api.twitter.com/statuses/mentions.json HTTP/1.1");
       // for example, using basic authentication, we should get "only one"

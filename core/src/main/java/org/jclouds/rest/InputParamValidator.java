@@ -27,12 +27,12 @@ import javax.inject.Inject;
 
 import org.jclouds.predicates.Validator;
 import org.jclouds.reflect.Invocation;
+import org.jclouds.reflect.Parameter;
 import org.jclouds.rest.annotations.ParamValidators;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.reflect.Parameter;
 import com.google.inject.Injector;
 
 /**

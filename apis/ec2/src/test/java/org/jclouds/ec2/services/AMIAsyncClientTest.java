@@ -34,11 +34,12 @@ import org.jclouds.ec2.xml.PermissionHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code AMIAsyncClient}
@@ -65,9 +66,9 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
    public void testCreateImage() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("createImageInRegion", String.class, String.class, String.class,
                CreateImageOptions[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "instanceId"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "instanceId"));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -98,10 +99,10 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
    public void testCreateImageOptions() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("createImageInRegion", String.class, String.class, String.class,
                CreateImageOptions[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "instanceId", new CreateImageOptions()
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "instanceId", new CreateImageOptions()
                .withDescription("description").noReboot()));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -129,9 +130,9 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
    public void testDescribeImages() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("describeImagesInRegion", String.class,
                DescribeImagesOptions[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -164,10 +165,10 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
    public void testDescribeImagesOptions() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("describeImagesInRegion", String.class,
                DescribeImagesOptions[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, executableBy("me").ownedBy("fred", "nancy").imageIds(
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, executableBy("me").ownedBy("fred", "nancy").imageIds(
                "1", "2")));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -195,9 +196,9 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
 
    public void testDeregisterImage() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("deregisterImageInRegion", String.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageId"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageId"));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -227,9 +228,9 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
    public void testRegisterImageFromManifest() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("registerImageFromManifestInRegion", String.class, String.class,
                String.class, RegisterImageOptions[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "pathToManifest"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "pathToManifest"));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -259,10 +260,10 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
    public void testRegisterImageFromManifestOptions() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("registerImageFromManifestInRegion", String.class, String.class,
                String.class, RegisterImageOptions[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "pathToManifest", new RegisterImageOptions()
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "pathToManifest", new RegisterImageOptions()
                .withDescription("description")));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -294,9 +295,9 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
    public void testRegisterImageBackedByEBS() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("registerUnixImageBackedByEbsInRegion", String.class,
                String.class, String.class, RegisterImageBackedByEbsOptions[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageName", "snapshotId"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageName", "snapshotId"));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -335,11 +336,11 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
    public void testRegisterImageBackedByEBSOptions() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("registerUnixImageBackedByEbsInRegion", String.class,
                String.class, String.class, RegisterImageBackedByEbsOptions[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageName", "snapshotId",
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageName", "snapshotId",
                new RegisterImageBackedByEbsOptions().withDescription("description").addBlockDeviceFromSnapshot(
                         "/dev/device", null, "snapshot").addNewBlockDevice("/dev/newdevice", "newblock", 100)));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -369,9 +370,9 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
    public void testGetBlockDeviceMappingsForImage() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("getBlockDeviceMappingsForImageInRegion", String.class,
                String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageId"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageId"));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -400,9 +401,9 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
 
    public void testGetLaunchPermissionForImage() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("getLaunchPermissionForImageInRegion", String.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageId"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageId"));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -436,10 +437,10 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
    public void testAddLaunchPermissionsToImage() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("addLaunchPermissionsToImageInRegion", String.class,
                Iterable.class, Iterable.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, ImmutableList.of("bob", "sue"), ImmutableList
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, ImmutableList.of("bob", "sue"), ImmutableList
                .of("all"), "imageId"));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -473,10 +474,10 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
    public void testRemoveLaunchPermissionsFromImage() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("removeLaunchPermissionsFromImageInRegion", String.class,
                Iterable.class, Iterable.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, ImmutableList.of("bob", "sue"), ImmutableList
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, ImmutableList.of("bob", "sue"), ImmutableList
                .of("all"), "imageId"));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -505,9 +506,9 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
    public void testResetLaunchPermissionsOnImage() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("resetLaunchPermissionsOnImageInRegion", String.class,
                String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageId"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageId"));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
