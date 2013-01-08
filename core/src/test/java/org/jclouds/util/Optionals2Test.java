@@ -25,7 +25,7 @@ import static org.testng.Assert.assertTrue;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
-import com.google.common.reflect.Invokable;
+import org.jclouds.reflect.Invokable;
 
 /**
  * @author Adrian Cole

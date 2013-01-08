@@ -48,11 +48,11 @@ public class FunctionalReflectionTest {
     * access to the actual proxied interface
     */
    @SuppressWarnings("unchecked")
-   public void testCanAccessInterfaceTypeInsideFunction() {
+   public void testCanAccessContravariantTypeInsideFunction() {
       final Function<Invocation, Result> test = new Function<Invocation, Result>() {
          public Result apply(Invocation e) {
             assertEquals(e.getInvokable().getDeclaringClass(), Set.class);
-            assertEquals(e.getInterfaceType(), SortedSet.class);
+            assertEquals(e.getInvokable().getEnclosingType().getRawType(), SortedSet.class);
             return Result.success(true);
          }
       };

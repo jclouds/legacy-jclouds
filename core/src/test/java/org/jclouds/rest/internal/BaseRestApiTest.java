@@ -40,17 +40,15 @@ import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.reflect.Invocation;
+import org.jclouds.reflect.Invokable;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
-import com.google.common.reflect.Invokable;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
@@ -177,9 +175,9 @@ public abstract class BaseRestApiTest {
       assertEquals(expected, parserClass);
    }
 
-   protected void assertResponseParserClassEquals(Invokable<?, ?> method, HttpRequest request, @Nullable Class<?> parserClass) {
-      assertEquals(
-            AsyncRestClientProxy.createResponseParser(parserFactory, injector,
-                  Invocation.create(method, ImmutableList.of()), request).getClass(), parserClass);
+   protected void assertResponseParserClassEquals(Invokable<?, ?> method, GeneratedHttpRequest request,
+         @Nullable Class<?> parserClass) {
+      assertEquals(TransformerForRequest.createResponseParser(parserFactory, injector, request).getClass(),
+            parserClass);
    }
 }

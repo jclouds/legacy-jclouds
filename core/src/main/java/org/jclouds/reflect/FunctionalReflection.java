@@ -38,7 +38,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
+import com.google.common.reflect.TypeToken;
 
 /**
  * Static utilities relating to functional Java reflection.
@@ -48,8 +48,8 @@ import com.google.common.reflect.Invokable;
 @Beta
 public final class FunctionalReflection {
    /**
-    * Returns a proxy instance that implements {@code interfaceType} by dispatching method invocations to
-    * {@code invocationFunction}. The class loader of {@code interfaceType} will be used to define the proxy class.
+    * Returns a proxy instance that implements {@code enclosingType} by dispatching method invocations to
+    * {@code invocationFunction}. The class loader of {@code enclosingType} will be used to define the proxy class.
     * <p>
     * Usage example:
     * 
@@ -72,26 +72,37 @@ public final class FunctionalReflection {
     * @param invocationFunction
     *           returns a result or a top-level exception, or result
     * @throws IllegalArgumentException
-    *            if {@code interfaceType} does not specify the type of a Java interface
+    *            if {@code enclosingType} does not specify the type of a Java interface
     * @see com.google.common.reflect.AbstractInvocationHandler#invoke(Object, Method, Object[])
     * @see com.google.common.reflect.Reflection#newProxy(Class, java.lang.reflect.InvocationHandler)
     */
-   public static <T> T newProxy(Class<T> interfaceType, Function<Invocation, Result> invocationFunction) {
-      checkNotNull(interfaceType, "interfaceType");
+   public static <T> T newProxy(TypeToken<T> enclosingType, Function<Invocation, Result> invocationFunction) {
+      checkNotNull(enclosingType, "enclosingType");
       checkNotNull(invocationFunction, "invocationFunction");
-      checkArgument(interfaceType.isInterface(), "%s is not an interface", interfaceType);
-      Object object = Proxy.newProxyInstance(interfaceType.getClassLoader(), new Class<?>[] { interfaceType },
-            new FunctionalInvocationHandler<T>(interfaceType, invocationFunction));
-      return interfaceType.cast(object);
+      return newProxy(enclosingType.getRawType(), new FunctionalInvocationHandler<T>(enclosingType, invocationFunction));
+   }
+
+   public static <T> T newProxy(Class<T> enclosingType, Function<Invocation, Result> invocationFunction) {
+      checkNotNull(invocationFunction, "invocationFunction");
+      return newProxy(enclosingType,
+            new FunctionalInvocationHandler<T>(TypeToken.of(enclosingType), invocationFunction));
+   }
+
+   @SuppressWarnings("unchecked")
+   private static <T> T newProxy(Class<? super T> enclosingType, FunctionalInvocationHandler<T> invocationHandler) {
+      checkNotNull(enclosingType, "enclosingType");
+      checkArgument(enclosingType.isInterface(), "%s is not an interface", enclosingType);
+      return (T) Proxy.newProxyInstance(enclosingType.getClassLoader(), new Class<?>[] { enclosingType },
+            invocationHandler);
    }
 
    private static final class FunctionalInvocationHandler<T> extends
          com.google.common.reflect.AbstractInvocationHandler {
-      private final Class<T> interfaceType;
+      private final TypeToken<T> enclosingType;
       private final Function<Invocation, Result> invocationFunction;
 
-      private FunctionalInvocationHandler(Class<T> interfaceType, Function<Invocation, Result> invocationFunction) {
-         this.interfaceType = interfaceType;
+      private FunctionalInvocationHandler(TypeToken<T> enclosingType, Function<Invocation, Result> invocationFunction) {
+         this.enclosingType = enclosingType;
          this.invocationFunction = invocationFunction;
       }
 
@@ -102,9 +113,9 @@ public final class FunctionalReflection {
             args = ImmutableList.copyOf(args);
          else
             args = Collections.unmodifiableList(args);
-         Invokable<?, ?> invokable = Invokable.class.cast(Invokable.from(invoked));
+         Invokable<T, ?> invokable = Invokable.from(enclosingType, invoked);
          // not yet support the proxy arg
-         Invocation invocation = Invocation.create(interfaceType, invokable, args);
+         Invocation invocation = Invocation.create(invokable, args);
          Result result;
          try {
             result = invocationFunction.apply(invocation);
@@ -125,13 +136,13 @@ public final class FunctionalReflection {
          if (o == null || getClass() != o.getClass())
             return false;
          FunctionalInvocationHandler<?> that = FunctionalInvocationHandler.class.cast(o);
-         return equal(this.interfaceType, that.interfaceType)
+         return equal(this.enclosingType, that.enclosingType)
                && equal(this.invocationFunction, that.invocationFunction);
       }
 
       @Override
       public int hashCode() {
-         return Objects.hashCode(interfaceType, invocationFunction);
+         return Objects.hashCode(enclosingType, invocationFunction);
       }
 
       @Override

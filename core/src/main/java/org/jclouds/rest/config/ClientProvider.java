@@ -21,9 +21,12 @@ package org.jclouds.rest.config;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.reflect.FunctionalReflection;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.InvokeSyncApi;
 
+import com.google.common.cache.Cache;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
 /**
@@ -35,20 +38,22 @@ import com.google.inject.Provider;
 @Singleton
 public class ClientProvider<S, A> implements Provider<S> {
 
-   private final SyncProxy.Factory factory;
+   private final InvokeSyncApi.Factory factory;
    private final Class<S> syncClientType;
    private final A asyncClient;
 
    @Inject
-   private ClientProvider(SyncProxy.Factory factory, Class<S> syncClientType, A asyncClient) {
+   private ClientProvider(Cache<Invokable<?, ?>, Invokable<?, ?>> invokables, InvokeSyncApi.Factory factory,
+         Class<S> syncClientType, Class<A> asyncClientType, A asyncClient) {
       this.factory = factory;
       this.asyncClient = asyncClient;
       this.syncClientType = syncClientType;
+      RestModule.putInvokables(TypeToken.of(syncClientType), TypeToken.of(asyncClientType), invokables);
    }
 
    @Override
    @Singleton
    public S get() {
-      return FunctionalReflection.newProxy(syncClientType, factory.create(syncClientType, asyncClient));
+      return FunctionalReflection.newProxy(syncClientType, factory.create(asyncClient));
    }
 }

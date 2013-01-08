@@ -19,7 +19,6 @@
 package org.jclouds.reflect;
 
 import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
@@ -28,12 +27,10 @@ import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
-import com.google.common.reflect.Invokable;
 
 /**
- * Context needed to call {@link com.google.common.reflect.Invokable#invoke(Object, Object...)}
+ * Context needed to call {@link org.jclouds.reflect.Invokable#invoke(Object, Object...)}
  * 
  * @author Adrian Cole
  */
@@ -41,46 +38,19 @@ import com.google.common.reflect.Invokable;
 public final class Invocation {
 
    /**
-    * Use this class when the invokable could be inherited. For example, a method is inherited when it cannot be
-    * retrieved by {@link Class#getDeclaredMethods()}, but it can be retrieved by {@link Class#getMethods()}.
-    * 
-    * @param interfaceType
-    *           type that either declared or inherited {@code invokable}, or was forwarded a call to it.
-    * @param args
-    *           as these represent parameters, can contain nulls
-    */
-   public static Invocation create(Class<?> interfaceType, Invokable<?, ?> invokable, List<Object> args) {
-      checkArgument(invokable.getDeclaringClass().isAssignableFrom(interfaceType), "%s isn't assignable from %s",
-            invokable.getDeclaringClass(), interfaceType);
-      return new Invocation(interfaceType, invokable, args);
-   }
-
-   /**
-    * Note: use {@link #create(Class, Invokable, List)} when the invokable was inherited.
-    * 
     * @param args
     *           as these represent parameters, can contain nulls
     */
    public static Invocation create(Invokable<?, ?> invokable, List<Object> args) {
-      return new Invocation(invokable.getDeclaringClass(), invokable, args);
+      return new Invocation(invokable, args);
    }
 
-   private final Class<?> interfaceType;
    private final Invokable<?, ?> invokable;
    private final List<Object> args;
 
-   private Invocation(Class<?> interfaceType, Invokable<?, ?> invokable, List<Object> args) {
-      this.interfaceType = checkNotNull(interfaceType, "interfaceType");
+   private Invocation(Invokable<?, ?> invokable, List<Object> args) {
       this.invokable = checkNotNull(invokable, "invokable");
       this.args = checkNotNull(args, "args");
-   }
-
-   /**
-    * different than {@link Invokable#getDeclaringClass()} when {@link #getInvokable()} is a member of a class it was
-    * not declared in.
-    */
-   public Class<?> getInterfaceType() {
-      return interfaceType;
    }
 
    /**
@@ -107,19 +77,17 @@ public final class Invocation {
       if (o == null || getClass() != o.getClass())
          return false;
       Invocation that = Invocation.class.cast(o);
-      return equal(this.interfaceType, that.interfaceType) && equal(this.invokable, that.invokable)
-            && equal(this.args, that.args);
+      return equal(this.invokable, that.invokable) && equal(this.args, that.args);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(interfaceType, invokable, args);
+      return Objects.hashCode(invokable, args);
    }
 
    @Override
    public String toString() {
-      return Objects.toStringHelper("").omitNullValues().add("interfaceType", interfaceType)
-            .add("invokable", invokable).add("args", args.size() != 0 ? args : null).toString();
+      return String.format("%s%s", invokable, args);
    }
 
    /**
@@ -175,12 +143,8 @@ public final class Invocation {
 
       @Override
       public String toString() {
-         return string().toString();
-      }
-
-      protected ToStringHelper string() {
          return Objects.toStringHelper("").omitNullValues().add("result", result.orNull())
-               .add("throwable", throwable.orNull());
+               .add("throwable", throwable.orNull()).toString();
       }
    }
 

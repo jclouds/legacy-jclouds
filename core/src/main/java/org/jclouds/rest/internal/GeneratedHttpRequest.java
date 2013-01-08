@@ -37,15 +37,15 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 public final class GeneratedHttpRequest extends HttpRequest {
-   public static Builder builder() { 
+   public static Builder builder() {
       return new Builder();
    }
-   
-   public Builder toBuilder() { 
+
+   public Builder toBuilder() {
       return new Builder().fromGeneratedHttpRequest(this);
    }
 
-   public final static class Builder extends HttpRequest.Builder<Builder>  {
+   public final static class Builder extends HttpRequest.Builder<Builder> {
       protected Invocation invocation;
       protected Optional<Invocation> caller = Optional.absent();
 
@@ -57,7 +57,7 @@ public final class GeneratedHttpRequest extends HttpRequest {
          return this;
       }
 
-      /** 
+      /**
        * @see GeneratedHttpRequest#getCaller()
        */
       public Builder caller(@Nullable Invocation caller) {
@@ -71,9 +71,15 @@ public final class GeneratedHttpRequest extends HttpRequest {
       }
 
       public Builder fromGeneratedHttpRequest(GeneratedHttpRequest in) {
-         return super.fromHttpRequest(in)
-                     .invocation(in.invocation)
-                     .caller(in.getCaller().orNull());
+         return super.fromHttpRequest(in).invocation(in.invocation).caller(in.getCaller().orNull());
+      }
+
+      Invocation getInvocation() {
+         return invocation;
+      }
+
+      Optional<Invocation> getCaller() {
+         return caller;
       }
 
       @Override
@@ -81,7 +87,7 @@ public final class GeneratedHttpRequest extends HttpRequest {
          return this;
       }
    }
-   
+
    private final Invocation invocation;
    private final Optional<Invocation> caller;
 
