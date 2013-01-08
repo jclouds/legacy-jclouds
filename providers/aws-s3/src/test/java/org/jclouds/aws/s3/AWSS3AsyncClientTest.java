@@ -29,7 +29,6 @@ import org.jclouds.aws.s3.functions.UploadIdFromHttpResponseViaRegex;
 import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
@@ -37,7 +36,9 @@ import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.location.Region;
+import org.jclouds.reflect.Invokable;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.S3AsyncClientTest;
 import org.jclouds.s3.S3Client;
@@ -58,7 +59,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.reflect.Invokable;
 import com.google.inject.Module;
 
 /**
@@ -81,7 +81,7 @@ public class AWSS3AsyncClientTest extends S3AsyncClientTest<AWSS3AsyncClient> {
 
    public void testGetBucketLocationEUIsStillDefault() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AWSS3AsyncClient.class.getMethod("getBucketLocation", String.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("bucket-eu-west-1"));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("bucket-eu-west-1"));
 
       assertRequestLineEquals(request, "GET https://bucket-eu-west-1.s3.amazonaws.com/?location HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: bucket-eu-west-1.s3.amazonaws.com\n");
@@ -100,7 +100,7 @@ public class AWSS3AsyncClientTest extends S3AsyncClientTest<AWSS3AsyncClient> {
 
       Invokable<?, ?> method = Invokable.from(AWSS3AsyncClient.class.getMethod("putObject", String.class, S3Object.class,
             PutObjectOptions[].class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("bucket",
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("bucket",
             blobToS3Object.apply(BindBlobToMultipartFormTest.TEST_BLOB)));
 
       assertRequestLineEquals(request, "PUT https://bucket." + url + "/hello HTTP/1.1");
@@ -117,13 +117,13 @@ public class AWSS3AsyncClientTest extends S3AsyncClientTest<AWSS3AsyncClient> {
    @Override
    public void testGetBucketLocation() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AWSS3AsyncClient.class.getMethod("getBucketLocation", String.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("bucket"));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("bucket"));
 
       assertRequestLineEquals(request, "GET https://bucket.s3.amazonaws.com/?location HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
       assertPayloadEquals(request, null, null, false);
 
-      request = filter.filter(request);
+      request = (GeneratedHttpRequest) filter.filter(request);
 
       assertRequestLineEquals(request, "GET https://bucket.s3.amazonaws.com/?location HTTP/1.1");
       assertNonPayloadHeadersEqual(
@@ -143,7 +143,7 @@ public class AWSS3AsyncClientTest extends S3AsyncClientTest<AWSS3AsyncClient> {
          IllegalArgumentException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AWSS3AsyncClient.class.getMethod("putBucketInRegion", String.class, String.class,
             PutBucketOptions[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null, "bucket"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null, "bucket"));
 
       assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
@@ -160,7 +160,7 @@ public class AWSS3AsyncClientTest extends S3AsyncClientTest<AWSS3AsyncClient> {
          NoSuchMethodException {
       Invokable<?, ?> method = Invokable.from(AWSS3AsyncClient.class.getMethod("initiateMultipartUpload", String.class, ObjectMetadata.class,
             PutObjectOptions[].class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("bucket", ObjectMetadataBuilder.create().key("foo")
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("bucket", ObjectMetadataBuilder.create().key("foo")
             .contentMD5(new byte[] { 1, 2, 3, 4 }).build()));
 
       assertRequestLineEquals(request, "POST https://bucket." + url + "/foo?uploads HTTP/1.1");
@@ -171,7 +171,7 @@ public class AWSS3AsyncClientTest extends S3AsyncClientTest<AWSS3AsyncClient> {
       // as this is a payload-related command, but with no payload, be careful
       // that we check
       // filtering and do not ignore if this fails later.
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
 
       assertRequestLineEquals(request, "POST https://bucket." + url + "/foo?uploads HTTP/1.1");
       assertNonPayloadHeadersEqual(request,
@@ -189,7 +189,7 @@ public class AWSS3AsyncClientTest extends S3AsyncClientTest<AWSS3AsyncClient> {
    public void testAbortMultipartUpload() throws SecurityException, NegativeArraySizeException, NoSuchMethodException {
       Invokable<?, ?> method = Invokable.from(AWSS3AsyncClient.class
             .getMethod("abortMultipartUpload", String.class, String.class, String.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("bucket", "foo", "asdsadasdas", 1,
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("bucket", "foo", "asdsadasdas", 1,
             Payloads.newStringPayload("")));
 
       assertRequestLineEquals(request, "DELETE https://bucket." + url + "/foo?uploadId=asdsadasdas HTTP/1.1");
@@ -206,7 +206,7 @@ public class AWSS3AsyncClientTest extends S3AsyncClientTest<AWSS3AsyncClient> {
    public void testUploadPart() throws SecurityException, NegativeArraySizeException, NoSuchMethodException {
       Invokable<?, ?> method = Invokable.from(AWSS3AsyncClient.class.getMethod("uploadPart", String.class, String.class, int.class,
             String.class, Payload.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("bucket", "foo", 1, "asdsadasdas",
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("bucket", "foo", 1, "asdsadasdas",
             Payloads.newStringPayload("")));
 
       assertRequestLineEquals(request, "PUT https://bucket." + url + "/foo?partNumber=1&uploadId=asdsadasdas HTTP/1.1");
@@ -224,7 +224,7 @@ public class AWSS3AsyncClientTest extends S3AsyncClientTest<AWSS3AsyncClient> {
          NoSuchMethodException {
       Invokable<?, ?> method = Invokable.from(AWSS3AsyncClient.class.getMethod("completeMultipartUpload", String.class, String.class,
             String.class, Map.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("bucket", "foo", "asdsadasdas",
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("bucket", "foo", "asdsadasdas",
             ImmutableMap.<Integer, String> of(1, "\"a54357aff0632cce46d942af68356b38\"")));
 
       assertRequestLineEquals(request, "POST https://bucket." + url + "/foo?uploadId=asdsadasdas HTTP/1.1");
@@ -245,7 +245,7 @@ public class AWSS3AsyncClientTest extends S3AsyncClientTest<AWSS3AsyncClient> {
          NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(AWSS3AsyncClient.class.getMethod("putBucketInRegion", String.class, String.class,
             PutBucketOptions[].class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("EU", "bucket"));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("EU", "bucket"));
 
       assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");

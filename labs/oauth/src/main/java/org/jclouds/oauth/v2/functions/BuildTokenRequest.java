@@ -43,7 +43,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Supplier;
 import com.google.common.base.Ticker;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.reflect.Invokable;
+import org.jclouds.reflect.Invokable;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -116,7 +116,7 @@ public class BuildTokenRequest implements Function<GeneratedHttpRequest, TokenRe
 
    protected String getOAuthScopes(GeneratedHttpRequest request) {
       Invokable<?, ?> invokable = request.getInvocation().getInvokable();
-      Class<?> interfaceType = request.getInvocation().getInterfaceType();
+      Class<?> interfaceType = invokable.getEnclosingType().getRawType();
       
       OAuthScopes classScopes = interfaceType.getAnnotation(OAuthScopes.class);
       OAuthScopes methodScopes = invokable.getAnnotation(OAuthScopes.class);

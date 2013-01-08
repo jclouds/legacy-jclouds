@@ -44,7 +44,7 @@ public class SDNAuthAsyncClientTest extends RestClientTest<SDNAuthAsyncClient> {
 
    public void testAuthenticate() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SDNAuthAsyncClient.class.getMethod("authenticate", String.class, String.class, String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "apple", "foo", "bar");
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "apple", "foo", "bar");
       assertRequestLineEquals(httpRequest,
                "GET http://localhost:8080/ws/Authentication/Login.ashx?output=json&appKey=apple&password=bar&username=foo HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");

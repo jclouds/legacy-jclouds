@@ -27,13 +27,13 @@ import org.jclouds.cloudstack.functions.ParseIdToNameFromHttpResponse;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListOSTypesOptions;
 import org.jclouds.functions.IdentityFunction;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code GuestOSAsyncClient}
@@ -47,7 +47,7 @@ public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestO
 
    public void testGetOSCategory() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(GuestOSAsyncClient.class.getMethod("getOSCategory", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(11l));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(11l));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listOsCategories&listAll=true&id=11 HTTP/1.1");
@@ -64,7 +64,7 @@ public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestO
 
    public void testListOSCategories() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(GuestOSAsyncClient.class.getMethod("listOSCategories"));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listOsCategories&listAll=true HTTP/1.1");
@@ -81,7 +81,7 @@ public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestO
 
    public void testGetOSType() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(GuestOSAsyncClient.class.getMethod("getOSType", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(11l));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(11l));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listOsTypes&listAll=true&id=11 HTTP/1.1");
@@ -99,7 +99,7 @@ public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestO
 
    public void testListOSTypes() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(GuestOSAsyncClient.class.getMethod("listOSTypes", ListOSTypesOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listOsTypes&listAll=true HTTP/1.1");
@@ -116,7 +116,7 @@ public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestO
 
    public void testListOSTypesOptions() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(GuestOSAsyncClient.class.getMethod("listOSTypes", ListOSTypesOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListOSTypesOptions.Builder.OSCategoryId("11")));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListOSTypesOptions.Builder.OSCategoryId("11")));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listOsTypes&listAll=true&oscategoryid=11 HTTP/1.1");

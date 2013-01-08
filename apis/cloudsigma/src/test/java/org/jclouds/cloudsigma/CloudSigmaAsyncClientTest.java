@@ -46,12 +46,13 @@ import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
+import org.jclouds.reflect.Invokable;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code CloudSigmaAsyncClient}
@@ -64,7 +65,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testGetProfileInfo() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("getProfileInfo"));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/profile/info HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -80,7 +81,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testListStandardDrives() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("listStandardDrives"));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/drives/standard/list HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -95,7 +96,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testListStandardCds() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("listStandardCds"));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/drives/standard/cd/list HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -110,7 +111,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testListStandardImages() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("listStandardImages"));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/drives/standard/img/list HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -125,7 +126,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testListDriveInfo() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("listDriveInfo"));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/drives/info HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -140,7 +141,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testGetDriveInfo() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("getDriveInfo", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/drives/uuid/info HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -156,7 +157,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testCreateDrive() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("createDrive", Drive.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(
             new CreateDriveRequest.Builder().name("foo").use(ImmutableList.of("production", "candy")).size(10000l)
                   .build()));
 
@@ -175,7 +176,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
    public void testCloneDrive() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("cloneDrive", String.class, String.class,
             CloneDriveOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("sourceid", "newname"));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("sourceid", "newname"));
 
       assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/drives/sourceid/clone HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -192,7 +193,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
    public void testCloneDriveOptions() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("cloneDrive", String.class, String.class,
             CloneDriveOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("sourceid", "newname",
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("sourceid", "newname",
             new CloneDriveOptions().size(1024l)));
 
       assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/drives/sourceid/clone HTTP/1.1");
@@ -209,7 +210,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testSetDriveData() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("setDriveData", String.class, DriveData.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("100", new DriveData.Builder().name("foo").size(10000l)
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("100", new DriveData.Builder().name("foo").size(10000l)
             .use(ImmutableList.of("production", "candy")).build()));
 
       assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/drives/100/set HTTP/1.1");
@@ -226,15 +227,15 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testListServers() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("listServers"));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/servers/list HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       // now make sure request filters apply by replaying
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = (GeneratedHttpRequest) Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = (GeneratedHttpRequest) Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/servers/list HTTP/1.1");
       // for example, using basic authentication, we should get "only one"
@@ -253,7 +254,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testListServerInfo() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("listServerInfo"));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/servers/info HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -268,7 +269,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testGetServerInfo() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("getServerInfo", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/servers/uuid/info HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -284,7 +285,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testCreateServer() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("createServer", Server.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(BindServerToPlainTextStringTest.SERVER));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(BindServerToPlainTextStringTest.SERVER));
 
       assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/servers/create HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -300,7 +301,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testSetServerConfiguration() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("setServerConfiguration", String.class, Server.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("100", BindServerToPlainTextStringTest.SERVER));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("100", BindServerToPlainTextStringTest.SERVER));
 
       assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/servers/100/set HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -316,7 +317,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testDestroyServer() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("destroyServer", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/servers/uuid/destroy HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -332,7 +333,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testStartServer() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("startServer", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
 
       assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/servers/uuid/start HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -348,7 +349,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testStopServer() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("stopServer", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
 
       assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/servers/uuid/stop HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -364,7 +365,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testShutdownServer() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("shutdownServer", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
 
       assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/servers/uuid/shutdown HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -380,7 +381,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testResetServer() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("resetServer", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
 
       assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/servers/uuid/reset HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -396,15 +397,15 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testListDrives() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("listDrives"));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/drives/list HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       // now make sure request filters apply by replaying
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = (GeneratedHttpRequest) Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = (GeneratedHttpRequest) Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/drives/list HTTP/1.1");
       // for example, using basic authentication, we should get "only one"
@@ -423,7 +424,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testDestroyDrive() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("destroyDrive", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/drives/uuid/destroy HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -439,15 +440,15 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testListVLANs() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("listVLANs"));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/vlan/list HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       // now make sure request filters apply by replaying
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = (GeneratedHttpRequest) Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = (GeneratedHttpRequest) Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/vlan/list HTTP/1.1");
       // for example, using basic authentication, we should get "only one"
@@ -466,7 +467,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testListVLANInfo() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("listVLANInfo"));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/vlan/info HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -481,7 +482,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testGetVLANInfo() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("getVLANInfo", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/vlan/uuid/info HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -497,7 +498,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testCreateVLAN() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("createVLAN", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("poohbear"));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("poohbear"));
 
       assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/resources/vlan/create HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -513,7 +514,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testRenameVLAN() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("renameVLAN", String.class, String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("100", "poohbear"));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("100", "poohbear"));
 
       assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/resources/vlan/100/set HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -529,7 +530,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testDestroyVLAN() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("destroyVLAN", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/vlan/uuid/destroy HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -545,15 +546,15 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testListStaticIPs() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("listStaticIPs"));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/ip/list HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       // now make sure request filters apply by replaying
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = (GeneratedHttpRequest) Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = (GeneratedHttpRequest) Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/ip/list HTTP/1.1");
       // for example, using basic authentication, we should get "only one"
@@ -572,7 +573,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testListStaticIPInfo() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("listStaticIPInfo"));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/ip/info HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -587,7 +588,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testGetStaticIPInfo() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("getStaticIPInfo", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/ip/uuid/info HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -603,7 +604,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testCreateStaticIP() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("createStaticIP"));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/resources/ip/create HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
@@ -619,7 +620,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
 
    public void testDestroyStaticIP() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(CloudSigmaAsyncClient.class.getMethod("destroyStaticIP", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("uuid"));
 
       assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/resources/ip/uuid/destroy HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");

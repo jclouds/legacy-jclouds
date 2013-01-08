@@ -26,10 +26,11 @@ import org.jclouds.aws.ec2.xml.DescribePlacementGroupsResponseHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code PlacementGroupAsyncClient}
@@ -43,7 +44,7 @@ public class PlacementGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<Pla
    public void testDeletePlacementGroup() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(PlacementGroupAsyncClient.class.getMethod("deletePlacementGroupInRegion", String.class,
                String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -73,9 +74,9 @@ public class PlacementGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<Pla
    public void testCreatePlacementGroup() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(PlacementGroupAsyncClient.class.getMethod("createPlacementGroupInRegion", String.class,
                String.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "cluster"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "cluster"));
 
-      request = request.getFilters().get(0).filter(request);
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -92,7 +93,7 @@ public class PlacementGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<Pla
    public void testCreatePlacementGroupDefault() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(PlacementGroupAsyncClient.class.getMethod("createPlacementGroupInRegion", String.class,
                String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -109,7 +110,7 @@ public class PlacementGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<Pla
    public void testDescribePlacementGroups() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(PlacementGroupAsyncClient.class.getMethod("describePlacementGroupsInRegion", String.class,
                String[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -126,7 +127,7 @@ public class PlacementGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<Pla
    public void testDescribePlacementGroupsArgs() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(PlacementGroupAsyncClient.class.getMethod("describePlacementGroupsInRegion", String.class,
                String[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");

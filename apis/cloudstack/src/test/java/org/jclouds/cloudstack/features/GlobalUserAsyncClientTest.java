@@ -25,10 +25,11 @@ import org.jclouds.cloudstack.options.UpdateUserOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code GlobalUserAsyncClient}
@@ -50,7 +51,7 @@ public class GlobalUserAsyncClientTest extends BaseCloudStackAsyncClientTest<Glo
    public void testCreateAccount() throws Exception {
       Invokable<?, ?> method = Invokable.from(GlobalUserAsyncClient.class.getMethod("createUser", String.class, String.class,
          String.class, String.class, String.class, String.class, CreateUserOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("user", "account", "email@example.com",
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("user", "account", "email@example.com",
          "hashed-password", "FirstName", "LastName"));
 
       assertRequestLineEquals(httpRequest, createUser.getRequestLine());
@@ -66,7 +67,7 @@ public class GlobalUserAsyncClientTest extends BaseCloudStackAsyncClientTest<Glo
 
    public void testUpdateUser() throws Exception {
       Invokable<?, ?> method = Invokable.from(GlobalUserAsyncClient.class.getMethod("updateUser", String.class, UpdateUserOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(42L));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(42L));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=updateUser&id=42 HTTP/1.1");
@@ -82,7 +83,7 @@ public class GlobalUserAsyncClientTest extends BaseCloudStackAsyncClientTest<Glo
 
    public void testDeleteUser() throws Exception {
       Invokable<?, ?> method = Invokable.from(GlobalUserAsyncClient.class.getMethod("deleteUser", String.class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(42L));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(42L));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=deleteUser&id=42 HTTP/1.1");

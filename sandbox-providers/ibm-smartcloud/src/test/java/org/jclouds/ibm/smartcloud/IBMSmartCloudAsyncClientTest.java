@@ -60,7 +60,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testListImages() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("listImages");
-      HttpRequest httpRequest = processor.createRequest(method);
+      GeneratedHttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/offerings/image HTTP/1.1");
@@ -68,8 +68,8 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
       assertPayloadEquals(httpRequest, null, null, false);
 
       // now make sure request filters apply by replaying
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = (GeneratedHttpRequest) Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = (GeneratedHttpRequest) Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/offerings/image HTTP/1.1");
@@ -90,7 +90,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testGetImage() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("getImage", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "1");
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/offerings/image/1 HTTP/1.1");
@@ -108,7 +108,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testDeleteImage() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("deleteImage", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "1");
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
                "DELETE https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/offerings/image/1 HTTP/1.1");
@@ -126,7 +126,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
    public void testSetImageVisibility() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("setImageVisibility", String.class,
                Image.Visibility.class);
-      HttpRequest httpRequest = processor.createRequest(method, "1", Image.Visibility.PUBLIC);
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "1", Image.Visibility.PUBLIC);
 
       assertRequestLineEquals(httpRequest,
                "PUT https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/offerings/image/1 HTTP/1.1");
@@ -144,7 +144,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testListInstances() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("listInstances");
-      HttpRequest httpRequest = processor.createRequest(method);
+      GeneratedHttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/instances HTTP/1.1");
@@ -162,7 +162,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testListInstancesFromRequest() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("listInstancesFromRequest", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "1");
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/requests/1 HTTP/1.1");
@@ -180,7 +180,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testGetInstance() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("getInstance", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "1");
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/instances/1 HTTP/1.1");
@@ -199,7 +199,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
    public void testExtendReservationForInstance() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class
                .getMethod("extendReservationForInstance", String.class, Date.class);
-      HttpRequest httpRequest = processor.createRequest(method, "1", new Date(123215235l));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "1", new Date(123215235l));
 
       assertRequestLineEquals(httpRequest,
                "PUT https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/instances/1 HTTP/1.1");
@@ -217,7 +217,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
    public void testRestartInstance() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("restartInstance", String.class,
                RestartInstanceOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, "1");
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
                "PUT https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/instances/1 HTTP/1.1");
@@ -234,7 +234,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
    public void testRestartInstanceNewKey() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("restartInstance", String.class,
                RestartInstanceOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, "1", new RestartInstanceOptions()
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "1", new RestartInstanceOptions()
                .authorizePublicKey("keyName"));
 
       assertRequestLineEquals(httpRequest,
@@ -252,7 +252,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
    public void testSaveInstanceToImage() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("saveInstanceToImage", String.class, String.class,
                String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "1", "imageName", "imageDescription");
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "1", "imageName", "imageDescription");
 
       assertRequestLineEquals(httpRequest,
                "PUT https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/instances/1 HTTP/1.1");
@@ -270,7 +270,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testDeleteInstance() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("deleteInstance", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "1");
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
                "DELETE https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/instances/1 HTTP/1.1");
@@ -287,7 +287,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testListKeys() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("listKeys");
-      HttpRequest httpRequest = processor.createRequest(method);
+      GeneratedHttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/keys HTTP/1.1");
@@ -305,7 +305,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testGetKey() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("getKey", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "1");
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/keys/1 HTTP/1.1");
@@ -322,7 +322,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testGenerateKeyPair() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("generateKeyPair", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "key");
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "key");
 
       assertRequestLineEquals(httpRequest,
                "POST https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/keys HTTP/1.1");
@@ -339,7 +339,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testAddPublicKey() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("addPublicKey", String.class, String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "key", "publicbits");
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "key", "publicbits");
 
       assertRequestLineEquals(httpRequest,
                "POST https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/keys HTTP/1.1");
@@ -356,7 +356,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testUpdatePublicKey() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("updatePublicKey", String.class, String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "key", "publicbits");
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "key", "publicbits");
 
       assertRequestLineEquals(httpRequest,
                "PUT https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/keys/key HTTP/1.1");
@@ -373,7 +373,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testSetDefaultStatusOfKey() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("setDefaultStatusOfKey", String.class, boolean.class);
-      HttpRequest httpRequest = processor.createRequest(method, "key", true);
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "key", true);
 
       assertRequestLineEquals(httpRequest,
                "PUT https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/keys/key HTTP/1.1");
@@ -390,7 +390,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testDeleteKey() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("deleteKey", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "1");
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
                "DELETE https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/keys/1 HTTP/1.1");
@@ -407,7 +407,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testListVolumes() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("listVolumes");
-      HttpRequest httpRequest = processor.createRequest(method);
+      GeneratedHttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/storage HTTP/1.1");
@@ -425,7 +425,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testGetVolume() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("getVolume", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "1");
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/storage/1 HTTP/1.1");
@@ -444,7 +444,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
    public void testCreateVolumeInLocation() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("createVolumeInLocation", String.class, String.class,
                String.class, String.class, String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "location", "name", "format", "size", "offering");
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "location", "name", "format", "size", "offering");
 
       assertRequestLineEquals(httpRequest,
                "POST https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/storage HTTP/1.1");
@@ -463,7 +463,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
    public void testCreateInstanceInLocation() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("createInstanceInLocation", String.class, String.class,
                String.class, String.class, CreateInstanceOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, "1", "name", "22", "instanceType");
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "1", "name", "22", "instanceType");
 
       assertRequestLineEquals(httpRequest,
                "POST https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/instances HTTP/1.1");
@@ -482,7 +482,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
    public void testCreateInstanceInLocationWithOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("createInstanceInLocation", String.class, String.class,
                String.class, String.class, CreateInstanceOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, "location", "name", "22", "instanceType",
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "location", "name", "22", "instanceType",
                new CreateInstanceOptions().staticIP("1").authorizePublicKey("MOO").mountVolume("2", "/mnt")
                         .configurationData(
                                  ImmutableMap.of("insight_admin_password", "myPassword1", "db2_admin_password",
@@ -506,7 +506,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testDeleteVolume() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("deleteVolume", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "1");
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
                "DELETE https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/storage/1 HTTP/1.1");
@@ -523,7 +523,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testListLocations() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("listLocations");
-      HttpRequest httpRequest = processor.createRequest(method);
+      GeneratedHttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/locations HTTP/1.1");
@@ -540,7 +540,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testGetLocation() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("getLocation", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "1");
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/locations/1 HTTP/1.1");
@@ -557,7 +557,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testListAddresses() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("listAddresses");
-      HttpRequest httpRequest = processor.createRequest(method);
+      GeneratedHttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/addresses HTTP/1.1");
@@ -575,7 +575,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testAllocateAddressInLocation() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("allocateAddressInLocation", String.class, String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "1", "offering");
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "1", "offering");
 
       assertRequestLineEquals(httpRequest,
                "POST https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/addresses HTTP/1.1");
@@ -592,7 +592,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testReleaseAddress() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("releaseAddress", String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "1");
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
                "DELETE https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/addresses/1 HTTP/1.1");
@@ -609,7 +609,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testListStorageOfferings() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("listStorageOfferings");
-      HttpRequest httpRequest = processor.createRequest(method);
+      GeneratedHttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/offerings/storage HTTP/1.1");
@@ -625,7 +625,7 @@ public class IBMSmartCloudAsyncClientTest extends RestClientTest<IBMSmartCloudAs
 
    public void testListAddressOfferings() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMSmartCloudAsyncClient.class.getMethod("listAddressOfferings");
-      HttpRequest httpRequest = processor.createRequest(method);
+      GeneratedHttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
                "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/offerings/address HTTP/1.1");

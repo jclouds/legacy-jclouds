@@ -36,7 +36,7 @@ import com.abiquo.server.core.enterprise.RoleDto;
 import com.abiquo.server.core.enterprise.RolesDto;
 import com.abiquo.server.core.enterprise.UserDto;
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
+import org.jclouds.reflect.Invokable;
 
 /**
  * Tests annotation parsing of {@code AdminAsyncApi}

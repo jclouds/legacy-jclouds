@@ -23,12 +23,12 @@ import java.io.IOException;
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListResourceLimitsOptions;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code LimitAsyncClient}
@@ -40,7 +40,7 @@ public class LimitAsyncClientTest extends BaseCloudStackAsyncClientTest<LimitAsy
 
    public void testListResourceLimits() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(LimitAsyncClient.class.getMethod("listResourceLimits", ListResourceLimitsOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listResourceLimits&listAll=true HTTP/1.1");
@@ -57,7 +57,7 @@ public class LimitAsyncClientTest extends BaseCloudStackAsyncClientTest<LimitAsy
 
    public void testListResourceLimitsOptions() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(LimitAsyncClient.class.getMethod("listResourceLimits", ListResourceLimitsOptions[].class));
-      HttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListResourceLimitsOptions.Builder.account("jclouds" , "23")));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListResourceLimitsOptions.Builder.account("jclouds" , "23")));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listResourceLimits&listAll=true&account=jclouds&domainid=23 HTTP/1.1");

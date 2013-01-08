@@ -22,8 +22,9 @@ import java.io.IOException;
 import java.net.URI;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.savvis.vpdc.options.GetVMOptions;
 import org.jclouds.savvis.vpdc.xml.FirewallServiceHandler;
 import org.jclouds.savvis.vpdc.xml.NetworkHandler;
@@ -35,7 +36,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests annotation parsing of {@code BrowsingAsyncApi}
@@ -47,7 +47,7 @@ public class BrowsingAsyncApiTest extends BaseVPDCAsyncApiTest<BrowsingAsyncApi>
 
    public void testOrg() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(BrowsingAsyncApi.class.getMethod("getOrg", String.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("11"));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("11"));
 
       assertRequestLineEquals(request, "GET https://api.savvis.net/vpdc/v1.0/org/11 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
@@ -62,7 +62,7 @@ public class BrowsingAsyncApiTest extends BaseVPDCAsyncApiTest<BrowsingAsyncApi>
 
    public void testOrgNull() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(BrowsingAsyncApi.class.getMethod("getOrg", String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
 
       assertRequestLineEquals(request, "GET https://api.savvis.net/vpdc/v1.0/org/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
@@ -77,7 +77,7 @@ public class BrowsingAsyncApiTest extends BaseVPDCAsyncApiTest<BrowsingAsyncApi>
 
    public void testVDC() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(BrowsingAsyncApi.class.getMethod("getVDCInOrg", String.class, String.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("11", "22"));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("11", "22"));
 
       assertRequestLineEquals(request, "GET https://api.savvis.net/vpdc/v1.0/org/11/vdc/22 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
@@ -92,7 +92,7 @@ public class BrowsingAsyncApiTest extends BaseVPDCAsyncApiTest<BrowsingAsyncApi>
 
    public void testVDCWhenOrgNull() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(BrowsingAsyncApi.class.getMethod("getVDCInOrg", String.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null, "22"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null, "22"));
 
       assertRequestLineEquals(request, "GET https://api.savvis.net/vpdc/v1.0/org/1/vdc/22 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
@@ -107,7 +107,7 @@ public class BrowsingAsyncApiTest extends BaseVPDCAsyncApiTest<BrowsingAsyncApi>
 
    public void testNetwork() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(BrowsingAsyncApi.class.getMethod("getNetworkInVDC", String.class, String.class, String.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("11", "22", "VM-Tier01"));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("11", "22", "VM-Tier01"));
 
       assertRequestLineEquals(request,
                "GET https://api.savvis.net/vpdc/v1.0/org/11/vdc/22/network/VM-Tier01 HTTP/1.1");
@@ -123,7 +123,7 @@ public class BrowsingAsyncApiTest extends BaseVPDCAsyncApiTest<BrowsingAsyncApi>
 
    public void testNetworkWhenOrgNull() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(BrowsingAsyncApi.class.getMethod("getNetworkInVDC", String.class, String.class, String.class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null, "22", "VM-Tier01"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null, "22", "VM-Tier01"));
 
       assertRequestLineEquals(request,
                "GET https://api.savvis.net/vpdc/v1.0/org/1/vdc/22/network/VM-Tier01 HTTP/1.1");
@@ -140,7 +140,7 @@ public class BrowsingAsyncApiTest extends BaseVPDCAsyncApiTest<BrowsingAsyncApi>
    public void testVMVDC() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(BrowsingAsyncApi.class.getMethod("getVMInVDC", String.class, String.class, String.class,
                GetVMOptions[].class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("11", "22", "33"));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("11", "22", "33"));
 
       assertRequestLineEquals(request,
                "GET https://api.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33 HTTP/1.1");
@@ -156,7 +156,7 @@ public class BrowsingAsyncApiTest extends BaseVPDCAsyncApiTest<BrowsingAsyncApi>
 
    public void testVM() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(BrowsingAsyncApi.class.getMethod("getVM", URI.class, GetVMOptions[].class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://api.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33")));
 
       assertRequestLineEquals(request,
@@ -174,7 +174,7 @@ public class BrowsingAsyncApiTest extends BaseVPDCAsyncApiTest<BrowsingAsyncApi>
    public void testVMWithPowerState() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(BrowsingAsyncApi.class.getMethod("getVMInVDC", String.class, String.class, String.class,
                GetVMOptions[].class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("11", "22", "VM-Tier01", GetVMOptions.Builder
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("11", "22", "VM-Tier01", GetVMOptions.Builder
                .withPowerState()));
 
       assertRequestLineEquals(request,
@@ -192,7 +192,7 @@ public class BrowsingAsyncApiTest extends BaseVPDCAsyncApiTest<BrowsingAsyncApi>
    public void testVMWhenOrgNull() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(BrowsingAsyncApi.class.getMethod("getVMInVDC", String.class, String.class, String.class,
                GetVMOptions[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null, "22", "VM-Tier01"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null, "22", "VM-Tier01"));
 
       assertRequestLineEquals(request,
                "GET https://api.savvis.net/vpdc/v1.0/org/1/vdc/22/vApp/VM-Tier01 HTTP/1.1");
@@ -208,7 +208,7 @@ public class BrowsingAsyncApiTest extends BaseVPDCAsyncApiTest<BrowsingAsyncApi>
 
    public void testGetTask() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(BrowsingAsyncApi.class.getMethod("getTask", String.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("1"));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("1"));
 
       assertRequestLineEquals(request, "GET https://api.savvis.net/vpdc/v1.0/task/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
@@ -223,7 +223,7 @@ public class BrowsingAsyncApiTest extends BaseVPDCAsyncApiTest<BrowsingAsyncApi>
 
    public void testListFirewallRules() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(BrowsingAsyncApi.class.getMethod("listFirewallRules", String.class, String.class));
-      HttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("11", "22"));
+      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("11", "22"));
 
       assertRequestLineEquals(request,
                "GET https://api.savvis.net/vpdc/v1.0/org/11/vdc/22/FirewallService HTTP/1.1");

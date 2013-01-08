@@ -21,12 +21,12 @@ package org.jclouds.aws.ec2.services;
 import java.io.IOException;
 
 import org.jclouds.aws.ec2.xml.MonitoringStateHandler;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.reflect.Invokable;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
-import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code MonitoringAsyncClient}
@@ -40,7 +40,7 @@ public class MonitoringAsyncClientTest extends BaseAWSEC2AsyncClientTest<Monitor
    public void testUnmonitorInstances() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(MonitoringAsyncClient.class.getMethod("unmonitorInstancesInRegion", String.class, String.class,
             String[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "instance1", "instance2"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "instance1", "instance2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       String payload = "Action=UnmonitorInstances&InstanceId.0=instance1&InstanceId.1=instance2";
@@ -57,7 +57,7 @@ public class MonitoringAsyncClientTest extends BaseAWSEC2AsyncClientTest<Monitor
    public void testMonitorInstances() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = Invokable.from(MonitoringAsyncClient.class.getMethod("monitorInstancesInRegion", String.class, String.class,
             String[].class));
-      HttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "instance1", "instance2"));
+      GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "instance1", "instance2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");

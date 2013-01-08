@@ -41,7 +41,7 @@ import com.abiquo.server.core.config.SystemPropertyDto;
 import com.abiquo.server.core.enterprise.PrivilegeDto;
 import com.abiquo.server.core.enterprise.PrivilegesDto;
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
+import org.jclouds.reflect.Invokable;
 
 /**
  * Tests annotation parsing of {@code AdminAsyncApi}.

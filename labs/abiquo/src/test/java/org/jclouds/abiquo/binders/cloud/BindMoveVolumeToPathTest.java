@@ -34,7 +34,7 @@ import org.testng.annotations.Test;
 import com.abiquo.server.core.cloud.VirtualDatacenterDto;
 import com.abiquo.server.core.infrastructure.storage.VolumeManagementDto;
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
+import org.jclouds.reflect.Invokable;
 
 /**
  * Unit tests for the {@link BindMoveVolumeToPath} binder.
