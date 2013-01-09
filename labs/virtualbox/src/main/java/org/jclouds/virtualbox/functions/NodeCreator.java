@@ -49,6 +49,7 @@ import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.NodeSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.statements.DeleteGShadowLock;
+import org.jclouds.virtualbox.statements.PasswordlessSudo;
 import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.jclouds.virtualbox.util.NetworkUtils;
@@ -157,15 +158,19 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
       NodeMetadata partialNodeMetadata = buildPartialNodeMetadata(cloned);
 
       // see DeleteGShadowLock for a detailed explanation
-       machineUtils.runScriptOnNode(partialNodeMetadata, new DeleteGShadowLock(), RunScriptOptions.NONE);
+      machineUtils.runScriptOnNode(partialNodeMetadata, new DeleteGShadowLock(), RunScriptOptions.NONE);
 
+      
       if(optionalNatIfaceCard.isPresent())
          checkState(networkUtils.enableNetworkInterface(partialNodeMetadata, optionalNatIfaceCard.get()),
          "cannot enable NAT Interface on vm(%s)", cloneName);
       
+      // apply passwordless ssh script to each clone
+      machineUtils.runScriptOnNode(partialNodeMetadata, new PasswordlessSudo(partialNodeMetadata.getCredentials().identity), RunScriptOptions.Builder.runAsRoot(true));
+      
       LoginCredentials credentials = partialNodeMetadata.getCredentials();
-      return new NodeAndInitialCredentials<IMachine>(cloned,
-               cloneName, credentials);
+      return new NodeAndInitialCredentials<IMachine>(cloned, cloneName, credentials);
+      
    }
 
    private NodeMetadata buildPartialNodeMetadata(IMachine clone) {
@@ -180,7 +185,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
       nodeMetadataBuilder.credentials(loginCredentials);    
       return  nodeMetadataBuilder.build();
    }
-
+   
    private long findSlotForNetworkAttachment(IMachine clone, NetworkAttachmentType networkAttachmentType) {
       long slot = -1;
       long i = 0;
