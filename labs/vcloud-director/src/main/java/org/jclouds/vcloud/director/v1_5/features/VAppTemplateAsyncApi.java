@@ -40,13 +40,11 @@ import javax.ws.rs.Produces;
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.dmtf.ovf.NetworkSection;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.References;
@@ -57,7 +55,7 @@ import org.jclouds.vcloud.director.v1_5.domain.section.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.href.VAppTemplateURNToHref;
+import org.jclouds.vcloud.director.v1_5.functions.URNToHref;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -75,7 +73,7 @@ public interface VAppTemplateAsyncApi {
    @Consumes(VAPP_TEMPLATE)
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<VAppTemplate> get(@EndpointParam(parser = VAppTemplateURNToHref.class) String reference);
+   ListenableFuture<VAppTemplate> get(@EndpointParam(parser = URNToHref.class) String reference);
 
    /**
     * @see VAppTemplateApi#edit(String, VAppTemplate)
@@ -84,7 +82,7 @@ public interface VAppTemplateAsyncApi {
    @Produces(VAPP_TEMPLATE)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> edit(@EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn,
+   ListenableFuture<Task> edit(@EndpointParam(parser = URNToHref.class) String templateUrn,
             @BinderParam(BindToXMLPayload.class) VAppTemplate template);
 
    /**
@@ -101,7 +99,7 @@ public interface VAppTemplateAsyncApi {
    @POST
    @Path("/action/disableDownload")
    @JAXBResponseParser
-   ListenableFuture<Void> disableDownload(@EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn);
+   ListenableFuture<Void> disableDownload(@EndpointParam(parser = URNToHref.class) String templateUrn);
 
    /**
     * @see VAppTemplateApi#enableDownload(String)
@@ -110,7 +108,7 @@ public interface VAppTemplateAsyncApi {
    @Consumes(TASK)
    @Path("/action/enableDownload")
    @JAXBResponseParser
-   ListenableFuture<Task> enableDownload(@EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn);
+   ListenableFuture<Task> enableDownload(@EndpointParam(parser = URNToHref.class) String templateUrn);
 
    /**
     * @see VAppTemplateApi#getCustomizationSection(String)
@@ -121,7 +119,7 @@ public interface VAppTemplateAsyncApi {
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<CustomizationSection> getCustomizationSection(
-            @EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn);
+            @EndpointParam(parser = URNToHref.class) String templateUrn);
 
    /**
     * @see VAppTemplateApi#getLeaseSettingsSection(String)
@@ -132,7 +130,7 @@ public interface VAppTemplateAsyncApi {
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<LeaseSettingsSection> getLeaseSettingsSection(
-            @EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn);
+            @EndpointParam(parser = URNToHref.class) String templateUrn);
 
    /**
     * @see VAppTemplateApi#editLeaseSettingsSection(String, LeaseSettingsSection)
@@ -143,7 +141,7 @@ public interface VAppTemplateAsyncApi {
    @Path("/leaseSettingsSection")
    @JAXBResponseParser
    ListenableFuture<Task> editLeaseSettingsSection(
-            @EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn,
+            @EndpointParam(parser = URNToHref.class) String templateUrn,
             @BinderParam(BindToXMLPayload.class) LeaseSettingsSection settingsSection);
 
    /**
@@ -155,7 +153,7 @@ public interface VAppTemplateAsyncApi {
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<NetworkConfigSection> getNetworkConfigSection(
-            @EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn);
+            @EndpointParam(parser = URNToHref.class) String templateUrn);
 
    /**
     * @see VAppTemplateApi#getNetworkSection(String)
@@ -166,7 +164,7 @@ public interface VAppTemplateAsyncApi {
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<NetworkSection> getNetworkSection(
-            @EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn);
+            @EndpointParam(parser = URNToHref.class) String templateUrn);
 
    /**
     * @see VAppTemplateApi#getOvf(String)
@@ -176,7 +174,7 @@ public interface VAppTemplateAsyncApi {
    @Path("/ovf")
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<Envelope> getOvf(@EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn);
+   ListenableFuture<Envelope> getOvf(@EndpointParam(parser = URNToHref.class) String templateUrn);
 
    /**
     * @see VAppTemplateApi#getOwnerOfVAppTemplate(String)
@@ -186,7 +184,7 @@ public interface VAppTemplateAsyncApi {
    @Path("/owner")
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<Owner> getOwner(@EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn);
+   ListenableFuture<Owner> getOwner(@EndpointParam(parser = URNToHref.class) String templateUrn);
 
    /**
     * @see VAppTemplateApi#getProductSectionsForVAppTemplate(String)
@@ -197,7 +195,7 @@ public interface VAppTemplateAsyncApi {
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<ProductSectionList> getProductSections(
-            @EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn);
+            @EndpointParam(parser = URNToHref.class) String templateUrn);
 
    /**
     * @see VAppTemplateApi#editProductSections(String, ProductSectionList)
@@ -207,7 +205,7 @@ public interface VAppTemplateAsyncApi {
    @Consumes(TASK)
    @Path("/productSections")
    @JAXBResponseParser
-   ListenableFuture<Task> editProductSections(@EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn,
+   ListenableFuture<Task> editProductSections(@EndpointParam(parser = URNToHref.class) String templateUrn,
             @BinderParam(BindToXMLPayload.class) ProductSectionList sections);
 
    /**
@@ -218,7 +216,7 @@ public interface VAppTemplateAsyncApi {
    @Path("/shadowVms")
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<References> getShadowVms(@EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn);
+   ListenableFuture<References> getShadowVms(@EndpointParam(parser = URNToHref.class) String templateUrn);
 
    /**
     * @see VAppTemplateApi#get(URI)
@@ -365,14 +363,4 @@ public interface VAppTemplateAsyncApi {
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<References> getShadowVms(@EndpointParam URI templateHref);
-
-   /**
-    * @return asynchronous access to {@link Metadata} features
-    */
-   @Delegate
-   MetadataAsyncApi.Writeable getMetadataApi(@EndpointParam(parser = VAppTemplateURNToHref.class) String templateUrn);
-
-   @Delegate
-   MetadataAsyncApi.Writeable getMetadataApi(@EndpointParam URI templateHref);
-
 }

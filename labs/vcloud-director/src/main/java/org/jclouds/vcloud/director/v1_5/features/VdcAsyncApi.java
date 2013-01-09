@@ -28,7 +28,6 @@ import javax.ws.rs.Produces;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.JAXBResponseParser;
@@ -47,7 +46,7 @@ import org.jclouds.vcloud.director.v1_5.domain.params.ComposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.InstantiateVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.UploadVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.href.VdcURNToHref;
+import org.jclouds.vcloud.director.v1_5.functions.URNToHref;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -65,7 +64,7 @@ public interface VdcAsyncApi {
    @Consumes
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<? extends Vdc> get(@EndpointParam(parser = VdcURNToHref.class) String vdcUrn);
+   ListenableFuture<? extends Vdc> get(@EndpointParam(parser = URNToHref.class) String vdcUrn);
 
    /**
     * @see VdcApi#captureVApp(String, CaptureVAppParams)
@@ -75,7 +74,7 @@ public interface VdcAsyncApi {
    @Consumes(VCloudDirectorMediaType.VAPP_TEMPLATE)
    @Produces(VCloudDirectorMediaType.CAPTURE_VAPP_PARAMS)
    @JAXBResponseParser
-   ListenableFuture<VAppTemplate> captureVApp(@EndpointParam(parser = VdcURNToHref.class) String vdcUrn,
+   ListenableFuture<VAppTemplate> captureVApp(@EndpointParam(parser = URNToHref.class) String vdcUrn,
             @BinderParam(BindToXMLPayload.class) CaptureVAppParams params);
 
    /**
@@ -86,7 +85,7 @@ public interface VdcAsyncApi {
    @Consumes(VCloudDirectorMediaType.MEDIA)
    @Produces(VCloudDirectorMediaType.CLONE_MEDIA_PARAMS)
    @JAXBResponseParser
-   ListenableFuture<Media> cloneMedia(@EndpointParam(parser = VdcURNToHref.class) String vdcUrn,
+   ListenableFuture<Media> cloneMedia(@EndpointParam(parser = URNToHref.class) String vdcUrn,
             @BinderParam(BindToXMLPayload.class) CloneMediaParams params);
 
    /**
@@ -98,7 +97,7 @@ public interface VdcAsyncApi {
    @Produces(VCloudDirectorMediaType.CLONE_VAPP_PARAMS)
    // TODO fix these etc.
    @JAXBResponseParser
-   ListenableFuture<VApp> cloneVApp(@EndpointParam(parser = VdcURNToHref.class) String vdcUrn,
+   ListenableFuture<VApp> cloneVApp(@EndpointParam(parser = URNToHref.class) String vdcUrn,
             @BinderParam(BindToXMLPayload.class) CloneVAppParams params);
 
    /**
@@ -109,7 +108,7 @@ public interface VdcAsyncApi {
    @Consumes(VCloudDirectorMediaType.VAPP_TEMPLATE)
    @Produces(VCloudDirectorMediaType.CLONE_VAPP_TEMPLATE_PARAMS)
    @JAXBResponseParser
-   ListenableFuture<VAppTemplate> cloneVAppTemplate(@EndpointParam(parser = VdcURNToHref.class) String vdcUrn,
+   ListenableFuture<VAppTemplate> cloneVAppTemplate(@EndpointParam(parser = URNToHref.class) String vdcUrn,
             @BinderParam(BindToXMLPayload.class) CloneVAppTemplateParams params);
 
    /**
@@ -120,7 +119,7 @@ public interface VdcAsyncApi {
    @Consumes(VCloudDirectorMediaType.VAPP)
    @Produces(VCloudDirectorMediaType.COMPOSE_VAPP_PARAMS)
    @JAXBResponseParser
-   ListenableFuture<VApp> composeVApp(@EndpointParam(parser = VdcURNToHref.class) String vdcUrn,
+   ListenableFuture<VApp> composeVApp(@EndpointParam(parser = URNToHref.class) String vdcUrn,
             @BinderParam(BindToXMLPayload.class) ComposeVAppParams params);
 
    /**
@@ -131,7 +130,7 @@ public interface VdcAsyncApi {
    @Consumes(VCloudDirectorMediaType.VAPP)
    @Produces(VCloudDirectorMediaType.INSTANTIATE_VAPP_TEMPLATE_PARAMS)
    @JAXBResponseParser
-   ListenableFuture<VApp> instantiateVApp(@EndpointParam(parser = VdcURNToHref.class) String vdcUrn,
+   ListenableFuture<VApp> instantiateVApp(@EndpointParam(parser = URNToHref.class) String vdcUrn,
             @BinderParam(BindToXMLPayload.class) InstantiateVAppParams params);
 
    /**
@@ -142,7 +141,7 @@ public interface VdcAsyncApi {
    @Consumes(VCloudDirectorMediaType.VAPP_TEMPLATE)
    @Produces(VCloudDirectorMediaType.UPLOAD_VAPP_TEMPLATE_PARAMS)
    @JAXBResponseParser
-   ListenableFuture<VAppTemplate> uploadVAppTemplate(@EndpointParam(parser = VdcURNToHref.class) String vdcUrn,
+   ListenableFuture<VAppTemplate> uploadVAppTemplate(@EndpointParam(parser = URNToHref.class) String vdcUrn,
             @BinderParam(BindToXMLPayload.class) UploadVAppTemplateParams params);
 
    /**
@@ -153,7 +152,7 @@ public interface VdcAsyncApi {
    @Consumes(VCloudDirectorMediaType.MEDIA)
    @Produces(VCloudDirectorMediaType.MEDIA)
    @JAXBResponseParser
-   ListenableFuture<Media> addMedia(@EndpointParam(parser = VdcURNToHref.class) String vdcUrn,
+   ListenableFuture<Media> addMedia(@EndpointParam(parser = URNToHref.class) String vdcUrn,
             @BinderParam(BindToXMLPayload.class) Media media);
 
    /**
@@ -252,14 +251,5 @@ public interface VdcAsyncApi {
    @Produces(VCloudDirectorMediaType.MEDIA)
    @JAXBResponseParser
    ListenableFuture<Media> addMedia(@EndpointParam URI vdcHref, @BinderParam(BindToXMLPayload.class) Media media);
-
-   /**
-    * @return asynchronous access to {@link Metadata.Readable} features
-    */
-   @Delegate
-   MetadataAsyncApi.Readable getMetadataApi(@EndpointParam(parser = VdcURNToHref.class) String vdcUrn);
-
-   @Delegate
-   MetadataAsyncApi.Readable getMetadataApi(@EndpointParam URI vdcHref);
 
 }

@@ -92,7 +92,7 @@ public class KeyPairsApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 		Vdc currentVDC = lazyGetVdc();
 		Media keyPairsContainer = findOrCreateKeyPairContainerInVDCNamed(currentVDC,
 				keyPairContainer, keyPairName);
-		String keypairValue = mediaApi.getMetadataApi(
+		String keypairValue = context.getApi().getMetadataApi(
 				keyPairsContainer.getId()).get(keyPairName);
 		assertEquals(keypairValue, generateKeyPair(keyPairName));
 	}
@@ -122,7 +122,7 @@ public class KeyPairsApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
 					@Override
 					public boolean apply(Media input) {
-						return mediaApi.getMetadataApi(input.getId()).get(
+						return context.getApi().getMetadataApi(input.getId()).get(
 								keyPairName) != null;
 					}
 				});
@@ -208,7 +208,7 @@ public class KeyPairsApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
 	private void setKeyPairOnkeyPairsContainer(Media media, String keyPairName,
 			String keyPair) {
-		Task setKeyPair = mediaApi.getMetadataApi(media.getId()).put(
+		Task setKeyPair = context.getApi().getMetadataApi(media.getId()).put(
 				keyPairName, keyPair);
 		Checks.checkTask(setKeyPair);
 		assertTrue(retryTaskSuccess.apply(setKeyPair),

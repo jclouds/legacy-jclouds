@@ -78,7 +78,7 @@ public class VAppNetworksLiveTest extends AbstractVAppApiLiveTest {
    protected void tidyUp() {
       if (key != null) {
          try {
-	         Task remove = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).remove(key);
+	         Task remove = context.getApi().getMetadataApi(vAppTemplateUrn).remove(key);
 	         taskDoneEventually(remove);
          } catch (Exception e) {
             logger.warn(e, "Error when deleting metadata entry '%s'", key);

@@ -18,7 +18,18 @@
  */
 package org.jclouds.vcloud.director.v1_5.admin;
 
+import java.net.URI;
+
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
+import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
+import org.jclouds.vcloud.director.v1_5.domain.Catalog;
+import org.jclouds.vcloud.director.v1_5.domain.Group;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.domain.User;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network;
+import org.jclouds.vcloud.director.v1_5.domain.org.AdminOrg;
+import org.jclouds.vcloud.director.v1_5.features.MetadataApi;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminCatalogApi;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminNetworkApi;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminOrgApi;
@@ -26,7 +37,9 @@ import org.jclouds.vcloud.director.v1_5.features.admin.AdminQueryApi;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminVdcApi;
 import org.jclouds.vcloud.director.v1_5.features.admin.GroupApi;
 import org.jclouds.vcloud.director.v1_5.features.admin.UserApi;
+import org.jclouds.vcloud.director.v1_5.functions.URNToAdminHref;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorApi;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncApi;
 
 /**
  * Provides synchronous access to VCloudDirector Admin.
@@ -81,4 +94,15 @@ public interface VCloudDirectorAdminApi extends VCloudDirectorApi {
    @Override
    @Delegate
    AdminNetworkApi getNetworkApi();
+   
+   /**
+    * @return synchronous access to {@link Metadata} features
+    */
+   @Override
+   @Delegate
+   MetadataApi getMetadataApi(@EndpointParam(parser = URNToAdminHref.class) String urn);
+
+   @Override
+   @Delegate
+   MetadataApi getMetadataApi(@EndpointParam URI href);
 }

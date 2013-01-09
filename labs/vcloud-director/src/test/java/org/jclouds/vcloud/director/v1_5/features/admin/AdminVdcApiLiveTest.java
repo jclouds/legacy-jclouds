@@ -51,7 +51,7 @@ public class AdminVdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
     * Convenience reference to API api.
     */
    protected AdminVdcApi vdcApi;
-   protected MetadataApi.Writeable metadataApi;
+   protected MetadataApi metadataApi;
 
    private String metadataKey;
    private String metadataValue;
@@ -60,7 +60,7 @@ public class AdminVdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    @BeforeClass(alwaysRun = true)
    public void setupRequiredApis() {
       vdcApi = adminContext.getApi().getVdcApi();
-      metadataApi = vdcApi.getMetadataApi(vdcUrn);
+      metadataApi = context.getApi().getMetadataApi(vdcUrn);
    }
 
    @AfterClass(alwaysRun = true)

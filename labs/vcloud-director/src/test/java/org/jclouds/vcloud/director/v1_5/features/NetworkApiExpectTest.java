@@ -180,7 +180,7 @@ public class NetworkApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    @Test
    public void testGetNetworkMetadataHref() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, getMetadata, getMetadataResponse);
-      assertEquals(api.getNetworkApi().getMetadataApi(networkHref).get(), metadata());
+      assertEquals(api.getMetadataApi(networkHref).get(), metadata());
    }
 
    static Metadata metadata() {
@@ -215,7 +215,7 @@ public class NetworkApiExpectTest extends VCloudDirectorAdminApiExpectTest {
    @Test
    public void testGetNetworkMetadataEntryHref() {
       VCloudDirectorApi api = requestsSendResponses(loginRequest, sessionResponse, getMetadataValue, getMetadataValueResponse);
-      assertEquals(api.getNetworkApi().getMetadataApi(networkHref).get("KEY"), "value");
+      assertEquals(api.getMetadataApi(networkHref).get("KEY"), "value");
    }
    
    public static OrgNetwork network() {

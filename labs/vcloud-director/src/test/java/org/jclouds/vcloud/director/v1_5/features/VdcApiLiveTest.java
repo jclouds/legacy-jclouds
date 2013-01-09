@@ -123,7 +123,7 @@ public class VdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
       if (metadataSet) {
          try {
-            Task remove = adminContext.getApi().getVdcApi().getMetadataApi(vdcUrn).remove("key");
+            Task remove = adminContext.getApi().getMetadataApi(vdcUrn).remove("key");
             taskDoneEventually(remove);
          } catch (Exception e) {
             logger.warn(e, "Error deleting metadata entry");
@@ -310,7 +310,7 @@ public class VdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
 
    @Test(description = "GET /vdc/{id}/metadata", dependsOnMethods = { "testGetVdc" })
    public void testGetMetadata() {
-      Metadata metadata = vdcApi.getMetadataApi(vdcUrn).get();
+      Metadata metadata = context.getApi().getMetadataApi(vdcUrn).get();
 
       // required for testing
       assertTrue(Iterables.isEmpty(metadata.getMetadataEntries()),
@@ -323,12 +323,12 @@ public class VdcApiLiveTest extends BaseVCloudDirectorApiLiveTest {
    public void testGetMetadataValue() {
       // setupMetadata();
       // First find a key
-      Metadata metadata = vdcApi.getMetadataApi(vdcUrn).get();
+      Metadata metadata = context.getApi().getMetadataApi(vdcUrn).get();
       Map<String, String> metadataMap = Checks.metadataToMap(metadata);
       String key = Iterables.getFirst(metadataMap.keySet(), "MadeUpKey!");
       String value = metadataMap.get(key);
 
-      String metadataValue = vdcApi.getMetadataApi(vdcUrn).get(key);
+      String metadataValue = context.getApi().getMetadataApi(vdcUrn).get(key);
 
       assertEquals(metadataValue, value);
    }

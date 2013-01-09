@@ -30,7 +30,6 @@ import javax.ws.rs.Produces;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.JAXBResponseParser;
@@ -40,8 +39,7 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.href.CatalogItemURNToHref;
-import org.jclouds.vcloud.director.v1_5.functions.href.CatalogURNToHref;
+import org.jclouds.vcloud.director.v1_5.functions.URNToHref;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -59,7 +57,7 @@ public interface CatalogAsyncApi {
    @Consumes
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<? extends Catalog> get(@EndpointParam(parser = CatalogURNToHref.class) String catalogUrn);
+   ListenableFuture<? extends Catalog> get(@EndpointParam(parser = URNToHref.class) String catalogUrn);
 
    /**
     * @see CatalogApi#addItem(String, CatalogItem)
@@ -69,7 +67,7 @@ public interface CatalogAsyncApi {
    @Consumes(VCloudDirectorMediaType.CATALOG_ITEM)
    @Produces(VCloudDirectorMediaType.CATALOG_ITEM)
    @JAXBResponseParser
-   ListenableFuture<CatalogItem> addItem(@EndpointParam(parser = CatalogURNToHref.class) String catalogUrn,
+   ListenableFuture<CatalogItem> addItem(@EndpointParam(parser = URNToHref.class) String catalogUrn,
             @BinderParam(BindToXMLPayload.class) CatalogItem catalogItem);
 
    /**
@@ -79,7 +77,7 @@ public interface CatalogAsyncApi {
    @Consumes
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<CatalogItem> getItem(@EndpointParam(parser = CatalogItemURNToHref.class) String catalogItemUrn);
+   ListenableFuture<CatalogItem> getItem(@EndpointParam(parser = URNToHref.class) String catalogItemUrn);
 
    /**
     * @see CatalogApi#editItem(String, CatalogItem)
@@ -88,7 +86,7 @@ public interface CatalogAsyncApi {
    @Consumes(VCloudDirectorMediaType.CATALOG_ITEM)
    @Produces(VCloudDirectorMediaType.CATALOG_ITEM)
    @JAXBResponseParser
-   ListenableFuture<CatalogItem> editItem(@EndpointParam(parser = CatalogItemURNToHref.class) String catalogItemUrn,
+   ListenableFuture<CatalogItem> editItem(@EndpointParam(parser = URNToHref.class) String catalogItemUrn,
             @BinderParam(BindToXMLPayload.class) CatalogItem catalogItem);
 
    /**
@@ -97,7 +95,7 @@ public interface CatalogAsyncApi {
    @DELETE
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Void> removeItem(@EndpointParam(parser = CatalogItemURNToHref.class) String catalogItemUrn);
+   ListenableFuture<Void> removeItem(@EndpointParam(parser = URNToHref.class) String catalogItemUrn);
 
    /**
     * @see CatalogApi#get(URI)
@@ -145,23 +143,4 @@ public interface CatalogAsyncApi {
    @Consumes
    @JAXBResponseParser
    ListenableFuture<Void> removeItem(@EndpointParam URI catalogItemHref);
-
-   /**
-    * @return asynchronous access to {@link Metadata.Readable} features
-    */
-   @Delegate
-   MetadataAsyncApi.Readable getMetadataApi(@EndpointParam(parser = CatalogURNToHref.class) String catalogUrn);
-   
-   @Delegate
-   MetadataAsyncApi.Readable getMetadataApi(@EndpointParam URI catalogItemHref);
-
-   /**
-    * @see CatalogApi#getItemMetadataApi
-    */
-   @Delegate
-   MetadataAsyncApi.Writeable getItemMetadataApi(@EndpointParam(parser = CatalogItemURNToHref.class) String catalogItemUrn);
-
-   @Delegate
-   MetadataAsyncApi.Writeable getItemMetadataApi(@EndpointParam URI catalogItemHref);
-
 }
