@@ -23,7 +23,7 @@ import java.net.URI;
 
 import org.jclouds.Fallbacks.EmptyMapOnNotFoundOr404;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.trmk.ecloud.BaseTerremarkECloudAsyncClientTest;
 import org.jclouds.trmk.ecloud.xml.TagNameToUsageCountHandler;

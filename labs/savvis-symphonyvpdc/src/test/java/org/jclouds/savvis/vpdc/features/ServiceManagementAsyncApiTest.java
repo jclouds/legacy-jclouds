@@ -23,7 +23,7 @@ import java.net.URI;
 
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.savvis.vpdc.xml.TaskHandler;
 import org.testng.annotations.Test;

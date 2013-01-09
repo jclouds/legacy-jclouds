@@ -62,7 +62,7 @@ import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule.GetAuth;
 import org.jclouds.openstack.keystone.v1_1.domain.Auth;
 import org.jclouds.openstack.keystone.v1_1.parse.ParseAuthTest;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;

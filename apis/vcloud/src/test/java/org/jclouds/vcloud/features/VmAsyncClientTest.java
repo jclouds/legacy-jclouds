@@ -25,7 +25,7 @@ import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnInputStream;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.domain.GuestCustomizationSection;

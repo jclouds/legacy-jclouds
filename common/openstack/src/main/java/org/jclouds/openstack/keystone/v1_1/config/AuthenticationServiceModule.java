@@ -19,7 +19,7 @@
 package org.jclouds.openstack.keystone.v1_1.config;
 
 import static com.google.common.base.Throwables.propagate;
-import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
+import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -59,7 +59,7 @@ public class AuthenticationServiceModule extends AbstractModule {
    @Override
    protected void configure() {
       // ServiceClient is used directly for filters and retry handlers, so let's bind it explicitly
-      bindClientAndAsyncClient(binder(), AuthenticationClient.class, AuthenticationAsyncClient.class);
+      bindHttpApi(binder(), AuthenticationClient.class, AuthenticationAsyncClient.class);
       install(new FactoryModuleBuilder().implement(RegionIdToURISupplier.class,
                RegionIdToURIFromAuthForServiceSupplier.class).build(RegionIdToURISupplier.Factory.class));
       install(new FactoryModuleBuilder().implement(ImplicitRegionIdSupplier.class, V1DefaultRegionIdSupplier.class)

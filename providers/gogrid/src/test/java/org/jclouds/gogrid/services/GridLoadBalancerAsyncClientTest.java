@@ -29,7 +29,7 @@ import org.jclouds.gogrid.functions.ParseLoadBalancerFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseLoadBalancerListFromJsonResponse;
 import org.jclouds.gogrid.options.AddLoadBalancerOptions;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 

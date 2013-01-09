@@ -35,7 +35,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 
 /**
  * @author Adrian Cole
@@ -43,11 +43,11 @@ import org.jclouds.reflect.Invokable;
 @Test(testName = "FalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExistsTest")
 public class FalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExistsTest {
 
-   GeneratedHttpRequest putBucket;
+   GeneratedHttpRequest<S3Client> putBucket;
 
    @BeforeClass
    void setUp() throws SecurityException, NoSuchMethodException {
-      putBucket = GeneratedHttpRequest.builder()
+      putBucket = GeneratedHttpRequest.builder(S3Client.class)
             .method("PUT")
             .endpoint("https://adriancole-blobstore113.s3.amazonaws.com/")
             .invocation(

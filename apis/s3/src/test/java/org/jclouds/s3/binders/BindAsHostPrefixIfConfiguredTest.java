@@ -32,7 +32,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code BindAsHostPrefixIfConfigured}

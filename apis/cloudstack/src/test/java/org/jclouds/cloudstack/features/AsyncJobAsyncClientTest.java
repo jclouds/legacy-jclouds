@@ -26,7 +26,7 @@ import org.jclouds.cloudstack.functions.ParseAsyncJobFromHttpResponse;
 import org.jclouds.cloudstack.functions.ParseAsyncJobsFromHttpResponse;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListAsyncJobsOptions;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 

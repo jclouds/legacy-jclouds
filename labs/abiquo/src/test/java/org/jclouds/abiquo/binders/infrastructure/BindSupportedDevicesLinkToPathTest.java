@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
 import com.abiquo.model.rest.RESTLink;
 import com.abiquo.server.core.infrastructure.DatacenterDto;
 import com.google.common.collect.ImmutableList;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 
 /**
  * Unit tests for the {@link BindSupportedDevicesLinkToPath} class.
@@ -63,7 +63,7 @@ public class BindSupportedDevicesLinkToPathTest {
       Invokable<?, ?> withEndpointLink = Invokable.from(InfrastructureAsyncApi.class.getMethod(
             "listSupportedStorageDevices", DatacenterDto.class));
 
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder(InfrastructureAsyncApi.class)
             .invocation(Invocation.create(withEndpointLink, ImmutableList.<Object> of(datacenter)))
             .method(HttpMethod.GET)
             .endpoint(URI.create("http://foo/bar")).build();
@@ -80,7 +80,7 @@ public class BindSupportedDevicesLinkToPathTest {
       Invokable<?, ?> withEndpointLink = Invokable.from(InfrastructureAsyncApi.class.getMethod(
             "listSupportedStorageDevices", DatacenterDto.class));
 
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder(InfrastructureAsyncApi.class)
             .invocation(Invocation.create(withEndpointLink, ImmutableList.<Object> of(datacenter)))
             .method(HttpMethod.GET)
             .endpoint(URI.create("http://foo/bar")).build();

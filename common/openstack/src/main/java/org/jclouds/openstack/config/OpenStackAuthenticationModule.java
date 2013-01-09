@@ -19,7 +19,7 @@
 package org.jclouds.openstack.config;
 
 import static com.google.common.base.Suppliers.memoizeWithExpiration;
-import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
+import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
 
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
@@ -59,7 +59,7 @@ public class OpenStackAuthenticationModule extends AbstractModule {
    @Override
    protected void configure() {
       // OpenStackAuthClient is used directly for filters and retry handlers, so let's bind it explicitly
-      bindClientAndAsyncClient(binder(), OpenStackAuthClient.class, OpenStackAuthAsyncClient.class);
+      bindHttpApi(binder(), OpenStackAuthClient.class, OpenStackAuthAsyncClient.class);
       install(new FactoryModuleBuilder().build(URIFromAuthenticationResponseForService.Factory.class));
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenew.class);
    }

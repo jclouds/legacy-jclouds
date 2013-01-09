@@ -26,7 +26,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.openstack.functions.ParseAuthenticationResponseFromHeaders;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 import org.jclouds.rest.AnonymousRestApiMetadata;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;

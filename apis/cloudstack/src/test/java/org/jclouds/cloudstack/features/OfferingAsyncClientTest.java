@@ -30,7 +30,7 @@ import org.jclouds.cloudstack.options.ListNetworkOfferingsOptions;
 import org.jclouds.cloudstack.options.ListServiceOfferingsOptions;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 

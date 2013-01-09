@@ -25,14 +25,14 @@ import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Throwables;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 
 public class BasePayloadTest {
 
-   protected GeneratedHttpRequest requestForArgs(List<Object> args) {
+   protected GeneratedHttpRequest<?> requestForArgs(List<Object> args) {
       try {
          Invocation invocation = Invocation.create(Invokable.from(String.class.getDeclaredMethod("toString")), args);
-         return GeneratedHttpRequest.builder().method("POST").endpoint(URI.create("http://localhost/key"))
+         return GeneratedHttpRequest.builder(String.class).method("POST").endpoint(URI.create("http://localhost/key"))
                .invocation(invocation).build();
       } catch (SecurityException e) {
          throw Throwables.propagate(e);
