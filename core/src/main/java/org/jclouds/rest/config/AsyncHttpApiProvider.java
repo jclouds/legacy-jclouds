@@ -22,7 +22,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.reflect.FunctionalReflection;
-import org.jclouds.rest.internal.InvokeAsyncApi;
+import org.jclouds.rest.internal.DelegatingInvocationFunction;
+import org.jclouds.rest.internal.InvokeHttpMethod;
 
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
@@ -32,21 +33,21 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Singleton
-public class AsyncClientProvider<A> implements Provider<A> {
-   private final Class<? super A> asyncClientType;
-   private final InvokeAsyncApi proxy;
+public class AsyncHttpApiProvider<A> implements Provider<A> {
+   private final Class<? super A> asyncApiType;
+   private final DelegatingInvocationFunction<A, A, InvokeHttpMethod<A, A>> httpInvoker;
 
    @Inject
-   private AsyncClientProvider(InvokeAsyncApi proxy, TypeLiteral<A> asyncClientType) {
-      this.proxy = proxy;
-      this.asyncClientType = asyncClientType.getRawType();
+   private AsyncHttpApiProvider(DelegatingInvocationFunction<A, A, InvokeHttpMethod<A, A>> httpInvoker,
+         TypeLiteral<A> asyncApiType) {
+      this.httpInvoker = httpInvoker;
+      this.asyncApiType = asyncApiType.getRawType();
    }
 
    @SuppressWarnings("unchecked")
    @Override
-   @Singleton
    public A get() {
-      return (A) FunctionalReflection.newProxy(asyncClientType, proxy);
+      return (A) FunctionalReflection.newProxy(asyncApiType, httpInvoker);
    }
 
 }

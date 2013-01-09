@@ -50,7 +50,7 @@ import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.json.internal.GsonWrapper;
 import org.jclouds.reflect.Invocation;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.OnlyElement;
@@ -62,6 +62,7 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.reflect.TypeToken;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -69,19 +70,45 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
-public class TransformerForRequest implements Function<GeneratedHttpRequest, Function<HttpResponse, ?>> {
+public class TransformerForRequest<A> implements Function<GeneratedHttpRequest<A>, Function<HttpResponse, ?>> {
    private final ParseSax.Factory parserFactory;
    private final Injector injector;
+   private final GetAcceptHeaders<A> getAcceptHeaders;
+   private final Class<A> enclosingType;
 
+   @SuppressWarnings("unchecked")
    @Inject
-   TransformerForRequest(Injector injector, Factory parserFactory) {
+   TransformerForRequest(Injector injector, Factory parserFactory, GetAcceptHeaders<A> getAcceptHeaders,
+         TypeLiteral<A> enclosingType) {
       this.injector = injector;
       this.parserFactory = parserFactory;
+      this.getAcceptHeaders = getAcceptHeaders;
+      this.enclosingType = (Class<A>) enclosingType.getRawType();
    }
 
+   @SuppressWarnings("unchecked")
    @Override
-   public Function<HttpResponse, ?> apply(GeneratedHttpRequest request) {
-      return createResponseParser(parserFactory, injector, request);
+   public Function<HttpResponse, ?> apply(GeneratedHttpRequest<A> request) {
+      Function<HttpResponse, ?> transformer;
+      Class<? extends HandlerWithResult<?>> handler = TransformerForRequest.getSaxResponseParserClassOrNull(request
+            .getInvocation().getInvokable());
+      if (handler != null) {
+         transformer = parserFactory.create(injector.getInstance(handler));
+      } else {
+         transformer = getTransformerForMethod(request.getInvocation(), injector);
+      }
+      if (transformer instanceof InvocationContext<?>) {
+         ((InvocationContext<?>) transformer).setContext(request);
+      }
+      if (request.getInvocation().getInvokable().isAnnotationPresent(Transform.class)) {
+         Function<?, ?> wrappingTransformer = injector.getInstance(request.getInvocation().getInvokable()
+               .getAnnotation(Transform.class).value());
+         if (wrappingTransformer instanceof InvocationContext<?>) {
+            ((InvocationContext<?>) wrappingTransformer).setContext(request);
+         }
+         transformer = compose(Function.class.cast(wrappingTransformer), transformer);
+      }
+      return transformer;
    }
 
    private static final TypeToken<ListenableFuture<Boolean>> futureBooleanLiteral = new TypeToken<ListenableFuture<Boolean>>() {
@@ -105,8 +132,9 @@ public class TransformerForRequest implements Function<GeneratedHttpRequest, Fun
 
    @SuppressWarnings("unchecked")
    @VisibleForTesting
-   protected static Key<? extends Function<HttpResponse, ?>> getParserOrThrowException(Invocation invocation) {
+   protected Key<? extends Function<HttpResponse, ?>> getParserOrThrowException(Invocation invocation) {
       Invokable<?, ?> invoked = invocation.getInvokable();
+      Set<String> acceptHeaders = getAcceptHeaders.apply(invocation);
       ResponseParser annotation = invoked.getAnnotation(ResponseParser.class);
       if (annotation == null) {
          if (invoked.getReturnType().equals(void.class) || invoked.getReturnType().equals(futureVoidLiteral)) {
@@ -120,10 +148,9 @@ public class TransformerForRequest implements Function<GeneratedHttpRequest, Fun
          } else if (invoked.getReturnType().equals(HttpResponse.class)
                || invoked.getReturnType().equals(futureHttpResponseLiteral)) {
             return Key.get(Class.class.cast(IdentityFunction.class));
-         } else if (RestAnnotationProcessor.getAcceptHeaders(invocation).contains(APPLICATION_JSON)) {
+         } else if (acceptHeaders.contains(APPLICATION_JSON)) {
             return getJsonParserKeyForMethod(invoked);
-         } else if (RestAnnotationProcessor.getAcceptHeaders(invocation).contains(APPLICATION_XML)
-               || invoked.isAnnotationPresent(JAXBResponseParser.class)) {
+         } else if (acceptHeaders.contains(APPLICATION_XML) || invoked.isAnnotationPresent(JAXBResponseParser.class)) {
             return getJAXBParserKeyForMethod(invoked);
          } else if (invoked.getReturnType().equals(String.class) || invoked.getReturnType().equals(futureStringLiteral)) {
             return Key.get(ReturnStringIf2xx.class);
@@ -176,7 +203,7 @@ public class TransformerForRequest implements Function<GeneratedHttpRequest, Fun
    // TODO: refactor this out of here
    @VisibleForTesting
    @SuppressWarnings({ "rawtypes", "unchecked" })
-   public static Function<HttpResponse, ?> getTransformerForMethod(Invocation invocation, Injector injector) {
+   public Function<HttpResponse, ?> getTransformerForMethod(Invocation invocation, Injector injector) {
       Invokable<?, ?> invoked = invocation.getInvokable();
       Function<HttpResponse, ?> transformer;
       if (invoked.isAnnotationPresent(SelectJson.class)) {
@@ -193,37 +220,16 @@ public class TransformerForRequest implements Function<GeneratedHttpRequest, Fun
       return transformer;
    }
 
-   @SuppressWarnings("unchecked")
-   @Deprecated
-   public static Function<HttpResponse, ?> createResponseParser(ParseSax.Factory parserFactory, Injector injector,
-         GeneratedHttpRequest request) {
-      Function<HttpResponse, ?> transformer;
-      Class<? extends HandlerWithResult<?>> handler = TransformerForRequest.getSaxResponseParserClassOrNull(request
-            .getInvocation().getInvokable());
-      if (handler != null) {
-         transformer = parserFactory.create(injector.getInstance(handler));
-      } else {
-         transformer = getTransformerForMethod(request.getInvocation(), injector);
-      }
-      if (transformer instanceof InvocationContext<?>) {
-         ((InvocationContext<?>) transformer).setContext(request);
-      }
-      if (request.getInvocation().getInvokable().isAnnotationPresent(Transform.class)) {
-         Function<?, ?> wrappingTransformer = injector.getInstance(request.getInvocation().getInvokable()
-               .getAnnotation(Transform.class).value());
-         if (wrappingTransformer instanceof InvocationContext<?>) {
-            ((InvocationContext<?>) wrappingTransformer).setContext(request);
-         }
-         transformer = compose(Function.class.cast(wrappingTransformer), transformer);
-      }
-      return transformer;
-   }
-
    static Class<? extends HandlerWithResult<?>> getSaxResponseParserClassOrNull(Invokable<?, ?> invoked) {
       XMLResponseParser annotation = invoked.getAnnotation(XMLResponseParser.class);
       if (annotation != null) {
          return annotation.value();
       }
       return null;
+   }
+
+   @Override
+   public String toString() {
+      return Objects.toStringHelper("").omitNullValues().add("enclosingType", enclosingType.getSimpleName()).toString();
    }
 }

@@ -27,7 +27,6 @@ import static org.testng.Assert.assertTrue;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.reflect.Invocation.Result;
@@ -42,22 +41,6 @@ import com.google.common.collect.ImmutableList;
  */
 @Test(singleThreaded = true)
 public class FunctionalReflectionTest {
-   
-   /**
-    * a method only has reference to its declaring type, not the interface specified to the proxy. this shows how to get
-    * access to the actual proxied interface
-    */
-   @SuppressWarnings("unchecked")
-   public void testCanAccessContravariantTypeInsideFunction() {
-      final Function<Invocation, Result> test = new Function<Invocation, Result>() {
-         public Result apply(Invocation e) {
-            assertEquals(e.getInvokable().getDeclaringClass(), Set.class);
-            assertEquals(e.getInvokable().getEnclosingType().getRawType(), SortedSet.class);
-            return Result.success(true);
-         }
-      };
-      FunctionalReflection.newProxy(SortedSet.class, test).add(null);
-   }
    
    @SuppressWarnings("unchecked")
    @Test(expectedExceptions = UnsupportedOperationException.class)

@@ -29,7 +29,7 @@ import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
 
 /**
- * Holds the context of a successful call to {@link org.jclouds.reflect.Invokable#invoke(Object, Object...)}
+ * Holds the context of a successful call to {@link com.google.common.reflect.Invokable#invoke(Object, Object...)}
  * 
  * @author Adrian Cole
  */

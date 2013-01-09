@@ -24,12 +24,13 @@ import java.util.List;
 
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.reflect.Invocation;
+import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 
 import com.google.common.collect.ImmutableList;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -60,7 +61,7 @@ public class BaseHandlerTest {
       } catch (NoSuchMethodException e) {
          throw propagate(e);
       }
-      request = GeneratedHttpRequest.builder().method("POST").endpoint("http://localhost/key").invocation(toString)
+      request = GeneratedHttpRequest.builder(TypeToken.of(String.class)).method("POST").endpoint("http://localhost/key").invocation(toString)
             .build();
    }
 
@@ -71,7 +72,7 @@ public class BaseHandlerTest {
    }
 
    protected GeneratedHttpRequest requestForArgs(List<Object> args) {
-      return GeneratedHttpRequest.builder().method("POST").endpoint("http://localhost/key")
+      return GeneratedHttpRequest.builder(TypeToken.of(String.class)).method("POST").endpoint("http://localhost/key")
             .invocation(Invocation.create(toString.getInvokable(), args)).build();
    }
 }

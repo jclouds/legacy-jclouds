@@ -19,7 +19,7 @@
 package org.jclouds.rest.config;
 
 import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
+import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
 
 import java.lang.reflect.TypeVariable;
 import java.util.Map;
@@ -87,7 +87,7 @@ public class RestClientModule<S, A> extends RestModule {
    @Override
    protected void configure() {
       super.configure();
-      bindClientAndAsyncClient(binder(), syncClientType.getRawType(), asyncClientType.getRawType());
+      bindHttpApi(binder(), syncClientType.getRawType(), asyncClientType.getRawType());
       bindErrorHandlers();
       bindRetryHandlers();
    }

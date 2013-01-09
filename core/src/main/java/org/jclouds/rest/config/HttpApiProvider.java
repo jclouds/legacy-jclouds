@@ -22,38 +22,36 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.reflect.FunctionalReflection;
-import org.jclouds.reflect.Invokable;
-import org.jclouds.rest.internal.InvokeSyncApi;
+import com.google.common.reflect.Invokable;
+import org.jclouds.rest.internal.DelegatingInvocationFunction;
+import org.jclouds.rest.internal.InvokeHttpMethod;
 
 import com.google.common.cache.Cache;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
 /**
- * ClientProvider makes the primary interface for the provider context. ex.
- * {@code context.getProviderSpecificContext().getApi()} is created by ClientProvider, which is a singleton
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class ClientProvider<S, A> implements Provider<S> {
-
-   private final InvokeSyncApi.Factory factory;
-   private final Class<S> syncClientType;
-   private final A asyncClient;
+public class HttpApiProvider<S, A> implements Provider<S> {
+   private final Class<? super S> apiType;
+   private final DelegatingInvocationFunction<S, A, InvokeHttpMethod<S, A>> httpInvoker;
 
    @Inject
-   private ClientProvider(Cache<Invokable<?, ?>, Invokable<?, ?>> invokables, InvokeSyncApi.Factory factory,
-         Class<S> syncClientType, Class<A> asyncClientType, A asyncClient) {
-      this.factory = factory;
-      this.asyncClient = asyncClient;
-      this.syncClientType = syncClientType;
-      RestModule.putInvokables(TypeToken.of(syncClientType), TypeToken.of(asyncClientType), invokables);
+   private HttpApiProvider(Cache<Invokable<?, ?>, Invokable<?, ?>> invokables,
+         DelegatingInvocationFunction<S, A, InvokeHttpMethod<S, A>> httpInvoker, Class<S> apiType, Class<A> asyncApiType) {
+      this.httpInvoker = httpInvoker;
+      this.apiType = apiType;
+      RestModule.putInvokables(TypeToken.of(apiType), TypeToken.of(asyncApiType), invokables);
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    @Singleton
    public S get() {
-      return FunctionalReflection.newProxy(syncClientType, factory.create(asyncClient));
+      return (S) FunctionalReflection.newProxy(apiType, httpInvoker);
    }
+
 }

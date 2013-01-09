@@ -20,12 +20,10 @@ package org.jclouds.rest.config;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Throwables.propagate;
-import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.util.concurrent.Atomics.newReference;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
-import static org.jclouds.http.HttpUtils.tryFindHttpMethod;
-import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
+import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
 import static org.jclouds.util.Maps2.transformKeys;
 import static org.jclouds.util.Predicates2.startsWith;
 
@@ -38,40 +36,27 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.ws.rs.Path;
 
 import org.jclouds.functions.IdentityFunction;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.internal.FilterStringsBoundToInjectorByName;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.location.config.LocationModule;
-import org.jclouds.reflect.Invocation;
-import org.jclouds.reflect.Invokable;
-import org.jclouds.reflect.Parameter;
+import com.google.common.reflect.Invokable;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.binders.BindToJsonPayloadWrappedWith;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.rest.internal.InvokeAsyncApi;
-import org.jclouds.rest.internal.InvokeFutureAndBlock;
-import org.jclouds.rest.internal.InvokeListenableFutureViaHttp;
-import org.jclouds.rest.internal.InvokeSyncApi;
-import org.jclouds.rest.internal.TransformerForRequest;
+import org.jclouds.rest.internal.BlockOnFuture;
 
 import com.google.common.base.Function;
-import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
@@ -94,42 +79,7 @@ public class RestModule extends AbstractModule {
    public RestModule(Map<Class<?>, Class<?>> sync2Async) {
       this.sync2Async = sync2Async;
    }
-
-   @Provides
-   @Singleton
-   protected Predicate<Invokable<?, ?>> mapsToAsyncHttpRequest(final Cache<Invokable<?, ?>, Invokable<?, ?>> backing) {
-      return new Predicate<Invokable<?, ?>>() {
-         public boolean apply(Invokable<?, ?> in) { // TODO: this is dynamic, but perhaps needs to be cached
-            return FluentIterable.from(backing.asMap().values()).anyMatch(mapsToAsyncHttpRequest(in));
-         }
-      };
-   }
-
-   private static Predicate<Invokable<?, ?>> mapsToAsyncHttpRequest(Invokable<?, ?> toTest) {
-      final int soughtHash = hashEnclosingTypeNameAndParameters(toTest);
-      return new Predicate<Invokable<?, ?>>() {
-         public boolean apply(Invokable<?, ?> in) {
-            return in.isAnnotationPresent(Path.class) || tryFindHttpMethod(in).isPresent()
-                  || any(in.getParameters(), new Predicate<Parameter>() {
-                     public boolean apply(Parameter in) {
-                        return in.getType().getRawType().isAssignableFrom(HttpRequest.class);
-                     }
-                  }) && in.getReturnType().getRawType().isAssignableFrom(ListenableFuture.class)
-                  && soughtHash == hashEnclosingTypeNameAndParameters(in);
-         }
-      };
-   }
-
-   /**
-    * when looking for a match, we ignore the return type
-    */
-   public static int hashEnclosingTypeNameAndParameters(Invokable<?, ?> in) {
-      int parametersTypeHashCode = 0;
-      for (Parameter param : in.getParameters())
-         parametersTypeHashCode += param.getType().hashCode();
-      return Objects.hashCode(in.getEnclosingType(), in.getName(), parametersTypeHashCode);
-   }
-
+   
    /**
     * seeds well-known invokables.
     */
@@ -150,11 +100,11 @@ public class RestModule extends AbstractModule {
          if (!objectMethods.contains(invoked)) {
             try {
                Method delegatedMethod = async.getRawType().getMethod(invoked.getName(), invoked.getParameterTypes());
-               checkArgument(Arrays.equals(delegatedMethod.getExceptionTypes(), invoked.getExceptionTypes()), "invoked %s has different typed exceptions than delegated invoked %s", invoked,
-                              delegatedMethod);
+               checkArgument(Arrays.equals(delegatedMethod.getExceptionTypes(), invoked.getExceptionTypes()),
+                     "invoked %s has different typed exceptions than delegated invoked %s", invoked, delegatedMethod);
                invoked.setAccessible(true);
                delegatedMethod.setAccessible(true);
-               cache.put(Invokable.from(sync, invoked), Invokable.from(async, delegatedMethod));
+               cache.put(Invokable.from(invoked), Invokable.from(delegatedMethod));
             } catch (SecurityException e) {
                throw propagate(e);
             } catch (NoSuchMethodException e) {
@@ -174,13 +124,11 @@ public class RestModule extends AbstractModule {
       }).toInstance(sync2Async);
       install(new SaxParserModule());
       install(new GsonModule());
+      install(new SetCaller.Module());
       install(new FactoryModuleBuilder().build(BindToJsonPayloadWrappedWith.Factory.class));
-      install(new FactoryModuleBuilder().build(InvokeAsyncApi.Delegate.Factory.class));
-      install(new FactoryModuleBuilder().build(InvokeFutureAndBlock.Factory.class));
-      install(new FactoryModuleBuilder().build(InvokeListenableFutureViaHttp.Caller.Factory.class));
+      install(new FactoryModuleBuilder().build(BlockOnFuture.Factory.class));
       bind(IdentityFunction.class).toInstance(IdentityFunction.INSTANCE);
-      install(new FactoryModuleBuilder().build(InvokeSyncApi.Factory.class));
-      bindClientAndAsyncClient(binder(), HttpClient.class, HttpAsyncClient.class);
+      bindHttpApi(binder(), HttpClient.class, HttpAsyncClient.class);
       // this will help short circuit scenarios that can otherwise lock out users
       bind(new TypeLiteral<AtomicReference<AuthorizationException>>() {
       }).toInstance(authException);
@@ -188,10 +136,6 @@ public class RestModule extends AbstractModule {
       }).to(FilterStringsBoundToInjectorByName.class);
       bind(new TypeLiteral<Function<Predicate<String>, Map<String, String>>>() {
       }).to(FilterStringsBoundToInjectorByName.class);
-      bind(new TypeLiteral<Function<Invocation, ListenableFuture<?>>>() {
-      }).to(InvokeListenableFutureViaHttp.class);
-      bind(new TypeLiteral<Function<GeneratedHttpRequest, Function<HttpResponse, ?>>>() {
-      }).to(TransformerForRequest.class);
       installLocations();
    }
 
@@ -199,7 +143,8 @@ public class RestModule extends AbstractModule {
    @Singleton
    @Named("TIMEOUTS")
    protected Map<String, Long> timeouts(Function<Predicate<String>, Map<String, String>> filterStringsBoundByName) {
-      Map<String, String> stringBoundWithTimeoutPrefix = filterStringsBoundByName.apply(startsWith(PROPERTY_TIMEOUTS_PREFIX));
+      Map<String, String> stringBoundWithTimeoutPrefix = filterStringsBoundByName
+            .apply(startsWith(PROPERTY_TIMEOUTS_PREFIX));
       Map<String, Long> longsByName = transformValues(stringBoundWithTimeoutPrefix, new Function<String, Long>() {
          public Long apply(String input) {
             return Long.valueOf(String.valueOf(input));
