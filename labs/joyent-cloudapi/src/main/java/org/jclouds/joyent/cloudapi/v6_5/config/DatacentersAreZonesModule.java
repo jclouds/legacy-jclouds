@@ -18,7 +18,7 @@
  */
 package org.jclouds.joyent.cloudapi.v6_5.config;
 
-import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
+import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
 
 import org.jclouds.joyent.cloudapi.v6_5.features.DatacenterAsyncApi;
 import org.jclouds.joyent.cloudapi.v6_5.features.DatacenterApi;
@@ -41,7 +41,7 @@ public class DatacentersAreZonesModule extends AbstractModule {
    @Override
    protected void configure() {
       // datacenter api is needed for obtaining zone ids
-      bindClientAndAsyncClient(binder(), DatacenterApi.class, DatacenterAsyncApi.class);
+      bindHttpApi(binder(), DatacenterApi.class, DatacenterAsyncApi.class);
       bind(ImplicitLocationSupplier.class).to(OnlyLocationOrFirstZone.class).in(Scopes.SINGLETON);
       bind(ZoneIdToURISupplier.class).to(ZoneIdToURIFromDatacentersApi.class).in(Scopes.SINGLETON);
       bind(ZoneIdsSupplier.class).to(ZoneIdsFromZoneIdToURIKeySet.class).in(Scopes.SINGLETON);

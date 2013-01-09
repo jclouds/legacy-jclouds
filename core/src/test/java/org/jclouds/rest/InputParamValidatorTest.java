@@ -34,8 +34,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 @Test(groups = "unit")
 public class InputParamValidatorTest {
@@ -104,7 +106,7 @@ public class InputParamValidatorTest {
    }
 
    Injector injector;
-   RestAnnotationProcessor restAnnotationProcessor;
+   RestAnnotationProcessor<IntegrationTestAsyncClient> restAnnotationProcessor;
 
    @BeforeClass
    void setupFactory() {
@@ -112,7 +114,7 @@ public class InputParamValidatorTest {
             .newBuilder(
                   AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(IntegrationTestClient.class, IntegrationTestAsyncClient.class,
                         "http://localhost:9999")).buildInjector();
-      restAnnotationProcessor = injector.getInstance(RestAnnotationProcessor.class);
+      restAnnotationProcessor = injector.getInstance(Key.get(new TypeLiteral<RestAnnotationProcessor<IntegrationTestAsyncClient>>(){}));
    }
 
 }

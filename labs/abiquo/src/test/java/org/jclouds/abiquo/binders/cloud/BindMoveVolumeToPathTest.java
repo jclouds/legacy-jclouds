@@ -34,7 +34,7 @@ import org.testng.annotations.Test;
 import com.abiquo.server.core.cloud.VirtualDatacenterDto;
 import com.abiquo.server.core.infrastructure.storage.VolumeManagementDto;
 import com.google.common.collect.ImmutableList;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 
 /**
  * Unit tests for the {@link BindMoveVolumeToPath} binder.
@@ -64,7 +64,7 @@ public class BindMoveVolumeToPathTest {
    private static GeneratedHttpRequest generatedHttpRequest() throws SecurityException, NoSuchMethodException {
       Invokable<?, ?> withEndpointLink = Invokable.from(CloudAsyncApi.class.getMethod("moveVolume", VolumeManagementDto.class,
             VirtualDatacenterDto.class));
-      return GeneratedHttpRequest.builder()
+      return GeneratedHttpRequest.builder(CloudAsyncApi.class)
             .invocation(Invocation.create(withEndpointLink, ImmutableList.<Object> of(CloudResources.volumePut(), CloudResources.virtualDatacenterPut())))
             .method(HttpMethod.POST).endpoint(URI.create("http://localhost")).build();
    }

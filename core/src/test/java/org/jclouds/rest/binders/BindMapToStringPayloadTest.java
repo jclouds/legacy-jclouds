@@ -33,7 +33,9 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.TypeToken;
+
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code BindMapToStringPayload}
@@ -55,12 +57,12 @@ public class BindMapToStringPayloadTest {
    @Test
    public void testCorrect() throws SecurityException, NoSuchMethodException {
       Invokable<?, Object> testPayload = Invokable.from(TestPayload.class.getMethod("testPayload", String.class));
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
+      GeneratedHttpRequest<TestPayload> request = GeneratedHttpRequest.builder(TypeToken.of(TestPayload.class))
             .invocation(Invocation.create(testPayload, ImmutableList.<Object> of("robot")))
             .method("POST").endpoint("http://localhost").build();
 
-      GeneratedHttpRequest newRequest = binder()
-            .bindToRequest(request, ImmutableMap.<String,Object>of("fooble", "robot"));
+      GeneratedHttpRequest<TestPayload> newRequest = binder().bindToRequest(request,
+            ImmutableMap.<String, Object> of("fooble", "robot"));
 
       assertEquals(newRequest.getRequestLine(), request.getRequestLine());
       assertEquals(newRequest.getPayload().getRawContent(), "name robot");
@@ -69,11 +71,11 @@ public class BindMapToStringPayloadTest {
    @Test
    public void testDecodes() throws SecurityException, NoSuchMethodException {
       Invokable<?, Object> testPayload = Invokable.from(TestPayload.class.getMethod("changeAdminPass", String.class));
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
+      GeneratedHttpRequest<TestPayload> request = GeneratedHttpRequest.builder(TypeToken.of(TestPayload.class))
             .invocation(Invocation.create(testPayload, ImmutableList.<Object> of("foo")))
             .method("POST").endpoint("http://localhost").build();
 
-      GeneratedHttpRequest newRequest = binder()
+      GeneratedHttpRequest<TestPayload> newRequest = binder()
             .bindToRequest(request, ImmutableMap.<String,Object>of("adminPass", "foo"));
 
       assertEquals(newRequest.getRequestLine(), request.getRequestLine());
@@ -83,7 +85,7 @@ public class BindMapToStringPayloadTest {
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustHavePayloadAnnotation() throws SecurityException, NoSuchMethodException {
       Invokable<?, Object> noPayload = Invokable.from(TestPayload.class.getMethod("noPayload", String.class));
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
+      GeneratedHttpRequest<TestPayload> request = GeneratedHttpRequest.builder(TypeToken.of(TestPayload.class))
             .invocation(Invocation.create(noPayload, ImmutableList.<Object> of("robot")))
             .method("POST").endpoint("http://localhost").build();
       binder().bindToRequest(request, ImmutableMap.<String,Object>of("fooble", "robot"));

@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
 
 import com.abiquo.server.core.event.EventsDto;
 import com.google.common.collect.ImmutableList;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests annotation parsing of {@code EventAsyncApi}

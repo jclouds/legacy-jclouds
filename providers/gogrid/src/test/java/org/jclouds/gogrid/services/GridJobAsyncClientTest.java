@@ -27,7 +27,7 @@ import org.jclouds.gogrid.domain.JobState;
 import org.jclouds.gogrid.domain.ObjectType;
 import org.jclouds.gogrid.functions.ParseJobListFromJsonResponse;
 import org.jclouds.gogrid.options.GetJobListOptions;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 

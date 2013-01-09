@@ -28,9 +28,10 @@ import org.jclouds.javax.annotation.Nullable;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
+import com.google.common.reflect.Invokable;
 
 /**
- * Context needed to call {@link org.jclouds.reflect.Invokable#invoke(Object, Object...)}
+ * Context needed to call {@link com.google.common.reflect.Invokable#invoke(Object, Object...)}
  * 
  * @author Adrian Cole
  */

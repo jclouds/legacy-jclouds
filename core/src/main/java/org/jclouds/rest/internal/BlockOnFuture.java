@@ -20,7 +20,6 @@ package org.jclouds.rest.internal;
 
 import static com.google.common.base.Optional.fromNullable;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -33,57 +32,45 @@ import javax.inject.Named;
 import org.jclouds.logging.Logger;
 import org.jclouds.reflect.Invocation;
 import org.jclouds.reflect.Invocation.Result;
-import org.jclouds.reflect.Invokable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import com.google.common.cache.Cache;
+import com.google.common.reflect.Invokable;
+import com.google.common.reflect.TypeToken;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.assistedinject.Assisted;
 
-public class InvokeFutureAndBlock implements Function<Invocation, Result> {
+public class BlockOnFuture implements Function<ListenableFuture<?>, Result> {
 
    public static interface Factory {
       /**
-       * @param receiver
-       *           object whose interface matched {@code declaring} except all invokeds return {@link ListenableFuture}
-       * @return blocking invocation handler
+       * @param invocation
+       *           context for how the future was created
        */
-      InvokeFutureAndBlock create(Object async);
+      BlockOnFuture create(TypeToken<?> enclosingType, Invocation invocation);
    }
 
    @Resource
    private Logger logger = Logger.NULL;
 
-   private final Cache<Invokable<?, ?>, Invokable<?, ?>> sync2AsyncInvokables;
    private final Map<String, Long> timeouts;
-   private final Object receiver;
+   private final TypeToken<?> enclosingType;
+   private final Invocation invocation;
 
    @Inject
    @VisibleForTesting
-   InvokeFutureAndBlock(Cache<Invokable<?, ?>, Invokable<?, ?>> sync2AsyncInvokables,
-         @Named("TIMEOUTS") Map<String, Long> timeouts, @Assisted Object receiver) {
-      this.receiver = receiver;
-      this.sync2AsyncInvokables = sync2AsyncInvokables;
+   BlockOnFuture(@Named("TIMEOUTS") Map<String, Long> timeouts, @Assisted TypeToken<?> enclosingType,
+         @Assisted Invocation invocation) {
       this.timeouts = timeouts;
+      this.enclosingType = enclosingType;
+      this.invocation = invocation;
    }
 
    @Override
-   public Result apply(Invocation invocation) {
-      @SuppressWarnings("unchecked")
-      Invokable<? super Object, ListenableFuture<?>> asyncMethod = Invokable.class.cast(sync2AsyncInvokables
-            .getIfPresent(invocation.getInvokable()));
-      try {
-         ListenableFuture<?> future = asyncMethod.invoke(receiver, invocation.getArgs().toArray());
-         Optional<Long> timeoutNanos = timeoutInNanos(invocation.getInvokable(), timeouts);
-         return block(future, timeoutNanos);
-      } catch (InvocationTargetException e) {
-         return Result.fail(e);
-      } catch (IllegalAccessException e) {
-         return Result.fail(e);
-      }
-
+   public Result apply(ListenableFuture<?> future) {
+      Optional<Long> timeoutNanos = timeoutInNanos(invocation.getInvokable(), timeouts);
+      return block(future, timeoutNanos);
    }
 
    private Result block(ListenableFuture<?> future, Optional<Long> timeoutNanos) {
@@ -106,7 +93,7 @@ public class InvokeFutureAndBlock implements Function<Invocation, Result> {
 
    // override timeout by values configured in properties(in ms)
    private Optional<Long> timeoutInNanos(Invokable<?, ?> invoked, Map<String, Long> timeouts) {
-      String className = invoked.getEnclosingType().getRawType().getSimpleName();
+      String className = enclosingType.getRawType().getSimpleName();
       Optional<Long> timeoutMillis = fromNullable(timeouts.get(className + "." + invoked.getName())).or(
             fromNullable(timeouts.get(className))).or(fromNullable(timeouts.get("default")));
       if (timeoutMillis.isPresent())

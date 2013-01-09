@@ -36,7 +36,7 @@ import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.location.Region;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.s3.S3AsyncClient;

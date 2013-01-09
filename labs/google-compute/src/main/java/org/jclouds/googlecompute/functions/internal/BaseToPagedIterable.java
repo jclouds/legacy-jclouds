@@ -42,7 +42,7 @@ import com.google.common.base.Optional;
 public abstract class BaseToPagedIterable<T, I extends BaseToPagedIterable<T, I>> implements
       Function<ListPage<T>, PagedIterable<T>>, InvocationContext<I> {
 
-   private GeneratedHttpRequest request;
+   private GeneratedHttpRequest<?> request;
 
    @Override
    public PagedIterable<T> apply(ListPage<T> input) {

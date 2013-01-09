@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.reflect.Invocation;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
@@ -65,7 +65,7 @@ public class BindCloneDriveOptionsToPlainTextStringTest {
    protected GeneratedHttpRequest requestForArgs(List<Object> args) {
       try {
          Invocation invocation = Invocation.create(Invokable.from(String.class.getDeclaredMethod("toString")), args);
-         return GeneratedHttpRequest.builder().method("POST").endpoint(URI.create("http://localhost/key"))
+         return GeneratedHttpRequest.builder(String.class).method("POST").endpoint(URI.create("http://localhost/key"))
                .invocation(invocation).build();
       } catch (SecurityException e) {
          throw Throwables.propagate(e);

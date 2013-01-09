@@ -20,7 +20,7 @@ package org.jclouds.openstack.keystone.v2_0.config;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Throwables.propagate;
-import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
+import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -144,7 +144,7 @@ public class KeystoneAuthenticationModule extends AbstractModule {
 
    protected void bindAuthenticationApi() {
       // AuthenticationApi is used directly for filters and retry handlers, so let's bind it explicitly
-      bindClientAndAsyncClient(binder(), AuthenticationApi.class, AuthenticationAsyncApi.class);
+      bindHttpApi(binder(), AuthenticationApi.class, AuthenticationAsyncApi.class);
    }
 
    /**
