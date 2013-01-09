@@ -29,7 +29,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.net.URI;
 
-import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
+import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
 
 /**
  * An OAuth module to be used form other providers.
@@ -40,7 +40,7 @@ public class OAuthAuthenticationModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bindClientAndAsyncClient(binder(), OAuthApi.class, OAuthAsyncApi.class);
+      bindHttpApi(binder(), OAuthApi.class, OAuthAsyncApi.class);
    }
 
    /**

@@ -41,7 +41,7 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;

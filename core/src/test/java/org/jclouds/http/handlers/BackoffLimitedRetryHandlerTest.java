@@ -44,13 +44,15 @@ import org.jclouds.http.internal.JavaUrlHttpCommandExecutorService;
 import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.ContentMetadataCodec.DefaultContentMetadataCodec;
 import org.jclouds.io.Payloads;
+import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
-import org.jclouds.reflect.Invokable;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 @Test(groups = "unit", testName = "BackoffLimitedRetryHandlerTest")
 public class BackoffLimitedRetryHandlerTest {
@@ -166,8 +168,8 @@ public class BackoffLimitedRetryHandlerTest {
       assertEquals(response.getPayload().getInput().read(), -1);
    }
 
-   private final RestAnnotationProcessor processor = BaseJettyTest.newBuilder(8100, new Properties()).buildInjector()
-         .getInstance(RestAnnotationProcessor.class);
+   private final RestAnnotationProcessor<IntegrationTestAsyncClient> processor = BaseJettyTest.newBuilder(8100, new Properties()).buildInjector()
+         .getInstance(Key.get(new TypeLiteral<RestAnnotationProcessor<IntegrationTestAsyncClient>>(){}));
 
    private HttpCommand createCommand() throws SecurityException, NoSuchMethodException {
       Invokable<?, Object> method = Invokable.from(IntegrationTestAsyncClient.class.getMethod("download", String.class));

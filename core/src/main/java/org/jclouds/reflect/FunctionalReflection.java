@@ -38,6 +38,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 import com.google.common.reflect.TypeToken;
 
 /**
@@ -113,7 +114,7 @@ public final class FunctionalReflection {
             args = ImmutableList.copyOf(args);
          else
             args = Collections.unmodifiableList(args);
-         Invokable<T, ?> invokable = Invokable.from(enclosingType, invoked);
+         Invokable<?, Object> invokable = Invokable.from(invoked);
          // not yet support the proxy arg
          Invocation invocation = Invocation.create(invokable, args);
          Result result;

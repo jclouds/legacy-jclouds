@@ -41,7 +41,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code RequestAuthorizeSignature}

@@ -36,7 +36,7 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.s3.S3Fallbacks.TrueOn404OrNotFoundFalseOnIllegalState;
@@ -80,7 +80,7 @@ import com.google.inject.Module;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "S3AsyncClientTest")
-public class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3AsyncClientTest<T> {
+public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3AsyncClientTest<T> {
 
    protected String url = "s3.amazonaws.com";
 

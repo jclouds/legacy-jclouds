@@ -27,7 +27,7 @@ import org.jclouds.gogrid.functions.ParseImageFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseImageListFromJsonResponse;
 import org.jclouds.gogrid.options.GetImageListOptions;
 import org.jclouds.gogrid.options.SaveImageOptions;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 

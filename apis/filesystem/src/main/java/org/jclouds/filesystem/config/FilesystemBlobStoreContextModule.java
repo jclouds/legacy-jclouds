@@ -18,7 +18,7 @@
  */
 package org.jclouds.filesystem.config;
 
-import static org.jclouds.rest.config.BinderUtils.bindClient;
+import static org.jclouds.rest.config.BinderUtils.bindBlockingApi;
 
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobRequestSigner;
@@ -50,7 +50,7 @@ public class FilesystemBlobStoreContextModule extends AbstractModule {
    protected void configure() {
       bind(AsyncBlobStore.class).to(LocalAsyncBlobStore.class).asEagerSingleton();
       // forward all requests from TransientBlobStore to TransientAsyncBlobStore.  needs above binding as cannot proxy a class
-      bindClient(binder(), LocalBlobStore.class, AsyncBlobStore.class);
+      bindBlockingApi(binder(), LocalBlobStore.class, AsyncBlobStore.class);
       bind(BlobStore.class).to(LocalBlobStore.class);
 
       install(new BlobStoreObjectModule());

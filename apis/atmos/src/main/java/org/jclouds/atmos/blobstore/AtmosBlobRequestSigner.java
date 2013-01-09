@@ -37,9 +37,7 @@ import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.TypeToken;
-
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 
 /**
  * 
@@ -47,7 +45,7 @@ import org.jclouds.reflect.Invokable;
  */
 @Singleton
 public class AtmosBlobRequestSigner implements BlobRequestSigner {
-   private final RestAnnotationProcessor processor;
+   private final RestAnnotationProcessor<AtmosAsyncClient> processor;
    private final BlobToObject blobToObject;
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
 
@@ -56,17 +54,15 @@ public class AtmosBlobRequestSigner implements BlobRequestSigner {
    private final Invokable<?, ?> createMethod;
 
    @Inject
-   public AtmosBlobRequestSigner(RestAnnotationProcessor processor, BlobToObject blobToObject,
+   public AtmosBlobRequestSigner(RestAnnotationProcessor<AtmosAsyncClient> processor, BlobToObject blobToObject,
          BlobToHttpGetOptions blob2ObjectGetOptions) throws SecurityException, NoSuchMethodException {
       this.processor = checkNotNull(processor, "processor");
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
-      this.getMethod = Invokable.from(TypeToken.of(AtmosAsyncClient.class),
-            AtmosAsyncClient.class.getMethod("readFile", String.class, GetOptions[].class));
-      this.deleteMethod = Invokable.from(TypeToken.of(AtmosAsyncClient.class),
-            AtmosAsyncClient.class.getMethod("deletePath", String.class));
-      this.createMethod = Invokable.from(TypeToken.of(AtmosAsyncClient.class),
-            AtmosAsyncClient.class.getMethod("createFile", String.class, AtmosObject.class, PutOptions[].class));
+      this.getMethod = Invokable.from(AtmosAsyncClient.class.getMethod("readFile", String.class, GetOptions[].class));
+      this.deleteMethod = Invokable.from(AtmosAsyncClient.class.getMethod("deletePath", String.class));
+      this.createMethod = Invokable.from(AtmosAsyncClient.class.getMethod("createFile", String.class,
+            AtmosObject.class, PutOptions[].class));
    }
 
    @Override

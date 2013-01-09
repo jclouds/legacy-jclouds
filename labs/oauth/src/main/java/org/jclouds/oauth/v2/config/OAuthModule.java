@@ -63,7 +63,7 @@ public class OAuthModule extends AbstractModule {
               Header.class, new HeaderTypeAdapter(),
               ClaimSet.class, new ClaimSetTypeAdapter()));
       bind(new TypeLiteral<Supplier<OAuthCredentials>>() {}).to(OAuthCredentialsSupplier.class);
-      bind(new TypeLiteral<Function<GeneratedHttpRequest, TokenRequest>>() {}).to(BuildTokenRequest.class);
+      bind(new TypeLiteral<Function<GeneratedHttpRequest<?>, TokenRequest>>() {}).to(BuildTokenRequest.class);
       bind(new TypeLiteral<Function<TokenRequest, Token>>() {}).to(FetchToken.class);
    }
 

@@ -32,7 +32,7 @@ import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 
 /**
  * 

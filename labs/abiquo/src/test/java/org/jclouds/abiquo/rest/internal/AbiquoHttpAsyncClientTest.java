@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
 import com.abiquo.model.rest.RESTLink;
 import com.abiquo.server.core.infrastructure.DatacentersDto;
 import com.google.common.collect.ImmutableList;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests annotation parsing of {@code AbiquoHttpAsyncApi}.

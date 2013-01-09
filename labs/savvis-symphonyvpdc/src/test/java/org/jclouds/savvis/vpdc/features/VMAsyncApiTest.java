@@ -27,7 +27,7 @@ import org.jclouds.cim.OSType;
 import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.savvis.vpdc.domain.VMSpec;
 import org.jclouds.savvis.vpdc.xml.TaskHandler;

@@ -21,7 +21,7 @@ package org.jclouds.savvis.vpdc.config;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
-import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
+import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
 import static org.jclouds.savvis.vpdc.reference.VPDCConstants.PROPERTY_VPDC_TIMEOUT_TASK_COMPLETED;
 
 import java.io.IOException;
@@ -86,7 +86,7 @@ public class VPDCRestClientModule extends RestClientModule<VPDCApi, VPDCAsyncApi
    @Override
    protected void configure() {
       super.configure();
-      bindClientAndAsyncClient(binder(), LoginApi.class, LoginAsyncApi.class);
+      bindHttpApi(binder(), LoginApi.class, LoginAsyncApi.class);
    }
 
    @VCloudToken

@@ -40,7 +40,7 @@ import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.reflect.Invokable;
+import com.google.common.reflect.Invokable;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.util.Strings2;
@@ -49,8 +49,11 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
+import com.google.common.reflect.TypeParameter;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.name.Names;
 
 /**
@@ -177,7 +180,25 @@ public abstract class BaseRestApiTest {
 
    protected void assertResponseParserClassEquals(Invokable<?, ?> method, GeneratedHttpRequest request,
          @Nullable Class<?> parserClass) {
-      assertEquals(TransformerForRequest.createResponseParser(parserFactory, injector, request).getClass(),
-            parserClass);
+      assertEquals(transformer(method.getDeclaringClass()).apply(request).getClass(), parserClass);
    }
+
+   protected <T> RestAnnotationProcessor<T> processor(Class<T> type) {
+      TypeToken<RestAnnotationProcessor<T>> token = new TypeToken<RestAnnotationProcessor<T>>() {
+         private static final long serialVersionUID = 1L;
+      }.where(new TypeParameter<T>() {
+      }, type);
+      Key<RestAnnotationProcessor<T>> rapKey = (Key<RestAnnotationProcessor<T>>) Key.get(token.getType());
+      return injector.getInstance(rapKey);
+   }
+
+   protected <T> TransformerForRequest<T> transformer(Class<T> type) {
+      TypeToken<TransformerForRequest<T>> token = new TypeToken<TransformerForRequest<T>>() {
+         private static final long serialVersionUID = 1L;
+      }.where(new TypeParameter<T>() {
+      }, type);
+      Key<TransformerForRequest<T>> rapKey = (Key<TransformerForRequest<T>>) Key.get(token.getType());
+      return injector.getInstance(rapKey);
+   }
+
 }

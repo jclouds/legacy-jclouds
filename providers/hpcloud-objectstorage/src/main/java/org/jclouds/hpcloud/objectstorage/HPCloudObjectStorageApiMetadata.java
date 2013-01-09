@@ -18,7 +18,7 @@
  */
 package org.jclouds.hpcloud.objectstorage;
 
-import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
+import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
 
 import java.net.URI;
 import java.util.Properties;
@@ -107,7 +107,7 @@ public class HPCloudObjectStorageApiMetadata extends SwiftKeystoneApiMetadata {
       }
       @Override
       protected void bindTemporaryUrlKeyApi() {
-         bindClientAndAsyncClient(binder(), TemporaryUrlKeyApi.class, KeystoneTemporaryUrlKeyAsyncApi.class);
+         bindHttpApi(binder(), TemporaryUrlKeyApi.class, KeystoneTemporaryUrlKeyAsyncApi.class);
       }
    }
 }
