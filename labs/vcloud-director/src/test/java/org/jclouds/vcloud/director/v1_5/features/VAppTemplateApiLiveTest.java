@@ -82,7 +82,7 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
    protected void tidyUp() {
       if (key != null) {
          try {
-            Task remove = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).remove(key);
+            Task remove = context.getApi().getMetadataApi(vAppTemplateUrn).remove(key);
             taskDoneEventually(remove);
          } catch (Exception e) {
             logger.warn(e, "Error when deleting metadata entry '%s'", key);
@@ -143,7 +143,7 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
 
    @Test(description = "GET /vAppTemplate/{id}/metadata", dependsOnMethods = { "testEditMetadataValue" })
    public void testGetVAppTemplateMetadata() {
-      Metadata metadata = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).get();
+      Metadata metadata = context.getApi().getMetadataApi(vAppTemplateUrn).get();
 
       checkMetadata(metadata);
    }
@@ -152,10 +152,10 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
    // otherwise no entry may exist
    @Test(description = "GET /vAppTemplate/{id}/metadata/{key}", dependsOnMethods = { "testGetVAppTemplateMetadata" })
    public void testGetMetadataValue() {
-      Metadata metadata = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).get();
+      Metadata metadata = context.getApi().getMetadataApi(vAppTemplateUrn).get();
       MetadataEntry entry = Iterables.get(metadata.getMetadataEntries(), 0);
 
-      String val = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).get(entry.getKey());
+      String val = context.getApi().getMetadataApi(vAppTemplateUrn).get(entry.getKey());
 
       assertEquals(val, entry.getValue());
    }
@@ -197,16 +197,16 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
 
    @Test(description = "POST /vAppTemplate/{id}/metadata", dependsOnMethods = { "testGetVAppTemplate" })
    public void testEditMetadata() {
-      Metadata oldMetadata = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).get();
+      Metadata oldMetadata = context.getApi().getMetadataApi(vAppTemplateUrn).get();
       Map<String, String> oldMetadataMap = metadataToMap(oldMetadata);
 
       key = name("key-");
       val = name("value-");
 
-      final Task task = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).putAll(ImmutableMap.of(key, val));
+      final Task task = context.getApi().getMetadataApi(vAppTemplateUrn).putAll(ImmutableMap.of(key, val));
       assertTaskSucceeds(task);
 
-      Metadata newMetadata = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).get();
+      Metadata newMetadata = context.getApi().getMetadataApi(vAppTemplateUrn).get();
       Map<String, String> expectedMetadataMap = ImmutableMap.<String, String> builder().putAll(oldMetadataMap)
                .put(key, val).build();
       checkMetadataFor("vAppTemplate", newMetadata, expectedMetadataMap);
@@ -216,19 +216,19 @@ public class VAppTemplateApiLiveTest extends AbstractVAppApiLiveTest {
    public void testEditMetadataValue() {
       val = "new" + val;
 
-      final Task task = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).put(key, val);
+      final Task task = context.getApi().getMetadataApi(vAppTemplateUrn).put(key, val);
       retryTaskSuccess.apply(task);
 
-      String newMetadataValue = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).get(key);
+      String newMetadataValue = context.getApi().getMetadataApi(vAppTemplateUrn).get(key);
       assertEquals(newMetadataValue, val);
    }
 
    @Test(description = "DELETE /vAppTemplate/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadataValue" })
    public void testRemoveVAppTemplateMetadataValue() {
-      final Task deletionTask = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).remove(key);
+      final Task deletionTask = context.getApi().getMetadataApi(vAppTemplateUrn).remove(key);
       assertTaskSucceeds(deletionTask);
 
-      Metadata newMetadata = vAppTemplateApi.getMetadataApi(vAppTemplateUrn).get();
+      Metadata newMetadata = context.getApi().getMetadataApi(vAppTemplateUrn).get();
       checkMetadataKeyAbsentFor("vAppTemplate", newMetadata, key);
       key = null;
    }

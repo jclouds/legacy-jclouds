@@ -19,11 +19,9 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import java.net.URI;
-import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.rest.annotations.EndpointParam;
+
 import org.jclouds.vcloud.director.v1_5.domain.org.Org;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgList;
-import org.jclouds.vcloud.director.v1_5.functions.href.OrgURNToHref;
 
 /**
  * Provides synchronous access to {@link Org}.
@@ -56,14 +54,4 @@ public interface OrgApi {
    Org get(String orgUrn);
 
    Org get(URI orgHref);
-
-   /**
-    * @return synchronous access to {@link Metadata.Readable} features
-    */
-   @Delegate
-   MetadataApi.Readable getMetadataApi(@EndpointParam(parser = OrgURNToHref.class) String orgUrn);
-   
-   @Delegate
-   MetadataApi.Readable getMetadataApi(@EndpointParam URI orgHref);
-
 }

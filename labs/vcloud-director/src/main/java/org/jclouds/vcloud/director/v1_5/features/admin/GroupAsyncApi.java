@@ -38,8 +38,8 @@ import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.href.GroupURNToHref;
-import org.jclouds.vcloud.director.v1_5.functions.href.OrgURNToAdminHref;
+import org.jclouds.vcloud.director.v1_5.functions.URNToAdminHref;
+import org.jclouds.vcloud.director.v1_5.functions.URNToHref;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -59,7 +59,7 @@ public interface GroupAsyncApi {
    @Produces(VCloudDirectorMediaType.GROUP)
    @JAXBResponseParser
    ListenableFuture<Group> addGroupToOrg(@BinderParam(BindToXMLPayload.class) Group group,
-            @EndpointParam(parser = OrgURNToAdminHref.class) String adminUrn);
+            @EndpointParam(parser = URNToAdminHref.class) String adminUrn);
 
    /**
     * @see GroupApi#get(String)
@@ -68,7 +68,7 @@ public interface GroupAsyncApi {
    @Consumes
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<Group> get(@EndpointParam(parser = GroupURNToHref.class) String groupUri);
+   ListenableFuture<Group> get(@EndpointParam(parser = URNToHref.class) String groupUri);
 
    /**
     * @see GroupApi#edit(String, Group)
@@ -77,7 +77,7 @@ public interface GroupAsyncApi {
    @Consumes(VCloudDirectorMediaType.GROUP)
    @Produces(VCloudDirectorMediaType.GROUP)
    @JAXBResponseParser
-   ListenableFuture<Group> edit(@EndpointParam(parser = GroupURNToHref.class) String groupUrn,
+   ListenableFuture<Group> edit(@EndpointParam(parser = URNToHref.class) String groupUrn,
             @BinderParam(BindToXMLPayload.class) Group group);
 
    /**
@@ -86,7 +86,7 @@ public interface GroupAsyncApi {
    @DELETE
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Void> remove(@EndpointParam(parser = GroupURNToHref.class) String groupUrn);
+   ListenableFuture<Void> remove(@EndpointParam(parser = URNToHref.class) String groupUrn);
 
    /**
     * @see GroupApi#addGroupToOrg(Group, URI)

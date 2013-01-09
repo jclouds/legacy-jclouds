@@ -19,13 +19,11 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import java.net.URI;
-import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.rest.annotations.EndpointParam;
+
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.params.CloneMediaParams;
-import org.jclouds.vcloud.director.v1_5.functions.href.MediaURNToHref;
 
 /**
  * Provides synchronous access to {@link Media}.
@@ -88,14 +86,4 @@ public interface MediaApi {
    Owner getOwner(String mediaUrn);
 
    Owner getOwner(URI mediaHref);
-
-   /**
-    * @return synchronous access to {@link Metadata.Writeable} features
-    */
-   @Delegate
-   MetadataApi.Writeable getMetadataApi(@EndpointParam(parser = MediaURNToHref.class) String mediaUrn);
-
-   @Delegate
-   MetadataApi.Writeable getMetadataApi(@EndpointParam URI mediaHref);
-
 }

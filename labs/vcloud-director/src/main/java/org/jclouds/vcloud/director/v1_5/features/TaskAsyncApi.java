@@ -33,7 +33,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.href.TaskURNToHref;
+import org.jclouds.vcloud.director.v1_5.functions.URNToHref;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -60,7 +60,7 @@ public interface TaskAsyncApi {
    @Consumes
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<Task> get(@EndpointParam(parser = TaskURNToHref.class) String taskUrn);
+   ListenableFuture<Task> get(@EndpointParam(parser = URNToHref.class) String taskUrn);
    
    /**
     * @see TaskApi#get(URI)
@@ -78,7 +78,7 @@ public interface TaskAsyncApi {
    @Path("/action/cancel")
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Void> cancel(@EndpointParam(parser = TaskURNToHref.class) String taskUrn);
+   ListenableFuture<Void> cancel(@EndpointParam(parser = URNToHref.class) String taskUrn);
    
    /**
     * @see TaskApi#cancel(URI)

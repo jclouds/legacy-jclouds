@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.user;
 
+import java.net.URI;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -25,16 +27,24 @@ import javax.ws.rs.PathParam;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.Entity;
+import org.jclouds.vcloud.director.v1_5.domain.Media;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
+import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.Vm;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network;
+import org.jclouds.vcloud.director.v1_5.domain.org.Org;
 import org.jclouds.vcloud.director.v1_5.features.CatalogAsyncApi;
+import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncApi;
 import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncApi;
 import org.jclouds.vcloud.director.v1_5.features.OrgAsyncApi;
 import org.jclouds.vcloud.director.v1_5.features.QueryAsyncApi;
@@ -45,6 +55,7 @@ import org.jclouds.vcloud.director.v1_5.features.VAppTemplateAsyncApi;
 import org.jclouds.vcloud.director.v1_5.features.VdcAsyncApi;
 import org.jclouds.vcloud.director.v1_5.features.VmAsyncApi;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
+import org.jclouds.vcloud.director.v1_5.functions.URNToHref;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Provides;
@@ -140,4 +151,13 @@ public interface VCloudDirectorAsyncApi {
     */
    @Delegate
    VmAsyncApi getVmApi();
+   
+   /**
+    * @return asynchronous access to {@link Metadata} features
+    */
+   @Delegate
+   MetadataAsyncApi getMetadataApi(@EndpointParam(parser = URNToHref.class) String urn);
+
+   @Delegate
+   MetadataAsyncApi getMetadataApi(@EndpointParam URI href);
 }
