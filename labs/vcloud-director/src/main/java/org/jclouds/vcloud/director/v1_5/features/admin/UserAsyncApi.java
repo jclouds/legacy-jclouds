@@ -38,8 +38,8 @@ import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.href.OrgURNToAdminHref;
-import org.jclouds.vcloud.director.v1_5.functions.href.UserURNToHref;
+import org.jclouds.vcloud.director.v1_5.functions.URNToAdminHref;
+import org.jclouds.vcloud.director.v1_5.functions.URNToHref;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -59,7 +59,7 @@ public interface UserAsyncApi {
    @Produces(VCloudDirectorMediaType.USER)
    @JAXBResponseParser
    ListenableFuture<User> addUserToOrg(@BinderParam(BindToXMLPayload.class) User user,
-            @EndpointParam(parser = OrgURNToAdminHref.class) String orgUrn);
+            @EndpointParam(parser = URNToAdminHref.class) String orgUrn);
 
    /**
     * @see UserApi#addUserToOrg(User, URI)
@@ -79,7 +79,7 @@ public interface UserAsyncApi {
    @Consumes
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<User> get(@EndpointParam(parser = UserURNToHref.class) String userUrn);
+   ListenableFuture<User> get(@EndpointParam(parser = URNToHref.class) String userUrn);
 
    /**
     * @see UserApi#get(URI)
@@ -97,7 +97,7 @@ public interface UserAsyncApi {
    @Consumes(VCloudDirectorMediaType.USER)
    @Produces(VCloudDirectorMediaType.USER)
    @JAXBResponseParser
-   ListenableFuture<User> edit(@EndpointParam(parser = UserURNToHref.class) String userUrn,
+   ListenableFuture<User> edit(@EndpointParam(parser = URNToHref.class) String userUrn,
             @BinderParam(BindToXMLPayload.class) User user);
 
    /**
@@ -115,7 +115,7 @@ public interface UserAsyncApi {
    @DELETE
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Void> remove(@EndpointParam(parser = UserURNToHref.class) String userUrn);
+   ListenableFuture<Void> remove(@EndpointParam(parser = URNToHref.class) String userUrn);
 
    /**
     * @see UserApi#remove(URI)
@@ -132,7 +132,7 @@ public interface UserAsyncApi {
    @Path("/action/unlock")
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Void> unlock(@EndpointParam(parser = UserURNToHref.class) String userUrn);
+   ListenableFuture<Void> unlock(@EndpointParam(parser = URNToHref.class) String userUrn);
 
    /**
     * @see UserApi#unlock(URI)

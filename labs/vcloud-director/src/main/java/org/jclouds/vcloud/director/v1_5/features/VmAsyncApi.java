@@ -45,8 +45,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.dmtf.cim.ResourceAllocationSettingData;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.JAXBResponseParser;
@@ -72,7 +72,7 @@ import org.jclouds.vcloud.director.v1_5.domain.section.RuntimeInfoSection;
 import org.jclouds.vcloud.director.v1_5.domain.section.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationAndCookieToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ReturnPayloadBytes;
-import org.jclouds.vcloud.director.v1_5.functions.href.VmURNToHref;
+import org.jclouds.vcloud.director.v1_5.functions.URNToHref;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -90,7 +90,7 @@ public interface VmAsyncApi {
    @Consumes(VM)
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<Vm> get(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
+   ListenableFuture<Vm> get(@EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#edit(String, Vm)
@@ -99,7 +99,7 @@ public interface VmAsyncApi {
    @Produces(VM)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> edit(@EndpointParam(parser = VmURNToHref.class) String vmUrn,
+   ListenableFuture<Task> edit(@EndpointParam(parser = URNToHref.class) String vmUrn,
             @BinderParam(BindToXMLPayload.class) Vm vApp);
 
    /**
@@ -108,7 +108,7 @@ public interface VmAsyncApi {
    @DELETE
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> remove(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
+   ListenableFuture<Task> remove(@EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#consolidate(String)
@@ -117,7 +117,7 @@ public interface VmAsyncApi {
    @Path("/action/consolidate")
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> consolidate(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
+   ListenableFuture<Task> consolidate(@EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#deploy(String, DeployVAppParams)
@@ -127,7 +127,7 @@ public interface VmAsyncApi {
    @Produces(DEPLOY_VAPP_PARAMS)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> deploy(@EndpointParam(parser = VmURNToHref.class) String vmUrn,
+   ListenableFuture<Task> deploy(@EndpointParam(parser = URNToHref.class) String vmUrn,
             @BinderParam(BindToXMLPayload.class) DeployVAppParams params);
 
    /**
@@ -137,7 +137,7 @@ public interface VmAsyncApi {
    @Path("/action/discardSuspendedState")
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> discardSuspendedState(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
+   ListenableFuture<Task> discardSuspendedState(@EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#installVMwareTools(String)
@@ -146,7 +146,7 @@ public interface VmAsyncApi {
    @Path("/action/installVMwareTools")
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> installVMwareTools(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
+   ListenableFuture<Task> installVMwareTools(@EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#relocate(String, RelocateParams)
@@ -156,7 +156,7 @@ public interface VmAsyncApi {
    @Produces(RELOCATE_VM_PARAMS)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> relocate(@EndpointParam(parser = VmURNToHref.class) String vmUrn,
+   ListenableFuture<Task> relocate(@EndpointParam(parser = URNToHref.class) String vmUrn,
             @BinderParam(BindToXMLPayload.class) RelocateParams params);
 
    /**
@@ -167,7 +167,7 @@ public interface VmAsyncApi {
    @Produces(UNDEPLOY_VAPP_PARAMS)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> undeploy(@EndpointParam(parser = VmURNToHref.class) String vmUrn,
+   ListenableFuture<Task> undeploy(@EndpointParam(parser = URNToHref.class) String vmUrn,
             @BinderParam(BindToXMLPayload.class) UndeployVAppParams params);
 
    /**
@@ -177,7 +177,7 @@ public interface VmAsyncApi {
    @Path("/action/upgradeHardwareVersion")
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> upgradeHardwareVersion(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
+   ListenableFuture<Task> upgradeHardwareVersion(@EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#powerOff(String)
@@ -186,7 +186,7 @@ public interface VmAsyncApi {
    @Path("/power/action/powerOff")
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> powerOff(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
+   ListenableFuture<Task> powerOff(@EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#powerOn(String)
@@ -195,7 +195,7 @@ public interface VmAsyncApi {
    @Path("/power/action/powerOn")
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> powerOn(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
+   ListenableFuture<Task> powerOn(@EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#reboot(String)
@@ -204,7 +204,7 @@ public interface VmAsyncApi {
    @Path("/power/action/reboot")
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> reboot(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
+   ListenableFuture<Task> reboot(@EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#reset(String)
@@ -213,7 +213,7 @@ public interface VmAsyncApi {
    @Path("/power/action/reset")
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> reset(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
+   ListenableFuture<Task> reset(@EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#shutdown(String)
@@ -222,7 +222,7 @@ public interface VmAsyncApi {
    @Path("/power/action/shutdown")
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> shutdown(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
+   ListenableFuture<Task> shutdown(@EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#suspend(String)
@@ -231,7 +231,7 @@ public interface VmAsyncApi {
    @Path("/power/action/suspend")
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> suspend(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
+   ListenableFuture<Task> suspend(@EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#getGuestCustomizationSection(String)
@@ -242,7 +242,7 @@ public interface VmAsyncApi {
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<GuestCustomizationSection> getGuestCustomizationSection(
-            @EndpointParam(parser = VmURNToHref.class) String vmUrn);
+            @EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#editGuestCustomizationSection(String, GuestCustomizationSection)
@@ -252,7 +252,7 @@ public interface VmAsyncApi {
    @Produces(GUEST_CUSTOMIZATION_SECTION)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> editGuestCustomizationSection(@EndpointParam(parser = VmURNToHref.class) String vmUrn,
+   ListenableFuture<Task> editGuestCustomizationSection(@EndpointParam(parser = URNToHref.class) String vmUrn,
             @BinderParam(BindToXMLPayload.class) GuestCustomizationSection section);
 
    /**
@@ -263,7 +263,7 @@ public interface VmAsyncApi {
    @Produces(MEDIA_PARAMS)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> ejectMedia(@EndpointParam(parser = VmURNToHref.class) String vmUrn,
+   ListenableFuture<Task> ejectMedia(@EndpointParam(parser = URNToHref.class) String vmUrn,
             @BinderParam(BindToXMLPayload.class) MediaInsertOrEjectParams mediaParams);
 
    /**
@@ -274,7 +274,7 @@ public interface VmAsyncApi {
    @Produces(MEDIA_PARAMS)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> insertMedia(@EndpointParam(parser = VmURNToHref.class) String vmUrn,
+   ListenableFuture<Task> insertMedia(@EndpointParam(parser = URNToHref.class) String vmUrn,
             @BinderParam(BindToXMLPayload.class) MediaInsertOrEjectParams mediaParams);
 
    /**
@@ -286,7 +286,7 @@ public interface VmAsyncApi {
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<NetworkConnectionSection> getNetworkConnectionSection(
-            @EndpointParam(parser = VmURNToHref.class) String vmUrn);
+            @EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#editNetworkConnectionSection(String, NetworkConnectionSection)
@@ -296,7 +296,7 @@ public interface VmAsyncApi {
    @Produces(NETWORK_CONNECTION_SECTION)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> editNetworkConnectionSection(@EndpointParam(parser = VmURNToHref.class) String vmUrn,
+   ListenableFuture<Task> editNetworkConnectionSection(@EndpointParam(parser = URNToHref.class) String vmUrn,
             @BinderParam(BindToXMLPayload.class) NetworkConnectionSection section);
 
    /**
@@ -308,7 +308,7 @@ public interface VmAsyncApi {
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<OperatingSystemSection> getOperatingSystemSection(
-            @EndpointParam(parser = VmURNToHref.class) String vmUrn);
+            @EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#editOperatingSystemSection(String, OperatingSystemSection)
@@ -318,7 +318,7 @@ public interface VmAsyncApi {
    @Produces(OPERATING_SYSTEM_SECTION)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> editOperatingSystemSection(@EndpointParam(parser = VmURNToHref.class) String vmUrn,
+   ListenableFuture<Task> editOperatingSystemSection(@EndpointParam(parser = URNToHref.class) String vmUrn,
             @BinderParam(BindToXMLPayload.class) OperatingSystemSection section);
 
    /**
@@ -329,7 +329,7 @@ public interface VmAsyncApi {
    @Consumes
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<ProductSectionList> getProductSections(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
+   ListenableFuture<ProductSectionList> getProductSections(@EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#editProductSections(String, ProductSectionList)
@@ -339,7 +339,7 @@ public interface VmAsyncApi {
    @Produces(PRODUCT_SECTION_LIST)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> editProductSections(@EndpointParam(parser = VmURNToHref.class) String vmUrn,
+   ListenableFuture<Task> editProductSections(@EndpointParam(parser = URNToHref.class) String vmUrn,
             @BinderParam(BindToXMLPayload.class) ProductSectionList sectionList);
 
    /**
@@ -350,7 +350,7 @@ public interface VmAsyncApi {
    @Consumes
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<VmPendingQuestion> getPendingQuestion(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
+   ListenableFuture<VmPendingQuestion> getPendingQuestion(@EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#answerQuestion(String, VmQuestionAnswer)
@@ -360,7 +360,7 @@ public interface VmAsyncApi {
    @Produces(VM_PENDING_ANSWER)
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Void> answerQuestion(@EndpointParam(parser = VmURNToHref.class) String vmUrn,
+   ListenableFuture<Void> answerQuestion(@EndpointParam(parser = URNToHref.class) String vmUrn,
             @BinderParam(BindToXMLPayload.class) VmQuestionAnswer answer);
 
    /**
@@ -371,7 +371,7 @@ public interface VmAsyncApi {
    @Consumes
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<RuntimeInfoSection> getRuntimeInfoSection(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
+   ListenableFuture<RuntimeInfoSection> getRuntimeInfoSection(@EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#getScreenImage(String)
@@ -381,7 +381,7 @@ public interface VmAsyncApi {
    @Consumes(ANY_IMAGE)
    @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(ReturnPayloadBytes.class)
-   ListenableFuture<byte[]> getScreenImage(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
+   ListenableFuture<byte[]> getScreenImage(@EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#getScreenTicket(String)
@@ -391,7 +391,7 @@ public interface VmAsyncApi {
    @Consumes
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<ScreenTicket> getScreenTicket(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
+   ListenableFuture<ScreenTicket> getScreenTicket(@EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#getVirtualHardwareSection(String)
@@ -402,7 +402,7 @@ public interface VmAsyncApi {
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<VirtualHardwareSection> getVirtualHardwareSection(
-            @EndpointParam(parser = VmURNToHref.class) String vmUrn);
+            @EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#editVirtualHardwareSection(String, VirtualHardwareSection)
@@ -412,7 +412,7 @@ public interface VmAsyncApi {
    @Produces(VIRTUAL_HARDWARE_SECTION)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> editVirtualHardwareSection(@EndpointParam(parser = VmURNToHref.class) String vmUrn,
+   ListenableFuture<Task> editVirtualHardwareSection(@EndpointParam(parser = URNToHref.class) String vmUrn,
             @BinderParam(BindToXMLPayload.class) VirtualHardwareSection section);
 
    /**
@@ -423,7 +423,7 @@ public interface VmAsyncApi {
    @Consumes
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<RasdItem> getVirtualHardwareSectionCpu(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
+   ListenableFuture<RasdItem> getVirtualHardwareSectionCpu(@EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#editVirtualHardwareSectionCpu(String, ResourceAllocationSettingData)
@@ -433,7 +433,7 @@ public interface VmAsyncApi {
    @Produces(OVF_RASD_ITEM)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> editVirtualHardwareSectionCpu(@EndpointParam(parser = VmURNToHref.class) String vmUrn,
+   ListenableFuture<Task> editVirtualHardwareSectionCpu(@EndpointParam(parser = URNToHref.class) String vmUrn,
             @BinderParam(BindToXMLPayload.class) RasdItem rasd);
 
    /**
@@ -445,7 +445,7 @@ public interface VmAsyncApi {
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<RasdItemsList> getVirtualHardwareSectionDisks(
-            @EndpointParam(parser = VmURNToHref.class) String vmUrn);
+            @EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#editVirtualHardwareSectionDisks(String, RasdItemsList)
@@ -455,7 +455,7 @@ public interface VmAsyncApi {
    @Produces(OVF_RASD_ITEMS_LIST)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> editVirtualHardwareSectionDisks(@EndpointParam(parser = VmURNToHref.class) String vmUrn,
+   ListenableFuture<Task> editVirtualHardwareSectionDisks(@EndpointParam(parser = URNToHref.class) String vmUrn,
             @BinderParam(BindToXMLPayload.class) RasdItemsList rasdItemsList);
 
    /**
@@ -467,7 +467,7 @@ public interface VmAsyncApi {
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<RasdItemsList> getVirtualHardwareSectionMedia(
-            @EndpointParam(parser = VmURNToHref.class) String vmUrn);
+            @EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#getVirtualHardwareSectionMemory(String)
@@ -477,7 +477,7 @@ public interface VmAsyncApi {
    @Consumes
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<RasdItem> getVirtualHardwareSectionMemory(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
+   ListenableFuture<RasdItem> getVirtualHardwareSectionMemory(@EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#editVirtualHardwareSectionMemory(String, ResourceAllocationSettingData)
@@ -487,7 +487,7 @@ public interface VmAsyncApi {
    @Produces(OVF_RASD_ITEM)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> editVirtualHardwareSectionMemory(@EndpointParam(parser = VmURNToHref.class) String vmUrn,
+   ListenableFuture<Task> editVirtualHardwareSectionMemory(@EndpointParam(parser = URNToHref.class) String vmUrn,
             @BinderParam(BindToXMLPayload.class) RasdItem rasd);
 
    /**
@@ -499,7 +499,7 @@ public interface VmAsyncApi {
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<RasdItemsList> getVirtualHardwareSectionNetworkCards(
-            @EndpointParam(parser = VmURNToHref.class) String vmUrn);
+            @EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#editVirtualHardwareSectionNetworkCards(String, RasdItemsList)
@@ -510,7 +510,7 @@ public interface VmAsyncApi {
    @Consumes(TASK)
    @JAXBResponseParser
    ListenableFuture<Task> editVirtualHardwareSectionNetworkCards(
-            @EndpointParam(parser = VmURNToHref.class) String vmUrn,
+            @EndpointParam(parser = URNToHref.class) String vmUrn,
             @BinderParam(BindToXMLPayload.class) RasdItemsList rasdItemsList);
 
    /**
@@ -522,7 +522,7 @@ public interface VmAsyncApi {
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<RasdItemsList> getVirtualHardwareSectionSerialPorts(
-            @EndpointParam(parser = VmURNToHref.class) String vmUrn);
+            @EndpointParam(parser = URNToHref.class) String vmUrn);
 
    /**
     * @see VmApi#editVirtualHardwareSectionSerialPorts(String, RasdItemsList)
@@ -533,7 +533,7 @@ public interface VmAsyncApi {
    @Consumes(TASK)
    @JAXBResponseParser
    ListenableFuture<Task> editVirtualHardwareSectionSerialPorts(
-            @EndpointParam(parser = VmURNToHref.class) String vmUrn,
+            @EndpointParam(parser = URNToHref.class) String vmUrn,
             @BinderParam(BindToXMLPayload.class) RasdItemsList rasdItemsList);
 
    /**
@@ -975,14 +975,4 @@ public interface VmAsyncApi {
    @JAXBResponseParser
    ListenableFuture<Task> editVirtualHardwareSectionSerialPorts(@EndpointParam URI vmHref,
             @BinderParam(BindToXMLPayload.class) RasdItemsList rasdItemsList);
-
-   /**
-    * Asynchronous access to {@Vm} {@link Metadata} features.
-    */
-   @Delegate
-   MetadataAsyncApi.Writeable getMetadataApi(@EndpointParam(parser = VmURNToHref.class) String vmUrn);
-
-   @Delegate
-   MetadataAsyncApi.Writeable getMetadataApi(@EndpointParam URI vmHref);
-
 }

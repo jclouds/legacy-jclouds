@@ -20,7 +20,6 @@ package org.jclouds.vcloud.director.v1_5.functions;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.get;
 
 import java.net.URI;
 
@@ -29,21 +28,25 @@ import javax.inject.Singleton;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.Entity;
+import org.jclouds.vcloud.director.v1_5.domain.Link;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Iterables;
 
 /**
- * Resolves URN to its HREF via the entity Resolver
+ * Resolves URN to its Admin HREF via the entity Resolver
  * 
  * @author Adrian Cole
  */
 @Singleton
-public final class URNToHref implements Function<Object, URI> {
+public final class URNToAdminHref implements Function<Object, URI> {
    private final LoadingCache<String, Entity> resolveEntityCache;
 
    @Inject
-   public URNToHref(LoadingCache<String, Entity> resolveEntityCache) {
+   public URNToAdminHref(LoadingCache<String, Entity> resolveEntityCache) {
       this.resolveEntityCache = checkNotNull(resolveEntityCache, "resolveEntityCache");
    }
 
@@ -51,7 +54,15 @@ public final class URNToHref implements Function<Object, URI> {
    public URI apply(@Nullable Object from) {
       checkArgument(checkNotNull(from, "urn") instanceof String, "urn is a String argument");
       Entity entity = resolveEntityCache.getUnchecked(from.toString());
-      checkArgument(entity.getLinks().size()  >0,"no links found for entity %s", entity);
-      return get(entity.getLinks(), 0).getHref();
+      Optional<Link> link = Iterables.tryFind(entity.getLinks(), typeContainsAdmin);
+      checkArgument(link.isPresent(), "no admin link found for entity %s", entity);
+      return link.get().getHref();
    }
+
+   private static final Predicate<Link> typeContainsAdmin = new Predicate<Link>() {
+      @Override
+      public boolean apply(Link in) {
+         return in.getType().indexOf(".admin.") != -1;
+      }
+   };
 }

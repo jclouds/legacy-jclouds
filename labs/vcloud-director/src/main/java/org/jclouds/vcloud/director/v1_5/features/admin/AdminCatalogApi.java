@@ -19,15 +19,12 @@
 package org.jclouds.vcloud.director.v1_5.features.admin;
 
 import java.net.URI;
-import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.rest.annotations.EndpointParam;
+
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.params.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.PublishCatalogParams;
 import org.jclouds.vcloud.director.v1_5.features.CatalogApi;
-import org.jclouds.vcloud.director.v1_5.features.MetadataApi;
-import org.jclouds.vcloud.director.v1_5.functions.href.CatalogURNToAdminHref;
 
 /**
  * Provides synchronous access to {@link AdminCatalog} objects.
@@ -157,16 +154,4 @@ public interface AdminCatalogApi extends CatalogApi {
    ControlAccessParams getAccessControl(String catalogUrn);
    
    ControlAccessParams getAccessControl(URI catalogAdminHref);
-
-   /**
-    * @return synchronous access to {@link Metadata.Writeable} features
-    */
-   @Override
-   @Delegate
-   MetadataApi.Writeable getMetadataApi(@EndpointParam(parser = CatalogURNToAdminHref.class) String catalogUrn);
-
-   @Override
-   @Delegate
-   MetadataApi.Writeable getMetadataApi(@EndpointParam URI catalogAdminHref);
-
 }

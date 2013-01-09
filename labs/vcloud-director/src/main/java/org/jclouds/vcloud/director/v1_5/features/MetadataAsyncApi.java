@@ -49,65 +49,57 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see MetadataApi
  * @author Adrian Cole, danikov
  */
+@RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
 public interface MetadataAsyncApi {
 
-   @RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
-   public static interface Readable extends MetadataAsyncApi {
+   /**
+    * @see MetadataApi.Readable#get()
+    */
+   @GET
+   @Path("/metadata")
+   @Consumes
+   @JAXBResponseParser
+   @Fallback(NullOnNotFoundOr404.class)
+   ListenableFuture<Metadata> get();
 
-      /**
-       * @see MetadataApi.Readable#get()
-       */
-      @GET
-      @Path("/metadata")
-      @Consumes
-      @JAXBResponseParser
-      @Fallback(NullOnNotFoundOr404.class)
-      ListenableFuture<Metadata> get();
+   /**
+    * @see MetadataApi.Readable#get(String)
+    */
+   @GET
+   @Path("/metadata/{key}")
+   @Consumes
+   @ResponseParser(RegexValueParser.class)
+   @Fallback(NullOnNotFoundOr404.class)
+   ListenableFuture<String> get(@PathParam("key") String key);
 
-      /**
-       * @see MetadataApi.Readable#get(String)
-       */
-      @GET
-      @Path("/metadata/{key}")
-      @Consumes
-      @ResponseParser(RegexValueParser.class)
-      @Fallback(NullOnNotFoundOr404.class)
-      ListenableFuture<String> get(@PathParam("key") String key);
+   /**
+    * @see MetadataApi.Writable#putAll
+    */
+   @POST
+   @Path("/metadata")
+   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(VCloudDirectorMediaType.METADATA)
+   @JAXBResponseParser
+   ListenableFuture<Task> putAll(@BinderParam(BindMapAsMetadata.class) Map<String, String> metadata);
 
-   }
+   /**
+    * @see MetadataApi#put
+    */
+   @PUT
+   @Path("/metadata/{key}")
+   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(VCloudDirectorMediaType.METADATA_VALUE)
+   @JAXBResponseParser
+   ListenableFuture<Task> put(@PathParam("key") String key,
+         @BinderParam(BindStringAsMetadataValue.class) String metadataValue);
 
-   @RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
-   public static interface Writeable extends Readable {
+   /**
+    * @see MetadataApi.Writable#remove
+    */
+   @DELETE
+   @Path("/metadata/{key}")
+   @Consumes(VCloudDirectorMediaType.TASK)
+   @JAXBResponseParser
+   ListenableFuture<Task> remove(@PathParam("key") String key);
 
-      /**
-       * @see MetadataApi.Writable#putAll
-       */
-      @POST
-      @Path("/metadata")
-      @Consumes(VCloudDirectorMediaType.TASK)
-      @Produces(VCloudDirectorMediaType.METADATA)
-      @JAXBResponseParser
-      ListenableFuture<Task> putAll(@BinderParam(BindMapAsMetadata.class) Map<String, String> metadata);
-
-      /**
-       * @see MetadataApi.Writeable#put
-       */
-      @PUT
-      @Path("/metadata/{key}")
-      @Consumes(VCloudDirectorMediaType.TASK)
-      @Produces(VCloudDirectorMediaType.METADATA_VALUE)
-      @JAXBResponseParser
-      ListenableFuture<Task> put(@PathParam("key") String key,
-            @BinderParam(BindStringAsMetadataValue.class) String metadataValue);
-
-      /**
-       * @see MetadataApi.Writable#remove
-       */
-      @DELETE
-      @Path("/metadata/{key}")
-      @Consumes(VCloudDirectorMediaType.TASK)
-      @JAXBResponseParser
-      ListenableFuture<Task> remove(@PathParam("key") String key);
-
-   }
 }

@@ -69,9 +69,7 @@ import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
 import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswer;
 import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswerChoice;
 import org.jclouds.vcloud.director.v1_5.domain.dmtf.RasdItem;
-import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection;
-import org.jclouds.vcloud.director.v1_5.domain.network.Network.FenceMode;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection.IpAddressAllocationMode;
 import org.jclouds.vcloud.director.v1_5.domain.params.DeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.MediaInsertOrEjectParams;
@@ -87,9 +85,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
@@ -851,10 +847,10 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
       key = name("key-");
       metadataValue = name("value-");
       //TODO: block!!
-      vmApi.getMetadataApi(vmUrn).put(key, metadataValue);
+      context.getApi().getMetadataApi(vmUrn).put(key, metadataValue);
 
       // Retrieve the value, and assert it was set correctly
-      String newMetadataValue = vmApi.getMetadataApi(vmUrn).get(key);
+      String newMetadataValue = context.getApi().getMetadataApi(vmUrn).get(key);
 
       // Check the retrieved object is well formed
       assertEquals(newMetadataValue, metadataValue,
@@ -867,9 +863,9 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
 		key = name("key-");
 		metadataValue = name("value-");
 
-		vmApi.getMetadataApi(vmUrn).put(key, metadataValue);
+		context.getApi().getMetadataApi(vmUrn).put(key, metadataValue);
 		// Call the method being tested
-		Metadata metadata = vmApi.getMetadataApi(vmUrn).get();
+		Metadata metadata = context.getApi().getMetadataApi(vmUrn).get();
 
 		checkMetadata(metadata);
 		
@@ -883,10 +879,10 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
       metadataValue = name("value-");
 
       //TODO: block!!
-      vmApi.getMetadataApi(vmUrn).put(key, metadataValue);
+      context.getApi().getMetadataApi(vmUrn).put(key, metadataValue);
 
       // Call the method being tested
-      String newMetadataValue = vmApi.getMetadataApi(vmUrn).get(key);
+      String newMetadataValue = context.getApi().getMetadataApi(vmUrn).get(key);
       
       assertEquals(newMetadataValue, metadataValue,
             String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", metadataValue, newMetadataValue));
@@ -895,11 +891,11 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
    @Test(description = "DELETE /vApp/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" })
    public void testRemoveMetadataEntry() {
       // Delete the entry
-      Task task = vmApi.getMetadataApi(vmUrn).remove(key);
+      Task task = context.getApi().getMetadataApi(vmUrn).remove(key);
       retryTaskSuccess.apply(task);
 
       // Confirm the entry has been removed
-      Metadata newMetadata = vmApi.getMetadataApi(vmUrn).get();
+      Metadata newMetadata = context.getApi().getMetadataApi(vmUrn).get();
 
       // Check the retrieved object is well formed
       checkMetadataKeyAbsentFor(VM, newMetadata, key);
@@ -907,17 +903,17 @@ public class VmApiLiveTest extends AbstractVAppApiLiveTest {
 
    @Test(description = "POST /vApp/{id}/metadata", dependsOnMethods = { "testGetMetadata" })
    public void testMergeMetadata() {
-      Metadata oldMetadata = vmApi.getMetadataApi(vmUrn).get();
+      Metadata oldMetadata = context.getApi().getMetadataApi(vmUrn).get();
       Map<String, String> oldMetadataMap = Checks.metadataToMap(oldMetadata);
 
       // Store a value, to be removed
       String key = name("key-");
       String value = name("value-");
-      Task task = vmApi.getMetadataApi(vmUrn).putAll(ImmutableMap.of(key, value));
+      Task task = context.getApi().getMetadataApi(vmUrn).putAll(ImmutableMap.of(key, value));
       retryTaskSuccess.apply(task);
 
       // Confirm the entry contains everything that was there, and everything that was being added
-      Metadata newMetadata = vmApi.getMetadataApi(vmUrn).get();
+      Metadata newMetadata = context.getApi().getMetadataApi(vmUrn).get();
       Map<String, String> expectedMetadataMap = ImmutableMap.<String, String> builder().putAll(oldMetadataMap)
                .put(key, value).build();
 

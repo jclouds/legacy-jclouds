@@ -98,7 +98,7 @@ public abstract class AbstractVAppApiLiveTest extends BaseVCloudDirectorApiLiveT
    protected VAppTemplateApi vAppTemplateApi;
    protected VdcApi vdcApi;
    protected VmApi vmApi;
-   protected MetadataApi.Writeable metadataApi;
+   protected MetadataApi metadataApi;
 
    /*
     * Objects shared between tests.
