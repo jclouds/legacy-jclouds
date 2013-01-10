@@ -32,6 +32,7 @@ import org.jclouds.location.Region;
 import org.jclouds.location.Zone;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.location.functions.ZoneToEndpoint;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -51,7 +52,10 @@ import com.google.inject.TypeLiteral;
 public class EC2RestClientModuleExpectTest extends BaseEC2ClientExpectTest<Injector> {
    private Injector injector;
 
-   public EC2RestClientModuleExpectTest() {
+   @BeforeClass
+   @Override
+   protected void setupDefaultRequests() {
+      super.setupDefaultRequests();
       Builder<HttpRequest, HttpResponse> builder = ImmutableMap.<HttpRequest, HttpResponse> builder();
       builder.put(describeRegionsRequest, describeRegionsResponse);
       builder.putAll(describeAvailabilityZonesRequestResponse);

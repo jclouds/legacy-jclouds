@@ -20,7 +20,6 @@ package org.jclouds.ec2.features;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Properties;
-import java.util.TimeZone;
 
 import org.jclouds.Constants;
 import org.jclouds.ec2.EC2Api;
@@ -42,10 +41,6 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "unit")
 public class TagApiExpectTest extends BaseEC2ApiExpectTest<EC2Api> {
 
-   public TagApiExpectTest() {
-      TimeZone.setDefault(TimeZone.getTimeZone("America/Los_Angeles"));
-   }
-   
    /**
     * @see TagApi
     * @see SinceApiVersion

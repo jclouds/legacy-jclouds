@@ -54,6 +54,7 @@ public class LaunchSpecification {
       protected String kernelId;
       protected String keyName;
       protected String availabilityZone;
+      protected String subnetId;
       protected String ramdiskId;
       protected Boolean monitoringEnabled;
       protected ImmutableSet.Builder<BlockDeviceMapping> blockDeviceMappings = ImmutableSet
@@ -69,6 +70,7 @@ public class LaunchSpecification {
          kernelId = null;
          keyName = null;
          availabilityZone = null;
+         subnetId = null;
          ramdiskId = null;
          monitoringEnabled = false;
          blockDeviceMappings = ImmutableSet.builder();
@@ -117,7 +119,12 @@ public class LaunchSpecification {
          this.availabilityZone = availabilityZone;
          return this;
       }
-
+      
+      public Builder subnetId(String subnetId) {
+         this.subnetId = subnetId;
+         return this;
+      }
+      
       public Builder ramdiskId(String ramdiskId) {
          this.ramdiskId = ramdiskId;
          return this;
@@ -177,17 +184,18 @@ public class LaunchSpecification {
       }
 
       public LaunchSpecification build() {
-         return new LaunchSpecification(instanceType, imageId, kernelId, ramdiskId, availabilityZone, keyName,
-               securityGroupIdToNames.build(), blockDeviceMappings.build(), monitoringEnabled,
+         return new LaunchSpecification(instanceType, imageId, kernelId, ramdiskId, availabilityZone, subnetId,
+               keyName, securityGroupIdToNames.build(), blockDeviceMappings.build(), monitoringEnabled,
                securityGroupIds.build(), securityGroupNames.build(), userData);
       }
 
       public static Builder fromLaunchSpecification(LaunchSpecification in) {
          return new Builder().instanceType(in.getInstanceType()).imageId(in.getImageId()).kernelId(in.getKernelId())
-               .ramdiskId(in.getRamdiskId()).availabilityZone(in.getAvailabilityZone()).keyName(in.getKeyName())
-               .securityGroupIdToNames(in.getSecurityGroupIdToNames()).securityGroupIds(in.getSecurityGroupIds())
-               .securityGroupNames(in.getSecurityGroupNames()).blockDeviceMappings(in.getBlockDeviceMappings())
-               .monitoringEnabled(in.isMonitoringEnabled()).userData(in.getUserData());
+               .ramdiskId(in.getRamdiskId()).availabilityZone(in.getAvailabilityZone()).subnetId(in.getSubnetId())
+               .keyName(in.getKeyName()).securityGroupIdToNames(in.getSecurityGroupIdToNames())
+               .securityGroupIds(in.getSecurityGroupIds()).securityGroupNames(in.getSecurityGroupNames())
+               .blockDeviceMappings(in.getBlockDeviceMappings()).monitoringEnabled(in.isMonitoringEnabled())
+               .userData(in.getUserData());
       }
    }
 
@@ -196,6 +204,7 @@ public class LaunchSpecification {
    protected final String kernelId;
    protected final String ramdiskId;
    protected final String availabilityZone;
+   protected final String subnetId;
    protected final String keyName;
    protected final Map<String, String> securityGroupIdToNames;
    protected final Set<? extends BlockDeviceMapping> blockDeviceMappings;
@@ -205,7 +214,7 @@ public class LaunchSpecification {
    protected final byte[] userData;
 
    public LaunchSpecification(String instanceType, String imageId, String kernelId, String ramdiskId,
-         String availabilityZone, String keyName, Map<String, String> securityGroupIdToNames,
+         String availabilityZone, String subnetId, String keyName, Map<String, String> securityGroupIdToNames,
          Iterable<? extends BlockDeviceMapping> blockDeviceMappings, Boolean monitoringEnabled,
          Set<String> securityGroupIds, Set<String> securityGroupNames, byte[] userData) {
       this.instanceType = checkNotNull(instanceType, "instanceType");
@@ -213,6 +222,7 @@ public class LaunchSpecification {
       this.kernelId = kernelId;
       this.ramdiskId = ramdiskId;
       this.availabilityZone = availabilityZone;
+      this.subnetId = subnetId;
       this.keyName = keyName;
       this.securityGroupIdToNames = ImmutableMap.copyOf(checkNotNull(securityGroupIdToNames, "securityGroupIdToNames"));
       this.blockDeviceMappings = ImmutableSortedSet.copyOf(checkNotNull(blockDeviceMappings, "blockDeviceMappings"));
@@ -268,6 +278,14 @@ public class LaunchSpecification {
    public String getAvailabilityZone() {
       return availabilityZone;
    }
+   
+   /**
+    * The ID of the subnet in which to launch the Spot Instance.
+    */
+   @Nullable
+   public String getSubnetId() {
+      return subnetId;
+   }
 
    /**
     * Optional. RAM disk associated with this instance.
@@ -309,6 +327,7 @@ public class LaunchSpecification {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((availabilityZone == null) ? 0 : availabilityZone.hashCode());
+      result = prime * result + ((subnetId == null) ? 0 : subnetId.hashCode());
       result = prime * result + ((blockDeviceMappings == null) ? 0 : blockDeviceMappings.hashCode());
       result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
       result = prime * result + ((instanceType == null) ? 0 : instanceType.hashCode());
@@ -337,6 +356,11 @@ public class LaunchSpecification {
             return false;
       } else if (!availabilityZone.equals(other.availabilityZone))
          return false;
+      if (subnetId == null) {
+         if (other.subnetId != null)
+            return false;
+      } else if (!subnetId.equals(other.subnetId))
+         return false;      
       if (blockDeviceMappings == null) {
          if (other.blockDeviceMappings != null)
             return false;
@@ -399,7 +423,7 @@ public class LaunchSpecification {
    @Override
    public String toString() {
       return "[instanceType=" + instanceType + ", imageId=" + imageId + ", kernelId=" + kernelId + ", ramdiskId="
-            + ramdiskId + ", availabilityZone=" + availabilityZone + ", keyName=" + keyName
+            + ramdiskId + ", availabilityZone=" + availabilityZone + ", subnetId=" + subnetId + ", keyName=" + keyName
             + ", securityGroupIdToNames=" + securityGroupIdToNames + ", blockDeviceMappings=" + blockDeviceMappings
             + ", securityGroupIds=" + securityGroupIds + ", securityGroupNames=" + securityGroupNames
             + ", monitoringEnabled=" + monitoringEnabled + ", userData=" + Arrays.toString(userData) + "]";
