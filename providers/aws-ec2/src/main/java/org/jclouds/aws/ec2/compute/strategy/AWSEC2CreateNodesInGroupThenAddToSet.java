@@ -56,6 +56,7 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
@@ -89,7 +90,7 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
             CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
             AWSEC2InstancePresent instancePresent,
             Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
-            LoadingCache<RunningInstance, LoginCredentials> instanceToCredentials, Map<String, Credentials> credentialStore,
+            LoadingCache<RunningInstance, Optional<LoginCredentials>> instanceToCredentials, Map<String, Credentials> credentialStore,
             ComputeUtils utils, SpotInstanceRequestToAWSRunningInstance spotConverter) {
       super(client, elasticIpCache, nodeRunning, templateBuilderProvider, createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
                instancePresent, runningInstanceToNodeMetadata, instanceToCredentials, credentialStore, utils);

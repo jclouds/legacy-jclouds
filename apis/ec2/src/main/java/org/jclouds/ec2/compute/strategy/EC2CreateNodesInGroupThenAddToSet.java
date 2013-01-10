@@ -57,6 +57,7 @@ import org.jclouds.logging.Logger;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
@@ -94,7 +95,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
    @VisibleForTesting
    final ComputeUtils utils;
    final InstancePresent instancePresent;
-   final LoadingCache<RunningInstance, LoginCredentials> instanceToCredentials;
+   final LoadingCache<RunningInstance, Optional<LoginCredentials>> instanceToCredentials;
    final Map<String, Credentials> credentialStore;
    final Provider<TemplateBuilder> templateBuilderProvider;
 
@@ -107,7 +108,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
             Provider<TemplateBuilder> templateBuilderProvider,
             CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
             InstancePresent instancePresent, Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
-            LoadingCache<RunningInstance, LoginCredentials> instanceToCredentials, Map<String, Credentials> credentialStore,
+            LoadingCache<RunningInstance, Optional<LoginCredentials>> instanceToCredentials, Map<String, Credentials> credentialStore,
             ComputeUtils utils) {
       this.client = checkNotNull(client, "client");
       this.elasticIpCache = checkNotNull(elasticIpCache, "elasticIpCache");
@@ -160,7 +161,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
    protected void populateCredentials(Iterable<? extends RunningInstance> started, TemplateOptions options) {
       LoginCredentials credentials = null;
       for (RunningInstance instance : started) {
-         credentials = instanceToCredentials.apply(instance);
+         credentials = instanceToCredentials.apply(instance).orNull();
          if (credentials != null)
             break;
       }

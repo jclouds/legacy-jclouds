@@ -34,6 +34,7 @@ import org.jclouds.ec2.domain.RunningInstance;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -43,7 +44,7 @@ import com.google.common.cache.LoadingCache;
  * @author Adrian Cole
  */
 @Singleton
-public class CredentialsForInstance extends CacheLoader<RunningInstance, LoginCredentials> {
+public class CredentialsForInstance extends CacheLoader<RunningInstance, Optional<LoginCredentials>> {
 
    private final ConcurrentMap<RegionAndName, KeyPair> credentialsMap;
    private final Supplier<LoadingCache<RegionAndName, ? extends Image>> imageMap;
@@ -58,13 +59,13 @@ public class CredentialsForInstance extends CacheLoader<RunningInstance, LoginCr
    }
 
    @Override
-   public LoginCredentials load(final RunningInstance instance) throws ExecutionException {
+   public Optional<LoginCredentials> load(final RunningInstance instance) throws ExecutionException {
       if ("windows".equals(instance.getPlatform())) {
-         return passwordCredentialsFromWindowsInstance.apply(instance);
+         return Optional.of(passwordCredentialsFromWindowsInstance.apply(instance));
       } else  if (instance.getKeyName() != null) {
-         return LoginCredentials.builder().user(getLoginAccountFor(instance)).privateKey(getPrivateKeyOrNull(instance)).build();
+         return Optional.of(LoginCredentials.builder().user(getLoginAccountFor(instance)).privateKey(getPrivateKeyOrNull(instance)).build());
       }
-      return null;
+      return Optional.absent();
    }
 
    @VisibleForTesting
