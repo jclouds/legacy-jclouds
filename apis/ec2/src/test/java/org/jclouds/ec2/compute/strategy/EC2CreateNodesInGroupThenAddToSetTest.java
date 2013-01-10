@@ -57,6 +57,7 @@ import org.jclouds.ec2.services.InstanceClient;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -115,7 +116,7 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       expect(instance.getId()).andReturn(instanceCreatedId).atLeastOnce();
       // simulate a lazy credentials fetch
       LoginCredentials creds = LoginCredentials.builder().user("foo").privateKey("bar").build();
-      expect(strategy.instanceToCredentials.apply(instance)).andReturn(creds);
+      expect(strategy.instanceToCredentials.apply(instance)).andReturn(Optional.of(creds));
       expect(instance.getRegion()).andReturn(region).atLeastOnce();
       expect(strategy.credentialStore.put("node#" + region + "/" + instanceCreatedId, creds)).andReturn(null);
 
@@ -213,7 +214,7 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       expect(instance.getId()).andReturn(instanceCreatedId).atLeastOnce();
       // simulate a lazy credentials fetch
       LoginCredentials creds = LoginCredentials.builder().user("foo").privateKey("bar").build();
-      expect(strategy.instanceToCredentials.apply(instance)).andReturn(creds);
+      expect(strategy.instanceToCredentials.apply(instance)).andReturn(Optional.of(creds));
       expect(instance.getRegion()).andReturn(region).atLeastOnce();
       expect(strategy.credentialStore.put("node#" + region + "/" + instanceCreatedId, creds)).andReturn(null);
 
@@ -312,7 +313,7 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize = createMock(CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class);
       PresentInstances presentInstances = createMock(PresentInstances.class);
       RunningInstanceToNodeMetadata runningInstanceToNodeMetadata = createMock(RunningInstanceToNodeMetadata.class);
-      LoadingCache<RunningInstance, LoginCredentials> instanceToCredentials = createMock(LoadingCache.class);
+      LoadingCache<RunningInstance, Optional<LoginCredentials>> instanceToCredentials = createMock(LoadingCache.class);
       LoadingCache<RegionAndName, String> elasticIpCache = createMock(LoadingCache.class);
       GetNodeMetadataStrategy nodeRunning = new GetNodeMetadataStrategy(){
 

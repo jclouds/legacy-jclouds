@@ -58,6 +58,7 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
@@ -95,7 +96,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
    @VisibleForTesting
    final ComputeUtils utils;
    final PresentInstances presentInstances;
-   final LoadingCache<RunningInstance, LoginCredentials> instanceToCredentials;
+   final LoadingCache<RunningInstance, Optional<LoginCredentials>> instanceToCredentials;
    final Map<String, Credentials> credentialStore;
 
    @Inject
@@ -105,7 +106,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
          @Named(TIMEOUT_NODE_RUNNING) Predicate<AtomicReference<NodeMetadata>> nodeRunning,
          CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
          PresentInstances presentInstances, Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
-         LoadingCache<RunningInstance, LoginCredentials> instanceToCredentials,
+         LoadingCache<RunningInstance, Optional<LoginCredentials>> instanceToCredentials,
          Map<String, Credentials> credentialStore, ComputeUtils utils) {
       this.client = checkNotNull(client, "client");
       this.elasticIpCache = checkNotNull(elasticIpCache, "elasticIpCache");
@@ -174,7 +175,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
    private void populateCredentials(Set<RunningInstance> input, TemplateOptions options) {
       LoginCredentials credentials = null;
       for (RunningInstance instance : input) {
-         credentials = instanceToCredentials.apply(instance);
+         credentials = instanceToCredentials.apply(instance).orNull();
          if (credentials != null)
             break;
       }

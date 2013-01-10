@@ -64,6 +64,7 @@ import org.jclouds.predicates.RetryablePredicate;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -117,7 +118,7 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       bind(TemplateBuilder.class).to(EC2TemplateBuilderImpl.class);
       bind(TemplateOptions.class).to(EC2TemplateOptions.class);
       bind(ComputeService.class).to(EC2ComputeService.class);
-      bind(new TypeLiteral<CacheLoader<RunningInstance, LoginCredentials>>() {
+      bind(new TypeLiteral<CacheLoader<RunningInstance, Optional<LoginCredentials>>>() {
       }).to(CredentialsForInstance.class);
       bind(new TypeLiteral<Function<RegionAndName, KeyPair>>() {
       }).to(CreateUniqueKeyPair.class);
@@ -154,7 +155,7 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected LoadingCache<RunningInstance, LoginCredentials> credentialsMap(CacheLoader<RunningInstance, LoginCredentials> in) {
+   protected LoadingCache<RunningInstance, Optional<LoginCredentials>> credentialsMap(CacheLoader<RunningInstance, Optional<LoginCredentials>> in) {
       return CacheBuilder.newBuilder().build(in);
    }
 
