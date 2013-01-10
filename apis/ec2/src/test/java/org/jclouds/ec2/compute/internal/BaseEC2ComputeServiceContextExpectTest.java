@@ -42,5 +42,4 @@ public abstract class BaseEC2ComputeServiceContextExpectTest<T> extends BaseEC2C
       return createInjector(fn, module, props).getInstance(ComputeServiceContext.class);
    }
 
-
 }

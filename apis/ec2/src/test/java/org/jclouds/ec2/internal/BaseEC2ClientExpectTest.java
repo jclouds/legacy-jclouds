@@ -39,7 +39,7 @@ public abstract class BaseEC2ClientExpectTest<T> extends BaseEC2ExpectTest<T> {
       @Override
       protected void configure() {
          super.configure();
-         // predicatable node names
+         // predictable node names
          final AtomicInteger suffix = new AtomicInteger();
          bind(new TypeLiteral<Supplier<String>>() {
          }).toInstance(new Supplier<String>() {
