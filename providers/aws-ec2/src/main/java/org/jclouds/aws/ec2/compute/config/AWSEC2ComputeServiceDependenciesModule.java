@@ -66,6 +66,7 @@ import org.jclouds.predicates.PredicateWithResult;
 import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.cache.CacheBuilder;
@@ -89,7 +90,7 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
       bind(TemplateBuilder.class).to(EC2TemplateBuilderImpl.class);
       bind(TemplateOptions.class).to(AWSEC2TemplateOptions.class);
       bind(ComputeService.class).to(AWSEC2ComputeService.class);
-      bind(new TypeLiteral<CacheLoader<RunningInstance, LoginCredentials>>() {
+      bind(new TypeLiteral<CacheLoader<RunningInstance, Optional<LoginCredentials>>>() {
       }).to(CredentialsForInstance.class);
       bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
       }).annotatedWith(Names.named("SECURITY")).to(CreateSecurityGroupIfNeeded.class);
