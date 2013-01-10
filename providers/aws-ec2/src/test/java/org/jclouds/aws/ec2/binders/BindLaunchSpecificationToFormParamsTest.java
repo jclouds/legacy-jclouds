@@ -65,4 +65,13 @@ public class BindLaunchSpecificationToFormParamsTest {
       assertEquals(binder.apply(spec), ImmutableMap.of("LaunchSpecification.InstanceType", "t1.micro",
             "LaunchSpecification.ImageId", "ami-123", "LaunchSpecification.SecurityGroupId.1", "sid-foo"));
    }
+
+   @Test
+   public void testApplyWithSubnetId() throws UnknownHostException {
+      LaunchSpecification spec = LaunchSpecification.builder().instanceType(InstanceType.T1_MICRO).imageId("ami-123")
+            .subnetId("subnet-xyz").build();
+
+      assertEquals(binder.apply(spec), ImmutableMap.of("LaunchSpecification.InstanceType", "t1.micro",
+            "LaunchSpecification.ImageId", "ami-123", "LaunchSpecification.SubnetId", "subnet-xyz"));
+   }
 }

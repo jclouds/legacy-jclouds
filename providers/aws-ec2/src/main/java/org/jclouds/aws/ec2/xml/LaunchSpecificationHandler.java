@@ -110,6 +110,8 @@ public class LaunchSpecificationHandler extends HandlerForGeneratedRequestWithRe
          builder.keyName(currentOrNull());
       } else if (qName.equals("availabilityZone")) {
          builder.availabilityZone(currentOrNull());
+      } else if (qName.equals("subnetId")) {
+         builder.subnetId(currentOrNull());
       } else if (qName.equals("ramdiskId")) {
          builder.ramdiskId(currentOrNull());
       } else if (qName.equals("enabled")) {

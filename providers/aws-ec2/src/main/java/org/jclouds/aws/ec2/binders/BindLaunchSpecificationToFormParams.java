@@ -66,6 +66,8 @@ public class BindLaunchSpecificationToFormParams implements Binder, Function<Lau
       if (launchSpec.getSecurityGroupIds().size() > 0)
          options.withSecurityGroupIds(launchSpec.getSecurityGroupIds());
       options.asType(checkNotNull(launchSpec.getInstanceType(), "instanceType"));
+      if (launchSpec.getSubnetId() != null)
+         options.withSubnetId(launchSpec.getSubnetId());
       if (launchSpec.getKernelId() != null)
          options.withKernelId(launchSpec.getKernelId());
       if (launchSpec.getKeyName() != null)

@@ -19,7 +19,7 @@
 package org.jclouds.aws.ec2.compute.internal;
 
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY;
-import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_GENERATE_INSTANCE_NAMES;
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_GENERATE_INSTANCE_NAMES;
 
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
