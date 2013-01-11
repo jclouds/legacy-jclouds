@@ -48,70 +48,20 @@ import com.google.common.base.Objects.ToStringHelper;
  * nodes.
  * 
  * @author Adrian Cole
- * @see <a href=
- *      "http://docs.rackspacecloud.com/loadbalancers/api/v1.0/clb-devguide/content/ch04s02.html" />
  */
 public class NodeRequest extends BaseNode<NodeRequest> {
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Builder toBuilder() {
-      return new Builder().from(this);
-   }
-
-   public static class Builder extends BaseNode.Builder<NodeRequest> {
-
-      @Override
-      public NodeRequest build() {
-         return new NodeRequest(address, port, condition, weight);
-      }
-
-      @Override
-      public Builder address(String address) {
-         return Builder.class.cast(super.address(address));
-      }
-
-      @Override
-      public Builder condition(Condition condition) {
-         return Builder.class.cast(super.condition(condition));
-      }
-
-      @Override
-      public Builder from(NodeRequest in) {
-         return Builder.class.cast(super.from(in));
-      }
-
-      @Override
-      public Builder port(int port) {
-         return Builder.class.cast(super.port(port));
-      }
-
-      @Override
-      public Builder weight(Integer weight) {
-         return Builder.class.cast(super.weight(weight));
-      }
-
-   }
-
    // for serialization only
    NodeRequest() {
-
    }
 
-   public NodeRequest(String address, int port, Condition condition, Integer weight) {
-      super(address, port, condition, weight);
+   public NodeRequest(String address, int port, Condition condition, Type type, Integer weight) {
+      super(address, port, condition, type, weight);
    }
 
    protected ToStringHelper string() {
       return Objects.toStringHelper(this).omitNullValues()
-            .add("address", address).add("port", port).add("condition", condition).add("weight", weight);
+            .add("address", address).add("port", port).add("condition", condition).add("type", type).add("weight", weight);
    }
    
    @Override
@@ -132,5 +82,70 @@ public class NodeRequest extends BaseNode<NodeRequest> {
       NodeRequest that = NodeRequest.class.cast(obj);
       return Objects.equal(this.address, that.address)
             && Objects.equal(this.port, that.port);
+   }
+
+   public static class Builder extends BaseNode.Builder<NodeRequest> {
+
+      @Override
+      public NodeRequest build() {
+         return new NodeRequest(address, port, condition, type, weight);
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder address(String address) {
+         return Builder.class.cast(super.address(address));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder condition(Condition condition) {
+         return Builder.class.cast(super.condition(condition));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder type(Type type) {
+         return Builder.class.cast(super.type(type));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder port(int port) {
+         return Builder.class.cast(super.port(port));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder weight(Integer weight) {
+         return Builder.class.cast(super.weight(weight));
+      }
+      @Override
+      public Builder from(NodeRequest in) {
+         return Builder.class.cast(super.from(in));
+      }
+   }
+
+   @SuppressWarnings("unchecked")
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Builder toBuilder() {
+      return new Builder().from(this);
    }
 }

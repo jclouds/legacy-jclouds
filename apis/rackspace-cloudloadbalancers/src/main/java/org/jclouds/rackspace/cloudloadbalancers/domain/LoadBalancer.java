@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
@@ -33,138 +34,154 @@ import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * 
  * @author Adrian Cole
  */
 public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+   private final String region;
+   private final int id;
+   private final Status status;
+   private final Set<VirtualIP> virtualIPs;
+   private final String clusterName;
+   private final Date created;
+   private final Date updated;
+   private final boolean contentCaching;
+   private final int nodeCount;
+   private final SSLTermination sslTermination;
+   private final SourceAddresses sourceAddresses;
+
+   public LoadBalancer(String region, int id, String name, String protocol, @Nullable Integer port, Set<Node> nodes,
+         @Nullable Integer timeout, @Nullable Boolean halfClosed, @Nullable Algorithm algorithm, Status status,
+         Set<VirtualIP> virtualIPs, @Nullable Map<String, SessionPersistenceType> sessionPersistenceType,
+         String clusterName, Date created, Date updated, @Nullable Map<String, Boolean> connectionLogging,
+         @Nullable ConnectionThrottle connectionThrottle, boolean contentCaching, int nodeCount,
+         @Nullable HealthMonitor healthMonitor, @Nullable SSLTermination sslTermination,
+         SourceAddresses sourceAddresses, @Nullable Set<AccessRule> accessRules,
+         @Nullable Set<Metadata> metadata) {
+      super(name, protocol, port, nodes, algorithm, timeout, halfClosed, sessionPersistenceType, connectionLogging,
+            connectionThrottle, healthMonitor, accessRules, metadata);
+      this.region = checkNotNull(region, "region");
+      checkArgument(id != -1, "id must be specified");
+      this.id = id;
+      this.status = checkNotNull(status, "status");
+      this.virtualIPs = ImmutableSet.copyOf(checkNotNull(virtualIPs, "virtualIPs"));
+      this.clusterName = clusterName;
+      this.created = checkNotNull(created, "created");
+      this.updated = checkNotNull(updated, "updated");
+      this.contentCaching = contentCaching;
+      this.nodeCount = nodeCount;
+      this.sslTermination = sslTermination;
+      this.sourceAddresses = sourceAddresses;
+   }
+
+   public String getRegion() {
+      return region;
+   }
+
+   public int getId() {
+      return id;
    }
 
    /**
-    * {@inheritDoc}
+    * @see Status
     */
-   @Override
-   public Builder toBuilder() {
-      return new Builder().from(this);
+   public Status getStatus() {
+      return status;
    }
 
-   public static class Builder extends BaseLoadBalancer.Builder<Node, LoadBalancer> {
-      private String region;
-      private int id = -1;
-      private Status status;
-      private Set<VirtualIP> virtualIPs = ImmutableSet.<VirtualIP> of();
-      private String sessionPersistenceType;
-      private String clusterName;
-      private Date created;
-      private Date updated;
-      private boolean connectionLoggingEnabled;
-      private int nodeCount = 0;
+   /**
+    * @see VirtualIP
+    */
+   public Set<VirtualIP> getVirtualIPs() {
+      return virtualIPs;
+   }
 
-      public Builder region(String region) {
-         this.region = region;
-         return this;
-      }
+   /**
+    * Name of the cluster.
+    */
+   public String getClusterName() {
+      return clusterName;
+   }
 
-      public Builder id(int id) {
-         this.id = id;
-         return this;
-      }
+   /**
+    * When the load balancer was created.
+    */
+   public Date getCreated() {
+      return created;
+   }
 
-      public Builder status(Status status) {
-         this.status = status;
-         return this;
-      }
+   /**
+    * When the load balancer was updated.
+    */
+   public Date getUpdated() {
+      return updated;
+   }
 
-      public Builder algorithm(Algorithm algorithm) {
-         algorithm(algorithm.name());
-         return this;
-      }
+   /**
+    * View the current content caching configuration.
+    */
+   public boolean isContentCaching() {
+      return contentCaching;
+   }
 
-      public Builder virtualIPs(Iterable<VirtualIP> virtualIPs) {
-         this.virtualIPs = ImmutableSet.<VirtualIP> copyOf(checkNotNull(virtualIPs, "virtualIPs"));
-         return this;
-      }
+   /**
+    * Broken out as a separate field because when LoadBalancers are returned from 
+    * {@link LoadBalancerApi#list()}, no Nodes are returned (so you can't rely on getNodes().size())
+    * but a nodeCount is returned. When {@link LoadBalancerApi#get(int)} is called, nodes are
+    * returned by no nodeCount is returned.
+    *  
+    * @return The number of Nodes in this LoadBalancer 
+    */
+   public int getNodeCount() {
+      return nodes.size() > 0 ? nodes.size() : nodeCount;
+   }
 
-      public Builder sessionPersistenceType(String sessionPersistenceType) {
-         this.sessionPersistenceType = sessionPersistenceType;
-         return this;
-      }
+   /**
+    * @see SSLTermination
+    */
+   @Nullable
+   public SSLTermination getSSLTermination() {
+      return sslTermination;
+   }
 
-      public Builder clusterName(String clusterName) {
-         this.clusterName = clusterName;
-         return this;
-      }
+   /**
+    * @see SourceAddresses
+    */
+   public SourceAddresses getSourceAddresses() {
+      return sourceAddresses;
+   }
 
-      public Builder created(Date created) {
-         this.created = created;
-         return this;
-      }
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this).omitNullValues().add("id", id).add("region", region).add("status", status)
+            .add("name", name).add("protocol", protocol).add("port", port).add("nodeCount", getNodeCount())
+            .add("nodes", nodes).add("timeout", timeout).add("algorithm", algorithm).add("halfClosed", halfClosed)
+            .add("clusterName", clusterName).add("created", created).add("updated", updated)
+            .add("contentCaching", contentCaching).add("sessionPersistenceType", getSessionPersistenceType())
+            .add("sslTermination", sslTermination).add("connectionLogging", isConnectionLogging())
+            .add("connectionThrottle", connectionThrottle).add("healthMonitor", healthMonitor)
+            .add("accessRules", accessList).add("metadata", getMetadata()).add("sourceAddresses", sourceAddresses)
+            .add("virtualIPs", virtualIPs);
+   }
 
-      public Builder updated(Date updated) {
-         this.updated = updated;
-         return this;
-      }
+   @Override
+   public String toString() {
+      return string().toString();
+   }
 
-      public Builder connectionLoggingEnabled(boolean connectionLoggingEnabled) {
-         this.connectionLoggingEnabled = connectionLoggingEnabled;
-         return this;
-      }
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(id, region);
+   }
 
-      /**
-       * @see LoadBalancer#getNodeCount()
-       */
-      public Builder nodeCount(int nodeCount) {
-         this.nodeCount = nodeCount;
-         return this;
-      }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null || getClass() != obj.getClass())
+         return false;
 
-      public LoadBalancer build() {
-         return new LoadBalancer(region, id, name, protocol, port, algorithm, status, virtualIPs, nodes,
-                  sessionPersistenceType, clusterName, created, updated, connectionLoggingEnabled, nodeCount);
-      }
-
-      @Override
-      public Builder nodes(Iterable<Node> nodes) {
-         this.nodes = ImmutableSet.<Node> copyOf(checkNotNull(nodes, "nodes"));
-         return this;
-      }
-
-      @Override
-      public Builder node(Node nodes) {
-         this.nodes.add(checkNotNull(nodes, "nodes"));
-         return this;
-      }
-
-      @Override
-      public Builder algorithm(String algorithm) {
-         return Builder.class.cast(super.algorithm(algorithm));
-      }
-
-      @Override
-      public Builder from(LoadBalancer in) {
-         return Builder.class.cast(super.from(in)).id(in.getId()).status(in.getStatus()).virtualIPs(in.getVirtualIPs())
-                  .clusterName(in.getClusterName()).created(in.getCreated()).updated(in.getUpdated())
-                  .connectionLoggingEnabled(in.isConnectionLoggingEnabled()).nodeCount(in.getNodeCount());
-      }
-
-      @Override
-      public Builder name(String name) {
-         return Builder.class.cast(super.name(name));
-      }
-
-      @Override
-      public Builder port(Integer port) {
-         return Builder.class.cast(super.port(port));
-      }
-
-      @Override
-      public Builder protocol(String protocol) {
-         return Builder.class.cast(super.protocol(protocol));
-      }
-
+      LoadBalancer that = LoadBalancer.class.cast(obj);
+      return Objects.equal(this.id, that.id) && Objects.equal(this.region, that.region);
    }
 
    /**
@@ -216,168 +233,221 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
       public static Status fromValue(String status) {
          try {
             return valueOf(checkNotNull(status, "status"));
-         } catch (IllegalArgumentException e) {
+         }
+         catch (IllegalArgumentException e) {
             return UNRECOGNIZED;
          }
       }
 
    }
 
-   /**
-    * All load balancers utilize an algorithm that defines how traffic should be directed between
-    * back-end nodes. The default algorithm for newly created load balancers is RANDOM, which can be
-    * overridden at creation time or changed after the load balancer has been initially provisioned.
-    * The algorithm name is to be constant within a major revision of the load balancing API, though
-    * new algorithms may be created with a unique algorithm name within a given major revision of
-    * the service API.
-    */
-   public static enum Algorithm {
-      /**
-       * The node with the lowest number of connections will receive requests.
-       */
-      LEAST_CONNECTIONS,
-      /**
-       * Back-end servers are selected at random.
-       */
-      RANDOM,
-      /**
-       * Connections are routed to each of the back-end servers in turn.
-       */
-      ROUND_ROBIN,
-      /**
-       * Each request will be assigned to a node based on the number of concurrent connections to
-       * the node and its weight.
-       */
-      WEIGHTED_LEAST_CONNECTIONS,
-      /**
-       * A round robin algorithm, but with different proportions of traffic being directed to the
-       * back-end nodes. Weights must be defined as part of the load balancer's node configuration.
-       */
-      WEIGHTED_ROUND_ROBIN, UNRECOGNIZED;
+   public static class Builder extends BaseLoadBalancer.Builder<Node, LoadBalancer> {
+      private String region;
+      private int id = -1;
+      private Status status;
+      private Set<VirtualIP> virtualIPs = ImmutableSet.<VirtualIP> of();
+      private String clusterName;
+      private Date created;
+      private Date updated;
+      private boolean contentCaching;
+      private int nodeCount = 0;
+      private SSLTermination sslTermination;
+      private SourceAddresses sourceAddresses;
 
-      public static Algorithm fromValue(String algorithm) {
-         try {
-            return valueOf(checkNotNull(algorithm, "algorithm"));
-         } catch (IllegalArgumentException e) {
-            return UNRECOGNIZED;
-         }
+      public Builder region(String region) {
+         this.region = region;
+         return this;
+      }
+
+      public Builder id(int id) {
+         this.id = id;
+         return this;
+      }
+
+      public Builder status(Status status) {
+         this.status = status;
+         return this;
+      }
+
+      public Builder virtualIPs(Iterable<VirtualIP> virtualIPs) {
+         this.virtualIPs = ImmutableSet.<VirtualIP> copyOf(checkNotNull(virtualIPs, "virtualIPs"));
+         return this;
+      }
+
+      public Builder clusterName(String clusterName) {
+         this.clusterName = clusterName;
+         return this;
+      }
+
+      public Builder created(Date created) {
+         this.created = created;
+         return this;
+      }
+
+      public Builder updated(Date updated) {
+         this.updated = updated;
+         return this;
+      }
+
+      public Builder contentCaching(boolean contentCaching) {
+         this.contentCaching = contentCaching;
+         return this;
+      }
+
+      /**
+       * @see LoadBalancer#getNodeCount()
+       */
+      public Builder nodeCount(int nodeCount) {
+         this.nodeCount = nodeCount;
+         return this;
+      }
+
+      public Builder sslTermination(@Nullable SSLTermination sslTermination) {
+         this.sslTermination = sslTermination;
+         return this;
+      }
+
+      public Builder sourceAddresses(@Nullable SourceAddresses sourceAddresses) {
+         this.sourceAddresses = sourceAddresses;
+         return this;
+      }
+
+      public LoadBalancer build() {
+         return new LoadBalancer(region, id, name, protocol, port, nodes, timeout, halfClosed, algorithm, status,
+               virtualIPs, sessionPersistence, clusterName, created, updated, connectionLogging, connectionThrottle,
+               contentCaching, nodeCount, healthMonitor, sslTermination, sourceAddresses, accessRules, metadata);
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder nodes(Iterable<Node> nodes) {
+         this.nodes = ImmutableSet.<Node> copyOf(checkNotNull(nodes, "nodes"));
+         return this;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder node(Node nodes) {
+         this.nodes.add(checkNotNull(nodes, "nodes"));
+         return this;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder algorithm(Algorithm algorithm) {
+         return Builder.class.cast(super.algorithm(algorithm));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder name(String name) {
+         return Builder.class.cast(super.name(name));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder port(Integer port) {
+         return Builder.class.cast(super.port(port));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder protocol(String protocol) {
+         return Builder.class.cast(super.protocol(protocol));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder timeout(@Nullable Integer timeout) {
+         return Builder.class.cast(super.timeout(timeout));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder halfClosed(@Nullable Boolean halfClosed) {
+         return Builder.class.cast(super.halfClosed(halfClosed));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder sessionPersistenceType(@Nullable SessionPersistenceType sessionPersistenceType) {
+         return Builder.class.cast(super.sessionPersistenceType(sessionPersistenceType));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder connectionLogging(@Nullable Boolean connectionLogging) {
+         return Builder.class.cast(super.connectionLogging(connectionLogging));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder connectionThrottle(@Nullable ConnectionThrottle connectionThrottle) {
+         return Builder.class.cast(super.connectionThrottle(connectionThrottle));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder healthMonitor(@Nullable HealthMonitor healthMonitor) {
+         return Builder.class.cast(super.healthMonitor(healthMonitor));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder accessRules(@Nullable Set<AccessRule> accessRules) {
+         return Builder.class.cast(super.accessRules(accessRules));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder metadata(@Nullable Set<Metadata> metadata) {
+         return Builder.class.cast(super.metadata(metadata));
+      }
+
+      @Override
+      public Builder from(LoadBalancer in) {
+         return Builder.class.cast(super.from(in)).region(in.getRegion()).id(in.getId()).status(in.getStatus())
+               .virtualIPs(in.getVirtualIPs()).clusterName(in.getClusterName()).created(in.getCreated())
+               .updated(in.getUpdated()).contentCaching(in.isContentCaching()).nodeCount(in.getNodeCount())
+               .sslTermination(in.getSSLTermination()).sourceAddresses(in.getSourceAddresses());
       }
    }
 
-   public static Algorithm[] WEIGHTED_ALGORITHMS = { Algorithm.WEIGHTED_LEAST_CONNECTIONS,
-            Algorithm.WEIGHTED_ROUND_ROBIN };
-
-   private final String region;
-   private final int id;
-   private final Status status;
-   private final Algorithm algorithm;
-   private final Set<VirtualIP> virtualIPs;
-   private final String sessionPersistenceType;
-   private final String clusterName;
-   private final Date created;
-   private final Date updated;
-   private final boolean connectionLoggingEnabled;
-   private int nodeCount = 0;
-
-   public LoadBalancer(String region, int id, String name, String protocol, Integer port, @Nullable String algorithm,
-            Status status, Iterable<VirtualIP> virtualIPs, Iterable<Node> nodes, String sessionPersistenceType,
-            String clusterName, Date created, Date updated, boolean connectionLoggingEnabled, Integer nodeCount) {
-      super(name, protocol, port, algorithm, nodes);
-      this.region = checkNotNull(region, "region");
-      checkArgument(id != -1, "id must be specified");
-      this.id = id;
-      this.status = checkNotNull(status, "status");
-      this.algorithm = algorithm != null ? Algorithm.fromValue(algorithm) : null;
-      this.virtualIPs = ImmutableSet.copyOf(checkNotNull(virtualIPs, "virtualIPs"));
-      this.sessionPersistenceType = sessionPersistenceType;
-      this.clusterName = clusterName;
-      this.created = checkNotNull(created, "created");
-      this.updated = checkNotNull(updated, "updated");
-      this.connectionLoggingEnabled = connectionLoggingEnabled;
-      this.nodeCount = nodeCount;
-   }
-
-   public String getRegion() {
-      return region;
-   }
-
-   public int getId() {
-      return id;
-   }
-
-   public Status getStatus() {
-      return status;
-   }
-
-   /**
-    * 
-    * @return algorithm, which may be null if the load balancer is deleted
-    */
-   @Nullable
-   public Algorithm getTypedAlgorithm() {
-      return algorithm;
-   }
-
-   public Set<VirtualIP> getVirtualIPs() {
-      return virtualIPs;
-   }
-
-   public String getClusterName() {
-      return clusterName;
-   }
-
-   public String getSessionPersistenceType() {
-      return sessionPersistenceType;
-   }
-
-   public Date getCreated() {
-      return created;
-   }
-
-   public Date getUpdated() {
-      return updated;
-   }
-
-   public boolean isConnectionLoggingEnabled() {
-      return connectionLoggingEnabled;
-   }
-
-   /**
-    * Broken out as a separate field because when LoadBalancers are returned from 
-    * {@link LoadBalancerApi#list()}, no Nodes are returned (so you can't rely on getNodes().size())
-    * but a nodeCount is returned. When {@link LoadBalancerApi#get(int)} is called, nodes are
-    * returned by no nodeCount is returned.
-    *  
-    * @return The number of Nodes in this LoadBalancer 
-    */
-   public int getNodeCount() {
-      return nodes.size() > 0 ? nodes.size() : nodeCount;
-   }
-
-   protected ToStringHelper string() {
-      return Objects.toStringHelper(this).omitNullValues()
-            .add("id", id).add("region", region).add("name", name).add("protocol", protocol).add("port", port)
-            .add("algorithm", algorithm).add("status", status).add("virtualIPs", virtualIPs).add("nodeCount", getNodeCount())
-            .add("nodes", nodes).add("sessionPersistenceType", sessionPersistenceType).add("created", created)
-            .add("updated", updated).add("clusterName", clusterName).add("connectionLoggingEnabled", connectionLoggingEnabled);
-   }
-   
-   @Override
-   public String toString() {
-      return string().toString();
+   @SuppressWarnings("unchecked")
+   public static Builder builder() {
+      return new Builder();
    }
 
    @Override
-   public int hashCode() {
-      return Objects.hashCode(id, region);
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj) return true;
-      if (obj == null || getClass() != obj.getClass()) return false;
-
-      LoadBalancer that = LoadBalancer.class.cast(obj);
-      return Objects.equal(this.id, that.id) && Objects.equal(this.region, that.region);
+   public Builder toBuilder() {
+      return new Builder().from(this);
    }
 }

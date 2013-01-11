@@ -22,9 +22,11 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.rackspace.cloudloadbalancers.domain.Node;
-import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer.Status;
+import org.jclouds.rackspace.cloudloadbalancers.domain.Node;
+import org.jclouds.rackspace.cloudloadbalancers.domain.SSLTermination;
+import org.jclouds.rackspace.cloudloadbalancers.domain.SourceAddresses;
+import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP;
 import org.jclouds.rackspace.cloudloadbalancers.domain.internal.BaseLoadBalancer;
 
 import com.google.common.base.Objects;
@@ -33,17 +35,18 @@ import com.google.common.collect.Sets;
 
 /**
  * Only here as the datatype for cloudloadbalancers is awkward.
- **/
+ */
 class LB extends BaseLoadBalancer<Node, LB> {
    int id;
    int nodeCount;
    Status status;
    Set<VirtualIP> virtualIps = Sets.newLinkedHashSet();
-   Map<String, String> sessionPersistence = Maps.newLinkedHashMap();
    Map<String, String> cluster = Maps.newLinkedHashMap();
    Map<String, Date> created = Maps.newLinkedHashMap();
    Map<String, Date> updated = Maps.newLinkedHashMap();
-   Map<String, Boolean> connectionLogging = Maps.newLinkedHashMap();
+   Map<String, Boolean> contentCaching = Maps.newLinkedHashMap();
+   SSLTermination sslTermination;
+   SourceAddresses sourceAddresses;
 
    @Override
    public int hashCode() {

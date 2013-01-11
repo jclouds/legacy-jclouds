@@ -51,73 +51,58 @@ import com.google.common.base.Objects.ToStringHelper;
  * nodes.
  * 
  * @author Adrian Cole
- * @see <a href=
- *      "http://docs.rackspacecloud.com/loadbalancers/api/v1.0/clb-devguide/content/ch04s02.html" />
  */
 public class Node extends BaseNode<Node> {
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+   private int id;
+   private Status status;
+
+   // for serialization only
+   Node() {
    }
 
-   /**
-    * {@inheritDoc}
-    */
+   public Node(int id, String address, int port, Condition condition, Type type, Status status, Integer weight) {
+      super(address, port, condition, type, weight);
+      checkArgument(id != -1, "id must be specified");
+      this.id = id;
+      this.status = checkNotNull(status, "status");
+   }
+
+   public int getId() {
+      return id;
+   }
+
+   public Status getStatus() {
+      return status;
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("id", id).add("address", address).add("port", port).add("condition", condition)
+            .add("type", type).add("weight", weight).add("status", status);
+   }
+   
    @Override
-   public Builder toBuilder() {
-      return new Builder().from(this);
+   public String toString() {
+      return string().toString();
    }
 
-   public static class Builder extends BaseNode.Builder<Node> {
-      private int id = -1;
-      private Status status;
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(id);
+   }
 
-      public Builder id(int id) {
-         this.id = id;
-         return this;
-      }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
 
-      public Builder status(Status status) {
-         this.status = status;
-         return this;
-      }
-
-      @Override
-      public Node build() {
-         return new Node(id, address, port, condition, status, weight);
-      }
-
-      @Override
-      public Builder address(String address) {
-         return Builder.class.cast(super.address(address));
-      }
-
-      @Override
-      public Builder condition(Condition condition) {
-         return Builder.class.cast(super.condition(condition));
-      }
-
-      @Override
-      public Builder from(Node in) {
-         return Builder.class.cast(super.from(in)).id(in.getId()).status(in.getStatus());
-      }
-
-      @Override
-      public Builder port(int port) {
-         return Builder.class.cast(super.port(port));
-      }
-
-      @Override
-      public Builder weight(Integer weight) {
-         return Builder.class.cast(super.weight(weight));
-      }
-
+      Node that = Node.class.cast(obj);
+      return Objects.equal(this.id, that.id);
    }
 
    /**
     * The status is determined by the passive or active health monitors.
-    * 
     */
    public static enum Status {
       /**
@@ -146,54 +131,82 @@ public class Node extends BaseNode<Node> {
             return UNRECOGNIZED;
          }
       }
-
    }
 
-   private int id;
-   private Status status;
+   public static class Builder extends BaseNode.Builder<Node> {
+      private int id = -1;
+      private Status status;
 
-   // for serialization only
-   Node() {
+      public Builder id(int id) {
+         this.id = id;
+         return this;
+      }
 
+      /**
+       * @see Status
+       */
+      public Builder status(Status status) {
+         this.status = status;
+         return this;
+      }
+
+      @Override
+      public Node build() {
+         return new Node(id, address, port, condition, type, status, weight);
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder address(String address) {
+         return Builder.class.cast(super.address(address));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder condition(Condition condition) {
+         return Builder.class.cast(super.condition(condition));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder type(Type type) {
+         return Builder.class.cast(super.type(type));
+      }      
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder port(int port) {
+         return Builder.class.cast(super.port(port));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder weight(Integer weight) {
+         return Builder.class.cast(super.weight(weight));
+      }
+      @Override
+      public Builder from(Node in) {
+         return Builder.class.cast(super.from(in)).id(in.getId()).status(in.getStatus());
+      }
    }
 
-   public Node(int id, String address, int port, Condition condition, Status status, Integer weight) {
-      super(address, port, condition, weight);
-      checkArgument(id != -1, "id must be specified");
-      this.id = id;
-      this.status = checkNotNull(status, "status");
+   @SuppressWarnings("unchecked")
+   public static Builder builder() {
+      return new Builder();
    }
 
-   public int getId() {
-      return id;
-   }
-
-   public Status getStatus() {
-      return status;
-   }
-
-   protected ToStringHelper string() {
-      return Objects.toStringHelper(this).omitNullValues()
-            .add("address", address).add("port", port).add("condition", condition)
-            .add("weight", weight).add("status", status);
-   }
-   
    @Override
-   public String toString() {
-      return string().toString();
-   }
-
-   @Override
-   public int hashCode() {
-      return Objects.hashCode(id);
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj) return true;
-      if (obj == null || getClass() != obj.getClass()) return false;
-
-      Node that = Node.class.cast(obj);
-      return Objects.equal(this.id, that.id);
+   public Builder toBuilder() {
+      return new Builder().from(this);
    }
 }

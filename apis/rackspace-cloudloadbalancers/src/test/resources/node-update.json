@@ -1,1 +1,1 @@
-{"node":{"condition":"DISABLED","weight":20}}
+{"node":{"condition":"DISABLED","type":"SECONDARY","weight":20}}

@@ -21,6 +21,8 @@ package org.jclouds.rackspace.cloudloadbalancers.domain.internal;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.jclouds.rackspace.cloudloadbalancers.domain.internal.BaseLoadBalancer.Algorithm;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
@@ -49,53 +51,81 @@ import com.google.common.base.Objects.ToStringHelper;
  * nodes.
  * 
  * @author Adrian Cole
- * @see <a href=
- *      "http://docs.rackspacecloud.com/loadbalancers/api/v1.0/clb-devguide/content/ch04s02.html" />
  */
 public class BaseNode<T extends BaseNode<T>> implements Comparable<BaseNode<T>> {
 
-   public static <T extends BaseNode<T>> Builder<T> builder() {
-      return new Builder<T>();
+   protected String address;
+   protected int port;
+   protected Condition condition;
+   protected Type type;
+   protected Integer weight;
+
+   // for serialization only
+   protected BaseNode() {
    }
 
-   @SuppressWarnings("unchecked")
-   public Builder<T> toBuilder() {
-      return new Builder<T>().from((T) this);
+   public BaseNode(String address, int port, Condition condition, Type type, Integer weight) {
+      this.address = checkNotNull(address, "address");
+      checkArgument(port != -1, "port must be specified");
+      this.port = port;
+      this.condition = checkNotNull(condition, "condition");
+      this.type = type;
+      this.weight = weight;
    }
 
-   public static class Builder<T extends BaseNode<T>> {
-      protected String address;
-      protected int port = -1;
-      protected Condition condition = Condition.ENABLED;
-      protected Integer weight;
+   public String getAddress() {
+      return address;
+   }
 
-      public Builder<T> address(String address) {
-         this.address = address;
-         return this;
-      }
+   public int getPort() {
+      return port;
+   }
 
-      public Builder<T> port(int port) {
-         this.port = port;
-         return this;
-      }
+   public Condition getCondition() {
+      return condition;
+   }
 
-      public Builder<T> condition(Condition condition) {
-         this.condition = condition;
-         return this;
-      }
+   public Type getType() {
+      return type;
+   }
 
-      public Builder<T> weight(Integer weight) {
-         this.weight = weight;
-         return this;
-      }
+   /**
+    * the maximum weight of a node is 100.
+    */
+   public Integer getWeight() {
+      return weight;
+   }
 
-      public BaseNode<T> build() {
-         return new BaseNode<T>(address, port, condition, weight);
-      }
+   @Override
+   public int compareTo(BaseNode<T> arg0) {
+      return address.compareTo(arg0.address);
+   }
 
-      public Builder<T> from(T in) {
-         return address(in.getAddress()).port(in.getPort()).condition(in.getCondition()).weight(in.getWeight());
-      }
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this).omitNullValues().add("address", address).add("port", port)
+            .add("condition", condition).add("type", type).add("weight", weight);
+   }
+
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(address, port, condition);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null || getClass() != obj.getClass())
+         return false;
+
+      BaseNode<?> that = BaseNode.class.cast(obj);
+      return Objects.equal(this.address, that.address) && Objects.equal(this.port, that.port)
+            && Objects.equal(this.condition, that.condition);
    }
 
    /**
@@ -122,78 +152,112 @@ public class BaseNode<T extends BaseNode<T>> implements Comparable<BaseNode<T>> 
       public static Condition fromValue(String condition) {
          try {
             return valueOf(checkNotNull(condition, "condition"));
-         } catch (IllegalArgumentException e) {
+         }
+         catch (IllegalArgumentException e) {
             return UNRECOGNIZED;
          }
       }
 
    }
 
-   protected String address;
-   protected int port;
-   protected Condition condition;
-   protected Integer weight;
-
-   // for serialization only
-   protected BaseNode() {
-
-   }
-
-   public BaseNode(String address, int port, Condition condition, Integer weight) {
-      this.address = checkNotNull(address, "address");
-      checkArgument(port != -1, "port must be specified");
-      this.port = port;
-      this.condition = checkNotNull(condition, "condition");
-      this.weight = weight;
-   }
-
-   public String getAddress() {
-      return address;
-   }
-
-   public int getPort() {
-      return port;
-   }
-
-   public Condition getCondition() {
-      return condition;
-   }
-
    /**
-    * the maximum weight of a node is 100.
+    * Type of node.
     */
-   public Integer getWeight() {
-      return weight;
+   public static enum Type {
+      /**
+       * Nodes defined as PRIMARY are in the normal rotation to receive traffic from the load balancer.
+       */
+      PRIMARY,
+
+      /**
+       * Nodes defined as SECONDARY are only in the rotation to receive traffic from the load balancer when all the
+       * primary nodes fail. This provides a failover feature that automatically routes traffic to the secondary node
+       * in the event that the primary node is disabled or in a failing state. Note that active health monitoring must
+       * be enabled on the load balancer to enable the failover feature to the secondary node.
+       */
+      SECONDARY,
+
+      UNRECOGNIZED;
+
+      public static Type fromValue(String type) {
+         try {
+            return valueOf(checkNotNull(type, "type"));
+         }
+         catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
+      }
    }
 
-   @Override
-   public int compareTo(BaseNode<T> arg0) {
-      return address.compareTo(arg0.address);
+   public static class Builder<T extends BaseNode<T>> {
+      protected String address;
+      protected int port = -1;
+      protected Condition condition = Condition.ENABLED;
+      protected Type type;
+      protected Integer weight;
+
+      /**
+       * Required. IP address or domain name for the node.
+       */
+      public Builder<T> address(String address) {
+         this.address = address;
+         return this;
+      }
+
+      /**
+       * Required. Port number for the service you are load balancing.
+       */
+      public Builder<T> port(int port) {
+         this.port = port;
+         return this;
+      }
+
+      /**
+       * Required. Condition for the node, which determines its role within the load balancer.
+       * 
+       * @see Condition
+       */
+      public Builder<T> condition(Condition condition) {
+         this.condition = condition;
+         return this;
+      }
+
+      /**
+       * Type of node to add.
+       * 
+       * @see Type
+       */
+      public Builder<T> type(Type type) {
+         this.type = type;
+         return this;
+      }
+
+      /**
+       * Weight of node to add. If the {@link Algorithm#WEIGHTED_ROUND_ROBIN} load balancer algorithm mode is 
+       * selected, then the user should assign the relevant weight to the node using the weight attribute for 
+       * the node. Must be an integer from 1 to 100.
+       */
+      public Builder<T> weight(Integer weight) {
+         this.weight = weight;
+         return this;
+      }
+
+      public BaseNode<T> build() {
+         return new BaseNode<T>(address, port, condition, type, weight);
+      }
+
+      public Builder<T> from(T in) {
+         return address(in.getAddress()).port(in.getPort()).condition(in.getCondition()).type(in.getType())
+               .weight(in.getWeight());
+      }
    }
 
-   protected ToStringHelper string() {
-      return Objects.toStringHelper(this).omitNullValues()
-            .add("address", address).add("port", port).add("condition", condition).add("weight", weight);
-   }
-   
-   @Override
-   public String toString() {
-      return string().toString();
+   public static <T extends BaseNode<T>> Builder<T> builder() {
+      return new Builder<T>();
    }
 
-   @Override
-   public int hashCode() {
-      return Objects.hashCode(address, port, condition);
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj) return true;
-      if (obj == null || getClass() != obj.getClass()) return false;
-
-      BaseNode<?> that = BaseNode.class.cast(obj);
-      return Objects.equal(this.address, that.address)
-            && Objects.equal(this.port, that.port)
-            && Objects.equal(this.condition, that.condition);
+   @SuppressWarnings("unchecked")
+   public Builder<T> toBuilder() {
+      return new Builder<T>().from((T) this);
    }
 }

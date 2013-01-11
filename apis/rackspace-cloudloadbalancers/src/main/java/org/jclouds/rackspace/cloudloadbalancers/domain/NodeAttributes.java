@@ -20,48 +20,40 @@ package org.jclouds.rackspace.cloudloadbalancers.domain;
 
 import org.jclouds.rackspace.cloudloadbalancers.domain.internal.BaseNode;
 import org.jclouds.rackspace.cloudloadbalancers.domain.internal.BaseNode.Condition;
+import org.jclouds.rackspace.cloudloadbalancers.domain.internal.BaseNode.Type;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
+ * Used to update Nodes.
  * 
  * @author Dan Lo Bianco
- * @see <a href=
- *      "http://docs.rackspace.com/loadbalancers/api/v1.0/clb-devguide/content/Modify_Nodes-d1e2503.html"
- *      />
  */
 public class NodeAttributes {
-   protected String condition;
+
+   protected Condition condition;
+   protected Type type;
    protected Integer weight;
 
-   public NodeAttributes condition(String condition) {
+   public NodeAttributes condition(Condition condition) {
       this.condition = condition;
       return this;
    }
 
-   public NodeAttributes weight(int weight) {
+   public NodeAttributes type(Type type) {
+      this.type = type;
+      return this;
+   }
+
+   public NodeAttributes weight(Integer weight) {
       this.weight = weight;
       return this;
    }
 
-   public static <T extends BaseNode<T>> NodeAttributes fromNode(T n) {
-      return Builder.condition(n.getCondition()).weight(n.getWeight());
-   }
-
-   public static class Builder {
-      public static NodeAttributes condition(Condition condition) {
-         return new NodeAttributes().condition(condition.name());
-      }
-
-      public static NodeAttributes weight(int weight) {
-         return new NodeAttributes().weight(weight);
-      }
-   }
-
    protected ToStringHelper string() {
       return Objects.toStringHelper(this).omitNullValues()
-            .add("condition", condition).add("weight", weight);
+            .add("condition", condition).add("type", type).add("weight", weight);
    }
    
    @Override
@@ -71,7 +63,7 @@ public class NodeAttributes {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(condition, weight);
+      return Objects.hashCode(condition, type, weight);
    }
 
    @Override
@@ -81,6 +73,34 @@ public class NodeAttributes {
 
       NodeAttributes that = NodeAttributes.class.cast(obj);
       return Objects.equal(this.condition, that.condition)
+            && Objects.equal(this.type, that.type)
             && Objects.equal(this.weight, that.weight);
+   }
+
+   public static class Builder {
+      /**
+       * @see BaseNode.Builder#condition(Condition)
+       */
+      public static NodeAttributes condition(Condition condition) {
+         return new NodeAttributes().condition(condition);
+      }
+
+      /**
+       * @see BaseNode.Builder#type(Type)
+       */
+      public static NodeAttributes type(Type type) {
+         return new NodeAttributes().type(type);
+      }
+
+      /**
+       * @see BaseNode.Builder#weight(Integer)
+       */
+      public static NodeAttributes weight(Integer weight) {
+         return new NodeAttributes().weight(weight);
+      }
+   }
+
+   public static <T extends BaseNode<T>> NodeAttributes fromNode(T n) {
+      return Builder.condition(n.getCondition()).type(n.getType()).weight(n.getWeight());
    }
 }

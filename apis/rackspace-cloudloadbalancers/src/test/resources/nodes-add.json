@@ -1,1 +1,1 @@
-{"nodes":[{"address":"10.1.1.1","port":80,"condition":"ENABLED","weight":3},{"address":"10.1.1.2","port":80,"condition":"ENABLED","weight":8},{"address":"10.1.1.3","port":80,"condition":"DISABLED","weight":12}]}
+{"nodes":[{"address":"10.1.1.1","port":80,"condition":"ENABLED","weight":3},{"address":"10.1.1.2","port":80,"condition":"ENABLED","type":"SECONDARY","weight":8},{"address":"10.1.1.3","port":80,"condition":"DISABLED","weight":12}]}
