@@ -114,7 +114,7 @@ public class NodeApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
             assert n.getAddress() != null : n;
             assert n.getPort() != -1 : n;
             assert n.getStatus() != null : n;
-            assert !Arrays.asList(LoadBalancer.WEIGHTED_ALGORITHMS).contains(lb.getTypedAlgorithm())
+            assert !Arrays.asList(LoadBalancer.WEIGHTED_ALGORITHMS).contains(lb.getAlgorithm())
                      || n.getWeight() != null : n;
 
             Node getDetails = clbApi.getNodeApiForZoneAndLoadBalancer(lb.getRegion(), lb.getId()).get(n.getId());
@@ -125,7 +125,7 @@ public class NodeApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
                assertEquals(getDetails.getAddress(), n.getAddress());
                assertEquals(getDetails.getPort(), n.getPort());
                assertEquals(getDetails.getStatus(), n.getStatus());
-               if (Arrays.asList(LoadBalancer.WEIGHTED_ALGORITHMS).contains(lb.getTypedAlgorithm())) {
+               if (Arrays.asList(LoadBalancer.WEIGHTED_ALGORITHMS).contains(lb.getAlgorithm())) {
                   assertEquals(getDetails.getWeight(), n.getWeight());
                }
             } catch (AssertionError e) {

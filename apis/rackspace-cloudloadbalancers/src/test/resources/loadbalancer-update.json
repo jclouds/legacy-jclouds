@@ -1,8 +1,1 @@
-{
-    "loadBalancer": {
-        "name": "foo",
-        "protocol": "HTTPS",
-        "port": 443,
-        "algorithm": "RANDOM"
-    }
-}
+{"loadBalancer":{"name":"foo","protocol":"HTTPS","port":443,"algorithm":"RANDOM"}}

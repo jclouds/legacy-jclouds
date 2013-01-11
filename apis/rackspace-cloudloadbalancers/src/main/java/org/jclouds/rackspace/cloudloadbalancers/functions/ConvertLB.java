@@ -51,21 +51,29 @@ public class ConvertLB implements Function<LB, LoadBalancer> {
    @Override
    public LoadBalancer apply(LB lb) {
       try {
-         Builder builder = LoadBalancer.builder().region(region).name(lb.getName()).port(lb.getPort())
-               .protocol(lb.getProtocol()).algorithm(lb.getAlgorithm()).nodes(lb.getNodes()).id(lb.id)
-               .status(lb.status).virtualIPs(lb.virtualIps).nodeCount(lb.nodeCount);
+         Builder builder = LoadBalancer.builder().id(lb.id).region(region).status(lb.status).name(lb.getName())
+               .protocol(lb.getProtocol()).port(lb.getPort()).nodeCount(lb.nodeCount).nodes(lb.getNodes())
+               .timeout(lb.getTimeout()).algorithm(lb.getAlgorithm()).halfClosed(lb.isHalfClosed())
+               .sessionPersistenceType(lb.getSessionPersistenceType()).connectionLogging(lb.isConnectionLogging())
+               .connectionThrottle(lb.getConnectionThrottle()).healthMonitor(lb.getHealthMonitor())
+               .accessRules(lb.getAccessRules()).metadata(lb.getMetadata()).virtualIPs(lb.virtualIps);
+
          if (lb.cluster.size() == 1)
             builder.clusterName(Iterables.get(lb.cluster.values(), 0));
-         if (lb.sessionPersistence.size() == 1)
-            builder.sessionPersistenceType(Iterables.get(lb.sessionPersistence.values(), 0));
          if (lb.created.size() == 1)
             builder.created(Iterables.get(lb.created.values(), 0));
          if (lb.updated.size() == 1)
             builder.updated(Iterables.get(lb.updated.values(), 0));
-         if (lb.connectionLogging.size() == 1)
-            builder.connectionLoggingEnabled(Iterables.get(lb.connectionLogging.values(), 0));
+         if (lb.contentCaching.size() == 1)
+            builder.contentCaching(Iterables.get(lb.contentCaching.values(), 0));
+         if (lb.sslTermination != null)
+            builder.sslTermination(lb.sslTermination);
+         if (lb.sourceAddresses != null)
+            builder.sourceAddresses(lb.sourceAddresses);
+
          return builder.build();
-      } catch (NullPointerException e) {
+      }
+      catch (NullPointerException e) {
          logger.warn(e, "nullpointer found parsing %s", lb);
          throw e;
       }

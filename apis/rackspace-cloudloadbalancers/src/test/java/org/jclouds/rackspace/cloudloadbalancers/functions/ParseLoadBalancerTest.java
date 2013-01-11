@@ -21,13 +21,20 @@ package org.jclouds.rackspace.cloudloadbalancers.functions;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.json.BaseItemParserTest;
+import org.jclouds.rackspace.cloudloadbalancers.domain.AccessRule;
+import org.jclouds.rackspace.cloudloadbalancers.domain.ConnectionThrottle;
+import org.jclouds.rackspace.cloudloadbalancers.domain.HealthMonitor;
+import org.jclouds.rackspace.cloudloadbalancers.domain.HealthMonitor.Type;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
-import org.jclouds.rackspace.cloudloadbalancers.domain.Node;
-import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer.Status;
+import org.jclouds.rackspace.cloudloadbalancers.domain.Metadata;
+import org.jclouds.rackspace.cloudloadbalancers.domain.Node;
+import org.jclouds.rackspace.cloudloadbalancers.domain.SSLTermination;
+import org.jclouds.rackspace.cloudloadbalancers.domain.SourceAddresses;
+import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP;
 import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP.IPVersion;
-import org.jclouds.rackspace.cloudloadbalancers.functions.ConvertLB;
-import org.jclouds.rackspace.cloudloadbalancers.functions.ParseLoadBalancer;
+import org.jclouds.rackspace.cloudloadbalancers.domain.internal.BaseLoadBalancer.Algorithm;
+import org.jclouds.rackspace.cloudloadbalancers.domain.internal.BaseLoadBalancer.SessionPersistenceType;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -57,19 +64,32 @@ public class ParseLoadBalancerTest extends BaseItemParserTest<LoadBalancer> {
             .name("sample-loadbalancer")
             .protocol("HTTP")
             .port(80)
-            .algorithm("RANDOM")
+            .algorithm(Algorithm.RANDOM)
             .status(Status.ACTIVE)
-            .connectionLoggingEnabled(true)
+            .connectionLogging(true)
+            .contentCaching(true)
             .nodeCount(2)
+            .halfClosed(false)
+            .healthMonitor(HealthMonitor.builder().type(Type.CONNECT).delay(10).timeout(5).attemptsBeforeDeactivation(2).build())
+            .sslTermination(SSLTermination.builder().enabled(true).secureTrafficOnly(false).securePort(443).build())
+            .sourceAddresses(SourceAddresses.builder().ipv6Public("2001:4800:7901::5/64").ipv4Public("174.143.139.137").ipv4Servicenet("10.183.250.137").build())
+            .connectionThrottle(ConnectionThrottle.builder().maxConnections(100).minConnections(10).maxConnectionRate(50).rateInterval(60).build())
+            .accessRules(ImmutableSet.of(
+                  AccessRule.builder().id(22215).type(AccessRule.Type.DENY).address("1.2.3.4/32").build(),
+                  AccessRule.builder().id(22217).type(AccessRule.Type.ALLOW).address("12.0.0.0/8").build()))
             .virtualIPs(ImmutableSet.of(
-                  VirtualIP.builder().id(1000).address("206.10.10.210").type(VirtualIP.Type.PUBLIC).ipVersion(IPVersion.IPV4).build()))
+                  VirtualIP.builder().id(1000).address("206.10.10.210").type(VirtualIP.Type.PUBLIC).ipVersion(IPVersion.IPV4).build(),
+                  VirtualIP.builder().id(1001).address("2001:4800:7901:0000:9a32:3c2a:0000:0001").type(VirtualIP.Type.PUBLIC).ipVersion(IPVersion.IPV6).build()))
             .nodes(ImmutableSet.of(
                   Node.builder().id(1041).address("10.1.1.1").port(80).condition(Node.Condition.ENABLED).status(Node.Status.ONLINE).build(), 
                   Node.builder().id(1411).address("10.1.1.2").port(80).condition(Node.Condition.ENABLED).status(Node.Status.ONLINE).build()))
-            .sessionPersistenceType("HTTP_COOKIE")
+            .sessionPersistenceType(SessionPersistenceType.HTTP_COOKIE)
             .clusterName("c1.dfw1")
             .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:42Z"))
-            .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:44Z")).build();
+            .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:44Z"))
+            .metadata(ImmutableSet.<Metadata> of(
+               Metadata.builder().id(1).key("color").value("red").build(), 
+               Metadata.builder().id(2).key("label").value("web-load-balancer").build())).build();
    }
 
    // add factory binding as this is not default

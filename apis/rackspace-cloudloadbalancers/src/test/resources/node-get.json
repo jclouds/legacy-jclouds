@@ -1,11 +1,23 @@
-{"node": {
-        "id":410,
-        "address":"10.1.1.1",
-        "port":80,
-        "condition":"ENABLED",
-        "status":"ONLINE",
-        "weight":12,
-        "type":"PRIMARY",
-        "metadata":[]
+{
+    "node": {
+        "id": 410,
+        "address": "10.1.1.1",
+        "port": 80,
+        "condition": "ENABLED",
+        "status": "ONLINE",
+        "weight": 12,
+        "type": "PRIMARY",
+        "metadata": [
+            {
+                "id": 1,
+                "key": "color",
+                "value": "red"
+            },
+            {
+                "id": 2,
+                "key": "label",
+                "value": "web-load-balancer"
+            }
+        ]
     }
 }
