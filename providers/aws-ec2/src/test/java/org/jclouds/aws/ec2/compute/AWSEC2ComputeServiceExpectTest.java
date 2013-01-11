@@ -26,6 +26,7 @@ import org.jclouds.aws.ec2.compute.internal.BaseAWSEC2ComputeServiceExpectTest;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
@@ -91,5 +92,38 @@ public class AWSEC2ComputeServiceExpectTest extends BaseAWSEC2ComputeServiceExpe
       NodeMetadata node = Iterables.getOnlyElement(createsVPCSpotInstance.createNodesInGroup("demoGroup", 1, template));
       assertEquals(node.getId(), "us-east-1/sir-228e6406");
    }
+   
+   public void testListNodesWhereImageDoesntExist() throws Exception {
+      HttpRequest describeInstancesRequest = formSigner.filter(HttpRequest.builder().method("POST")
+                           .endpoint("https://ec2." + region + ".amazonaws.com/")
+                           .addHeader("Host", "ec2." + region + ".amazonaws.com")
+                           .addFormParam("Action", "DescribeInstances").build());
 
+      HttpRequest describeSpotInstancesRequest = formSigner.filter(HttpRequest.builder().method("POST")
+                          .endpoint("https://ec2." + region + ".amazonaws.com/")
+                          .addHeader("Host", "ec2." + region + ".amazonaws.com")
+                          .addFormParam("Action", "DescribeSpotInstanceRequests").build());
+
+      HttpResponse noSpotInstancesResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromStringWithContentType(
+                  "<DescribeSpotInstanceRequestsResponse><spotInstanceRequestSet></spotInstanceRequestSet></DescribeSpotInstanceRequestsResponse>",
+                  MediaType.APPLICATION_XML)).build();
+      
+      HttpResponse noImagesResponse = HttpResponse.builder().statusCode(200)
+                          .payload(payloadFromStringWithContentType(
+                                 "<DescribeImagesResponse><imagesSet></imagesSet></DescribeImagesResponse>",
+                                 MediaType.APPLICATION_XML)).build();
+      
+      Builder<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder();
+      requestResponseMap.put(describeRegionsRequest, describeRegionsResponse);
+      requestResponseMap.put(describeAvailabilityZonesRequest, describeAvailabilityZonesResponse);
+      requestResponseMap.put(describeImagesRequest, noImagesResponse);
+      requestResponseMap.put(describeInstancesRequest, describeInstanceResponse);
+      requestResponseMap.put(describeSpotInstancesRequest, noSpotInstancesResponse);
+
+      ComputeService listsWithoutImages = requestsSendResponses(requestResponseMap.build());
+
+      NodeMetadata node = Iterables.getOnlyElement(listsWithoutImages.listNodesDetailsMatching(NodePredicates.all()));
+      assertEquals(node.getId(), "us-east-1/i-2baa5550");
+   }
 }
