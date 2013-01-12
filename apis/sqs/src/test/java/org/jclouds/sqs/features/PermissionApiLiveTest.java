@@ -18,12 +18,13 @@
  */
 package org.jclouds.sqs.features;
 
-import static org.jclouds.concurrent.MoreExecutors.sameThreadExecutor;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.jclouds.providers.AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint;
 import static org.jclouds.sqs.reference.SQSParameters.ACTION;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
+
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 

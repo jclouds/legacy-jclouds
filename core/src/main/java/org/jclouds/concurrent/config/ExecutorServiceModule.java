@@ -34,8 +34,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.concurrent.MoreExecutors;
-import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
 
@@ -83,25 +81,13 @@ public class ExecutorServiceModule extends AbstractModule {
    @Inject
    public ExecutorServiceModule(@Named(PROPERTY_USER_THREADS) ExecutorService userThreads,
          @Named(PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads) {
-      this.userExecutorFromConstructor = addToStringOnSubmit(checkNotGuavaSameThreadExecutor(userThreads));
-      this.ioExecutorFromConstructor = addToStringOnSubmit(checkNotGuavaSameThreadExecutor(ioThreads));
+      this.userExecutorFromConstructor = addToStringOnSubmit(userThreads);
+      this.ioExecutorFromConstructor = addToStringOnSubmit(ioThreads);
    }
 
    private ExecutorService addToStringOnSubmit(ExecutorService executor) {
       if (executor != null) {
          return new DescribingExecutorService(executor);
-      }
-      return executor;
-   }
-
-   private ExecutorService checkNotGuavaSameThreadExecutor(ExecutorService executor) {
-      // we detect behavior based on the class
-      if (executor != null && !(executor.getClass().isAnnotationPresent(SingleThreaded.class))
-            && executor.getClass().getSimpleName().indexOf("SameThread") != -1) {
-         Logger.CONSOLE.warn(
-               "please switch from %s to %s or annotate your same threaded executor with @SingleThreaded", executor
-                     .getClass().getName(), MoreExecutors.SameThreadExecutorService.class.getName());
-         return MoreExecutors.sameThreadExecutor();
       }
       return executor;
    }

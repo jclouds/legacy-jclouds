@@ -18,13 +18,16 @@
  */
 package org.jclouds.lifecycle.config;
 
+import static com.google.common.base.Throwables.propagate;
+import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static com.google.inject.matcher.Matchers.any;
+import static java.util.Arrays.asList;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
@@ -34,14 +37,12 @@ import javax.annotation.PreDestroy;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
-import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.lifecycle.Closer;
 
-import com.google.common.base.Throwables;
-import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ExecutionList;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
+import com.google.inject.Stage;
 import com.google.inject.TypeLiteral;
 import com.google.inject.spi.InjectionListener;
 import com.google.inject.spi.TypeEncounter;
@@ -103,10 +104,10 @@ public class LifeCycleModule extends AbstractModule {
    protected void bindPostInjectionInvoke(final Closer closer, final ExecutionList list) {
       bindListener(any(), new TypeListener() {
          public <I> void hear(TypeLiteral<I> injectableType, TypeEncounter<I> encounter) {
-            Set<Method> methods = Sets.newHashSet();
+            Set<Method> methods = newHashSet();
             Class<? super I> type = injectableType.getRawType();
             while (type != null) {
-               methods.addAll(Arrays.asList(type.getDeclaredMethods()));
+               methods.addAll(asList(type.getDeclaredMethods()));
                type = type.getSuperclass();
             }
             for (final Method method : methods) {
@@ -150,12 +151,12 @@ public class LifeCycleModule extends AbstractModule {
                               method.invoke(injectee);
                            } catch (InvocationTargetException ie) {
                               Throwable e = ie.getTargetException();
-                              throw Throwables.propagate(e);
+                              throw propagate(e);
                            } catch (IllegalAccessException e) {
-                              throw Throwables.propagate(e);
+                              throw propagate(e);
                            }
                         }
-                     }, MoreExecutors.sameThreadExecutor());
+                     }, sameThreadExecutor());
                   }
                });
             }
