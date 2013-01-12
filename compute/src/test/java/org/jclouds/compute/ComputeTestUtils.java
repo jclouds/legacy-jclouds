@@ -19,6 +19,7 @@
 package org.jclouds.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.collect.Iterables.get;
 import static org.testng.Assert.assertEquals;
 
@@ -31,7 +32,6 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.rest.HttpClient;
-import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
@@ -64,7 +64,7 @@ public class ComputeTestUtils {
    }
 
    public static void checkSecretKeyFile(String secretKeyFile) {
-      Preconditions2.checkNotEmpty(secretKeyFile, "System property: [test.ssh.keyfile] set to an empty string");
+      checkNotNull(emptyToNull(secretKeyFile), "System property: [test.ssh.keyfile] set to an empty string");
       if (!new File(secretKeyFile).exists()) {
          throw new IllegalStateException("secretKeyFile not found at: " + secretKeyFile);
       }

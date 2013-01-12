@@ -21,6 +21,7 @@ package org.jclouds.openstack.nova.v2_0.compute.options;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.emptyToNull;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -28,12 +29,12 @@ import java.util.Set;
 
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.scriptbuilder.domain.Statement;
-import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -154,7 +155,7 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
     */
    public NovaTemplateOptions securityGroupNames(Iterable<String> securityGroupNames) {
       for (String groupName : checkNotNull(securityGroupNames, "securityGroupNames"))
-         Preconditions2.checkNotEmpty(groupName, "all security groups must be non-empty");
+         checkNotNull(emptyToNull(groupName), "all security groups must be non-empty");
       this.securityGroupNames = Optional.<Set<String>> of(ImmutableSet.copyOf(securityGroupNames));
       return this;
    }

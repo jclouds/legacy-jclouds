@@ -19,14 +19,16 @@
 package org.jclouds.vcloud.compute.options;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.emptyToNull;
 
 import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.util.Preconditions2;
 import org.jclouds.vcloud.domain.network.FenceMode;
 import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
+import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -120,8 +122,7 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
     * Specifies the customizationScript used to run instances with
     */
    public VCloudTemplateOptions customizationScript(String customizationScript) {
-      Preconditions2.checkNotEmpty(customizationScript, "customizationScript must be non-empty");
-      this.customizationScript = customizationScript;
+      this.customizationScript = checkNotNull(emptyToNull(customizationScript), "customizationScript must be defined");
       return this;
    }
 

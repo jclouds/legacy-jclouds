@@ -23,6 +23,7 @@ import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.io.BaseEncoding.base64;
 
 import java.util.List;
@@ -37,7 +38,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToJsonPayload;
-import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -318,7 +318,7 @@ public class CreateServerOptions implements MapBinder {
     */
    public CreateServerOptions securityGroupNames(Iterable<String> securityGroupNames) {
       for (String groupName : checkNotNull(securityGroupNames, "securityGroupNames"))
-         Preconditions2.checkNotEmpty(groupName, "all security groups must be non-empty");
+         checkNotNull(emptyToNull(groupName), "all security groups must be non-empty");
       this.securityGroupNames = ImmutableSet.copyOf(securityGroupNames);
       return this;
    }

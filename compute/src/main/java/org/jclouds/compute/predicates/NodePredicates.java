@@ -19,13 +19,13 @@
 package org.jclouds.compute.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.emptyToNull;
 
 import java.util.Set;
 
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadata.Status;
-import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -191,7 +191,7 @@ public class NodePredicates {
     * @return predicate
     */
    public static Predicate<NodeMetadata> inGroup(final String group) {
-      Preconditions2.checkNotEmpty(group, "group must be defined");
+      checkNotNull(emptyToNull(group), "group must be defined");
       return new Predicate<NodeMetadata>() {
          @Override
          public boolean apply(NodeMetadata nodeMetadata) {
@@ -231,7 +231,7 @@ public class NodePredicates {
     * @return predicate
     */
    public static Predicate<NodeMetadata> runningInGroup(final String group) {
-      Preconditions2.checkNotEmpty(group, "group must be defined");
+      checkNotNull(emptyToNull(group), "group must be defined");
       return new Predicate<NodeMetadata>() {
          @Override
          public boolean apply(NodeMetadata nodeMetadata) {

@@ -22,6 +22,7 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Strings.emptyToNull;
 
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +34,6 @@ import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.scriptbuilder.domain.Statement;
-import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -148,9 +148,8 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
     * Specifies the keypair used to run instances with
     */
    public AWSEC2TemplateOptions placementGroup(String placementGroup) {
-      checkNotNull(placementGroup, "use noPlacementGroup option to request boot without a keypair");
+      checkNotNull(emptyToNull(placementGroup), "use noPlacementGroup option instead of passing null");
       checkState(!noPlacementGroup, "you cannot specify both options placementGroup and noPlacementGroup");
-      Preconditions2.checkNotEmpty(placementGroup, "placementGroup must be non-empty");
       this.placementGroup = placementGroup;
       return this;
    }
@@ -168,9 +167,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
     * Specifies the subnetId used to run instances in
     */
    public AWSEC2TemplateOptions subnetId(String subnetId) {
-      checkNotNull(subnetId, "subnetId cannot be null");
-      Preconditions2.checkNotEmpty(subnetId, "subnetId must be non-empty");
-      this.subnetId = subnetId;
+      this.subnetId = checkNotNull(emptyToNull(subnetId), "subnetId must be defined");
       return this;
    }
 
@@ -204,7 +201,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
    public AWSEC2TemplateOptions securityGroupIds(Iterable<String> groupIds) {
       checkArgument(Iterables.size(groupIds) > 0, "you must specify at least one security group");
       for (String groupId : groupIds)
-         Preconditions2.checkNotEmpty(groupId, "all security groups must be non-empty");
+         checkNotNull(emptyToNull(groupId), "all security groups must be non-empty");
       this.groupIds = ImmutableSet.copyOf(groupIds);
       return this;
    }

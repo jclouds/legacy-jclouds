@@ -50,7 +50,7 @@ public class AWSEC2TemplateOptionsTest {
       assertEquals(options.as(AWSEC2TemplateOptions.class), options);
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
+   @Test(expectedExceptions = NullPointerException.class, expectedExceptionsMessageRegExp = "all security groups must be non-empty")
    public void testsecurityGroupIdsIterableBadFormat() {
       AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
       options.securityGroupIds(ImmutableSet.of("groupId1", ""));
@@ -76,7 +76,7 @@ public class AWSEC2TemplateOptionsTest {
       assertEquals(options.getGroupIds(), ImmutableSet.of("groupId1", "groupId2"));
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
+   @Test(expectedExceptions = NullPointerException.class, expectedExceptionsMessageRegExp = "all security groups must be non-empty")
    public void testsecurityGroupIdsVarArgsBadFormat() {
       AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
       options.securityGroupIds("mygroupId", "");
@@ -107,7 +107,7 @@ public class AWSEC2TemplateOptionsTest {
       assertEquals(options.getGroupIds(), ImmutableSet.of("groupId1", "groupId2"));
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
+   @Test(expectedExceptions = NullPointerException.class, expectedExceptionsMessageRegExp = "all security groups must be non-empty")
    public void testsecurityGroupsIterableBadFormat() {
       AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
       options.securityGroups(ImmutableSet.of("group1", ""));
@@ -133,7 +133,7 @@ public class AWSEC2TemplateOptionsTest {
       assertEquals(options.getGroups(), ImmutableSet.of("group1", "group2"));
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
+   @Test(expectedExceptions = NullPointerException.class, expectedExceptionsMessageRegExp = "all security groups must be non-empty")
    public void testsecurityGroupsVarArgsBadFormat() {
       AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
       options.securityGroups("mygroup", "");
@@ -164,7 +164,7 @@ public class AWSEC2TemplateOptionsTest {
       assertEquals(options.getGroups(), ImmutableSet.of("group1", "group2"));
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
+   @Test(expectedExceptions = NullPointerException.class, expectedExceptionsMessageRegExp = "use noKeyPair option to request boot without a keypair")
    public void testkeyPairBadFormat() {
       AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
       options.keyPair("");

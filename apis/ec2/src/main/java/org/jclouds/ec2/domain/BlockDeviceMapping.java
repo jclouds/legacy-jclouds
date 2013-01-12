@@ -20,9 +20,9 @@ package org.jclouds.ec2.domain;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.emptyToNull;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.util.Preconditions2;
 
 /**
  * 
@@ -101,7 +101,7 @@ public class BlockDeviceMapping implements Comparable<BlockDeviceMapping>{
          @Nullable Integer sizeInGib, @Nullable Boolean noDevice, @Nullable Boolean deleteOnTermination) {
 
       checkNotNull(deviceName, "deviceName cannot be null");
-      Preconditions2.checkNotEmpty(deviceName, "the deviceName must be non-empty");
+      checkNotNull(emptyToNull(deviceName), "deviceName must be defined");
 
       if (sizeInGib != null) {
          checkArgument(sizeInGib >= VOLUME_SIZE_MIN_VALUE && sizeInGib <= VOLUME_SIZE_MAX_VALUE,
@@ -205,8 +205,7 @@ public class BlockDeviceMapping implements Comparable<BlockDeviceMapping>{
       public MapEBSSnapshotToDevice(String deviceName, String snapshotId, @Nullable Integer sizeInGib,
             @Nullable Boolean deleteOnTermination) {
          super(deviceName, null, snapshotId, sizeInGib, null, deleteOnTermination);
-         checkNotNull(snapshotId, "snapshotId cannot be null");
-         Preconditions2.checkNotEmpty(snapshotId, "the snapshotId must be non-empty");
+         checkNotNull(emptyToNull(snapshotId), "snapshotId must be defined");
       }
    }
 
@@ -220,8 +219,7 @@ public class BlockDeviceMapping implements Comparable<BlockDeviceMapping>{
    public static class MapEphemeralDeviceToDevice extends BlockDeviceMapping {
       public MapEphemeralDeviceToDevice(String deviceName, String virtualName) {
          super(deviceName, virtualName, null, null, null, null);
-         checkNotNull(virtualName, "virtualName cannot be null");
-         Preconditions2.checkNotEmpty(virtualName, "the virtualName must be non-empty");
+         checkNotNull(emptyToNull(virtualName), "virtualName must be defined");
       }
    }
 

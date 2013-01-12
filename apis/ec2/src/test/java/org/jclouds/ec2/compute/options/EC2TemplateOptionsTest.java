@@ -46,7 +46,7 @@ public class EC2TemplateOptionsTest {
       assertEquals(options.as(EC2TemplateOptions.class), options);
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
+   @Test(expectedExceptions = NullPointerException.class, expectedExceptionsMessageRegExp = "all security groups must be non-empty")
    public void testsecurityGroupsIterableBadFormat() {
       EC2TemplateOptions options = new EC2TemplateOptions();
       options.securityGroups(ImmutableSet.of("group1", ""));
@@ -72,7 +72,7 @@ public class EC2TemplateOptionsTest {
       assertEquals(options.getGroups(), ImmutableSet.of("group1", "group2"));
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
+   @Test(expectedExceptions = NullPointerException.class, expectedExceptionsMessageRegExp = "all security groups must be non-empty")
    public void testsecurityGroupsVarArgsBadFormat() {
       EC2TemplateOptions options = new EC2TemplateOptions();
       options.securityGroups("mygroup", "");
@@ -104,7 +104,7 @@ public class EC2TemplateOptionsTest {
       assertEquals(options.getGroups(), ImmutableSet.of("group1", "group2"));
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
+   @Test(expectedExceptions = NullPointerException.class, expectedExceptionsMessageRegExp = "use noKeyPair option to request boot without a keypair")
    public void testkeyPairBadFormat() {
       EC2TemplateOptions options = new EC2TemplateOptions();
       options.keyPair("");
