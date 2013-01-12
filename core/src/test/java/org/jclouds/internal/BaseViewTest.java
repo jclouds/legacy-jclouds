@@ -19,7 +19,6 @@
 package org.jclouds.internal;
 
 import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.fail;
@@ -29,7 +28,6 @@ import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.Utils;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Objects;
 import com.google.common.reflect.TypeToken;
 
 /** 
@@ -44,13 +42,7 @@ public class BaseViewTest {
          super("water", createMock(ProviderMetadata.class), "identity", createMock(Utils.class), createMock(Closer.class));
       }
 
-      @Override
       public void close() {
-      }
-      
-      @Override
-      public boolean equals(Object in){
-         return Objects.equal(in.getClass(), getClass());
       }
    }
 
@@ -60,13 +52,7 @@ public class BaseViewTest {
          super("peanutbutter", createMock(ProviderMetadata.class), "identity", createMock(Utils.class), createMock(Closer.class));
       }
 
-      @Override
       public void close() {
-      }
-      
-      @Override
-      public boolean equals(Object in){
-         return Objects.equal(in.getClass(), getClass());
       }
    }
    
@@ -80,8 +66,8 @@ public class BaseViewTest {
    public void testWaterTurnedIntoWine() {
       Wine wine = new Wine();
       assertEquals(wine.getBackendType(), TypeToken.of(Water.class));
-      assertEquals(wine.unwrap(TypeToken.of(Water.class)), new Water());
-      assertEquals(wine.unwrap(), new Water());
+      assertEquals(wine.unwrap(TypeToken.of(Water.class)).getClass(), Water.class);
+      assertEquals(wine.unwrap().getClass(), Water.class);
    }
 
    public void testPeanutButterDidntTurnIntoWine() {
