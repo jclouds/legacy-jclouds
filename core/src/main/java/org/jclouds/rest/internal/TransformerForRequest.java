@@ -111,22 +111,22 @@ public class TransformerForRequest<A> implements Function<GeneratedHttpRequest<A
       return transformer;
    }
 
-   private static final TypeToken<ListenableFuture<Boolean>> futureBooleanLiteral = new TypeToken<ListenableFuture<Boolean>>() {
+   private static final TypeToken<ListenableFuture<Boolean>> futureBooleanToken = new TypeToken<ListenableFuture<Boolean>>() {
       private static final long serialVersionUID = 1L;
    };
-   private static final TypeToken<ListenableFuture<String>> futureStringLiteral = new TypeToken<ListenableFuture<String>>() {
+   private static final TypeToken<ListenableFuture<String>> futureStringToken = new TypeToken<ListenableFuture<String>>() {
       private static final long serialVersionUID = 1L;
    };
-   private static final TypeToken<ListenableFuture<Void>> futureVoidLiteral = new TypeToken<ListenableFuture<Void>>() {
+   private static final TypeToken<ListenableFuture<Void>> futureVoidToken = new TypeToken<ListenableFuture<Void>>() {
       private static final long serialVersionUID = 1L;
    };
-   private static final TypeToken<ListenableFuture<URI>> futureURILiteral = new TypeToken<ListenableFuture<URI>>() {
+   private static final TypeToken<ListenableFuture<URI>> futureURIToken = new TypeToken<ListenableFuture<URI>>() {
       private static final long serialVersionUID = 1L;
    };
-   private static final TypeToken<ListenableFuture<InputStream>> futureInputStreamLiteral = new TypeToken<ListenableFuture<InputStream>>() {
+   private static final TypeToken<ListenableFuture<InputStream>> futureInputStreamToken = new TypeToken<ListenableFuture<InputStream>>() {
       private static final long serialVersionUID = 1L;
    };
-   private static final TypeToken<ListenableFuture<HttpResponse>> futureHttpResponseLiteral = new TypeToken<ListenableFuture<HttpResponse>>() {
+   private static final TypeToken<ListenableFuture<HttpResponse>> futureHttpResponseToken = new TypeToken<ListenableFuture<HttpResponse>>() {
       private static final long serialVersionUID = 1L;
    };
 
@@ -136,25 +136,26 @@ public class TransformerForRequest<A> implements Function<GeneratedHttpRequest<A
       Invokable<?, ?> invoked = invocation.getInvokable();
       Set<String> acceptHeaders = getAcceptHeaders.apply(invocation);
       ResponseParser annotation = invoked.getAnnotation(ResponseParser.class);
+      Class<?> rawReturnType = invoked.getReturnType().getRawType();
       if (annotation == null) {
-         if (invoked.getReturnType().equals(void.class) || invoked.getReturnType().equals(futureVoidLiteral)) {
+         if (rawReturnType.equals(void.class) || invoked.getReturnType().equals(futureVoidToken)) {
             return Key.get(ReleasePayloadAndReturn.class);
-         } else if (invoked.getReturnType().equals(boolean.class) || invoked.getReturnType().equals(Boolean.class)
-               || invoked.getReturnType().equals(futureBooleanLiteral)) {
+         } else if (rawReturnType.equals(boolean.class) || rawReturnType.equals(Boolean.class)
+               || invoked.getReturnType().equals(futureBooleanToken)) {
             return Key.get(ReturnTrueIf2xx.class);
-         } else if (invoked.getReturnType().equals(InputStream.class)
-               || invoked.getReturnType().equals(futureInputStreamLiteral)) {
+         } else if (rawReturnType.equals(InputStream.class)
+               || invoked.getReturnType().equals(futureInputStreamToken)) {
             return Key.get(ReturnInputStream.class);
-         } else if (invoked.getReturnType().equals(HttpResponse.class)
-               || invoked.getReturnType().equals(futureHttpResponseLiteral)) {
+         } else if (rawReturnType.equals(HttpResponse.class)
+               || invoked.getReturnType().equals(futureHttpResponseToken)) {
             return Key.get(Class.class.cast(IdentityFunction.class));
          } else if (acceptHeaders.contains(APPLICATION_JSON)) {
             return getJsonParserKeyForMethod(invoked);
          } else if (acceptHeaders.contains(APPLICATION_XML) || invoked.isAnnotationPresent(JAXBResponseParser.class)) {
             return getJAXBParserKeyForMethod(invoked);
-         } else if (invoked.getReturnType().equals(String.class) || invoked.getReturnType().equals(futureStringLiteral)) {
+         } else if (rawReturnType.equals(String.class) || invoked.getReturnType().equals(futureStringToken)) {
             return Key.get(ReturnStringIf2xx.class);
-         } else if (invoked.getReturnType().equals(URI.class) || invoked.getReturnType().equals(futureURILiteral)) {
+         } else if (rawReturnType.equals(URI.class) || invoked.getReturnType().equals(futureURIToken)) {
             return Key.get(ParseURIFromListOrLocationHeaderIf20x.class);
          } else {
             throw new IllegalStateException("You must specify a ResponseParser annotation on: " + invoked.toString());
