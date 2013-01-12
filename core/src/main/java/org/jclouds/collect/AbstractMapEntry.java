@@ -25,13 +25,10 @@ import org.jclouds.javax.annotation.Nullable;
 import com.google.common.base.Objects;
 
 
-public abstract class AbstractMapEntry<K, V> implements Entry<K, V> {
+abstract class AbstractMapEntry<K, V> implements Entry<K, V> {
 
-   public abstract K getKey();
-
-   public abstract V getValue();
-
-   public V setValue(V value) {
+   @Override
+   public V setValue(V value) { // NO_UCD
       throw new UnsupportedOperationException();
    }
 
@@ -51,9 +48,6 @@ public abstract class AbstractMapEntry<K, V> implements Entry<K, V> {
       return ((k == null) ? 0 : k.hashCode()) ^ ((v == null) ? 0 : v.hashCode());
    }
 
-   /**
-    * Returns a string representation of the form <code>{key}={value}</code>.
-    */
    @Override
    public String toString() {
       return getKey() + "=" + getValue();

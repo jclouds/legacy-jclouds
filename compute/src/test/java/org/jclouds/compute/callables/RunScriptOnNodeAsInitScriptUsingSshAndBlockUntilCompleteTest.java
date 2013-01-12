@@ -86,7 +86,7 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilCompleteTest {
    public void testWithoutInitThrowsIllegalStateException() {
       Statement command = exec("doFoo");
       NodeMetadata node = new NodeMetadataBuilder().ids("id").status(Status.RUNNING).credentials(
-            new LoginCredentials("tester", "testpassword!", null, false)).build();
+            LoginCredentials.builder().user("tester").password("testpassword!").build()).build();
 
       SshClient sshClient = createMock(SshClient.class);
 
@@ -153,7 +153,7 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilCompleteTest {
    public void testWithSudoPassword() {
       Statement command = exec("doFoo");
       NodeMetadata node = new NodeMetadataBuilder().ids("id").status(Status.RUNNING).credentials(
-            new LoginCredentials("tester", "testpassword!", null, true)).build();
+            LoginCredentials.builder().user("tester").password("testpassword!").authenticateSudo(true).build()).build();
 
       SshClient sshClient = createMock(SshClient.class);
 
@@ -206,7 +206,7 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilCompleteTest {
    public void testDoublecheckStatusInCaseTransientlyWrong() {
       Statement command = exec("doFoo");
       NodeMetadata node = new NodeMetadataBuilder().ids("id").status(Status.RUNNING).credentials(
-            new LoginCredentials("tester", "testpassword!", null, true)).build();
+            LoginCredentials.builder().user("tester").password("testpassword!").authenticateSudo(true).build()).build();
 
       SshClient sshClient = createMock(SshClient.class);
 
@@ -256,7 +256,7 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilCompleteTest {
    public void testNotRoot() {
       Statement command = exec("doFoo");
       NodeMetadata node = new NodeMetadataBuilder().ids("id").status(Status.RUNNING).credentials(
-            new LoginCredentials("tester", "testpassword!", null, true)).build();
+            LoginCredentials.builder().user("tester").password("testpassword!").authenticateSudo(true).build()).build();
 
       SshClient sshClient = createMock(SshClient.class);
 
@@ -302,11 +302,10 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilCompleteTest {
       verify(sshClient);
    }
    
-
    public void testBadReturnCode() {
       Statement command = exec("doFoo");
       NodeMetadata node = new NodeMetadataBuilder().ids("badreturncode").status(Status.RUNNING).credentials(
-            new LoginCredentials("tester", "testpassword!", null, true)).build();
+            LoginCredentials.builder().user("tester").password("testpassword!").authenticateSudo(true).build()).build();
       
       SshClient sshClient = createMock(SshClient.class);
 

@@ -87,7 +87,7 @@ public class JsonBall implements Comparable<String>, CharSequence {
       this.value = quoteStringIfNotNumberOrBoolean(checkNotNull(value, "value"));
    }
 
-   static String quoteStringIfNotNumberOrBoolean(String in) {
+   private static String quoteStringIfNotNumberOrBoolean(String in) {
       if (JSON_STRING_PATTERN.matcher(in).find() && !JSON_NUMBER_PATTERN.matcher(in).find()
             && !JSON_BOOLEAN_PATTERN.matcher(in).find()) {
          return "\"" + in + "\"";

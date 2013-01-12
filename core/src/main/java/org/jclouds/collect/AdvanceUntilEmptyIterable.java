@@ -53,13 +53,13 @@ public class AdvanceUntilEmptyIterable<E> extends FluentIterable<FluentIterable<
       return iterator;
    }
 
-   static class AdvanceUntilEmptyIterator<E> extends AbstractIterator<FluentIterable<E>> {
+   private static class AdvanceUntilEmptyIterator<E> extends AbstractIterator<FluentIterable<E>> {
 
       private final Supplier<FluentIterable<E>> nextIterable;
       private transient FluentIterable<E> current;
       private transient boolean unread = true;
 
-      AdvanceUntilEmptyIterator(Supplier<FluentIterable<E>> nextIterable) {
+      private AdvanceUntilEmptyIterator(Supplier<FluentIterable<E>> nextIterable) {
          this.nextIterable = checkNotNull(nextIterable, "next iterable");
       }
 

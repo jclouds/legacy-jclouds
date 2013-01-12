@@ -36,7 +36,6 @@ public enum LocationScope {
      * E.g. the DMZ segment, secure segment. 
      */
     NETWORK,
-    RACK,
     HOST;
 
 }

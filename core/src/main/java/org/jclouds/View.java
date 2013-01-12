@@ -48,7 +48,7 @@ public interface View {
     * 
     * ex.
     * <pre>
-    * RestContext<NovaClient, NovaAsyncClient> backendApi = computeContext.unwrap(NovaApiMetadata.CONTEXT_TOKEN);
+    * RestContext<NovaApi, NovaAsyncApi> backendApi = computeContext.unwrap(NovaApiMetadata.CONTEXT_TOKEN);
     * </pre>
     * @param type
     *           the type of the context to be returned. The backend context must
@@ -60,13 +60,6 @@ public interface View {
     * @see #getBackendType()
     */
    <C extends Context> C unwrap(TypeToken<C> type) throws IllegalArgumentException;
-
-   /**
-    * shortcut for {@code unwrap(TypeToken.of(clazz))}
-    * 
-    * @see #unwrap(TypeToken)
-    */
-   <C extends Context> C unwrap(Class<C> clazz) throws IllegalArgumentException;
 
    /**
     * shortcut for {@code unwrap(getWrappedType())}

@@ -32,13 +32,13 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-public class LocationBuilder {
-   protected LocationScope scope;
-   protected String id;
-   protected String description;
-   protected Location parent;
-   protected Set<String> iso3166Codes = ImmutableSet.of();
-   protected Map<String, Object> metadata = ImmutableMap.of();
+public final class LocationBuilder {
+   private LocationScope scope;
+   private String id;
+   private String description;
+   private Location parent;
+   private Set<String> iso3166Codes = ImmutableSet.of();
+   private Map<String, Object> metadata = ImmutableMap.of();
 
    public LocationBuilder scope(LocationScope scope) {
       this.scope = scope;

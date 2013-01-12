@@ -48,7 +48,7 @@ public class Futures {
       private final Future<T> delegate;
       private final ExecutionList executionList;
 
-      public CallGetAndRunExecutionList(Future<T> delegate, ExecutionList executionList) {
+      CallGetAndRunExecutionList(Future<T> delegate, ExecutionList executionList) {
          this.delegate = checkNotNull(delegate, "delegate");
          this.executionList = checkNotNull(executionList, "executionList");
       }
@@ -84,9 +84,9 @@ public class Futures {
    // note that this is done so that we can operate in Google AppEngine which
    // restricts thread creation
    // * to allow us to print debug info about what the delegate was doing
-   public static class FutureListener<T> {
+   private static class FutureListener<T> {
 
-      final ExecutorService adapterExecutor;
+      private final ExecutorService adapterExecutor;
 
       // The execution list to hold our listeners.
       private final ExecutionList executionList = new ExecutionList();
@@ -98,7 +98,7 @@ public class Futures {
       // The delegate future.
       private final Future<T> delegate;
 
-      static <T> FutureListener<T> create(Future<T> delegate, ExecutorService adapterExecutor) {
+      private static <T> FutureListener<T> create(Future<T> delegate, ExecutorService adapterExecutor) {
          return new FutureListener<T>(delegate, adapterExecutor);
       }
 
@@ -107,7 +107,7 @@ public class Futures {
          this.adapterExecutor = checkNotNull(adapterExecutor, "adapterExecutor");
       }
 
-      public void addListener(Runnable listener, Executor exec) {
+      private void addListener(Runnable listener, Executor exec) {
          executionList.add(listener, exec);
 
          // When a listener is first added, we run a task that will wait for
@@ -123,19 +123,15 @@ public class Futures {
          }
       }
 
-      Future<T> getFuture() {
+      private Future<T> getFuture() {
          return delegate;
-      }
-
-      ExecutorService getExecutor() {
-         return adapterExecutor;
       }
    }
 
-   public static class ListenableFutureAdapter<T> extends ForwardingFuture<T> implements ListenableFuture<T> {
-      final FutureListener<T> futureListener;
+   private static class ListenableFutureAdapter<T> extends ForwardingFuture<T> implements ListenableFuture<T> {
+      private final FutureListener<T> futureListener;
 
-      static <T> ListenableFutureAdapter<T> create(Future<T> future, ExecutorService executor) {
+      private static <T> ListenableFutureAdapter<T> create(Future<T> future, ExecutorService executor) {
          return new ListenableFutureAdapter<T>(future, executor);
       }
 
@@ -152,20 +148,19 @@ public class Futures {
       public void addListener(Runnable listener, Executor exec) {
          futureListener.addListener(listener, exec);
       }
-
    }
 
-   public static class LazyListenableFutureFunctionAdapter<I, O> extends ForwardingObject implements
+   private static class LazyListenableFutureFunctionAdapter<I, O> extends ForwardingObject implements
             ListenableFuture<O> {
       private final FutureListener<I> futureListener;
       private final Function<? super I, ? extends O> function;
 
-      static <I, O> LazyListenableFutureFunctionAdapter<I, O> create(Future<I> future,
+      private static <I, O> LazyListenableFutureFunctionAdapter<I, O> create(Future<I> future,
                Function<? super I, ? extends O> function, ExecutorService executor) {
          return new LazyListenableFutureFunctionAdapter<I, O>(future, function, executor);
       }
 
-      static <I, O> LazyListenableFutureFunctionAdapter<I, O> create(FutureListener<I> futureListener,
+      private static <I, O> LazyListenableFutureFunctionAdapter<I, O> create(FutureListener<I> futureListener,
                Function<? super I, ? extends O> function) {
          return new LazyListenableFutureFunctionAdapter<I, O>(futureListener, function);
       }

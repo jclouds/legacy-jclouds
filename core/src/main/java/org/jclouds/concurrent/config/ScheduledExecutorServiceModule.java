@@ -1,7 +1,8 @@
 package org.jclouds.concurrent.config;
 
-import static org.jclouds.concurrent.config.ExecutorServiceModule.shutdownOnClose;
+import static org.jclouds.Constants.PROPERTY_SCHEDULER_THREADS;
 import static org.jclouds.concurrent.config.ExecutorServiceModule.getStackTraceHere;
+import static org.jclouds.concurrent.config.ExecutorServiceModule.shutdownOnClose;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Delayed;
@@ -14,10 +15,8 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.lifecycle.Closer;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -30,90 +29,82 @@ import com.google.inject.Provides;
  * @author Ignasi Barrera
  * 
  * @see ExecutorServiceModule
- *
+ * 
  */
 public class ScheduledExecutorServiceModule extends AbstractModule {
 
-    static class DescribingScheduledExecutorService extends DescribingExecutorService implements ScheduledExecutorService {
+   private static class DescribingScheduledExecutorService extends DescribingExecutorService implements
+         ScheduledExecutorService {
 
-        public DescribingScheduledExecutorService(ScheduledExecutorService delegate) {
-            super(delegate);
-        }
+      private DescribingScheduledExecutorService(ScheduledExecutorService delegate) {
+         super(delegate);
+      }
 
-        @SuppressWarnings({"unchecked", "rawtypes"})
-        @Override
-        public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
-            return new DescribedScheduledFuture(((ScheduledExecutorService) delegate)
-                .schedule(command, delay, unit), command.toString(), getStackTraceHere());
-        }
+      @SuppressWarnings({ "unchecked", "rawtypes" })
+      @Override
+      public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
+         return new DescribedScheduledFuture(((ScheduledExecutorService) delegate).schedule(command, delay, unit),
+               command.toString(), getStackTraceHere());
+      }
 
-        @Override
-        public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
-            return new DescribedScheduledFuture<V>(((ScheduledExecutorService) delegate)
-                .schedule(callable, delay, unit), callable.toString(), getStackTraceHere());
-        }
+      @Override
+      public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
+         return new DescribedScheduledFuture<V>(((ScheduledExecutorService) delegate).schedule(callable, delay, unit),
+               callable.toString(), getStackTraceHere());
+      }
 
-        @SuppressWarnings({"unchecked", "rawtypes"})
-        @Override
-        public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay,
-            long period, TimeUnit unit) {
-            return new DescribedScheduledFuture(((ScheduledExecutorService) delegate)
-                .scheduleAtFixedRate(command, initialDelay, period, unit), command.toString(), getStackTraceHere());
-        }
+      @SuppressWarnings({ "unchecked", "rawtypes" })
+      @Override
+      public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) {
+         return new DescribedScheduledFuture(((ScheduledExecutorService) delegate).scheduleAtFixedRate(command,
+               initialDelay, period, unit), command.toString(), getStackTraceHere());
+      }
 
-        @SuppressWarnings({"unchecked", "rawtypes"})
-        @Override
-        public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay,
-            long delay, TimeUnit unit) {
-            return new DescribedScheduledFuture(((ScheduledExecutorService) delegate)
-                .scheduleWithFixedDelay(command, initialDelay, delay, unit), command.toString(), getStackTraceHere());
-        }
-    }
+      @SuppressWarnings({ "unchecked", "rawtypes" })
+      @Override
+      public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit) {
+         return new DescribedScheduledFuture(((ScheduledExecutorService) delegate).scheduleWithFixedDelay(command,
+               initialDelay, delay, unit), command.toString(), getStackTraceHere());
+      }
+   }
 
-    static class DescribedScheduledFuture<T> extends DescribedFuture<T> implements ScheduledFuture<T> {
+   private static class DescribedScheduledFuture<T> extends DescribedFuture<T> implements ScheduledFuture<T> {
 
-        public DescribedScheduledFuture(ScheduledFuture<T> delegate, String description,
+      private DescribedScheduledFuture(ScheduledFuture<T> delegate, String description,
             StackTraceElement[] submissionTrace) {
-            super(delegate, description, submissionTrace);
-        }
+         super(delegate, description, submissionTrace);
+      }
 
-        @Override
-        public long getDelay(TimeUnit unit) {
-            return ((ScheduledFuture<T>) delegate).getDelay(unit);
-        }
+      @Override
+      public long getDelay(TimeUnit unit) {
+         return ((ScheduledFuture<T>) delegate).getDelay(unit);
+      }
 
-        @Override
-        public int compareTo(Delayed o) {
-            return ((ScheduledFuture<T>) delegate).compareTo(o);
-        }
-    }
+      @Override
+      public int compareTo(Delayed o) {
+         return ((ScheduledFuture<T>) delegate).compareTo(o);
+      }
+   }
 
-    static ScheduledExecutorService addToStringOnSchedule(ScheduledExecutorService executor) {
-        if (executor != null) {
-           return new DescribingScheduledExecutorService(executor);
-        }
-        return executor;
-    }
+   private static ScheduledExecutorService addToStringOnSchedule(ScheduledExecutorService executor) {
+      return (executor != null) ? new DescribingScheduledExecutorService(executor) : executor;
+   }
 
-    @Provides
-    @Singleton
-    @Named(Constants.PROPERTY_SCHEDULER_THREADS)
-    ScheduledExecutorService provideScheduledExecutor(@Named(Constants.PROPERTY_SCHEDULER_THREADS) final int count,
-        final Closer closer) {
-        return shutdownOnClose(addToStringOnSchedule(newScheduledThreadPoolNamed("scheduler thread %d", count)), closer);
-    }
+   @Provides
+   @Singleton
+   @Named(PROPERTY_SCHEDULER_THREADS)
+   ScheduledExecutorService provideScheduledExecutor(@Named(PROPERTY_SCHEDULER_THREADS) int count, Closer closer) {
+      return shutdownOnClose(addToStringOnSchedule(newScheduledThreadPoolNamed("scheduler thread %d", count)), closer);
+   }
 
-    @VisibleForTesting
-    static ScheduledExecutorService newScheduledThreadPoolNamed(String name, int maxCount) {
-        ThreadFactory factory = new ThreadFactoryBuilder().setNameFormat(name)
+   private static ScheduledExecutorService newScheduledThreadPoolNamed(String name, int maxCount) {
+      ThreadFactory factory = new ThreadFactoryBuilder().setNameFormat(name)
             .setThreadFactory(Executors.defaultThreadFactory()).build();
-       return maxCount == 0 ? Executors.newSingleThreadScheduledExecutor(factory)
-                            : Executors.newScheduledThreadPool(maxCount, factory);
-    }
+      return maxCount == 0 ? Executors.newSingleThreadScheduledExecutor(factory) : Executors.newScheduledThreadPool(
+            maxCount, factory);
+   }
 
-    @Override
-    protected void configure() {
-
-    }
-
+   @Override
+   protected void configure() { // NO_UCD
+   }
 }

@@ -36,32 +36,30 @@ public class ValueOfConfigurationKeyOrNullTest {
 
    @Test
    public void testNotThere() {
-      assertEquals(new ValueOfConfigurationKeyOrNull(Guice.createInjector()).apply("foo"), null);
+      assertEquals(Guice.createInjector().getInstance(ValueOfConfigurationKeyOrNull.class).apply("foo"), null);
    }
 
    @Test
    public void testThere() {
-      assertEquals(new ValueOfConfigurationKeyOrNull(Guice.createInjector(new AbstractModule() {
+      assertEquals(Guice.createInjector(new AbstractModule() {
 
          @Override
          protected void configure() {
             bindConstant().annotatedWith(Names.named("foo")).to("bar");
          }
 
-      })).apply("foo"), "bar");
-
+      }).getInstance(ValueOfConfigurationKeyOrNull.class).apply("foo"), "bar");
    }
    
    @Test
    public void testEmptyIsThere() {
-      assertEquals(new ValueOfConfigurationKeyOrNull(Guice.createInjector(new AbstractModule() {
+      assertEquals(Guice.createInjector(new AbstractModule() {
 
          @Override
          protected void configure() {
             bindConstant().annotatedWith(Names.named("foo")).to("");
          }
 
-      })).apply("foo"), "");
-
+      }).getInstance(ValueOfConfigurationKeyOrNull.class).apply("foo"), "");
    }
 }

@@ -129,9 +129,11 @@ public class JsonNodeMetadataStore implements NodeMetadataStore {
                .tags(jsonMetadata.tags)
                .group(jsonMetadata.group)
                .userMetadata(jsonMetadata.userMetadata)
-               .credentials(
-                        new LoginCredentials(jsonMetadata.user, jsonMetadata.password, jsonMetadata.privateKey,
-                                 jsonMetadata.authenticateSudo)).build();
+               .credentials(LoginCredentials.builder()
+                                            .user(jsonMetadata.user)
+                                            .privateKey(jsonMetadata.privateKey)
+                                            .password(jsonMetadata.password)
+                                            .authenticateSudo(jsonMetadata.authenticateSudo).build()).build();
    }
 
    @Override

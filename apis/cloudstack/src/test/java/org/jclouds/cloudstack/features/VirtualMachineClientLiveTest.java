@@ -284,7 +284,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    private void conditionallyCheckSSH() {
-      if (vm.getPassword() != null && !loginCredentials.hasPasswordOption())
+      if (vm.getPassword() != null && loginCredentials.getOptionalPassword() == null)
          loginCredentials = loginCredentials.toBuilder().password(vm.getPassword()).build();
       assert HostSpecifier.isValid(vm.getIPAddress());
       if (!InetAddresses2.isPrivateIPAddress(vm.getIPAddress())) {

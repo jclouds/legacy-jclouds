@@ -80,7 +80,7 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
             defaultTemplateOrPreferredInZone(defaultTemplate, client, network.getZoneId()),
             client, jobComplete, virtualMachineRunning);
 
-         if (vm.getPassword() != null && !loginCredentials.hasPasswordOption())
+         if (vm.getPassword() != null && loginCredentials.getOptionalPassword() == null)
             loginCredentials = loginCredentials.toBuilder().password(vm.getPassword()).build();
 
       } catch (NoSuchElementException e) {

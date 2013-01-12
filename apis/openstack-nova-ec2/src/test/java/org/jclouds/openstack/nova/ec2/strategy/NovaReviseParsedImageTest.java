@@ -71,7 +71,7 @@ public class NovaReviseParsedImageTest {
                               .build())
                   .name("Ubuntu Maverick 10.10 Server 64-bit 20111212")
                   .description("")
-                  .defaultCredentials(new LoginCredentials("root", false))
+                  .defaultCredentials(LoginCredentials.builder().user("root").build())
                   .id("us-east-1/ami-000004d6")
                   .providerId("ami-000004d6")
                   .location(defaultLocation)

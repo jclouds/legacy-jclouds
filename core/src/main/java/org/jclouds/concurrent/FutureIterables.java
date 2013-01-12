@@ -56,8 +56,6 @@ import com.google.inject.Inject;
  */
 @Beta
 public class FutureIterables {
-   @Resource
-   private static Logger logger = Logger.CONSOLE;
    
    @Inject(optional = true)
    @Named(Constants.PROPERTY_MAX_RETRIES)
@@ -69,17 +67,7 @@ public class FutureIterables {
    
    @Inject(optional = true)
    private static BackoffLimitedRetryHandler retryHandler = BackoffLimitedRetryHandler.INSTANCE;
-   
-   public static <F, T> Iterable<T> transformParallel(final Iterable<F> fromIterable,
-         final Function<? super F, Future<? extends T>> function) {
-      return transformParallel(fromIterable, function, org.jclouds.concurrent.MoreExecutors.sameThreadExecutor(), null);
-   }
-   
-   public static <F, T> Iterable<T> transformParallel(final Iterable<F> fromIterable,
-         final Function<? super F, Future<? extends T>> function, ExecutorService exec, @Nullable Long maxTime) {
-      return transformParallel(fromIterable, function, exec, maxTime, logger, "transforming");
-   }
-   
+
    public static <F, T> Iterable<T> transformParallel(final Iterable<F> fromIterable,
          final Function<? super F, Future<? extends T>> function, ExecutorService exec, @Nullable Long maxTime, Logger logger,
                String logPrefix) {
@@ -113,8 +101,8 @@ public class FutureIterables {
       }
       //make sure we propagate any authorization exception so that we don't lock out accounts
       if (exceptions.size() > 0)
-         return propagateAuthorizationOrOriginalException(new TransformParallelException((Map) responses, exceptions,
-               logPrefix));
+         return propagateAuthorizationOrOriginalException(new TransformParallelException(Map.class.cast(responses),
+               exceptions, logPrefix));
       
       return unwrap(responses.values());
    }
@@ -180,7 +168,7 @@ public class FutureIterables {
       return errorMap;
    }
    
-   public static <T> Iterable<T> unwrap(Iterable<Future<? extends T>> values) {
+   private static <T> Iterable<T> unwrap(Iterable<Future<? extends T>> values) {
       return transform(values, new Function<Future<? extends T>, T>() {
          @Override
          public T apply(Future<? extends T> from) {
@@ -211,9 +199,4 @@ public class FutureIterables {
       return String.format("%s, completed: %d/%d, errors: %d, rate: %dms/op", prefix, complete, size, errors,
             (long) ((System.currentTimeMillis() - start) / ((double) size)));
    }
-   
-   protected static boolean timeOut(long start, Long maxTime) {
-      return maxTime != null ? System.currentTimeMillis() < start + maxTime : false;
-   }
-   
 }
