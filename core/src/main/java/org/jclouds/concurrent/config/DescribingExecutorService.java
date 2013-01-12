@@ -19,6 +19,7 @@
 package org.jclouds.concurrent.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.concurrent.config.ExecutorServiceModule.getStackTraceHere;
 
 import java.util.Collection;
 import java.util.List;
@@ -86,18 +87,18 @@ public class DescribingExecutorService implements ExecutorService {
 
    @Override
    public <T> Future<T> submit(Callable<T> task) {
-      return new DescribedFuture<T>(delegate.submit(task), task.toString(), ExecutorServiceModule.getStackTraceHere());
+      return new DescribedFuture<T>(delegate.submit(task), task.toString(), getStackTraceHere());
    }
 
    @SuppressWarnings({ "unchecked", "rawtypes" })
    @Override
    public Future<?> submit(Runnable task) {
-      return new DescribedFuture(delegate.submit(task), task.toString(), ExecutorServiceModule.getStackTraceHere());
+      return new DescribedFuture(delegate.submit(task), task.toString(), getStackTraceHere());
    }
 
    @Override
-   public <T> Future<T> submit(Runnable task, T result) {
-      return new DescribedFuture<T>(delegate.submit(task, result), task.toString(), ExecutorServiceModule.getStackTraceHere());
+   public <T> Future<T> submit(Runnable task, T result) { // NO_UCD
+      return new DescribedFuture<T>(delegate.submit(task, result), task.toString(), getStackTraceHere());
    }
 
    @Override

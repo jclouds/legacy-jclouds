@@ -57,7 +57,7 @@ public class RunScriptOnNodeUsingSshTest {
          }
       };
       node = createMock(NodeMetadata.class);
-      expect(node.getCredentials()).andReturn(new LoginCredentials("tester", "notalot", null, false)).atLeastOnce();
+      expect(node.getCredentials()).andReturn(LoginCredentials.builder().user("tester").password("notalot").build()).atLeastOnce();
       replay(node);
    }
 
@@ -97,7 +97,7 @@ public class RunScriptOnNodeUsingSshTest {
 
    public void simpleRootTestWithSudoPassword() {
       node = createMock(NodeMetadata.class);
-      expect(node.getCredentials()).andReturn(new LoginCredentials("tester", "testpassword!", null, true))
+      expect(node.getCredentials()).andReturn(LoginCredentials.builder().user("tester").password("testpassword!").authenticateSudo(true).build())
             .atLeastOnce();
       replay(node);
       RunScriptOnNodeUsingSsh testMe = new RunScriptOnNodeUsingSsh(sshFactory, eventBus, node, exec("echo $USER\necho $USER"),

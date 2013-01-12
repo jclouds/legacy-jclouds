@@ -237,9 +237,7 @@ public class RunningInstanceToNodeMetadataTest {
    }
 
    protected RunningInstance firstInstanceFromResource(String resource) {
-      RunningInstance server = Iterables.get(Iterables.get(DescribeInstancesResponseHandlerTest
-               .parseRunningInstances(resource), 0), 0);
-      return server;
+      return Iterables.get(Iterables.get(DescribeInstancesResponseHandlerTest.parseRunningInstances(resource), 0), 0);
    }
 
    protected RunningInstanceToNodeMetadata createNodeParser(final ImmutableSet<Hardware> hardware,

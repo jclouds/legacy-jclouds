@@ -67,7 +67,7 @@ public class EC2ImageParserTest {
       assertImageEquals(Iterables.get(result, 0), new ImageBuilder().operatingSystem(
                new OperatingSystem.Builder().family(OsFamily.UNRECOGNIZED).arch("paravirtual").version("").description(
                         "137112412989/amzn-ami-0.9.7-beta.i386-ebs").is64Bit(false).build()).description("Amazon")
-               .defaultCredentials(new LoginCredentials("ec2-user", false)).id("us-east-1/ami-82e4b5c7").name(
+               .defaultCredentials(LoginCredentials.builder().user("ec2-user").build()).id("us-east-1/ami-82e4b5c7").name(
                         "amzn-ami-0.9.7-beta.i386-ebs").providerId("ami-82e4b5c7").location(defaultLocation)
                .userMetadata(ImmutableMap.of("owner", "137112412989", "rootDeviceType", "ebs")).status(
                         Status.AVAILABLE).backendStatus("available").build());
@@ -75,7 +75,7 @@ public class EC2ImageParserTest {
       assertImageEquals(Iterables.get(result, 3), new ImageBuilder().operatingSystem(
                new OperatingSystem.Builder().family(OsFamily.UNRECOGNIZED).arch("paravirtual").version("").description(
                         "amzn-ami-us-west-1/amzn-ami-0.9.7-beta.x86_64.manifest.xml").is64Bit(true).build())
-               .description("Amazon Linux AMI x86_64 S3").defaultCredentials(new LoginCredentials("ec2-user", false))
+               .description("Amazon Linux AMI x86_64 S3").defaultCredentials(LoginCredentials.builder().user("ec2-user").build())
                .id("us-east-1/ami-f2e4b5b7").providerId("ami-f2e4b5b7").name("amzn-ami-0.9.7-beta.x86_64-S3").location(
                         defaultLocation)
                .userMetadata(ImmutableMap.of("owner", "137112412989", "rootDeviceType", "ebs")).status(
@@ -86,7 +86,7 @@ public class EC2ImageParserTest {
                         "amazon/NameGivesNoClue_Server-2008-R2_SP1-Language_Packs-64Bit-Base-2012.05.10")
                         .is64Bit(true).build())
                .description("Microsoft Windows Server 2008 R2 SP1 Datacenter 64-bit Multi-language AMI provided by Amazon")
-               .defaultCredentials(new LoginCredentials("root", false))
+               .defaultCredentials(LoginCredentials.builder().user("root").build())
                .id("us-east-1/ami-85457ff1").providerId("ami-85457ff1").name("NameGivesNoClue_Server-2008-R2_SP1-Language_Packs-64Bit-Base-2012.05.10")
                         .location(defaultLocation)
                .userMetadata(ImmutableMap.of("owner", "801119661308", "rootDeviceType", "ebs"))

@@ -51,18 +51,16 @@ public class PrioritizeCredentialsFromTemplateTest {
       expect(image.getDefaultCredentials()).andReturn(null);
       expect(template.getOptions()).andReturn(new TemplateOptions());
 
-      replay(template);
-      replay(image);
+      replay(template, image);
 
       assertEquals(fn.apply(template, null), expected);
 
       verify(template);
       verify(image);
-
    }
-
+   
    public void testWhenCredentialsNotPresentInImageTemplateOptionsReturnsFromParameter() {
-      LoginCredentials expected = new LoginCredentials("foo", "bar", null, false);
+      LoginCredentials expected = LoginCredentials.builder().user("foo").password("bar").build();
 
       Image image = createMock(Image.class);
       Template template = createMock(Template.class);
@@ -71,18 +69,16 @@ public class PrioritizeCredentialsFromTemplateTest {
       expect(image.getDefaultCredentials()).andReturn(null);
       expect(template.getOptions()).andReturn(new TemplateOptions());
 
-      replay(template);
-      replay(image);
+      replay(template, image);
 
       assertEquals(fn.apply(template, expected), expected);
 
       verify(template);
       verify(image);
-
    }
-
+   
    public void testWhenCredentialsNotPresentInImageReturnsOneInTemplateOptionsAndNotParameter() {
-      LoginCredentials expected = new LoginCredentials("ubuntu", "password", null, false);
+      LoginCredentials expected = LoginCredentials.builder().user("ubuntu").password("password").build();
 
       Image image = createMock(Image.class);
       Template template = createMock(Template.class);
@@ -91,16 +87,14 @@ public class PrioritizeCredentialsFromTemplateTest {
       expect(image.getDefaultCredentials()).andReturn(null);
       expect(template.getOptions()).andReturn(TemplateOptions.Builder.overrideLoginCredentials(expected));
 
-      replay(template);
-      replay(image);
+      replay(template, image);
 
-      assertEquals(fn.apply(template, new LoginCredentials("foo", "bar", null, false)), expected);
+      assertEquals(fn.apply(template, LoginCredentials.builder().user("foo").password("bar").build()), expected);
 
       verify(template);
       verify(image);
-
    }
-
+   
    public void testWhenCredentialsNotPresentInImageReturnsCredentialFromTemplateOptionsAndUserFromParameter() {
       Credentials expected = new Credentials("ubuntu", "password");
 
@@ -111,18 +105,16 @@ public class PrioritizeCredentialsFromTemplateTest {
       expect(image.getDefaultCredentials()).andReturn(null);
       expect(template.getOptions()).andReturn(TemplateOptions.Builder.overrideLoginUser("ubuntu"));
 
-      replay(template);
-      replay(image);
+      replay(template, image);
 
-      assertEquals(fn.apply(template, new LoginCredentials("foo", "password", null, false)), expected);
+      assertEquals(fn.apply(template, LoginCredentials.builder().user("foo").password("password").build()), expected);
 
       verify(template);
       verify(image);
-
    }
-
+   
    public void testWhenCredentialsNotPresentInTemplateOptionsReturnsOneInImageAndNotParameter() {
-      LoginCredentials expected = new LoginCredentials("ubuntu", "password", null, false);
+      LoginCredentials expected = LoginCredentials.builder().user("ubuntu").password("password").build();
 
       Image image = createMock(Image.class);
       Template template = createMock(Template.class);
@@ -131,16 +123,14 @@ public class PrioritizeCredentialsFromTemplateTest {
       expect(image.getDefaultCredentials()).andReturn(expected);
       expect(template.getOptions()).andReturn(new TemplateOptions());
 
-      replay(template);
-      replay(image);
+      replay(template, image);
 
-      assertEquals(fn.apply(template, new LoginCredentials("foo", "bar", null, false)), expected);
+      assertEquals(fn.apply(template, LoginCredentials.builder().user("foo").password("bar").build()), expected);
 
       verify(template);
       verify(image);
-
    }
-
+   
    public void testWhenCredentialsPresentInImageOverridesIdentityFromCredentialsInTemplateOptionsAndNotParameter() {
       Credentials expected = new Credentials("ubuntu", "password");
 
@@ -148,36 +138,31 @@ public class PrioritizeCredentialsFromTemplateTest {
       Template template = createMock(Template.class);
 
       expect(template.getImage()).andReturn(image);
-      expect(image.getDefaultCredentials()).andReturn(new LoginCredentials("user", "password", null, false));
+      expect(image.getDefaultCredentials()).andReturn(LoginCredentials.builder().user("ubuntu").password("password").build());
       expect(template.getOptions()).andReturn(TemplateOptions.Builder.overrideLoginUser("ubuntu"));
 
-      replay(template);
-      replay(image);
+      replay(template, image);
 
-      assertEquals(fn.apply(template, new LoginCredentials("foo", "bar", null, false)), expected);
+      assertEquals(fn.apply(template, LoginCredentials.builder().user("foo").password("bar").build()), expected);
 
-      verify(template);
-      verify(image);
-
+      verify(template, image);
    }
-
+   
    public void testWhenCredentialsPresentInImageOverridesCredentialFromCredentialsInTemplateOptionsAndNotParameter() {
-      LoginCredentials expected = new LoginCredentials("ubuntu", "password", null, false);
+      LoginCredentials expected = LoginCredentials.builder().user("ubuntu").password("password").build();
 
       Image image = createMock(Image.class);
       Template template = createMock(Template.class);
 
       expect(template.getImage()).andReturn(image);
-      expect(image.getDefaultCredentials()).andReturn(new LoginCredentials("ubuntu", "password2", null, false));
+      expect(image.getDefaultCredentials()).andReturn(LoginCredentials.builder().user("ubuntu").password("password2").build());
       expect(template.getOptions()).andReturn(TemplateOptions.Builder.overrideLoginPassword("password"));
 
-      replay(template);
-      replay(image);
+      replay(template, image);
 
-      assertEquals(fn.apply(template, new LoginCredentials("foo", "bar", null, false)), expected);
+      assertEquals(fn.apply(template, LoginCredentials.builder().user("foo").password("bar").build()), expected);
 
       verify(template);
       verify(image);
-
    }
 }

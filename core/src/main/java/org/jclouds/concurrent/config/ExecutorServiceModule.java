@@ -18,6 +18,8 @@
  */
 package org.jclouds.concurrent.config;
 
+import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
+import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 import static org.jclouds.concurrent.DynamicExecutors.newScalingThreadPool;
 
 import java.io.Closeable;
@@ -32,13 +34,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -47,21 +47,20 @@ import com.google.inject.Provides;
  * Configures {@link ExecutorService}.
  * 
  * Note that this uses threads.
- *  
+ * 
  * <p>
- * This extends the underlying Future to expose a description (the task's toString) and the submission context (stack trace).
- * The submission stack trace is appended to relevant stack traces on exceptions that are returned,
- * so the user can see the logical chain of execution (in the executor, and where it was passed to the executor).
+ * This extends the underlying Future to expose a description (the task's toString) and the submission context (stack
+ * trace). The submission stack trace is appended to relevant stack traces on exceptions that are returned, so the user
+ * can see the logical chain of execution (in the executor, and where it was passed to the executor).
  * 
  * @author Adrian Cole
  */
 @ConfiguresExecutorService
 public class ExecutorServiceModule extends AbstractModule {
 
-   @VisibleForTesting
    static final class ShutdownExecutorOnClose implements Closeable {
       @Resource
-      protected Logger logger = Logger.NULL;
+      private Logger logger = Logger.NULL;
 
       private final ExecutorService service;
 
@@ -77,32 +76,31 @@ public class ExecutorServiceModule extends AbstractModule {
       }
    }
 
-   @VisibleForTesting
    final ExecutorService userExecutorFromConstructor;
-   @VisibleForTesting
+
    final ExecutorService ioExecutorFromConstructor;
 
    @Inject
-   public ExecutorServiceModule(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
-            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads) {
+   public ExecutorServiceModule(@Named(PROPERTY_USER_THREADS) ExecutorService userThreads,
+         @Named(PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads) {
       this.userExecutorFromConstructor = addToStringOnSubmit(checkNotGuavaSameThreadExecutor(userThreads));
       this.ioExecutorFromConstructor = addToStringOnSubmit(checkNotGuavaSameThreadExecutor(ioThreads));
    }
 
-   ExecutorService addToStringOnSubmit(ExecutorService executor) {
+   private ExecutorService addToStringOnSubmit(ExecutorService executor) {
       if (executor != null) {
          return new DescribingExecutorService(executor);
       }
       return executor;
    }
 
-   ExecutorService checkNotGuavaSameThreadExecutor(ExecutorService executor) {
+   private ExecutorService checkNotGuavaSameThreadExecutor(ExecutorService executor) {
       // we detect behavior based on the class
       if (executor != null && !(executor.getClass().isAnnotationPresent(SingleThreaded.class))
-               && executor.getClass().getSimpleName().indexOf("SameThread") != -1) {
+            && executor.getClass().getSimpleName().indexOf("SameThread") != -1) {
          Logger.CONSOLE.warn(
-                  "please switch from %s to %s or annotate your same threaded executor with @SingleThreaded", executor
-                           .getClass().getName(), MoreExecutors.SameThreadExecutorService.class.getName());
+               "please switch from %s to %s or annotate your same threaded executor with @SingleThreaded", executor
+                     .getClass().getName(), MoreExecutors.SameThreadExecutorService.class.getName());
          return MoreExecutors.sameThreadExecutor();
       }
       return executor;
@@ -113,13 +111,13 @@ public class ExecutorServiceModule extends AbstractModule {
    }
 
    @Override
-   protected void configure() {
+   protected void configure() { // NO_UCD
    }
 
    @Provides
    @Singleton
-   @Named(Constants.PROPERTY_USER_THREADS)
-   ExecutorService provideExecutorService(@Named(Constants.PROPERTY_USER_THREADS) int count, Closer closer) {
+   @Named(PROPERTY_USER_THREADS)
+   ExecutorService provideExecutorService(@Named(PROPERTY_USER_THREADS) int count, Closer closer) { // NO_UCD
       if (userExecutorFromConstructor != null)
          return userExecutorFromConstructor;
       return shutdownOnClose(addToStringOnSubmit(newThreadPoolNamed("user thread %d", count)), closer);
@@ -127,47 +125,42 @@ public class ExecutorServiceModule extends AbstractModule {
 
    @Provides
    @Singleton
-   @Named(Constants.PROPERTY_IO_WORKER_THREADS)
-   ExecutorService provideIOExecutor(@Named(Constants.PROPERTY_IO_WORKER_THREADS) int count, Closer closer) {
+   @Named(PROPERTY_IO_WORKER_THREADS)
+   ExecutorService provideIOExecutor(@Named(PROPERTY_IO_WORKER_THREADS) int count, Closer closer) { // NO_UCD
       if (ioExecutorFromConstructor != null)
          return ioExecutorFromConstructor;
       return shutdownOnClose(addToStringOnSubmit(newThreadPoolNamed("i/o thread %d", count)), closer);
    }
 
-   @VisibleForTesting
    static <T extends ExecutorService> T shutdownOnClose(final T service, Closer closer) {
       closer.addToClose(new ShutdownExecutorOnClose(service));
       return service;
    }
 
-   @VisibleForTesting
-   ExecutorService newCachedThreadPoolNamed(String name) {
+   private ExecutorService newCachedThreadPoolNamed(String name) {
       return Executors.newCachedThreadPool(namedThreadFactory(name));
    }
 
-   @VisibleForTesting
-   ExecutorService newThreadPoolNamed(String name, int maxCount) {
+   private ExecutorService newThreadPoolNamed(String name, int maxCount) {
       return maxCount == 0 ? newCachedThreadPoolNamed(name) : newScalingThreadPoolNamed(name, maxCount);
    }
 
-   @VisibleForTesting
-   ExecutorService newScalingThreadPoolNamed(String name, int maxCount) {
+   private ExecutorService newScalingThreadPoolNamed(String name, int maxCount) {
       return newScalingThreadPool(1, maxCount, 60L * 1000, namedThreadFactory(name));
    }
 
-   protected ThreadFactory namedThreadFactory(String name) {
+   private ThreadFactory namedThreadFactory(String name) {
       return new ThreadFactoryBuilder().setNameFormat(name).setThreadFactory(Executors.defaultThreadFactory()).build();
    }
 
-
    /** returns the stack trace at the caller */
    static StackTraceElement[] getStackTraceHere() {
-      // remove the first two items in the stack trace (because the first one refers to the call to 
+      // remove the first two items in the stack trace (because the first one refers to the call to
       // Thread.getStackTrace, and the second one is us)
       StackTraceElement[] fullSubmissionTrace = Thread.currentThread().getStackTrace();
-      StackTraceElement[] cleanedSubmissionTrace = new StackTraceElement[fullSubmissionTrace.length-2];
+      StackTraceElement[] cleanedSubmissionTrace = new StackTraceElement[fullSubmissionTrace.length - 2];
       System.arraycopy(fullSubmissionTrace, 2, cleanedSubmissionTrace, 0, cleanedSubmissionTrace.length);
       return cleanedSubmissionTrace;
    }
-   
+
 }

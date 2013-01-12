@@ -67,7 +67,7 @@ public class AWSEC2ImageParserTest {
                               .description("ubuntu-images-us/ubuntu-hardy-8.04-i386-server-20091130.manifest.xml")
                               .is64Bit(false).build())
                   .description("ubuntu-images-us/ubuntu-hardy-8.04-i386-server-20091130.manifest.xml")
-                  .defaultCredentials(new LoginCredentials("ubuntu", false)).id("us-east-1/ami-7e28ca17")
+                  .defaultCredentials(LoginCredentials.builder().user("ubuntu").build()).id("us-east-1/ami-7e28ca17")
                   .providerId("ami-7e28ca17").location(defaultLocation).version("20091130")
                   .userMetadata(ImmutableMap.of(
                      "owner", "099720109477",
@@ -86,7 +86,7 @@ public class AWSEC2ImageParserTest {
                         new OperatingSystem.Builder().family(OsFamily.UBUNTU).arch("paravirtual").version("8.04")
                               .description("alestic/ubuntu-8.04-hardy-base-20080905.manifest.xml").is64Bit(false)
                               .build()).description("alestic/ubuntu-8.04-hardy-base-20080905.manifest.xml")
-                  .defaultCredentials(new LoginCredentials("ubuntu", false)).id("us-east-1/ami-c0fa1ea9")
+                  .defaultCredentials(LoginCredentials.builder().user("ubuntu").build()).id("us-east-1/ami-c0fa1ea9")
                   .providerId("ami-c0fa1ea9").location(defaultLocation).version("20080905")
                   .userMetadata(ImmutableMap.of("owner", "063491364108", "rootDeviceType", "instance-store"))
                   .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).backendStatus("available").build());
@@ -101,7 +101,7 @@ public class AWSEC2ImageParserTest {
                               .description("099720109477/ebs/ubuntu-images/ubuntu-lucid-10.04-i386-server-20100827")
                               .is64Bit(false).build())
                   .description("099720109477/ebs/ubuntu-images/ubuntu-lucid-10.04-i386-server-20100827")
-                  .defaultCredentials(new LoginCredentials("ubuntu", false)).id("us-east-1/ami-10f3a255")
+                  .defaultCredentials(LoginCredentials.builder().user("ubuntu").build()).id("us-east-1/ami-10f3a255")
                   .providerId("ami-10f3a255").location(defaultLocation).version("20100827")
                   .userMetadata(ImmutableMap.of(
                      "owner", "099720109477",
@@ -125,7 +125,7 @@ public class AWSEC2ImageParserTest {
                               .description("vostok-builds/vostok-0.95-5622/vostok-0.95-5622.manifest.xml")
                               .is64Bit(false).build())
                   .description("vostok-builds/vostok-0.95-5622/vostok-0.95-5622.manifest.xml")
-                  .defaultCredentials(new LoginCredentials("root", false)).id("us-east-1/ami-870de2ee")
+                  .defaultCredentials(LoginCredentials.builder().user("root").build()).id("us-east-1/ami-870de2ee")
                   .providerId("ami-870de2ee").location(defaultLocation).version("5622")
                   .userMetadata(ImmutableMap.of("owner", "133804938231", "rootDeviceType", "instance-store"))
                   .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).build());
@@ -144,7 +144,7 @@ public class AWSEC2ImageParserTest {
                         new OperatingSystem.Builder().family(OsFamily.CENTOS).arch("hvm").version("5.4")
                               .description("amazon/EC2 CentOS 5.4 HVM AMI").is64Bit(true).build())
                   .description("EC2 CentOS 5.4 HVM AMI")
-                  .defaultCredentials(new LoginCredentials("root", false)).id("us-east-1/ami-7ea24a17")
+                  .defaultCredentials(LoginCredentials.builder().user("root").build()).id("us-east-1/ami-7ea24a17")
                   .providerId("ami-7ea24a17").location(defaultLocation)
                   .userMetadata(ImmutableMap.of(
                      "owner", "206029621532",
@@ -167,7 +167,7 @@ public class AWSEC2ImageParserTest {
                         new OperatingSystem.Builder().family(OsFamily.CENTOS).arch("paravirtual").version("5.4")
                               .description("rightscale-us-east/CentOS_5.4_x64_v4.4.10.manifest.xml").is64Bit(true)
                               .build()).description("rightscale-us-east/CentOS_5.4_x64_v4.4.10.manifest.xml")
-                  .defaultCredentials(new LoginCredentials("root", false)).id("us-east-1/ami-ccb35ea5")
+                  .defaultCredentials(LoginCredentials.builder().user("root").build()).id("us-east-1/ami-ccb35ea5")
                   .providerId("ami-ccb35ea5").location(defaultLocation).version("4.4.10")
                   .userMetadata(ImmutableMap.of("owner", "admin", "rootDeviceType", "instance-store"))
                   .status(org.jclouds.compute.domain.Image.Status.AVAILABLE).backendStatus("available").build());
@@ -194,7 +194,7 @@ public class AWSEC2ImageParserTest {
                         new OperatingSystem.Builder().family(OsFamily.AMZN_LINUX).arch("paravirtual")
                               .version("0.9.7-beta").description("137112412989/amzn-ami-0.9.7-beta.i386-ebs")
                               .is64Bit(false).build()).description("Amazon")
-                  .defaultCredentials(new LoginCredentials("ec2-user", false)).id("us-east-1/ami-82e4b5c7")
+                  .defaultCredentials(LoginCredentials.builder().user("ec2-user").build()).id("us-east-1/ami-82e4b5c7")
                   .providerId("ami-82e4b5c7").location(defaultLocation).version("0.9.7-beta")
                   .userMetadata(ImmutableMap.of(
                      "owner", "137112412989",
@@ -213,7 +213,7 @@ public class AWSEC2ImageParserTest {
                               .version("0.9.7-beta")
                               .description("amzn-ami-us-west-1/amzn-ami-0.9.7-beta.x86_64.manifest.xml").is64Bit(true)
                               .build()).description("Amazon Linux AMI x86_64 S3")
-                  .defaultCredentials(new LoginCredentials("ec2-user", false)).id("us-east-1/ami-f2e4b5b7")
+                  .defaultCredentials(LoginCredentials.builder().user("ec2-user").build()).id("us-east-1/ami-f2e4b5b7")
                   .providerId("ami-f2e4b5b7").location(defaultLocation).version("0.9.7-beta")
                   .userMetadata(ImmutableMap.of(
                      "owner", "137112412989",

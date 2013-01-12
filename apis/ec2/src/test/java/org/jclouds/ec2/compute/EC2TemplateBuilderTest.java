@@ -166,7 +166,7 @@ public class EC2TemplateBuilderTest {
       
       final Image image = new ImageBuilder().providerId("cc-image").name("image").id("us-east-1/cc-image").location(location)
                .operatingSystem(new OperatingSystem(OsFamily.UBUNTU, null, "1.0", "hvm", "ubuntu", true))
-               .description("description").version("1.0").defaultCredentials(new LoginCredentials("root", false))
+               .description("description").version("1.0").defaultCredentials(LoginCredentials.builder().user("root").build())
                .status(Image.Status.AVAILABLE)
                .build();
       Map<RegionAndName, Image> imageMap = ImmutableMap.of(
@@ -191,12 +191,12 @@ public class EC2TemplateBuilderTest {
       final Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(
                new ImageBuilder().providerId("cc-image").name("image").id("us-east-1/cc-image").location(location)
                         .operatingSystem(new OperatingSystem(OsFamily.UBUNTU, null, "1.0", "hvm", "ubuntu", true))
-                        .description("description").version("1.0").defaultCredentials(new LoginCredentials("root", false))
+                        .description("description").version("1.0").defaultCredentials(LoginCredentials.builder().user("root").build())
                         .status(Image.Status.AVAILABLE)
                         .build(), 
                new ImageBuilder().providerId("normal-image").name("image").id("us-east-1/normal-image").location(location)
                         .operatingSystem(new OperatingSystem(OsFamily.UBUNTU, null, "1.0", "paravirtual", "ubuntu", true))
-                        .description("description").version("1.0").defaultCredentials(new LoginCredentials("root", false))
+                        .description("description").version("1.0").defaultCredentials(LoginCredentials.builder().user("root").build())
                         .status(Image.Status.AVAILABLE)
                         .build()));
       

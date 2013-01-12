@@ -81,7 +81,7 @@ class BackoffExponentiallyAndRetryOnThrowableCallable<T> extends ForwardingObjec
       throw currentException;
    }
 
-   void imposeBackoffExponentialDelay(long period, long maxPeriod, int pow, int failureCount, int max) {
+   private void imposeBackoffExponentialDelay(long period, long maxPeriod, int pow, int failureCount, int max) {
       long delayMs = (long) (period * Math.pow(failureCount, pow));
       delayMs = delayMs > maxPeriod ? maxPeriod : delayMs;
       try {

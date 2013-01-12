@@ -85,9 +85,9 @@ public class RetryingCacheLoaderDecorator<K, V> {
    }
 
    public static class OnThrowableBuilder<K, V> {
-      Class<? extends Throwable> retryableThrowable;
+      private Class<? extends Throwable> retryableThrowable;
 
-      protected OnThrowableBuilder(Class<? extends Throwable> retryableThrowable) {
+      private OnThrowableBuilder(Class<? extends Throwable> retryableThrowable) {
          this.retryableThrowable = checkNotNull(retryableThrowable, "retryableThrowable");
       }
 
@@ -107,7 +107,7 @@ public class RetryingCacheLoaderDecorator<K, V> {
       private int maxTries = 5;
       private final Class<? extends Throwable> retryableThrowable;
 
-      protected BackoffExponentiallyAndRetryOnThrowableCacheLoaderDecorator(Class<? extends Throwable> retryableThrowable) {
+      private BackoffExponentiallyAndRetryOnThrowableCacheLoaderDecorator(Class<? extends Throwable> retryableThrowable) {
          this.retryableThrowable = checkNotNull(retryableThrowable, "retryableThrowable");
       }
 

@@ -39,8 +39,8 @@ import com.google.common.io.InputSupplier;
  * 
  */
 public class InputSupplierMap<K, V> extends AbstractMap<K, V> {
-   final Map<K, InputSupplier<V>> toMap;
-   final Function<V, InputSupplier<V>> putFunction;
+   private final Map<K, InputSupplier<V>> toMap;
+   private final Function<V, InputSupplier<V>> putFunction;
 
    public InputSupplierMap(Map<K, InputSupplier<V>> toMap, Function<V, InputSupplier<V>> putFunction) {
       this.toMap = checkNotNull(toMap);
@@ -91,10 +91,9 @@ public class InputSupplierMap<K, V> extends AbstractMap<K, V> {
    @Override
    public Set<Entry<K, V>> entrySet() {
       return new EntrySet();
-
    }
 
-   class EntrySet extends AbstractSet<Entry<K, V>> {
+   private class EntrySet extends AbstractSet<Entry<K, V>> {
       @Override
       public int size() {
          return InputSupplierMap.this.size();

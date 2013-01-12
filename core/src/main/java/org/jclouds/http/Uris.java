@@ -139,11 +139,6 @@ public final class Uris {
          return this;
       }
 
-      public UriBuilder clearPath() {
-         path = null;
-         return this;
-      }
-
       public UriBuilder path(@Nullable String path) {
          path = emptyToNull(path);
          if (path == null)
@@ -161,10 +156,6 @@ public final class Uris {
             path(slash(this.path, path));
          }
          return this;
-      }
-
-      public UriBuilder query(Map<String, ?> parameters) {
-         return query(forMap(parameters));
       }
 
       public UriBuilder query(@Nullable String queryLine) {
@@ -192,10 +183,6 @@ public final class Uris {
 
       public UriBuilder addQuery(String name, String... values) {
          return addQuery(name, Arrays.asList(checkNotNull(values, "values of %s", name)));
-      }
-
-      public UriBuilder addQuery(Map<String, ?> parameters) {
-         return addQuery(forMap(parameters));
       }
 
       public UriBuilder addQuery(Multimap<String, ?> parameters) {
@@ -315,7 +302,7 @@ public final class Uris {
          }
       }
 
-      public String expand(Map<String, ?> variables) {
+      private String expand(Map<String, ?> variables) {
          StringBuilder b = new StringBuilder();
          if (scheme != null)
             b.append(scheme).append("://");

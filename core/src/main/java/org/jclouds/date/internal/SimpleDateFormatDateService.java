@@ -67,11 +67,6 @@ public class SimpleDateFormatDateService implements DateService {
    }
 
    @Override
-   public final Date fromSeconds(long seconds) {
-      return new Date(seconds * 1000);
-   }
-
-   @Override
    public final String cDateFormat(Date date) {
       synchronized (cSimpleDateFormat) {
          return cSimpleDateFormat.format(date);

@@ -99,7 +99,7 @@ public class Sha512Crypt {
       return Function.INSTANCE;
    }
 
-   public static enum Function implements com.google.common.base.Function<String, String> {
+   private static enum Function implements com.google.common.base.Function<String, String> {
       INSTANCE;
 
       @Override
@@ -111,7 +111,6 @@ public class Sha512Crypt {
       public String toString() {
          return "sha512Crypt()";
       }
-
    }
 
    private static final String sha512_salt_prefix = "$6$";
@@ -141,7 +140,7 @@ public class Sha512Crypt {
     * 
     * @return The Sha512 Unix Crypt hash text for the password
     */
-   public static String makeShadowLine(String password, @Nullable String shadowPrefix) {
+   static String makeShadowLine(String password, @Nullable String shadowPrefix) {
       MessageDigest ctx = sha512();
       MessageDigest alt_ctx = sha512();
 

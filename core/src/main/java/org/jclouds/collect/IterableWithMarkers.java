@@ -86,7 +86,20 @@ public class IterableWithMarkers {
       public Optional<Object> nextMarker() {
          return marker;
       }
-
    }
 
+   private static abstract class ForwardingIterableWithMarker<T> extends IterableWithMarker<T> {
+
+      protected abstract IterableWithMarker<T> delegate();
+
+      @Override
+      public Iterator<T> iterator() {
+         return delegate().iterator();
+      }
+
+      @Override
+      public Optional<Object> nextMarker() {
+         return delegate().nextMarker();
+      }
+   }
 }

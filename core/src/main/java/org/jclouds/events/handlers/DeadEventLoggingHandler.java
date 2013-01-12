@@ -35,18 +35,12 @@ import com.google.common.eventbus.Subscribe;
  * @author Ignasi Barrera
  */
 @Singleton
-public class DeadEventLoggingHandler
-{
-    @Resource
-    private Logger logger = Logger.NULL;
+public class DeadEventLoggingHandler {
+   @Resource
+   private Logger logger = Logger.NULL;
 
-    /**
-     * Due to <a href="http://code.google.com/p/guava-libraries/issues/detail?id=783">Guava Issue
-     * 786</a> {@link #handleDeadEvent(DeadEvent)} is marked <code>final</code>to avoid having
-     * duplicate events.
-     */
-    @Subscribe
-    public final void handleDeadEvent(DeadEvent deadEvent) {
-        logger.trace("detected dead event %s", deadEvent.getEvent());
-    }
+   @Subscribe
+   public void handleDeadEvent(DeadEvent deadEvent) { // NO_UCD
+      logger.trace("detected dead event %s", deadEvent.getEvent());
+   }
 }

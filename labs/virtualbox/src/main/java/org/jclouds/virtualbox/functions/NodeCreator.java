@@ -181,9 +181,11 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
       nodeMetadataBuilder.publicAddresses(ImmutableSet.of(networkUtils.getIpAddressFromNicSlot(clone.getName(), slot)));
       String guestOsUser = clone.getExtraData(GUEST_OS_USER);
       String guestOsPassword = clone.getExtraData(GUEST_OS_PASSWORD);
-      LoginCredentials loginCredentials = new LoginCredentials(guestOsUser, guestOsPassword, null, true);
-      nodeMetadataBuilder.credentials(loginCredentials);    
-      return  nodeMetadataBuilder.build();
+      nodeMetadataBuilder.credentials(LoginCredentials.builder()
+                                                      .user(guestOsUser)
+                                                      .password(guestOsPassword)
+                                                      .authenticateSudo(true).build());    
+      return nodeMetadataBuilder.build();
    }
    
    private long findSlotForNetworkAttachment(IMachine clone, NetworkAttachmentType networkAttachmentType) {

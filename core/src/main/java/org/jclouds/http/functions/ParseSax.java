@@ -205,16 +205,17 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
    }
 
    public abstract static class HandlerForGeneratedRequestWithResult<T> extends HandlerWithResult<T> {
-      @Override
-      protected GeneratedHttpRequest getRequest() {
-         return (GeneratedHttpRequest) super.getRequest();
-      }
 
       @Override
       public HandlerForGeneratedRequestWithResult<T> setContext(HttpRequest request) {
          checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest, "note this handler requires a GeneratedHttpRequest");
          super.setContext(request);
          return this;
+      }
+      
+      @Override
+      protected GeneratedHttpRequest<?> getRequest() {
+         return (GeneratedHttpRequest<?>) super.getRequest();
       }
    }
 

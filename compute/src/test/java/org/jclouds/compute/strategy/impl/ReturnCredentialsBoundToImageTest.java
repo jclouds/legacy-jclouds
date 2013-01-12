@@ -39,12 +39,12 @@ import com.google.common.collect.ImmutableMap;
  */
 @Test(groups = "unit", testName = "ReturnCredentialsBoundToImageTest")
 public class ReturnCredentialsBoundToImageTest {
+   LoginCredentials creds = LoginCredentials.builder().user("ubuntu").password("foo").build();
 
    public void testDefaultIsToReturnConfiguredCredential() {
       Image image = createMock(Image.class);
       replay(image);
 
-      LoginCredentials creds = new LoginCredentials("ubuntu", "foo", null, false);
       assertEquals(new ReturnCredentialsBoundToImage(creds, ImmutableMap.<String, Credentials> of(), ImmutableMap
                .<OsFamily, LoginCredentials> of()).apply(image), creds);
 
@@ -57,7 +57,6 @@ public class ReturnCredentialsBoundToImageTest {
       expect(image.getId()).andReturn("1").times(2);
       replay(image);
 
-      LoginCredentials creds = new LoginCredentials("ubuntu", "foo", null, false);
       assertEquals(new ReturnCredentialsBoundToImage(null, ImmutableMap.<String, Credentials> of("image#1", creds),
                ImmutableMap.<OsFamily, LoginCredentials> of()).apply(image), creds);
 

@@ -66,7 +66,7 @@ public class StaticNATVirtualMachineInNetworkLiveTest extends NATClientLiveTest 
          vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network,
                defaultTemplateOrPreferredInZone(defaultTemplate, client, network.getZoneId()), client, jobComplete,
                virtualMachineRunning);
-         if (vm.getPassword() != null && !loginCredentials.hasPasswordOption())
+         if (vm.getPassword() != null && loginCredentials.getOptionalPassword() == null)
             loginCredentials = loginCredentials.toBuilder().password(vm.getPassword()).build();
       } catch (NoSuchElementException e) {
          networksDisabled = true;

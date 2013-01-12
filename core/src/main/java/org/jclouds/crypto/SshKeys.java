@@ -110,7 +110,7 @@ public class SshKeys {
    }
 
    // http://www.ietf.org/rfc/rfc4253.txt
-   static byte[] readLengthFirst(InputStream in) throws IOException {
+   private static byte[] readLengthFirst(InputStream in) throws IOException {
       int byte1 = in.read();
       int byte2 = in.read();
       int byte3 = in.read();
@@ -315,7 +315,7 @@ public class SshKeys {
       return on(':').join(fixedLength(2).split(base16().lowerCase().encode(hc.asBytes())));
    }
 
-   public static byte[] keyBlob(BigInteger publicExponent, BigInteger modulus) {
+   private static byte[] keyBlob(BigInteger publicExponent, BigInteger modulus) {
       try {
          ByteArrayOutputStream out = new ByteArrayOutputStream();
          writeLengthFirst("ssh-rsa".getBytes(), out);
@@ -328,7 +328,7 @@ public class SshKeys {
    }
 
    // http://www.ietf.org/rfc/rfc4253.txt
-   static void writeLengthFirst(byte[] array, ByteArrayOutputStream out) throws IOException {
+   private static void writeLengthFirst(byte[] array, ByteArrayOutputStream out) throws IOException {
       out.write((array.length >>> 24) & 0xFF);
       out.write((array.length >>> 16) & 0xFF);
       out.write((array.length >>> 8) & 0xFF);

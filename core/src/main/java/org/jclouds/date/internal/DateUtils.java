@@ -27,12 +27,10 @@ import java.util.regex.Pattern;
  */
 public class DateUtils {
 
-   public static final String TZ_REGEX = "([+-][0-9][0-9](:?[0-9][0-9])?|Z)";
-
-   public static final Pattern MILLIS_PATTERN = Pattern.compile("(.*\\.[0-9][0-9][0-9])[0-9]*" + TZ_REGEX + "?");
-
+   private static final String TZ_REGEX = "([+-][0-9][0-9](:?[0-9][0-9])?|Z)";
+   private static final Pattern MILLIS_PATTERN = Pattern.compile("(.*\\.[0-9][0-9][0-9])[0-9]*" + TZ_REGEX + "?");
    // This regexp will match all TZ forms that are valid is ISO 8601
-   public static final Pattern TZ_PATTERN = Pattern.compile("(.*)" + TZ_REGEX + "$");
+   private static final Pattern TZ_PATTERN = Pattern.compile("(.*)" + TZ_REGEX + "$");
 
    public static String trimToMillis(String toParse) {
        Matcher matcher = MILLIS_PATTERN.matcher(toParse);
@@ -44,7 +42,7 @@ public class DateUtils {
       return toParse;
    }
 
-   public static final Pattern SECOND_PATTERN = Pattern.compile(".*[0-2][0-9]:00");
+   private static final Pattern SECOND_PATTERN = Pattern.compile(".*[0-2][0-9]:00");
 
    public static String trimTZ(String toParse) {
       Matcher matcher = TZ_PATTERN.matcher(toParse);

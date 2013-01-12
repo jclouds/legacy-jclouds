@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.inject.name.Names.named;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import com.google.common.base.Function;
 import com.google.inject.ConfigurationException;
@@ -33,12 +32,11 @@ import com.google.inject.Key;
  * 
  * @author Adrian Cole
  */
-@Singleton
 public class ValueOfConfigurationKeyOrNull implements Function<String, String> {
-   protected final Injector injector;
+   private final Injector injector;
 
    @Inject
-   public ValueOfConfigurationKeyOrNull(Injector injector) {
+   private ValueOfConfigurationKeyOrNull(Injector injector) {
       this.injector = checkNotNull(injector, "injector");
    }
 
@@ -51,5 +49,4 @@ public class ValueOfConfigurationKeyOrNull implements Function<String, String> {
          return null;
       }
    }
-
 }

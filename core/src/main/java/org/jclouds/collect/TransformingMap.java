@@ -36,9 +36,9 @@ import com.google.common.base.Function;
  * 
  */
 public class TransformingMap<K, V1, V2> extends AbstractMap<K, V2> {
-   final Map<K, V1> fromMap;
-   final Function<? super V1, V2> getFunction;
-   final Function<? super V2, V1> putFunction;
+   private final Map<K, V1> fromMap;
+   private final Function<? super V1, V2> getFunction;
+   private final Function<? super V2, V1> putFunction;
 
    public TransformingMap(Map<K, V1> fromMap, Function<? super V1, V2> getFunction, Function<? super V2, V1> putFunction) {
       this.fromMap = checkNotNull(fromMap);
@@ -85,7 +85,7 @@ public class TransformingMap<K, V1, V2> extends AbstractMap<K, V2> {
 
    }
 
-   class EntrySet extends AbstractSet<Entry<K, V2>> {
+   private class EntrySet extends AbstractSet<Entry<K, V2>> {
       @Override
       public int size() {
          return TransformingMap.this.size();

@@ -18,6 +18,8 @@
  */
 package org.jclouds;
 
+import static java.util.concurrent.Executors.defaultThreadFactory;
+
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
@@ -44,7 +46,7 @@ public abstract class PerformanceTest {
 
    @BeforeTest
    public void setupExecutorService() {
-      exec = DynamicExecutors.newScalingThreadPool(1, THREAD_COUNT, 1000);
+      exec = DynamicExecutors.newScalingThreadPool(1, THREAD_COUNT, 1000, defaultThreadFactory());
    }
 
    @AfterTest

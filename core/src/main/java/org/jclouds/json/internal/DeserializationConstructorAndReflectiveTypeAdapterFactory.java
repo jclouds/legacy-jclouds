@@ -123,7 +123,6 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactory imp
       this.delegateFactory = new ReflectiveTypeAdapterFactory(constructorConstructor, checkNotNull(serializationFieldNamingPolicy, "fieldNamingPolicy"), checkNotNull(excluder, "excluder"));
    }
 
-   @SuppressWarnings("unchecked")
    public <T> TypeAdapter<T> create(Gson gson, final TypeToken<T> type) {
       Class<? super T> raw = type.getRawType();
       Constructor<? super T> deserializationCtor = constructorFieldNamingPolicy.getDeserializationConstructor(raw);
@@ -139,11 +138,11 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactory imp
 
    private final class DeserializeWithParameterizedConstructorSerializeWithDelegate<T> extends TypeAdapter<T> {
       private final Constructor<? super T> parameterizedCtor;
-      private final Map<String, ParameterReader> parameterReaders;
+      private final Map<String, ParameterReader<?>> parameterReaders;
       private final TypeAdapter<T> delegate;
 
       private DeserializeWithParameterizedConstructorSerializeWithDelegate(TypeAdapter<T> delegate,
-                                                                           Constructor<? super T> parameterizedCtor, Map<String, ParameterReader> parameterReaders) {
+                                                                           Constructor<? super T> parameterizedCtor, Map<String, ParameterReader<?>> parameterReaders) {
          this.delegate = delegate;
          this.parameterizedCtor = parameterizedCtor;
          this.parameterReaders = parameterReaders;
@@ -174,7 +173,7 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactory imp
             while (in.hasNext()) {
                empty = false;
                String name = in.nextName();
-               ParameterReader parameter = parameterReaders.get(name);
+               ParameterReader<?> parameter = parameterReaders.get(name);
                if (parameter == null) {
                   in.skipValue();
                } else {
@@ -246,20 +245,19 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactory imp
       }
    }
 
-   @SuppressWarnings("unchecked")
-   private Map<String, ParameterReader> getParameterReaders(Gson context, TypeToken<?> declaring, Constructor<?> constructor) {
-      Map<String, ParameterReader> result = Maps.newLinkedHashMap();
+   private Map<String, ParameterReader<?>> getParameterReaders(Gson context, TypeToken<?> declaring, Constructor<?> constructor) {
+      Map<String, ParameterReader<?>> result = Maps.newLinkedHashMap();
 
       for (int index = 0; index < constructor.getGenericParameterTypes().length; index++) {
          Type parameterType = getTypeOfConstructorParameter(declaring, constructor, index);
          TypeAdapter<?> adapter = context.getAdapter(TypeToken.get(parameterType));
          String parameterName = constructorFieldNamingPolicy.translateName(constructor, index);
          checkArgument(parameterName != null, constructor + " parameter " + 0 + " failed to be named by " + constructorFieldNamingPolicy);
-         ParameterReader parameterReader = new ParameterReader(parameterName, index, adapter);
-         ParameterReader previous = result.put(parameterReader.name, parameterReader);
+         @SuppressWarnings({ "rawtypes", "unchecked" })
+         ParameterReader<?> parameterReader = new ParameterReader(parameterName, index, adapter);
+         ParameterReader<?> previous = result.put(parameterReader.name, parameterReader);
          checkArgument(previous == null, constructor + " declares multiple JSON parameters named " + parameterReader.name);
       }
-
       return result;
    }
 

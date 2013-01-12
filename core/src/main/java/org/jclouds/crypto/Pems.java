@@ -76,15 +76,15 @@ public class Pems {
    public static final String PUBLIC_X509_MARKER = "-----BEGIN PUBLIC KEY-----";
    public static final String PUBLIC_PKCS1_MARKER = "-----BEGIN RSA PUBLIC KEY-----";
 
-   public static class PemProcessor<T> implements ByteProcessor<T> {
-      public interface ResultParser<T> {
+   private static class PemProcessor<T> implements ByteProcessor<T> {
+      private interface ResultParser<T> {
          T parseResult(byte[] bytes) throws IOException;
       }
 
       private final ByteArrayOutputStream out = new ByteArrayOutputStream();
       private final Map<String, ResultParser<T>> parsers;
 
-      public PemProcessor(Map<String, ResultParser<T>> parsers) {
+      private PemProcessor(Map<String, ResultParser<T>> parsers) {
          this.parsers = checkNotNull(parsers, "parsers");
       }
 
