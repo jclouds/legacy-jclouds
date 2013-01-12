@@ -18,13 +18,16 @@
  */
 package org.jclouds.scriptbuilder.functionloader;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
-import org.jclouds.scriptbuilder.domain.OsFamily;
-import org.jclouds.scriptbuilder.domain.ShellToken;
-import org.jclouds.util.ClassLoadingUtils;
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.io.Resources.getResource;
+import static java.lang.String.format;
+import static org.jclouds.scriptbuilder.domain.ShellToken.SH;
 
 import java.io.IOException;
+
+import org.jclouds.scriptbuilder.domain.OsFamily;
+
+import com.google.common.io.Resources;
 
 /**
  * A {@link FunctionLoader} implementation which loads the target function from the classpath.
@@ -45,9 +48,8 @@ public enum BasicFunctionLoader implements FunctionLoader {
    @Override
    public String loadFunction(String function, OsFamily family) throws FunctionNotFoundException {
       try {
-         return Resources.toString(ClassLoadingUtils.loadResource(
-                  BasicFunctionLoader.class, String.format("/functions/%s.%s", function, ShellToken.SH.to(family))),
-                  Charsets.UTF_8);
+         return Resources.toString(
+               getResource(BasicFunctionLoader.class, format("/functions/%s.%s", function, SH.to(family))), UTF_8);
       } catch (IOException e) {
          throw new FunctionNotFoundException(function, family, e);
       }
