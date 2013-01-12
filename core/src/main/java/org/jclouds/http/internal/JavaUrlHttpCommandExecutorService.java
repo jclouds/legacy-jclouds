@@ -46,7 +46,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
-import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.net.ssl.HostnameVerifier;
@@ -65,7 +64,6 @@ import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
-import org.jclouds.logging.Logger;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMultimap;
@@ -84,8 +82,6 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
    public static final String DEFAULT_USER_AGENT = String.format("jclouds/%s java/%s", JcloudsVersion.get(), System
             .getProperty("java.version"));
 
-   @Resource
-   protected Logger logger = Logger.NULL;
    private final Supplier<SSLContext> untrustedSSLContextProvider;
    private final HostnameVerifier verifier;
    private final Field methodField;
