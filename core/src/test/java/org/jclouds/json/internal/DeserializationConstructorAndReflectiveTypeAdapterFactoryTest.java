@@ -86,6 +86,10 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactoryTest
 
       @Override
       public boolean equals(Object obj) {
+         if (obj == null)
+            return false;
+         if (obj == this)
+            return true;
          DefaultConstructor other = DefaultConstructor.class.cast(obj);
          if (bar != other.bar)
             return false;
@@ -158,6 +162,10 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactoryTest
 
       @Override
       public boolean equals(Object obj) {
+         if (obj == null)
+            return false;
+         if (obj == this)
+            return true;
          ValidatedConstructor other = ValidatedConstructor.class.cast(obj);
          if (bar != other.bar)
             return false;
@@ -224,6 +232,10 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactoryTest
 
       @Override
       public boolean equals(Object obj) {
+         if (obj == null)
+            return false;
+         if (obj == this)
+            return true;
          RenamedFields other = RenamedFields.class.cast(obj);
          if (bar != other.bar)
             return false;
