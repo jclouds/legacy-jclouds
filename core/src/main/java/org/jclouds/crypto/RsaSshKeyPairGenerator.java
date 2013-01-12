@@ -28,12 +28,12 @@ import javax.inject.Singleton;
 import com.google.inject.Inject;
 
 @Singleton
-public class RsaSshKeyPairGenerator implements SshKeyPairGenerator {
-   protected final Crypto crypto;
-   protected final SecureRandom secureRandom;
+class RsaSshKeyPairGenerator implements SshKeyPairGenerator {
+   private final Crypto crypto;
+   private final SecureRandom secureRandom;
 
    @Inject
-   public RsaSshKeyPairGenerator(Crypto crypto, SecureRandom secureRandom) {
+   private RsaSshKeyPairGenerator(Crypto crypto, SecureRandom secureRandom) {
       this.crypto = checkNotNull(crypto, "crypto");
       this.secureRandom = checkNotNull(secureRandom, "secureRandom");
    }

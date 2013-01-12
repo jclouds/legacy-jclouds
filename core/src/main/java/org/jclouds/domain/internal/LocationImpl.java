@@ -63,22 +63,15 @@ public class LocationImpl implements Location {
 
    @Override
    public String toString() {
-      return string().toString();
-   }
-
-  
-   protected ToStringHelper string() {
       ToStringHelper helper = Objects.toStringHelper("").omitNullValues().add("scope", scope).add("id", id)
-               .add("description", description);
-
+            .add("description", description);
       if (parent != null)
          helper.add("parent", parent.getId());
-
       if (iso3166Codes.size() > 0)
          helper.add("iso3166Codes", iso3166Codes);
       if (metadata.size() > 0)
          helper.add("metadata", metadata);
-      return helper;
+      return helper.toString();
    }
 
    public LocationImpl(LocationScope scope, String id, String description, @Nullable Location parent,

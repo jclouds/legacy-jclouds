@@ -42,6 +42,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
 
 /**
  * @author Adrian Cole
@@ -66,9 +68,9 @@ public class RsaSshKeyPairGeneratorTest {
 
    @Test
    public void testApply() {
-      Crypto crypto = createMock(Crypto.class);
+      final Crypto crypto = createMock(Crypto.class);
       KeyPairGenerator rsaKeyPairGenerator = createMock(KeyPairGenerator.class);
-      SecureRandom secureRandom = createMock(SecureRandom.class);
+      final SecureRandom secureRandom = createMock(SecureRandom.class);
 
       expect(crypto.rsaKeyPairGenerator()).andReturn(rsaKeyPairGenerator);
       rsaKeyPairGenerator.initialize(2048, secureRandom);
@@ -76,7 +78,12 @@ public class RsaSshKeyPairGeneratorTest {
 
       replay(crypto, rsaKeyPairGenerator, secureRandom);
 
-      RsaSshKeyPairGenerator supplier = new RsaSshKeyPairGenerator(crypto, secureRandom);
+      RsaSshKeyPairGenerator supplier = Guice.createInjector(new AbstractModule(){
+         protected void configure() {
+            bind(Crypto.class).toInstance(crypto);
+            bind(SecureRandom.class).toInstance(secureRandom);
+         }
+      }).getInstance(RsaSshKeyPairGenerator.class);
 
       assertEquals(supplier.get(),
                ImmutableMap.of("public", openSshKey, "private", PRIVATE_KEY.replaceAll("\n", lineSeparator)));

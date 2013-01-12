@@ -21,7 +21,6 @@ package org.jclouds.cache;
 import java.util.Map;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheLoader;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -55,25 +54,5 @@ public abstract class ForwardingCacheLoader<K, V> extends CacheLoader<K, V> {
    @Override
    public Map<K, V> loadAll(Iterable<? extends K> keys) throws Exception {
       return delegate().loadAll(keys);
-   }
-
-   /**
-    * A simplified version of {@link ForwardingCacheLoader} where subclasses can pass in an already
-    * constructed {@link CacheLoader} as the delegate.
-    * 
-    */
-   @Beta
-   public static class SimpleForwardingCacheLoader<K, V> extends ForwardingCacheLoader<K, V> {
-      private final CacheLoader<K, V> delegate;
-
-      protected SimpleForwardingCacheLoader(CacheLoader<K, V> delegate) {
-         this.delegate = Preconditions.checkNotNull(delegate);
-      }
-
-      @Override
-      protected final CacheLoader<K, V> delegate() {
-         return delegate;
-      }
-
    }
 }

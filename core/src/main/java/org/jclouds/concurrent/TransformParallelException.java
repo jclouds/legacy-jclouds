@@ -29,6 +29,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author Adrian Cole
  */
+@SuppressWarnings("serial")
 public final class TransformParallelException extends RuntimeException {
 
    private final Map<?, Future<?>> success;

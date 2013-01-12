@@ -23,12 +23,12 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class DescribedFuture<T> implements Future<T> {
+class DescribedFuture<T> implements Future<T> {
    protected final Future<T> delegate;
    private final String description;
    private StackTraceElement[] submissionTrace;
 
-   public DescribedFuture(Future<T> delegate, String description, StackTraceElement[] submissionTrace) {
+   DescribedFuture(Future<T> delegate, String description, StackTraceElement[] submissionTrace) {
       this.delegate = delegate;
       this.description = description;
       this.submissionTrace = submissionTrace;

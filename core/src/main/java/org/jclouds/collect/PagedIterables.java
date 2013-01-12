@@ -35,17 +35,7 @@ import com.google.common.collect.ImmutableSet;
  */
 @Beta
 public class PagedIterables {
-   
-   @SuppressWarnings("rawtypes")
-   public static final PagedIterable EMPTY = new PagedIterable() {
 
-      @Override
-      public Iterator<IterableWithMarker> iterator() {
-         return ImmutableSet.of(IterableWithMarkers.EMPTY).iterator();
-      }
-
-   };
-   
    /**
     * @param only
     *           the only page of data
@@ -154,7 +144,7 @@ public class PagedIterables {
     * @return iterable current data which continues if the user iterates beyond
     *         the first page
     */
-   public static <T> Iterator<IterableWithMarker<T>> advancingIterator(IterableWithMarker<T> initial,
+   private static <T> Iterator<IterableWithMarker<T>> advancingIterator(IterableWithMarker<T> initial,
          Function<Object, IterableWithMarker<T>> markerToNext) {
       if (!initial.nextMarker().isPresent()) {
          return ImmutableSet.of(initial).iterator();

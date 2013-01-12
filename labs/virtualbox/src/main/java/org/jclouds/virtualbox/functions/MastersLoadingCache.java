@@ -241,7 +241,10 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
             .iso(IsoSpec.builder().sourcePath(localIsoUrl)
                   .installationScript(installationKeySequence.replace("HOSTNAME", vmSpecification.getVmName())).build())
             .network(networkSpec)
-            .credentials(new LoginCredentials(currentImage.username, currentImage.credential, null, true)).build();
+            .credentials(LoginCredentials.builder()
+                                         .user(currentImage.username)
+                                         .password(currentImage.credential)
+                                         .authenticateSudo(true).build()).build();
    }
 
    @Override

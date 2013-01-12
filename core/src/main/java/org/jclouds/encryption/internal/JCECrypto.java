@@ -87,8 +87,8 @@ public class JCECrypto implements Crypto {
       return provider == null ? Cipher.getInstance(algorithm) : Cipher.getInstance(algorithm, provider);
    }
 
-   public static final String HmacSHA256 = "HmacSHA256";
-   public static final String HmacSHA1 = "HmacSHA1";
+   private static final String HmacSHA256 = "HmacSHA256";
+   private static final String HmacSHA1 = "HmacSHA1";
 
    @Override
    public Mac hmacSHA1(byte[] key) throws InvalidKeyException {

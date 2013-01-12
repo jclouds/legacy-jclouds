@@ -36,19 +36,18 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @Singleton
-public class MapHttp4xxCodesToExceptions implements FutureFallback<Object> {
+public final class MapHttp4xxCodesToExceptions implements FutureFallback<Object> {
 
    private final PropagateIfRetryAfter propagateIfRetryAfter;
 
    @Inject
-   protected MapHttp4xxCodesToExceptions(PropagateIfRetryAfter propagateIfRetryAfter) {
+   MapHttp4xxCodesToExceptions(PropagateIfRetryAfter propagateIfRetryAfter) { // NO_UCD
       this.propagateIfRetryAfter = checkNotNull(propagateIfRetryAfter, "propagateIfRetryAfter");
    }
 
    @Override
-   public ListenableFuture<Object> create(Throwable t) {
-      // if we pass here, we aren't a retry-after exception
-      propagateIfRetryAfter.create(t);
+   public ListenableFuture<Object> create(Throwable t) { // NO_UCD
+      propagateIfRetryAfter.create(t); // if we pass here, we aren't a retry-after exception
       if (t instanceof HttpResponseException) {
          HttpResponseException responseException = HttpResponseException.class.cast(t);
          if (responseException.getResponse() != null)

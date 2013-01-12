@@ -120,9 +120,10 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
 
       String guestOsUser = vm.getExtraData(GUEST_OS_USER);
       String guestOsPassword = vm.getExtraData(GUEST_OS_PASSWORD);
-      LoginCredentials loginCredentials = new LoginCredentials(guestOsUser, guestOsPassword, null, true);
-      nodeMetadataBuilder.credentials(loginCredentials);
-
+      nodeMetadataBuilder.credentials(LoginCredentials.builder()
+                                                      .user(guestOsUser)
+                                                      .password(guestOsPassword)
+                                                      .authenticateSudo(true).build());
       return nodeMetadataBuilder.build();
    }
    

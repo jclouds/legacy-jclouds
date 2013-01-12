@@ -45,8 +45,8 @@ import com.google.inject.name.Names;
 // surefire
 @Test(groups = "unit", testName = "OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest")
 public class OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest {
-   ValueOfConfigurationKeyOrNull valueOfConfigurationKeyOrNull = new ValueOfConfigurationKeyOrNull(
-         Guice.createInjector());
+   ValueOfConfigurationKeyOrNull valueOfConfigurationKeyOrNull = Guice.createInjector().getInstance(
+         ValueOfConfigurationKeyOrNull.class);
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testIllegalArgumentWhenResourcesEmpty() {
@@ -91,16 +91,14 @@ public class OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest
       ReferenceType reference1 = new ReferenceTypeImpl("travis tritt", null, null);
       ReferenceType reference2 = new ReferenceTypeImpl("hail mary", null, null);
 
-      assertEquals(new OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefault(
-            new ValueOfConfigurationKeyOrNull(Guice.createInjector(new AbstractModule() {
-
-               @Override
-               protected void configure() {
-                  bindConstant().annotatedWith(Names.named("foo")).to(".*mary.*");
-               }
-
-            })), "foo", Predicates.<ReferenceType> alwaysTrue()).apply(ImmutableList.<ReferenceType> of(reference1,
-            reference2)), reference2);
+      assertEquals(
+            new OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefault(Guice.createInjector(
+                  new AbstractModule() {
+                     protected void configure() {
+                        bindConstant().annotatedWith(Names.named("foo")).to(".*mary.*");
+                     }
+                  }).getInstance(ValueOfConfigurationKeyOrNull.class), "foo", Predicates.<ReferenceType> alwaysTrue()).apply(ImmutableList
+                  .<ReferenceType> of(reference1, reference2)), reference2);
 
    }
 
@@ -109,16 +107,11 @@ public class OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest
       ReferenceType reference1 = new ReferenceTypeImpl("travis tritt", null, null);
       ReferenceType reference2 = new ReferenceTypeImpl("hail mary", null, null);
 
-      new OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefault(new ValueOfConfigurationKeyOrNull(
-            Guice.createInjector(new AbstractModule() {
-
-               @Override
-               protected void configure() {
-                  bindConstant().annotatedWith(Names.named("foo")).to(".*happy.*");
-               }
-
-            })), "foo", Predicates.<ReferenceType> alwaysTrue()).apply(ImmutableList.<ReferenceType> of(reference1,
-            reference2));
-
+      new OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefault(Guice.createInjector(new AbstractModule() {
+         protected void configure() {
+            bindConstant().annotatedWith(Names.named("foo")).to(".*happy.*");
+         }
+      }).getInstance(ValueOfConfigurationKeyOrNull.class), "foo", Predicates.<ReferenceType> alwaysTrue())
+            .apply(ImmutableList.<ReferenceType> of(reference1, reference2));
    }
 }

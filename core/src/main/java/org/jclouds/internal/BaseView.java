@@ -54,11 +54,6 @@ public abstract class BaseView extends ForwardingObject implements View {
    }
    
    @Override
-   public <C extends Context> C unwrap(Class<C> clazz) {
-      return unwrap (TypeToken.of(checkNotNull(clazz, "clazz")));
-   }
-   
-   @Override
    public TypeToken<? extends Context> getBackendType() {
       return backendType;
    }

@@ -53,7 +53,6 @@ public class BindPropertiesToExpandedValues extends AbstractModule {
             bindProperties(resolved);
          }
 
-         @SuppressWarnings("unused")
          @Provides
          @Singleton
          protected Properties expanded(FilterStringsBoundToInjectorByName filterStringsBoundByName) {

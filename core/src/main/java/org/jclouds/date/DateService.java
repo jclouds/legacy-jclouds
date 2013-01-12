@@ -34,8 +34,6 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(SimpleDateFormatDateService.class)
 public interface DateService {
 
-   Date fromSeconds(long seconds);
-
    String cDateFormat(Date date);
 
    String cDateFormat();

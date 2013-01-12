@@ -181,7 +181,7 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
       vm = VirtualMachineClientLiveTest.createVirtualMachineWithSecurityGroupInZone(zone.getId(),
             defaultTemplateOrPreferredInZone(defaultTemplate, client, zone.getId()), group.getId(), client,
             jobComplete, virtualMachineRunning);
-      if (vm.getPassword() != null && !loginCredentials.hasPasswordOption())
+      if (vm.getPassword() != null && loginCredentials.getOptionalPassword() == null)
          loginCredentials = loginCredentials.toBuilder().password(vm.getPassword()).build();
       // ingress port 22
       checkSSH(HostAndPort.fromParts(vm.getIPAddress(), 22));

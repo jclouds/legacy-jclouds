@@ -146,7 +146,10 @@ public class YamlImage {
 
          return new ImageBuilder().id(arg0.id).name(arg0.name).description(arg0.description)
                   .operatingSystem(operatingSystem).status(Image.Status.AVAILABLE)
-                  .defaultCredentials(new LoginCredentials(arg0.username, arg0.credential, null, true))
+                  .defaultCredentials(LoginCredentials.builder()
+                                                      .user(arg0.username)
+                                                      .password(arg0.credential)
+                                                      .authenticateSudo(true).build())
                   .build();
       }
    };

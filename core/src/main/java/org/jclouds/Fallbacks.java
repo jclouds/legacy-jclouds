@@ -124,7 +124,7 @@ public final class Fallbacks {
       }
    }
 
-   public static final class EmptyListOnNotFoundOr404 implements FutureFallback<ImmutableList<Object>> {
+   public static final class EmptyListOnNotFoundOr404 implements FutureFallback<ImmutableList<Object>> { // NO_UCD (unused code)
       @Override
       public ListenableFuture<ImmutableList<Object>> create(Throwable t) {
          return valOnNotFoundOr404(ImmutableList.of(), checkNotNull(t, "throwable"));
@@ -145,7 +145,7 @@ public final class Fallbacks {
       }
    }
 
-   public static final class EmptyMultimapOnNotFoundOr404 implements FutureFallback<ImmutableMultimap<Object, Object>> {
+   public static final class EmptyMultimapOnNotFoundOr404 implements FutureFallback<ImmutableMultimap<Object, Object>> { // NO_UCD (unused code)
       @Override
       public ListenableFuture<ImmutableMultimap<Object, Object>> create(Throwable t) {
          return valOnNotFoundOr404(ImmutableMultimap.of(), checkNotNull(t, "throwable"));
