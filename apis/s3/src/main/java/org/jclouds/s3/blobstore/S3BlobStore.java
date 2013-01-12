@@ -19,6 +19,7 @@
 package org.jclouds.s3.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Set;
 
@@ -42,6 +43,7 @@ import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
+import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.blobstore.functions.BlobToObject;
 import org.jclouds.s3.blobstore.functions.BucketToResourceList;
@@ -57,9 +59,9 @@ import org.jclouds.s3.options.ListBucketOptions;
 import org.jclouds.s3.options.PutBucketOptions;
 import org.jclouds.s3.options.PutObjectOptions;
 import org.jclouds.s3.util.S3Utils;
-import org.jclouds.util.Assertions;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -148,38 +150,20 @@ public class S3BlobStore extends BaseBlobStore {
    }
 
    /**
-    * This implementation invokes {@link #deleteAndEnsurePathGone}
-    * 
-    * @param container
-    *           bucket name
+    * This implementation invokes {@link #clearContainer} then {@link S3Client#deleteBucketIfEmpty} until it is true.
     */
    @Override
-   public void deleteContainer(String container) {
-      clearAndDeleteContainer(container);
-   }
-
-   /**
-    * This implementation invokes {@link #clearContainer} then {@link S3Client#deleteBucketIfEmpty}
-    * until it is true.
-    */
-   public void clearAndDeleteContainer(final String container) {
-      try {
-         //TODO: probably it is better to use a retryable predicate
-         if (!Assertions.eventuallyTrue(new Supplier<Boolean>() {
-            public Boolean get() {
-               try {
-                  clearContainer(container);
-                  return sync.deleteBucketIfEmpty(container);
-               } catch (ContainerNotFoundException e) {
-                  return true;
-               }
+   protected void deletePathAndEnsureGone(String path) {
+      checkState(new RetryablePredicate<String>(new Predicate<String>() {
+         public boolean apply(String in) {
+            try {
+               clearContainer(in);
+               return sync.deleteBucketIfEmpty(in);
+            } catch (ContainerNotFoundException e) {
+               return true;
             }
-         }, 30000)) {
-            throw new IllegalStateException(container + " still exists after deleting!");
          }
-      } catch (InterruptedException e) {
-         throw new IllegalStateException(container + " interrupted during deletion!", e);
-      }
+      }, 30000).apply(path), "%s still exists after deleting!", path);
    }
 
    /**

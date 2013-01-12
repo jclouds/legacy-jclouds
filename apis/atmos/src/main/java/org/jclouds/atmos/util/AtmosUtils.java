@@ -17,6 +17,7 @@
  * under the License.
  */
 package org.jclouds.atmos.util;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -31,6 +32,7 @@ import org.jclouds.atmos.domain.AtmosObject;
 import org.jclouds.atmos.filters.SignRequest;
 import org.jclouds.atmos.options.PutOptions;
 import org.jclouds.atmos.xml.ErrorHandler;
+import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyAlreadyExistsException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.crypto.Crypto;
@@ -38,9 +40,9 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.util.Assertions;
+import org.jclouds.predicates.RetryablePredicate;
 
-import com.google.common.base.Supplier;
+import com.google.common.base.Predicate;
 
 /**
  * Encryption, Hashing, and IO Utilities needed to sign and verify Atmos Storage requests and
@@ -78,25 +80,23 @@ public class AtmosUtils {
          sync.createFile(container, object, options);
          
       } catch(KeyAlreadyExistsException e) {
-         deleteAndEnsureGone(sync, path);
+         deletePathAndEnsureGone(sync, path);
          sync.createFile(container, object, options);
       }
       return path;
    }
-
-   public static void deleteAndEnsureGone(final AtmosClient sync, final String path) {
-      try {
-         if (!Assertions.eventuallyTrue(new Supplier<Boolean>() {
-            public Boolean get() {
-               sync.deletePath(path);
-               return !sync.pathExists(path);
+   
+   public static void deletePathAndEnsureGone(final AtmosClient sync, String path) {
+      checkState(new RetryablePredicate<String>(new Predicate<String>() {
+         public boolean apply(String in) {
+            try {
+               sync.deletePath(in);
+               return !sync.pathExists(in);
+            } catch (ContainerNotFoundException e) {
+               return true;
             }
-         }, 3000)) {
-            throw new IllegalStateException(path + " still exists after deleting!");
          }
-      } catch (InterruptedException e) {
-         throw new IllegalStateException(path + " interrupted during deletion!", e);
-      }
+      }, 3000).apply(path), "%s still exists after deleting!", path);
    }
 
    public AtmosError parseAtmosErrorFromContent(HttpCommand command, HttpResponse response, String content)
