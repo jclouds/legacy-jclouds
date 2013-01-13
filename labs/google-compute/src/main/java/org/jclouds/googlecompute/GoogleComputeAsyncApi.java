@@ -22,6 +22,7 @@ import com.google.common.annotations.Beta;
 import org.jclouds.googlecompute.features.DiskAsyncApi;
 import org.jclouds.googlecompute.features.KernelAsyncApi;
 import org.jclouds.googlecompute.features.MachineTypeAsyncApi;
+import org.jclouds.googlecompute.features.NetworkAsyncApi;
 import org.jclouds.googlecompute.features.OperationAsyncApi;
 import org.jclouds.googlecompute.features.ProjectAsyncApi;
 import org.jclouds.googlecompute.features.ZoneAsyncApi;
@@ -54,8 +55,6 @@ public interface GoogleComputeAsyncApi {
     *
     * @param projectName the name of the project
     */
-   @Delegate
-   @Path("/projects/{project}")
    KernelAsyncApi getKernelApiForProject(@PathParam("project") String projectName);
 
    /**
@@ -68,10 +67,13 @@ public interface GoogleComputeAsyncApi {
    MachineTypeAsyncApi getMachineTypeApiForProject(@PathParam("project") String projectName);
 
    /**
-    * Provides asynchronous access to Project features
+    * Provides asynchronous access to Network features
+    *
+    * @param projectName the name of the project
     */
    @Delegate
-   ProjectAsyncApi getProjectApi();
+   @Path("/projects/{project}")
+   NetworkAsyncApi getNetworkApiForProject(@PathParam("project") String projectName);
 
    /**
     * Provides asynchronous access to Operation features
@@ -81,6 +83,12 @@ public interface GoogleComputeAsyncApi {
    @Delegate
    @Path("/projects/{project}")
    OperationAsyncApi getOperationApiForProject(@PathParam("project") String projectName);
+
+   /**
+    * Provides asynchronous access to Project features
+    */
+   @Delegate
+   ProjectAsyncApi getProjectApi();
 
    /**
     * Provides asynchronous access to Zone features
