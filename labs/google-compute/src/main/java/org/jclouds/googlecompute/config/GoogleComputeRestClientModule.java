@@ -29,6 +29,8 @@ import org.jclouds.googlecompute.GoogleComputeAsyncApi;
 import org.jclouds.googlecompute.domain.Operation;
 import org.jclouds.googlecompute.features.DiskApi;
 import org.jclouds.googlecompute.features.DiskAsyncApi;
+import org.jclouds.googlecompute.features.KernelApi;
+import org.jclouds.googlecompute.features.KernelAsyncApi;
 import org.jclouds.googlecompute.features.OperationApi;
 import org.jclouds.googlecompute.features.OperationAsyncApi;
 import org.jclouds.googlecompute.features.ProjectApi;
@@ -61,6 +63,7 @@ import static com.google.common.base.Preconditions.checkState;
 public class GoogleComputeRestClientModule extends RestClientModule<GoogleComputeApi, GoogleComputeAsyncApi> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>>builder()
            .put(DiskApi.class, DiskAsyncApi.class)
+           .put(KernelApi.class, KernelAsyncApi.class)
            .put(OperationApi.class, OperationAsyncApi.class)
            .put(ProjectApi.class, ProjectAsyncApi.class)
            .put(ZoneApi.class, ZoneAsyncApi.class)
