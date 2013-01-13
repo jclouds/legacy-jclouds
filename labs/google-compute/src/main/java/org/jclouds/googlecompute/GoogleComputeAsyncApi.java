@@ -21,6 +21,7 @@ package org.jclouds.googlecompute;
 import com.google.common.annotations.Beta;
 import org.jclouds.googlecompute.features.DiskAsyncApi;
 import org.jclouds.googlecompute.features.KernelAsyncApi;
+import org.jclouds.googlecompute.features.MachineTypeAsyncApi;
 import org.jclouds.googlecompute.features.OperationAsyncApi;
 import org.jclouds.googlecompute.features.ProjectAsyncApi;
 import org.jclouds.googlecompute.features.ZoneAsyncApi;
@@ -56,6 +57,15 @@ public interface GoogleComputeAsyncApi {
    @Delegate
    @Path("/projects/{project}")
    KernelAsyncApi getKernelApiForProject(@PathParam("project") String projectName);
+
+   /**
+    * Provides asynchronous access to MachineType features
+    *
+    * @param projectName the name of the project
+    */
+   @Delegate
+   @Path("/projects/{project}")
+   MachineTypeAsyncApi getMachineTypeApiForProject(@PathParam("project") String projectName);
 
    /**
     * Provides asynchronous access to Project features
