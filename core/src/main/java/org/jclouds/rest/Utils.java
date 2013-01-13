@@ -19,7 +19,6 @@
 package org.jclouds.rest;
 
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 
 import org.jclouds.crypto.Crypto;
 import org.jclouds.date.DateService;
@@ -31,6 +30,7 @@ import org.jclouds.xml.XMLParser;
 
 import com.google.common.annotations.Beta;
 import com.google.common.eventbus.EventBus;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.ImplementedBy;
 import com.google.inject.Injector;
 
@@ -103,19 +103,19 @@ public interface Utils {
     */
    DateService date();
 
-   ExecutorService getUserExecutor();
+   ListeningExecutorService getUserExecutor();
 
    /**
     * #see #getUserExecutor
     */
-   ExecutorService userExecutor();
+   ListeningExecutorService userExecutor();
 
-   ExecutorService getIoExecutor();
+   ListeningExecutorService getIoExecutor();
 
    /**
     * #see #getIoExecutor
     */
-   ExecutorService ioExecutor();
+   ListeningExecutorService ioExecutor();
 
    @Beta
    EventBus getEventBus();

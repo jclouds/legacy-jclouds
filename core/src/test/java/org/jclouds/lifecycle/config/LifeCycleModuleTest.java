@@ -18,24 +18,24 @@
  */
 package org.jclouds.lifecycle.config;
 
+import static com.google.inject.name.Names.named;
+import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
+import static org.jclouds.Constants.PROPERTY_USER_THREADS;
+
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Named;
 
-import org.jclouds.Constants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.lifecycle.Closer;
 import org.testng.annotations.Test;
 
 import com.google.common.util.concurrent.ExecutionList;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
-import com.google.inject.Provides;
-import com.google.inject.name.Names;
 
 /**
  * 
@@ -47,35 +47,17 @@ public class LifeCycleModuleTest {
    @Test
    void testBindsExecutor() {
       Injector i = createInjector();
-      assert i.getInstance(Key.get(ExecutorService.class, Names
-               .named(Constants.PROPERTY_USER_THREADS))) != null;
-      assert i.getInstance(Key.get(ExecutorService.class, Names
-               .named(Constants.PROPERTY_IO_WORKER_THREADS))) != null;
+      assert i.getInstance(Key.get(ListeningExecutorService.class, named(PROPERTY_USER_THREADS))) != null;
+      assert i.getInstance(Key.get(ListeningExecutorService.class, named(PROPERTY_IO_WORKER_THREADS))) != null;
    }
 
    private Injector createInjector() {
-      Injector i = Guice.createInjector(new LifeCycleModule() {
-         @SuppressWarnings("unused")
-         @Provides
-         @Named(Constants.PROPERTY_USER_THREADS)
-         int p() {
-            return 1;
+      Injector i = Guice.createInjector(new AbstractModule() {
+         protected void configure() {
+            bindConstant().annotatedWith(named(PROPERTY_IO_WORKER_THREADS)).to(1);
+            bindConstant().annotatedWith(named(PROPERTY_USER_THREADS)).to(1);
          }
-
-         @SuppressWarnings("unused")
-         @Provides
-         @Named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT)
-         int p2() {
-            return 1;
-         }
-
-         @SuppressWarnings("unused")
-         @Provides
-         @Named(Constants.PROPERTY_IO_WORKER_THREADS)
-         int p3() {
-            return 1;
-         }
-      }, new ExecutorServiceModule());
+      }, new LifeCycleModule(), new ExecutorServiceModule());
       // TODO: currently have to manually invoke the execution list, as otherwise it may occur
       // before everything is wired up
       i.getInstance(ExecutionList.class).execute();
@@ -91,8 +73,8 @@ public class LifeCycleModuleTest {
    @Test
    void testCloserClosesExecutor() throws IOException {
       Injector i = createInjector();
-      ExecutorService executor = i.getInstance(Key.get(ExecutorService.class, Names
-               .named(Constants.PROPERTY_USER_THREADS)));
+      ListeningExecutorService executor = i.getInstance(Key.get(ListeningExecutorService.class,
+            named(PROPERTY_USER_THREADS)));
       assert !executor.isShutdown();
       Closer closer = i.getInstance(Closer.class);
       closer.close();
@@ -102,16 +84,16 @@ public class LifeCycleModuleTest {
    @Test
    void testCloserPreDestroyOrder() throws IOException {
       Injector i = createInjector();
-      ExecutorService userThreads = i.getInstance(Key.get(ExecutorService.class, Names
-               .named(Constants.PROPERTY_USER_THREADS)));
-      assert !userThreads.isShutdown();
-      ExecutorService ioThreads = i.getInstance(Key.get(ExecutorService.class, Names
-               .named(Constants.PROPERTY_IO_WORKER_THREADS)));
-      assert !ioThreads.isShutdown();
+      ListeningExecutorService userExecutor = i.getInstance(Key.get(ListeningExecutorService.class,
+            named(PROPERTY_USER_THREADS)));
+      assert !userExecutor.isShutdown();
+      ListeningExecutorService ioExecutor = i.getInstance(Key.get(ListeningExecutorService.class,
+            named(PROPERTY_IO_WORKER_THREADS)));
+      assert !ioExecutor.isShutdown();
       Closer closer = i.getInstance(Closer.class);
       closer.close();
-      assert userThreads.isShutdown();
-      assert ioThreads.isShutdown();
+      assert userExecutor.isShutdown();
+      assert ioExecutor.isShutdown();
    }
 
    static class PostConstructable {

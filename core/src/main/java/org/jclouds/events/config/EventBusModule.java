@@ -22,8 +22,6 @@ package org.jclouds.events.config;
 import static com.google.inject.Scopes.SINGLETON;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 
-import java.util.concurrent.ExecutorService;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -33,6 +31,7 @@ import org.jclouds.events.handlers.DeadEventLoggingHandler;
 
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -56,9 +55,9 @@ public class EventBusModule extends AbstractModule {
     */
    @Provides
    @Singleton
-   AsyncEventBus provideAsyncEventBus(@Named(PROPERTY_USER_THREADS) ExecutorService executor,
+   AsyncEventBus provideAsyncEventBus(@Named(PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
          DeadEventLoggingHandler deadEventsHandler) {// NO_UCD
-      AsyncEventBus asyncBus = new AsyncEventBus("jclouds-async-event-bus", executor);
+      AsyncEventBus asyncBus = new AsyncEventBus("jclouds-async-event-bus", userExecutor);
       asyncBus.register(deadEventsHandler);
       return asyncBus;
    }

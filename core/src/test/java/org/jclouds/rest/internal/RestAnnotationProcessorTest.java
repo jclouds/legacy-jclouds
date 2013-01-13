@@ -45,7 +45,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import javax.inject.Named;
 import javax.inject.Qualifier;
@@ -94,7 +93,6 @@ import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.reflect.Invocation;
 import org.jclouds.reflect.InvocationSuccess;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.InvocationContext;
@@ -144,6 +142,7 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.io.Files;
+import com.google.common.reflect.Invokable;
 import com.google.common.reflect.TypeToken;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -255,7 +254,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       Injector child = injectorForCaller(new HttpCommandExecutorService() {
 
          @Override
-         public Future<HttpResponse> submit(HttpCommand command) {
+         public ListenableFuture<HttpResponse> submit(HttpCommand command) {
             assertEquals(command.getCurrentRequest().getRequestLine(),
                   "GET http://localhost:9999/client/1/foo HTTP/1.1");
             return Futures.immediateFuture(HttpResponse.builder().build());
@@ -280,7 +279,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
          int callCounter = 0;
 
          @Override
-         public Future<HttpResponse> submit(HttpCommand command) {
+         public ListenableFuture<HttpResponse> submit(HttpCommand command) {
             if (callCounter == 1)
                assertEquals(command.getCurrentRequest().getRequestLine(),
                      "GET http://localhost:1111/client/1/bar/2 HTTP/1.1");
@@ -310,7 +309,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       Injector child = injectorForCaller(new HttpCommandExecutorService() {
 
          @Override
-         public Future<HttpResponse> submit(HttpCommand command) {
+         public ListenableFuture<HttpResponse> submit(HttpCommand command) {
             assertEquals(command.getCurrentRequest().getRequestLine(), "GET http://howdyboys/client/1/foo HTTP/1.1");
             return Futures.immediateFuture(HttpResponse.builder().build());
          }
@@ -335,7 +334,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       Injector child = injectorForCaller(new HttpCommandExecutorService() {
 
          @Override
-         public Future<HttpResponse> submit(HttpCommand command) {
+         public ListenableFuture<HttpResponse> submit(HttpCommand command) {
             assertEquals(command.getCurrentRequest().getRequestLine(),
                   "GET http://howdyboys/testing/testing/thepathparam/client/1/foo HTTP/1.1");
             return Futures.immediateFuture(HttpResponse.builder().build());
@@ -361,7 +360,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       Injector child = injectorForCaller(new HttpCommandExecutorService() {
 
          @Override
-         public Future<HttpResponse> submit(HttpCommand command) {
+         public ListenableFuture<HttpResponse> submit(HttpCommand command) {
             assertEquals(command.getCurrentRequest().getRequestLine(), "GET http://howdyboys/client/1/foo HTTP/1.1");
             return Futures.immediateFuture(HttpResponse.builder().build());
          }
@@ -386,7 +385,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       Injector child = injectorForCaller(new HttpCommandExecutorService() {
 
          @Override
-         public Future<HttpResponse> submit(HttpCommand command) {
+         public ListenableFuture<HttpResponse> submit(HttpCommand command) {
             assertEquals(command.getCurrentRequest().getRequestLine(), "GET http://howdyboys/client/1/foo HTTP/1.1");
             return Futures.immediateFuture(HttpResponse.builder().build());
          }
@@ -425,7 +424,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       Injector child = injectorForCaller(new HttpCommandExecutorService() {
 
          @Override
-         public Future<HttpResponse> submit(HttpCommand command) {
+         public ListenableFuture<HttpResponse> submit(HttpCommand command) {
             assertEquals(command.getCurrentRequest().getRequestLine(), "GET http://howdyboys/client/1/foo HTTP/1.1");
             return Futures.immediateFuture(HttpResponse.builder().build());
          }

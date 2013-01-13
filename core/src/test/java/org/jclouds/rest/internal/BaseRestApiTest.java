@@ -32,7 +32,6 @@ import static org.testng.Assert.assertNull;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutorService;
 
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
@@ -53,6 +52,7 @@ import com.google.common.collect.TreeMultimap;
 import com.google.common.reflect.Invokable;
 import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -82,8 +82,8 @@ public abstract class BaseRestApiTest {
 
       @Override
       protected void configure() {
-         bind(ExecutorService.class).annotatedWith(named(PROPERTY_USER_THREADS)).toInstance(sameThreadExecutor());
-         bind(ExecutorService.class).annotatedWith(named(PROPERTY_IO_WORKER_THREADS)).toInstance(sameThreadExecutor());
+         bind(ListeningExecutorService.class).annotatedWith(named(PROPERTY_USER_THREADS)).toInstance(sameThreadExecutor());
+         bind(ListeningExecutorService.class).annotatedWith(named(PROPERTY_IO_WORKER_THREADS)).toInstance(sameThreadExecutor());
          bind(HttpCommandExecutorService.class).toInstance(mock);
       }
    }
