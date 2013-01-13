@@ -23,9 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.util.concurrent.Futures.transform;
 import static com.google.common.util.concurrent.Futures.withFallback;
-import static org.jclouds.concurrent.Futures.makeListenable;
-
-import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -52,6 +49,7 @@ import com.google.common.reflect.Invokable;
 import com.google.common.reflect.TypeToken;
 import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 
@@ -66,7 +64,7 @@ public class InvokeHttpMethod<S, A> implements Function<Invocation, Result> {
    private final RestAnnotationProcessor<A> annotationProcessor;
    private final HttpCommandExecutorService http;
    private final TransformerForRequest<A> transformerForRequest;
-   private final ExecutorService userThreads;
+   private final ListeningExecutorService userExecutor;
    private final BlockOnFuture.Factory blocker;
 
    @SuppressWarnings("unchecked")
@@ -74,13 +72,13 @@ public class InvokeHttpMethod<S, A> implements Function<Invocation, Result> {
    private InvokeHttpMethod(Injector injector, TypeLiteral<A> enclosingType,
          Cache<Invokable<?, ?>, Invokable<?, ?>> sync2AsyncInvokables, RestAnnotationProcessor<A> annotationProcessor,
          HttpCommandExecutorService http, TransformerForRequest<A> transformerForRequest,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads, BlockOnFuture.Factory blocker) {
+         @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, BlockOnFuture.Factory blocker) {
       this.injector = injector;
       this.enclosingType = (TypeToken<A>) TypeToken.of(enclosingType.getType());
       this.sync2AsyncInvokables = sync2AsyncInvokables;
       this.annotationProcessor = annotationProcessor;
       this.http = http;
-      this.userThreads = userThreads;
+      this.userExecutor = userExecutor;
       this.blocker = blocker;
       this.transformerForRequest = transformerForRequest;
    }
@@ -125,8 +123,7 @@ public class InvokeHttpMethod<S, A> implements Function<Invocation, Result> {
       logger.trace("<< response from %s is parsed by %s", name, transformer.getClass().getSimpleName());
 
       logger.debug(">> invoking %s", name);
-      ListenableFuture<?> result = transform(makeListenable(http.submit(new HttpCommand(request)), userThreads),
-            transformer);
+      ListenableFuture<?> result = transform(http.submit(new HttpCommand(request)), transformer, userExecutor);
 
       FutureFallback<?> fallback = fallbacks.getUnchecked(invocation.getInvokable());
       if (fallback instanceof InvocationContext) {

@@ -34,7 +34,6 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
@@ -84,6 +83,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.InputSupplier;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.inject.AbstractModule;
@@ -195,7 +195,7 @@ public abstract class BaseRestApiExpectTest<S> {
       @Inject
       public ExpectHttpCommandExecutorService(Function<HttpRequest, HttpResponse> fn, HttpUtils utils,
                ContentMetadataCodec contentMetadataCodec,
-               @Named(PROPERTY_IO_WORKER_THREADS) ExecutorService ioExecutor,
+               @Named(PROPERTY_IO_WORKER_THREADS) ListeningExecutorService ioExecutor,
                IOExceptionRetryHandler ioRetryHandler, DelegatingRetryHandler retryHandler,
                DelegatingErrorHandler errorHandler, HttpWire wire) {
          super(utils, contentMetadataCodec, ioExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
@@ -230,8 +230,8 @@ public abstract class BaseRestApiExpectTest<S> {
 
       @Override
       public void configure() {
-         bind(ExecutorService.class).annotatedWith(named(PROPERTY_USER_THREADS)).toInstance(sameThreadExecutor());
-         bind(ExecutorService.class).annotatedWith(named(PROPERTY_IO_WORKER_THREADS)).toInstance(sameThreadExecutor());
+         bind(ListeningExecutorService.class).annotatedWith(named(PROPERTY_USER_THREADS)).toInstance(sameThreadExecutor());
+         bind(ListeningExecutorService.class).annotatedWith(named(PROPERTY_IO_WORKER_THREADS)).toInstance(sameThreadExecutor());
          bind(new TypeLiteral<Function<HttpRequest, HttpResponse>>() {
          }).toInstance(fn);
          bind(HttpCommandExecutorService.class).to(ExpectHttpCommandExecutorService.class);

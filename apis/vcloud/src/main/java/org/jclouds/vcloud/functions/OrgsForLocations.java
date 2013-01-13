@@ -21,8 +21,6 @@ package org.jclouds.vcloud.functions;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
 import java.net.URI;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -39,6 +37,8 @@ import org.jclouds.vcloud.domain.Org;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Adrian Cole
@@ -48,12 +48,12 @@ public class OrgsForLocations implements Function<Iterable<Location>, Iterable<O
    @Resource
    public Logger logger = Logger.NULL;
    private final VCloudAsyncClient aclient;
-   private final ExecutorService executor;
+   private final ListeningExecutorService userExecutor;
 
    @Inject
-   OrgsForLocations(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   OrgsForLocations(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
       this.aclient = aclient;
-      this.executor = executor;
+      this.userExecutor = userExecutor;
    }
 
    /**
@@ -63,22 +63,19 @@ public class OrgsForLocations implements Function<Iterable<Location>, Iterable<O
    @Override
    public Iterable<Org> apply(Iterable<Location> from) {
       FluentIterable<URI> uris = FluentIterable.from(from).filter(new Predicate<Location>() {
-         @Override
          public boolean apply(Location input) {
             return input.getScope() == LocationScope.ZONE;
          }
       }).transform(new Function<Location, URI>() {
-         @Override
          public URI apply(Location from) {
             return URI.create(from.getParent().getId());
          }
       });
-      return transformParallel(uris, new Function<URI, Future<? extends Org>>() {
-         @Override
-         public Future<Org> apply(URI from) {
+      return transformParallel(uris, new Function<URI, ListenableFuture<? extends Org>>() {
+         public ListenableFuture<Org> apply(URI from) {
             return aclient.getOrgClient().getOrg(from);
          }
-      }, executor, null, logger, "organizations for uris");
+      }, userExecutor, null, logger, "organizations for uris");
    }
 
 }

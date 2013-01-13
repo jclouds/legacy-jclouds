@@ -20,9 +20,6 @@ package org.jclouds.trmk.vcloud_0_8.functions;
 
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,6 +32,8 @@ import org.jclouds.trmk.vcloud_0_8.domain.Org;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 
 import com.google.common.base.Function;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Adrian Cole
@@ -45,26 +44,22 @@ public class AllVDCsInOrg implements Function<Org, Iterable<? extends org.jcloud
    public Logger logger = Logger.NULL;
 
    private final TerremarkVCloudAsyncClient aclient;
-   private final ExecutorService executor;
+   private final ListeningExecutorService userExecutor;
 
    @Inject
-   AllVDCsInOrg(TerremarkVCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   AllVDCsInOrg(TerremarkVCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
       this.aclient = aclient;
-      this.executor = executor;
+      this.userExecutor = userExecutor;
    }
 
    @Override
    public Iterable<? extends org.jclouds.trmk.vcloud_0_8.domain.VDC> apply(final Org org) {
-
-      Iterable<? extends org.jclouds.trmk.vcloud_0_8.domain.VDC> catalogItems = transformParallel(org.getVDCs().values(),
-            new Function<ReferenceType, Future<? extends org.jclouds.trmk.vcloud_0_8.domain.VDC>>() {
-               @Override
-               public Future<? extends org.jclouds.trmk.vcloud_0_8.domain.VDC> apply(ReferenceType from) {
+      return transformParallel(org.getVDCs().values(),
+            new Function<ReferenceType, ListenableFuture<? extends org.jclouds.trmk.vcloud_0_8.domain.VDC>>() {
+               public ListenableFuture<? extends org.jclouds.trmk.vcloud_0_8.domain.VDC> apply(ReferenceType from) {
                   return aclient.getVDC(from.getHref());
                }
-
-            }, executor, null, logger, "vdcs in org " + org.getName());
-      return catalogItems;
+            }, userExecutor, null, logger, "vdcs in org " + org.getName());
    }
 
 }

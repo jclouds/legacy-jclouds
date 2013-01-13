@@ -20,13 +20,13 @@ package org.jclouds.openstack.swift.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
+import static com.google.common.util.concurrent.Futures.transform;
 
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -39,7 +39,6 @@ import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.concurrent.Futures;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.SwiftAsyncClient;
@@ -60,6 +59,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * Implementation of {@link SwiftAsyncClient} which keeps all data in a local Map object.
@@ -76,16 +76,16 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
    private final ResourceToObjectInfo blob2ObjectInfo;
    private final ListContainerOptionsToBlobStoreListContainerOptions container2ContainerListOptions;
    private final ResourceToObjectList resource2ObjectList;
-   private final ExecutorService service;
+   private final ListeningExecutorService userExecutor;
 
    @Inject
-   private StubSwiftAsyncClient(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
+   private StubSwiftAsyncClient(@Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
             LocalAsyncBlobStore blobStore,
             SwiftObject.Factory objectProvider, HttpGetOptionsListToGetOptions httpGetOptionsConverter,
             ObjectToBlob object2Blob, BlobToObject blob2Object, ResourceToObjectInfo blob2ObjectInfo,
             ListContainerOptionsToBlobStoreListContainerOptions container2ContainerListOptions,
             ResourceToObjectList resource2ContainerList) {
-      this.service = service;
+      this.userExecutor = userExecutor;
       this.blobStore = blobStore;
       this.objectProvider = objectProvider;
       this.httpGetOptionsConverter = httpGetOptionsConverter;
@@ -127,11 +127,11 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
 
    public ListenableFuture<SwiftObject> getObject(String container, String key, GetOptions... options) {
       org.jclouds.blobstore.options.GetOptions getOptions = httpGetOptionsConverter.apply(options);
-      return Futures.compose(blobStore.getBlob(container, key, getOptions), blob2Object, service);
+      return transform(blobStore.getBlob(container, key, getOptions), blob2Object, userExecutor);
    }
 
    public ListenableFuture<MutableObjectInfoWithMetadata> getObjectInfo(String container, String key) {
-      return Futures.compose(blobStore.blobMetadata(container, key),
+      return transform(blobStore.blobMetadata(container, key),
                new Function<BlobMetadata, MutableObjectInfoWithMetadata>() {
 
                   @Override
@@ -140,7 +140,7 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
                      return blob2ObjectInfo.apply(from);
                   }
 
-               }, service);
+               }, userExecutor);
    }
 
    public ListenableFuture<? extends Set<ContainerMetadata>> listContainers(
@@ -181,7 +181,7 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
    public ListenableFuture<PageSet<ObjectInfo>> listObjects(String container,
             org.jclouds.openstack.swift.options.ListContainerOptions... optionsList) {
       ListContainerOptions options = container2ContainerListOptions.apply(optionsList);
-      return Futures.compose(blobStore.list(container, options), resource2ObjectList, service);
+      return transform(blobStore.list(container, options), resource2ObjectList, userExecutor);
    }
 
    public ListenableFuture<Boolean> copyObject(String sourceContainer, String sourceObject, String destinationContainer, String destinationObject) {

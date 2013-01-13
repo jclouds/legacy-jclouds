@@ -46,7 +46,7 @@ public class EventBusModuleTest {
     
     @BeforeClass
     public void setup() {
-        ExecutorServiceModule executorServiceModule = new ExecutorServiceModule() {
+        ExecutorServiceModule userExecutorModule = new ExecutorServiceModule() {
             @Override
             protected void configure() {
                bindConstant().annotatedWith(Names.named(Constants.PROPERTY_IO_WORKER_THREADS)).to(1);
@@ -55,7 +55,7 @@ public class EventBusModuleTest {
             }
          };
          EventBusModule eventBusModule = new EventBusModule();
-         injector = Guice.createInjector(executorServiceModule, eventBusModule);
+         injector = Guice.createInjector(userExecutorModule, eventBusModule);
     }
     
     public void testAsyncExecutorIsProvided() {

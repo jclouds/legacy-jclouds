@@ -26,8 +26,6 @@ import static org.jclouds.concurrent.FutureIterables.transformParallel;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -42,6 +40,8 @@ import org.jclouds.vcloud.domain.VAppTemplate;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Adrian Cole
@@ -55,41 +55,34 @@ public class VAppTemplatesSupplier implements Supplier<Set<VAppTemplate>> {
 
    private final Supplier<Map<String, Org>> orgMap;
    private final Function<Org, Iterable<VAppTemplate>> imagesInOrg;
-   private final ExecutorService executor;
+   private final ListeningExecutorService userExecutor;
 
    @Inject
    VAppTemplatesSupplier(Supplier<Map<String, Org>> orgMap,
             Function<Org, Iterable<VAppTemplate>> imagesInOrg,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
       this.orgMap = checkNotNull(orgMap, "orgMap");
       this.imagesInOrg = checkNotNull(imagesInOrg, "imagesInOrg");
-      this.executor = checkNotNull(executor, "executor");
+      this.userExecutor = checkNotNull(userExecutor, "userExecutor");
    }
 
    @Override
    public Set<VAppTemplate> get() {
       Iterable<Org> orgs = checkNotNull(orgMap.get().values(), "orgs");
       Iterable<? extends Iterable<VAppTemplate>> images = transformParallel(orgs,
-               new Function<Org, Future<? extends Iterable<VAppTemplate>>>() {
-
-                  @Override
-                  public Future<Iterable<VAppTemplate>> apply(final Org from) {
+               new Function<Org, ListenableFuture<? extends Iterable<VAppTemplate>>>() {
+                  public ListenableFuture<Iterable<VAppTemplate>> apply(final Org from) {
                      checkNotNull(from, "org");
-                     return executor.submit(new Callable<Iterable<VAppTemplate>>() {
-
-                        @Override
+                     return userExecutor.submit(new Callable<Iterable<VAppTemplate>>() {
                         public Iterable<VAppTemplate> call() throws Exception {
                            return imagesInOrg.apply(from);
                         }
-
-                        @Override
                         public String toString() {
                            return "imagesInOrg(" + from.getHref() + ")";
                         }
                      });
                   }
-
-               }, executor, null, logger, "images in " + orgs);
+               }, userExecutor, null, logger, "images in " + orgs);
       return newLinkedHashSet(concat(images));
    }
 }

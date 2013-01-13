@@ -22,9 +22,6 @@ import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -40,6 +37,8 @@ import org.jclouds.vcloud.domain.VAppTemplate;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Adrian Cole
@@ -50,32 +49,26 @@ public class VAppTemplatesForCatalogItems implements Function<Iterable<CatalogIt
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    private Logger logger = Logger.NULL;
    private final VCloudAsyncClient aclient;
-   private final ExecutorService executor;
+   private final ListeningExecutorService userExecutor;
 
 
    @Inject
-   VAppTemplatesForCatalogItems(VCloudAsyncClient aclient, @Named(PROPERTY_USER_THREADS) ExecutorService executor) {
+   VAppTemplatesForCatalogItems(VCloudAsyncClient aclient, @Named(PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
       this.aclient = aclient;
-      this.executor = executor;
+      this.userExecutor = userExecutor;
    }
 
    @Override
    public Iterable<VAppTemplate> apply(Iterable<CatalogItem> from) {
       return filter(transformParallel(filter(from, new Predicate<CatalogItem>() {
-
-         @Override
          public boolean apply(CatalogItem input) {
             return input.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML);
          }
-
-      }), new Function<CatalogItem, Future<? extends VAppTemplate>>() {
-
-         @Override
-         public Future<VAppTemplate> apply(CatalogItem from) {
+      }), new Function<CatalogItem, ListenableFuture<? extends VAppTemplate>>() {
+         public ListenableFuture<VAppTemplate> apply(CatalogItem from) {
             return aclient.getVAppTemplateClient().getVAppTemplate(from.getEntity().getHref());
          }
-
-      }, executor, null, logger, "vappTemplates in"), Predicates.notNull());
+      }, userExecutor, null, logger, "vappTemplates in"), Predicates.notNull());
    }
 
 }

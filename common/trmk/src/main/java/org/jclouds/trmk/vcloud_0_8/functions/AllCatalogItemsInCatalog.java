@@ -21,9 +21,6 @@ package org.jclouds.trmk.vcloud_0_8.functions;
 import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -39,6 +36,8 @@ import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Adrian Cole
@@ -49,35 +48,26 @@ public class AllCatalogItemsInCatalog implements Function<Catalog, Iterable<? ex
    public Logger logger = Logger.NULL;
 
    private final TerremarkVCloudAsyncClient aclient;
-   private final ExecutorService executor;
+   private final ListeningExecutorService userExecutor;
 
    @Inject
    AllCatalogItemsInCatalog(TerremarkVCloudAsyncClient aclient,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
       this.aclient = aclient;
-      this.executor = executor;
+      this.userExecutor = userExecutor;
    }
 
    @Override
    public Iterable<? extends CatalogItem> apply(Catalog from) {
-
-      Iterable<? extends CatalogItem> catalogItems = transformParallel(filter(from.values(), new Predicate<ReferenceType>() {
-
-         @Override
+      return transformParallel(filter(from.values(), new Predicate<ReferenceType>() {
          public boolean apply(ReferenceType input) {
             return input.getType().equals(TerremarkVCloudMediaType.CATALOGITEM_XML);
          }
-
-      }), new Function<ReferenceType, Future<? extends CatalogItem>>() {
-
-         @SuppressWarnings("unchecked")
-         @Override
-         public Future<CatalogItem> apply(ReferenceType from) {
-            return (Future<CatalogItem>) aclient.getCatalogItem(from.getHref());
+      }), new Function<ReferenceType, ListenableFuture<? extends CatalogItem>>() {
+         public ListenableFuture<? extends CatalogItem> apply(ReferenceType from) {
+            return aclient.getCatalogItem(from.getHref());
          }
-
-      }, executor, null, logger, "catalogItems in " + from.getHref());
-      return catalogItems;
+      }, userExecutor, null, logger, "catalogItems in " + from.getHref());
    }
 
 }

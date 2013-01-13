@@ -41,8 +41,8 @@ public class AsyncGoogleAppEngineConfigurationModule extends GoogleAppEngineConf
       super();
    }
 
-   public AsyncGoogleAppEngineConfigurationModule(Module executorServiceModule) {
-      super(executorServiceModule);
+   public AsyncGoogleAppEngineConfigurationModule(Module userExecutorModule) {
+      super(userExecutorModule);
    }
 
    /**

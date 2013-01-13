@@ -20,9 +20,6 @@ package org.jclouds.vcloud.functions;
 
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,6 +33,8 @@ import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
 
 import com.google.common.base.Function;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Adrian Cole
@@ -46,21 +45,20 @@ public class CatalogsInOrg implements Function<Org, Iterable<Catalog>> {
    public Logger logger = Logger.NULL;
 
    private final VCloudAsyncClient aclient;
-   private final ExecutorService executor;
+   private final ListeningExecutorService userExecutor;
 
    @Inject
-   CatalogsInOrg(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   CatalogsInOrg(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
       this.aclient = aclient;
-      this.executor = executor;
+      this.userExecutor = userExecutor;
    }
 
    @Override
    public Iterable<Catalog> apply(final Org org) {
-      return transformParallel(org.getCatalogs().values(), new Function<ReferenceType, Future<? extends Catalog>>() {
-         @Override
-         public Future<Catalog> apply(ReferenceType from) {
+      return transformParallel(org.getCatalogs().values(), new Function<ReferenceType, ListenableFuture<? extends Catalog>>() {
+         public ListenableFuture<Catalog> apply(ReferenceType from) {
             return aclient.getCatalogClient().getCatalog(from.getHref());
          }
-      }, executor, null, logger, "catalogs in " + org.getName());
+      }, userExecutor, null, logger, "catalogs in " + org.getName());
    }
 }

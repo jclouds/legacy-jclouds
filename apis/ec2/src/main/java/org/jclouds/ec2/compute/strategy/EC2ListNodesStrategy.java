@@ -27,8 +27,6 @@ import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -50,6 +48,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Inject;
 
 /**
@@ -70,16 +70,16 @@ public class EC2ListNodesStrategy implements ListNodesStrategy {
    protected final EC2AsyncClient client;
    protected final Supplier<Set<String>> regions;
    protected final Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata;
-   protected final ExecutorService executor;
+   protected final ListeningExecutorService userExecutor;
 
    @Inject
    protected EC2ListNodesStrategy(EC2AsyncClient client, @Region Supplier<Set<String>> regions,
             Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
       this.client =  checkNotNull(client, "client");
       this.regions =  checkNotNull(regions, "regions");
       this.runningInstanceToNodeMetadata = checkNotNull(runningInstanceToNodeMetadata, "runningInstanceToNodeMetadata");
-      this.executor =  checkNotNull(executor, "executor");
+      this.userExecutor =  checkNotNull(userExecutor, "userExecutor");
    }
 
    @Override
@@ -97,21 +97,14 @@ public class EC2ListNodesStrategy implements ListNodesStrategy {
 
    protected Iterable<? extends RunningInstance> pollRunningInstances() {
       Iterable<? extends Set<? extends Reservation<? extends RunningInstance>>> reservations = transformParallel(
-               regions.get(), new Function<String, Future<? extends Set<? extends Reservation<? extends RunningInstance>>>>() {
+               regions.get(), new Function<String, ListenableFuture<? extends Set<? extends Reservation<? extends RunningInstance>>>>() {
 
                   @Override
-                  public Future<Set<? extends Reservation<? extends RunningInstance>>> apply(String from) {
-                     // see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7126754
-                     return castToSpecificTypedFuture(client.getInstanceServices().describeInstancesInRegion(from));
+                  public ListenableFuture<? extends Set<? extends Reservation<? extends RunningInstance>>> apply(String from) {
+                     return client.getInstanceServices().describeInstancesInRegion(from);
                   }
 
-               }, executor, maxTime, logger, "reservations");
-
+               }, userExecutor, maxTime, logger, "reservations");
       return concat(concat(reservations));
-   }
-
-   @SuppressWarnings("unchecked")
-   private static <T> Future<T> castToSpecificTypedFuture(Future<? extends T> input) {
-       return (Future<T>) input;
    }
 }

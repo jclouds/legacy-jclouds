@@ -25,8 +25,6 @@ import static org.jclouds.abiquo.domain.DomainWrapper.wrap;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -46,6 +44,8 @@ import com.abiquo.server.core.cloud.VirtualDatacentersDto;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -58,7 +58,7 @@ import com.google.inject.Singleton;
 public class ListVirtualDatacenters implements ListRootEntities<VirtualDatacenter> {
    protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-   protected final ExecutorService userExecutor;
+   protected final ListeningExecutorService userExecutor;
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -69,7 +69,7 @@ public class ListVirtualDatacenters implements ListRootEntities<VirtualDatacente
 
    @Inject
    ListVirtualDatacenters(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-         @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor) {
+         @Named(Constants.PROPERTY_USER_THREADS) final ListeningExecutorService userExecutor) {
       this.context = checkNotNull(context, "context");
       this.userExecutor = checkNotNull(userExecutor, "userExecutor");
    }
@@ -103,9 +103,9 @@ public class ListVirtualDatacenters implements ListRootEntities<VirtualDatacente
 
    private Iterable<VirtualDatacenter> listConcurrentVirtualDatacenters(final List<Integer> ids) {
       Iterable<VirtualDatacenterDto> vdcs = transformParallel(ids,
-            new Function<Integer, Future<? extends VirtualDatacenterDto>>() {
+            new Function<Integer, ListenableFuture<? extends VirtualDatacenterDto>>() {
                @Override
-               public Future<VirtualDatacenterDto> apply(final Integer input) {
+               public ListenableFuture<VirtualDatacenterDto> apply(final Integer input) {
                   return context.getAsyncApi().getCloudApi().getVirtualDatacenter(input);
                }
             }, userExecutor, maxTime, logger, "getting virtual datacenters");

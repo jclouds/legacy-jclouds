@@ -30,7 +30,6 @@ import static org.jclouds.ec2.compute.util.EC2ComputeUtils.getZoneFromLocationOr
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Resource;
@@ -65,6 +64,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * creates futures that correlate to
@@ -129,7 +129,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
    };
 
    @Override
-   public Map<?, Future<Void>> execute(String group, int count, Template template, Set<NodeMetadata> goodNodes,
+   public Map<?, ListenableFuture<Void>> execute(String group, int count, Template template, Set<NodeMetadata> goodNodes,
          Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
 
       Template mutableTemplate = template.clone();

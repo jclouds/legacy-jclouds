@@ -27,16 +27,14 @@ import static org.jclouds.util.Throwables2.containsThrowable;
 import static org.jclouds.util.Throwables2.propagateAuthorizationOrOriginalException;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.annotation.Resource;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
@@ -47,6 +45,8 @@ import org.jclouds.rest.AuthorizationException;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Inject;
 
 /**
@@ -69,21 +69,21 @@ public class FutureIterables {
    private static BackoffLimitedRetryHandler retryHandler = BackoffLimitedRetryHandler.INSTANCE;
 
    public static <F, T> Iterable<T> transformParallel(final Iterable<F> fromIterable,
-         final Function<? super F, Future<? extends T>> function, ExecutorService exec, @Nullable Long maxTime, Logger logger,
+         final Function<? super F, ListenableFuture<? extends T>> function, ListeningExecutorService exec, @Nullable Long maxTime, Logger logger,
                String logPrefix) {
       return transformParallel(fromIterable, function, exec, maxTime, logger, logPrefix, retryHandler, maxRetries);
    }
    
    @SuppressWarnings("unchecked")
    public static <F, T> Iterable<T> transformParallel(Iterable<F> fromIterable,
-         Function<? super F, Future<? extends T>> function, ExecutorService exec, @Nullable Long maxTime, Logger logger,
+         Function<? super F, ListenableFuture<? extends T>> function, ListeningExecutorService exec, @Nullable Long maxTime, Logger logger,
                String logPrefix, BackoffLimitedRetryHandler retryHandler, int maxRetries) {
       Map<F, Exception> exceptions = newHashMap();
-      Map<F, Future<? extends T>> responses = newHashMap();
+      Map<F, ListenableFuture<? extends T>> responses = newHashMap();
       for (int i = 0; i < maxRetries; i++) {
          
          for (F from : fromIterable) {
-            Future<? extends T> to = function.apply(from);
+            ListenableFuture<? extends T> to = function.apply(from);
             responses.put(from, to);
          }
          try {
@@ -107,9 +107,10 @@ public class FutureIterables {
       return unwrap(responses.values());
    }
    
-   public static <T> Map<T, Exception> awaitCompletion(Map<T, ? extends Future<?>> responses, ExecutorService exec,
-         @Nullable Long maxTime, final Logger logger, final String logPrefix) throws TimeoutException {
-      final ConcurrentMap<T, Exception> errorMap = newConcurrentMap();
+   public static <F> Map<F, Exception> awaitCompletion(Map<F, ? extends ListenableFuture<?>> responses,
+         ListeningExecutorService exec, @Nullable Long maxTime, final Logger logger, final String logPrefix)
+         throws TimeoutException {
+      final ConcurrentMap<F, Exception> errorMap = newConcurrentMap();
       if (responses.size() == 0)
          return errorMap;
       final int total = responses.size();
@@ -117,8 +118,8 @@ public class FutureIterables {
       final AtomicInteger complete = new AtomicInteger(0);
       final AtomicInteger errors = new AtomicInteger(0);
       final long start = System.currentTimeMillis();
-      for (final java.util.Map.Entry<T, ? extends Future<?>> future : responses.entrySet()) {
-         Futures.makeListenable(future.getValue(), exec).addListener(new Runnable() {
+      for (final Entry<F, ? extends ListenableFuture<?>> future : responses.entrySet()) {
+         future.getValue().addListener(new Runnable() {
             
             @Override
             public void run() {
@@ -168,10 +169,10 @@ public class FutureIterables {
       return errorMap;
    }
    
-   private static <T> Iterable<T> unwrap(Iterable<Future<? extends T>> values) {
-      return transform(values, new Function<Future<? extends T>, T>() {
+   private static <T> Iterable<T> unwrap(Iterable<ListenableFuture<? extends T>> values) {
+      return transform(values, new Function<ListenableFuture<? extends T>, T>() {
          @Override
-         public T apply(Future<? extends T> from) {
+         public T apply(ListenableFuture<? extends T> from) {
             try {
                return from.get();
             } catch (InterruptedException e) {

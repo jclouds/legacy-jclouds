@@ -18,6 +18,7 @@
  */
 package org.jclouds.concurrent.config;
 
+import static com.google.common.util.concurrent.MoreExecutors.listeningDecorator;
 import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 import static org.jclouds.concurrent.DynamicExecutors.newScalingThreadPool;
@@ -30,19 +31,19 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
 
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
- * Configures {@link ExecutorService}.
+ * Configures {@link ListeningExecutorService}.
  * 
  * Note that this uses threads.
  * 
@@ -60,9 +61,9 @@ public class ExecutorServiceModule extends AbstractModule {
       @Resource
       private Logger logger = Logger.NULL;
 
-      private final ExecutorService service;
+      private final ListeningExecutorService service;
 
-      private ShutdownExecutorOnClose(ExecutorService service) {
+      private ShutdownExecutorOnClose(ListeningExecutorService service) {
          this.service = service;
       }
 
@@ -74,26 +75,23 @@ public class ExecutorServiceModule extends AbstractModule {
       }
    }
 
-   final ExecutorService userExecutorFromConstructor;
-
-   final ExecutorService ioExecutorFromConstructor;
-
-   @Inject
-   public ExecutorServiceModule(@Named(PROPERTY_USER_THREADS) ExecutorService userThreads,
-         @Named(PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads) {
-      this.userExecutorFromConstructor = addToStringOnSubmit(userThreads);
-      this.ioExecutorFromConstructor = addToStringOnSubmit(ioThreads);
-   }
-
-   private ExecutorService addToStringOnSubmit(ExecutorService executor) {
-      if (executor != null) {
-         return new DescribingExecutorService(executor);
-      }
-      return executor;
-   }
+   final ListeningExecutorService userExecutorFromConstructor;
+   final ListeningExecutorService ioExecutorFromConstructor;
 
    public ExecutorServiceModule() {
-      this(null, null);
+      this.userExecutorFromConstructor = null;
+      this.ioExecutorFromConstructor = null;
+   }
+   
+   public ExecutorServiceModule(@Named(PROPERTY_USER_THREADS) ExecutorService userExecutor,
+         @Named(PROPERTY_IO_WORKER_THREADS) ExecutorService ioExecutor) {
+      this(listeningDecorator(userExecutor), listeningDecorator(ioExecutor));
+   }
+   
+   public ExecutorServiceModule(@Named(PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
+         @Named(PROPERTY_IO_WORKER_THREADS) ListeningExecutorService ioExecutor) {
+      this.userExecutorFromConstructor = WithSubmissionTrace.wrap(userExecutor);
+      this.ioExecutorFromConstructor = WithSubmissionTrace.wrap(ioExecutor);
    }
 
    @Override
@@ -103,50 +101,55 @@ public class ExecutorServiceModule extends AbstractModule {
    @Provides
    @Singleton
    @Named(PROPERTY_USER_THREADS)
-   ExecutorService provideExecutorService(@Named(PROPERTY_USER_THREADS) int count, Closer closer) { // NO_UCD
+   ListeningExecutorService provideListeningUserExecutorService(@Named(PROPERTY_USER_THREADS) int count, Closer closer) { // NO_UCD
       if (userExecutorFromConstructor != null)
          return userExecutorFromConstructor;
-      return shutdownOnClose(addToStringOnSubmit(newThreadPoolNamed("user thread %d", count)), closer);
+      return shutdownOnClose(WithSubmissionTrace.wrap(newThreadPoolNamed("user thread %d", count)), closer);
    }
 
    @Provides
    @Singleton
    @Named(PROPERTY_IO_WORKER_THREADS)
-   ExecutorService provideIOExecutor(@Named(PROPERTY_IO_WORKER_THREADS) int count, Closer closer) { // NO_UCD
+   ListeningExecutorService provideListeningIOExecutorService(@Named(PROPERTY_IO_WORKER_THREADS) int count,
+         Closer closer) { // NO_UCD
       if (ioExecutorFromConstructor != null)
          return ioExecutorFromConstructor;
-      return shutdownOnClose(addToStringOnSubmit(newThreadPoolNamed("i/o thread %d", count)), closer);
+      return shutdownOnClose(WithSubmissionTrace.wrap(newThreadPoolNamed("i/o thread %d", count)), closer);
    }
 
-   static <T extends ExecutorService> T shutdownOnClose(final T service, Closer closer) {
+   @Provides
+   @Singleton
+   @Named(PROPERTY_USER_THREADS)
+   ExecutorService provideUserExecutorService(@Named(PROPERTY_USER_THREADS) ListeningExecutorService in) { // NO_UCD
+      return in;
+   }
+
+   @Provides
+   @Singleton
+   @Named(PROPERTY_IO_WORKER_THREADS)
+   ExecutorService provideIOExecutorService(@Named(PROPERTY_IO_WORKER_THREADS) ListeningExecutorService in) { // NO_UCD
+      return in;
+   }
+
+   static <T extends ListeningExecutorService> T shutdownOnClose(final T service, Closer closer) {
       closer.addToClose(new ShutdownExecutorOnClose(service));
       return service;
    }
 
-   private ExecutorService newCachedThreadPoolNamed(String name) {
-      return Executors.newCachedThreadPool(namedThreadFactory(name));
+   private ListeningExecutorService newCachedThreadPoolNamed(String name) {
+      return listeningDecorator(Executors.newCachedThreadPool(namedThreadFactory(name)));
    }
 
-   private ExecutorService newThreadPoolNamed(String name, int maxCount) {
+   private ListeningExecutorService newThreadPoolNamed(String name, int maxCount) {
       return maxCount == 0 ? newCachedThreadPoolNamed(name) : newScalingThreadPoolNamed(name, maxCount);
    }
 
-   private ExecutorService newScalingThreadPoolNamed(String name, int maxCount) {
-      return newScalingThreadPool(1, maxCount, 60L * 1000, namedThreadFactory(name));
+   private ListeningExecutorService newScalingThreadPoolNamed(String name, int maxCount) {
+      return listeningDecorator(newScalingThreadPool(1, maxCount, 60L * 1000, namedThreadFactory(name)));
    }
 
    private ThreadFactory namedThreadFactory(String name) {
       return new ThreadFactoryBuilder().setNameFormat(name).setThreadFactory(Executors.defaultThreadFactory()).build();
-   }
-
-   /** returns the stack trace at the caller */
-   static StackTraceElement[] getStackTraceHere() {
-      // remove the first two items in the stack trace (because the first one refers to the call to
-      // Thread.getStackTrace, and the second one is us)
-      StackTraceElement[] fullSubmissionTrace = Thread.currentThread().getStackTrace();
-      StackTraceElement[] cleanedSubmissionTrace = new StackTraceElement[fullSubmissionTrace.length - 2];
-      System.arraycopy(fullSubmissionTrace, 2, cleanedSubmissionTrace, 0, cleanedSubmissionTrace.length);
-      return cleanedSubmissionTrace;
    }
 
 }

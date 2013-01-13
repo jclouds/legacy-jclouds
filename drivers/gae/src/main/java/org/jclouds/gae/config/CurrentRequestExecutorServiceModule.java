@@ -29,7 +29,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
-import org.jclouds.concurrent.config.DescribingExecutorService;
+import org.jclouds.concurrent.config.WithSubmissionTrace;
 
 import com.google.appengine.api.ThreadManager;
 import com.google.apphosting.api.ApiProxy;
@@ -99,20 +99,20 @@ public class CurrentRequestExecutorServiceModule extends AbstractModule {
       int maxThreads = 10;
       long keepAlive = ApiProxy.getCurrentEnvironment().getRemainingMillis();
       ExecutorService pool = newScalingThreadPool(0, maxThreads, keepAlive, factory);
-      return MoreExecutors.listeningDecorator(new DescribingExecutorService(pool));
+      return WithSubmissionTrace.wrap(MoreExecutors.listeningDecorator(pool));
    }
 
    @Provides
    @Singleton
    @Named(Constants.PROPERTY_USER_THREADS)
-   protected ExecutorService userThreads() {
+   protected ListeningExecutorService userExecutor() {
       return memoizedCurrentRequestExecutorService.get();
    }
 
    @Provides
    @Singleton
    @Named(Constants.PROPERTY_IO_WORKER_THREADS)
-   protected ExecutorService ioThreads() {
+   protected ListeningExecutorService ioExecutor() {
       return memoizedCurrentRequestExecutorService.get();
    }
 }

@@ -17,46 +17,66 @@
  * under the License.
  */
 package org.jclouds.concurrent.config;
-
+import static com.google.common.base.Throwables.getStackTraceAsString;
+import static com.google.inject.name.Names.named;
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.jclouds.concurrent.config.ExecutorServiceModuleTest.checkFutureGetFailsWith;
+import static org.jclouds.Constants.PROPERTY_SCHEDULER_THREADS;
+import static org.jclouds.concurrent.config.ExecutorServiceModuleTest.assertTraceHasSubmission;
+import static org.jclouds.concurrent.config.ExecutorServiceModuleTest.incrementInitialElement;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import org.easymock.EasyMock;
-import org.jclouds.Constants;
-import org.jclouds.concurrent.config.ExecutorServiceModuleTest.ConfigurableRunner;
 import org.jclouds.lifecycle.Closer;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.util.concurrent.ListeningScheduledExecutorService;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
-import com.google.inject.name.Names;
 
 /**
- * Unit tests for the {@link ScheduledExecutorServiceModule} class.
  * 
- * @author Ignasi Barrera
- * 
- * @see ExecutorServiceModuleTest
+ * @author Adrian Cole
  */
-@Test(groups = "unit")
+@Test
 public class ScheduledExecutorServiceModuleTest {
 
-   @Test(groups = "unit")
+   private Injector injector;
+
+   @BeforeMethod
+   private void setupExecutorModule() {
+      ScheduledExecutorServiceModule module = new ScheduledExecutorServiceModule() {
+         @Override
+         protected void configure() {
+            bindConstant().annotatedWith(named(PROPERTY_SCHEDULER_THREADS)).to(1);
+            super.configure();
+         }
+      };
+
+      injector = Guice.createInjector(module);
+   }
+
+   @AfterMethod
+   private void close() throws IOException {
+      injector.getInstance(Closer.class).close();
+   }
+
+   @Test
    public void testShutdownOnClose() throws IOException {
       Injector i = Guice.createInjector();
 
       Closer closer = i.getInstance(Closer.class);
-      ScheduledExecutorService executor = EasyMock.createMock(ScheduledExecutorService.class);
+      ListeningScheduledExecutorService executor = createMock(ListeningScheduledExecutorService.class);
       ExecutorServiceModule.shutdownOnClose(executor, closer);
 
       expect(executor.shutdownNow()).andReturn(ImmutableList.<Runnable> of()).atLeastOnce();
@@ -67,106 +87,61 @@ public class ScheduledExecutorServiceModuleTest {
       verify(executor);
    }
 
-   @Test(groups = "unit")
+   @Test
    public void testShutdownOnCloseThroughModule() throws IOException {
 
-      ScheduledExecutorServiceModule module = new ScheduledExecutorServiceModule() {
+      ListeningScheduledExecutorService sched = injector.getInstance(Key.get(ListeningScheduledExecutorService.class,
+            named(PROPERTY_SCHEDULER_THREADS)));
+
+      assertFalse(sched.isShutdown());
+
+      injector.getInstance(Closer.class).close();
+
+      assertTrue(sched.isShutdown());
+   }
+
+   @Test
+   public void testExceptionInSubmitRunnableIncludesSubmissionTrace() throws Exception {
+      ListeningScheduledExecutorService sched = injector.getInstance(Key.get(ListeningScheduledExecutorService.class,
+            named(PROPERTY_SCHEDULER_THREADS)));
+      String submission = null;
+      try {
+         // this is sensitive to formatting as we are looking for the stack traces to match. if you wrap the below
+         // line again, you'll need to change incrementInitialElement to 3 line numbers instead of 2.
+         submission = getStackTraceAsString(incrementInitialElement(new RuntimeException(), 2))
+               .replaceFirst(".*\n", "");
+         sched.submit(runnableThrowsRTE()).get();
+      } catch (ExecutionException e) {
+         assertTraceHasSubmission(getStackTraceAsString(e), submission);
+         assertTraceHasSubmission(getStackTraceAsString(e.getCause()), submission);
+      }
+   }
+   
+   @Test
+   public void testExceptionInScheduleWithFixedDelayRunnableIncludesSubmissionTrace() throws Exception {
+      ListeningScheduledExecutorService sched = injector.getInstance(Key.get(ListeningScheduledExecutorService.class,
+            named(PROPERTY_SCHEDULER_THREADS)));
+      String submission = null;
+      try {
+         // this is sensitive to formatting as we are looking for the stack traces to match. if you wrap the below
+         // line again, you'll need to change incrementInitialElement to 3 line numbers instead of 2.
+         submission = getStackTraceAsString(incrementInitialElement(new RuntimeException(), 2))
+               .replaceFirst(".*\n", "");
+         sched.scheduleWithFixedDelay(runnableThrowsRTE(), 0, 1, TimeUnit.MICROSECONDS).get();
+      } catch (ExecutionException e) {
+         assertTraceHasSubmission(getStackTraceAsString(e), submission);
+         assertTraceHasSubmission(getStackTraceAsString(e.getCause()), submission);
+      }
+   }
+
+   static Runnable runnableThrowsRTE() {
+      return new Runnable() {
+
          @Override
-         protected void configure() {
-            bindConstant().annotatedWith(Names.named(Constants.PROPERTY_SCHEDULER_THREADS)).to(1);
-            super.configure();
+         public void run() {
+            throw new RuntimeException();
          }
+
       };
-
-      Injector i = Guice.createInjector(module);
-      Closer closer = i.getInstance(Closer.class);
-
-      ScheduledExecutorService sched = i.getInstance(Key.get(ScheduledExecutorService.class, Names
-              .named(Constants.PROPERTY_SCHEDULER_THREADS)));
-
-      assert !sched.isShutdown();
-
-      closer.close();
-
-      assert sched.isShutdown();
-   }
-
-   @Test(groups = "unit")
-   public void testDescribedFutureToString() throws Exception {
-
-       ScheduledExecutorServiceModule module = new ScheduledExecutorServiceModule() {
-         @Override
-         protected void configure() {
-            bindConstant().annotatedWith(Names.named(Constants.PROPERTY_SCHEDULER_THREADS)).to(1);
-            super.configure();
-         }
-      };
-
-      Injector i = Guice.createInjector(module);
-      Closer closer = i.getInstance(Closer.class);
-
-      ScheduledExecutorService sched = i.getInstance(Key.get(ScheduledExecutorService.class, Names
-              .named(Constants.PROPERTY_SCHEDULER_THREADS)));
-
-      ConfigurableRunner t1 = new ConfigurableRunner();
-      t1.result = "okay";
-
-      ScheduledFuture<Object> esc = performScheduleInSeparateMethod1(sched, t1);
-      assert esc.toString().indexOf("ConfigurableRunner") >= 0;
-      assert esc.get().equals("okay");
-
-      closer.close();
-   }
-
-   @Test(groups = "unit")
-   public void testDescribedFutureExceptionIncludesSubmissionTrace() throws Exception {
-
-       ScheduledExecutorServiceModule module = new ScheduledExecutorServiceModule() {
-         @Override
-         protected void configure() {
-            bindConstant().annotatedWith(Names.named(Constants.PROPERTY_SCHEDULER_THREADS)).to(1);
-            super.configure();
-         }
-      };
-
-      Injector i = Guice.createInjector(module);
-      Closer closer = i.getInstance(Closer.class);
-
-      ScheduledExecutorService sched = i.getInstance(Key.get(ScheduledExecutorService.class, Names
-              .named(Constants.PROPERTY_SCHEDULER_THREADS)));
-
-      ConfigurableRunner t1 = new ConfigurableRunner();
-      t1.failMessage = "foo";
-      t1.result = "shouldn't happen";
-
-      ScheduledFuture<Object> esc = performScheduleInSeparateMethod1(sched, t1);
-      checkFutureGetFailsWith(esc, "foo", "testDescribedFutureExceptionIncludesSubmissionTrace", "performScheduleInSeparateMethod1");
-
-      ScheduledFuture<?> esr = performScheduleInSeparateMethod2(sched, t1);
-      checkFutureGetFailsWith(esr, "foo", "testDescribedFutureExceptionIncludesSubmissionTrace", "performScheduleInSeparateMethod2");
-
-      ScheduledFuture<?> esfr = performScheduleInSeparateMethod3(sched, t1);
-      checkFutureGetFailsWith(esfr, "foo", "testDescribedFutureExceptionIncludesSubmissionTrace", "performScheduleInSeparateMethod3");
-
-      ScheduledFuture<?> esfd = performScheduleInSeparateMethod4(sched, t1);
-      checkFutureGetFailsWith(esfd, "foo", "testDescribedFutureExceptionIncludesSubmissionTrace", "performScheduleInSeparateMethod4");
-
-      closer.close();
-   }
-
-   static ScheduledFuture<Object> performScheduleInSeparateMethod1(ScheduledExecutorService sched, ConfigurableRunner t1) {
-       return sched.schedule((Callable<Object>)t1, 0, TimeUnit.SECONDS);
-   }
-
-   static ScheduledFuture<?> performScheduleInSeparateMethod2(ScheduledExecutorService sched, ConfigurableRunner t1) {
-       return sched.schedule((Runnable)t1, 0, TimeUnit.SECONDS);
-   }
-
-   static ScheduledFuture<?> performScheduleInSeparateMethod3(ScheduledExecutorService sched, ConfigurableRunner t1) {
-       return sched.scheduleAtFixedRate((Runnable)t1, 0, 1, TimeUnit.SECONDS);
-   }
-
-   static ScheduledFuture<?> performScheduleInSeparateMethod4(ScheduledExecutorService sched, ConfigurableRunner t1) {
-       return sched.scheduleWithFixedDelay((Runnable)t1, 0, 1, TimeUnit.SECONDS);
    }
 }

@@ -22,9 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -40,6 +37,8 @@ import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Adrian Cole
@@ -51,31 +50,26 @@ public class VAppTemplatesForResourceEntities implements
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
    private final TerremarkVCloudAsyncClient aclient;
-   private final ExecutorService executor;
+   private final ListeningExecutorService userExecutor;
 
    @Inject
    VAppTemplatesForResourceEntities(TerremarkVCloudAsyncClient aclient,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
       this.aclient = aclient;
-      this.executor = executor;
+      this.userExecutor = userExecutor;
    }
 
    @Override
    public Iterable<? extends VAppTemplate> apply(Iterable<? extends ReferenceType> from) {
       return transformParallel(filter(checkNotNull(from, "named resources"), new Predicate<ReferenceType>() {
-
-         @Override
          public boolean apply(ReferenceType input) {
             return input.getType().equals(TerremarkVCloudMediaType.VAPPTEMPLATE_XML);
          }
-
-      }), new Function<ReferenceType, Future<? extends VAppTemplate>>() {
-         @Override
-         public Future<? extends VAppTemplate> apply(ReferenceType from) {
+      }), new Function<ReferenceType, ListenableFuture<? extends VAppTemplate>>() {
+         public ListenableFuture<? extends VAppTemplate> apply(ReferenceType from) {
             return aclient.getVAppTemplate(from.getHref());
          }
-
-      }, executor, null, logger, "vappTemplates in");
+      }, userExecutor, null, logger, "vappTemplates in");
    }
 
 }

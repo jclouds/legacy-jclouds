@@ -19,7 +19,6 @@
 package org.jclouds.rest.internal;
 
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,6 +36,7 @@ import org.jclouds.xml.XMLParser;
 
 import com.google.common.annotations.Beta;
 import com.google.common.eventbus.EventBus;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
@@ -51,8 +51,8 @@ public class UtilsImpl implements Utils {
    private final HttpAsyncClient simpleAsyncClient;
    private final Crypto encryption;
    private final DateService date;
-   private final ExecutorService userExecutor;
-   private final ExecutorService ioExecutor;
+   private final ListeningExecutorService userExecutor;
+   private final ListeningExecutorService ioExecutor;
    private final EventBus eventBus;
    private final Map<String, Credentials> credentialStore;
    private final LoggerFactory loggerFactory;
@@ -61,8 +61,8 @@ public class UtilsImpl implements Utils {
 
    @Inject
    protected UtilsImpl(Injector injector, Json json, XMLParser xml, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
-         Crypto encryption, DateService date, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
-            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads, EventBus eventBus,
+         Crypto encryption, DateService date, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
+            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ListeningExecutorService ioExecutor, EventBus eventBus,
             Map<String, Credentials> credentialStore, LoggerFactory loggerFactory) {
       this.injector = injector;
       this.json = json;
@@ -70,8 +70,8 @@ public class UtilsImpl implements Utils {
       this.simpleAsyncClient = simpleAsyncClient;
       this.encryption = encryption;
       this.date = date;
-      this.userExecutor = userThreads;
-      this.ioExecutor = ioThreads;
+      this.userExecutor = userExecutor;
+      this.ioExecutor = ioExecutor;
       this.eventBus = eventBus;
       this.credentialStore = credentialStore;
       this.loggerFactory = loggerFactory;
@@ -119,22 +119,22 @@ public class UtilsImpl implements Utils {
    }
 
    @Override
-   public ExecutorService getIoExecutor() {
+   public ListeningExecutorService getIoExecutor() {
       return ioExecutor;
    }
 
    @Override
-   public ExecutorService getUserExecutor() {
+   public ListeningExecutorService getUserExecutor() {
       return userExecutor;
    }
 
    @Override
-   public ExecutorService ioExecutor() {
+   public ListeningExecutorService ioExecutor() {
       return ioExecutor;
    }
 
    @Override
-   public ExecutorService userExecutor() {
+   public ListeningExecutorService userExecutor() {
       return userExecutor;
    }
    

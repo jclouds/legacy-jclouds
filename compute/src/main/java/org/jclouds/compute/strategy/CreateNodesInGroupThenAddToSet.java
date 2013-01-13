@@ -20,7 +20,6 @@ package org.jclouds.compute.strategy;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Future;
 
 import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -28,6 +27,7 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.strategy.impl.CreateNodesWithGroupEncodedIntoNameThenAddToSet;
 
 import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.ImplementedBy;
 
 /**
@@ -37,6 +37,6 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(CreateNodesWithGroupEncodedIntoNameThenAddToSet.class)
 public interface CreateNodesInGroupThenAddToSet {
 
-   Map<?, Future<Void>> execute(String group, int count, Template template, Set<NodeMetadata> goodNodes,
+   Map<?, ListenableFuture<Void>> execute(String group, int count, Template template, Set<NodeMetadata> goodNodes,
             Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses);
 }

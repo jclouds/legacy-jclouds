@@ -18,13 +18,13 @@
  */
 package org.jclouds.enterprise.config;
 
-import java.util.concurrent.ExecutorService;
-
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.joda.config.JodaDateServiceModule;
 import org.jclouds.encryption.bouncycastle.config.BouncyCastleCryptoModule;
 import org.jclouds.netty.config.NettyPayloadModule;
+
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * Configures Enterprise-grade components
@@ -35,8 +35,8 @@ import org.jclouds.netty.config.NettyPayloadModule;
 @ConfiguresExecutorService
 public class EnterpriseConfigurationModule extends ExecutorServiceModule {
 
-   public EnterpriseConfigurationModule(ExecutorService userThreads, ExecutorService ioThreads) {
-      super(userThreads, ioThreads);
+   public EnterpriseConfigurationModule(ListeningExecutorService userExecutor, ListeningExecutorService ioExecutor) {
+      super(userExecutor, ioExecutor);
    }
 
    public EnterpriseConfigurationModule() {

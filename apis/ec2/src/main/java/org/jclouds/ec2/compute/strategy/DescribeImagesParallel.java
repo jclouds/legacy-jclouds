@@ -23,8 +23,6 @@ import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -38,6 +36,8 @@ import org.jclouds.ec2.options.DescribeImagesOptions;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * 
@@ -51,13 +51,12 @@ public class DescribeImagesParallel implements
    protected Logger logger = Logger.NULL;
 
    protected final EC2AsyncClient async;
-   final ExecutorService executor;
+   final ListeningExecutorService userExecutor;
 
    @Inject
-   public DescribeImagesParallel(EC2AsyncClient async, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
-      super();
+   public DescribeImagesParallel(EC2AsyncClient async, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
       this.async = async;
-      this.executor = executor;
+      this.userExecutor = userExecutor;
    }
 
    @Override
@@ -65,15 +64,11 @@ public class DescribeImagesParallel implements
             Iterable<Entry<String, DescribeImagesOptions>> queries) {
       return concat(transformParallel(
                queries,
-               new Function<Entry<String, DescribeImagesOptions>, Future<? extends Set<? extends org.jclouds.ec2.domain.Image>>>() {
-
-                  @Override
-                  public Future<Set<? extends org.jclouds.ec2.domain.Image>> apply(
+               new Function<Entry<String, DescribeImagesOptions>, ListenableFuture<? extends Set<? extends org.jclouds.ec2.domain.Image>>>() {
+                  public ListenableFuture<Set<? extends org.jclouds.ec2.domain.Image>> apply(
                            Entry<String, DescribeImagesOptions> from) {
                      return async.getAMIServices().describeImagesInRegion(from.getKey(), from.getValue());
                   }
-
-               }, executor, null, logger, "amis"));
+               }, userExecutor, null, logger, "amis"));
    }
-
 }

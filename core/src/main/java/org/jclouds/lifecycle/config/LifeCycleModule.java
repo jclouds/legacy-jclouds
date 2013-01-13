@@ -23,23 +23,25 @@ import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static com.google.inject.matcher.Matchers.any;
 import static java.util.Arrays.asList;
+import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
+import static org.jclouds.Constants.PROPERTY_SCHEDULER_THREADS;
+import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Named;
 
-import org.jclouds.Constants;
 import org.jclouds.lifecycle.Closer;
 
 import com.google.common.util.concurrent.ExecutionList;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Stage;
@@ -70,14 +72,14 @@ public class LifeCycleModule extends AbstractModule {
 
       Closeable executorCloser = new Closeable() {
          @Inject
-         @Named(Constants.PROPERTY_USER_THREADS)
-         ExecutorService userExecutor;
+         @Named(PROPERTY_USER_THREADS)
+         ListeningExecutorService userExecutor;
          @Inject
-         @Named(Constants.PROPERTY_IO_WORKER_THREADS)
-         ExecutorService ioExecutor;
+         @Named(PROPERTY_IO_WORKER_THREADS)
+         ListeningExecutorService ioExecutor;
          // ScheduledExecutor is defined in an optional module
          @Inject(optional = true)
-         @Named(Constants.PROPERTY_SCHEDULER_THREADS)
+         @Named(PROPERTY_SCHEDULER_THREADS)
          ScheduledExecutorService scheduledExecutor;
 
          public void close() throws IOException {

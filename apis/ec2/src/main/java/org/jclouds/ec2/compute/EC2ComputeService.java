@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Named;
@@ -96,6 +95,7 @@ import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Inject;
 
 /**
@@ -124,7 +124,7 @@ public class EC2ComputeService extends BaseComputeService {
             InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
             RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
             PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client client,
+            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, EC2Client client,
             ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
             @Named("SECURITY") LoadingCache<RegionAndName, String> securityGroupMap,
             Optional<ImageExtension> imageExtension, GroupNamingConvention.Factory namingConvention,
@@ -133,7 +133,7 @@ public class EC2ComputeService extends BaseComputeService {
                getNodeMetadataStrategy, runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy,
                startNodeStrategy, stopNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning,
                nodeTerminated, nodeSuspended, initScriptRunnerFactory, initAdminAccess, runScriptOnNodeFactory,
-               persistNodeCredentials, timeouts, executor, imageExtension);
+               persistNodeCredentials, timeouts, userExecutor, imageExtension);
       this.client = client;
       this.credentialsMap = credentialsMap;
       this.securityGroupMap = securityGroupMap;

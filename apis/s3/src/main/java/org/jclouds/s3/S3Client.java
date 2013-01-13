@@ -19,6 +19,9 @@
 package org.jclouds.s3;
 
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.s3.domain.AccessControlList;
