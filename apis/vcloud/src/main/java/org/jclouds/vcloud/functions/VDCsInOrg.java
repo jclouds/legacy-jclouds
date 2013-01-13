@@ -20,9 +20,6 @@ package org.jclouds.vcloud.functions;
 
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,6 +33,8 @@ import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VDC;
 
 import com.google.common.base.Function;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Adrian Cole
@@ -46,23 +45,21 @@ public class VDCsInOrg implements Function<Org, Iterable<VDC>> {
    public Logger logger = Logger.NULL;
 
    private final VCloudAsyncClient aclient;
-   private final ExecutorService executor;
+   private final ListeningExecutorService userExecutor;
 
    @Inject
-   VDCsInOrg(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   VDCsInOrg(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
       this.aclient = aclient;
-      this.executor = executor;
+      this.userExecutor = userExecutor;
    }
 
    @Override
    public Iterable<VDC> apply(final Org org) {
-      return transformParallel(org.getVDCs().values(), new Function<ReferenceType, Future<? extends VDC>>() {
-         @Override
-         public Future<? extends VDC> apply(ReferenceType from) {
+      return transformParallel(org.getVDCs().values(), new Function<ReferenceType, ListenableFuture<? extends VDC>>() {
+         public ListenableFuture<? extends VDC> apply(ReferenceType from) {
             return aclient.getVDCClient().getVDC(from.getHref());
          }
-
-      }, executor, null, logger, "vdcs in org " + org.getName());
+      }, userExecutor, null, logger, "vdcs in org " + org.getName());
    }
 
 }

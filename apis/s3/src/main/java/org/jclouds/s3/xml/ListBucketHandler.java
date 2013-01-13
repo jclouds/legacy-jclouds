@@ -23,6 +23,7 @@ import static org.jclouds.http.Uris.uriBuilder;
 import static org.jclouds.util.SaxUtils.currentOrNull;
 
 import java.util.regex.Pattern;
+
 import javax.inject.Inject;
 
 import org.jclouds.date.DateService;

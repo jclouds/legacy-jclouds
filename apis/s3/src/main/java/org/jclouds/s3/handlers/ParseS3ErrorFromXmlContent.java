@@ -24,12 +24,11 @@ import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCK
 
 import java.net.URI;
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.util.AWSUtils;
@@ -39,6 +38,9 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.s3.S3ApiMetadata;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 
 /**
  * @author Adrian Cole

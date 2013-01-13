@@ -24,7 +24,6 @@ import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursi
 
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -48,6 +47,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * 
@@ -57,17 +57,17 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
 
    protected final BlobStoreContext context;
    protected final BlobUtils blobUtils;
-   protected final ExecutorService service;
+   protected final ListeningExecutorService userExecutor;
    protected final Supplier<Location> defaultLocation;
    protected final Supplier<Set<? extends Location>> locations;
 
    @Inject
    protected BaseAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
+            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, Supplier<Location> defaultLocation,
             @Memoized Supplier<Set<? extends Location>> locations) {
       this.context = checkNotNull(context, "context");
       this.blobUtils = checkNotNull(blobUtils, "blobUtils");
-      this.service = checkNotNull(service, "service");
+      this.userExecutor = checkNotNull(userExecutor, "userExecutor");
       this.defaultLocation = checkNotNull(defaultLocation, "defaultLocation");
       this.locations = checkNotNull(locations, "locations");
    }
@@ -117,7 +117,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
     */
    @Override
    public ListenableFuture<Long> countBlobs(final String containerName, final ListContainerOptions options) {
-      return org.jclouds.concurrent.Futures.makeListenable(service.submit(new Callable<Long>() {
+      return userExecutor.submit(new Callable<Long>() {
          public Long call() throws Exception {
             return blobUtils.countBlobs(containerName, options);
          }
@@ -126,7 +126,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
          public String toString() {
             return "countBlobs(" + containerName + ")";
          }
-      }), service);
+      });
    }
 
    /**
@@ -149,7 +149,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
     */
    @Override
    public ListenableFuture<Void> clearContainer(final String containerName, final ListContainerOptions options) {
-      return org.jclouds.concurrent.Futures.makeListenable(service.submit(new Callable<Void>() {
+      return userExecutor.submit(new Callable<Void>() {
 
          public Void call() throws Exception {
             blobUtils.clearContainer(containerName, options);
@@ -160,7 +160,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
          public String toString() {
             return "clearContainer(" + containerName + ")";
          }
-      }), service);
+      });
    }
 
    /**
@@ -171,7 +171,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
     */
    @Override
    public ListenableFuture<Void> deleteDirectory(final String containerName, final String directory) {
-      return org.jclouds.concurrent.Futures.makeListenable(service.submit(new Callable<Void>() {
+      return userExecutor.submit(new Callable<Void>() {
 
          public Void call() throws Exception {
             blobUtils.deleteDirectory(containerName, directory);
@@ -182,7 +182,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
          public String toString() {
             return "deleteDirectory(" + containerName + "," + directory + ")";
          }
-      }), service);
+      });
    }
 
    /**
@@ -194,7 +194,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
     *           virtual path
     */
    public ListenableFuture<Boolean> directoryExists(final String containerName, final String directory) {
-      return org.jclouds.concurrent.Futures.makeListenable(service.submit(new Callable<Boolean>() {
+      return userExecutor.submit(new Callable<Boolean>() {
 
          public Boolean call() throws Exception {
             return blobUtils.directoryExists(containerName, directory);
@@ -204,7 +204,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
          public String toString() {
             return "directoryExists(" + containerName + "," + directory + ")";
          }
-      }), service);
+      });
    }
 
    /**
@@ -217,9 +217,8 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
     */
 
    public ListenableFuture<Void> createDirectory(final String containerName, final String directory) {
-
       return blobUtils.directoryExists(containerName, directory) ? Futures.immediateFuture((Void) null)
-               : org.jclouds.concurrent.Futures.makeListenable(service.submit(new Callable<Void>() {
+               : userExecutor.submit(new Callable<Void>() {
                   public Void call() throws Exception {
                      blobUtils.createDirectory(containerName, directory);
                      return null;
@@ -229,7 +228,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
                   public String toString() {
                      return "createDirectory(" + containerName + "," + directory + ")";
                   }
-               }), service);
+               });
    }
 
    /**
@@ -254,7 +253,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
     */
    @Override
    public ListenableFuture<Void> deleteContainer(final String container) {
-      return org.jclouds.concurrent.Futures.makeListenable(service.submit(new Callable<Void>() {
+      return userExecutor.submit(new Callable<Void>() {
 
          public Void call() throws Exception {
             deletePathAndEnsureGone(container);
@@ -265,7 +264,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
          public String toString() {
             return "deleteContainer(" + container + ")";
          }
-      }), service);
+      });
    }
 
    protected void deletePathAndEnsureGone(String path) {

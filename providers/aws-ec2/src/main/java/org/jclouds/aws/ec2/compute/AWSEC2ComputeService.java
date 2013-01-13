@@ -29,7 +29,6 @@ import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_GENERATE_INSTA
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
@@ -74,6 +73,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Adrian Cole
@@ -100,7 +100,7 @@ public class AWSEC2ComputeService extends EC2ComputeService {
          InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
          RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
          PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, AWSEC2Client client,
+         @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, AWSEC2Client client,
          ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
          @Named("SECURITY") LoadingCache<RegionAndName, String> securityGroupMap,
          @Named("PLACEMENT") LoadingCache<RegionAndName, String> placementGroupMap,
@@ -111,7 +111,7 @@ public class AWSEC2ComputeService extends EC2ComputeService {
             getNodeMetadataStrategy, runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy,
             startNodeStrategy, stopNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning,
             nodeTerminated, nodeSuspended, initScriptRunnerFactory, runScriptOnNodeFactory, initAdminAccess,
-            persistNodeCredentials, timeouts, executor, client, credentialsMap, securityGroupMap, imageExtension,
+            persistNodeCredentials, timeouts, userExecutor, client, credentialsMap, securityGroupMap, imageExtension,
             namingConvention, generateInstanceNames);
       this.client = client;
       this.placementGroupMap = placementGroupMap;

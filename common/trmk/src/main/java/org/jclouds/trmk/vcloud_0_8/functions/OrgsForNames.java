@@ -20,9 +20,6 @@ package org.jclouds.trmk.vcloud_0_8.functions;
 
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -34,6 +31,8 @@ import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
 import org.jclouds.trmk.vcloud_0_8.domain.Org;
 
 import com.google.common.base.Function;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Adrian Cole
@@ -43,23 +42,21 @@ public class OrgsForNames implements Function<Iterable<String>, Iterable<? exten
    @Resource
    public Logger logger = Logger.NULL;
    private final TerremarkVCloudAsyncClient aclient;
-   private final ExecutorService executor;
+   private final ListeningExecutorService userExecutor;
 
    @Inject
-   OrgsForNames(TerremarkVCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   OrgsForNames(TerremarkVCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
       this.aclient = aclient;
-      this.executor = executor;
+      this.userExecutor = userExecutor;
    }
 
    @Override
    public Iterable<? extends Org> apply(Iterable<String> from) {
-      return transformParallel(from, new Function<String, Future<? extends Org>>() {
-         @Override
-         public Future<? extends Org> apply(String from) {
+      return transformParallel(from, new Function<String, ListenableFuture<? extends Org>>() {
+         public ListenableFuture<? extends Org> apply(String from) {
             return aclient.findOrgNamed(from);
          }
-
-      }, executor, null, logger, "organizations for names");
+      }, userExecutor, null, logger, "organizations for names");
    }
 
 }

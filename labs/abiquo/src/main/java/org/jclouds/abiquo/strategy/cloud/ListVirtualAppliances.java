@@ -24,9 +24,6 @@ import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.abiquo.domain.DomainWrapper.wrap;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
 import javax.annotation.Resource;
 import javax.inject.Named;
 
@@ -44,6 +41,8 @@ import com.abiquo.server.core.cloud.VirtualApplianceDto;
 import com.abiquo.server.core.cloud.VirtualAppliancesDto;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -58,7 +57,7 @@ public class ListVirtualAppliances implements ListRootEntities<VirtualAppliance>
 
    protected final ListVirtualDatacenters listVirtualDatacenters;
 
-   protected final ExecutorService userExecutor;
+   protected final ListeningExecutorService userExecutor;
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -69,7 +68,7 @@ public class ListVirtualAppliances implements ListRootEntities<VirtualAppliance>
 
    @Inject
    ListVirtualAppliances(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-         @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor,
+         @Named(Constants.PROPERTY_USER_THREADS) final ListeningExecutorService userExecutor,
          final ListVirtualDatacenters listVirtualDatacenters) {
       this.context = checkNotNull(context, "context");
       this.listVirtualDatacenters = checkNotNull(listVirtualDatacenters, "listVirtualDatacenters");
@@ -92,9 +91,9 @@ public class ListVirtualAppliances implements ListRootEntities<VirtualAppliance>
 
    private Iterable<VirtualApplianceDto> listConcurrentVirtualAppliances(final Iterable<VirtualDatacenter> vdcs) {
       Iterable<VirtualAppliancesDto> vapps = transformParallel(vdcs,
-            new Function<VirtualDatacenter, Future<? extends VirtualAppliancesDto>>() {
+            new Function<VirtualDatacenter, ListenableFuture<? extends VirtualAppliancesDto>>() {
                @Override
-               public Future<VirtualAppliancesDto> apply(final VirtualDatacenter input) {
+               public ListenableFuture<VirtualAppliancesDto> apply(final VirtualDatacenter input) {
                   return context.getAsyncApi().getCloudApi().listVirtualAppliances(input.unwrap());
                }
             }, userExecutor, maxTime, logger, "getting virtual appliances");

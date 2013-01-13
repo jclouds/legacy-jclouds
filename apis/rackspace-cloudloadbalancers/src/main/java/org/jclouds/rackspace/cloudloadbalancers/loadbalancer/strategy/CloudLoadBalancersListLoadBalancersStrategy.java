@@ -21,26 +21,20 @@ package org.jclouds.rackspace.cloudloadbalancers.loadbalancer.strategy;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
-import org.jclouds.loadbalancer.reference.LoadBalancerConstants;
 import org.jclouds.loadbalancer.strategy.ListLoadBalancersStrategy;
 import org.jclouds.location.Zone;
-import org.jclouds.logging.Logger;
 import org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersApi;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * 
@@ -48,38 +42,25 @@ import com.google.common.collect.Sets;
  */
 @Singleton
 public class CloudLoadBalancersListLoadBalancersStrategy implements ListLoadBalancersStrategy {
-   @Resource
-   @Named(LoadBalancerConstants.LOADBALANCER_LOGGER)
-   protected Logger logger = Logger.NULL;
 
    private final CloudLoadBalancersApi aclient;
    private final Function<LoadBalancer, LoadBalancerMetadata> converter;
-   private final ExecutorService executor; // leaving this here for possible future parallelization
    private final Supplier<Set<String>> zones;
 
    @Inject
    protected CloudLoadBalancersListLoadBalancersStrategy(CloudLoadBalancersApi aclient,
-            Function<LoadBalancer, LoadBalancerMetadata> converter,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, @Zone Supplier<Set<String>> zones) {
+         Function<LoadBalancer, LoadBalancerMetadata> converter, @Zone Supplier<Set<String>> zones) {
       this.aclient = checkNotNull(aclient, "aclient");
       this.zones = checkNotNull(zones, "zones");
       this.converter = checkNotNull(converter, "converter");
-      this.executor = checkNotNull(executor, "executor");
    }
 
    @Override
    public Iterable<? extends LoadBalancerMetadata> listLoadBalancers() {
-      Set<LoadBalancerMetadata> loadBalancerMetadatas = Sets.newHashSet();
-      
-      for (String zone: zones.get()) {
-         FluentIterable<LoadBalancerMetadata> lbm = 
-               aclient.getLoadBalancerApiForZone(zone).list().concat().transform(converter);
-         
-         for (LoadBalancerMetadata loadBalancerMetadata: lbm) {
-            loadBalancerMetadatas.add(loadBalancerMetadata);
-         }
+      Builder<LoadBalancerMetadata> loadBalancers = ImmutableSet.<LoadBalancerMetadata> builder();
+      for (String zone : zones.get()) { // TODO: parallel
+         loadBalancers.addAll(aclient.getLoadBalancerApiForZone(zone).list().concat().transform(converter));
       }
-      
-      return loadBalancerMetadatas;
+      return loadBalancers.build();
    }
 }

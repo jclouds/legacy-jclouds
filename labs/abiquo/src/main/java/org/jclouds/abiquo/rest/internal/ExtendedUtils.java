@@ -22,7 +22,6 @@ package org.jclouds.abiquo.rest.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -40,6 +39,7 @@ import org.jclouds.rest.internal.UtilsImpl;
 import org.jclouds.xml.XMLParser;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
@@ -57,11 +57,11 @@ public class ExtendedUtils extends UtilsImpl implements Utils {
    @Inject
    public ExtendedUtils(final Injector injector, final Json json, final XMLParser xml, final HttpClient simpleApi,
          final HttpAsyncClient simpleAsyncApi, final Crypto encryption, final DateService date,
-         @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userThreads,
-         @Named(Constants.PROPERTY_IO_WORKER_THREADS) final ExecutorService ioThreads, final EventBus eventBus,
+         @Named(Constants.PROPERTY_USER_THREADS) final ListeningExecutorService userExecutor,
+         @Named(Constants.PROPERTY_IO_WORKER_THREADS) final ListeningExecutorService ioExecutor, final EventBus eventBus,
          final Map<String, Credentials> credentialStore, final LoggerFactory loggerFactory,
          final AbiquoHttpClient abiquoHttpClient, final AbiquoHttpAsyncClient abiquoHttpAsyncApi) {
-      super(injector, json, xml, simpleApi, simpleAsyncApi, encryption, date, userThreads, ioThreads, eventBus,
+      super(injector, json, xml, simpleApi, simpleAsyncApi, encryption, date, userExecutor, ioExecutor, eventBus,
             credentialStore, loggerFactory);
       this.abiquoHttpClient = checkNotNull(abiquoHttpClient, "abiquoHttpClient");
       this.abiquoHttpAsyncApi = checkNotNull(abiquoHttpAsyncApi, "abiquoHttpAsyncApi");

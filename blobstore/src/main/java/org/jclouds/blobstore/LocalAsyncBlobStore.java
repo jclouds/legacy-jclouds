@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -80,6 +79,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * Implementation of {@link BaseAsyncBlobStore} which uses a pluggable
@@ -103,13 +103,13 @@ public class LocalAsyncBlobStore extends BaseAsyncBlobStore {
    @Inject
    protected LocalAsyncBlobStore(BlobStoreContext context,
          BlobUtils blobUtils,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
+         @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
          Supplier<Location> defaultLocation,
          @Memoized Supplier<Set<? extends Location>> locations,
          ContentMetadataCodec contentMetadataCodec,
          IfDirectoryReturnNameStrategy ifDirectoryReturnName,
          Factory blobFactory, LocalStorageStrategy storageStrategy) {
-      super(context, blobUtils, service, defaultLocation, locations);
+      super(context, blobUtils, userExecutor, defaultLocation, locations);
       this.blobFactory = blobFactory;
       this.contentMetadataCodec = contentMetadataCodec;
       this.ifDirectoryReturnName = ifDirectoryReturnName;

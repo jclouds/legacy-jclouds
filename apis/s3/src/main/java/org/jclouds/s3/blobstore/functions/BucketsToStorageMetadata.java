@@ -22,8 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -39,6 +37,8 @@ import org.jclouds.logging.Logger;
 import org.jclouds.s3.domain.BucketMetadata;
 
 import com.google.common.base.Function;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 @Singleton
 public class BucketsToStorageMetadata implements
@@ -47,11 +47,11 @@ public class BucketsToStorageMetadata implements
    @Resource
    protected Logger logger = Logger.NULL;
    
-   private final ExecutorService userExecutor;
+   private final ListeningExecutorService userExecutor;
    private final BucketToResourceMetadata bucket2ResourceMd;
 
    @Inject
-   public BucketsToStorageMetadata(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor, BucketToResourceMetadata bucket2ResourceMd) {
+   public BucketsToStorageMetadata(@Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, BucketToResourceMetadata bucket2ResourceMd) {
       this.userExecutor = checkNotNull(userExecutor, "userExecutor");
       this.bucket2ResourceMd = checkNotNull(bucket2ResourceMd, "bucket2ResourceMd");
    }
@@ -62,9 +62,9 @@ public class BucketsToStorageMetadata implements
       // parallel as listing buckets is slow when looking up regions
       Iterable<? extends StorageMetadata> buckets = FutureIterables
                .<BucketMetadata, StorageMetadata> transformParallel(input,
-                        new Function<BucketMetadata, Future<? extends StorageMetadata>>() {
+                        new Function<BucketMetadata, ListenableFuture<? extends StorageMetadata>>() {
                            @Override
-                           public Future<? extends StorageMetadata> apply(final BucketMetadata from) {
+                           public ListenableFuture<? extends StorageMetadata> apply(final BucketMetadata from) {
                               return userExecutor.submit(new Callable<StorageMetadata>() {
 
                                  @Override

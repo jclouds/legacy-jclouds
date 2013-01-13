@@ -24,7 +24,6 @@ import static com.google.common.util.concurrent.Futures.immediateFuture;
 
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -47,12 +46,13 @@ import org.jclouds.blobstore.LocalAsyncBlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
-import org.jclouds.concurrent.Futures;
 import org.jclouds.http.options.GetOptions;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * Implementation of {@link AtmosAsyncClient} which keeps all data in a local Map object.
@@ -68,13 +68,13 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
    private final BlobMetadataToObject blob2ObjectInfo;
    private final ListOptionsToBlobStoreListOptions container2ContainerListOptions;
    private final ResourceMetadataListToDirectoryEntryList resource2ObjectList;
-   private final ExecutorService service;
+   private final ListeningExecutorService userExecutor;
 
    @Inject
    private StubAtmosAsyncClient(LocalAsyncBlobStore blobStore, AtmosObject.Factory objectProvider,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, ObjectToBlob object2Blob, BlobToObject blob2Object,
             BlobMetadataToObject blob2ObjectInfo, ListOptionsToBlobStoreListOptions container2ContainerListOptions,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
+            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
             ResourceMetadataListToDirectoryEntryList resource2ContainerList) {
       this.blobStore = blobStore;
       this.objectProvider = objectProvider;
@@ -85,7 +85,7 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
       this.container2ContainerListOptions = checkNotNull(container2ContainerListOptions,
                "container2ContainerListOptions");
       this.resource2ObjectList = checkNotNull(resource2ContainerList, "resource2ContainerList");
-      this.service = service;
+      this.userExecutor = userExecutor;
    }
 
    @Override
@@ -99,7 +99,7 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
          container = directoryName;
          path = null;
       }
-      return Futures.compose(blobStore.createContainerInLocation(null, container), new Function<Boolean, URI>() {
+      return Futures.transform(blobStore.createContainerInLocation(null, container), new Function<Boolean, URI>() {
 
          public URI apply(Boolean from) {
             if (path != null) {
@@ -109,7 +109,7 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
             return URI.create("http://stub/containers/" + container);
          }
 
-      }, service);
+      }, userExecutor);
    }
 
    @Override
@@ -124,27 +124,27 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
             object.getContentMetadata().setName(path + "/" + file);
       }
       Blob blob = object2Blob.apply(object);
-      return Futures.compose(blobStore.putBlob(container, blob), new Function<String, URI>() {
+      return Futures.transform(blobStore.putBlob(container, blob), new Function<String, URI>() {
 
          public URI apply(String from) {
             return URI.create(uri);
          }
 
-      }, service);
+      }, userExecutor);
    }
 
    @Override
    public ListenableFuture<Void> deletePath(String path) {
       if (path.indexOf('/') == path.length() - 1) {
          // chop off the trailing slash
-         return Futures.compose(blobStore.deleteContainerIfEmpty(path.substring(0, path.length() - 1)),
+         return Futures.transform(blobStore.deleteContainerIfEmpty(path.substring(0, path.length() - 1)),
                   new Function<Boolean, Void>() {
 
                      public Void apply(Boolean from) {
                         return null;
                      }
 
-                  }, service);
+                  }, userExecutor);
       } else {
          String container = path.substring(0, path.indexOf('/'));
          path = path.substring(path.indexOf('/') + 1);
@@ -164,11 +164,11 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
       else {
          String container = path.substring(0, path.indexOf('/'));
          path = path.substring(path.indexOf('/') + 1);
-         return Futures.compose(blobStore.blobMetadata(container, path), new Function<BlobMetadata, UserMetadata>() {
+         return Futures.transform(blobStore.blobMetadata(container, path), new Function<BlobMetadata, UserMetadata>() {
             public UserMetadata apply(BlobMetadata from) {
                return blob2ObjectInfo.apply(from).getUserMetadata();
             }
-         }, service);
+         }, userExecutor);
       }
    }
 
@@ -177,7 +177,7 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
       String container = path.substring(0, path.indexOf('/'));
       path = path.substring(path.indexOf('/') + 1);
       try {
-         return Futures.compose(blobStore.getBlob(container, path), blob2Object, service);
+         return Futures.transform(blobStore.getBlob(container, path), blob2Object, userExecutor);
       } catch (Exception e) {
          return immediateFailedFuture(Throwables.getRootCause(e));
       }
@@ -187,7 +187,7 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
    public ListenableFuture<BoundedSet<? extends DirectoryEntry>> listDirectories(ListOptions... optionsList) {
       // org.jclouds.blobstore.options.ListOptions options = container2ContainerListOptions
       // .apply(optionsList);
-      return Futures.compose(blobStore.list(), resource2ObjectList, service);
+      return Futures.transform(blobStore.list(), resource2ObjectList, userExecutor);
    }
 
    @Override
@@ -201,7 +201,7 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
          if (!path.equals(""))
             options.inDirectory(path);
       }
-      return Futures.compose(blobStore.list(container, options), resource2ObjectList, service);
+      return Futures.transform(blobStore.list(container, options), resource2ObjectList, userExecutor);
    }
 
    @Override
@@ -232,7 +232,7 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
       String container = path.substring(0, path.indexOf('/'));
       String blobName = path.substring(path.indexOf('/') + 1);
       org.jclouds.blobstore.options.GetOptions getOptions = httpGetOptionsConverter.apply(options);
-      return Futures.compose(blobStore.getBlob(container, blobName, getOptions), blob2Object, service);
+      return Futures.transform(blobStore.getBlob(container, blobName, getOptions), blob2Object, userExecutor);
    }
 
    @Override

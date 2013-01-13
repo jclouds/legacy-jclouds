@@ -26,8 +26,6 @@ import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -44,6 +42,8 @@ import org.jclouds.location.Region;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Inject;
 
 /**
@@ -59,9 +59,9 @@ public class AWSEC2ListNodesStrategy extends EC2ListNodesStrategy {
    @Inject
    protected AWSEC2ListNodesStrategy(AWSEC2AsyncClient client, @Region Supplier<Set<String>> regions,
             Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
             SpotInstanceRequestToAWSRunningInstance spotConverter) {
-      super(client, regions, runningInstanceToNodeMetadata, executor);
+      super(client, regions, runningInstanceToNodeMetadata, userExecutor);
       this.client = checkNotNull(client, "client");
       this.spotConverter = checkNotNull(spotConverter, "spotConverter");
    }
@@ -69,14 +69,13 @@ public class AWSEC2ListNodesStrategy extends EC2ListNodesStrategy {
    @Override
    protected Iterable<? extends RunningInstance> pollRunningInstances() {
       Iterable<? extends AWSRunningInstance> spots = filter(transform(concat(transformParallel(regions.get(),
-               new Function<String, Future<? extends Set<SpotInstanceRequest>>>() {
+               new Function<String, ListenableFuture<? extends Set<SpotInstanceRequest>>>() {
                   @Override
-                  public Future<? extends Set<SpotInstanceRequest>> apply(String from) {
-                     return client.getSpotInstanceServices()
-                              .describeSpotInstanceRequestsInRegion(from);
+                  public ListenableFuture<? extends Set<SpotInstanceRequest>> apply(String from) {
+                     return client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(from);
                   }
 
-               }, executor, maxTime, logger, "reservations")), spotConverter), notNull());
+               }, userExecutor, maxTime, logger, "reservations")), spotConverter), notNull());
 
       return concat(super.pollRunningInstances(), spots);
    }

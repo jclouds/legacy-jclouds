@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -41,12 +40,12 @@ import org.jclouds.compute.domain.ImageTemplate;
 import org.jclouds.compute.domain.ImageTemplateBuilder;
 import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.concurrent.Futures;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.PredicateWithResult;
 import org.jclouds.predicates.Retryables;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * CloudServers implementation of {@link ImageExtension}
@@ -62,7 +61,7 @@ public class CloudServersImageExtension implements ImageExtension {
    protected Logger logger = Logger.NULL;
 
    private final CloudServersClient client;
-   private final ExecutorService executor;
+   private final ListeningExecutorService userExecutor;
    private final PredicateWithResult<Integer, Image> imageAvailablePredicate;
    @com.google.inject.Inject(optional = true)
    @Named("IMAGE_MAX_WAIT")
@@ -73,11 +72,11 @@ public class CloudServersImageExtension implements ImageExtension {
 
    @Inject
    public CloudServersImageExtension(CloudServersClient client,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
+            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
             PredicateWithResult<Integer, Image> imageAvailablePredicate) {
-      this.client = checkNotNull(client);
-      this.executor = userThreads;
-      this.imageAvailablePredicate = imageAvailablePredicate;
+      this.client = checkNotNull(client, "client");
+      this.userExecutor = checkNotNull(userExecutor, "userExecutor");
+      this.imageAvailablePredicate = checkNotNull(imageAvailablePredicate, "imageAvailablePredicate");
    }
 
    @Override
@@ -96,14 +95,14 @@ public class CloudServersImageExtension implements ImageExtension {
       CloneImageTemplate cloneTemplate = (CloneImageTemplate) template;
       final org.jclouds.cloudservers.domain.Image image = client.createImageFromServer(cloneTemplate.getName(),
                Integer.parseInt(cloneTemplate.getSourceNodeId()));
-      return Futures.makeListenable(executor.submit(new Callable<Image>() {
+      return userExecutor.submit(new Callable<Image>() {
          @Override
          public Image call() throws Exception {
             return Retryables.retryGettingResultOrFailing(imageAvailablePredicate, image.getId(), maxWait, waitPeriod,
                      TimeUnit.SECONDS, "Image was not created within the time limit, Giving up! [Limit: " + maxWait
                               + " secs.]");
          }
-      }), executor);
+      });
 
    }
 

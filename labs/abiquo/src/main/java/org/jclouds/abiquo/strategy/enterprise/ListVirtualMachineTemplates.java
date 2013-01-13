@@ -24,9 +24,6 @@ import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.abiquo.domain.DomainWrapper.wrap;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
 import javax.annotation.Resource;
 import javax.inject.Named;
 
@@ -45,6 +42,8 @@ import com.abiquo.server.core.appslibrary.VirtualMachineTemplateDto;
 import com.abiquo.server.core.appslibrary.VirtualMachineTemplatesDto;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -57,7 +56,7 @@ import com.google.inject.Singleton;
 public class ListVirtualMachineTemplates implements ListEntities<VirtualMachineTemplate, Enterprise> {
    protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-   protected final ExecutorService userExecutor;
+   protected final ListeningExecutorService userExecutor;
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -68,7 +67,7 @@ public class ListVirtualMachineTemplates implements ListEntities<VirtualMachineT
 
    @Inject
    ListVirtualMachineTemplates(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-         @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor) {
+         @Named(Constants.PROPERTY_USER_THREADS) final ListeningExecutorService userExecutor) {
       super();
       this.context = checkNotNull(context, "context");
       this.userExecutor = checkNotNull(userExecutor, "userExecutor");
@@ -92,9 +91,9 @@ public class ListVirtualMachineTemplates implements ListEntities<VirtualMachineT
    private Iterable<VirtualMachineTemplateDto> listConcurrentTemplates(final Enterprise parent,
          final Iterable<Datacenter> dcs) {
       Iterable<VirtualMachineTemplatesDto> templates = transformParallel(dcs,
-            new Function<Datacenter, Future<? extends VirtualMachineTemplatesDto>>() {
+            new Function<Datacenter, ListenableFuture<? extends VirtualMachineTemplatesDto>>() {
                @Override
-               public Future<VirtualMachineTemplatesDto> apply(final Datacenter input) {
+               public ListenableFuture<VirtualMachineTemplatesDto> apply(final Datacenter input) {
                   return context.getAsyncApi().getVirtualMachineTemplateApi()
                         .listVirtualMachineTemplates(parent.getId(), input.getId());
                }

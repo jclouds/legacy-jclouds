@@ -24,10 +24,8 @@ import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -46,6 +44,8 @@ import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.Logger;
 
 import com.google.common.collect.Maps;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Inject;
 
 /**
@@ -60,7 +60,7 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
    protected Logger logger = Logger.NULL;
 
    protected final BackoffLimitedRetryHandler retryHandler;
-   private final ExecutorService userExecutor;
+   private final ListeningExecutorService userExecutor;
 
    protected final AsyncBlobStore connection;
    /** Maximum duration in milliseconds of a request. */
@@ -69,10 +69,8 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
    protected Long maxTime = Long.MAX_VALUE;
 
    @Inject
-   DeleteAllKeysInList(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
-            AsyncBlobStore connection,
-            BackoffLimitedRetryHandler retryHandler) {
-
+   DeleteAllKeysInList(@Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
+         AsyncBlobStore connection, BackoffLimitedRetryHandler retryHandler) {
       this.userExecutor = userExecutor;
       this.connection = connection;
       this.retryHandler = retryHandler;
@@ -95,7 +93,7 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
       for (int numErrors = 0; numErrors < maxErrors; ) {
          // fetch partial directory listing
          PageSet<? extends StorageMetadata> listing;
-         Future<PageSet<? extends StorageMetadata>> listFuture =
+         ListenableFuture<PageSet<? extends StorageMetadata>> listFuture =
                connection.list(containerName, options);
          try {
             listing = listFuture.get(maxTime, TimeUnit.MILLISECONDS);
@@ -141,7 +139,7 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
          }
 
          // remove blobs and now-empty subdirectories
-         Map<StorageMetadata, Future<?>> responses = Maps.newHashMap();
+         Map<StorageMetadata, ListenableFuture<?>> responses = Maps.newHashMap();
          for (StorageMetadata md : listing) {
             String fullPath = parentIsFolder(options, md) ? options.getDir() + "/"
                      + md.getName() : md.getName();
@@ -174,7 +172,7 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
             retryHandler.imposeBackoffExponentialDelay(numErrors, message);
             continue;
          } finally {
-            for (Future<?> future : responses.values()) {
+            for (ListenableFuture<?> future : responses.values()) {
                future.cancel(true);
             }
          }

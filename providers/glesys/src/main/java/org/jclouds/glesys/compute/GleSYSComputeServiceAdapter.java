@@ -29,8 +29,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -74,6 +72,8 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * defines the connection between the {@link GleSYSApi} implementation and
@@ -89,17 +89,17 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
 
    private final GleSYSApi api;
    private final GleSYSAsyncApi aapi;
-   private final ExecutorService userThreads;
+   private final ListeningExecutorService userExecutor;
    private final Timeouts timeouts;
    private final Supplier<Set<? extends Location>> locations;
 
    @Inject
    public GleSYSComputeServiceAdapter(GleSYSApi api, GleSYSAsyncApi aapi,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads, Timeouts timeouts,
+         @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, Timeouts timeouts,
          @Memoized Supplier<Set<? extends Location>> locations) {
       this.api = checkNotNull(api, "api");
       this.aapi = checkNotNull(aapi, "aapi");
-      this.userThreads = checkNotNull(userThreads, "userThreads");
+      this.userExecutor = checkNotNull(userExecutor, "userExecutor");
       this.timeouts = checkNotNull(timeouts, "timeouts");
       this.locations = checkNotNull(locations, "locations");
    }
@@ -209,13 +209,11 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
    
    @Override
    public Iterable<ServerDetails> listNodes() {
-      return transformParallel(api.getServerApi().list(), new Function<Server, Future<? extends ServerDetails>>() {
-         @Override
-         public Future<ServerDetails> apply(Server from) {
+      return transformParallel(api.getServerApi().list(), new Function<Server, ListenableFuture<? extends ServerDetails>>() {
+         public ListenableFuture<ServerDetails> apply(Server from) {
             return aapi.getServerApi().get(from.getId());
          }
-
-      }, userThreads, null, logger, "server details");
+      }, userExecutor, null, logger, "server details");
    }
 
    @Override

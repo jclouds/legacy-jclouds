@@ -32,7 +32,6 @@ import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -63,6 +62,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.Module;
 
 public class BaseBlobStoreIntegrationTest extends BaseViewLiveTest<BlobStoreContext> {
@@ -106,7 +107,7 @@ public class BaseBlobStoreIntegrationTest extends BaseViewLiveTest<BlobStoreCont
       return ImmutableSet.<Module> of(getLoggingModule(), createHttpModule());
    }
 
-   protected ExecutorService exec;
+   protected ListeningExecutorService exec;
 
    /**
     * we are doing this at a class level, as the context.getBlobStore() object is going to be shared
@@ -116,7 +117,7 @@ public class BaseBlobStoreIntegrationTest extends BaseViewLiveTest<BlobStoreCont
     */
    @BeforeClass(groups = { "integration", "live" }, dependsOnMethods = "setupContext")
    public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
-      exec = Executors.newCachedThreadPool();
+      exec = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
    }
 
    

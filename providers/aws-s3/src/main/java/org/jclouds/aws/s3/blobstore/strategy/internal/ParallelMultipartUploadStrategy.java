@@ -31,7 +31,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -48,7 +47,6 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
-import org.jclouds.concurrent.Futures;
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadSlicer;
 import org.jclouds.logging.Logger;
@@ -58,6 +56,7 @@ import org.jclouds.util.Throwables2;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Inject;
 
 public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStrategy {
@@ -72,7 +71,7 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
    @VisibleForTesting
    static final int DEFAULT_MAX_PERCENT_RETRIES = 10;
    
-   private final ExecutorService ioWorkerExecutor;
+   private final ListeningExecutorService ioExecutor;
   
    @Inject(optional = true)
    @Named("jclouds.mpu.parallel.degree")
@@ -101,10 +100,10 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
 
    @Inject
    public ParallelMultipartUploadStrategy(AWSS3AsyncBlobStore ablobstore, PayloadSlicer slicer,
-         @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor) {
+         @Named(Constants.PROPERTY_IO_WORKER_THREADS) ListeningExecutorService ioExecutor) {
       this.ablobstore = checkNotNull(ablobstore, "ablobstore");
       this.slicer = checkNotNull(slicer, "slicer");
-      this.ioWorkerExecutor = checkNotNull(ioWorkerExecutor, "ioWorkerExecutor");
+      this.ioExecutor = checkNotNull(ioExecutor, "ioExecutor");
    }
    
    protected void prepareUploadPart(final String container, final String key, 
@@ -149,14 +148,13 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
                latch.countDown();
             }
          }
-      }, ioWorkerExecutor);
+      }, ioExecutor);
       futureParts.put(part, futureETag);
    }   
    
    @Override
    public ListenableFuture<String> execute(final String container, final Blob blob, final PutOptions options) {
-      return Futures.makeListenable(
-            ioWorkerExecutor.submit(new Callable<String>() {
+      return ioExecutor.submit(new Callable<String>() {
                @Override
                public String call() throws Exception {
                   String key = blob.getMetadata().getName();
@@ -250,7 +248,7 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
                            futureETag.get(maxTime,TimeUnit.SECONDS) : futureETag.get();
                   }
                }
-            }), ioWorkerExecutor);
+            });
    }
    
    class Part {

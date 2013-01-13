@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -39,7 +38,6 @@ import org.jclouds.compute.domain.ImageTemplate;
 import org.jclouds.compute.domain.ImageTemplateBuilder;
 import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.concurrent.Futures;
 import org.jclouds.logging.Logger;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.domain.Server;
@@ -48,6 +46,7 @@ import org.jclouds.predicates.PredicateWithResult;
 import org.jclouds.predicates.Retryables;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * Nova implementation of {@link ImageExtension}
@@ -63,7 +62,7 @@ public class NovaImageExtension implements ImageExtension {
    protected Logger logger = Logger.NULL;
 
    private final NovaApi novaApi;
-   private final ExecutorService executor;
+   private final ListeningExecutorService userExecutor;
    @com.google.inject.Inject(optional = true)
    @Named("IMAGE_MAX_WAIT")
    private long maxWait = 3600;
@@ -74,10 +73,10 @@ public class NovaImageExtension implements ImageExtension {
 
    @Inject
    public NovaImageExtension(NovaApi novaApi,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
+            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
             PredicateWithResult<ZoneAndId, Image> imageReadyPredicate) {
       this.novaApi = checkNotNull(novaApi);
-      this.executor = userThreads;
+      this.userExecutor = userExecutor;
       this.imageReadyPredicate = imageReadyPredicate;
    }
 
@@ -105,14 +104,14 @@ public class NovaImageExtension implements ImageExtension {
 
       logger.info(">> Registered new Image %s, waiting for it to become available.", newImageId);
 
-      return Futures.makeListenable(executor.submit(new Callable<Image>() {
+      return userExecutor.submit(new Callable<Image>() {
          @Override
          public Image call() throws Exception {
             return Retryables.retryGettingResultOrFailing(imageReadyPredicate, targetImageZoneAndId, maxWait,
                      waitPeriod, TimeUnit.SECONDS, "Image was not created within the time limit, Giving up! [Limit: "
                               + maxWait + " secs.]");
          }
-      }), executor);
+      });
    }
 
    @Override

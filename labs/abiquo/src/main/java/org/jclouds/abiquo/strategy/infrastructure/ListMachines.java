@@ -24,9 +24,6 @@ import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.abiquo.domain.DomainWrapper.wrap;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
 import javax.annotation.Resource;
 import javax.inject.Named;
 
@@ -47,6 +44,8 @@ import com.abiquo.server.core.infrastructure.RackDto;
 import com.abiquo.server.core.infrastructure.RacksDto;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -59,7 +58,7 @@ import com.google.inject.Singleton;
 public class ListMachines implements ListRootEntities<Machine> {
    protected RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-   protected final ExecutorService userExecutor;
+   protected final ListeningExecutorService userExecutor;
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -70,7 +69,7 @@ public class ListMachines implements ListRootEntities<Machine> {
 
    @Inject
    ListMachines(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-         @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor) {
+         @Named(Constants.PROPERTY_USER_THREADS) final ListeningExecutorService userExecutor) {
       super();
       this.context = checkNotNull(context, "context");
       this.userExecutor = checkNotNull(userExecutor, "userExecutor");
@@ -93,9 +92,9 @@ public class ListMachines implements ListRootEntities<Machine> {
    }
 
    private Iterable<RackDto> listConcurrentRacks(final Iterable<Datacenter> datacenters) {
-      Iterable<RacksDto> racks = transformParallel(datacenters, new Function<Datacenter, Future<? extends RacksDto>>() {
+      Iterable<RacksDto> racks = transformParallel(datacenters, new Function<Datacenter, ListenableFuture<? extends RacksDto>>() {
          @Override
-         public Future<RacksDto> apply(final Datacenter input) {
+         public ListenableFuture<RacksDto> apply(final Datacenter input) {
             return context.getAsyncApi().getInfrastructureApi().listRacks(input.unwrap());
          }
       }, userExecutor, maxTime, logger, "getting racks");
@@ -104,9 +103,9 @@ public class ListMachines implements ListRootEntities<Machine> {
    }
 
    private Iterable<MachineDto> listConcurrentMachines(final Iterable<RackDto> racks) {
-      Iterable<MachinesDto> machines = transformParallel(racks, new Function<RackDto, Future<? extends MachinesDto>>() {
+      Iterable<MachinesDto> machines = transformParallel(racks, new Function<RackDto, ListenableFuture<? extends MachinesDto>>() {
          @Override
-         public Future<MachinesDto> apply(final RackDto input) {
+         public ListenableFuture<MachinesDto> apply(final RackDto input) {
             return context.getAsyncApi().getInfrastructureApi().listMachines(input);
          }
       }, userExecutor, maxTime, logger, "getting machines");

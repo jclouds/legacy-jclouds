@@ -21,13 +21,13 @@ package org.jclouds.s3.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
+import static com.google.common.util.concurrent.Futures.transform;
 
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -44,7 +44,6 @@ import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.util.BlobStoreUtils;
-import org.jclouds.concurrent.Futures;
 import org.jclouds.date.DateService;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
@@ -78,6 +77,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * Implementation of {@link S3AsyncBlobStore} which keeps all data in a local Map object.
@@ -99,17 +99,17 @@ public class StubS3AsyncClient implements S3AsyncClient {
    private final ResourceToBucketList resource2BucketList;
    private final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs;
    private final ConcurrentMap<String, Location> containerToLocation;
-   private final ExecutorService service;
+   private final ListeningExecutorService userExecutor;
 
    @Inject
-   private StubS3AsyncClient(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
+   private StubS3AsyncClient(@Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
             LocalAsyncBlobStore blobStore, ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
             ConcurrentMap<String, Location> containerToLocation, DateService dateService,
             S3Object.Factory objectProvider, Blob.Factory blobProvider,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, ObjectToBlob object2Blob, BlobToObject blob2Object,
             BlobToObjectMetadata blob2ObjectMetadata, BucketToContainerListOptions bucket2ContainerListOptions,
             ResourceToBucketList resource2BucketList) {
-      this.service = service;
+      this.userExecutor = userExecutor;
       this.containerToBlobs = containerToBlobs;
       this.containerToLocation = containerToLocation;
       this.blobStore = blobStore;
@@ -146,7 +146,7 @@ public class StubS3AsyncClient implements S3AsyncClient {
 
    public ListenableFuture<ListBucketResponse> listBucket(final String name, ListBucketOptions... optionsList) {
       ListContainerOptions options = bucket2ContainerListOptions.apply(optionsList);
-      return Futures.compose(blobStore.list(name, options), resource2BucketList, service);
+      return transform(blobStore.list(name, options), resource2BucketList, userExecutor);
    }
 
    public ListenableFuture<ObjectMetadata> copyObject(final String sourceBucket, final String sourceObject,
@@ -274,16 +274,15 @@ public class StubS3AsyncClient implements S3AsyncClient {
 
    public ListenableFuture<S3Object> getObject(final String bucketName, final String key, final GetOptions... options) {
       org.jclouds.blobstore.options.GetOptions getOptions = httpGetOptionsConverter.apply(options);
-      return Futures.compose(blobStore.getBlob(bucketName, key, getOptions), blob2Object, service);
+      return transform(blobStore.getBlob(bucketName, key, getOptions), blob2Object, userExecutor);
    }
 
    public ListenableFuture<ObjectMetadata> headObject(String bucketName, String key) {
-      return Futures.compose(blobStore.blobMetadata(bucketName, key), new Function<BlobMetadata, ObjectMetadata>() {
-         @Override
+      return transform(blobStore.blobMetadata(bucketName, key), new Function<BlobMetadata, ObjectMetadata>() {
          public ObjectMetadata apply(BlobMetadata from) {
             return blob2ObjectMetadata.apply(from);
          }
-      }, service);
+      }, userExecutor);
    }
 
    public ListenableFuture<? extends Set<BucketMetadata>> listOwnedBuckets() {

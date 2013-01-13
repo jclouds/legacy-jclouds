@@ -20,9 +20,6 @@ package org.jclouds.blobstore.strategy.internal;
 
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -39,6 +36,8 @@ import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Inject;
 
 /**
@@ -53,7 +52,7 @@ public class GetAllBlobsInListAndRetryOnFailure implements GetBlobsInListStrateg
    protected final ListBlobsInContainer getAllBlobMetadata;
    protected final BackoffLimitedRetryHandler retryHandler;
    protected final AsyncBlobStore ablobstore;
-   protected final ExecutorService userExecutor;
+   protected final ListeningExecutorService userExecutor;
    @Resource
    @Named(BlobStoreConstants.BLOBSTORE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -65,7 +64,7 @@ public class GetAllBlobsInListAndRetryOnFailure implements GetBlobsInListStrateg
    protected Long maxTime;
 
    @Inject
-   GetAllBlobsInListAndRetryOnFailure(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
+   GetAllBlobsInListAndRetryOnFailure(@Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
             ListBlobsInContainer getAllBlobMetadata, AsyncBlobStore ablobstore, BackoffLimitedRetryHandler retryHandler) {
       this.userExecutor = userExecutor;
       this.ablobstore = ablobstore;
@@ -75,10 +74,10 @@ public class GetAllBlobsInListAndRetryOnFailure implements GetBlobsInListStrateg
 
    public Iterable<Blob> execute(final String container, ListContainerOptions options) {
       Iterable<? extends BlobMetadata> list = getAllBlobMetadata.execute(container, options);
-      return transformParallel(list, new Function<BlobMetadata, Future<? extends Blob>>() {
+      return transformParallel(list, new Function<BlobMetadata, ListenableFuture<? extends Blob>>() {
 
          @Override
-         public Future<Blob> apply(BlobMetadata from) {
+         public ListenableFuture<Blob> apply(BlobMetadata from) {
             return ablobstore.getBlob(container, from.getName());
          }
 

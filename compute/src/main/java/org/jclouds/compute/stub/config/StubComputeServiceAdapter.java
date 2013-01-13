@@ -21,10 +21,9 @@ package org.jclouds.compute.stub.config;
 import static org.jclouds.compute.util.ComputeServiceUtils.formatStatus;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,11 +36,11 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
@@ -51,9 +50,10 @@ import org.jclouds.rest.ResourceNotFoundException;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * 
@@ -63,7 +63,7 @@ import com.google.common.collect.ImmutableList.Builder;
 public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAdapter {
    private final Supplier<Location> location;
    private final ConcurrentMap<String, NodeMetadata> nodes;
-   private final ExecutorService ioThreads;
+   private final ListeningExecutorService ioExecutor;
    private final Provider<Integer> idProvider;
    private final String publicIpPrefix;
    private final String privateIpPrefix;
@@ -73,12 +73,12 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
 
    @Inject
    public StubComputeServiceAdapter(ConcurrentMap<String, NodeMetadata> nodes,
-            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads, Supplier<Location> location,
+            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ListeningExecutorService ioExecutor, Supplier<Location> location,
             @Named("NODE_ID") Provider<Integer> idProvider, @Named("PUBLIC_IP_PREFIX") String publicIpPrefix,
             @Named("PRIVATE_IP_PREFIX") String privateIpPrefix, @Named("PASSWORD_PREFIX") String passwordPrefix,
             JustProvider locationSupplier, Map<OsFamily, Map<String, String>> osToVersionMap) {
       this.nodes = nodes;
-      this.ioThreads=ioThreads;
+      this.ioExecutor = ioExecutor;
       this.location = location;
       this.idProvider = idProvider;
       this.publicIpPrefix = publicIpPrefix;
@@ -96,7 +96,7 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       if (millis == 0l)
          setStateOnNode(status, node);
       else
-         ioThreads.execute(new Runnable() {
+         ioExecutor.execute(new Runnable() {
 
             @Override
             public void run() {
@@ -187,7 +187,7 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
          return;
       setStateOnNodeAfterDelay(Status.PENDING, node, 0);
       setStateOnNodeAfterDelay(Status.TERMINATED, node, 50);
-      ioThreads.execute(new Runnable() {
+      ioExecutor.execute(new Runnable() {
 
          @Override
          public void run() {

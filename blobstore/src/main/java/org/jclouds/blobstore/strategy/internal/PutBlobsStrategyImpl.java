@@ -22,8 +22,6 @@ import static com.google.common.base.Throwables.propagate;
 import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
@@ -39,6 +37,8 @@ import org.jclouds.blobstore.strategy.PutBlobsStrategy;
 import org.jclouds.logging.Logger;
 
 import com.google.common.collect.Maps;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Inject;
 
 /**
@@ -49,7 +49,7 @@ import com.google.inject.Inject;
 public class PutBlobsStrategyImpl implements PutBlobsStrategy {
 
    private final AsyncBlobStore ablobstore;
-   private final ExecutorService userExecutor;
+   private final ListeningExecutorService userExecutor;
    @Resource
    @Named(BlobStoreConstants.BLOBSTORE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -61,7 +61,7 @@ public class PutBlobsStrategyImpl implements PutBlobsStrategy {
    protected Long maxTime;
 
    @Inject
-   PutBlobsStrategyImpl(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
+   PutBlobsStrategyImpl(@Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
             AsyncBlobStore ablobstore) {
       this.userExecutor = userExecutor;
       this.ablobstore = ablobstore;
@@ -69,7 +69,7 @@ public class PutBlobsStrategyImpl implements PutBlobsStrategy {
 
    @Override
    public void execute(String containerName, Iterable<? extends Blob> blobs) {
-      Map<Blob, Future<?>> responses = Maps.newLinkedHashMap();
+      Map<Blob, ListenableFuture<?>> responses = Maps.newLinkedHashMap();
       for (Blob blob : blobs) {
          responses.put(blob, ablobstore.putBlob(containerName, blob));
       }

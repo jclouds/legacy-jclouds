@@ -26,8 +26,6 @@ import static org.jclouds.concurrent.FutureIterables.transformParallel;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -42,6 +40,8 @@ import org.jclouds.trmk.vcloud_0_8.domain.Org;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Adrian Cole
@@ -55,27 +55,27 @@ public class VCloudHardwareSupplier implements Supplier<Set<? extends Hardware>>
 
    private final Supplier<Map<String, ? extends Org>> orgMap;
    private final Function<Org, Iterable<? extends Hardware>> sizesInOrg;
-   private final ExecutorService executor;
+   private final ListeningExecutorService userExecutor;
 
    @Inject
    VCloudHardwareSupplier(Supplier<Map<String, ? extends Org>> orgMap,
             Function<Org, Iterable<? extends Hardware>> sizesInOrg,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
       this.orgMap = checkNotNull(orgMap, "orgMap");
       this.sizesInOrg = checkNotNull(sizesInOrg, "sizesInOrg");
-      this.executor = checkNotNull(executor, "executor");
+      this.userExecutor = checkNotNull(userExecutor, "userExecutor");
    }
 
    @Override
    public Set<? extends Hardware> get() {
       Iterable<? extends Org> orgs = checkNotNull(orgMap.get().values(), "orgs");
       Iterable<? extends Iterable<? extends Hardware>> sizes = transformParallel(orgs,
-               new Function<Org, Future<? extends Iterable<? extends Hardware>>>() {
+               new Function<Org, ListenableFuture<? extends Iterable<? extends Hardware>>>() {
 
                   @Override
-                  public Future<Iterable<? extends Hardware>> apply(final Org from) {
+                  public ListenableFuture<Iterable<? extends Hardware>> apply(final Org from) {
                      checkNotNull(from, "org");
-                     return executor.submit(new Callable<Iterable<? extends Hardware>>() {
+                     return userExecutor.submit(new Callable<Iterable<? extends Hardware>>() {
 
                         @Override
                         public Iterable<? extends Hardware> call() throws Exception {
@@ -89,7 +89,7 @@ public class VCloudHardwareSupplier implements Supplier<Set<? extends Hardware>>
                      });
                   }
 
-               }, executor, null, logger, "sizes in " + orgs);
+               }, userExecutor, null, logger, "sizes in " + orgs);
       return newLinkedHashSet(concat(sizes));
    }
 }
