@@ -33,6 +33,8 @@ import org.jclouds.googlecompute.features.KernelApi;
 import org.jclouds.googlecompute.features.KernelAsyncApi;
 import org.jclouds.googlecompute.features.MachineTypeApi;
 import org.jclouds.googlecompute.features.MachineTypeAsyncApi;
+import org.jclouds.googlecompute.features.NetworkApi;
+import org.jclouds.googlecompute.features.NetworkAsyncApi;
 import org.jclouds.googlecompute.features.OperationApi;
 import org.jclouds.googlecompute.features.OperationAsyncApi;
 import org.jclouds.googlecompute.features.ProjectApi;
@@ -67,6 +69,7 @@ public class GoogleComputeRestClientModule extends RestClientModule<GoogleComput
            .put(DiskApi.class, DiskAsyncApi.class)
            .put(KernelApi.class, KernelAsyncApi.class)
            .put(MachineTypeApi.class, MachineTypeAsyncApi.class)
+           .put(NetworkApi.class, NetworkAsyncApi.class)
            .put(OperationApi.class, OperationAsyncApi.class)
            .put(ProjectApi.class, ProjectAsyncApi.class)
            .put(ZoneApi.class, ZoneAsyncApi.class)
