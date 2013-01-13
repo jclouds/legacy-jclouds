@@ -19,10 +19,10 @@
 package org.jclouds.apis;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.emptyToNull;
 
 import org.jclouds.View;
 import org.jclouds.rest.RestApiMetadata;
-import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -53,7 +53,7 @@ public class ApiPredicates {
     * @return the apis with the given id
     */
    public static Predicate<ApiMetadata> id(final String id) {
-      Preconditions2.checkNotEmpty(id, "id must be defined");
+      checkNotNull(emptyToNull(id), "id must be defined");
       return new Predicate<ApiMetadata>() {
          /**
           * {@inheritDoc}

@@ -19,6 +19,7 @@
 package org.jclouds.blobstore.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
 
 import java.util.Set;
@@ -34,10 +35,12 @@ import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.util.BlobUtils;
+import org.jclouds.blobstore.util.internal.BlobUtilsImpl;
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
-import org.jclouds.util.Assertions;
+import org.jclouds.predicates.RetryablePredicate;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 
 /**
@@ -189,28 +192,21 @@ public abstract class BaseBlobStore implements BlobStore {
     *           bucket name
     */
    @Override
-   public void deleteContainer(final String container) {
-      clearAndDeleteContainer(container);
+   public void deleteContainer(String container) {
+      deletePathAndEnsureGone(container);
    }
 
-   protected void clearAndDeleteContainer(final String container) {
-      try {
-         if (!Assertions.eventuallyTrue(new Supplier<Boolean>() {
-            public Boolean get() {
-               try {
-                  clearContainer(container, recursive());
-                  return deleteAndVerifyContainerGone(container);
-               } catch (ContainerNotFoundException e) {
-                  return true;
-               }
+   protected void deletePathAndEnsureGone(String path) {
+      checkState(new RetryablePredicate<String>(new Predicate<String>() {
+         public boolean apply(String in) {
+            try {
+               clearContainer(in, recursive());
+               return deleteAndVerifyContainerGone(in);
+            } catch (ContainerNotFoundException e) {
+               return true;
             }
-
-         }, 30000)) {
-            throw new IllegalStateException(container + " still exists after deleting!");
          }
-      } catch (InterruptedException e) {
-         throw new IllegalStateException(container + " interrupted during deletion!", e);
-      }
+      }, 30000).apply(path), "%s still exists after deleting!", path);
    }
 
    @Override

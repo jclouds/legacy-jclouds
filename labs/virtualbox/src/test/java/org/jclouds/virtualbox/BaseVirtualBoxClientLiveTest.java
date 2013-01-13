@@ -20,15 +20,11 @@
 package org.jclouds.virtualbox;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
-import static org.jclouds.scriptbuilder.domain.Statements.findPid;
-import static org.jclouds.scriptbuilder.domain.Statements.kill;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 
 import java.io.File;
-import java.net.URI;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -36,18 +32,14 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.compute.callables.RunScriptOnNode.Factory;
-import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
-import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.rest.annotations.BuildVersion;
-import org.jclouds.scriptbuilder.domain.Statement;
-import org.jclouds.scriptbuilder.domain.StatementList;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.domain.HardDisk;
@@ -81,10 +73,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.net.HostAndPort;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -138,7 +128,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
    @Inject
    protected LoadingCache<Image, Master> mastersCache;
 
-   private final ExecutorService singleThreadExec = MoreExecutors.sameThreadExecutor();
+   private final ExecutorService singleThreadExec = sameThreadExecutor();
    private String masterName;   
 
    @Override

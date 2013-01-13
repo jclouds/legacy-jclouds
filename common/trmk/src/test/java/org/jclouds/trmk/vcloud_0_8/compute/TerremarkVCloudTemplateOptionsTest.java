@@ -45,7 +45,7 @@ public class TerremarkVCloudTemplateOptionsTest {
       assertEquals(options.as(TerremarkVCloudTemplateOptions.class), options);
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
+   @Test(expectedExceptions = NullPointerException.class, expectedExceptionsMessageRegExp = "use noKeyPair option to request boot without a keypair")
    public void testkeyPairBadFormat() {
       TerremarkVCloudTemplateOptions options = new TerremarkVCloudTemplateOptions();
       options.sshKeyFingerprint("");

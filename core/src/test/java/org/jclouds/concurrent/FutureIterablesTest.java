@@ -18,13 +18,16 @@
  */
 package org.jclouds.concurrent;
 
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
 import java.util.Map;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,7 +38,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 
 /**
  * Tests behavior of FutureIterables
@@ -54,17 +56,17 @@ public class FutureIterablesTest {
             @Override
             public Future<String> apply(String input) {
                counter.incrementAndGet();
-               return com.google.common.util.concurrent.Futures.immediateFailedFuture(new AuthorizationException());
+               return immediateFailedFuture(new AuthorizationException());
             }
 
-         }, MoreExecutors.sameThreadExecutor(), null, Logger.CONSOLE, "");
+         }, sameThreadExecutor(), null, Logger.CONSOLE, "");
          fail("Expected AuthorizationException");
       } catch (AuthorizationException e) {
          assertEquals(counter.get(), 2);
       }
 
    }
-   
+
    public void testNormalExceptionPropagatesAsTransformParallelExceptionAndTries5XPerElement() {
       final AtomicInteger counter = new AtomicInteger();
 
@@ -74,10 +76,10 @@ public class FutureIterablesTest {
             @Override
             public Future<String> apply(String input) {
                counter.incrementAndGet();
-               return com.google.common.util.concurrent.Futures.immediateFailedFuture(new RuntimeException());
+               return immediateFailedFuture(new RuntimeException());
             }
 
-         }, MoreExecutors.sameThreadExecutor(), null, Logger.CONSOLE, "");
+         }, sameThreadExecutor(), null, Logger.CONSOLE, "");
          fail("Expected TransformParallelException");
       } catch (TransformParallelException e) {
          assertEquals(e.getFromToException().size(), 2);
@@ -89,21 +91,21 @@ public class FutureIterablesTest {
    public void testAwaitCompletionTimeout() throws Exception {
       final long timeoutMs = 1000;
       ExecutorService executorService = Executors.newSingleThreadExecutor();
-      Map<Void, Future<?>> responses = Maps.newHashMap();
+      Map<Void, Future<?>> responses = newHashMap();
       try {
          responses.put(null, executorService.submit(new Runnable() {
-               @Override
-               public void run() {
-                  try {
-                     Thread.sleep(2 * timeoutMs);
-                  } catch (InterruptedException ie) {
-                     // triggered during shutdown
-                  }
+            @Override
+            public void run() {
+               try {
+                  Thread.sleep(2 * timeoutMs);
+               } catch (InterruptedException ie) {
+                  // triggered during shutdown
                }
+            }
          }));
-         Map<Void, Exception> errors = FutureIterables.awaitCompletion(
-               responses, executorService, timeoutMs, Logger.CONSOLE,
-               /*prefix=*/ "");
+         Map<Void, Exception> errors = FutureIterables.awaitCompletion(responses, executorService, timeoutMs,
+               Logger.CONSOLE,
+               /* prefix= */"");
          if (!errors.isEmpty()) {
             throw errors.values().iterator().next();
          }

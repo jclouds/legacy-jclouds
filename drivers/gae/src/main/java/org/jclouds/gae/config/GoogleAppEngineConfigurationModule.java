@@ -18,7 +18,8 @@
  */
 package org.jclouds.gae.config;
 
-import org.jclouds.concurrent.MoreExecutors;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
@@ -49,7 +50,7 @@ public class GoogleAppEngineConfigurationModule extends AbstractModule {
    private final Module executorServiceModule;
 
    public GoogleAppEngineConfigurationModule() {
-      this(new ExecutorServiceModule(MoreExecutors.sameThreadExecutor(), MoreExecutors.sameThreadExecutor()));
+      this(new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()));
    }
 
    /**

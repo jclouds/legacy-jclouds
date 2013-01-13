@@ -17,6 +17,8 @@
  * under the License.
  */
 package org.jclouds.ec2.compute;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
@@ -28,7 +30,6 @@ import static org.jclouds.compute.util.ComputeServiceUtils.addMetadataAndParseTa
 import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsValuesOfEmptyString;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_GENERATE_INSTANCE_NAMES;
 import static org.jclouds.ec2.util.Tags.resourceToTagsAsMap;
-import static org.jclouds.util.Preconditions2.checkNotEmpty;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -202,8 +203,8 @@ public class EC2ComputeService extends BaseComputeService {
     */
    @VisibleForTesting
    void deleteSecurityGroup(String region, String group) {
-      checkNotEmpty(region, "region");
-      checkNotEmpty(group, "group");
+      checkNotNull(emptyToNull(region), "region must be defined");
+      checkNotNull(emptyToNull(group), "group must be defined");
       String groupName = namingConvention.create().sharedNameForGroup(group);
       
       if (client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, groupName).size() > 0) {

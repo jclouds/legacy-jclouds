@@ -18,11 +18,13 @@
  */
 package org.jclouds.providers;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.emptyToNull;
+
 import org.jclouds.Context;
 import org.jclouds.View;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.ApiPredicates;
-import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -104,7 +106,7 @@ public class ProviderPredicates {
     * @return the providers with the given id
     */
    public static Predicate<ProviderMetadata> id(final String id) {
-      Preconditions2.checkNotEmpty(id, "id must be defined");
+      checkNotNull(emptyToNull(id), "id must be defined");
       return new Predicate<ProviderMetadata>() {
          /**
           * {@inheritDoc}

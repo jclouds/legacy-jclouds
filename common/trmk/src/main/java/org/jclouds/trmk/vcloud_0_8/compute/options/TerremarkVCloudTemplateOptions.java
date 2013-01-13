@@ -20,11 +20,11 @@ package org.jclouds.trmk.vcloud_0_8.compute.options;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Strings.emptyToNull;
 
 import java.util.Map;
 
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.util.Preconditions2;
 
 /**
  * Contains options supported in the {@code ComputeService#runNode} operation on
@@ -73,10 +73,8 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions implements C
     * Specifies the keypair used to run instances with
     */
    public TerremarkVCloudTemplateOptions sshKeyFingerprint(String keyPair) {
-      checkNotNull(keyPair, "use noKeyPair option to request boot without a keypair");
       checkState(!noKeyPair, "you cannot specify both options keyPair and noKeyPair");
-      Preconditions2.checkNotEmpty(keyPair, "keypair must be non-empty");
-      this.keyPair = keyPair;
+      this.keyPair = checkNotNull(emptyToNull(keyPair), "use noKeyPair option to request boot without a keypair");
       return this;
    }
 

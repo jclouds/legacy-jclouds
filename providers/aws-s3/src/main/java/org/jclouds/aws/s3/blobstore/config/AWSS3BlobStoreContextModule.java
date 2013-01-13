@@ -18,8 +18,6 @@
  */
 package org.jclouds.aws.s3.blobstore.config;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.aws.s3.AWSS3AsyncClient;
 import org.jclouds.aws.s3.blobstore.AWSS3AsyncBlobStore;
 import org.jclouds.aws.s3.blobstore.AWSS3BlobStore;
@@ -28,18 +26,11 @@ import org.jclouds.aws.s3.blobstore.strategy.MultipartUploadStrategy;
 import org.jclouds.aws.s3.blobstore.strategy.internal.ParallelMultipartUploadStrategy;
 import org.jclouds.aws.s3.blobstore.strategy.internal.SequentialMultipartUploadStrategy;
 import org.jclouds.blobstore.BlobRequestSigner;
-import org.jclouds.cache.RetryingCacheLoaderDecorator;
-import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.s3.S3Client;
 import org.jclouds.s3.blobstore.S3AsyncBlobStore;
 import org.jclouds.s3.blobstore.S3BlobRequestSigner;
 import org.jclouds.s3.blobstore.S3BlobStore;
 import org.jclouds.s3.blobstore.config.S3BlobStoreContextModule;
-import org.jclouds.s3.domain.AccessControlList;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
@@ -63,24 +54,5 @@ public class AWSS3BlobStoreContextModule extends S3BlobStoreContextModule {
    protected void bindRequestSigner() {
       bind(BlobRequestSigner.class).to(new TypeLiteral<S3BlobRequestSigner<AWSS3AsyncClient>>() {
       });
-   }
-
-   @Override
-   protected LoadingCache<String, AccessControlList> bucketAcls(final S3Client client) {
-       CacheLoader<String, AccessControlList> loader = RetryingCacheLoaderDecorator.newDecorator()
-            .on(ResourceNotFoundException.class).exponentiallyBackoff()
-            .decorate(
-                new CacheLoader<String, AccessControlList>() {
-                   @Override
-                   public AccessControlList load(String bucketName) {
-                      return client.getBucketACL(bucketName);
-                   }
-                   
-                   @Override
-                   public String toString() {
-                      return "getBucketAcl()";
-                   }
-                });
-      return CacheBuilder.newBuilder().expireAfterWrite(30, TimeUnit.SECONDS).build(loader);
    }
 }

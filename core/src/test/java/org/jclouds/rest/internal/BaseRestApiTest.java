@@ -19,8 +19,12 @@
 package org.jclouds.rest.internal;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.hash.Hashing.md5;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static com.google.inject.name.Names.named;
 import static org.easymock.EasyMock.createMock;
 import static org.eclipse.jetty.http.HttpHeaders.TRANSFER_ENCODING;
+import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
+import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 import static org.jclouds.io.ByteSources.asByteSource;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
@@ -30,8 +34,6 @@ import java.util.Date;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
-import org.jclouds.Constants;
-import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.HttpCommandExecutorService;
@@ -40,7 +42,6 @@ import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.javax.annotation.Nullable;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.util.Strings2;
@@ -49,12 +50,12 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
+import com.google.common.reflect.Invokable;
 import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Key;
-import com.google.inject.name.Names;
 
 /**
  * 
@@ -81,10 +82,8 @@ public abstract class BaseRestApiTest {
 
       @Override
       protected void configure() {
-         bind(ExecutorService.class).annotatedWith(Names.named(Constants.PROPERTY_USER_THREADS)).toInstance(
-               MoreExecutors.sameThreadExecutor());
-         bind(ExecutorService.class).annotatedWith(Names.named(Constants.PROPERTY_IO_WORKER_THREADS)).toInstance(
-               MoreExecutors.sameThreadExecutor());
+         bind(ExecutorService.class).annotatedWith(named(PROPERTY_USER_THREADS)).toInstance(sameThreadExecutor());
+         bind(ExecutorService.class).annotatedWith(named(PROPERTY_IO_WORKER_THREADS)).toInstance(sameThreadExecutor());
          bind(HttpCommandExecutorService.class).toInstance(mock);
       }
    }
