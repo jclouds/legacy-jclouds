@@ -23,17 +23,12 @@ import static com.google.common.base.Throwables.propagate;
 import static java.lang.String.format;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 
-import javax.inject.Named;
-
-import org.jclouds.crypto.Sha512Crypt;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
-import com.google.inject.Inject;
 
 /**
  * Replaces the password entry for a user in the shadow file, using SHA-512
@@ -43,20 +38,12 @@ import com.google.inject.Inject;
  */
 public class ReplaceShadowPasswordEntry implements Statement {
 
+   private final Function<String, String> cryptFunction;
    private final String login;
    private final String password;
 
-   private Function<String, String> cryptFunction = Sha512Crypt.function();
-
-   @Inject(optional = true)
-   @Named("CRYPT")
-   @VisibleForTesting
-   ReplaceShadowPasswordEntry cryptFunction(Function<String, String> cryptFunction) {
-      this.cryptFunction = cryptFunction;
-      return this;
-   }
-
-   public ReplaceShadowPasswordEntry(String login, String password) {
+   public ReplaceShadowPasswordEntry(Function<String, String> cryptFunction, String login, String password) {
+      this.cryptFunction = checkNotNull(cryptFunction, "cryptFunction");
       this.login = checkNotNull(login, "login");
       this.password = checkNotNull(password, "password");
    }

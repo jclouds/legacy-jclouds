@@ -21,8 +21,8 @@ package org.jclouds.ec2.compute.strategy;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.crypto.SshKeys.fingerprintPrivateKey;
-import static org.jclouds.crypto.SshKeys.sha1PrivateKey;
+import static org.jclouds.ssh.SshKeys.fingerprintPrivateKey;
+import static org.jclouds.ssh.SshKeys.sha1PrivateKey;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;

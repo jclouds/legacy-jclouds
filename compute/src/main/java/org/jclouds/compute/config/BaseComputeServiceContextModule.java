@@ -61,6 +61,7 @@ import org.jclouds.location.Provider;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
@@ -85,6 +86,7 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
 
    @Override
    protected void configure() {
+      bind(AdminAccess.Configuration.class).to(AdminAccessConfiguration.class);
       install(new ComputeServiceTimeoutsModule());
       bind(new TypeLiteral<Function<NodeMetadata, SshClient>>() {
       }).to(CreateSshClientOncePortIsListeningOnNode.class);
@@ -115,7 +117,7 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
 
       install(new FactoryModuleBuilder().build(BlockUntilInitScriptStatusIsZeroThenReturnOutput.Factory.class));
    }
-   
+
    protected void bindCredentialsOverriderFunction(){
       bind(new TypeLiteral<Function<Template, LoginCredentials>>() {
       }).to(DefaultCredentialsFromImageOrOverridingCredentials.class);

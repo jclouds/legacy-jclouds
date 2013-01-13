@@ -20,8 +20,8 @@ package org.jclouds.ec2.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.crypto.SshKeys;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.ssh.SshKeys;
 
 /**
  * 

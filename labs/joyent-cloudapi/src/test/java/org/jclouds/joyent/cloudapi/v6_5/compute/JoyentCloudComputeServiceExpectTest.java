@@ -28,7 +28,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.crypto.SshKeyPairGenerator;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.joyent.cloudapi.v6_5.compute.internal.BaseJoyentCloudComputeServiceExpectTest;
@@ -37,6 +36,7 @@ import org.jclouds.joyent.cloudapi.v6_5.features.DatasetApiExpectTest;
 import org.jclouds.joyent.cloudapi.v6_5.features.MachineApiExpectTest;
 import org.jclouds.joyent.cloudapi.v6_5.features.PackageApiExpectTest;
 import org.jclouds.location.reference.LocationConstants;
+import org.jclouds.ssh.SshKeyPairGenerator;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;

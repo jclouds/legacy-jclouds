@@ -18,6 +18,7 @@
  */
 package org.jclouds.scriptbuilder.statements.login;
 
+import com.google.common.base.Function;
 
 /**
  * Statements used to manipulate the shadow file
@@ -27,10 +28,10 @@ package org.jclouds.scriptbuilder.statements.login;
 public class ShadowStatements {
 
    /**
-    * note must be run as root, and will either reset the root password, or
-    * whoever sudoed to root.
+    * note must be run as root, and will either reset the root password, or whoever sudoed to root.
     */
-   public static ReplaceShadowPasswordEntryOfLoginUser resetLoginUserPasswordTo(String password) {
-      return new ReplaceShadowPasswordEntryOfLoginUser(password);
+   public static ReplaceShadowPasswordEntryOfLoginUser resetLoginUserPasswordTo(Function<String, String> cryptFunction,
+         String password) {
+      return new ReplaceShadowPasswordEntryOfLoginUser(cryptFunction, password);
    }
 }

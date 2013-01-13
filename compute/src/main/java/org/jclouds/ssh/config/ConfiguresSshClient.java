@@ -16,21 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.crypto;
+package org.jclouds.ssh.config;
 
-import java.util.Map;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import com.google.common.base.Supplier;
-import com.google.inject.ImplementedBy;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
- * Creates a unique keypair without a passphrase. The resulting map has the following keys
- * <ul>
- * <li>public</li>
- * <li>private</li>
- * </ul>
+ * designates the module configures an Ssh Client.
+ * 
+ * @author Adrian Cole
+ * 
  */
-@ImplementedBy(RsaSshKeyPairGenerator.class)
-public interface SshKeyPairGenerator extends Supplier<Map<String, String>> {
+@Retention(RUNTIME)
+@Target(TYPE)
+public @interface ConfiguresSshClient {
 
 }

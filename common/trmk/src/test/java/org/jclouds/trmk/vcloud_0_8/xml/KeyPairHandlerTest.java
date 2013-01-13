@@ -24,8 +24,8 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.UnknownHostException;
 
-import org.jclouds.crypto.SshKeys;
 import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.ssh.SshKeys;
 import org.jclouds.trmk.vcloud_0_8.domain.KeyPair;
 import org.testng.annotations.Test;
 

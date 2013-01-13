@@ -23,6 +23,7 @@ import static org.testng.Assert.assertEquals;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -58,9 +59,16 @@ public class UserAddTest {
                "mkdir -p /home/users\ngroupadd -f wheel\ngroupadd -f candy\nuseradd -c me -s /bin/bash -g wheel -G candy -m  -d /home/users/me me\nchown -R me /home/users/me\n");
    }
 
+   Function<String, String> crypt = new Function<String, String>() {
+      public String apply(String in) {
+         assertEquals(in, "password");
+         return "CRYPT";
+      }
+   };
+
    public void testWithPasswordUNIX() {
-      String userAdd = UserAdd.builder().login("me").password("foo").group("wheel").build().render(OsFamily.UNIX);
-      assert userAdd.startsWith("mkdir -p /home/users\ngroupadd -f wheel\nuseradd -c me -s /bin/bash -g wheel -m  -d /home/users/me -p '$6$") : userAdd;
+      String userAdd = UserAdd.builder().cryptFunction(crypt).login("me").password("password").group("wheel").build().render(OsFamily.UNIX);
+      assert userAdd.startsWith("mkdir -p /home/users\ngroupadd -f wheel\nuseradd -c me -s /bin/bash -g wheel -m  -d /home/users/me -p 'CRYPT'") : userAdd;
       assert userAdd.endsWith("' me\nchown -R me /home/users/me\n") : userAdd;
    }
 
