@@ -48,7 +48,7 @@ public class NovaTemplateOptionsTest {
       assertEquals(options.as(NovaTemplateOptions.class), options);
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
+   @Test(expectedExceptions = NullPointerException.class, expectedExceptionsMessageRegExp = "all security groups must be non-empty")
    public void testsecurityGroupNamesIterableBadFormat() {
       NovaTemplateOptions options = new NovaTemplateOptions();
       options.securityGroupNames(ImmutableSet.of("group1", ""));
@@ -68,7 +68,7 @@ public class NovaTemplateOptionsTest {
       assertEquals(options.getSecurityGroupNames(), Optional.of(ImmutableSet.of("group1", "group2")));
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
+   @Test(expectedExceptions = NullPointerException.class, expectedExceptionsMessageRegExp = "all security groups must be non-empty")
    public void testsecurityGroupNamesVarArgsBadFormat() {
       NovaTemplateOptions options = new NovaTemplateOptions();
       options.securityGroupNames("mygroup", "");

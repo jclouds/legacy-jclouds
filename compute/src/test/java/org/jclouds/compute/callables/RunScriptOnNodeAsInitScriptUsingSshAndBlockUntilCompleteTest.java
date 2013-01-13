@@ -18,22 +18,24 @@
  */
 package org.jclouds.compute.callables;
 
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static com.google.inject.name.Names.named;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
+import static org.jclouds.Constants.PROPERTY_USER_THREADS;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_SCRIPT_COMPLETE;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.Constants;
-import org.jclouds.compute.config.ComputeServiceProperties;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeMetadata.Status;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
-import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.scriptbuilder.InitScript;
@@ -47,40 +49,29 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
-import com.google.inject.name.Names;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "unit", singleThreaded = true, testName = "RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilCompleteTest")
 public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilCompleteTest {
-
+   Injector injector = Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()),
+         new AbstractModule() {
+            protected void configure() {
+               bindConstant().annotatedWith(named(PROPERTY_USER_THREADS)).to(1);
+               bindConstant().annotatedWith(named(PROPERTY_IO_WORKER_THREADS)).to(1);
+               bindConstant().annotatedWith(named(TIMEOUT_SCRIPT_COMPLETE)).to(100);
+               install(new FactoryModuleBuilder().build(BlockUntilInitScriptStatusIsZeroThenReturnOutput.Factory.class));
+            }
+         });
    EventBus eventBus = new EventBus();
-   
-   BlockUntilInitScriptStatusIsZeroThenReturnOutput.Factory statusFactory = Guice.createInjector(
-            new ExecutorServiceModule(MoreExecutors.sameThreadExecutor(), MoreExecutors.sameThreadExecutor()),
-            new AbstractModule() {
-
-               @Override
-               protected void configure() {
-                  bindConstant().annotatedWith(Names.named(Constants.PROPERTY_USER_THREADS)).to(1);
-                  bindConstant().annotatedWith(Names.named(Constants.PROPERTY_IO_WORKER_THREADS)).to(1);
-                  bindConstant().annotatedWith(Names.named(ComputeServiceProperties.TIMEOUT_SCRIPT_COMPLETE))
-                           .to(100);
-                  install(new FactoryModuleBuilder()
-                           .build(BlockUntilInitScriptStatusIsZeroThenReturnOutput.Factory.class));
-               }
-            }).getInstance(BlockUntilInitScriptStatusIsZeroThenReturnOutput.Factory.class);
+   BlockUntilInitScriptStatusIsZeroThenReturnOutput.Factory statusFactory = injector
+         .getInstance(BlockUntilInitScriptStatusIsZeroThenReturnOutput.Factory.class);
 
    // fail faster than normal
-   Timeouts timeouts = Guice.createInjector(new AbstractModule() {
-
-      @Override
-      protected void configure() {
-         bindConstant().annotatedWith(Names.named(ComputeServiceProperties.TIMEOUT_SCRIPT_COMPLETE)).to(100l);
-      }
-   }).getInstance(Timeouts.class);
+   Timeouts timeouts = injector.getInstance(Timeouts.class);
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testWithoutInitThrowsIllegalStateException() {

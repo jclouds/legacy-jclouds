@@ -58,16 +58,10 @@ public class VCloudTemplateOptionsTest {
       assertEquals(options.as(VCloudTemplateOptions.class), options);
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
+   @Test(expectedExceptions = NullPointerException.class, expectedExceptionsMessageRegExp = "customizationScript must be defined")
    public void testcustomizationScriptBadFormat() {
       VCloudTemplateOptions options = new VCloudTemplateOptions();
       options.customizationScript("");
-   }
-
-   @Test
-   public void testNullcustomizationScript() {
-      VCloudTemplateOptions options = new VCloudTemplateOptions();
-      assertEquals(options.getCustomizationScript(), null);
    }
 
    @Test
@@ -115,7 +109,7 @@ public class VCloudTemplateOptionsTest {
       assertEquals(options.getDescription(), "mykeypair");
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
+   @Test(expectedExceptions = NullPointerException.class, expectedExceptionsMessageRegExp = "customizationScript must be defined")
    public void testcustomizationScriptNPE() {
       customizationScript(null);
    }

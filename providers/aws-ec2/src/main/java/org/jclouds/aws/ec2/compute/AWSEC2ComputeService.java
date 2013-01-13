@@ -18,7 +18,9 @@
  */
 package org.jclouds.aws.ec2.compute;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Strings.emptyToNull;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_RUNNING;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_SUSPENDED;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_TERMINATED;
@@ -66,7 +68,6 @@ import org.jclouds.ec2.compute.EC2ComputeService;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.scriptbuilder.functions.InitAdminAccess;
-import org.jclouds.util.Preconditions2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
@@ -119,7 +120,7 @@ public class AWSEC2ComputeService extends EC2ComputeService {
 
    @VisibleForTesting
    void deletePlacementGroup(String region, String group) {
-      Preconditions2.checkNotEmpty(group, "group");
+      checkNotNull(emptyToNull(group), "group must be defined");
       // placementGroupName must be unique within an account per
       // http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/index.html?using_cluster_computing.html
       String placementGroup = String.format("jclouds#%s#%s", group, region);

@@ -30,6 +30,7 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.jclouds.Constants.PROPERTY_API;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
@@ -48,7 +49,6 @@ import java.util.Set;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.Apis;
-import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
@@ -61,6 +61,7 @@ import org.jclouds.events.config.EventBusModule;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.lifecycle.Closer;
 import org.jclouds.lifecycle.config.LifeCycleModule;
 import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
@@ -71,6 +72,7 @@ import org.jclouds.providers.internal.UpdateProviderMetadataFromProperties;
 import org.jclouds.rest.ConfiguresCredentialStore;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestApiMetadata;
+import org.jclouds.rest.RestContext;
 import org.jclouds.rest.config.CredentialStoreModule;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.config.RestModule;
@@ -84,10 +86,10 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.common.reflect.TypeToken;
 import com.google.common.util.concurrent.ExecutionList;
 import com.google.inject.Guice;
@@ -490,8 +492,7 @@ public class ContextBuilder {
                return input.getClass().isAnnotationPresent(SingleThreaded.class);
             }
          })) {
-            modules.add(new ExecutorServiceModule(MoreExecutors.sameThreadExecutor(), MoreExecutors
-                     .sameThreadExecutor()));
+            modules.add(new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()));
          } else {
             modules.add(new ExecutorServiceModule());
          }

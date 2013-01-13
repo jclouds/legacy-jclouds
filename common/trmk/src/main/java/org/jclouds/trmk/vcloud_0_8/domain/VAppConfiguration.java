@@ -19,10 +19,10 @@
 package org.jclouds.trmk.vcloud_0_8.domain;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.emptyToNull;
 
 import java.util.List;
-
-import org.jclouds.util.Preconditions2;
 
 import com.google.common.collect.Lists;
 
@@ -43,8 +43,7 @@ public class VAppConfiguration {
     * 
     */
    public VAppConfiguration changeNameTo(String name) {
-      Preconditions2.checkNotEmpty(name, "name must be specified");
-      this.name = name;
+      this.name = checkNotNull(emptyToNull(name), "name must be defined");
       return this;
    }
 
