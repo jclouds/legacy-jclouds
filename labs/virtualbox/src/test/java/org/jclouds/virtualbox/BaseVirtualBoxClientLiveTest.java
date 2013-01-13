@@ -25,7 +25,6 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 
 import java.io.File;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -127,14 +126,12 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
    protected PrioritizeCredentialsFromTemplate prioritizeCredentialsFromTemplate;
    @Inject
    protected LoadingCache<Image, Master> mastersCache;
-
-   private final ExecutorService singleThreadExec = sameThreadExecutor();
    private String masterName;   
 
    @Override
    protected Iterable<Module> setupModules() {
       return ImmutableSet.<Module> of(getLoggingModule(), credentialStoreModule, getSshModule(),  new ExecutorServiceModule(
-            singleThreadExec, singleThreadExec));
+            sameThreadExecutor(), sameThreadExecutor()));
    }
    
    @Override

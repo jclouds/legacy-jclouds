@@ -23,7 +23,6 @@ import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_T
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
@@ -61,6 +60,7 @@ import org.jclouds.scriptbuilder.functions.InitAdminAccess;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Andrew Kennedy
@@ -82,13 +82,13 @@ public class GoGridComputeService extends BaseComputeService {
             @Named(TIMEOUT_NODE_SUSPENDED) Predicate<AtomicReference<NodeMetadata>> nodeSuspended,
             InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, InitAdminAccess initAdminAccess,
             RunScriptOnNode.Factory runScriptOnNodeFactory, PersistNodeCredentials persistNodeCredentials,
-            Timeouts timeouts, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+            Timeouts timeouts, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
             Optional<ImageExtension> imageExtension) {
       super(context, credentialStore, images, hardwareProfiles, locations, listNodesStrategy, getImageStrategy,
                getNodeMetadataStrategy, runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy,
                resumeNodeStrategy, suspendNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning,
                nodeTerminated, nodeSuspended, initScriptRunnerFactory, initAdminAccess, runScriptOnNodeFactory,
-               persistNodeCredentials, timeouts, executor, imageExtension);
+               persistNodeCredentials, timeouts, userExecutor, imageExtension);
    }
 
    /**

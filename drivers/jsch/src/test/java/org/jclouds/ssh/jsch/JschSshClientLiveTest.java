@@ -235,11 +235,11 @@ public class JschSshClientLiveTest {
    @Test
    public void testExecHostnameConcurrentlyWithSameSessions() throws Exception {
       final SshClient client = setupClient();
-      ListeningExecutorService executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
+      ListeningExecutorService userExecutor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
       List<ListenableFuture<ExecResponse>> futures = Lists.newArrayList();
       try {
          for (int i = 0; i < 100; i++) {
-            futures.add(executor.submit(new Callable<ExecResponse>() {
+            futures.add(userExecutor.submit(new Callable<ExecResponse>() {
                @Override
                public ExecResponse call() {
                   ExecResponse response = client.exec("hostname");
@@ -256,7 +256,7 @@ public class JschSshClientLiveTest {
                      : sshHost);
          }
       } finally {
-         executor.shutdownNow();
+         userExecutor.shutdownNow();
          client.disconnect();
       }
    }

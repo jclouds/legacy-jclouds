@@ -30,7 +30,6 @@ import static org.testng.Assert.fail;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -47,6 +46,8 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.net.HostAndPort;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 
 @Test(singleThreaded = true)
 public class ConcurrentOpenSocketFinderTest {
@@ -67,24 +68,24 @@ public class ConcurrentOpenSocketFinderTest {
    private final Predicate<AtomicReference<NodeMetadata>> nodeRunning = alwaysTrue();
    private final Predicate<AtomicReference<NodeMetadata>> nodeNotRunning = alwaysFalse();
 
-   private ExecutorService threadPool;
+   private ListeningExecutorService userExecutor;
 
    @BeforeClass
    public void setUp() {
-      threadPool = Executors.newCachedThreadPool();
+      userExecutor = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
    }
 
    @AfterClass(alwaysRun = true)
    public void tearDown() {
-      if (threadPool != null)
-         threadPool.shutdownNow();
+      if (userExecutor != null)
+         userExecutor.shutdownNow();
    }
 
    @Test
    public void testRespectsTimeout() throws Exception {
       final long timeoutMs = 1000;
 
-      OpenSocketFinder finder = new ConcurrentOpenSocketFinder(socketAlwaysClosed, nodeRunning, threadPool);
+      OpenSocketFinder finder = new ConcurrentOpenSocketFinder(socketAlwaysClosed, nodeRunning, userExecutor);
 
       Stopwatch stopwatch = new Stopwatch();
       stopwatch.start();
@@ -109,7 +110,7 @@ public class ConcurrentOpenSocketFinderTest {
          }
       };
 
-      OpenSocketFinder finder = new ConcurrentOpenSocketFinder(secondSocketOpen, nodeRunning, threadPool);
+      OpenSocketFinder finder = new ConcurrentOpenSocketFinder(secondSocketOpen, nodeRunning, userExecutor);
 
       HostAndPort result = finder.findOpenSocketOnNode(node, 22, 2000, MILLISECONDS);
       assertEquals(result, HostAndPort.fromParts("1.2.3.5", 22));
@@ -122,7 +123,7 @@ public class ConcurrentOpenSocketFinderTest {
             HostAndPort.fromParts("1.2.3.4", 22), new SlowCallable<Boolean>(true, 1500),
             HostAndPort.fromParts("1.2.3.5", 22), new SlowCallable<Boolean>(true, 1000)));
 
-      OpenSocketFinder finder = new ConcurrentOpenSocketFinder(socketTester, nodeRunning, threadPool);
+      OpenSocketFinder finder = new ConcurrentOpenSocketFinder(socketTester, nodeRunning, userExecutor);
 
       HostAndPort result = finder.findOpenSocketOnNode(node, 22, 2000, MILLISECONDS);
       assertEquals(result, HostAndPort.fromParts("1.2.3.5", 22));
@@ -131,7 +132,7 @@ public class ConcurrentOpenSocketFinderTest {
    @Test
    public void testAbortsWhenNodeNotRunning() throws Exception {
 
-      OpenSocketFinder finder = new ConcurrentOpenSocketFinder(socketAlwaysClosed, nodeNotRunning, threadPool) {
+      OpenSocketFinder finder = new ConcurrentOpenSocketFinder(socketAlwaysClosed, nodeNotRunning, userExecutor) {
          @Override
          protected <T> Predicate<T> retryPredicate(final Predicate<T> findOrBreak, long period, long timeoutValue,
                TimeUnit timeUnits) {

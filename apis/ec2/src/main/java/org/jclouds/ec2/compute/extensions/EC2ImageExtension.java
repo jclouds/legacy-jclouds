@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -39,7 +38,6 @@ import org.jclouds.compute.domain.ImageTemplate;
 import org.jclouds.compute.domain.ImageTemplateBuilder;
 import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.concurrent.Futures;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
@@ -50,6 +48,7 @@ import org.jclouds.predicates.Retryables;
 
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * EC2 implementation of {@link ImageExtension} please note that {@link #createImage(ImageTemplate)}
@@ -64,7 +63,7 @@ public class EC2ImageExtension implements ImageExtension {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    private final EC2Client ec2Client;
-   private final ExecutorService executor;
+   private final ListeningExecutorService userExecutor;
    private final PredicateWithResult<String, Image> imageReadyPredicate;
    @com.google.inject.Inject(optional = true)
    @Named("IMAGE_MAX_WAIT")
@@ -74,10 +73,10 @@ public class EC2ImageExtension implements ImageExtension {
    private long waitPeriod = 1;
 
    @Inject
-   public EC2ImageExtension(EC2Client ec2Client, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
+   public EC2ImageExtension(EC2Client ec2Client, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
             PredicateWithResult<String, Image> imageReadyPredicate) {
       this.ec2Client = checkNotNull(ec2Client);
-      this.executor = checkNotNull(userThreads);
+      this.userExecutor = checkNotNull(userExecutor);
       this.imageReadyPredicate = imageReadyPredicate;
    }
 
@@ -105,14 +104,14 @@ public class EC2ImageExtension implements ImageExtension {
       final String imageId = ec2Client.getAMIServices().createImageInRegion(region, cloneTemplate.getName(),
                instanceId, CreateImageOptions.NONE);
 
-      return Futures.makeListenable(executor.submit(new Callable<Image>() {
+      return userExecutor.submit(new Callable<Image>() {
          @Override
          public Image call() throws Exception {
             return Retryables.retryGettingResultOrFailing(imageReadyPredicate, region + "/" + imageId, maxWait,
                      waitPeriod, TimeUnit.SECONDS, "Image was not created within the time limit, Giving up! [Limit: "
                               + maxWait + " secs.]");
          }
-      }), executor);
+      });
    }
 
    @Override

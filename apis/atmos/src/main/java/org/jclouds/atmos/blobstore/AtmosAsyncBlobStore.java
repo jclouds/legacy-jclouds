@@ -19,12 +19,12 @@
 package org.jclouds.atmos.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.util.concurrent.Futures.transform;
 import static org.jclouds.atmos.options.PutOptions.Builder.publicRead;
 
 import java.net.URI;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -56,7 +56,6 @@ import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
-import org.jclouds.concurrent.Futures;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
@@ -66,6 +65,7 @@ import com.google.common.base.Supplier;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Adrian Cole
@@ -86,14 +86,14 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
 
    @Inject
    AtmosAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
+            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, Supplier<Location> defaultLocation,
             @Memoized Supplier<Set<? extends Location>> locations, AtmosAsyncClient async, AtmosClient sync,
             ObjectToBlob object2Blob, ObjectToBlobMetadata object2BlobMd, BlobToObject blob2Object,
             BlobStoreListOptionsToListOptions container2ContainerListOptions,
             DirectoryEntryListToResourceMetadataList container2ResourceList, Crypto crypto,
             BlobToHttpGetOptions blob2ObjectGetOptions, Provider<FetchBlobMetadata> fetchBlobMetadataProvider,
             LoadingCache<String, Boolean> isPublic) {
-      super(context, blobUtils, service, defaultLocation, locations);
+      super(context, blobUtils, userExecutor, defaultLocation, locations);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.sync = checkNotNull(sync, "sync");
       this.async = checkNotNull(async, "async");
@@ -113,12 +113,12 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<BlobMetadata> blobMetadata(String container, String key) {
-      return Futures.compose(async.headFile(container + "/" + key), new Function<AtmosObject, BlobMetadata>() {
+      return transform(async.headFile(container + "/" + key), new Function<AtmosObject, BlobMetadata>() {
          @Override
          public BlobMetadata apply(AtmosObject from) {
             return object2BlobMd.apply(from);
          }
-      }, service);
+      }, userExecutor);
    }
 
    /**
@@ -128,13 +128,11 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<Boolean> createContainerInLocation(Location location, String container) {
-      return Futures.compose(async.createDirectory(container), new Function<URI, Boolean>() {
-
+      return transform(async.createDirectory(container), new Function<URI, Boolean>() {
          public Boolean apply(URI from) {
             return true;
          }
-
-      }, service);
+      }, userExecutor);
    }
 
    /**
@@ -142,13 +140,11 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<Void> createDirectory(String container, String directory) {
-      return Futures.compose(async.createDirectory(container + "/" + directory), new Function<URI, Void>() {
-
+      return transform(async.createDirectory(container + "/" + directory), new Function<URI, Void>() {
          public Void apply(URI from) {
             return null;// no etag
          }
-
-      }, service);
+      }, userExecutor);
    }
 
    /**
@@ -204,7 +200,7 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
    public ListenableFuture<Blob> getBlob(String container, String key, org.jclouds.blobstore.options.GetOptions options) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(options);
       ListenableFuture<AtmosObject> returnVal = async.readFile(container + "/" + key, httpOptions);
-      return Futures.compose(returnVal, object2Blob, service);
+      return transform(returnVal, object2Blob, userExecutor);
    }
 
    /**
@@ -212,7 +208,7 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<PageSet<? extends StorageMetadata>> list() {
-      return Futures.compose(async.listDirectories(), container2ResourceList, service);
+      return transform(async.listDirectories(), container2ResourceList, userExecutor);
    }
 
    /**
@@ -224,10 +220,10 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
       container = AtmosUtils.adjustContainerIfDirOptionPresent(container, options);
       ListOptions nativeOptions = container2ContainerListOptions.apply(options);
       ListenableFuture<BoundedSet<? extends DirectoryEntry>> returnVal = async.listDirectory(container, nativeOptions);
-      ListenableFuture<PageSet<? extends StorageMetadata>> list = Futures.compose(returnVal, container2ResourceList,
-               service);
-      return (ListenableFuture<PageSet<? extends StorageMetadata>>) (options.isDetailed() ? Futures.compose(list,
-               fetchBlobMetadataProvider.get().setContainerName(container), service) : list);
+      ListenableFuture<PageSet<? extends StorageMetadata>> list = transform(returnVal, container2ResourceList,
+            userExecutor);
+      return (ListenableFuture<PageSet<? extends StorageMetadata>>) (options.isDetailed() ? transform(list,
+               fetchBlobMetadataProvider.get().setContainerName(container)) : list);
    }
 
    /**
@@ -244,7 +240,7 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
       } catch (CacheLoader.InvalidCacheLoadException e) {
          // nulls not permitted
       }
-      return Futures.makeListenable(service.submit(new Callable<String>() {
+      return userExecutor.submit(new Callable<String>() {
 
          @Override
          public String call() throws Exception {
@@ -255,7 +251,7 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
          public String toString() {
             return "putBlob(" + container + "," + blob.getMetadata().getName() + ")";
          }
-      }), service);
+      });
 
    }
 
@@ -277,13 +273,13 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
    public ListenableFuture<Boolean> createContainerInLocation(Location location, String container,
             CreateContainerOptions options) {
       if (options.isPublicRead())
-         return Futures.compose(async.createDirectory(container, publicRead()), new Function<URI, Boolean>() {
+         return transform(async.createDirectory(container, publicRead()), new Function<URI, Boolean>() {
 
             public Boolean apply(URI from) {
                return true;
             }
 
-         }, service);
+         }, userExecutor);
       return createContainerInLocation(location, container);
    }
 

@@ -24,33 +24,17 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-
-import org.jclouds.date.internal.DateServiceDateCodecFactory;
-import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.BaseJettyTest;
 import org.jclouds.http.HttpCommand;
-import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.IntegrationTestAsyncClient;
-import org.jclouds.http.internal.HttpWire;
-import org.jclouds.http.internal.JavaUrlHttpCommandExecutorService;
-import org.jclouds.io.ContentMetadataCodec;
-import org.jclouds.io.ContentMetadataCodec.DefaultContentMetadataCodec;
 import org.jclouds.io.Payloads;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
@@ -94,35 +78,6 @@ public class BackoffLimitedRetryHandlerTest {
       assert (elapsedTime >= period * 10 - 1) : elapsedTime;
       assertTrue(elapsedTime < period * 11);
 
-   }
-
-   HttpCommandExecutorService http;
-
-   @BeforeTest
-   void setupExecutorService() throws Exception {
-      ExecutorService execService = Executors.newCachedThreadPool();
-      BackoffLimitedRetryHandler backoff = new BackoffLimitedRetryHandler();
-      HttpUtils utils = new HttpUtils(0, 500, 1, 1);
-      ContentMetadataCodec contentMetadataCodec = new DefaultContentMetadataCodec(new DateServiceDateCodecFactory(
-            new SimpleDateFormatDateService()));
-      RedirectionRetryHandler retry = new RedirectionRetryHandler(backoff);
-      http = new JavaUrlHttpCommandExecutorService(utils, 
-               contentMetadataCodec, execService,
-               new DelegatingRetryHandler(backoff, retry), new BackoffLimitedRetryHandler(),
-               new DelegatingErrorHandler(), new HttpWire(), new HostnameVerifier() {
-
-                  @Override
-                  public boolean verify(String hostname, SSLSession session) {
-                     return false;
-                  }
-               }, new Supplier<SSLContext>() {
-
-                  @Override
-                  public SSLContext get() {
-                     return null;
-                  }
-
-               });
    }
 
    @Test

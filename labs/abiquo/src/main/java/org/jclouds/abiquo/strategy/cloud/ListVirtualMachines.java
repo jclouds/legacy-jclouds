@@ -24,9 +24,6 @@ import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.abiquo.domain.DomainWrapper.wrap;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
 import javax.annotation.Resource;
 import javax.inject.Named;
 
@@ -45,6 +42,8 @@ import com.abiquo.server.core.cloud.VirtualMachineWithNodeExtendedDto;
 import com.abiquo.server.core.cloud.VirtualMachinesWithNodeExtendedDto;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -57,7 +56,7 @@ import com.google.inject.Singleton;
 public class ListVirtualMachines implements ListRootEntities<VirtualMachine> {
    protected final RestContext<AbiquoApi, AbiquoAsyncApi> context;
 
-   protected final ExecutorService userExecutor;
+   protected final ListeningExecutorService userExecutor;
 
    protected final ListVirtualAppliances listVirtualAppliances;
 
@@ -70,7 +69,7 @@ public class ListVirtualMachines implements ListRootEntities<VirtualMachine> {
 
    @Inject
    ListVirtualMachines(final RestContext<AbiquoApi, AbiquoAsyncApi> context,
-         @Named(Constants.PROPERTY_USER_THREADS) final ExecutorService userExecutor,
+         @Named(Constants.PROPERTY_USER_THREADS) final ListeningExecutorService userExecutor,
          final ListVirtualAppliances listVirtualAppliances) {
       super();
       this.context = checkNotNull(context, "context");
@@ -99,9 +98,9 @@ public class ListVirtualMachines implements ListRootEntities<VirtualMachine> {
    private Iterable<VirtualMachineWithNodeExtendedDto> listConcurrentVirtualMachines(
          final Iterable<VirtualAppliance> vapps, final VirtualMachineOptions options) {
       Iterable<VirtualMachinesWithNodeExtendedDto> vms = transformParallel(vapps,
-            new Function<VirtualAppliance, Future<? extends VirtualMachinesWithNodeExtendedDto>>() {
+            new Function<VirtualAppliance, ListenableFuture<? extends VirtualMachinesWithNodeExtendedDto>>() {
                @Override
-               public Future<VirtualMachinesWithNodeExtendedDto> apply(final VirtualAppliance input) {
+               public ListenableFuture<VirtualMachinesWithNodeExtendedDto> apply(final VirtualAppliance input) {
                   return context.getAsyncApi().getCloudApi().listVirtualMachines(input.unwrap(), options);
                }
             }, userExecutor, maxTime, logger, "getting virtual machines");

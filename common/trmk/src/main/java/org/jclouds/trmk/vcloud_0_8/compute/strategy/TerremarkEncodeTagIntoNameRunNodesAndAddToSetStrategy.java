@@ -21,8 +21,6 @@ package org.jclouds.trmk.vcloud_0_8.compute.strategy;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -41,6 +39,8 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.trmk.vcloud_0_8.compute.options.TerremarkVCloudTemplateOptions;
 
 import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * creates futures that correlate to
@@ -58,15 +58,15 @@ public class TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy extends Creat
             ListNodesStrategy listNodesStrategy,
             GroupNamingConvention.Factory namingConvention,
             CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
             CreateNewKeyPairUnlessUserSpecifiedOtherwise createNewKeyPairUnlessUserSpecifiedOtherwise) {
-      super(addNodeWithTagStrategy, listNodesStrategy, namingConvention, executor,
+      super(addNodeWithTagStrategy, listNodesStrategy, namingConvention, userExecutor,
                customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory);
       this.createNewKeyPairUnlessUserSpecifiedOtherwise = createNewKeyPairUnlessUserSpecifiedOtherwise;
    }
 
    @Override
-   public Map<?, Future<Void>> execute(String tag, int count, Template template, Set<NodeMetadata> goodNodes,
+   public Map<?, ListenableFuture<Void>> execute(String tag, int count, Template template, Set<NodeMetadata> goodNodes,
             Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
       assert template.getLocation().getParent().getScope() == LocationScope.REGION : "template location should have a parent of org, which should be mapped to region: "
                + template.getLocation();

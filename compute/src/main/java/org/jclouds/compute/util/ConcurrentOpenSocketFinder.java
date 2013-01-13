@@ -18,7 +18,6 @@
  */
 package org.jclouds.compute.util;
 
-import static java.lang.String.format;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Predicates.or;
@@ -27,12 +26,12 @@ import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.util.concurrent.Atomics.newReference;
 import static com.google.common.util.concurrent.MoreExecutors.listeningDecorator;
+import static java.lang.String.format;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_RUNNING;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -66,16 +65,16 @@ public class ConcurrentOpenSocketFinder implements OpenSocketFinder {
 
    private final SocketOpen socketTester;
    private final Predicate<AtomicReference<NodeMetadata>> nodeRunning;
-   private final ListeningExecutorService executor;
+   private final ListeningExecutorService userExecutor;
 
    @Inject
    @VisibleForTesting
    ConcurrentOpenSocketFinder(SocketOpen socketTester,
          @Named(TIMEOUT_NODE_RUNNING) Predicate<AtomicReference<NodeMetadata>> nodeRunning,
-         @Named(PROPERTY_USER_THREADS) ExecutorService userThreads) {
+         @Named(PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
       this.socketTester = checkNotNull(socketTester, "socketTester");
       this.nodeRunning = checkNotNull(nodeRunning, "nodeRunning");
-      this.executor = listeningDecorator(checkNotNull(userThreads, "userThreads"));
+      this.userExecutor = listeningDecorator(checkNotNull(userExecutor, "userExecutor"));
    }
 
    @Override
@@ -123,7 +122,7 @@ public class ConcurrentOpenSocketFinder implements OpenSocketFinder {
 
             Builder<ListenableFuture<?>> futures = ImmutableList.builder();
             for (final HostAndPort socket : input) {
-               futures.add(executor.submit(new Runnable() {
+               futures.add(userExecutor.submit(new Runnable() {
 
                   @Override
                   public void run() {

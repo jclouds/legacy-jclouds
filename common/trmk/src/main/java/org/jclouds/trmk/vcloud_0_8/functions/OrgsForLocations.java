@@ -23,8 +23,6 @@ import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
 import java.net.URI;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -41,6 +39,8 @@ import org.jclouds.trmk.vcloud_0_8.domain.Org;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Adrian Cole
@@ -50,12 +50,12 @@ public class OrgsForLocations implements Function<Iterable<? extends Location>, 
    @Resource
    public Logger logger = Logger.NULL;
    private final TerremarkVCloudAsyncClient aclient;
-   private final ExecutorService executor;
+   private final ListeningExecutorService userExecutor;
 
    @Inject
-   OrgsForLocations(TerremarkVCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   OrgsForLocations(TerremarkVCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
       this.aclient = aclient;
-      this.executor = executor;
+      this.userExecutor = userExecutor;
    }
 
    /**
@@ -64,28 +64,18 @@ public class OrgsForLocations implements Function<Iterable<? extends Location>, 
     */
    @Override
    public Iterable<? extends Org> apply(Iterable<? extends Location> from) {
-
       return transformParallel(Sets.newLinkedHashSet(transform(filter(from, new Predicate<Location>() {
-
-         @Override
          public boolean apply(Location input) {
             return input.getScope() == LocationScope.ZONE;
          }
-
       }), new Function<Location, URI>() {
-
-         @Override
          public URI apply(Location from) {
             return URI.create(from.getParent().getId());
          }
-
-      })), new Function<URI, Future<? extends Org>>() {
-         @Override
-         public Future<? extends Org> apply(URI from) {
+      })), new Function<URI, ListenableFuture<? extends Org>>() {
+         public ListenableFuture<? extends Org> apply(URI from) {
             return aclient.getOrg(from);
          }
-
-      }, executor, null, logger, "organizations for uris");
+      }, userExecutor, null, logger, "organizations for uris");
    }
-
 }

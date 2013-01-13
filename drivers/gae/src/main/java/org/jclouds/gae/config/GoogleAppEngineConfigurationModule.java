@@ -47,7 +47,7 @@ import com.google.inject.Scopes;
 @ConfiguresExecutorService
 @SingleThreaded
 public class GoogleAppEngineConfigurationModule extends AbstractModule {
-   private final Module executorServiceModule;
+   private final Module userExecutorModule;
 
    public GoogleAppEngineConfigurationModule() {
       this(new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()));
@@ -59,8 +59,8 @@ public class GoogleAppEngineConfigurationModule extends AbstractModule {
     * @param currentRequestExecutorService
     * @see CurrentRequestExecutorServiceModule#currentRequestExecutorService
     */
-   public GoogleAppEngineConfigurationModule(Module executorServiceModule) {
-      this.executorServiceModule = executorServiceModule;
+   public GoogleAppEngineConfigurationModule(Module userExecutorModule) {
+      this.userExecutorModule = userExecutorModule;
    }
 
    /**
@@ -70,12 +70,12 @@ public class GoogleAppEngineConfigurationModule extends AbstractModule {
     * @see CurrentRequestExecutorServiceModule#memoizedCurrentRequestExecutorService
     */
    public GoogleAppEngineConfigurationModule(Supplier<ListeningExecutorService> memoizedCurrentRequestExecutorService) {
-      this.executorServiceModule = new CurrentRequestExecutorServiceModule(memoizedCurrentRequestExecutorService);
+      this.userExecutorModule = new CurrentRequestExecutorServiceModule(memoizedCurrentRequestExecutorService);
    }
 
    @Override
    protected void configure() {
-      install(executorServiceModule);
+      install(userExecutorModule);
       bind(SocketOpen.class).to(SocketOpenUnsupported.class).in(Scopes.SINGLETON);
       bindHttpCommandExecutorService();
    }

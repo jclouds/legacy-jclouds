@@ -18,8 +18,9 @@
  */
 package org.jclouds.cloudfiles.blobstore;
 
+import static com.google.common.util.concurrent.Futures.transform;
+
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,7 +37,6 @@ import org.jclouds.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.cloudfiles.CloudFilesClient;
 import org.jclouds.cloudfiles.blobstore.functions.EnableCDNAndCache;
 import org.jclouds.collect.Memoized;
-import org.jclouds.concurrent.Futures;
 import org.jclouds.domain.Location;
 import org.jclouds.openstack.swift.blobstore.SwiftAsyncBlobStore;
 import org.jclouds.openstack.swift.blobstore.functions.BlobStoreListContainerOptionsToListContainerOptions;
@@ -45,11 +45,12 @@ import org.jclouds.openstack.swift.blobstore.functions.ContainerToResourceList;
 import org.jclouds.openstack.swift.blobstore.functions.ContainerToResourceMetadata;
 import org.jclouds.openstack.swift.blobstore.functions.ObjectToBlob;
 import org.jclouds.openstack.swift.blobstore.functions.ObjectToBlobMetadata;
+import org.jclouds.openstack.swift.blobstore.strategy.internal.AsyncMultipartUploadStrategy;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.util.concurrent.ListenableFuture;
-import org.jclouds.openstack.swift.blobstore.strategy.internal.AsyncMultipartUploadStrategy;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * 
@@ -61,7 +62,7 @@ public class CloudFilesAsyncBlobStore extends SwiftAsyncBlobStore {
 
    @Inject
    protected CloudFilesAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
+            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, Supplier<Location> defaultLocation,
             @Memoized Supplier<Set<? extends Location>> locations, CloudFilesClient sync, CloudFilesAsyncClient async,
             ContainerToResourceMetadata container2ResourceMd,
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
@@ -69,7 +70,7 @@ public class CloudFilesAsyncBlobStore extends SwiftAsyncBlobStore {
             ObjectToBlobMetadata object2BlobMd, BlobToHttpGetOptions blob2ObjectGetOptions,
             Provider<FetchBlobMetadata> fetchBlobMetadataProvider, EnableCDNAndCache enableCDNAndCache,
             Provider<AsyncMultipartUploadStrategy> multipartUploadStrategy) {
-      super(context, blobUtils, service, defaultLocation, locations, sync, async, container2ResourceMd,
+      super(context, blobUtils, userExecutor, defaultLocation, locations, sync, async, container2ResourceMd,
                container2ContainerListOptions, container2ResourceList, object2Blob, blob2Object, object2BlobMd,
                blob2ObjectGetOptions, fetchBlobMetadataProvider, multipartUploadStrategy);
       this.enableCDNAndCache = enableCDNAndCache;
@@ -81,7 +82,7 @@ public class CloudFilesAsyncBlobStore extends SwiftAsyncBlobStore {
 
       ListenableFuture<Boolean> returnVal = createContainerInLocation(location, container);
       if (options.isPublicRead())
-         return Futures.compose(createContainerInLocation(location, container), new Function<Boolean, Boolean>() {
+         return transform(createContainerInLocation(location, container), new Function<Boolean, Boolean>() {
 
             @Override
             public Boolean apply(Boolean input) {
@@ -91,7 +92,7 @@ public class CloudFilesAsyncBlobStore extends SwiftAsyncBlobStore {
                return false;
             }
 
-         }, service);
+         }, userExecutor);
       return returnVal;
    }
 }

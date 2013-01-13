@@ -423,7 +423,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
       final long timeoutMs = 20 * 60 * 1000;
       List<String> groups = Lists.newArrayList();
       List<ListenableFuture<NodeMetadata>> futures = Lists.newArrayList();
-      ListeningExecutorService executor = MoreExecutors.listeningDecorator(context.utils().userExecutor());
+      ListeningExecutorService userExecutor = MoreExecutors.listeningDecorator(context.utils().userExecutor());
 
       try {
          for (int i = 0; i < 2; i++) {
@@ -431,7 +431,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
             final String group = "twin" + groupNum;
             groups.add(group);
 
-            ListenableFuture<NodeMetadata> future = executor.submit(new Callable<NodeMetadata>() {
+            ListenableFuture<NodeMetadata> future = userExecutor.submit(new Callable<NodeMetadata>() {
                public NodeMetadata call() throws Exception {
                   NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1, inboundPorts(22, 8080)
                            .blockOnPort(22, 300 + groupNum)));

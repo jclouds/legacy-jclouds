@@ -20,8 +20,6 @@ package org.jclouds.http.internal;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -42,6 +40,8 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.common.reflect.Invokable;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
@@ -88,18 +88,18 @@ public class TrackingJavaUrlHttpCommandExecutorService extends JavaUrlHttpComman
 
    @Inject
    public TrackingJavaUrlHttpCommandExecutorService(HttpUtils utils, ContentMetadataCodec contentMetadataCodec,
-            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
+            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ListeningExecutorService ioExecutor,
             DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
             DelegatingErrorHandler errorHandler, HttpWire wire, @Named("untrusted") HostnameVerifier verifier,
             @Named("untrusted") Supplier<SSLContext> untrustedSSLContextProvider, List<HttpCommand> commandsInvoked)
             throws SecurityException, NoSuchFieldException {
-      super(utils, contentMetadataCodec, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire, verifier,
+      super(utils, contentMetadataCodec, ioExecutor, retryHandler, ioRetryHandler, errorHandler, wire, verifier,
                untrustedSSLContextProvider);
       this.commandsInvoked = commandsInvoked;
    }
 
    @Override
-   public Future<HttpResponse> submit(HttpCommand command) {
+   public ListenableFuture<HttpResponse> submit(HttpCommand command) {
       commandsInvoked.add(command);
       return super.submit(command);
    }

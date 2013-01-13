@@ -43,7 +43,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.GZIPInputStream;
@@ -58,7 +57,6 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
-import org.jclouds.concurrent.Futures;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.http.BaseJettyTest;
@@ -84,6 +82,8 @@ import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * @author Adrian Cole
@@ -139,7 +139,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       final AtomicInteger blobCount = new AtomicInteger();
       final String container = getContainerName();
       try {
-         Map<Integer, Future<?>> responses = Maps.newHashMap();
+         Map<Integer, ListenableFuture<?>> responses = Maps.newHashMap();
          for (int i = 0; i < 10; i++) {
 
             responses.put(i, this.exec.submit(new Callable<Void>() {
@@ -179,10 +179,10 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
          final String name = "constitution.txt";
 
          uploadConstitution(container, name, expectedContentDisposition);
-         Map<Integer, Future<?>> responses = Maps.newHashMap();
+         Map<Integer, ListenableFuture<?>> responses = Maps.newHashMap();
          for (int i = 0; i < 10; i++) {
 
-            responses.put(i, Futures.compose(view.getAsyncBlobStore().getBlob(container, name),
+            responses.put(i, Futures.transform(view.getAsyncBlobStore().getBlob(container, name),
                      new Function<Blob, Void>() {
 
                         @Override

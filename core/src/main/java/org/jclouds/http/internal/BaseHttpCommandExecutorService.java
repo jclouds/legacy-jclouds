@@ -27,8 +27,6 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -50,6 +48,8 @@ import org.jclouds.logging.Logger;
 import org.jclouds.util.Throwables2;
 
 import com.google.common.io.NullOutputStream;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * 
@@ -62,7 +62,7 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
    private final DelegatingRetryHandler retryHandler;
    private final IOExceptionRetryHandler ioRetryHandler;
    private final DelegatingErrorHandler errorHandler;
-   private final ExecutorService ioWorkerExecutor;
+   private final ListeningExecutorService ioExecutor;
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -74,7 +74,7 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
 
    @Inject
    protected BaseHttpCommandExecutorService(HttpUtils utils, ContentMetadataCodec contentMetadataCodec,
-            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
+            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ListeningExecutorService ioExecutor,
             DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
             DelegatingErrorHandler errorHandler, HttpWire wire) {
       this.utils = checkNotNull(utils, "utils");
@@ -82,7 +82,7 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
       this.retryHandler = checkNotNull(retryHandler, "retryHandler");
       this.ioRetryHandler = checkNotNull(ioRetryHandler, "ioRetryHandler");
       this.errorHandler = checkNotNull(errorHandler, "errorHandler");
-      this.ioWorkerExecutor = checkNotNull(ioWorkerExecutor, "ioWorkerExecutor");
+      this.ioExecutor = checkNotNull(ioExecutor, "ioExecutor");
       this.wire = checkNotNull(wire, "wire");
    }
 
@@ -124,12 +124,12 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
    }
 
    @Override
-   public Future<HttpResponse> submit(HttpCommand command) {
+   public ListenableFuture<HttpResponse> submit(HttpCommand command) {
       HttpRequest request = command.getCurrentRequest();
       checkRequestHasContentLengthOrChunkedEncoding(request,
                "if the request has a payload, it must be set to chunked encoding or specify a content length: "
                         + request);
-      return ioWorkerExecutor.submit(new HttpResponseCallable(command));
+      return ioExecutor.submit(new HttpResponseCallable(command));
    }
 
    public class HttpResponseCallable implements Callable<HttpResponse> {

@@ -27,7 +27,6 @@ import static org.testng.Assert.fail;
 
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput.ExitStatusOfCommandGreaterThanZero;
@@ -42,6 +41,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.eventbus.EventBus;
 import com.google.common.util.concurrent.AbstractFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
 /**
@@ -139,7 +139,7 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutputTest {
    EventBus eventBus = new EventBus();
 
    public void testExitStatusZeroReturnsExecResponse() throws InterruptedException, ExecutionException {
-      ExecutorService userThreads = MoreExecutors.sameThreadExecutor();
+      ListeningExecutorService userExecutor = MoreExecutors.sameThreadExecutor();
       Predicate<String> notRunningAnymore = Predicates.alwaysTrue();
       SudoAwareInitManager commandRunner = createMockBuilder(SudoAwareInitManager.class).addMockedMethod("runAction")
                .addMockedMethod("getStatement").addMockedMethod("getNode").addMockedMethod("toString")
@@ -155,7 +155,7 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutputTest {
       replay(commandRunner, initScript);
 
       BlockUntilInitScriptStatusIsZeroThenReturnOutput future = new BlockUntilInitScriptStatusIsZeroThenReturnOutput(
-               userThreads, eventBus, notRunningAnymore, commandRunner);
+               userExecutor, eventBus, notRunningAnymore, commandRunner);
 
       future.run();
 
@@ -167,7 +167,7 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutputTest {
 
    public void testFirstExitStatusOneButSecondExitStatusZeroReturnsExecResponse() throws InterruptedException,
             ExecutionException {
-      ExecutorService userThreads = MoreExecutors.sameThreadExecutor();
+      ListeningExecutorService userExecutor = MoreExecutors.sameThreadExecutor();
       Predicate<String> notRunningAnymore = Predicates.alwaysTrue();
 
       SudoAwareInitManager commandRunner = createMockBuilder(SudoAwareInitManager.class).addMockedMethod("runAction")
@@ -190,7 +190,7 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutputTest {
       replay(commandRunner, initScript);
 
       BlockUntilInitScriptStatusIsZeroThenReturnOutput future = new BlockUntilInitScriptStatusIsZeroThenReturnOutput(
-               userThreads, eventBus, notRunningAnymore, commandRunner);
+               userExecutor, eventBus, notRunningAnymore, commandRunner);
 
       future.run();
 
@@ -201,7 +201,7 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutputTest {
    }
 
    public void testCancelInterruptStopsCommand() throws InterruptedException, ExecutionException {
-      ExecutorService userThreads = MoreExecutors.sameThreadExecutor();
+      ListeningExecutorService userExecutor = MoreExecutors.sameThreadExecutor();
       Predicate<String> notRunningAnymore = Predicates.alwaysTrue();
       SudoAwareInitManager commandRunner = createMockBuilder(SudoAwareInitManager.class).addMockedMethod(
                "refreshAndRunAction").addMockedMethod("runAction").addMockedMethod("getStatement").addMockedMethod(
@@ -229,7 +229,7 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutputTest {
       replay(commandRunner, initScript);
 
       BlockUntilInitScriptStatusIsZeroThenReturnOutput future = new BlockUntilInitScriptStatusIsZeroThenReturnOutput(
-               userThreads, eventBus, notRunningAnymore, commandRunner);
+               userExecutor, eventBus, notRunningAnymore, commandRunner);
 
       future.cancel(true);
 
@@ -246,7 +246,7 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutputTest {
 
    public void testCancelDontInterruptLeavesCommandRunningAndReturnsLastStatus() throws InterruptedException,
             ExecutionException {
-      ExecutorService userThreads = MoreExecutors.sameThreadExecutor();
+      ListeningExecutorService userExecutor = MoreExecutors.sameThreadExecutor();
       Predicate<String> notRunningAnymore = Predicates.alwaysTrue();
       SudoAwareInitManager commandRunner = createMockBuilder(SudoAwareInitManager.class).addMockedMethod("runAction")
                .addMockedMethod("getStatement").addMockedMethod("getNode").addMockedMethod("toString")
@@ -262,7 +262,7 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutputTest {
       replay(commandRunner, initScript);
 
       BlockUntilInitScriptStatusIsZeroThenReturnOutput future = new BlockUntilInitScriptStatusIsZeroThenReturnOutput(
-               userThreads, eventBus, notRunningAnymore, commandRunner);
+               userExecutor, eventBus, notRunningAnymore, commandRunner);
 
       future.cancel(false);
 

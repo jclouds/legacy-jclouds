@@ -24,8 +24,6 @@ import static org.jclouds.joyent.cloudapi.v6_5.config.JoyentCloudProperties.AUTO
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -46,6 +44,8 @@ import org.jclouds.joyent.cloudapi.v6_5.domain.datacenterscoped.DatacenterAndNam
 
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * 
@@ -64,17 +64,17 @@ public class ApplyJoyentCloudTemplateOptionsCreateNodesWithGroupEncodedIntoNameT
             ListNodesStrategy listNodesStrategy,
             GroupNamingConvention.Factory namingConvention,
             CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
             LoadingCache<DatacenterAndName, KeyAndPrivateKey> keyCache, 
             @Named(AUTOGENERATE_KEYS) boolean defaultToAutogenerateKeys) {
-      super(addNodeWithTagStrategy, listNodesStrategy, namingConvention, executor,
+      super(addNodeWithTagStrategy, listNodesStrategy, namingConvention, userExecutor,
                customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory);
       this.keyCache = checkNotNull(keyCache, "keyCache");
       this.defaultToAutogenerateKeys = defaultToAutogenerateKeys;
    }
 
    @Override
-   public Map<?, Future<Void>> execute(String group, int count, Template template, Set<NodeMetadata> goodNodes,
+   public Map<?, ListenableFuture<Void>> execute(String group, int count, Template template, Set<NodeMetadata> goodNodes,
          Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
 
       Template mutableTemplate = template.clone();

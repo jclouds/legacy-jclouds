@@ -20,9 +20,6 @@ package org.jclouds.trmk.vcloud_0_8.functions;
 
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,6 +33,8 @@ import org.jclouds.trmk.vcloud_0_8.domain.Org;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 
 import com.google.common.base.Function;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Adrian Cole
@@ -46,25 +45,21 @@ public class AllCatalogsInOrg implements Function<Org, Iterable<? extends Catalo
    public Logger logger = Logger.NULL;
 
    private final TerremarkVCloudAsyncClient aclient;
-   private final ExecutorService executor;
+   private final ListeningExecutorService userExecutor;
 
    @Inject
-   AllCatalogsInOrg(TerremarkVCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   AllCatalogsInOrg(TerremarkVCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
       this.aclient = aclient;
-      this.executor = executor;
+      this.userExecutor = userExecutor;
    }
 
    @Override
    public Iterable<? extends Catalog> apply(final Org org) {
-      Iterable<? extends Catalog> catalogs = transformParallel(org.getCatalogs().values(),
-            new Function<ReferenceType, Future<? extends Catalog>>() {
-               @SuppressWarnings("unchecked")
-               @Override
-               public Future<Catalog> apply(ReferenceType from) {
-                  return (Future<Catalog>) aclient.getCatalog(from.getHref());
+      return transformParallel(org.getCatalogs().values(),
+            new Function<ReferenceType, ListenableFuture<? extends Catalog>>() {
+               public ListenableFuture<? extends Catalog> apply(ReferenceType from) {
+                  return aclient.getCatalog(from.getHref());
                }
-
-            }, executor, null, logger, "catalogs in " + org.getName());
-      return catalogs;
+            }, userExecutor, null, logger, "catalogs in " + org.getName());
    }
 }

@@ -23,7 +23,6 @@ import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_T
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
@@ -62,6 +61,7 @@ import org.jclouds.trmk.vcloud_0_8.compute.strategy.CleanupOrphanKeys;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Adrian Cole
@@ -85,13 +85,13 @@ public class TerremarkVCloudComputeService extends BaseComputeService {
             InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
             RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
             PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, CleanupOrphanKeys cleanupOrphanKeys,
+            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, CleanupOrphanKeys cleanupOrphanKeys,
             Optional<ImageExtension> imageExtension) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getImageStrategy,
                getNodeMetadataStrategy, runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy,
                resumeNodeStrategy, suspendNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning,
                nodeTerminated, nodeSuspended, initScriptRunnerFactory, initAdminAccess, runScriptOnNodeFactory,
-               persistNodeCredentials, timeouts, executor, imageExtension);
+               persistNodeCredentials, timeouts, userExecutor, imageExtension);
       this.cleanupOrphanKeys = cleanupOrphanKeys;
    }
 

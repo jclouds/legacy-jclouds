@@ -19,11 +19,12 @@
 package org.jclouds.gae;
 
 import static com.google.common.base.Throwables.propagate;
+import static com.google.common.util.concurrent.Futures.transform;
+import static com.google.common.util.concurrent.JdkFutureAdapters.listenInPoolThread;
 import static org.jclouds.http.HttpUtils.checkRequestHasContentLengthOrChunkedEncoding;
 import static org.jclouds.http.HttpUtils.wirePayloadIfEnabled;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -31,7 +32,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.concurrent.Futures;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
@@ -50,6 +50,7 @@ import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * Google App Engine version of {@link HttpCommandExecutorService} using their fetchAsync call
@@ -58,7 +59,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @Singleton
 public class AsyncGaeHttpCommandExecutorService implements HttpCommandExecutorService {
-   private final ExecutorService service;
+   private final ListeningExecutorService ioExecutor;
    private final URLFetchService urlFetchService;
    private final ConvertToGaeRequest convertToGaeRequest;
    private final ConvertToJcloudsResponse convertToJcloudsResponse;
@@ -75,11 +76,12 @@ public class AsyncGaeHttpCommandExecutorService implements HttpCommandExecutorSe
    protected final HttpUtils utils;
 
    @Inject
-   public AsyncGaeHttpCommandExecutorService(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
+   public AsyncGaeHttpCommandExecutorService(
+         @Named(Constants.PROPERTY_IO_WORKER_THREADS) ListeningExecutorService ioExecutor,
          URLFetchService urlFetchService, ConvertToGaeRequest convertToGaeRequest,
          ConvertToJcloudsResponse convertToJcloudsResponse, DelegatingRetryHandler retryHandler,
          IOExceptionRetryHandler ioRetryHandler, DelegatingErrorHandler errorHandler, HttpUtils utils, HttpWire wire) {
-      this.service = service;
+      this.ioExecutor = ioExecutor;
       this.urlFetchService = urlFetchService;
       this.convertToGaeRequest = convertToGaeRequest;
       this.convertToJcloudsResponse = convertToJcloudsResponse;
@@ -109,10 +111,10 @@ public class AsyncGaeHttpCommandExecutorService implements HttpCommandExecutorSe
 
       HTTPRequest nativeRequest = filterLogAndConvertRe(command.getCurrentRequest());
 
-      ListenableFuture<HttpResponse> response = Futures.compose(urlFetchService.fetchAsync(nativeRequest),
-            convertToJcloudsResponse, service);
+      ListenableFuture<HttpResponse> response = transform(
+            listenInPoolThread(urlFetchService.fetchAsync(nativeRequest)), convertToJcloudsResponse);
 
-      return Futures.compose(response, new Function<HttpResponse, HttpResponse>() {
+      return transform(response, new Function<HttpResponse, HttpResponse>() {
 
          @Override
          public HttpResponse apply(HttpResponse response) {
@@ -159,7 +161,7 @@ public class AsyncGaeHttpCommandExecutorService implements HttpCommandExecutorSe
             }
             return shouldContinue;
          }
-      }, service);
+      }, ioExecutor);
 
    }
 

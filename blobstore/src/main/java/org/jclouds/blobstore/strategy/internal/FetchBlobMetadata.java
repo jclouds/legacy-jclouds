@@ -21,9 +21,6 @@ package org.jclouds.blobstore.strategy.internal;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
 import javax.annotation.Resource;
 import javax.inject.Named;
 
@@ -43,6 +40,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Inject;
 
 /**
@@ -55,7 +54,7 @@ public class FetchBlobMetadata implements Function<PageSet<? extends StorageMeta
 
    protected final BackoffLimitedRetryHandler retryHandler;
    protected final AsyncBlobStore ablobstore;
-   protected final ExecutorService userExecutor;
+   protected final ListeningExecutorService userExecutor;
    @Resource
    @Named(BlobStoreConstants.BLOBSTORE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -69,7 +68,7 @@ public class FetchBlobMetadata implements Function<PageSet<? extends StorageMeta
    protected Long maxTime;
 
    @Inject
-   FetchBlobMetadata(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor, AsyncBlobStore ablobstore,
+   FetchBlobMetadata(@Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, AsyncBlobStore ablobstore,
             BackoffLimitedRetryHandler retryHandler) {
       this.userExecutor = userExecutor;
       this.ablobstore = ablobstore;
@@ -91,10 +90,10 @@ public class FetchBlobMetadata implements Function<PageSet<? extends StorageMeta
             return input.getType() == StorageType.BLOB;
          }
 
-      }), new Function<StorageMetadata, Future<? extends BlobMetadata>>() {
+      }), new Function<StorageMetadata, ListenableFuture<? extends BlobMetadata>>() {
 
          @Override
-         public Future<BlobMetadata> apply(StorageMetadata from) {
+         public ListenableFuture<BlobMetadata> apply(StorageMetadata from) {
             return ablobstore.blobMetadata(container, from.getName());
          }
 

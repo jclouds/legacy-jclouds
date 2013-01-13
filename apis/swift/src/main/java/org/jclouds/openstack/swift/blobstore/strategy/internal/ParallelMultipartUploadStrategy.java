@@ -1,27 +1,7 @@
 package org.jclouds.openstack.swift.blobstore.strategy.internal;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Maps;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.inject.Inject;
-import org.jclouds.Constants;
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.internal.BlobRuntimeException;
-import org.jclouds.blobstore.options.PutOptions;
-import org.jclouds.blobstore.reference.BlobStoreConstants;
-import org.jclouds.concurrent.Futures;
-import org.jclouds.io.Payload;
-import org.jclouds.io.PayloadSlicer;
-import org.jclouds.logging.Logger;
-import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
-import org.jclouds.openstack.swift.CommonSwiftClient;
-import org.jclouds.openstack.swift.SwiftApiMetadata;
-import org.jclouds.openstack.swift.blobstore.SwiftAsyncBlobStore;
-import org.jclouds.openstack.swift.blobstore.functions.BlobToObject;
-import org.jclouds.util.Throwables2;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.annotation.Resource;
-import javax.inject.Named;
 import java.util.Map;
 import java.util.Queue;
 import java.util.SortedMap;
@@ -33,11 +13,32 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import javax.annotation.Resource;
+import javax.inject.Named;
+
+import org.jclouds.Constants;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.internal.BlobRuntimeException;
+import org.jclouds.blobstore.options.PutOptions;
+import org.jclouds.blobstore.reference.BlobStoreConstants;
+import org.jclouds.io.Payload;
+import org.jclouds.io.PayloadSlicer;
+import org.jclouds.logging.Logger;
+import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
+import org.jclouds.openstack.swift.CommonSwiftClient;
+import org.jclouds.openstack.swift.SwiftApiMetadata;
+import org.jclouds.openstack.swift.blobstore.SwiftAsyncBlobStore;
+import org.jclouds.openstack.swift.blobstore.functions.BlobToObject;
+import org.jclouds.util.Throwables2;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Maps;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.inject.Inject;
 
 public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStrategy {
     @Resource
@@ -74,17 +75,17 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
     @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
     protected Long maxTime;
 
-    private final ExecutorService ioWorkerExecutor;
+    private final ListeningExecutorService ioExecutor;
 
     protected final SwiftAsyncBlobStore ablobstore;
     protected final PayloadSlicer slicer;
 
     @Inject
     public ParallelMultipartUploadStrategy(SwiftAsyncBlobStore ablobstore, PayloadSlicer slicer,
-                                           @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor) {
+                                           @Named(Constants.PROPERTY_IO_WORKER_THREADS) ListeningExecutorService ioExecutor) {
         this.ablobstore = checkNotNull(ablobstore, "ablobstore");
         this.slicer = checkNotNull(slicer, "slicer");
-        this.ioWorkerExecutor = checkNotNull(ioWorkerExecutor, "ioWorkerExecutor");
+        this.ioExecutor = checkNotNull(ioExecutor, "ioExecutor");
     }
 
 
@@ -136,14 +137,13 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
                     latch.countDown();
                 }
             }
-        }, ioWorkerExecutor);
+        }, ioExecutor);
         futureParts.put(part, futureETag);
     }
 
     @Override
     public ListenableFuture<String> execute(final String container, final Blob blob, final PutOptions options, final BlobToObject blob2Object) {
-        return Futures.makeListenable(
-                ioWorkerExecutor.submit(new Callable<String>() {
+        return ioExecutor.submit(new Callable<String>() {
                     @Override
                     public String call() throws Exception {
                         String key = blob.getMetadata().getName();
@@ -235,7 +235,7 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
                                     futureETag.get(maxTime, TimeUnit.SECONDS) : futureETag.get();
                         }
                     }
-                }), ioWorkerExecutor);
+                });
     }
 
     class Part {
