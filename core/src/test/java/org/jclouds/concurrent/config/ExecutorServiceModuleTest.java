@@ -26,7 +26,6 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
@@ -34,8 +33,8 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import org.jclouds.lifecycle.Closer;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -53,7 +52,7 @@ public class ExecutorServiceModuleTest {
 
    private Injector injector;
 
-   @BeforeMethod
+   @BeforeClass
    private void setupExecutorModule() {
       ExecutorServiceModule module = new ExecutorServiceModule() {
          @Override
@@ -69,9 +68,15 @@ public class ExecutorServiceModuleTest {
       assertNull(module.ioExecutorFromConstructor);
    }
 
-   @AfterMethod
+   @AfterClass
    private void close() throws IOException {
+      ListeningExecutorService user = injector.getInstance(Key.get(ListeningExecutorService.class,
+            named(PROPERTY_USER_THREADS)));
+      ListeningExecutorService io = injector.getInstance(Key.get(ListeningExecutorService.class,
+            named(PROPERTY_IO_WORKER_THREADS)));
       injector.getInstance(Closer.class).close();
+      assertTrue(user.isShutdown());
+      assertTrue(io.isShutdown());
    }
 
    @Test
@@ -90,24 +95,7 @@ public class ExecutorServiceModuleTest {
       verify(executor);
    }
 
-   @Test
-   public void testShutdownOnCloseThroughModule() throws IOException {
-
-      ListeningExecutorService user = injector.getInstance(Key.get(ListeningExecutorService.class,
-            named(PROPERTY_USER_THREADS)));
-      ListeningExecutorService io = injector.getInstance(Key.get(ListeningExecutorService.class,
-            named(PROPERTY_IO_WORKER_THREADS)));
-
-      assertFalse(user.isShutdown());
-      assertFalse(io.isShutdown());
-
-      injector.getInstance(Closer.class).close();
-
-      assertTrue(user.isShutdown());
-      assertTrue(io.isShutdown());
-   }
-
-   @Test
+   @Test(timeOut = 5000)
    public void testExceptionInSubmitRunnableIncludesSubmissionTrace() throws Exception {
       ListeningExecutorService user = injector.getInstance(Key.get(ListeningExecutorService.class,
             named(PROPERTY_USER_THREADS)));
@@ -145,12 +133,9 @@ public class ExecutorServiceModuleTest {
 
    static Runnable runnableThrowsRTE() {
       return new Runnable() {
-
-         @Override
          public void run() {
             throw new RuntimeException();
          }
-
       };
    }
 }

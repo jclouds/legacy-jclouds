@@ -26,7 +26,7 @@ import static org.easymock.EasyMock.verify;
 import static org.jclouds.Constants.PROPERTY_SCHEDULER_THREADS;
 import static org.jclouds.concurrent.config.ExecutorServiceModuleTest.assertTraceHasSubmission;
 import static org.jclouds.concurrent.config.ExecutorServiceModuleTest.incrementInitialElement;
-import static org.testng.Assert.assertFalse;
+import static org.jclouds.concurrent.config.ExecutorServiceModuleTest.runnableThrowsRTE;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
@@ -34,8 +34,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.lifecycle.Closer;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -53,7 +53,7 @@ public class ScheduledExecutorServiceModuleTest {
 
    private Injector injector;
 
-   @BeforeMethod
+   @BeforeClass
    private void setupExecutorModule() {
       ScheduledExecutorServiceModule module = new ScheduledExecutorServiceModule() {
          @Override
@@ -66,9 +66,12 @@ public class ScheduledExecutorServiceModuleTest {
       injector = Guice.createInjector(module);
    }
 
-   @AfterMethod
+   @AfterClass
    private void close() throws IOException {
+      ListeningScheduledExecutorService sched = injector.getInstance(Key.get(ListeningScheduledExecutorService.class,
+            named(PROPERTY_SCHEDULER_THREADS)));
       injector.getInstance(Closer.class).close();
+      assertTrue(sched.isShutdown());
    }
 
    @Test
@@ -87,20 +90,7 @@ public class ScheduledExecutorServiceModuleTest {
       verify(executor);
    }
 
-   @Test
-   public void testShutdownOnCloseThroughModule() throws IOException {
-
-      ListeningScheduledExecutorService sched = injector.getInstance(Key.get(ListeningScheduledExecutorService.class,
-            named(PROPERTY_SCHEDULER_THREADS)));
-
-      assertFalse(sched.isShutdown());
-
-      injector.getInstance(Closer.class).close();
-
-      assertTrue(sched.isShutdown());
-   }
-
-   @Test
+   @Test(timeOut = 5000)
    public void testExceptionInSubmitRunnableIncludesSubmissionTrace() throws Exception {
       ListeningScheduledExecutorService sched = injector.getInstance(Key.get(ListeningScheduledExecutorService.class,
             named(PROPERTY_SCHEDULER_THREADS)));
@@ -117,7 +107,7 @@ public class ScheduledExecutorServiceModuleTest {
       }
    }
    
-   @Test
+   @Test(timeOut = 5000)
    public void testExceptionInScheduleWithFixedDelayRunnableIncludesSubmissionTrace() throws Exception {
       ListeningScheduledExecutorService sched = injector.getInstance(Key.get(ListeningScheduledExecutorService.class,
             named(PROPERTY_SCHEDULER_THREADS)));
@@ -132,16 +122,5 @@ public class ScheduledExecutorServiceModuleTest {
          assertTraceHasSubmission(getStackTraceAsString(e), submission);
          assertTraceHasSubmission(getStackTraceAsString(e.getCause()), submission);
       }
-   }
-
-   static Runnable runnableThrowsRTE() {
-      return new Runnable() {
-
-         @Override
-         public void run() {
-            throw new RuntimeException();
-         }
-
-      };
    }
 }
