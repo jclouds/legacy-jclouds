@@ -32,6 +32,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.easymock.IArgumentMatcher;
+import org.jclouds.compute.config.AdminAccessConfiguration;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
@@ -42,8 +43,6 @@ import org.jclouds.io.Payload;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.scriptbuilder.statements.login.AdminAccess;
-import org.jclouds.scriptbuilder.statements.login.AdminAccess.Configuration;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
@@ -104,34 +103,26 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
    @Override
    protected Module getSshModule() {
       return new AbstractModule() {
-
          @Override
          protected void configure() {
-            bind(AdminAccess.Configuration.class).toInstance(new Configuration() {
-
-               @Override
+            bind(AdminAccessConfiguration.class).toInstance(new AdminAccessConfiguration() {
                public Supplier<String> defaultAdminUsername() {
                   return Suppliers.ofInstance("defaultAdminUsername");
                }
 
-               @Override
                public Supplier<Map<String, String>> defaultAdminSshKeys() {
                   return Suppliers.<Map<String, String>> ofInstance(ImmutableMap.of("public", "publicKey", "private",
                         Pems.PRIVATE_PKCS1_MARKER));
                }
-
-               @Override
+               
                public Function<String, String> cryptFunction() {
                   return new Function<String, String>() {
-
-                     @Override
                      public String apply(String input) {
                         return String.format("crypt(%s)", input);
                      }
-
                   };
                }
-
+               
                public Supplier<String> passwordGenerator() {
                   return Suppliers.ofInstance("randompassword");
                }

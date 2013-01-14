@@ -28,8 +28,8 @@ import static com.google.common.base.Throwables.getCausalChain;
 import static com.google.common.collect.Iterables.any;
 import static com.google.common.hash.Hashing.md5;
 import static com.google.common.io.BaseEncoding.base16;
-import static org.jclouds.crypto.SshKeys.fingerprintPrivateKey;
-import static org.jclouds.crypto.SshKeys.sha1PrivateKey;
+import static org.jclouds.ssh.SshKeys.fingerprintPrivateKey;
+import static org.jclouds.ssh.SshKeys.sha1PrivateKey;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;

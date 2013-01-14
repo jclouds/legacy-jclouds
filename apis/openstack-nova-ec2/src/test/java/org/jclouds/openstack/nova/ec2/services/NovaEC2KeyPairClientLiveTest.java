@@ -30,9 +30,9 @@ import java.util.SortedSet;
 
 import org.jclouds.compute.ComputeTestUtils;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
-import org.jclouds.crypto.SshKeys;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.openstack.nova.ec2.NovaEC2ApiMetadata;
+import org.jclouds.ssh.SshKeys;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 

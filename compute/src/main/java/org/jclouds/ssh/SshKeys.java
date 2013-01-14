@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.crypto;
+package org.jclouds.ssh;
 
 import static com.google.common.base.Joiner.on;
 import static com.google.common.base.Preconditions.checkArgument;
@@ -48,6 +48,8 @@ import java.security.spec.RSAPrivateCrtKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Map;
 
+import org.jclouds.crypto.Crypto;
+import org.jclouds.crypto.Pems;
 import org.jclouds.io.InputSuppliers;
 
 import com.google.common.annotations.Beta;

@@ -62,7 +62,7 @@
 
  */
 
-package org.jclouds.crypto;
+package org.jclouds.compute.functions;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

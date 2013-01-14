@@ -16,14 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.crypto;
+package org.jclouds.ssh;
 
-import static org.jclouds.crypto.SshKeys.fingerprint;
-import static org.jclouds.crypto.SshKeys.generate;
-import static org.jclouds.crypto.SshKeys.privateKeyHasFingerprint;
-import static org.jclouds.crypto.SshKeys.privateKeyHasSha1;
-import static org.jclouds.crypto.SshKeys.privateKeyMatchesPublicKey;
-import static org.jclouds.crypto.SshKeys.publicKeySpecFromOpenSSH;
+import static org.jclouds.ssh.SshKeys.fingerprint;
+import static org.jclouds.ssh.SshKeys.generate;
+import static org.jclouds.ssh.SshKeys.privateKeyHasFingerprint;
+import static org.jclouds.ssh.SshKeys.privateKeyHasSha1;
+import static org.jclouds.ssh.SshKeys.privateKeyMatchesPublicKey;
+import static org.jclouds.ssh.SshKeys.publicKeySpecFromOpenSSH;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -35,7 +35,9 @@ import java.security.spec.RSAPrivateCrtKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Map;
 
+import org.jclouds.crypto.Pems;
 import org.jclouds.io.Payloads;
+import org.jclouds.ssh.SshKeys;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 

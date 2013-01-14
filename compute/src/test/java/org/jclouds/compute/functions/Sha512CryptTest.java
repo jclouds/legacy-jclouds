@@ -16,10 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.crypto;
+package org.jclouds.compute.functions;
 
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.compute.functions.Sha512Crypt;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
