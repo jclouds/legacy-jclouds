@@ -20,6 +20,7 @@ package org.jclouds.s3.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.util.Predicates2.retry;
 
 import java.util.Set;
 
@@ -43,7 +44,6 @@ import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.blobstore.functions.BlobToObject;
 import org.jclouds.s3.blobstore.functions.BucketToResourceList;
@@ -154,7 +154,7 @@ public class S3BlobStore extends BaseBlobStore {
     */
    @Override
    protected void deletePathAndEnsureGone(String path) {
-      checkState(new RetryablePredicate<String>(new Predicate<String>() {
+      checkState(retry(new Predicate<String>() {
          public boolean apply(String in) {
             try {
                clearContainer(in);

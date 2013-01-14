@@ -124,7 +124,7 @@ public class FGCPComputeServiceContextModule
    // @Named("SECURITY")
    // protected Predicate<String> provideServerStopped(ServerStopped
    // serverStopped, Timeouts timeouts) {
-   // return new RetryablePredicate<String>(serverStopped,
+   // return RetryablePredicate.create(serverStopped,
    // timeouts.nodeSuspended);
    // }
 

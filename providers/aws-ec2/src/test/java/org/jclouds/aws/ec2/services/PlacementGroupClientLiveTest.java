@@ -21,6 +21,8 @@ package org.jclouds.aws.ec2.services;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newTreeSet;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
@@ -28,7 +30,6 @@ import static org.testng.Assert.fail;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
@@ -45,7 +46,6 @@ import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.ec2.compute.domain.EC2HardwareBuilder;
 import org.jclouds.ec2.domain.InstanceType;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.statements.java.InstallJDK;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
@@ -54,6 +54,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.inject.Module;
 
@@ -71,8 +72,8 @@ public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveT
    }
 
    private AWSEC2Client client;
-   private RetryablePredicate<PlacementGroup> availableTester;
-   private RetryablePredicate<PlacementGroup> deletedTester;
+   private Predicate<PlacementGroup> availableTester;
+   private Predicate<PlacementGroup> deletedTester;
    private PlacementGroup group;
 
    @Override
@@ -80,11 +81,8 @@ public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveT
    public void setupContext() {
       super.setupContext();
       client = view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi();
-
-      availableTester = new RetryablePredicate<PlacementGroup>(new PlacementGroupAvailable(client), 60, 1,
-               TimeUnit.SECONDS);
-
-      deletedTester = new RetryablePredicate<PlacementGroup>(new PlacementGroupDeleted(client), 60, 1, TimeUnit.SECONDS);
+      availableTester = retry(new PlacementGroupAvailable(client), 60, 1, SECONDS);
+      deletedTester = retry(new PlacementGroupDeleted(client), 60, 1, SECONDS);
    }
 
    @Test

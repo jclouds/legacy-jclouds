@@ -18,7 +18,9 @@
  */
 package org.jclouds.cloudstack.compute.config;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+import static org.jclouds.util.Predicates2.retry;
 
 import java.util.Map;
 import java.util.Set;
@@ -65,7 +67,6 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
@@ -183,8 +184,7 @@ public class CloudStackComputeServiceContextModule extends
    @Provides
    @Singleton
    protected Predicate<String> jobComplete(JobComplete jobComplete) {
-      // TODO: parameterize
-      return new RetryablePredicate<String>(jobComplete, 1200, 1, 5, TimeUnit.SECONDS);
+      return retry(jobComplete, 1200, 1, 5, SECONDS);
    }
 
    @Provides

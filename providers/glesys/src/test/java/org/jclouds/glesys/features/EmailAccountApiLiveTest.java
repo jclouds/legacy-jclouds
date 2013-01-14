@@ -18,12 +18,12 @@
  */
 package org.jclouds.glesys.features;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
-
-import java.util.concurrent.TimeUnit;
 
 import org.jclouds.glesys.domain.EmailAccount;
 import org.jclouds.glesys.domain.EmailAlias;
@@ -32,7 +32,6 @@ import org.jclouds.glesys.domain.EmailOverviewDomain;
 import org.jclouds.glesys.internal.BaseGleSYSApiLiveTest;
 import org.jclouds.glesys.options.CreateAccountOptions;
 import org.jclouds.glesys.options.UpdateAccountOptions;
-import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -62,11 +61,11 @@ public class EmailAccountApiLiveTest extends BaseGleSYSApiLiveTest {
 
       createDomain(testDomain);
 
-      emailAccountCounter = new RetryablePredicate<Integer>(new Predicate<Integer>() {
+      emailAccountCounter = retry(new Predicate<Integer>() {
          public boolean apply(Integer value) {
             return api.listDomain(testDomain).size() == value;
          }
-      }, 180, 5, TimeUnit.SECONDS);
+      }, 180, 5, SECONDS);
 
       assertTrue(emailAccountCounter.apply(0));
 
@@ -86,7 +85,7 @@ public class EmailAccountApiLiveTest extends BaseGleSYSApiLiveTest {
 
    private EmailAccountApi api;
    private String testDomain;
-   private RetryablePredicate<Integer> emailAccountCounter;
+   private Predicate<Integer> emailAccountCounter;
 
    @Test
    public void testCreateEmail() {

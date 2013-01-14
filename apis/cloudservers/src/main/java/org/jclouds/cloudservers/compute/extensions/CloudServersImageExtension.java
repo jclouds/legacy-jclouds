@@ -21,10 +21,11 @@ package org.jclouds.cloudservers.compute.extensions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_IMAGE_AVAILABLE;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -36,16 +37,20 @@ import org.jclouds.cloudservers.CloudServersClient;
 import org.jclouds.cloudservers.domain.Server;
 import org.jclouds.compute.domain.CloneImageTemplate;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.ImageTemplate;
 import org.jclouds.compute.domain.ImageTemplateBuilder;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
-import org.jclouds.predicates.PredicateWithResult;
-import org.jclouds.predicates.Retryables;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.UncheckedTimeoutException;
 
 /**
  * CloudServers implementation of {@link ImageExtension}
@@ -62,20 +67,16 @@ public class CloudServersImageExtension implements ImageExtension {
 
    private final CloudServersClient client;
    private final ListeningExecutorService userExecutor;
-   private final PredicateWithResult<Integer, Image> imageAvailablePredicate;
-   @com.google.inject.Inject(optional = true)
-   @Named("IMAGE_MAX_WAIT")
-   private long maxWait = 3600;
-   @com.google.inject.Inject(optional = true)
-   @Named("IMAGE_WAIT_PERIOD")
-   private long waitPeriod = 1;
+   private final Supplier<Location> location;
+   private final Predicate<AtomicReference<Image>> imageAvailablePredicate;
 
    @Inject
-   public CloudServersImageExtension(CloudServersClient client,
-            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
-            PredicateWithResult<Integer, Image> imageAvailablePredicate) {
+   public CloudServersImageExtension(CloudServersClient client, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
+         Supplier<Location> location,
+         @Named(TIMEOUT_IMAGE_AVAILABLE) Predicate<AtomicReference<Image>> imageAvailablePredicate) {
       this.client = checkNotNull(client, "client");
       this.userExecutor = checkNotNull(userExecutor, "userExecutor");
+      this.location = checkNotNull(location, "location");
       this.imageAvailablePredicate = checkNotNull(imageAvailablePredicate, "imageAvailablePredicate");
    }
 
@@ -93,17 +94,25 @@ public class CloudServersImageExtension implements ImageExtension {
       checkState(template instanceof CloneImageTemplate,
                " openstack-nova only supports creating images through cloning.");
       CloneImageTemplate cloneTemplate = (CloneImageTemplate) template;
-      final org.jclouds.cloudservers.domain.Image image = client.createImageFromServer(cloneTemplate.getName(),
+      org.jclouds.cloudservers.domain.Image csImage = client.createImageFromServer(cloneTemplate.getName(),
                Integer.parseInt(cloneTemplate.getSourceNodeId()));
+      
+      final AtomicReference<Image> image = new AtomicReference<Image>(new ImageBuilder()
+            .location(location.get())
+            .ids(csImage.getId() + "")
+            .description(cloneTemplate.getName())
+            .operatingSystem(OperatingSystem.builder().description(cloneTemplate.getName()).build())
+            .status(Image.Status.PENDING).build());
+
       return userExecutor.submit(new Callable<Image>() {
          @Override
          public Image call() throws Exception {
-            return Retryables.retryGettingResultOrFailing(imageAvailablePredicate, image.getId(), maxWait, waitPeriod,
-                     TimeUnit.SECONDS, "Image was not created within the time limit, Giving up! [Limit: " + maxWait
-                              + " secs.]");
+            if (imageAvailablePredicate.apply(image))
+               return image.get();
+            // TODO: get rid of the expectation that the image will be available, as it is very brittle
+            throw new UncheckedTimeoutException("Image was not created within the time limit: " + image.get());
          }
       });
-
    }
 
    @Override

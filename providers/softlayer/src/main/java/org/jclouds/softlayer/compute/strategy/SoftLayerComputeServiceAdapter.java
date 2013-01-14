@@ -25,6 +25,7 @@ import static com.google.common.base.Predicates.and;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.get;
+import static org.jclouds.util.Predicates2.retry;
 import static org.jclouds.softlayer.predicates.ProductItemPredicates.capacity;
 import static org.jclouds.softlayer.predicates.ProductItemPredicates.categoryCode;
 import static org.jclouds.softlayer.predicates.ProductItemPredicates.matches;
@@ -42,12 +43,12 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
+import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.compute.functions.ProductItemToImage;
 import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
@@ -64,8 +65,8 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.Iterables;
 
 /**
  * defines the connection between the {@link SoftLayerClient} implementation and
@@ -82,7 +83,7 @@ public class SoftLayerComputeServiceAdapter implements
 
    private final SoftLayerClient client;
    private final Supplier<ProductPackage> productPackageSupplier;
-   private final RetryablePredicate<VirtualGuest> loginDetailsTester;
+   private final Predicate<VirtualGuest> loginDetailsTester;
    private final long guestLoginDelay;
    private final Pattern cpuPattern;
    private final Pattern disk0Type;
@@ -101,8 +102,7 @@ public class SoftLayerComputeServiceAdapter implements
       this.guestLoginDelay = guestLoginDelay;
       this.productPackageSupplier = checkNotNull(productPackageSupplier, "productPackageSupplier");
       checkArgument(guestLoginDelay > 500, "guestOrderDelay must be in milliseconds and greater than 500");
-      this.loginDetailsTester = new RetryablePredicate<VirtualGuest>(virtualGuestHasLoginDetailsPresent,
-            guestLoginDelay);
+      this.loginDetailsTester = retry(virtualGuestHasLoginDetailsPresent, guestLoginDelay);
       this.cpuPattern = Pattern.compile(checkNotNull(cpuRegex, "cpuRegex"));
       this.prices = checkNotNull(prices, "prices");
       this.portSpeed = portSpeed;

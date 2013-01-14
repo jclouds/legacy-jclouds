@@ -19,8 +19,9 @@
 package org.jclouds.compute.callables;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.jclouds.util.Predicates2.retry;
 
-import java.util.Date;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +35,6 @@ import org.jclouds.compute.events.StatementOnNodeCompletion;
 import org.jclouds.compute.events.StatementOnNodeFailure;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.scriptbuilder.InitScript;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -80,7 +80,7 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutput extends AbstractFu
             ComputeServiceConstants.InitStatusProperties properties, @Assisted SudoAwareInitManager commandRunner) {
       this(userExecutor, eventBus, Predicates.<String> alwaysTrue(), commandRunner);
       // this is mutable only until we can determine how to decouple "this" from here
-      notRunningAnymore = new LoopUntilTrueOrThrowCancellationException(new ExitStatusOfCommandGreaterThanZero(
+      notRunningAnymore = loopUntilTrueOrThrowCancellationException(new ExitStatusOfCommandGreaterThanZero(
                commandRunner), properties.initStatusMaxPeriod, properties.initStatusInitialPeriod, this);
    }
 
@@ -108,28 +108,19 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutput extends AbstractFu
 
    }
 
-   @VisibleForTesting
-   static class LoopUntilTrueOrThrowCancellationException extends RetryablePredicate<String> {
-
-      private final AbstractFuture<ExecResponse> futureWhichMightBeCancelled;
-
-      public LoopUntilTrueOrThrowCancellationException(Predicate<String> predicate, long period, long maxPeriod,
-               AbstractFuture<ExecResponse> futureWhichMightBeCancelled) {
-         // arbitrarily high value, but Long.MAX_VALUE doesn't work!
-         super(predicate, TimeUnit.DAYS.toMillis(365), period, maxPeriod, TimeUnit.MILLISECONDS);
-         this.futureWhichMightBeCancelled = futureWhichMightBeCancelled;
-      }
-
-      /**
-       * make sure we stop the retry loop if someone cancelled the future, this keeps threads from
-       * being consumed on dead tasks
-       */
-      @Override
-      protected boolean atOrAfter(Date end) {
-         if (futureWhichMightBeCancelled.isCancelled())
-            throw new CancellationException(futureWhichMightBeCancelled + " is cancelled");
-         return super.atOrAfter(end);
-      }
+   /**
+    * make sure we stop the retry loop if someone cancelled the future, this keeps threads from
+    * being consumed on dead tasks
+    */
+   static Predicate<String> loopUntilTrueOrThrowCancellationException(Predicate<String> predicate, long period, long maxPeriod,
+         final AbstractFuture<ExecResponse> futureWhichMightBeCancelled) {
+      return retry(Predicates.<String> and(predicate, new Predicate<String>(){
+         public boolean apply(String in) {
+            if (futureWhichMightBeCancelled.isCancelled())
+               throw new CancellationException(futureWhichMightBeCancelled + " is cancelled");
+            return true;
+         }
+      }), period, maxPeriod, MILLISECONDS);
    }
 
    /**

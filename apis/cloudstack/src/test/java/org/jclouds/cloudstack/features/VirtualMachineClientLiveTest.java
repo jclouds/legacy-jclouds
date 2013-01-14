@@ -52,7 +52,6 @@ import org.jclouds.cloudstack.options.ListNetworkOfferingsOptions;
 import org.jclouds.cloudstack.options.ListNetworksOptions;
 import org.jclouds.cloudstack.options.ListTemplatesOptions;
 import org.jclouds.cloudstack.options.ListVirtualMachinesOptions;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.util.InetAddresses2;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
@@ -87,7 +86,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
    };
 
    public static VirtualMachine createVirtualMachine(CloudStackClient client, String defaultTemplate,
-         RetryablePredicate<String> jobComplete, RetryablePredicate<VirtualMachine> virtualMachineRunning) {
+         Predicate<String> jobComplete, Predicate<VirtualMachine> virtualMachineRunning) {
       Set<Network> networks = client.getNetworkClient().listNetworks(isDefault(true));
       if (networks.size() > 0) {
          Network network = get(filter(networks, new Predicate<Network>() {
@@ -116,15 +115,15 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    public static VirtualMachine createVirtualMachineWithSecurityGroupInZone(String zoneId, String templateId, String groupId,
-         CloudStackClient client, RetryablePredicate<String> jobComplete,
-         RetryablePredicate<VirtualMachine> virtualMachineRunning) {
+         CloudStackClient client, Predicate<String> jobComplete,
+         Predicate<VirtualMachine> virtualMachineRunning) {
       return createVirtualMachineWithOptionsInZone(new DeployVirtualMachineOptions().securityGroupId(groupId), zoneId,
             templateId, client, jobComplete, virtualMachineRunning);
    }
 
    public static VirtualMachine createVirtualMachineInNetwork(Network network, String templateId,
-         CloudStackClient client, RetryablePredicate<String> jobComplete,
-         RetryablePredicate<VirtualMachine> virtualMachineRunning) {
+         CloudStackClient client, Predicate<String> jobComplete,
+         Predicate<VirtualMachine> virtualMachineRunning) {
       DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
       String zoneId = network.getZoneId();
       options.networkId(network.getId());
@@ -134,7 +133,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
 
    public static VirtualMachine createVirtualMachineInNetworkWithIp(
          CloudStackClient client, String templateId, Set<Network> networks, Map<String, String> ipToNetwork,
-         RetryablePredicate<String> jobComplete, RetryablePredicate<VirtualMachine> virtualMachineRunning) {
+         Predicate<String> jobComplete, Predicate<VirtualMachine> virtualMachineRunning) {
 
       DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
 
@@ -152,8 +151,8 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    public static VirtualMachine createVirtualMachineWithOptionsInZone(DeployVirtualMachineOptions options, String zoneId,
-         String templateId, CloudStackClient client, RetryablePredicate<String> jobComplete,
-         RetryablePredicate<VirtualMachine> virtualMachineRunning) {
+         String templateId, CloudStackClient client, Predicate<String> jobComplete,
+         Predicate<VirtualMachine> virtualMachineRunning) {
       String serviceOfferingId = DEFAULT_SIZE_ORDERING.min(client.getOfferingClient().listServiceOfferings()).getId();
 
       System.out.printf("serviceOfferingId %s, templateId %s, zoneId %s, options %s%n", serviceOfferingId, templateId,

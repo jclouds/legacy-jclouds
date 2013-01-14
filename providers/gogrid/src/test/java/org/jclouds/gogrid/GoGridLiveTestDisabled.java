@@ -20,6 +20,8 @@ package org.jclouds.gogrid;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -31,7 +33,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.Credentials;
@@ -53,7 +54,6 @@ import org.jclouds.gogrid.predicates.LoadBalancerLatestJobCompleted;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.predicates.InetSocketAddressConnect;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
 import org.testng.SkipException;
@@ -83,8 +83,8 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
 
    private GoGridClient client;
 
-   private RetryablePredicate<Server> serverLatestJobCompleted;
-   private RetryablePredicate<LoadBalancer> loadBalancerLatestJobCompleted;
+   private Predicate<Server> serverLatestJobCompleted;
+   private Predicate<LoadBalancer> loadBalancerLatestJobCompleted;
    /**
     * Keeps track of the servers, created during the tests, to remove them after all tests complete
     */
@@ -99,11 +99,10 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
       super.setupContext();
       gocontext = view.unwrap();
 
-      client = gocontext.getApi();
-      serverLatestJobCompleted = new RetryablePredicate<Server>(new ServerLatestJobCompleted(client.getJobServices()),
-               800, 20, TimeUnit.SECONDS);
-      loadBalancerLatestJobCompleted = new RetryablePredicate<LoadBalancer>(new LoadBalancerLatestJobCompleted(client
-               .getJobServices()), 800, 20, TimeUnit.SECONDS);
+      client = gocontext.getApi();      
+      serverLatestJobCompleted = retry(new ServerLatestJobCompleted(client.getJobServices()), 800, 20, SECONDS);
+      loadBalancerLatestJobCompleted = retry(new LoadBalancerLatestJobCompleted(client.getJobServices()), 800, 20,
+            SECONDS);
    }
 
    @Test(enabled = true)
@@ -344,8 +343,7 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
 
       HostAndPort socket = HostAndPort.fromParts(createdServer.getIp().getIp(), 22);
 
-      RetryablePredicate<HostAndPort> socketOpen = new RetryablePredicate<HostAndPort>(new InetSocketAddressConnect(), 180,
-               5, TimeUnit.SECONDS);
+      Predicate<HostAndPort> socketOpen = retry(new InetSocketAddressConnect(), 180, 5, SECONDS);
 
       socketOpen.apply(socket);
 

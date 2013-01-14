@@ -19,18 +19,18 @@
 package org.jclouds.ec2.features.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.jclouds.ec2.domain.Tag;
 import org.jclouds.ec2.features.TagApi;
 import org.jclouds.ec2.internal.BaseEC2ApiLiveTest;
 import org.jclouds.ec2.util.TagFilterBuilder;
-import org.jclouds.predicates.RetryablePredicate;
 import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -85,9 +85,7 @@ public abstract class BaseTagApiLiveTest extends BaseEC2ApiLiveTest {
 
    @Test(dependsOnMethods = { "testApplyTag", "testApplyTagWithValue" })
    protected void testList() {
-      assertTrue(new RetryablePredicate<Iterable<Tag>>(new Predicate<Iterable<Tag>>() {
-
-         @Override
+      assertTrue(retry(new Predicate<Iterable<Tag>>() {
          public boolean apply(Iterable<Tag> input) {
             return api().list().filter(new Predicate<Tag>() {
                @Override
@@ -96,8 +94,7 @@ public abstract class BaseTagApiLiveTest extends BaseEC2ApiLiveTest {
                }
             }).toSet().equals(input);
          }
-
-      }, 600, 200, 200, TimeUnit.MILLISECONDS).apply(ImmutableSet.of(tag, tag2)));
+      }, 600, 200, 200, MILLISECONDS).apply(ImmutableSet.of(tag, tag2)));
    }
 
    @Test(dependsOnMethods = "testList")

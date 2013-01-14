@@ -18,11 +18,12 @@
  */
 
 package org.jclouds.virtualbox.config;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.jclouds.util.Predicates2.retry;
 
 import java.io.File;
 import java.net.URI;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
@@ -37,7 +38,6 @@ import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.compute.VirtualBoxComputeServiceAdapter;
 import org.jclouds.virtualbox.compute.extensions.VirtualBoxImageExtension;
@@ -167,7 +167,7 @@ public class VirtualBoxComputeServiceContextModule extends
    @Provides
    @Singleton
    protected Predicate<SshClient> sshResponds(SshResponds sshResponds, Timeouts timeouts) {
-      return new RetryablePredicate<SshClient>(sshResponds, timeouts.nodeRunning, 500l, TimeUnit.MILLISECONDS);
+      return retry(sshResponds, timeouts.nodeRunning, 500l, MILLISECONDS);
    }
 
    @Override

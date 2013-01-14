@@ -19,6 +19,7 @@
 package org.jclouds.atmos;
 
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
@@ -42,7 +43,6 @@ import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.InputStreamPayload;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
@@ -328,7 +328,7 @@ public class AtmosClientLiveTest extends BaseBlobStoreIntegrationTest {
          getApi().deletePath(path);
       } catch (KeyNotFoundException ex) {
       }
-      checkState(new RetryablePredicate<String>(new Predicate<String>() {
+      checkState(retry(new Predicate<String>() {
          public boolean apply(String in) {
             try {
                return !getApi().pathExists(in);

@@ -28,6 +28,7 @@ import static com.google.common.collect.Maps.uniqueIndex;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
 import static org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED;
+import static org.jclouds.util.Predicates2.retry;
 
 import java.io.IOException;
 import java.net.URI;
@@ -48,7 +49,6 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 import org.jclouds.location.suppliers.LocationsSupplier;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.config.RestClientModule;
@@ -366,7 +366,7 @@ public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A
    @Singleton
    protected Predicate<URI> successTester(Injector injector,
          @Named(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED) long completed) {
-      return new RetryablePredicate<URI>(injector.getInstance(TaskSuccess.class), completed);
+      return retry(injector.getInstance(TaskSuccess.class), completed);
    }
 
    @Provides

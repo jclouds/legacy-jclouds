@@ -19,6 +19,7 @@
 package org.jclouds.fujitsu.fgcp.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.util.Predicates2.retry;
 
 import java.util.List;
 import java.util.Set;
@@ -51,7 +52,6 @@ import org.jclouds.fujitsu.fgcp.domain.VServerWithVNICs;
 import org.jclouds.fujitsu.fgcp.domain.VSystem;
 import org.jclouds.fujitsu.fgcp.domain.VSystemWithDetails;
 import org.jclouds.logging.Logger;
-import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
@@ -90,12 +90,9 @@ public class FGCPComputeServiceAdapter implements
          ResourceIdToSystemId toSystemId) {
       this.api = checkNotNull(api, "api");
       this.asyncApi = checkNotNull(asyncApi, "asyncApi");
-      this.serverStopped = new RetryablePredicate<String>(
-            checkNotNull(serverStopped), timeouts.nodeSuspended);
-      this.serverCreated = new RetryablePredicate<String>(
-            checkNotNull(serverStopped), timeouts.nodeRunning);
-      this.systemNormal = new RetryablePredicate<String>(
-            checkNotNull(systemNormal), timeouts.nodeTerminated);
+      this.serverStopped = retry(checkNotNull(serverStopped), timeouts.nodeSuspended);
+      this.serverCreated = retry(checkNotNull(serverStopped), timeouts.nodeRunning);
+      this.systemNormal = retry(checkNotNull(systemNormal), timeouts.nodeTerminated);
       this.toFirewallId = checkNotNull(toFirewallId, "ResourceIdToFirewallId");
       this.toSystemId = checkNotNull(toSystemId, "ResourceIdToSystemId");
    }

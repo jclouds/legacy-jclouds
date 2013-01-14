@@ -17,11 +17,11 @@
  * under the License.
  */
 package org.jclouds.compute.callables;
-
 import static org.easymock.EasyMock.createMockBuilder;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput.loopUntilTrueOrThrowCancellationException;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
@@ -30,7 +30,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput.ExitStatusOfCommandGreaterThanZero;
-import org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput.LoopUntilTrueOrThrowCancellationException;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
@@ -50,7 +49,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 @Test(groups = "unit", singleThreaded = true, testName = "BlockUntilInitScriptStatusIsZeroThenReturnOutputTest")
 public class BlockUntilInitScriptStatusIsZeroThenReturnOutputTest {
 
-   public void testLoopUntilTrueOrThrowCancellationExceptionReturnsWhenPredicateIsTrue() {
+   public void testloopUntilTrueOrThrowCancellationExceptionReturnsWhenPredicateIsTrue() {
       AbstractFuture<ExecResponse> future = new AbstractFuture<ExecResponse>() {
 
          @Override
@@ -60,13 +59,13 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutputTest {
 
       };
 
-      LoopUntilTrueOrThrowCancellationException pred = new LoopUntilTrueOrThrowCancellationException(Predicates
+      Predicate<String> pred = loopUntilTrueOrThrowCancellationException(Predicates
                .<String> alwaysTrue(), 1, 1, future);
       assertEquals(pred.apply("foo"), true);
 
    }
 
-   public void testLoopUntilTrueOrThrowCancellationExceptionReturnsWhenPredicateIsTrueSecondTimeWhileNotCancelled() {
+   public void testloopUntilTrueOrThrowCancellationExceptionReturnsWhenPredicateIsTrueSecondTimeWhileNotCancelled() {
       AbstractFuture<ExecResponse> future = new AbstractFuture<ExecResponse>() {
 
          @Override
@@ -86,14 +85,13 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutputTest {
 
       };
 
-      LoopUntilTrueOrThrowCancellationException pred = new LoopUntilTrueOrThrowCancellationException(predicate, 1, 1,
-               future);
+      Predicate<String> pred = loopUntilTrueOrThrowCancellationException(predicate, 1, 1, future);
       assertEquals(pred.apply("foo"), true);
 
    }
 
    // need to break the loop when cancelled.
-   public void testLoopUntilTrueOrThrowCancellationExceptionSkipsAndReturnsFalseOnCancelled() {
+   public void testloopUntilTrueOrThrowCancellationExceptionSkipsAndReturnsFalseOnCancelled() {
       AbstractFuture<ExecResponse> future = new AbstractFuture<ExecResponse>() {
 
          @Override
@@ -102,8 +100,8 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutputTest {
          }
 
       };
-      LoopUntilTrueOrThrowCancellationException pred = new LoopUntilTrueOrThrowCancellationException(Predicates
-               .<String> alwaysFalse(), 1, 1, future);
+      Predicate<String> pred = loopUntilTrueOrThrowCancellationException(Predicates.<String> alwaysFalse(), 1, 1,
+            future);
       assertEquals(pred.apply("foo"), false);
 
    }

@@ -17,13 +17,13 @@
  * under the License.
  */
 package org.jclouds.cloudsigma;
-
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.jclouds.cloudsigma.domain.ClaimType;
@@ -47,7 +47,6 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.predicates.InetSocketAddressConnect;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
@@ -92,10 +91,8 @@ public class CloudSigmaClientLiveTest extends BaseComputeServiceContextLiveTest 
       cloudSigmaContext = view.unwrap();
 
       client = cloudSigmaContext.getApi();
-      driveNotClaimed = new RetryablePredicate<DriveInfo>(Predicates.not(new DriveClaimed(client)), maxDriveImageTime,
-            1, TimeUnit.SECONDS);
-      socketTester = new RetryablePredicate<HostAndPort>(new InetSocketAddressConnect(), maxDriveImageTime, 1,
-            TimeUnit.SECONDS);
+      driveNotClaimed = retry(Predicates.not(new DriveClaimed(client)), maxDriveImageTime, 1, SECONDS);
+      socketTester = retry(new InetSocketAddressConnect(), maxDriveImageTime, 1, SECONDS);
 
       if (template == null || template.getImageId() == null) {
          imageId = view.getComputeService().templateBuilder().build().getImage().getId();

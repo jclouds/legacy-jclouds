@@ -17,15 +17,15 @@
  * under the License.
  */
 package org.jclouds.ec2.services;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.ec2.options.DescribeSnapshotsOptions.Builder.snapshotIds;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.concurrent.TimeUnit;
 
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.ec2.EC2ApiMetadata;
@@ -35,7 +35,6 @@ import org.jclouds.ec2.domain.Snapshot;
 import org.jclouds.ec2.domain.Volume;
 import org.jclouds.ec2.predicates.SnapshotCompleted;
 import org.jclouds.ec2.predicates.VolumeAvailable;
-import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -109,8 +108,7 @@ public class ElasticBlockStoreClientLiveTest extends BaseComputeServiceContextLi
    @Test(dependsOnMethods = "testCreateVolumeInAvailabilityZone")
    void testCreateSnapshotInRegion() {
       Snapshot snapshot = client.createSnapshotInRegion(defaultRegion, volumeId);
-      Predicate<Snapshot> snapshotted = new RetryablePredicate<Snapshot>(new SnapshotCompleted(client), 600, 10,
-            TimeUnit.SECONDS);
+      Predicate<Snapshot> snapshotted = retry(new SnapshotCompleted(client), 600, 10, SECONDS);
       assert snapshotted.apply(snapshot);
 
       Snapshot result = Iterables.getOnlyElement(client.describeSnapshotsInRegion(snapshot.getRegion(),
@@ -125,8 +123,7 @@ public class ElasticBlockStoreClientLiveTest extends BaseComputeServiceContextLi
       Volume volume = client.createVolumeFromSnapshotInAvailabilityZone(defaultZone, snapshot.getId());
       assertNotNull(volume);
 
-      Predicate<Volume> availabile = new RetryablePredicate<Volume>(new VolumeAvailable(client), 600, 10,
-            TimeUnit.SECONDS);
+      Predicate<Volume> availabile = retry(new VolumeAvailable(client), 600, 10, SECONDS);
       assert availabile.apply(volume);
 
       Volume result = Iterables.getOnlyElement(client.describeVolumesInRegion(snapshot.getRegion(), volume.getId()));
@@ -143,8 +140,7 @@ public class ElasticBlockStoreClientLiveTest extends BaseComputeServiceContextLi
       Volume volume = client.createVolumeFromSnapshotInAvailabilityZone(defaultZone, 2, snapshot.getId());
       assertNotNull(volume);
 
-      Predicate<Volume> availabile = new RetryablePredicate<Volume>(new VolumeAvailable(client), 600, 10,
-            TimeUnit.SECONDS);
+      Predicate<Volume> availabile = retry(new VolumeAvailable(client), 600, 10, SECONDS);
       assert availabile.apply(volume);
 
       Volume result = Iterables.getOnlyElement(client.describeVolumesInRegion(snapshot.getRegion(), volume.getId()));
