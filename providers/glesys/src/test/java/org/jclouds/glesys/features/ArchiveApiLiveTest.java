@@ -18,16 +18,15 @@
  */
 package org.jclouds.glesys.features;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.glesys.domain.Archive;
 import org.jclouds.glesys.domain.ArchiveAllowedArguments;
 import org.jclouds.glesys.internal.BaseGleSYSApiLiveTest;
-import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -48,12 +47,11 @@ public class ArchiveApiLiveTest extends BaseGleSYSApiLiveTest {
       
       api = gleContext.getApi().getArchiveApi();
       archiveUser = gleContext.getIdentity().toLowerCase() + "_test9";
-      archiveCounter = new RetryablePredicate<Integer>(
-            new Predicate<Integer>() {
-               public boolean apply(Integer value){
-                  return api.list().size() == value;
-               }
-            }, 30, 1, TimeUnit.SECONDS);
+      archiveCounter = retry(new Predicate<Integer>() {
+         public boolean apply(Integer value) {
+            return api.list().size() == value;
+         }
+      }, 30, 1, SECONDS);
    }
    
    @AfterClass(groups = { "integration", "live" })
@@ -67,7 +65,7 @@ public class ArchiveApiLiveTest extends BaseGleSYSApiLiveTest {
 
    private ArchiveApi api;
    private String archiveUser;
-   private RetryablePredicate<Integer> archiveCounter;
+   private Predicate<Integer> archiveCounter;
 
    @Test
    public void testAllowedArguments() throws Exception {
@@ -111,12 +109,11 @@ public class ArchiveApiLiveTest extends BaseGleSYSApiLiveTest {
    public void testResizeArchive() throws Exception {
       api.resize(archiveUser, 20);
 
-      assertTrue(new RetryablePredicate<String>(
-            new Predicate<String>() {
-               public boolean apply(String value){
-                  return api.get(archiveUser) != null && value.equals(api.get(archiveUser).getTotalSize());
-               }
-            }, 30, 1, TimeUnit.SECONDS).apply("20 GB"));
+      assertTrue(retry(new Predicate<String>() {
+         public boolean apply(String value) {
+            return api.get(archiveUser) != null && value.equals(api.get(archiveUser).getTotalSize());
+         }
+      }, 30, 1, SECONDS).apply("20 GB"));
    }
 
 }

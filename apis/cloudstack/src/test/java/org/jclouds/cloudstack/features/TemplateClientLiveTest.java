@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack.features;
 
 import static org.jclouds.cloudstack.options.ListTemplatesOptions.Builder.zoneId;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -44,7 +45,6 @@ import org.jclouds.cloudstack.options.ListNetworksOptions;
 import org.jclouds.cloudstack.options.ListVolumesOptions;
 import org.jclouds.cloudstack.options.RegisterTemplateOptions;
 import org.jclouds.logging.Logger;
-import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
@@ -186,7 +186,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
             return t2.getStatus() == Template.Status.DOWNLOADED;
          }
       };
-      assertTrue(new RetryablePredicate<Template>(templateReadyPredicate, 60000).apply(registeredTemplate));
+      assertTrue(retry(templateReadyPredicate, 60000).apply(registeredTemplate));
 
       // Create a VM that uses this template
       vmForRegistration = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, registeredTemplate.getId(), client, jobComplete, virtualMachineRunning);

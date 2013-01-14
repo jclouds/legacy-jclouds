@@ -19,8 +19,10 @@
 package org.jclouds.cloudstack.features;
 
 import static com.google.common.collect.Iterables.find;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.cloudstack.predicates.NetworkPredicates.hasLoadBalancerService;
 import static org.jclouds.cloudstack.predicates.NetworkPredicates.isVirtualNetwork;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -28,7 +30,6 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.cloudstack.domain.JobResult;
@@ -40,7 +41,6 @@ import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.predicates.LoadBalancerRuleActive;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.SshException;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
@@ -60,16 +60,14 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
    private PublicIPAddress ip = null;
    private VirtualMachine vm;
    private LoadBalancerRule rule;
-   private RetryablePredicate<LoadBalancerRule> loadBalancerRuleActive;
+   private Predicate<LoadBalancerRule> loadBalancerRuleActive;
    private Network network;
    private boolean networksDisabled;
 
    @BeforeGroups(groups = "live")
    public void setupContext() {
       super.setupContext();
-
-      loadBalancerRuleActive = new RetryablePredicate<LoadBalancerRule>(new LoadBalancerRuleActive(client), 60, 1, 1,
-            TimeUnit.SECONDS);
+      loadBalancerRuleActive = retry(new LoadBalancerRuleActive(client), 60, 1, 1, SECONDS);
       prefix += "rule";
       try {
          network = find(client.getNetworkClient().listNetworks(),

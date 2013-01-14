@@ -18,6 +18,8 @@
  */
 package org.jclouds.virtualbox.predicates;
 
+import static org.jclouds.util.Predicates2.retry;
+
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -27,7 +29,6 @@ import javax.inject.Named;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.logging.Logger;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 
 import com.google.common.base.Predicate;
@@ -88,8 +89,7 @@ public class RetryIfSocketNotYetOpen implements Predicate<HostAndPort> {
       logger.debug(">> blocking on socket %s for %d %s", socket, timeoutValue, timeoutUnits);
       // Specify a retry period of 1s, expressed in the same time units.
       long period = timeoutUnits.convert(1, TimeUnit.SECONDS);
-      RetryablePredicate<HostAndPort> tester = new RetryablePredicate<HostAndPort>(socketTester, timeoutValue, period, timeoutUnits);
-      boolean passed = tester.apply(socket);
+      boolean passed = retry(socketTester, timeoutValue, period, timeoutUnits).apply(socket);
       if (passed)
          logger.debug("<< socket %s opened", socket);
       else

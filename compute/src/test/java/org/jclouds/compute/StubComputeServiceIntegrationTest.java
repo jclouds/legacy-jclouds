@@ -17,12 +17,13 @@
  * under the License.
  */
 package org.jclouds.compute;
-
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reportMatcher;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -40,7 +41,6 @@ import org.jclouds.compute.util.OpenSocketFinder;
 import org.jclouds.crypto.Pems;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.io.Payload;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.ssh.SshClient;
@@ -83,7 +83,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
 
       replay(socketOpen);
 
-      socketTester = new RetryablePredicate<HostAndPort>(socketOpen, 1, 1, TimeUnit.MILLISECONDS);
+      socketTester = retry(socketOpen, 1, 1, MILLISECONDS);
       
       openSocketFinder = new OpenSocketFinder(){
 

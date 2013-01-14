@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -27,7 +28,6 @@ import java.util.Set;
 import org.jclouds.openstack.nova.v2_0.domain.VolumeType;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiLiveTest;
 import org.jclouds.openstack.nova.v2_0.options.CreateVolumeTypeOptions;
-import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -67,8 +67,7 @@ public class VolumeTypeApiLiveTest extends BaseNovaApiLiveTest {
          if (testVolumeType != null) {
             final String id = testVolumeType.getId();
             assertTrue(volumeTypeOption.get().delete(id));
-            assertTrue(new RetryablePredicate<VolumeTypeApi>(new Predicate<VolumeTypeApi>() {
-               @Override
+            assertTrue(retry(new Predicate<VolumeTypeApi>() {
                public boolean apply(VolumeTypeApi volumeApi) {
                   return volumeApi.get(id) == null;
                }
@@ -82,8 +81,7 @@ public class VolumeTypeApiLiveTest extends BaseNovaApiLiveTest {
       if (volumeTypeOption.isPresent()) {
          testVolumeType = volumeTypeOption.get().create(
                "jclouds-test-1", CreateVolumeTypeOptions.Builder.specs(ImmutableMap.of("test", "value1")));
-         assertTrue(new RetryablePredicate<VolumeTypeApi>(new Predicate<VolumeTypeApi>() {
-            @Override
+         assertTrue(retry(new Predicate<VolumeTypeApi>() {
             public boolean apply(VolumeTypeApi volumeTypeApi) {
                return volumeTypeApi.get(testVolumeType.getId()) != null;
             }

@@ -21,10 +21,14 @@ package org.jclouds.openstack.nova.v2_0.compute.extensions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.Iterables.find;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_IMAGE_AVAILABLE;
+import static org.jclouds.location.predicates.LocationPredicates.idEquals;
 
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -32,21 +36,26 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.CloneImageTemplate;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.ImageTemplate;
 import org.jclouds.compute.domain.ImageTemplateBuilder;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.domain.Server;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneAndId;
-import org.jclouds.predicates.PredicateWithResult;
-import org.jclouds.predicates.Retryables;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.UncheckedTimeoutException;
 
 /**
  * Nova implementation of {@link ImageExtension}
@@ -63,21 +72,17 @@ public class NovaImageExtension implements ImageExtension {
 
    private final NovaApi novaApi;
    private final ListeningExecutorService userExecutor;
-   @com.google.inject.Inject(optional = true)
-   @Named("IMAGE_MAX_WAIT")
-   private long maxWait = 3600;
-   @com.google.inject.Inject(optional = true)
-   @Named("IMAGE_WAIT_PERIOD")
-   private long waitPeriod = 1;
-   private PredicateWithResult<ZoneAndId, Image> imageReadyPredicate;
+   private final Supplier<Set<? extends Location>> locations;
+   private final Predicate<AtomicReference<Image>> imageAvailablePredicate;
 
    @Inject
-   public NovaImageExtension(NovaApi novaApi,
-            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
-            PredicateWithResult<ZoneAndId, Image> imageReadyPredicate) {
-      this.novaApi = checkNotNull(novaApi);
-      this.userExecutor = userExecutor;
-      this.imageReadyPredicate = imageReadyPredicate;
+   public NovaImageExtension(NovaApi novaApi, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
+         @Memoized Supplier<Set<? extends Location>> locations,
+         @Named(TIMEOUT_IMAGE_AVAILABLE) Predicate<AtomicReference<Image>> imageAvailablePredicate) {
+      this.novaApi = checkNotNull(novaApi, "novaApi");
+      this.userExecutor = checkNotNull(userExecutor, "userExecutor");
+      this.locations = checkNotNull(locations, "locations");
+      this.imageAvailablePredicate = checkNotNull(imageAvailablePredicate, "imageAvailablePredicate");
    }
 
    @Override
@@ -103,13 +108,22 @@ public class NovaImageExtension implements ImageExtension {
       final ZoneAndId targetImageZoneAndId = ZoneAndId.fromZoneAndId(sourceImageZoneAndId.getZone(), newImageId);
 
       logger.info(">> Registered new Image %s, waiting for it to become available.", newImageId);
+      
+      final AtomicReference<Image> image = new AtomicReference<Image>(new ImageBuilder()
+            .location(find(locations.get(), idEquals(targetImageZoneAndId.getZone())))
+            .id(targetImageZoneAndId.slashEncode())
+            .providerId(targetImageZoneAndId.getId())
+            .description(cloneTemplate.getName())
+            .operatingSystem(OperatingSystem.builder().description(cloneTemplate.getName()).build())
+            .status(Image.Status.PENDING).build());
 
       return userExecutor.submit(new Callable<Image>() {
          @Override
          public Image call() throws Exception {
-            return Retryables.retryGettingResultOrFailing(imageReadyPredicate, targetImageZoneAndId, maxWait,
-                     waitPeriod, TimeUnit.SECONDS, "Image was not created within the time limit, Giving up! [Limit: "
-                              + maxWait + " secs.]");
+            if (imageAvailablePredicate.apply(image))
+               return image.get();
+            // TODO: get rid of the expectation that the image will be available, as it is very brittle
+            throw new UncheckedTimeoutException("Image was not created within the time limit: " + image.get());
          }
       });
    }

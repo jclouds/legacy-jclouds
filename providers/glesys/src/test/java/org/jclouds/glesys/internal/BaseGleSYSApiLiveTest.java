@@ -18,15 +18,14 @@
  */
 package org.jclouds.glesys.internal;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertTrue;
-
-import java.util.concurrent.TimeUnit;
 
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.glesys.GleSYSApi;
 import org.jclouds.glesys.GleSYSAsyncApi;
 import org.jclouds.glesys.features.DomainApi;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -59,11 +58,12 @@ public class BaseGleSYSApiLiveTest extends BaseComputeServiceContextLiveTest {
       final DomainApi api = gleContext.getApi().getDomainApi();
       int before = api.list().size();
       api.create(domain);
-      RetryablePredicate<Integer> result = new RetryablePredicate<Integer>(new Predicate<Integer>() {
+
+      Predicate<Integer> result = retry(new Predicate<Integer>() {
          public boolean apply(Integer value) {
             return api.list().size() == value;
          }
-      }, 30, 1, TimeUnit.SECONDS);
+      }, 30, 1, SECONDS);
 
       assertTrue(result.apply(before + 1));
    }

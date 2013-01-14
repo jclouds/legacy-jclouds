@@ -18,10 +18,12 @@
  */
 package org.jclouds.ec2;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.ec2.options.CreateSnapshotOptions.Builder.withDescription;
 import static org.jclouds.ec2.options.DescribeImagesOptions.Builder.imageIds;
 import static org.jclouds.ec2.options.RegisterImageBackedByEbsOptions.Builder.withKernelId;
 import static org.jclouds.ec2.options.RunInstancesOptions.Builder.withKeyName;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -29,7 +31,6 @@ import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.AWSResponseException;
@@ -59,7 +60,6 @@ import org.jclouds.ec2.predicates.VolumeAttached;
 import org.jclouds.ec2.predicates.VolumeAvailable;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payloads;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.scriptbuilder.InitScript;
 import org.jclouds.scriptbuilder.domain.OsFamily;
@@ -107,15 +107,15 @@ public class EBSBootEC2ClientLiveTest extends BaseComputeServiceContextLiveTest 
    private KeyPair keyPair;
    private String securityGroupName;
 
-   private RetryablePredicate<HostAndPort> socketTester;
-   private RetryablePredicate<Attachment> attachTester;
-   private RetryablePredicate<Volume> volumeTester;
+   private Predicate<HostAndPort> socketTester;
+   private Predicate<Attachment> attachTester;
+   private Predicate<Volume> volumeTester;
    private RunningInstance instance;
-   private RetryablePredicate<RunningInstance> runningTester;
-   private RetryablePredicate<RunningInstance> stoppedTester;
-   private RetryablePredicate<RunningInstance> terminatedTester;
+   private Predicate<RunningInstance> runningTester;
+   private Predicate<RunningInstance> stoppedTester;
+   private Predicate<RunningInstance> terminatedTester;
    private Volume volume;
-   private RetryablePredicate<Snapshot> snapshotTester;
+   private Predicate<Snapshot> snapshotTester;
    private Snapshot snapshot;
    private Image ebsImage;
    private RunningInstance ebsInstance;
@@ -130,25 +130,24 @@ public class EBSBootEC2ClientLiveTest extends BaseComputeServiceContextLiveTest 
       client = injector.getInstance(EC2Client.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<HostAndPort>(socketOpen, 120, 1, TimeUnit.SECONDS);
+      socketTester = retry(socketOpen, 120, 1, SECONDS);
 
       VolumeAvailable volumeAvailable = injector.getInstance(VolumeAvailable.class);
-      volumeTester = new RetryablePredicate<Volume>(volumeAvailable, 60, 1, TimeUnit.SECONDS);
+      volumeTester = retry(volumeAvailable, 60, 1, SECONDS);
 
       SnapshotCompleted snapshotCompleted = injector.getInstance(SnapshotCompleted.class);
-      snapshotTester = new RetryablePredicate<Snapshot>(snapshotCompleted, 120, 3, TimeUnit.SECONDS);
+      snapshotTester = retry(snapshotCompleted, 120, 3, SECONDS);
 
       VolumeAttached volumeAttached = injector.getInstance(VolumeAttached.class);
-      attachTester = new RetryablePredicate<Attachment>(volumeAttached, 60, 1, TimeUnit.SECONDS);
+      attachTester = retry(volumeAttached, 60, 1, SECONDS);
 
-      runningTester = new RetryablePredicate<RunningInstance>(new InstanceStateRunning(client), 180, 5,
-            TimeUnit.SECONDS);
+      runningTester = retry(new InstanceStateRunning(client), 180, 5, SECONDS);
 
       InstanceStateStopped instanceStateStopped = injector.getInstance(InstanceStateStopped.class);
-      stoppedTester = new RetryablePredicate<RunningInstance>(instanceStateStopped, 60, 1, TimeUnit.SECONDS);
+      stoppedTester = retry(instanceStateStopped, 60, 1, SECONDS);
 
       InstanceStateTerminated instanceStateTerminated = injector.getInstance(InstanceStateTerminated.class);
-      terminatedTester = new RetryablePredicate<RunningInstance>(instanceStateTerminated, 60, 1, TimeUnit.SECONDS);
+      terminatedTester = retry(instanceStateTerminated, 60, 1, SECONDS);
 
       injector.injectMembers(socketOpen); // add logger
    }
@@ -297,9 +296,7 @@ public class EBSBootEC2ClientLiveTest extends BaseComputeServiceContextLiveTest 
          output = ssh.exec(script + " status");
 
          assert !output.getOutput().trim().equals("") : output;
-
-         RetryablePredicate<String> scriptTester = new RetryablePredicate<String>(new ScriptTester(ssh, SCRIPT_END),
-               600, 10, TimeUnit.SECONDS);
+         Predicate<String> scriptTester = retry(new ScriptTester(ssh, SCRIPT_END), 600, 10, SECONDS);
          scriptTester.apply(script);
       } finally {
          if (ssh != null)

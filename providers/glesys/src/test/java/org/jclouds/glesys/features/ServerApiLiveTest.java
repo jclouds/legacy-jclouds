@@ -18,12 +18,13 @@
  */
 package org.jclouds.glesys.features;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.jclouds.glesys.domain.AllowedArgumentsForCreateServer;
 import org.jclouds.glesys.domain.Console;
@@ -31,6 +32,7 @@ import org.jclouds.glesys.domain.OSTemplate;
 import org.jclouds.glesys.domain.ResourceStatus;
 import org.jclouds.glesys.domain.ResourceUsage;
 import org.jclouds.glesys.domain.Server;
+import org.jclouds.glesys.domain.Server.State;
 import org.jclouds.glesys.domain.ServerDetails;
 import org.jclouds.glesys.domain.ServerLimit;
 import org.jclouds.glesys.domain.ServerStatus;
@@ -39,7 +41,6 @@ import org.jclouds.glesys.options.CloneServerOptions;
 import org.jclouds.glesys.options.DestroyServerOptions;
 import org.jclouds.glesys.options.ServerStatusOptions;
 import org.jclouds.glesys.options.UpdateServerOptions;
-import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -247,26 +248,22 @@ public class ServerApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
       
       testServerId2 = testServer2.getId();
 
-      RetryablePredicate<Server.State> cloneChecker = new ServerStatusChecker(api, testServerId2, 300, 10, TimeUnit.SECONDS);
+      Predicate<State> cloneChecker = statusChecker(api, testServerId2); 
       assertTrue(cloneChecker.apply(Server.State.STOPPED));
 
       api.start(testServer2.getId());
 
       // TODO ServerStatus==STOPPED suggests the previous call to start should have worked
-      cloneChecker = new RetryablePredicate<Server.State>(
-            new Predicate<Server.State>() {
-
-               public boolean apply(Server.State value) {
-                  ServerStatus status = api.getStatus(testServerId2, ServerStatusOptions.Builder.state());
-                  if (status.getState() == value) {
-                     return true;
-                  }
-
-                  api.start(testServerId2);
-                  return false;
-               }
-
-            }, 600, 30, TimeUnit.SECONDS);
+      cloneChecker = retry(new Predicate<Server.State>() {
+         public boolean apply(Server.State value) {
+            ServerStatus status = api.getStatus(testServerId2, ServerStatusOptions.Builder.state());
+            if (status.getState() == value) {
+               return true;
+            }
+            api.start(testServerId2);
+            return false;
+         }
+      }, 600, 30, SECONDS);
 
       assertTrue(cloneChecker.apply(Server.State.RUNNING));
    }

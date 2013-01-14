@@ -18,19 +18,19 @@
  */
 package org.jclouds.glesys.features;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import org.jclouds.glesys.domain.Domain;
 import org.jclouds.glesys.domain.DomainRecord;
 import org.jclouds.glesys.internal.BaseGleSYSApiLiveTest;
 import org.jclouds.glesys.options.DomainOptions;
 import org.jclouds.glesys.options.UpdateRecordOptions;
-import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -51,18 +51,16 @@ public class DomainApiLiveTest extends BaseGleSYSApiLiveTest {
       super.setupContext();
       testDomain =  identity.toLowerCase() + "-domain.jclouds.org";
       api = gleContext.getApi().getDomainApi();
-      domainCounter = new RetryablePredicate<Integer>(
-            new Predicate<Integer>() {
-               public boolean apply(Integer value) {
-                  return api.list().size() == value;
-               }
-            }, 30, 1, TimeUnit.SECONDS);
-      recordCounter = new RetryablePredicate<Integer>(
-            new Predicate<Integer>() {
-               public boolean apply(Integer value) {
-                  return api.listRecords(testDomain).size() == value;
-               }
-            }, 30, 1, TimeUnit.SECONDS);
+      domainCounter = retry(new Predicate<Integer>() {
+         public boolean apply(Integer value) {
+            return api.list().size() == value;
+         }
+      }, 30, 1, SECONDS);
+      recordCounter = retry(new Predicate<Integer>() {
+         public boolean apply(Integer value) {
+            return api.listRecords(testDomain).size() == value;
+         }
+      }, 30, 1, SECONDS);
 
       try {
          api.delete(testDomain);
@@ -82,8 +80,8 @@ public class DomainApiLiveTest extends BaseGleSYSApiLiveTest {
    }
 
    private DomainApi api;
-   private RetryablePredicate<Integer> domainCounter;
-   private RetryablePredicate<Integer> recordCounter;
+   private Predicate<Integer> domainCounter;
+   private Predicate<Integer> recordCounter;
 
    @Test
    public void testGetDomain() throws Exception {

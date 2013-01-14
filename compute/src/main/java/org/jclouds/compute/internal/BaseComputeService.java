@@ -26,6 +26,7 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_RUNNING;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_SUSPENDED;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_TERMINATED;
@@ -34,12 +35,12 @@ import static org.jclouds.compute.predicates.NodePredicates.all;
 import static org.jclouds.compute.util.ComputeServiceUtils.formatStatus;
 import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
+import static org.jclouds.util.Predicates2.retry;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -87,7 +88,6 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.domain.LoginCredentials.Builder;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.functions.InitAdminAccess;
@@ -289,9 +289,7 @@ public class BaseComputeService implements ComputeService {
       checkNotNull(id, "id");
       logger.debug(">> destroying node(%s)", id);
       final AtomicReference<NodeMetadata> node = Atomics.newReference();
-      RetryablePredicate<String> tester = new RetryablePredicate<String>(new Predicate<String>() {
-
-         @Override
+      Predicate<String> tester = retry(new Predicate<String>() {
          public boolean apply(String input) {
             try {
                NodeMetadata md = destroyNodeStrategy.destroyNode(id);
@@ -303,8 +301,7 @@ public class BaseComputeService implements ComputeService {
                return false;
             }
          }
-
-      }, timeouts.nodeTerminated, 1000, TimeUnit.MILLISECONDS);
+      }, timeouts.nodeTerminated, 1000, MILLISECONDS);
       
       boolean successful = tester.apply(id) && (node.get() == null || nodeTerminated.apply(node));
       if (successful)

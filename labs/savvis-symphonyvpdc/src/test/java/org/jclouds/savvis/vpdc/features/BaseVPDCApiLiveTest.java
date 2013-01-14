@@ -19,19 +19,21 @@
 package org.jclouds.savvis.vpdc.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
-import org.jclouds.savvis.vpdc.VPDCAsyncApi;
 import org.jclouds.savvis.vpdc.VPDCApi;
+import org.jclouds.savvis.vpdc.VPDCAsyncApi;
 import org.jclouds.savvis.vpdc.predicates.TaskSuccess;
 import org.jclouds.savvis.vpdc.reference.VPDCConstants;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicate;
 
 /**
  * Tests behavior of {@code VPDCApi}
@@ -47,7 +49,7 @@ public class BaseVPDCApiLiveTest extends BaseComputeServiceContextLiveTest {
 
    protected RestContext<VPDCApi, VPDCAsyncApi> restContext;
    protected String email;
-   protected RetryablePredicate<String> taskTester;
+   protected Predicate<String> taskTester;
 
    @Override
    protected Properties setupProperties() {
@@ -65,7 +67,7 @@ public class BaseVPDCApiLiveTest extends BaseComputeServiceContextLiveTest {
    @Override
    public void setupContext() {
       super.setupContext();
-      taskTester = new RetryablePredicate<String>(new TaskSuccess(restContext.getApi()), 7200, 10, TimeUnit.SECONDS);
+      taskTester = retry(new TaskSuccess(restContext.getApi()), 7200, 10, SECONDS);
    }
 
 }

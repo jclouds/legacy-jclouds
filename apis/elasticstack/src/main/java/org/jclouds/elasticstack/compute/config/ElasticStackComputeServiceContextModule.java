@@ -18,10 +18,12 @@
  */
 package org.jclouds.elasticstack.compute.config;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.jclouds.util.Predicates2.retry;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -32,7 +34,7 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Volume;
-import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.Location;
 import org.jclouds.elasticstack.ElasticStackClient;
 import org.jclouds.elasticstack.compute.ElasticStackComputeServiceAdapter;
@@ -49,7 +51,6 @@ import org.jclouds.elasticstack.predicates.DriveClaimed;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.json.Json;
 import org.jclouds.location.Provider;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.util.Strings2;
 
 import com.google.common.base.Function;
@@ -130,9 +131,7 @@ public class ElasticStackComputeServiceContextModule extends
 
    @Provides
    @Singleton
-   protected Predicate<DriveInfo> supplyDriveUnclaimed(DriveClaimed driveClaimed,
-            ComputeServiceConstants.Timeouts timeouts) {
-      return new RetryablePredicate<DriveInfo>(Predicates.not(driveClaimed), timeouts.nodeRunning, 1000,
-               TimeUnit.MILLISECONDS);
+   protected Predicate<DriveInfo> supplyDriveUnclaimed(DriveClaimed driveClaimed, Timeouts timeouts) {
+      return retry(Predicates.not(driveClaimed), timeouts.nodeRunning, 1000, MILLISECONDS);
    }
 }

@@ -20,12 +20,13 @@ package org.jclouds.azure.management.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.jclouds.azure.management.domain.DetailedHostedServiceProperties;
@@ -34,7 +35,6 @@ import org.jclouds.azure.management.domain.HostedService.Status;
 import org.jclouds.azure.management.domain.HostedServiceWithDetailedProperties;
 import org.jclouds.azure.management.domain.Operation;
 import org.jclouds.azure.management.internal.BaseAzureManagementApiLiveTest;
-import org.jclouds.predicates.RetryablePredicate;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -52,9 +52,9 @@ public class HostedServiceApiLiveTest extends BaseAzureManagementApiLiveTest {
    public static final String HOSTED_SERVICE = (System.getProperty("user.name") + "-jclouds-hostedService")
             .toLowerCase();
 
-   private RetryablePredicate<String> operationSucceeded;
-   private RetryablePredicate<HostedServiceWithDetailedProperties> hostedServiceCreated;
-   private RetryablePredicate<HostedService> hostedServiceGone;
+   private Predicate<String> operationSucceeded;
+   private Predicate<HostedServiceWithDetailedProperties> hostedServiceCreated;
+   private Predicate<HostedService> hostedServiceGone;
 
    private String location;
 
@@ -64,33 +64,21 @@ public class HostedServiceApiLiveTest extends BaseAzureManagementApiLiveTest {
       super.setupContext();
       // TODO: filter locations on those who have compute
       location = Iterables.get(context.getApi().getLocationApi().list(), 0).getName();
-      operationSucceeded = new RetryablePredicate<String>(new Predicate<String>() {
-
-         @Override
+      operationSucceeded = retry(new Predicate<String>() {
          public boolean apply(String input) {
             return context.getApi().getOperationApi().get(input).getStatus() == Operation.Status.SUCCEEDED;
          }
-
-      }, 600, 5, 5, TimeUnit.SECONDS);
-
-      hostedServiceCreated = new RetryablePredicate<HostedServiceWithDetailedProperties>(
-               new Predicate<HostedServiceWithDetailedProperties>() {
-
-                  @Override
-                  public boolean apply(HostedServiceWithDetailedProperties input) {
-                     return api().getDetails(input.getName()).getProperties().getStatus() == Status.CREATED;
-                  }
-
-               }, 600, 5, 5, TimeUnit.SECONDS);
-
-      hostedServiceGone = new RetryablePredicate<HostedService>(new Predicate<HostedService>() {
-
-         @Override
+      }, 600, 5, 5, SECONDS);
+      hostedServiceCreated = retry(new Predicate<HostedServiceWithDetailedProperties>() {
+         public boolean apply(HostedServiceWithDetailedProperties input) {
+            return api().getDetails(input.getName()).getProperties().getStatus() == Status.CREATED;
+         }
+      }, 600, 5, 5, SECONDS);
+      hostedServiceGone = retry(new Predicate<HostedService>() {
          public boolean apply(HostedService input) {
             return api().get(input.getName()) == null;
          }
-
-      }, 600, 5, 5, TimeUnit.SECONDS);
+      }, 600, 5, 5, SECONDS);
    }
 
    private HostedServiceWithDetailedProperties hostedService;

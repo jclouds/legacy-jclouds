@@ -19,13 +19,13 @@
 package org.jclouds.vcloud.features;
 
 import static com.google.common.collect.Iterables.getOnlyElement;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
 
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
@@ -121,8 +121,7 @@ public class VAppTemplateClientLiveTest extends BaseVCloudClientLiveTest {
 
          node = getOnlyElement(client.createNodesInGroup(group, 1));
 
-         Predicate<URI> taskTester = new RetryablePredicate<URI>(new TaskSuccess(getVCloudApi()), 600, 5,
-                  TimeUnit.SECONDS);
+         Predicate<URI> taskTester = retry(new TaskSuccess(getVCloudApi()), 600, 5, SECONDS);
 
          // I have to undeploy first
          Task task = getVCloudApi().getVAppClient().undeployVApp(URI.create(node.getId()));

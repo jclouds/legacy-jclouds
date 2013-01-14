@@ -19,11 +19,11 @@
 package org.jclouds.gogrid.compute;
 
 import static com.google.common.collect.Iterables.getOnlyElement;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.compute.predicates.NodePredicates.inGroup;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-
-import java.util.concurrent.TimeUnit;
 
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -32,11 +32,11 @@ import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.inject.Module;
@@ -77,8 +77,8 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       } catch (Exception e) {
 
       }
-      RetryablePredicate<Server> serverLatestJobCompleted = new RetryablePredicate<Server>(
-            new ServerLatestJobCompleted(providerContext.getApi().getJobServices()), 800, 20, TimeUnit.SECONDS);
+      Predicate<Server> serverLatestJobCompleted = retry(new ServerLatestJobCompleted(providerContext.getApi()
+            .getJobServices()), 800, 20, SECONDS);
 
       String ram = Iterables.get(providerContext.getApi().getServerServices().getRamSizes(), 1).getName();
       try {

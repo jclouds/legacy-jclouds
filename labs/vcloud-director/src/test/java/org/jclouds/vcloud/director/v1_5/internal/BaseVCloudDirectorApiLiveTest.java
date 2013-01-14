@@ -25,6 +25,7 @@ import static com.google.common.collect.Iterables.contains;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.getFirst;
 import static com.google.common.collect.Iterables.tryFind;
+import static org.jclouds.util.Predicates2.retry;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_NON_NULL;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.URN_REQ_LIVE;
@@ -57,7 +58,6 @@ import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.date.DateService;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.vcloud.director.testng.FormatApiResultsListener;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorApiMetadata;
@@ -179,12 +179,12 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
 
    @Inject
    protected void initTaskSuccess(TaskSuccess taskSuccess) {
-      retryTaskSuccess = new RetryablePredicate<Task>(taskSuccess, TASK_TIMEOUT_SECONDS * 1000L);
+      retryTaskSuccess = retry(taskSuccess, TASK_TIMEOUT_SECONDS * 1000L);
    }
 
    @Inject
    protected void initTaskSuccessLong(TaskSuccess taskSuccess) {
-      retryTaskSuccessLong = new RetryablePredicate<Task>(taskSuccess, LONG_TASK_TIMEOUT_SECONDS * 1000L);
+      retryTaskSuccessLong = retry(taskSuccess, LONG_TASK_TIMEOUT_SECONDS * 1000L);
    }
 
    @BeforeClass(groups = { "integration", "live" })
@@ -588,9 +588,7 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
    protected boolean taskStatusEventually(Task task, Task.Status running, ImmutableSet<Task.Status> immutableSet) {
       TaskApi taskApi = context.getApi().getTaskApi();
       TaskStatusEquals predicate = new TaskStatusEquals(taskApi, running, immutableSet);
-      RetryablePredicate<Task> retryablePredicate = new RetryablePredicate<Task>(predicate,
-               TASK_TIMEOUT_SECONDS * 1000L);
-      return retryablePredicate.apply(task);
+      return retry(predicate, TASK_TIMEOUT_SECONDS * 1000L).apply(task);
    }
 
    protected void assertTaskStatusEventually(Task task, Task.Status running, ImmutableSet<Task.Status> immutableSet) {
@@ -602,9 +600,7 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
       TaskApi taskApi = context.getApi().getTaskApi();
       TaskStatusEquals predicate = new TaskStatusEquals(taskApi, ImmutableSet.of(Task.Status.ABORTED,
                Task.Status.CANCELED, Task.Status.ERROR, Task.Status.SUCCESS), ImmutableSet.<Task.Status> of());
-      RetryablePredicate<Task> retryablePredicate = new RetryablePredicate<Task>(predicate,
-               LONG_TASK_TIMEOUT_SECONDS * 1000L);
-      return retryablePredicate.apply(task);
+      return retry(predicate, TASK_TIMEOUT_SECONDS * 1000L).apply(task);
    }
 
    protected void assertTaskDoneEventually(Task task) {

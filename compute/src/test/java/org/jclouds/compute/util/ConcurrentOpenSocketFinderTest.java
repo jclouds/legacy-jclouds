@@ -134,7 +134,7 @@ public class ConcurrentOpenSocketFinderTest {
 
       OpenSocketFinder finder = new ConcurrentOpenSocketFinder(socketAlwaysClosed, nodeNotRunning, userExecutor) {
          @Override
-         protected <T> Predicate<T> retryPredicate(final Predicate<T> findOrBreak, long period, long timeoutValue,
+         protected <T> Predicate<T> retryPredicate(final Predicate<T> findOrBreak, long timeout, long period,
                TimeUnit timeUnits) {
             return new Predicate<T>() {
                @Override

@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.io.BaseEncoding.base16;
 import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsCommaDelimitedValue;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
+import static org.jclouds.util.Predicates2.retry;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -62,7 +63,6 @@ import org.jclouds.glesys.options.CreateServerOptions;
 import org.jclouds.glesys.options.DestroyServerOptions;
 import org.jclouds.location.predicates.LocationPredicates;
 import org.jclouds.logging.Logger;
-import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -234,9 +234,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
 
    @Override
    public void destroyNode(String id) {
-      new RetryablePredicate<String>(new Predicate<String>() {
-
-         @Override
+      retry(new Predicate<String>() {
          public boolean apply(String arg0) {
             try {
                api.getServerApi().destroy(arg0, DestroyServerOptions.Builder.discardIp());
@@ -245,7 +243,6 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
                return false;
             }
          }
-
       }, timeouts.nodeTerminated).apply(id);
    }
 

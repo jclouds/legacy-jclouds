@@ -17,16 +17,15 @@
  * under the License.
  */
 package org.jclouds.compute.reference;
-
 import static org.jclouds.compute.config.ComputeServiceProperties.BLACKLIST_NODES;
 import static org.jclouds.compute.config.ComputeServiceProperties.IMAGE_AUTHENTICATE_SUDO;
 import static org.jclouds.compute.config.ComputeServiceProperties.IMAGE_ID;
 import static org.jclouds.compute.config.ComputeServiceProperties.IMAGE_LOGIN_USER;
 import static org.jclouds.compute.config.ComputeServiceProperties.INIT_STATUS_INITIAL_PERIOD;
 import static org.jclouds.compute.config.ComputeServiceProperties.INIT_STATUS_MAX_PERIOD;
+import static org.jclouds.compute.config.ComputeServiceProperties.OS_VERSION_MAP_JSON;
 import static org.jclouds.compute.config.ComputeServiceProperties.POLL_INITIAL_PERIOD;
 import static org.jclouds.compute.config.ComputeServiceProperties.POLL_MAX_PERIOD;
-import static org.jclouds.compute.config.ComputeServiceProperties.OS_VERSION_MAP_JSON;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_IMAGE_AVAILABLE;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_IMAGE_DELETED;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_RUNNING;
@@ -41,7 +40,8 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.compute.config.ComputeServiceProperties;
+import org.jclouds.util.Predicates2;
 
 import com.google.common.base.Supplier;
 import com.google.inject.Inject;
@@ -145,11 +145,11 @@ public interface ComputeServiceConstants {
    public static class PollPeriod {
       @Inject(optional = true)
       @Named(POLL_INITIAL_PERIOD)
-      public long pollInitialPeriod = RetryablePredicate.DEFAULT_PERIOD;
+      public long pollInitialPeriod = Predicates2.DEFAULT_PERIOD;
 
       @Inject(optional = true)
       @Named(POLL_MAX_PERIOD)
-      public long pollMaxPeriod = RetryablePredicate.DEFAULT_MAX_PERIOD;
+      public long pollMaxPeriod = Predicates2.DEFAULT_MAX_PERIOD;
    }
 
    @Singleton

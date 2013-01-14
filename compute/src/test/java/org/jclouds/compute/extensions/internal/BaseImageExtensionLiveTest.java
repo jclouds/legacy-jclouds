@@ -19,11 +19,12 @@
 
 package org.jclouds.compute.extensions.internal;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -38,13 +39,13 @@ import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.SshClient;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+
 
 /**
  * Base test for {@link ImageExtension} implementations.
@@ -174,7 +175,7 @@ public abstract class BaseImageExtensionLiveTest extends BaseComputeServiceConte
 
    private void checkReachable(NodeMetadata node) {
       SshClient client = view.utils().sshForNode().apply(node);
-      assertTrue(new RetryablePredicate<SshClient>(new Predicate<SshClient>() {
+      assertTrue(retry(new Predicate<SshClient>() {
          @Override
          public boolean apply(SshClient input) {
             input.connect();
@@ -183,6 +184,6 @@ public abstract class BaseImageExtensionLiveTest extends BaseComputeServiceConte
             }
             return false;
          }
-      }, getSpawnNodeMaxWait(), 1l, TimeUnit.SECONDS).apply(client));
+      }, getSpawnNodeMaxWait(), 1l, SECONDS).apply(client));
    }
 }

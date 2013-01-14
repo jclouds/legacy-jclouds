@@ -17,20 +17,17 @@
  * under the License.
  */
 package org.jclouds.cloudstack.compute;
-
 import static com.google.common.collect.Iterables.getFirst;
 import static com.google.inject.name.Names.bindProperties;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
-import org.jclouds.cloudstack.domain.FirewallRule;
-import org.jclouds.cloudstack.functions.GetFirewallRulesByVirtualMachine;
-import org.jclouds.cloudstack.functions.GetIPForwardingRulesByVirtualMachine;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
@@ -39,6 +36,7 @@ import org.jclouds.cloudstack.compute.config.CloudStackComputeServiceContextModu
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.compute.strategy.CloudStackComputeServiceAdapter;
 import org.jclouds.cloudstack.compute.strategy.OptionsConverter;
+import org.jclouds.cloudstack.domain.FirewallRule;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkType;
@@ -46,9 +44,11 @@ import org.jclouds.cloudstack.domain.ServiceOffering;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.Zone;
-import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
+import org.jclouds.cloudstack.functions.GetFirewallRulesByVirtualMachine;
+import org.jclouds.cloudstack.functions.GetIPForwardingRulesByVirtualMachine;
 import org.jclouds.cloudstack.functions.StaticNATVirtualMachineInNetwork;
 import org.jclouds.cloudstack.functions.ZoneIdToZone;
+import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.predicates.JobComplete;
 import org.jclouds.cloudstack.predicates.TemplatePredicates;
 import org.jclouds.cloudstack.suppliers.GetCurrentUser;
@@ -62,7 +62,6 @@ import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCred
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.annotations.Identity;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
@@ -129,7 +128,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
          @Provides
          @Singleton
          protected Predicate<String> jobComplete(JobComplete jobComplete) {
-            return new RetryablePredicate<String>(jobComplete, 1200, 1, 5, TimeUnit.SECONDS);
+            return retry(jobComplete, 1200, 1, 5, SECONDS);
          }
 
          @Provides

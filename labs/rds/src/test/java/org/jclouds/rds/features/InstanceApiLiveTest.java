@@ -19,16 +19,17 @@
 package org.jclouds.rds.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.predicates.InetSocketAddressConnect;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rds.domain.Authorization;
 import org.jclouds.rds.domain.Authorization.Status;
 import org.jclouds.rds.domain.Instance;
@@ -52,9 +53,9 @@ import com.google.common.net.HostAndPort;
 public class InstanceApiLiveTest extends BaseRDSApiLiveTest {
    public static final String INSTANCE = (System.getProperty("user.name") + "-jclouds-instance").toLowerCase();
 
-   private RetryablePredicate<HostAndPort> socketTester;
-   private RetryablePredicate<Instance> instanceAvailable;
-   private RetryablePredicate<Instance> instanceGone;
+   private Predicate<HostAndPort> socketTester;
+   private Predicate<Instance> instanceAvailable;
+   private Predicate<Instance> instanceGone;
 
    private SecurityGroup securityGroup;
 
@@ -63,44 +64,30 @@ public class InstanceApiLiveTest extends BaseRDSApiLiveTest {
    public void setupContext() {
       super.setupContext();
       securityGroup = createSecurityGroupAndAuthorizeIngressToAll(INSTANCE);
-
-      socketTester = new RetryablePredicate<HostAndPort>(new InetSocketAddressConnect(), 180, 1, 1, TimeUnit.SECONDS);
-      instanceAvailable = new RetryablePredicate<Instance>(new Predicate<Instance>() {
-
-         @Override
+      socketTester = retry(new InetSocketAddressConnect(), 180, 1, 1, SECONDS);
+      instanceAvailable = retry(new Predicate<Instance>() {
          public boolean apply(Instance input) {
             return api().get(input.getId()).getStatus() == Instance.Status.AVAILABLE;
          }
-
-      }, 600, 5, 5, TimeUnit.SECONDS);
-
-      instanceGone = new RetryablePredicate<Instance>(new Predicate<Instance>() {
-
-         @Override
+      }, 600, 5, 5, SECONDS);
+      instanceGone = retry(new Predicate<Instance>() {
          public boolean apply(Instance input) {
             return api().get(input.getId()) == null;
          }
-
-      }, 600, 5, 5, TimeUnit.SECONDS);
+      }, 600, 5, 5, SECONDS);
    }
 
    private SecurityGroup createSecurityGroupAndAuthorizeIngressToAll(String name) {
-      RetryablePredicate<SecurityGroup> ipRangesAuthorized = new RetryablePredicate<SecurityGroup>(
+      Predicate<SecurityGroup> ipRangesAuthorized = retry(
                new Predicate<SecurityGroup>() {
-
-                  @Override
                   public boolean apply(SecurityGroup input) {
                      return Iterables.all(sgApi().get(input.getName()).getIPRanges(), new Predicate<Authorization>() {
-
-                        @Override
                         public boolean apply(Authorization i2) {
                            return i2.getStatus() == Status.AUTHORIZED;
                         }
-
                      });
                   }
-
-               }, 30000, 100, 500, TimeUnit.MILLISECONDS);
+               }, 30000, 100, 500, MILLISECONDS);
 
       try {
          SecurityGroup securityGroup = sgApi().createWithNameAndDescription(name, "jclouds");

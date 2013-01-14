@@ -19,17 +19,17 @@
 package org.jclouds.savvis.vpdc.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cim.OSType;
 import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.predicates.InetSocketAddressConnect;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.savvis.vpdc.domain.Network;
 import org.jclouds.savvis.vpdc.domain.Resource;
 import org.jclouds.savvis.vpdc.domain.Task;
@@ -54,7 +54,7 @@ public class VMApiLiveTest extends BaseVPDCApiLiveTest {
 
    private VMApi api;
    private VM vm;
-   private RetryablePredicate<HostAndPort> socketTester;
+   private Predicate<HostAndPort> socketTester;
 
    private String username = checkNotNull(System.getProperty("test." + provider + ".loginUser"), "test." + provider
             + ".loginUser");
@@ -66,7 +66,7 @@ public class VMApiLiveTest extends BaseVPDCApiLiveTest {
    public void setupContext() {
       super.setupContext();
       api = restContext.getApi().getVMApi();
-      socketTester = new RetryablePredicate<HostAndPort>(new InetSocketAddressConnect(), 130, 10, TimeUnit.SECONDS);// make
+      socketTester = retry(new InetSocketAddressConnect(), 130, 10, SECONDS);// make
    }
 
    private String billingSiteId;
