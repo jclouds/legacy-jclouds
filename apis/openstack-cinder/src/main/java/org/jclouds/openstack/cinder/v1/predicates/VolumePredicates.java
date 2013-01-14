@@ -19,13 +19,12 @@
 package org.jclouds.openstack.cinder.v1.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.concurrent.TimeUnit;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 
 import org.jclouds.openstack.cinder.v1.domain.Volume;
 import org.jclouds.openstack.cinder.v1.domain.Volume.Status;
 import org.jclouds.openstack.cinder.v1.features.VolumeApi;
-import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Predicate;
 
@@ -38,7 +37,7 @@ import com.google.common.base.Predicate;
  * {@code
  * Volume volume = volumeApi.create(100);
  * 
- * RetryablePredicate<String> awaitAvailable = new RetryablePredicate<String>(
+ * RetryablePredicate<String> awaitAvailable = RetryablePredicate.create(
  *    VolumePredicates.available(volumeApi), 600, 10, 10, TimeUnit.SECONDS);
  * 
  * if (!awaitAvailable.apply(volume.getId())) {
@@ -68,10 +67,9 @@ public class VolumePredicates {
     * @param volumeApi The VolumeApi in the zone where your Volume resides.
     * @return RetryablePredicate That will check the status every 5 seconds for a maxiumum of 10 minutes.
     */
-   public static RetryablePredicate<Volume> awaitAvailable(VolumeApi volumeApi) {
+   public static Predicate<Volume> awaitAvailable(VolumeApi volumeApi) {
       StatusUpdatedPredicate statusPredicate = new StatusUpdatedPredicate(volumeApi, Volume.Status.AVAILABLE);
-
-      return new RetryablePredicate<Volume>(statusPredicate, 600, 5, 5, TimeUnit.SECONDS);
+      return retry(statusPredicate, 600, 5, 5, SECONDS);
    }
    
    /**
@@ -80,10 +78,9 @@ public class VolumePredicates {
     * @param volumeApi The VolumeApi in the zone where your Volume resides.
     * @return RetryablePredicate That will check the status every 5 seconds for a maxiumum of 10 minutes.
     */
-   public static RetryablePredicate<Volume> awaitInUse(VolumeApi volumeApi) {
+   public static Predicate<Volume> awaitInUse(VolumeApi volumeApi) {
       StatusUpdatedPredicate statusPredicate = new StatusUpdatedPredicate(volumeApi, Volume.Status.IN_USE);
-
-      return new RetryablePredicate<Volume>(statusPredicate, 600, 5, 5, TimeUnit.SECONDS);
+      return retry(statusPredicate, 600, 5, 5, SECONDS);
    }
 
    /**
@@ -93,17 +90,15 @@ public class VolumePredicates {
     * @return RetryablePredicate That will check the whether the Volume exists 
     * every 5 seconds for a maxiumum of 10 minutes.
     */
-   public static RetryablePredicate<Volume> awaitDeleted(VolumeApi volumeApi) {
+   public static Predicate<Volume> awaitDeleted(VolumeApi volumeApi) {
       DeletedPredicate deletedPredicate = new DeletedPredicate(volumeApi);
-      
-      return new RetryablePredicate<Volume>(deletedPredicate, 600, 5, 5, TimeUnit.SECONDS);
+      return retry(deletedPredicate, 600, 5, 5, SECONDS);
    }
    
-   public static RetryablePredicate<Volume> awaitStatus(
+   public static Predicate<Volume> awaitStatus(
          VolumeApi volumeApi, Volume.Status status, long maxWaitInSec, long periodInSec) {
       StatusUpdatedPredicate statusPredicate = new StatusUpdatedPredicate(volumeApi, status);
-      
-      return new RetryablePredicate<Volume>(statusPredicate, maxWaitInSec, periodInSec, periodInSec, TimeUnit.SECONDS);
+      return retry(statusPredicate, maxWaitInSec, periodInSec, periodInSec, SECONDS);
    }
    
    private static class StatusUpdatedPredicate implements Predicate<Volume> {

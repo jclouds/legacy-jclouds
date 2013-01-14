@@ -27,7 +27,6 @@ import org.jclouds.cloudservers.compute.functions.CloudServersImageToImage;
 import org.jclouds.cloudservers.compute.functions.CloudServersImageToOperatingSystem;
 import org.jclouds.cloudservers.compute.functions.FlavorToHardware;
 import org.jclouds.cloudservers.compute.functions.ServerToNodeMetadata;
-import org.jclouds.cloudservers.compute.predicates.GetImageWhenStatusActivePredicateWithResult;
 import org.jclouds.cloudservers.compute.strategy.CloudServersComputeServiceAdapter;
 import org.jclouds.cloudservers.domain.Flavor;
 import org.jclouds.cloudservers.domain.ImageStatus;
@@ -40,9 +39,9 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.extensions.ImageExtension;
+import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
-import org.jclouds.predicates.PredicateWithResult;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -85,10 +84,6 @@ public class CloudServersComputeServiceContextModule extends
       
       bind(new TypeLiteral<ImageExtension>() {
       }).to(CloudServersImageExtension.class);
-      
-      bind(new TypeLiteral<PredicateWithResult<Integer, Image>>() {
-      }).to(GetImageWhenStatusActivePredicateWithResult.class);
-
    }
    
    @VisibleForTesting

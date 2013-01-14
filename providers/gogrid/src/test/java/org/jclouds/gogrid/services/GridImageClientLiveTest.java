@@ -18,6 +18,8 @@
  */
 package org.jclouds.gogrid.services;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -26,7 +28,6 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.jclouds.gogrid.domain.Ip;
@@ -35,7 +36,6 @@ import org.jclouds.gogrid.domain.ServerImage;
 import org.jclouds.gogrid.domain.ServerImageState;
 import org.jclouds.gogrid.options.SaveImageOptions;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
-import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -86,8 +86,8 @@ public class GridImageClientLiveTest extends BaseGoGridClientLiveTest {
 
    @Test
    public void testSaveServerToImage() throws IOException {
-      RetryablePredicate<Server> serverLatestJobCompleted = new RetryablePredicate<Server>(
-            new ServerLatestJobCompleted(restContext.getApi().getJobServices()), 800, 20, TimeUnit.SECONDS);
+      Predicate<Server> serverLatestJobCompleted = retry(new ServerLatestJobCompleted(restContext.getApi()
+            .getJobServices()), 800, 20, SECONDS);
 
       final String nameOfServer = "Server" + String.valueOf(new Date().getTime()).substring(6);
       ServerImage image = null;
@@ -131,14 +131,11 @@ public class GridImageClientLiveTest extends BaseGoGridClientLiveTest {
    }
 
    protected void assertEventuallyImageStateEquals(ServerImage image, final ServerImageState state) {
-      assertTrue(new RetryablePredicate<ServerImage>(new Predicate<ServerImage>() {
-
-         @Override
+      assertTrue(retry(new Predicate<ServerImage>() {
          public boolean apply(ServerImage input) {
-            return Iterables.getOnlyElement(restContext
-                  .getApi()
-                  .getImageServices().getImagesById(input.getId())).getState() == state;
+            return Iterables.getOnlyElement(restContext.getApi().getImageServices().getImagesById(input.getId()))
+                  .getState() == state;
          }
-      }, 600, 1, TimeUnit.SECONDS).apply(image));
+      }, 600, 1, SECONDS).apply(image));
    }
 }

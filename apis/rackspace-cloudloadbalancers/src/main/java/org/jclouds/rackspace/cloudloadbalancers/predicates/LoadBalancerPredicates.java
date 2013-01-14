@@ -19,10 +19,9 @@
 package org.jclouds.rackspace.cloudloadbalancers.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerApi;
 
@@ -37,7 +36,7 @@ import com.google.common.base.Predicate;
  * {@code
  * LoadBalancer loadBalancer = loadBalancerApi.create(loadBalancerRequest);
  * 
- * RetryablePredicate<String> awaitAvailable = new RetryablePredicate<String>(
+ * RetryablePredicate<String> awaitAvailable = RetryablePredicate.create(
  *    LoadBalancerPredicates.available(loadBalancerApi), 600, 10, 10, TimeUnit.SECONDS);
  * 
  * if (!awaitAvailable.apply(loadBalancer)) {
@@ -67,10 +66,9 @@ public class LoadBalancerPredicates {
     * @param loadBalancerApi The LoadBalancerApi in the zone where your LoadBalancer resides.
     * @return RetryablePredicate That will check the status every 3 seconds for a maxiumum of 5 minutes.
     */
-   public static RetryablePredicate<LoadBalancer> awaitAvailable(LoadBalancerApi loadBalancerApi) {
+   public static Predicate<LoadBalancer> awaitAvailable(LoadBalancerApi loadBalancerApi) {
       StatusUpdatedPredicate statusPredicate = new StatusUpdatedPredicate(loadBalancerApi, LoadBalancer.Status.ACTIVE);
-
-      return new RetryablePredicate<LoadBalancer>(statusPredicate, 300, 3, 3, TimeUnit.SECONDS);
+      return retry(statusPredicate, 300, 3, 3, SECONDS);
    }
    
    /**
@@ -80,17 +78,15 @@ public class LoadBalancerPredicates {
     * @return RetryablePredicate That will check the whether the LoadBalancer exists 
     * every 3 seconds for a maxiumum of 5 minutes.
     */
-   public static RetryablePredicate<LoadBalancer> awaitDeleted(LoadBalancerApi loadBalancerApi) {
+   public static Predicate<LoadBalancer> awaitDeleted(LoadBalancerApi loadBalancerApi) {
       DeletedPredicate deletedPredicate = new DeletedPredicate(loadBalancerApi);
-      
-      return new RetryablePredicate<LoadBalancer>(deletedPredicate, 300, 3, 3, TimeUnit.SECONDS);
+      return retry(deletedPredicate, 300, 3, 3, SECONDS);
    }
    
-   public static RetryablePredicate<LoadBalancer> awaitStatus(
+   public static Predicate<LoadBalancer> awaitStatus(
          LoadBalancerApi loadBalancerApi, LoadBalancer.Status status, long maxWaitInSec, long periodInSec) {
       StatusUpdatedPredicate statusPredicate = new StatusUpdatedPredicate(loadBalancerApi, status);
-      
-      return new RetryablePredicate<LoadBalancer>(statusPredicate, maxWaitInSec, periodInSec, periodInSec, TimeUnit.SECONDS);
+      return retry(statusPredicate, maxWaitInSec, periodInSec, periodInSec, SECONDS);
    }
    
    private static class StatusUpdatedPredicate implements Predicate<LoadBalancer> {

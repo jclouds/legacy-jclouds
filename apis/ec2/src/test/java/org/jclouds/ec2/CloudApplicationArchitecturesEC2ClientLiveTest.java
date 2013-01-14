@@ -18,10 +18,11 @@
  */
 package org.jclouds.ec2;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.ec2.options.RunInstancesOptions.Builder.asType;
+import static org.jclouds.util.Predicates2.retry;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
@@ -31,7 +32,6 @@ import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.AWSResponseException;
@@ -51,7 +51,6 @@ import org.jclouds.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.ec2.predicates.InstanceHasIpAddress;
 import org.jclouds.ec2.predicates.InstanceStateRunning;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.scriptbuilder.ScriptBuilder;
 import org.jclouds.scriptbuilder.domain.OsFamily;
@@ -61,6 +60,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -90,9 +90,9 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest extends BaseComputeS
    private String instanceId;
    private String address;
 
-   private RetryablePredicate<HostAndPort> socketTester;
-   private RetryablePredicate<RunningInstance> hasIpTester;
-   private RetryablePredicate<RunningInstance> runningTester;
+   private Predicate<HostAndPort> socketTester;
+   private Predicate<RunningInstance> hasIpTester;
+   private Predicate<RunningInstance> runningTester;
 
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
@@ -100,11 +100,10 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest extends BaseComputeS
       Injector injector = view.utils().injector();
       client = injector.getInstance(EC2Client.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
-      runningTester = new RetryablePredicate<RunningInstance>(new InstanceStateRunning(client), 180, 5,
-            TimeUnit.SECONDS);
-      hasIpTester = new RetryablePredicate<RunningInstance>(new InstanceHasIpAddress(client), 180, 5, TimeUnit.SECONDS);
+      runningTester = retry(new InstanceStateRunning(client), 180, 5,SECONDS);
+      hasIpTester = retry(new InstanceHasIpAddress(client), 180, 5, SECONDS);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<HostAndPort>(socketOpen, 180, 1, TimeUnit.SECONDS);
+      socketTester = retry(socketOpen, 180, 1, SECONDS);
    }
 
    @Test(enabled = false)

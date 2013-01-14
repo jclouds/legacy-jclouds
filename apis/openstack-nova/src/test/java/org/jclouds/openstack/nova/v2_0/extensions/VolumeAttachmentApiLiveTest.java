@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -28,7 +29,6 @@ import org.jclouds.openstack.nova.v2_0.domain.Volume;
 import org.jclouds.openstack.nova.v2_0.domain.VolumeAttachment;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiLiveTest;
 import org.jclouds.openstack.nova.v2_0.options.CreateVolumeOptions;
-import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -68,8 +68,7 @@ public class VolumeAttachmentApiLiveTest extends BaseNovaApiLiveTest {
          if (testVolume != null) {
             final String volumeId = testVolume.getId();
             assertTrue(volumeApi.get().delete(volumeId));
-            assertTrue(new RetryablePredicate<VolumeApi>(new Predicate<VolumeApi>() {
-               @Override
+            assertTrue(retry(new Predicate<VolumeApi>() {
                public boolean apply(VolumeApi volumeApi) {
                   return volumeApi.get(volumeId) == null;
                }
@@ -88,8 +87,7 @@ public class VolumeAttachmentApiLiveTest extends BaseNovaApiLiveTest {
                .availabilityZone(zone);
 
          testVolume = volumeApi.get().create(1, options);
-         assertTrue(new RetryablePredicate<VolumeApi>(new Predicate<VolumeApi>() {
-            @Override
+         assertTrue(retry(new Predicate<VolumeApi>() {
             public boolean apply(VolumeApi volumeApi) {
                return volumeApi.get(testVolume.getId()).getStatus() == Volume.Status.AVAILABLE;
             }
@@ -114,8 +112,7 @@ public class VolumeAttachmentApiLiveTest extends BaseNovaApiLiveTest {
             assertNotNull(testAttachment.getId());
             assertEquals(testAttachment.getVolumeId(), testVolume.getId());
 
-            assertTrue(new RetryablePredicate<VolumeAttachmentApi>(new Predicate<VolumeAttachmentApi>() {
-               @Override
+            assertTrue(retry(new Predicate<VolumeAttachmentApi>() {
                public boolean apply(VolumeAttachmentApi volumeAttachmentApi) {
                   return volumeAttachmentApi.listAttachmentsOnServer(serverId).size() > before;
                }
@@ -145,8 +142,7 @@ public class VolumeAttachmentApiLiveTest extends BaseNovaApiLiveTest {
             assertTrue(foundIt, "Failed to find the attachment we created in listAttachments() response");
 
             volumeAttachmentApi.get().detachVolumeFromServer(testVolume.getId(), serverId);
-            assertTrue(new RetryablePredicate<VolumeAttachmentApi>(new Predicate<VolumeAttachmentApi>() {
-               @Override
+            assertTrue(retry(new Predicate<VolumeAttachmentApi>() {
                public boolean apply(VolumeAttachmentApi volumeAttachmentApi) {
                   return volumeAttachmentApi.listAttachmentsOnServer(serverId).size() == before;
                }

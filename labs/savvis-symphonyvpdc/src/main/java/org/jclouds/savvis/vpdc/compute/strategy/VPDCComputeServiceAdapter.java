@@ -19,20 +19,21 @@
 package org.jclouds.savvis.vpdc.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 import static org.jclouds.savvis.vpdc.options.GetVMOptions.Builder.withPowerState;
 import static org.jclouds.savvis.vpdc.reference.VPDCConstants.PROPERTY_VPDC_VDC_EMAIL;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.Volume;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.savvis.vpdc.VPDCApi;
 import org.jclouds.savvis.vpdc.domain.Network;
 import org.jclouds.savvis.vpdc.domain.Org;
@@ -46,8 +47,8 @@ import org.jclouds.savvis.vpdc.reference.VCloudMediaType;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 
 ;
@@ -60,7 +61,7 @@ import com.google.inject.Inject;
 @Singleton
 public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSpec, CIMOperatingSystem, Network> {
    private final VPDCApi api;
-   private final RetryablePredicate<String> taskTester;
+   private final Predicate<String> taskTester;
    @Inject(optional = true)
    @Named(PROPERTY_VPDC_VDC_EMAIL)
    String email;
@@ -69,8 +70,7 @@ public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSp
    public VPDCComputeServiceAdapter(VPDCApi api, TaskSuccess taskSuccess) {
       this.api = checkNotNull(api, "api");
       // TODO: parameterize
-      this.taskTester = new RetryablePredicate<String>(checkNotNull(taskSuccess, "taskSuccess"), 650, 10,
-            TimeUnit.SECONDS);
+      this.taskTester = retry(checkNotNull(taskSuccess, "taskSuccess"), 650, 10, SECONDS);
    }
 
    @Override

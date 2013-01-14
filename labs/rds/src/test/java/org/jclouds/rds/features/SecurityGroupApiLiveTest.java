@@ -19,14 +19,14 @@
 package org.jclouds.rds.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.jclouds.collect.IterableWithMarker;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rds.domain.Authorization;
 import org.jclouds.rds.domain.Authorization.Status;
 import org.jclouds.rds.domain.EC2SecurityGroup;
@@ -49,36 +49,27 @@ public class SecurityGroupApiLiveTest extends BaseRDSApiLiveTest {
    public static final String SECURITYGROUP = (System.getProperty("user.name") + "-jclouds-securityGroup")
             .toLowerCase();
 
-   private RetryablePredicate<SecurityGroup> ipRangesAuthorized;
-   private RetryablePredicate<SecurityGroup> ipRangesRevoked;
+   private Predicate<SecurityGroup> ipRangesAuthorized;
+   private Predicate<SecurityGroup> ipRangesRevoked;
 
    @BeforeClass(groups = "live")
    @Override
    public void setupContext() {
       super.setupContext();
-      ipRangesAuthorized = new RetryablePredicate<SecurityGroup>(new Predicate<SecurityGroup>() {
-
-         @Override
+      ipRangesAuthorized = retry(new Predicate<SecurityGroup>() {
          public boolean apply(SecurityGroup input) {
             return Iterables.all(api().get(input.getName()).getIPRanges(), new Predicate<Authorization>() {
-
-               @Override
                public boolean apply(Authorization i2) {
                   return i2.getStatus() == Status.AUTHORIZED;
                }
-
             });
          }
-
-      }, 30000, 100, 500, TimeUnit.MILLISECONDS);
-      ipRangesRevoked = new RetryablePredicate<SecurityGroup>(new Predicate<SecurityGroup>() {
-
-         @Override
+      }, 30000, 100, 500, MILLISECONDS);
+      ipRangesRevoked = retry(new Predicate<SecurityGroup>() {
          public boolean apply(SecurityGroup input) {
             return api().get(input.getName()).getIPRanges().size() == 0;
          }
-
-      }, 30000, 100, 500, TimeUnit.MILLISECONDS);
+      }, 30000, 100, 500, MILLISECONDS);
    }
 
    private SecurityGroup securityGroup;

@@ -18,6 +18,8 @@
  */
 package org.jclouds.glesys.internal;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -28,6 +30,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.glesys.domain.Server;
+import org.jclouds.glesys.domain.Server.State;
 import org.jclouds.glesys.domain.ServerDetails;
 import org.jclouds.glesys.domain.ServerSpec;
 import org.jclouds.glesys.domain.ServerStatus;
@@ -35,7 +38,6 @@ import org.jclouds.glesys.features.DomainApi;
 import org.jclouds.glesys.features.ServerApi;
 import org.jclouds.glesys.options.DestroyServerOptions;
 import org.jclouds.glesys.options.ServerStatusOptions;
-import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -50,7 +52,7 @@ import com.google.common.base.Predicate;
 @Test(groups = "live", singleThreaded = true)
 public class BaseGleSYSApiWithAServerLiveTest extends BaseGleSYSApiLiveTest {
    protected String serverId;
-   protected ServerStatusChecker serverStatusChecker;
+   protected Predicate<State> serverStatusChecker;
 
    public BaseGleSYSApiWithAServerLiveTest() {
       provider = "glesys";
@@ -62,7 +64,6 @@ public class BaseGleSYSApiWithAServerLiveTest extends BaseGleSYSApiLiveTest {
       assertNull(serverId, "This method should be called EXACTLY once per run");
       super.setupContext();
       serverStatusChecker = createServer(hostName);
-      serverId = serverStatusChecker.getServerId();
    }
 
    @AfterClass(groups = { "integration", "live" })
@@ -76,17 +77,16 @@ public class BaseGleSYSApiWithAServerLiveTest extends BaseGleSYSApiLiveTest {
       final DomainApi api = gleContext.getApi().getDomainApi();
       int before = api.list().size();
       api.create(domain);
-      RetryablePredicate<Integer> result = new RetryablePredicate<Integer>(new Predicate<Integer>() {
+      Predicate<Integer> result = retry(new Predicate<Integer>() {
          public boolean apply(Integer value) {
             return api.list().size() == value;
          }
-      }, 30, 1, TimeUnit.SECONDS);
-
+      }, 30, 1, SECONDS);
       assertTrue(result.apply(before + 1));
    }
 
-   protected ServerStatusChecker createServer(String hostName) {
-      ServerApi api = gleContext.getApi().getServerApi();
+   protected Predicate<State> createServer(String hostName) {
+      final ServerApi api = gleContext.getApi().getServerApi();
 
       ServerDetails testServer = api.createWithHostnameAndRootPassword(
             ServerSpec.builder().datacenter("Falkenberg").platform("OpenVZ").templateName("Ubuntu 10.04 LTS 32-bit")
@@ -97,31 +97,20 @@ public class BaseGleSYSApiWithAServerLiveTest extends BaseGleSYSApiLiveTest {
       assertEquals(testServer.getHostname(), hostName);
       assertFalse(testServer.getIps().isEmpty());
 
-      ServerStatusChecker runningServerCounter = new ServerStatusChecker(api, testServer.getId(), 300, 10,
-            TimeUnit.SECONDS);
-
-      assertTrue(runningServerCounter.apply(Server.State.RUNNING));
-      return runningServerCounter;
+      Predicate<State> statusChecker = statusChecker(api, testServer.getId());
+      assertTrue(statusChecker.apply(Server.State.RUNNING));
+      serverId = testServer.getId();
+      return statusChecker;
    }
 
-   public static class ServerStatusChecker extends RetryablePredicate<Server.State> {
-      private final String serverId;
+   protected Predicate<State> statusChecker(final ServerApi api, final String serverId) {
+     return retry(new Predicate<Server.State>() {
 
-      public String getServerId() {
-         return serverId;
-      }
+         public boolean apply(Server.State value) {
+            ServerStatus status = api.getStatus(serverId, ServerStatusOptions.Builder.state());
+            return status.getState() == value;
+         }
 
-      public ServerStatusChecker(final ServerApi api, final String serverId, long maxWait, long period,
-            TimeUnit unit) {
-         super(new Predicate<Server.State>() {
-
-            public boolean apply(Server.State value) {
-               ServerStatus status = api.getStatus(serverId, ServerStatusOptions.Builder.state());
-               return status.getState() == value;
-            }
-
-         }, maxWait, period, unit);
-         this.serverId = serverId;
-      }
+      }, 300, 10, TimeUnit.SECONDS);
    }
 }

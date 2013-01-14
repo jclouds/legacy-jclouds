@@ -19,6 +19,7 @@
 package org.jclouds.gogrid.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.util.Predicates2.retry;
 
 import java.security.SecureRandom;
 import java.util.Set;
@@ -27,6 +28,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Template;
@@ -43,9 +45,9 @@ import org.jclouds.gogrid.domain.ServerImage;
 import org.jclouds.gogrid.options.GetIpListOptions;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
 import org.jclouds.logging.Logger;
-import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 
@@ -62,17 +64,17 @@ public class GoGridComputeServiceAdapter implements ComputeServiceAdapter<Server
 
    private final GoGridClient client;
    private final Function<Hardware, String> sizeToRam;
-   private final RetryablePredicate<Server> serverLatestJobCompleted;
-   private final RetryablePredicate<Server> serverLatestJobCompletedShort;
+   private final Predicate<Server> serverLatestJobCompleted;
+   private final Predicate<Server> serverLatestJobCompletedShort;
 
    @Inject
    protected GoGridComputeServiceAdapter(GoGridClient client, Function<Hardware, String> sizeToRam, Timeouts timeouts) {
       this.client = checkNotNull(client, "client");
       this.sizeToRam = checkNotNull(sizeToRam, "sizeToRam");
-      this.serverLatestJobCompleted = new RetryablePredicate<Server>(new ServerLatestJobCompleted(client
-               .getJobServices()), timeouts.nodeRunning * 9l / 10l);
-      this.serverLatestJobCompletedShort = new RetryablePredicate<Server>(new ServerLatestJobCompleted(client
-               .getJobServices()), timeouts.nodeRunning * 1l / 10l);
+      this.serverLatestJobCompleted = retry(new ServerLatestJobCompleted(client.getJobServices()),
+            timeouts.nodeRunning * 9l / 10l);
+      this.serverLatestJobCompletedShort = retry(new ServerLatestJobCompleted(client.getJobServices()),
+            timeouts.nodeRunning * 1l / 10l);
    }
 
    @Override

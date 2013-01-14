@@ -16,17 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.predicates;
+package org.jclouds.util;
 
-import static org.jclouds.predicates.RetryablePredicateTest.assertCallTimes;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.fail;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.predicates.RetryablePredicateTest.RepeatedAttemptsPredicate;
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -34,13 +35,14 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Supplier;
+import com.google.common.collect.Lists;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Test(groups = "unit", singleThreaded = true)
-public class RetryableNumTimesPredicateTest {
+public class Predicates2Test {
    // Grace must be reasonably big; Thread.sleep can take a bit longer to wake up sometimes...
    public static int SLOW_BUILD_SERVER_GRACE = 250;
 
@@ -81,15 +83,12 @@ public class RetryableNumTimesPredicateTest {
    }
 
    private void ensureImmediateReturnFor(final Exception ex) {
-      RetryableNumTimesPredicate<Supplier<String>> predicate = new RetryableNumTimesPredicate<Supplier<String>>(
+      Predicate<Supplier<String>> predicate = retry(
                new Predicate<Supplier<String>>() {
-
-                  @Override
                   public boolean apply(Supplier<String> input) {
                      return "goo".equals(input.get());
                   }
-
-               }, 3, 1L, TimeUnit.SECONDS);
+               }, 3, 1, SECONDS);
       
       stopwatch.start();
       assert !predicate.apply(new Supplier<String>() {
@@ -107,8 +106,7 @@ public class RetryableNumTimesPredicateTest {
    @Test
    void testAlwaysTrue() {
       // will call once immediately
-      RetryableNumTimesPredicate<String> predicate = new RetryableNumTimesPredicate<String>(Predicates.<String> alwaysTrue(), 
-               1, 1L, TimeUnit.SECONDS);
+      Predicate<String> predicate = retry(Predicates.<String> alwaysTrue(), 3, 1, SECONDS);
       stopwatch.start();
       predicate.apply("");
       long duration = stopwatch.elapsedMillis();
@@ -117,23 +115,21 @@ public class RetryableNumTimesPredicateTest {
 
    @Test
    void testAlwaysFalseMillis() {
-      // maxAttempts=3; period=1; maxPeriod defaults to 1*10
-      // will call at 0, 1, 1+(1*1.5) = 2.5secs
-      RetryableNumTimesPredicate<String> predicate = new RetryableNumTimesPredicate<String>(Predicates.<String> alwaysFalse(), 
-               3, 1L, TimeUnit.SECONDS);
+      // maxWait=3; period=1; maxPeriod defaults to 1*10
+      // will call at 0, 1, 1+(1*1.5), 3
+      Predicate<String> predicate = retry(Predicates.<String> alwaysFalse(), 3, 1, SECONDS);
       stopwatch.start();
       predicate.apply("");
       long duration = stopwatch.elapsedMillis();
-      assertOrdered(2500-EARLY_RETURN_GRACE, duration, 2500+SLOW_BUILD_SERVER_GRACE);
+      assertOrdered(3000-EARLY_RETURN_GRACE, duration, 3000+SLOW_BUILD_SERVER_GRACE);
    }
 
    @Test
    void testThirdTimeTrue() {
-      // maxAttempts=3; period=1; maxPeriod defaults to 1*10
+      // maxWait=4; period=1; maxPeriod defaults to 1*10
       // will call at 0, 1, 1+(1*1.5)
       RepeatedAttemptsPredicate rawPredicate = new RepeatedAttemptsPredicate(2);
-      RetryableNumTimesPredicate<String> predicate = new RetryableNumTimesPredicate<String>(rawPredicate, 
-               4, 1, TimeUnit.SECONDS);
+      Predicate<String> predicate = retry(rawPredicate, 4, 1, SECONDS);
 
       stopwatch.start();
       predicate.apply("");
@@ -145,11 +141,10 @@ public class RetryableNumTimesPredicateTest {
 
    @Test
    void testThirdTimeTrueLimitedMaxInterval() {
-      // maxAttempts=3; period=1; maxPeriod=1
+      // maxWait=3; period=1; maxPeriod=1
       // will call at 0, 1, 1+1
       RepeatedAttemptsPredicate rawPredicate = new RepeatedAttemptsPredicate(2);
-      RetryableNumTimesPredicate<String> predicate = new RetryableNumTimesPredicate<String>(rawPredicate, 
-               3, 1L, 1L, TimeUnit.SECONDS);
+      Predicate<String> predicate = retry(rawPredicate, 3, 1, 1, SECONDS);
 
       stopwatch.start();
       predicate.apply("");
@@ -157,6 +152,33 @@ public class RetryableNumTimesPredicateTest {
       
       assertOrdered(2000-EARLY_RETURN_GRACE, duration, 2000+SLOW_BUILD_SERVER_GRACE);
       assertCallTimes(rawPredicate.callTimes, 0, 1000, 2000);
+   }
+   
+   public static class RepeatedAttemptsPredicate implements Predicate<String> {
+      final List<Long> callTimes = Lists.newArrayList();
+      private final int succeedOnAttempt;
+      private final Stopwatch stopwatch;
+      private int count = 0;
+      
+      RepeatedAttemptsPredicate(int succeedOnAttempt) {
+         this.succeedOnAttempt = succeedOnAttempt;
+         this.stopwatch = new Stopwatch();
+         stopwatch.start();
+      }
+      @Override
+      public boolean apply(String input) {
+         callTimes.add(stopwatch.elapsedMillis());
+         return count++ == succeedOnAttempt;
+      }
+   }
+   
+   @Test(enabled=false) // not a test, but picked up as such because public
+   public static void assertCallTimes(List<Long> actual, Integer... expected) {
+      Assert.assertEquals(actual.size(), expected.length);
+      for (int i = 0; i < expected.length; i++) {
+         long callTime = actual.get(i);
+         assertOrdered(expected[i]-EARLY_RETURN_GRACE, callTime, expected[i]+SLOW_BUILD_SERVER_GRACE);
+      }
    }
    
    private static void assertOrdered(long... values) {

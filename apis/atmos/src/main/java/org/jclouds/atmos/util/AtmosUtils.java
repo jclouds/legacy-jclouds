@@ -18,6 +18,7 @@
  */
 package org.jclouds.atmos.util;
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.util.Predicates2.retry;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -40,7 +41,6 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Predicate;
 
@@ -87,7 +87,7 @@ public class AtmosUtils {
    }
    
    public static void deletePathAndEnsureGone(final AtmosClient sync, String path) {
-      checkState(new RetryablePredicate<String>(new Predicate<String>() {
+      checkState(retry(new Predicate<String>() {
          public boolean apply(String in) {
             try {
                sync.deletePath(in);

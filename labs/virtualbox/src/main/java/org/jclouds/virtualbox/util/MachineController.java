@@ -20,9 +20,10 @@ package org.jclouds.virtualbox.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -30,7 +31,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.predicates.RetryableNumTimesPredicate;
 import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.functions.LaunchMachineIfNotAlreadyRunning;
 import org.virtualbox_4_2.AdditionsFacilityStatus;
@@ -100,8 +100,7 @@ public class MachineController {
             new Function<ISession, String>() {
                @Override
                public String apply(ISession session) {
-                  new RetryableNumTimesPredicate<Integer>(new FacilitiesPredicate(session), 
-                        5, 3L, TimeUnit.SECONDS).apply(4);
+                  retry(new FacilitiesPredicate(session), 15, 3, SECONDS).apply(4);
                   String guestAdditionsInstalled = session.getConsole().getGuest().getAdditionsVersion();
                   return guestAdditionsInstalled;
                }
@@ -139,10 +138,10 @@ public class MachineController {
                   session.getConsole().powerButton();
                   return session;
                }
-            });                 
-      checkState(new RetryableNumTimesPredicate<MachineState>(
-            new MachineStatePredicate(manager.get().getVBox(), vmName), 5,
-                  3L, TimeUnit.SECONDS).apply(MachineState.PoweredOff), "vm(%s) is not shutdown correctly", vmName);
+            });        
+      checkState(
+            retry(new MachineStatePredicate(manager.get().getVBox(), vmName), 15, 3, SECONDS).apply(
+                  MachineState.PoweredOff), "vm(%s) is not shutdown correctly", vmName);
       return checkNotNull(session, "session");
    }
 
@@ -200,10 +199,11 @@ public class MachineController {
 
          @Override
          public Void apply(ISession session) {
-            checkState(new RetryableNumTimesPredicate<AdditionsRunLevelType>(new AdditionsStatusPredicate(session), 
-                  5, 2L, TimeUnit.SECONDS).apply(AdditionsRunLevelType.Userland), "timed out waiting for additionsRunLevelType to be %s", AdditionsRunLevelType.Userland);
-            checkState(new RetryableNumTimesPredicate<Integer>(new FacilitiesPredicate(session), 
-                  5, 3L, TimeUnit.SECONDS).apply(4), "timed out waiting for 4 running facilities");
+            checkState(
+                  retry(new AdditionsStatusPredicate(session), 10, 2, SECONDS).apply(AdditionsRunLevelType.Userland),
+                  "timed out waiting for additionsRunLevelType to be %s", AdditionsRunLevelType.Userland);
+            checkState(retry(new FacilitiesPredicate(session), 15, 3, SECONDS).apply(4),
+                  "timed out waiting for 4 running facilities");
             Optional<IAdditionsFacility> vboxServiceFacility = Optional.absent();
             while (!vboxServiceFacility.isPresent()) {
                List<IAdditionsFacility> facilities = session.getConsole().getGuest().getFacilities();

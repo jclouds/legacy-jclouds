@@ -20,9 +20,10 @@ package org.jclouds.ec2.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Resource;
@@ -41,7 +42,6 @@ import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.features.WindowsApi;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
-import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -103,8 +103,8 @@ public class PasswordCredentialsFromWindowsInstance implements Function<RunningI
       };
 
       // TODO: parameterize
-      RetryablePredicate<String> passwordReadyRetryable = new RetryablePredicate<String>(passwordReady, 600, 10,
-               TimeUnit.SECONDS);
+      Predicate<String> passwordReadyRetryable = retry(passwordReady, 600, 10, SECONDS);
+
       logger.debug(">> awaiting password data for instance(%s/%s)", instance.getRegion(), instance.getId());
       if (passwordReadyRetryable.apply(instance.getId())) {
          credentials = pwDataToLoginCredentials.apply(new PasswordDataAndPrivateKey(data.get(), privateKey));

@@ -18,10 +18,15 @@
  */
 package org.jclouds.googlecompute.internal;
 
-import com.google.common.base.Predicate;
-import com.google.common.reflect.TypeToken;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
+import static org.testng.Assert.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
+
+import java.net.URI;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.googlecompute.GoogleComputeApi;
 import org.jclouds.googlecompute.GoogleComputeApiMetadata;
@@ -29,16 +34,12 @@ import org.jclouds.googlecompute.GoogleComputeAsyncApi;
 import org.jclouds.googlecompute.config.UserProject;
 import org.jclouds.googlecompute.domain.Operation;
 import org.jclouds.oauth.v2.OAuthTestUtils;
-import org.jclouds.predicates.Retryables;
 import org.jclouds.rest.RestContext;
 
-import java.net.URI;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
+import com.google.common.base.Predicate;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 
 /**
@@ -123,10 +124,8 @@ public class BaseGoogleComputeApiLiveTest extends BaseContextLiveTest<RestContex
    protected static Operation waitOperationDone(Predicate<AtomicReference<Operation>> operationDonePredicate,
                                                 Operation operation, long maxWaitSeconds) {
       AtomicReference<Operation> operationReference = new AtomicReference<Operation>(operation);
-      Retryables.retry(operationDonePredicate, operationReference, maxWaitSeconds, 1, TimeUnit.SECONDS);
+      retry(operationDonePredicate,  maxWaitSeconds, 1, SECONDS).apply(operationReference);
       return operationReference.get();
    }
-
-
 }
 

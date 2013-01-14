@@ -17,7 +17,6 @@
  * under the License.
  */
 package org.jclouds.compute.internal;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
@@ -30,6 +29,7 @@ import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newTreeSet;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.logging.Logger.getAnonymousLogger;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.nameTask;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
@@ -41,6 +41,7 @@ import static org.jclouds.compute.predicates.NodePredicates.all;
 import static org.jclouds.compute.predicates.NodePredicates.inGroup;
 import static org.jclouds.compute.predicates.NodePredicates.runningInGroup;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
@@ -82,7 +83,6 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.scriptbuilder.domain.Statement;
@@ -154,7 +154,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
 
    protected void buildSocketTester() {
       SocketOpen socketOpen = view.utils().injector().getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<HostAndPort>(socketOpen, 60, 1, TimeUnit.SECONDS);
+      socketTester = retry(socketOpen, 60, 1, SECONDS);
       // wait a maximum of 60 seconds for port 8080 to open.
       openSocketFinder = context.utils().injector().getInstance(OpenSocketFinder.class);
    }

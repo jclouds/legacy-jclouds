@@ -21,10 +21,11 @@ package org.jclouds.loadbalancer.internal;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Sets.newLinkedHashSet;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.jclouds.util.Predicates2.retry;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Resource;
@@ -44,7 +45,6 @@ import org.jclouds.loadbalancer.strategy.GetLoadBalancerMetadataStrategy;
 import org.jclouds.loadbalancer.strategy.ListLoadBalancersStrategy;
 import org.jclouds.loadbalancer.strategy.LoadBalanceNodesStrategy;
 import org.jclouds.logging.Logger;
-import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
@@ -138,9 +138,7 @@ public class BaseLoadBalancerService implements LoadBalancerService {
       checkNotNull(id, "id");
       logger.debug(">> destroying load balancer(%s)", id);
       final AtomicReference<LoadBalancerMetadata> loadBalancer = Atomics.newReference();
-      RetryablePredicate<String> tester = new RetryablePredicate<String>(new Predicate<String>() {
-
-         @Override
+      Predicate<String> tester = retry(new Predicate<String>() {
          public boolean apply(String input) {
             try {
                LoadBalancerMetadata md = destroyLoadBalancerStrategy.destroyLoadBalancer(id);
@@ -152,8 +150,7 @@ public class BaseLoadBalancerService implements LoadBalancerService {
                return false;
             }
          }
-
-      }, 3000, 1000, TimeUnit.MILLISECONDS);// TODO make timeouts class like ComputeServiceconstants
+      }, 3000, 1000, MILLISECONDS);// TODO make timeouts class like ComputeServiceconstants
       boolean successful = tester.apply(id) && loadBalancer.get() == null; // TODO add load
                                                                            // balancerTerminated
       // retryable predicate

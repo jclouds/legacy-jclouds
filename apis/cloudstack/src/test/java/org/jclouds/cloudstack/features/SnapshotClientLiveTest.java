@@ -36,8 +36,6 @@ import org.jclouds.cloudstack.domain.Volume;
 import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.options.ListSnapshotsOptions;
 import org.jclouds.logging.Logger;
-import org.jclouds.predicates.PredicateCallable;
-import org.jclouds.predicates.Retryables;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -121,18 +119,10 @@ public class SnapshotClientLiveTest extends BaseCloudStackClientLiveTest {
 
    public void testCreateSnapshotFromVolume() {
       final Volume volume = getPreferredVolume();  //fail fast if none
-
-      Snapshot snapshot = Retryables.retryGettingResultOrFailing(new PredicateCallable<Snapshot>() {
-         public Snapshot call() {
-            logger.info("creating snapshot from volume %s", volume);
-            AsyncCreateResponse job = client.getSnapshotClient().createSnapshot(volume.getId());
-            assertTrue(jobComplete.apply(job.getJobId()));
-            return findSnapshotWithId(job.getId());
-         }
-         protected void onFailure() {
-            logger.info("failed creating snapshot (retrying): %s", getLastFailure());
-         }
-      }, null, 60*1000, "failed to create snapshot");
+      logger.info("creating snapshot from volume %s", volume);
+      AsyncCreateResponse job = client.getSnapshotClient().createSnapshot(volume.getId());
+      assertTrue(jobComplete.apply(job.getJobId()));
+      Snapshot snapshot = findSnapshotWithId(job.getId());
       logger.info("created snapshot %s from volume %s", snapshot, volume);
       checkSnapshot(snapshot);
       client.getSnapshotClient().deleteSnapshot(snapshot.getId());

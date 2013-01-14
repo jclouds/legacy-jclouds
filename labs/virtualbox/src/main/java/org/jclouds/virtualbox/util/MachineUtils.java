@@ -20,6 +20,7 @@ package org.jclouds.virtualbox.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.util.Predicates2.retry;
 
 import java.util.concurrent.TimeUnit;
 
@@ -34,7 +35,6 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.predicates.RetryableNumTimesPredicate;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Throwables2;
 import org.jclouds.virtualbox.functions.IpAddressesLoadingCache;
@@ -60,9 +60,6 @@ import com.google.inject.Inject;
 
 @Singleton
 public class MachineUtils {
-   
-   
-
    public final String IP_V4_ADDRESS_PATTERN = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
             + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
             + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
@@ -270,8 +267,8 @@ public class MachineUtils {
    }
 
    private void checkSessionIsUnlocked(ISession session, int attempts, long period, TimeUnit timeUnit) {
-      checkState(new RetryableNumTimesPredicate<SessionState>(new SessionStatePredicate(session), 
-            attempts, period, timeUnit).apply(SessionState.Unlocked), 
+      checkState(
+            retry(new SessionStatePredicate(session), attempts * period, period, timeUnit).apply(SessionState.Unlocked),
             "timed out or number of retries(%s) reached waiting for session to be unlocked", attempts);
    }
 

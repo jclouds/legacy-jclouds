@@ -18,13 +18,14 @@
  */
 package org.jclouds.aws.ec2.compute.config;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_AMI_QUERY;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
+import static org.jclouds.util.Predicates2.retry;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import javax.inject.Named;
@@ -59,11 +60,8 @@ import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
 import org.jclouds.ec2.compute.loaders.CreateSecurityGroupIfNeeded;
 import org.jclouds.ec2.compute.loaders.LoadPublicIpForInstanceOrNull;
 import org.jclouds.ec2.compute.loaders.RegionAndIdToImage;
-import org.jclouds.ec2.compute.predicates.GetImageWhenStatusAvailablePredicateWithResult;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.RunningInstance;
-import org.jclouds.predicates.PredicateWithResult;
-import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -111,8 +109,6 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
       }).to(EC2ImageParser.class);
       bind(new TypeLiteral<ImageExtension>() {
       }).to(EC2ImageExtension.class);
-      bind(new TypeLiteral<PredicateWithResult<String, Image>>() {
-      }).to(GetImageWhenStatusAvailablePredicateWithResult.class);
    }
 
    @Provides
@@ -147,14 +143,14 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
    @Singleton
    @Named("AVAILABLE")
    protected Predicate<PlacementGroup> placementGroupAvailable(PlacementGroupAvailable available) {
-      return new RetryablePredicate<PlacementGroup>(available, 60, 1, TimeUnit.SECONDS);
+      return retry(available, 60, 1, SECONDS);
    }
 
    @Provides
    @Singleton
    @Named("DELETED")
    protected Predicate<PlacementGroup> placementGroupDeleted(PlacementGroupDeleted deleted) {
-      return new RetryablePredicate<PlacementGroup>(deleted, 60, 1, TimeUnit.SECONDS);
+      return retry(deleted, 60, 1, SECONDS);
    }
 
    @Provides

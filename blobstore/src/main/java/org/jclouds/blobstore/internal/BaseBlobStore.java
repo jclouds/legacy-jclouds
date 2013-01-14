@@ -21,6 +21,7 @@ package org.jclouds.blobstore.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
+import static org.jclouds.util.Predicates2.retry;
 
 import java.util.Set;
 
@@ -38,7 +39,6 @@ import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.blobstore.util.internal.BlobUtilsImpl;
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
-import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
@@ -197,7 +197,7 @@ public abstract class BaseBlobStore implements BlobStore {
    }
 
    protected void deletePathAndEnsureGone(String path) {
-      checkState(new RetryablePredicate<String>(new Predicate<String>() {
+      checkState(retry(new Predicate<String>() {
          public boolean apply(String in) {
             try {
                clearContainer(in, recursive());

@@ -20,12 +20,13 @@ package org.jclouds.cloudstack.internal;
 
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.get;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.jclouds.cloudstack.CloudStackAsyncClient;
@@ -53,7 +54,6 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.internal.BaseGenericComputeServiceContextLiveTest;
 import org.jclouds.predicates.InetSocketAddressConnect;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
@@ -156,12 +156,12 @@ public class BaseCloudStackClientLiveTest extends BaseGenericComputeServiceConte
    protected User user;
 
    protected Predicate<HostAndPort> socketTester;
-   protected RetryablePredicate<String> jobComplete;
-   protected RetryablePredicate<String> adminJobComplete;
-   protected RetryablePredicate<VirtualMachine> virtualMachineRunning;
-   protected RetryablePredicate<VirtualMachine> adminVirtualMachineRunning;
-   protected RetryablePredicate<VirtualMachine> virtualMachineDestroyed;
-   protected RetryablePredicate<VirtualMachine> adminVirtualMachineDestroyed;
+   protected Predicate<String> jobComplete;
+   protected Predicate<String> adminJobComplete;
+   protected Predicate<VirtualMachine> virtualMachineRunning;
+   protected Predicate<VirtualMachine> adminVirtualMachineRunning;
+   protected Predicate<VirtualMachine> virtualMachineDestroyed;
+   protected Predicate<VirtualMachine> adminVirtualMachineDestroyed;
    protected SshClient.Factory sshFactory;
 
    protected Injector injector;
@@ -223,23 +223,20 @@ public class BaseCloudStackClientLiveTest extends BaseGenericComputeServiceConte
 
       injector = cloudStackContext.utils().injector();
       sshFactory = injector.getInstance(SshClient.Factory.class);
-      socketTester = new RetryablePredicate<HostAndPort>(new InetSocketAddressConnect(), 180, 1, 1, TimeUnit.SECONDS);
+      socketTester = retry(new InetSocketAddressConnect(), 180, 1, 1, SECONDS);
       injector.injectMembers(socketTester);
-      jobComplete = new RetryablePredicate<String>(new JobComplete(client), 1200, 1, 5, TimeUnit.SECONDS);
+
+      jobComplete = retry(new JobComplete(client), 1200, 1, 5, SECONDS);
       injector.injectMembers(jobComplete);
-      adminJobComplete = new RetryablePredicate<String>(new JobComplete(adminClient), 1200, 1, 5, TimeUnit.SECONDS);
+      adminJobComplete = retry(new JobComplete(adminClient), 1200, 1, 5, SECONDS);
       injector.injectMembers(adminJobComplete);
-      virtualMachineRunning = new RetryablePredicate<VirtualMachine>(new VirtualMachineRunning(client), 600, 5, 5,
-            TimeUnit.SECONDS);
+      virtualMachineRunning = retry(new VirtualMachineRunning(client), 600, 5, 5, SECONDS);
       injector.injectMembers(virtualMachineRunning);
-      adminVirtualMachineRunning = new RetryablePredicate<VirtualMachine>(new VirtualMachineRunning(adminClient), 600,
-            5, 5, TimeUnit.SECONDS);
+      adminVirtualMachineRunning = retry(new VirtualMachineRunning(adminClient), 600, 5, 5, SECONDS);
       injector.injectMembers(adminVirtualMachineRunning);
-      virtualMachineDestroyed = new RetryablePredicate<VirtualMachine>(new VirtualMachineDestroyed(client), 600, 5, 5,
-            TimeUnit.SECONDS);
+      virtualMachineDestroyed = retry(new VirtualMachineDestroyed(client), 600, 5, 5, SECONDS);
       injector.injectMembers(virtualMachineDestroyed);
-      adminVirtualMachineDestroyed = new RetryablePredicate<VirtualMachine>(new VirtualMachineDestroyed(adminClient),
-            600, 5, 5, TimeUnit.SECONDS);
+      adminVirtualMachineDestroyed = retry(new VirtualMachineDestroyed(adminClient), 600, 5, 5, SECONDS);
       injector.injectMembers(adminVirtualMachineDestroyed);
       reuseOrAssociate = new ReuseOrAssociateNewPublicIPAddress(client, new BlockUntilJobCompletesAndReturnResult(
             client, jobComplete));

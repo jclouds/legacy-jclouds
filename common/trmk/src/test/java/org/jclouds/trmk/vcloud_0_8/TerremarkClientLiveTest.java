@@ -21,6 +21,8 @@ package org.jclouds.trmk.vcloud_0_8;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.size;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
 import static org.jclouds.trmk.vcloud_0_8.domain.VAppConfiguration.Builder.changeNameTo;
 import static org.jclouds.trmk.vcloud_0_8.domain.VAppConfiguration.Builder.deleteDiskWithAddressOnParent;
 import static org.jclouds.trmk.vcloud_0_8.options.CloneVAppOptions.Builder.deploy;
@@ -37,21 +39,19 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.cim.CIMPredicates;
 import org.jclouds.cim.ResourceAllocationSettingData;
 import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshClient.Factory;
-import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.ssh.SshException;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.trmk.vcloud_0_8.domain.Catalog;
 import org.jclouds.trmk.vcloud_0_8.domain.CatalogItem;
 import org.jclouds.trmk.vcloud_0_8.domain.CustomizationParameters;
@@ -78,6 +78,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -96,8 +97,8 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
    protected InternetService is;
    protected Node node;
    protected VApp vApp;
-   protected RetryablePredicate<HostAndPort> socketTester;
-   protected RetryablePredicate<URI> successTester;
+   protected Predicate<HostAndPort> socketTester;
+   protected Predicate<URI> successTester;
    protected Injector injector;
 
    protected VApp clone;
@@ -488,13 +489,10 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
       injector = view.utils().injector();
 
       sshFactory = injector.getInstance(SshClient.Factory.class);
-      socketTester = new RetryablePredicate<HostAndPort>(injector.getInstance(SocketOpen.class), 300, 10, TimeUnit.SECONDS);// make
-      // it
-      // longer
-      // then
-      // default internet
-      // service timeout
-      successTester = new RetryablePredicate<URI>(injector.getInstance(TaskSuccess.class), 650, 10, TimeUnit.SECONDS);
+
+      // longer than default internet service timeout
+      socketTester = retry(injector.getInstance(SocketOpen.class), 300, 10, SECONDS);
+      successTester = retry(injector.getInstance(TaskSuccess.class), 650, 10, SECONDS);
       connection = (S) RestContext.class.cast(view.unwrap()).getApi();
       orgs = listOrgs();
    }
