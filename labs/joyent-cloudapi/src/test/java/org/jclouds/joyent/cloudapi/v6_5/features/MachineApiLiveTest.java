@@ -27,7 +27,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.crypto.SshKeys;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.joyent.cloudapi.v6_5.domain.Key;
 import org.jclouds.joyent.cloudapi.v6_5.domain.Machine;
@@ -37,6 +36,7 @@ import org.jclouds.joyent.cloudapi.v6_5.reference.Metadata;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.ssh.SshKeys;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.util.InetAddresses2;
 import org.testng.annotations.AfterGroups;

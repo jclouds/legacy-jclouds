@@ -19,6 +19,9 @@
 package org.jclouds.rest.internal;
 
 import static com.google.common.base.Optional.fromNullable;
+import static com.google.common.collect.ObjectArrays.concat;
+import static com.google.common.util.concurrent.Uninterruptibles.getUninterruptibly;
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -39,6 +42,8 @@ import com.google.common.base.Optional;
 import com.google.common.reflect.Invokable;
 import com.google.common.reflect.TypeToken;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.UncheckedExecutionException;
+import com.google.common.util.concurrent.UncheckedTimeoutException;
 import com.google.inject.assistedinject.Assisted;
 
 public class BlockOnFuture implements Function<ListenableFuture<?>, Result> {
@@ -77,18 +82,38 @@ public class BlockOnFuture implements Function<ListenableFuture<?>, Result> {
       try {
          if (timeoutNanos.isPresent()) {
             logger.debug(">> blocking on %s for %s", future, timeoutNanos);
-            return Result.success(future.get(timeoutNanos.get(), TimeUnit.NANOSECONDS));
+            return Result.success(getUninterruptibly(future, timeoutNanos.get(), NANOSECONDS));
          } else {
             logger.debug(">> blocking on %s", future);
-            return Result.success(future.get());
+            return Result.success(getUninterruptibly(future));
          }
       } catch (ExecutionException e) {
-         return Result.fail(e.getCause());
-      } catch (InterruptedException e) {
-         return Result.fail(e); // TODO: should we kill the future?
+         throw propagateCause(e);
       } catch (TimeoutException e) {
-         return Result.fail(e);
+         future.cancel(true);
+         throw new UncheckedTimeoutException(e);
       }
+   }
+
+   private static RuntimeException propagateCause(Exception e) {
+      Throwable cause = e.getCause();
+      if (cause == null) {
+         UncheckedExecutionException unchecked = new UncheckedExecutionException(e.getMessage()) {
+            private static final long serialVersionUID = 1L;
+         };
+         unchecked.setStackTrace(e.getStackTrace());
+         throw unchecked;
+      }
+      StackTraceElement[] combined = concat(cause.getStackTrace(), e.getStackTrace(), StackTraceElement.class);
+      cause.setStackTrace(combined);
+      if (cause instanceof RuntimeException) {
+         throw (RuntimeException) cause;
+      }
+      if (cause instanceof Error) {
+         throw (Error) cause;
+      }
+      // The cause is a weird kind of Throwable, so throw the outer exception.
+      throw new RuntimeException(e);
    }
 
    // override timeout by values configured in properties(in ms)

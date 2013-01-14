@@ -16,30 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.crypto;
+package org.jclouds.ssh;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.security.SecureRandom;
 import java.util.Map;
 
-import javax.inject.Singleton;
+import org.jclouds.ssh.internal.RsaSshKeyPairGenerator;
 
-import com.google.inject.Inject;
+import com.google.common.base.Supplier;
+import com.google.inject.ImplementedBy;
 
-@Singleton
-class RsaSshKeyPairGenerator implements SshKeyPairGenerator {
-   private final Crypto crypto;
-   private final SecureRandom secureRandom;
+/**
+ * Creates a unique keypair without a passphrase. The resulting map has the following keys
+ * <ul>
+ * <li>public</li>
+ * <li>private</li>
+ * </ul>
+ */
+@ImplementedBy(RsaSshKeyPairGenerator.class)
+public interface SshKeyPairGenerator extends Supplier<Map<String, String>> {
 
-   @Inject
-   private RsaSshKeyPairGenerator(Crypto crypto, SecureRandom secureRandom) {
-      this.crypto = checkNotNull(crypto, "crypto");
-      this.secureRandom = checkNotNull(secureRandom, "secureRandom");
-   }
-
-   @Override
-   public Map<String, String> get() {
-      return SshKeys.generate(crypto.rsaKeyPairGenerator(), secureRandom);
-   }
 }

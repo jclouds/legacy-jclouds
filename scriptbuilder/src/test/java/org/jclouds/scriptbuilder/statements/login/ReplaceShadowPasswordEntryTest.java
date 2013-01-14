@@ -18,24 +18,34 @@
  */
 package org.jclouds.scriptbuilder.statements.login;
 
+import static org.testng.Assert.*;
+
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Function;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "unit")
 public class ReplaceShadowPasswordEntryTest {
+   Function<String, String> crypt = new Function<String, String>() {
+      public String apply(String in) {
+         assertEquals(in, "password");
+         return "CRYPT";
+      }
+   };
 
    public void testWithPasswordUNIX() {
-      String userAdd = new ReplaceShadowPasswordEntry("foo", "bar").render(OsFamily.UNIX);
-      assert userAdd.startsWith("awk -v user=^foo: -v password='$6$") : userAdd;
+      String userAdd = new ReplaceShadowPasswordEntry(crypt, "foo", "password").render(OsFamily.UNIX);
+      assert userAdd.startsWith("awk -v user=^foo: -v password='CRYPT") : userAdd;
       assert userAdd
             .endsWith("' 'BEGIN { FS=OFS=\":\" } $0 ~ user { $2 = password } 1' /etc/shadow >/etc/shadow.foo\ntest -f /etc/shadow.foo && mv /etc/shadow.foo /etc/shadow\n") : userAdd;
    }
 
    @Test(expectedExceptions = UnsupportedOperationException.class)
    public void testAddUserWindowsNotSupported() {
-      new ReplaceShadowPasswordEntry("user", "password").render(OsFamily.WINDOWS);
+      new ReplaceShadowPasswordEntry(crypt, "user", "password").render(OsFamily.WINDOWS);
    }
 }

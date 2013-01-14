@@ -28,12 +28,12 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.crypto.SshKeyPairGenerator;
 import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudApi;
 import org.jclouds.joyent.cloudapi.v6_5.compute.internal.KeyAndPrivateKey;
 import org.jclouds.joyent.cloudapi.v6_5.domain.Key;
 import org.jclouds.joyent.cloudapi.v6_5.domain.datacenterscoped.DatacenterAndName;
 import org.jclouds.logging.Logger;
+import org.jclouds.ssh.SshKeyPairGenerator;
 
 import com.google.common.cache.CacheLoader;
 import com.google.inject.Inject;

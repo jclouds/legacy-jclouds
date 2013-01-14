@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.crypto;
+package org.jclouds.ssh.config;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
@@ -37,7 +37,11 @@ import java.security.SecureRandom;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 
+import org.jclouds.crypto.Crypto;
+import org.jclouds.crypto.Pems;
 import org.jclouds.io.Payloads;
+import org.jclouds.ssh.SshKeys;
+import org.jclouds.ssh.internal.RsaSshKeyPairGenerator;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 

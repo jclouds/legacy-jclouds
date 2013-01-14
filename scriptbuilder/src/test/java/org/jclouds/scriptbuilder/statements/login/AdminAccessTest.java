@@ -19,7 +19,6 @@
 package org.jclouds.scriptbuilder.statements.login;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
 
@@ -50,10 +49,9 @@ public class AdminAccessTest {
       try {
          assertEquals(
                AdminAccess.builder().adminPassword("bar").adminPrivateKey("fooPrivateKey")
-                     .adminPublicKey("fooPublicKey").adminUsername("foo")
-                     .adminHome("/over/ridden/foo").build()
-                     .init(TestConfiguration.INSTANCE).render(OsFamily.UNIX), 
-                     Resources.toString(Resources.getResource("test_adminaccess_params.sh"), Charsets.UTF_8));
+                     .adminPublicKey("fooPublicKey").adminUsername("foo").adminHome("/over/ridden/foo").build()
+                     .init(TestConfiguration.INSTANCE).render(OsFamily.UNIX),
+               Resources.toString(Resources.getResource("test_adminaccess_params.sh"), Charsets.UTF_8));
 
       } finally {
          TestConfiguration.INSTANCE.reset();
@@ -66,15 +64,13 @@ public class AdminAccessTest {
          assertEquals(
                AdminAccess.builder().adminPassword("bar").adminPrivateKey("fooPrivateKey")
                      .adminPublicKey("fooPublicKey").adminUsername("foo").adminFullName("JClouds Foo")
-                     .adminHome("/over/ridden/foo").build()
-                     .init(TestConfiguration.INSTANCE).render(OsFamily.UNIX),
+                     .adminHome("/over/ridden/foo").build().init(TestConfiguration.INSTANCE).render(OsFamily.UNIX),
                Resources.toString(Resources.getResource("test_adminaccess_params_and_fullname.sh"), Charsets.UTF_8));
 
       } finally {
          TestConfiguration.INSTANCE.reset();
       }
    }
-
 
    public void testOnlyInstallUserUNIX() throws IOException {
       TestConfiguration.INSTANCE.reset();
@@ -83,20 +79,19 @@ public class AdminAccessTest {
                AdminAccess.builder().grantSudoToAdminUser(false).authorizeAdminPublicKey(true)
                      .installAdminPrivateKey(true).lockSsh(false).resetLoginPassword(false).build()
                      .init(TestConfiguration.INSTANCE).render(OsFamily.UNIX),
-                     Resources.toString(Resources.getResource("test_adminaccess_plainuser.sh"), Charsets.UTF_8));
+               Resources.toString(Resources.getResource("test_adminaccess_plainuser.sh"), Charsets.UTF_8));
       } finally {
          TestConfiguration.INSTANCE.reset();
       }
    }
 
-   @Test(expectedExceptions = UnsupportedOperationException.class)
+   @Test(expectedExceptions = UnsupportedOperationException.class, expectedExceptionsMessageRegExp = "windows not yet implemented")
    public void testCreateWheelWindowsNotSupported() {
       AdminAccess.standard().init(TestConfiguration.INSTANCE).render(OsFamily.WINDOWS);
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
-   // for issue 682
-   public void testRootNotAllowed() throws IOException {
+   @Test(expectedExceptions = IllegalArgumentException.class, expectedExceptionsMessageRegExp = "cannot create admin user 'root'; ensure jclouds is not running as root, or specify an explicit non-root username in AdminAccess")
+   public void testRootNotAllowed() {
       TestConfiguration.INSTANCE.reset();
       try {
          AdminAccess.builder().adminUsername("root").build().init(TestConfiguration.INSTANCE).render(OsFamily.UNIX);
@@ -105,12 +100,13 @@ public class AdminAccessTest {
       }
    }
 
-   @Test(expectedExceptions = NullPointerException.class)
-   public void testFamilyRequiredAllowed() throws IOException {
+   @Test(expectedExceptions = NullPointerException.class, expectedExceptionsMessageRegExp = "family")
+   public void testFamilyRequiredAllowed() {
       AdminAccess.standard().render(null);
    }
 
-   public void testWhenUninitializedLazyInitWithDefaultConfiguration() throws IOException {
+   @Test(expectedExceptions = IllegalStateException.class, expectedExceptionsMessageRegExp = "please call init\\(\\) first")
+   public void testIllegalStateExceptionUnlessCalledInit() {
       AdminAccess access = AdminAccess.standard();
       // before rendered, holder is empty
       assertEquals(access.config.getAdminUsername(), null);
@@ -119,20 +115,6 @@ public class AdminAccessTest {
       assertEquals(access.config.getAdminPrivateKey(), null);
       assertEquals(access.config.getLoginPassword(), null);
       access.render(OsFamily.UNIX);
-      // DefaultConfiguration
-      try {
-         assertEquals(access.config.getAdminUsername(), System.getProperty("user.name"));
-         assertNotNull(access.config.getAdminPassword());
-         assertNotNull(access.config.getAdminPublicKey());
-         assertNotNull(access.config.getAdminPrivateKey());
-         assertNotNull(access.config.getLoginPassword());
-      } catch (AssertionError e) {
-         throw e;
-      } catch (Throwable e) {
-         // we are catching throwables here, in case the test runner doesn't
-         // have ssh keys setup
-      }
-
    }
 
 }

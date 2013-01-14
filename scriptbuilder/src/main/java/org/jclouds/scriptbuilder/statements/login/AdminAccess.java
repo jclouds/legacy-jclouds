@@ -21,30 +21,30 @@ package org.jclouds.scriptbuilder.statements.login;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Predicates.isNull;
+import static com.google.common.base.Throwables.propagate;
+import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Lists.newArrayList;
+import static org.jclouds.scriptbuilder.statements.login.ShadowStatements.resetLoginUserPasswordTo;
+import static org.jclouds.scriptbuilder.statements.ssh.SshStatements.lockSshd;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import org.jclouds.crypto.Sha512Crypt;
 import org.jclouds.domain.Credentials;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
-import org.jclouds.scriptbuilder.statements.ssh.SshStatements;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.io.Files;
-import com.google.inject.ImplementedBy;
 
 /**
  * Controls the administrative access to a node. By default, it will perform the following:
@@ -74,19 +74,14 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  */
 public class AdminAccess implements Statement {
-   public static AdminAccess.Builder builder() {
+   public static Builder builder() {
       return new Builder();
-   }
-
-   public static AdminAccess.Builder builder(Function<String, String> cryptFunction) {
-      return new Builder(cryptFunction);
    }
 
    public static AdminAccess standard() {
       return new Builder().build();
    }
 
-   @ImplementedBy(DefaultConfiguration.class)
    public static interface Configuration {
       Supplier<String> defaultAdminUsername();
 
@@ -98,16 +93,7 @@ public class AdminAccess implements Statement {
    }
 
    public static class Builder {
-      private final Function<String, String> cryptFunction;
-
-      public Builder() {
-         this(Sha512Crypt.function());
-      }
-
-      public Builder(Function<String, String> cryptFunction) {
-         this.cryptFunction = cryptFunction;
-      }
-
+      private Function<String, String> cryptFunction;
       private String adminUsername;
       private String adminFullName;
       private String adminHome;
@@ -122,87 +108,92 @@ public class AdminAccess implements Statement {
       private boolean authorizeAdminPublicKey = true;
       private boolean installAdminPrivateKey = false;
       private boolean resetLoginPassword = true;
-
-      public AdminAccess.Builder adminUsername(String adminUsername) {
-         this.adminUsername = adminUsername;
+      
+      public Builder cryptFunction(Function<String, String> cryptFunction) {
+         this.cryptFunction = cryptFunction;
+         return this;
+      }
+      
+      public Builder adminUsername(String adminUsername) {
+         this.adminUsername = checkNotRoot(adminUsername);
          return this;
       }
 
-      public AdminAccess.Builder adminFullName(String adminFullName) {
+      public Builder adminFullName(String adminFullName) {
          this.adminFullName = adminFullName;
          return this;
       }
 
 
-      public AdminAccess.Builder adminHome(String adminHome) {
+      public Builder adminHome(String adminHome) {
          this.adminHome = adminHome;
          return this;
       }
 
-      public AdminAccess.Builder adminPassword(String adminPassword) {
+      public Builder adminPassword(String adminPassword) {
          this.adminPassword = adminPassword;
          return this;
       }
 
-      public AdminAccess.Builder loginPassword(String loginPassword) {
+      public Builder loginPassword(String loginPassword) {
          this.loginPassword = loginPassword;
          return this;
       }
 
-      public AdminAccess.Builder lockSsh(boolean lockSsh) {
+      public Builder lockSsh(boolean lockSsh) {
          this.lockSsh = lockSsh;
          return this;
       }
 
-      public AdminAccess.Builder resetLoginPassword(boolean resetLoginPassword) {
+      public Builder resetLoginPassword(boolean resetLoginPassword) {
          this.resetLoginPassword = resetLoginPassword;
          return this;
       }
 
-      public AdminAccess.Builder authorizeAdminPublicKey(boolean authorizeAdminPublicKey) {
+      public Builder authorizeAdminPublicKey(boolean authorizeAdminPublicKey) {
          this.authorizeAdminPublicKey = authorizeAdminPublicKey;
          return this;
       }
 
-      public AdminAccess.Builder installAdminPrivateKey(boolean installAdminPrivateKey) {
+      public Builder installAdminPrivateKey(boolean installAdminPrivateKey) {
          this.installAdminPrivateKey = installAdminPrivateKey;
          return this;
       }
 
-      public AdminAccess.Builder grantSudoToAdminUser(boolean grantSudoToAdminUser) {
+      public Builder grantSudoToAdminUser(boolean grantSudoToAdminUser) {
          this.grantSudoToAdminUser = grantSudoToAdminUser;
          return this;
       }
 
-      public AdminAccess.Builder adminPublicKey(File adminPublicKey) {
+      public Builder adminPublicKey(File adminPublicKey) {
          this.adminPublicKeyFile = adminPublicKey;
          this.adminPublicKey = null;
          return this;
       }
 
-      public AdminAccess.Builder adminPublicKey(String adminPublicKey) {
+      public Builder adminPublicKey(String adminPublicKey) {
          this.adminPublicKey = adminPublicKey;
          this.adminPublicKeyFile = null;
          return this;
       }
 
-      public AdminAccess.Builder adminPrivateKey(File adminPrivateKey) {
+      public Builder adminPrivateKey(File adminPrivateKey) {
          this.adminPrivateKeyFile = adminPrivateKey;
          this.adminPrivateKey = null;
          return this;
       }
 
-      public AdminAccess.Builder adminPrivateKey(String adminPrivateKey) {
+      public Builder adminPrivateKey(String adminPrivateKey) {
          this.adminPrivateKey = adminPrivateKey;
          this.adminPrivateKeyFile = null;
          return this;
       }
       
-      public AdminAccess.Builder from(AdminAccessBuilderSpec spec) {
+      public Builder from(AdminAccessBuilderSpec spec) {
          return spec.copyTo(this);
       }
 
-      public AdminAccess.Builder from(String spec) {
+      public Builder from(String spec) {
          return from(AdminAccessBuilderSpec.parse(spec));
       }
 
@@ -222,7 +213,7 @@ public class AdminAccess implements Statement {
                      lockSsh, grantSudoToAdminUser, authorizeAdminPublicKey, installAdminPrivateKey, resetLoginPassword,
                      cryptFunction);
          } catch (IOException e) {
-            throw Throwables.propagate(e);
+            throw propagate(e);
          }
       }
    }
@@ -379,7 +370,8 @@ public class AdminAccess implements Statement {
    }
 
    public AdminAccess init(Configuration configuration) {
-      Builder builder = AdminAccess.builder(configuration.cryptFunction());
+      Builder builder = AdminAccess.builder();
+      builder.cryptFunction(config.getCryptFunction() != null ? config.getCryptFunction() : configuration.cryptFunction());
       builder.adminUsername(config.getAdminUsername() != null ? config.getAdminUsername() : configuration
                .defaultAdminUsername().get());
       builder.adminFullName(config.getAdminFullName() != null ? config.getAdminFullName() : builder.adminUsername);
@@ -407,14 +399,10 @@ public class AdminAccess implements Statement {
       checkNotNull(family, "family");
       if (family == OsFamily.WINDOWS)
          throw new UnsupportedOperationException("windows not yet implemented");
-      checkArgument(!"root".equals(config.getAdminUsername()), "cannot create admin user 'root'; " +
-            "ensure jclouds is not running as root, or specify an explicit non-root username in AdminAccess");
-      if (Iterables.any(
-            Lists.newArrayList(config.getAdminUsername(), config.getAdminPassword(), config.getAdminPublicKey(),
-                  config.getAdminPrivateKey(), config.getLoginPassword()), Predicates.isNull()))
-         init(new DefaultConfiguration());
-
-      checkNotNull(config.getAdminUsername(), "adminUsername");
+      checkState(
+            !any(newArrayList(config.getAdminUsername(), config.getAdminPassword(), config.getAdminPublicKey(),
+                  config.getAdminPrivateKey(), config.getLoginPassword()), isNull()), "please call init() first");
+      checkNotRoot(config.getAdminUsername());
       checkNotNull(config.getAdminPassword(), "adminPassword");
       checkNotNull(config.getAdminPublicKey(), "adminPublicKey");
       checkNotNull(config.getAdminPrivateKey(), "adminPrivateKey");
@@ -435,14 +423,19 @@ public class AdminAccess implements Statement {
          statements.add(SudoStatements.createWheel());
          userBuilder.group("wheel");
       }
-      statements.add(userBuilder.build().cryptFunction(config.getCryptFunction()));
+      statements.add(userBuilder.cryptFunction(config.getCryptFunction()).build());
       if (config.shouldLockSsh())
-         statements.add(SshStatements.lockSshd());
+         statements.add(lockSshd());
       if (config.shouldResetLoginPassword()) {
-         statements.add(ShadowStatements.resetLoginUserPasswordTo(config.getLoginPassword()).cryptFunction(
-                  config.getCryptFunction()));
+         statements.add(resetLoginUserPasswordTo(config.getCryptFunction(), config.getLoginPassword()));
       }
       return new StatementList(statements.build()).render(family);
+   }
+
+   private static String checkNotRoot(String user) {
+      checkArgument(!"root".equals(checkNotNull(user, "adminUsername")), "cannot create admin user 'root'; "
+            + "ensure jclouds is not running as root, or specify an explicit non-root username in AdminAccess");
+      return user;
    }
 
    @Override
@@ -453,6 +446,4 @@ public class AdminAccess implements Statement {
                .append(shouldGrantSudoToAdminUser()).append("]");
       return builder2.toString();
    }
-   
-   
 }

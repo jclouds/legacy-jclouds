@@ -27,7 +27,7 @@ import java.util.Set;
 
 import org.jclouds.cloudstack.domain.SshKeyPair;
 import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
-import org.jclouds.crypto.SshKeys;
+import org.jclouds.ssh.SshKeys;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

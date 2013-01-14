@@ -22,9 +22,9 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jclouds.crypto.SshKeys;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.ssh.SshKeys;
 import org.testng.annotations.Test;
 
 /**

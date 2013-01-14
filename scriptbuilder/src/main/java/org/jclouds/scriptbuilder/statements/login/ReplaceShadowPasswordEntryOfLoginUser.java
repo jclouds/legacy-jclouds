@@ -18,6 +18,8 @@
  */
 package org.jclouds.scriptbuilder.statements.login;
 
+import com.google.common.base.Function;
+
 
 /**
  * 
@@ -25,8 +27,8 @@ package org.jclouds.scriptbuilder.statements.login;
  */
 public class ReplaceShadowPasswordEntryOfLoginUser extends ReplaceShadowPasswordEntry {
 
-   public ReplaceShadowPasswordEntryOfLoginUser(String password) {
-      super("${SUDO_USER:=${USER}}", password);
+   public ReplaceShadowPasswordEntryOfLoginUser(Function<String, String> cryptFunction, String password) {
+      super(cryptFunction, "${SUDO_USER:=${USER}}", password);
    }
 
 }

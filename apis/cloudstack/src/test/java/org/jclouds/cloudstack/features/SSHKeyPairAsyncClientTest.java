@@ -29,13 +29,13 @@ import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListSSHKeyPairsOptions;
-import org.jclouds.crypto.SshKeys;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.ssh.SshKeys;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;

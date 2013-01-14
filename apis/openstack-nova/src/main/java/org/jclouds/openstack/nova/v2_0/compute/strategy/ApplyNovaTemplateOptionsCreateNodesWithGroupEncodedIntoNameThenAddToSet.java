@@ -20,7 +20,7 @@ package org.jclouds.openstack.nova.v2_0.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.crypto.SshKeys.fingerprintPrivateKey;
+import static org.jclouds.ssh.SshKeys.fingerprintPrivateKey;
 
 import java.util.List;
 import java.util.Map;

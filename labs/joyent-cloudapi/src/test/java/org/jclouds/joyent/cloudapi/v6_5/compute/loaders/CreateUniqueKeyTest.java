@@ -31,12 +31,12 @@ import java.util.Map;
 
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.functions.GroupNamingConvention.Factory;
-import org.jclouds.crypto.SshKeyPairGenerator;
 import org.jclouds.joyent.cloudapi.v6_5.JoyentCloudApi;
 import org.jclouds.joyent.cloudapi.v6_5.compute.internal.KeyAndPrivateKey;
 import org.jclouds.joyent.cloudapi.v6_5.domain.Key;
 import org.jclouds.joyent.cloudapi.v6_5.domain.datacenterscoped.DatacenterAndName;
 import org.jclouds.joyent.cloudapi.v6_5.features.KeyApi;
+import org.jclouds.ssh.SshKeyPairGenerator;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
