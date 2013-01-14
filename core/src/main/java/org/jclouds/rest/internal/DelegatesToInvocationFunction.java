@@ -19,25 +19,33 @@
 package org.jclouds.rest.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.notNull;
 import static com.google.common.base.Throwables.propagate;
+import static com.google.common.collect.Iterables.all;
 import static com.google.common.collect.Iterables.find;
 import static com.google.inject.util.Types.newParameterizedType;
 import static org.jclouds.util.Optionals2.isReturnTypeOptional;
 import static org.jclouds.util.Optionals2.unwrapIfOptional;
 import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
+import static org.jclouds.util.Throwables2.propagateIfPossible;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Qualifier;
 
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.reflect.FunctionalReflection;
 import org.jclouds.reflect.Invocation;
-import org.jclouds.reflect.Invocation.Result;
 import org.jclouds.reflect.InvocationSuccess;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.config.SetCaller;
@@ -49,6 +57,8 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.AbstractInvocationHandler;
+import com.google.common.reflect.Invokable;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Binding;
 import com.google.inject.ConfigurationException;
@@ -60,7 +70,6 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
 
 /**
- * 
  * @param <S>
  *           The enclosing type of the interface that a dynamic proxy like this implements
  * @param <A>
@@ -69,8 +78,67 @@ import com.google.inject.util.Types;
  *           The function that implements this dynamic proxy
  */
 @Beta
-public final class DelegatingInvocationFunction<S, A, F extends Function<Invocation, Result>> implements
-      Function<Invocation, Result> {
+public final class DelegatesToInvocationFunction<S, A, F extends Function<Invocation, Object>> implements
+      InvocationHandler {
+
+   private static final Object[] NO_ARGS = {};
+
+   /**
+    * {@inheritDoc}
+    * 
+    * <p>
+    * <ul>
+    * <li>{@code proxy.hashCode()} delegates to {@link AbstractInvocationHandler#hashCode}
+    * <li>{@code proxy.toString()} delegates to {@link AbstractInvocationHandler#toString}
+    * <li>{@code proxy.equals(argument)} returns true if:
+    * <ul>
+    * <li>{@code proxy} and {@code argument} are of the same type
+    * <li>and {@link AbstractInvocationHandler#equals} returns true for the {@link InvocationHandler} of
+    * {@code argument}
+    * </ul>
+    * <li>other method calls are dispatched to {@link #handleInvocation}.
+    * </ul>
+    * @throws Throwable 
+    */
+   @Override
+   public final Object invoke(Object proxy, Method invoked, @Nullable Object[] argv) throws Throwable  {
+      if (argv == null) {
+         argv = NO_ARGS;
+      }
+      if (argv.length == 0 && invoked.getName().equals("hashCode")) {
+         return hashCode();
+      }
+      if (argv.length == 1 && invoked.getName().equals("equals") && invoked.getParameterTypes()[0] == Object.class) {
+         Object arg = argv[0];
+         return proxy.getClass().isInstance(arg) && equals(Proxy.getInvocationHandler(arg));
+      }
+      if (argv.length == 0 && invoked.getName().equals("toString")) {
+         return toString();
+      }
+      List<Object> args = Arrays.asList(argv);
+      if (all(args, notNull()))
+         args = ImmutableList.copyOf(args);
+      else
+         args = Collections.unmodifiableList(args);
+      Invokable<?, Object> invokable = Invokable.from(invoked);
+      // not yet support the proxy arg
+      Invocation invocation = Invocation.create(invokable, args);
+      try {
+         return handle(invocation);
+      } catch (Throwable e) {
+         propagateIfPossible(e, invocation.getInvokable().getExceptionTypes());
+         throw e;
+      }
+   }
+
+   protected Object handle(Invocation invocation) {
+      if (invocation.getInvokable().isAnnotationPresent(Provides.class))
+         return lookupValueFromGuice(invocation.getInvokable());
+      else if (invocation.getInvokable().isAnnotationPresent(Delegate.class))
+         return propagateContextToDelegate(invocation);
+      return methodInvoker.apply(invocation);
+   }
+   
    private final Injector injector;
    private final TypeToken<S> enclosingType;
    private final SetCaller setCaller;
@@ -80,7 +148,7 @@ public final class DelegatingInvocationFunction<S, A, F extends Function<Invocat
 
    @SuppressWarnings("unchecked")
    @Inject
-   DelegatingInvocationFunction(Injector injector, SetCaller setCaller, Map<Class<?>, Class<?>> syncToAsync,
+   DelegatesToInvocationFunction(Injector injector, SetCaller setCaller, Map<Class<?>, Class<?>> syncToAsync,
          TypeLiteral<S> enclosingType, Function<InvocationSuccess, Optional<Object>> optionalConverter, F methodInvoker) {
       this.injector = checkNotNull(injector, "injector");
       this.enclosingType = (TypeToken<S>) TypeToken.of(checkNotNull(enclosingType, "enclosingType").getType());
@@ -90,22 +158,13 @@ public final class DelegatingInvocationFunction<S, A, F extends Function<Invocat
       this.methodInvoker = checkNotNull(methodInvoker, "methodInvoker");
    }
 
-   @Override
-   public Result apply(Invocation in) {
-      if (in.getInvokable().isAnnotationPresent(Provides.class))
-         return Result.success(lookupValueFromGuice(in.getInvokable()));
-      else if (in.getInvokable().isAnnotationPresent(Delegate.class))
-         return Result.success(propagateContextToDelegate(in));
-      return methodInvoker.apply(in);
-   }
-
    private Object propagateContextToDelegate(Invocation caller) {
       Class<?> returnType = unwrapIfOptional(caller.getInvokable().getReturnType());
-      Function<Invocation, Result> delegate;
+      Function<Invocation, Object> delegate;
       setCaller.enter(enclosingType, caller);
       try {
          @SuppressWarnings("unchecked")
-         Key<Function<Invocation, Result>> delegateType = (Key<Function<Invocation, Result>>) methodInvokerFor(returnType);
+         Key<Function<Invocation, Object>> delegateType = (Key<Function<Invocation, Object>>) methodInvokerFor(returnType);
          delegate = injector.getInstance(delegateType);
       } finally {
          setCaller.exit();

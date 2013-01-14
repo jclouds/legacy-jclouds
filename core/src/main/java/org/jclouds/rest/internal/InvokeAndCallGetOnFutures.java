@@ -19,6 +19,8 @@
 package org.jclouds.rest.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Throwables.propagate;
+import static com.google.common.util.concurrent.Futures.getUnchecked;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -27,20 +29,18 @@ import javax.inject.Inject;
 
 import org.jclouds.logging.Logger;
 import org.jclouds.reflect.Invocation;
-import org.jclouds.reflect.Invocation.Result;
-import com.google.common.reflect.Invokable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.cache.Cache;
-import com.google.common.util.concurrent.Futures;
+import com.google.common.reflect.Invokable;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * 
  * @author Adrian Cole
  */
-public final class InvokeAndCallGetOnFutures<R> implements Function<Invocation, Result> {
+public final class InvokeAndCallGetOnFutures<R> implements Function<Invocation, Object> {
 
    @Resource
    private Logger logger = Logger.NULL;
@@ -62,7 +62,7 @@ public final class InvokeAndCallGetOnFutures<R> implements Function<Invocation, 
 
    @SuppressWarnings("unchecked")
    @Override
-   public Result apply(Invocation in) {
+   public Object apply(Invocation in) {
       @SuppressWarnings("rawtypes")
       Invokable target = checkNotNull(sync2AsyncInvokables.getIfPresent(in.getInvokable()), "invokable %s not in %s",
             in.getInvokable(), sync2AsyncInvokables);
@@ -70,13 +70,13 @@ public final class InvokeAndCallGetOnFutures<R> implements Function<Invocation, 
       try {
          returnVal = target.invoke(receiver, in.getArgs().toArray());
       } catch (InvocationTargetException e) {
-         return Result.fail(e);
+         throw propagate(e.getCause());
       } catch (IllegalAccessException e) {
-         return Result.fail(e);
+         throw new Error("Method became inaccessible: " + toString(), e);
       }
       if (!isFuture(target))
-         return Result.success(returnVal);
-      return Result.success(Futures.getUnchecked(ListenableFuture.class.cast(returnVal)));
+         return returnVal;
+      return getUnchecked(ListenableFuture.class.cast(returnVal));
    }
 
    private boolean isFuture(Invokable<?, ?> target) {
