@@ -35,7 +35,6 @@ import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.Logger;
 import org.jclouds.reflect.Invocation;
-import org.jclouds.reflect.Invocation.Result;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.annotations.Fallback;
 
@@ -53,7 +52,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 
-public class InvokeHttpMethod<S, A> implements Function<Invocation, Result> {
+public class InvokeHttpMethod<S, A> implements Function<Invocation, Object> {
 
    @Resource
    private Logger logger = Logger.NULL;
@@ -98,9 +97,9 @@ public class InvokeHttpMethod<S, A> implements Function<Invocation, Result> {
          });
 
    @Override
-   public Result apply(Invocation in) {
+   public Object apply(Invocation in) {
       if (isFuture(in.getInvokable())) {
-         return Result.success(createFuture(in));
+         return createFuture(in);
       }
       @SuppressWarnings("rawtypes")
       Invokable async = checkNotNull(sync2AsyncInvokables.getIfPresent(in.getInvokable()), "invokable %s not in %s",

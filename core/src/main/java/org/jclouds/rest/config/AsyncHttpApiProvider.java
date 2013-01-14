@@ -18,11 +18,12 @@
  */
 package org.jclouds.rest.config;
 
+import java.lang.reflect.Proxy;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.reflect.FunctionalReflection;
-import org.jclouds.rest.internal.DelegatingInvocationFunction;
+import org.jclouds.rest.internal.DelegatesToInvocationFunction;
 import org.jclouds.rest.internal.InvokeHttpMethod;
 
 import com.google.inject.Provider;
@@ -35,10 +36,10 @@ import com.google.inject.TypeLiteral;
 @Singleton
 public class AsyncHttpApiProvider<A> implements Provider<A> {
    private final Class<? super A> asyncApiType;
-   private final DelegatingInvocationFunction<A, A, InvokeHttpMethod<A, A>> httpInvoker;
+   private final DelegatesToInvocationFunction<A, A, InvokeHttpMethod<A, A>> httpInvoker;
 
    @Inject
-   private AsyncHttpApiProvider(DelegatingInvocationFunction<A, A, InvokeHttpMethod<A, A>> httpInvoker,
+   private AsyncHttpApiProvider(DelegatesToInvocationFunction<A, A, InvokeHttpMethod<A, A>> httpInvoker,
          TypeLiteral<A> asyncApiType) {
       this.httpInvoker = httpInvoker;
       this.asyncApiType = asyncApiType.getRawType();
@@ -47,7 +48,6 @@ public class AsyncHttpApiProvider<A> implements Provider<A> {
    @SuppressWarnings("unchecked")
    @Override
    public A get() {
-      return (A) FunctionalReflection.newProxy(asyncApiType, httpInvoker);
+      return (A) Proxy.newProxyInstance(asyncApiType.getClassLoader(), new Class<?>[] { asyncApiType }, httpInvoker);
    }
-
 }

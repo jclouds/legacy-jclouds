@@ -18,15 +18,16 @@
  */
 package org.jclouds.rest.config;
 
+import java.lang.reflect.Proxy;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.reflect.FunctionalReflection;
-import com.google.common.reflect.Invokable;
-import org.jclouds.rest.internal.DelegatingInvocationFunction;
+import org.jclouds.rest.internal.DelegatesToInvocationFunction;
 import org.jclouds.rest.internal.InvokeHttpMethod;
 
 import com.google.common.cache.Cache;
+import com.google.common.reflect.Invokable;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
@@ -37,11 +38,11 @@ import com.google.inject.Provider;
 @Singleton
 public class HttpApiProvider<S, A> implements Provider<S> {
    private final Class<? super S> apiType;
-   private final DelegatingInvocationFunction<S, A, InvokeHttpMethod<S, A>> httpInvoker;
+   private final DelegatesToInvocationFunction<S, A, InvokeHttpMethod<S, A>> httpInvoker;
 
    @Inject
    private HttpApiProvider(Cache<Invokable<?, ?>, Invokable<?, ?>> invokables,
-         DelegatingInvocationFunction<S, A, InvokeHttpMethod<S, A>> httpInvoker, Class<S> apiType, Class<A> asyncApiType) {
+         DelegatesToInvocationFunction<S, A, InvokeHttpMethod<S, A>> httpInvoker, Class<S> apiType, Class<A> asyncApiType) {
       this.httpInvoker = httpInvoker;
       this.apiType = apiType;
       RestModule.putInvokables(TypeToken.of(apiType), TypeToken.of(asyncApiType), invokables);
@@ -51,7 +52,7 @@ public class HttpApiProvider<S, A> implements Provider<S> {
    @Override
    @Singleton
    public S get() {
-      return (S) FunctionalReflection.newProxy(apiType, httpInvoker);
+      return (S) Proxy.newProxyInstance(apiType.getClassLoader(), new Class<?>[] { apiType }, httpInvoker);
    }
 
 }

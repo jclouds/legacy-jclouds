@@ -27,9 +27,7 @@ import static org.testng.Assert.assertTrue;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Set;
-import java.util.concurrent.TimeoutException;
 
-import org.jclouds.reflect.Invocation.Result;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -45,8 +43,8 @@ public class FunctionalReflectionTest {
    @SuppressWarnings("unchecked")
    @Test(expectedExceptions = UnsupportedOperationException.class)
    public void testNullArgsAreAllowedAndUnmodifiable() {
-      final Function<Invocation, Result> test = new Function<Invocation, Result>() {
-         public Result apply(Invocation e) {
+      final Function<Invocation, Object> test = new Function<Invocation, Object>() {
+         public Object apply(Invocation e) {
             assertNotNull(e.getArgs());
             assertNull(e.getArgs().get(0));
             e.getArgs().add("foo");
@@ -59,8 +57,8 @@ public class FunctionalReflectionTest {
    @SuppressWarnings("unchecked")
    @Test(expectedExceptions = UnsupportedOperationException.class)
    public void testImmutableListWhenArgsAreNotNull() {
-      final Function<Invocation, Result> test = new Function<Invocation, Result>() {
-         public Result apply(Invocation e) {
+      final Function<Invocation, Object> test = new Function<Invocation, Object>() {
+         public Object apply(Invocation e) {
             assertNotNull(e.getArgs());
             assertTrue(e.getArgs() instanceof ImmutableList);
             assertEquals(e.getArgs().get(0), "foo");
@@ -73,9 +71,9 @@ public class FunctionalReflectionTest {
 
    @Test(expectedExceptions = IOException.class, expectedExceptionsMessageRegExp = "io")
    public void testPropagatesDeclaredException() throws IOException {
-      final Function<Invocation, Result> test = new Function<Invocation, Result>() {
-         public Result apply(Invocation e) {
-            return Result.fail(new IOException("io"));
+      final Function<Invocation, Object> test = new Function<Invocation, Object>() {
+         public Object apply(Invocation e) {
+            throw new RuntimeException(new IOException("io"));
          }
       };
       Closeable closeable = FunctionalReflection.newProxy(Closeable.class, test);
@@ -87,21 +85,9 @@ public class FunctionalReflectionTest {
     */
    @Test(expectedExceptions = AssertionError.class, expectedExceptionsMessageRegExp = "assert")
    public void testPropagatesError() throws IOException {
-      final Function<Invocation, Result> test = new Function<Invocation, Result>() {
-         public Result apply(Invocation e) {
-            return Result.fail(new AssertionError("assert"));
-         }
-      };
-      Closeable closeable = FunctionalReflection.newProxy(Closeable.class, test);
-      closeable.close();
-   }
-
-   // TODO: coerce things like this to UncheckedTimeoutException and friends
-   @Test(expectedExceptions = RuntimeException.class, expectedExceptionsMessageRegExp = ".*timeout")
-   public void testWrapsDeclaredException() throws IOException {
-      final Function<Invocation, Result> test = new Function<Invocation, Result>() {
-         public Result apply(Invocation e) {
-            return Result.fail(new TimeoutException("timeout"));
+      final Function<Invocation, Object> test = new Function<Invocation, Object>() {
+         public Object apply(Invocation e) {
+            throw new AssertionError("assert");
          }
       };
       Closeable closeable = FunctionalReflection.newProxy(Closeable.class, test);
@@ -109,9 +95,9 @@ public class FunctionalReflectionTest {
    }
 
    public void testToStringEqualsFunction() {
-      final Function<Invocation, Result> test = new Function<Invocation, Result>() {
-         public Result apply(Invocation e) {
-            return Result.success("foo");
+      final Function<Invocation, Object> test = new Function<Invocation, Object>() {
+         public Object apply(Invocation e) {
+            return "foo";
          }
 
          public String toString() {
@@ -123,9 +109,9 @@ public class FunctionalReflectionTest {
    }
 
    public void testHashCodeDifferentiatesOnInterface() {
-      final Function<Invocation, Result> test = new Function<Invocation, Result>() {
-         public Result apply(Invocation e) {
-            return Result.success(null);
+      final Function<Invocation, Object> test = new Function<Invocation, Object>() {
+         public Object apply(Invocation e) {
+            return null;
          }
 
          public int hashCode() {
