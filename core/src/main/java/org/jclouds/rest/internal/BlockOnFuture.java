@@ -34,7 +34,6 @@ import javax.inject.Named;
 
 import org.jclouds.logging.Logger;
 import org.jclouds.reflect.Invocation;
-import org.jclouds.reflect.Invocation.Result;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -46,7 +45,7 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.google.common.util.concurrent.UncheckedTimeoutException;
 import com.google.inject.assistedinject.Assisted;
 
-public class BlockOnFuture implements Function<ListenableFuture<?>, Result> {
+public class BlockOnFuture implements Function<ListenableFuture<?>, Object> {
 
    public static interface Factory {
       /**
@@ -73,19 +72,19 @@ public class BlockOnFuture implements Function<ListenableFuture<?>, Result> {
    }
 
    @Override
-   public Result apply(ListenableFuture<?> future) {
+   public Object apply(ListenableFuture<?> future) {
       Optional<Long> timeoutNanos = timeoutInNanos(invocation.getInvokable(), timeouts);
       return block(future, timeoutNanos);
    }
 
-   private Result block(ListenableFuture<?> future, Optional<Long> timeoutNanos) {
+   private Object block(ListenableFuture<?> future, Optional<Long> timeoutNanos) {
       try {
          if (timeoutNanos.isPresent()) {
             logger.debug(">> blocking on %s for %s", future, timeoutNanos);
-            return Result.success(getUninterruptibly(future, timeoutNanos.get(), NANOSECONDS));
+            return getUninterruptibly(future, timeoutNanos.get(), NANOSECONDS);
          } else {
             logger.debug(">> blocking on %s", future);
-            return Result.success(getUninterruptibly(future));
+            return getUninterruptibly(future);
          }
       } catch (ExecutionException e) {
          throw propagateCause(e);

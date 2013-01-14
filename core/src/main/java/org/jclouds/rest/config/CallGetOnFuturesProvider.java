@@ -18,15 +18,16 @@
  */
 package org.jclouds.rest.config;
 
+import java.lang.reflect.Proxy;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.reflect.FunctionalReflection;
-import com.google.common.reflect.Invokable;
-import org.jclouds.rest.internal.DelegatingInvocationFunction;
+import org.jclouds.rest.internal.DelegatesToInvocationFunction;
 import org.jclouds.rest.internal.InvokeAndCallGetOnFutures;
 
 import com.google.common.cache.Cache;
+import com.google.common.reflect.Invokable;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
@@ -37,11 +38,11 @@ import com.google.inject.Provider;
 public class CallGetOnFuturesProvider<S, A> implements Provider<S> {
 
    private final Class<? super S> apiType;
-   private final DelegatingInvocationFunction<S, A, InvokeAndCallGetOnFutures<A>> syncInvoker;
+   private final DelegatesToInvocationFunction<S, A, InvokeAndCallGetOnFutures<A>> syncInvoker;
 
    @Inject
    private CallGetOnFuturesProvider(Cache<Invokable<?, ?>, Invokable<?, ?>> invokables,
-         DelegatingInvocationFunction<S, A, InvokeAndCallGetOnFutures<A>> syncInvoker, Class<S> apiType,
+         DelegatesToInvocationFunction<S, A, InvokeAndCallGetOnFutures<A>> syncInvoker, Class<S> apiType,
          Class<A> asyncApiType) {
       this.syncInvoker = syncInvoker;
       this.apiType = apiType;
@@ -52,6 +53,6 @@ public class CallGetOnFuturesProvider<S, A> implements Provider<S> {
    @Override
    @Singleton
    public S get() {
-      return (S) FunctionalReflection.newProxy(apiType, syncInvoker);
+      return (S) Proxy.newProxyInstance(apiType.getClassLoader(), new Class<?>[] { apiType }, syncInvoker);
    }
 }

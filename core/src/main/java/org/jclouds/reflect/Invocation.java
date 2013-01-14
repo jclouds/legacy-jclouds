@@ -23,11 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
 import com.google.common.reflect.Invokable;
 
 /**
@@ -90,63 +87,4 @@ public final class Invocation {
    public String toString() {
       return String.format("%s%s", invokable, args);
    }
-
-   /**
-    * result of an invocation which is either successful or failed, but not both.
-    */
-   @Beta
-   public final static class Result {
-      public static Result success(@Nullable Object result) {
-         return new Result(Optional.fromNullable(result), Optional.<Throwable> absent());
-      }
-
-      public static Result fail(Throwable throwable) {
-         return new Result(Optional.absent(), Optional.of(throwable));
-      }
-
-      private final Optional<Object> result;
-      private final Optional<Throwable> throwable;
-
-      private Result(Optional<Object> result, Optional<Throwable> throwable) {
-         this.result = checkNotNull(result, "result");
-         this.throwable = checkNotNull(throwable, "throwable");
-      }
-
-      /**
-       * result of{@link Invokable#invoke(Object, Object...)}
-       */
-      public Optional<Object> getResult() {
-         return result;
-      }
-
-      /**
-       * throwable received during {@link Invokable#invoke(Object, Object...)}
-       */
-      public Optional<Throwable> getThrowable() {
-         return throwable;
-      }
-
-      @Override
-      public boolean equals(Object o) {
-         if (this == o)
-            return true;
-         if (o == null || getClass() != o.getClass())
-            return false;
-         Result that = Result.class.cast(o);
-         return equal(this.result.orNull(), that.result.orNull())
-               && equal(this.throwable.orNull(), that.throwable.orNull());
-      }
-
-      @Override
-      public int hashCode() {
-         return Objects.hashCode(result.orNull(), throwable.orNull());
-      }
-
-      @Override
-      public String toString() {
-         return Objects.toStringHelper("").omitNullValues().add("result", result.orNull())
-               .add("throwable", throwable.orNull()).toString();
-      }
-   }
-
 }

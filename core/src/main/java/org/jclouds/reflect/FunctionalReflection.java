@@ -32,8 +32,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.jclouds.reflect.Invocation.Result;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
@@ -77,13 +75,13 @@ public final class FunctionalReflection {
     * @see com.google.common.reflect.AbstractInvocationHandler#invoke(Object, Method, Object[])
     * @see com.google.common.reflect.Reflection#newProxy(Class, java.lang.reflect.InvocationHandler)
     */
-   public static <T> T newProxy(TypeToken<T> enclosingType, Function<Invocation, Result> invocationFunction) {
+   public static <T> T newProxy(TypeToken<T> enclosingType, Function<Invocation, Object> invocationFunction) {
       checkNotNull(enclosingType, "enclosingType");
       checkNotNull(invocationFunction, "invocationFunction");
       return newProxy(enclosingType.getRawType(), new FunctionalInvocationHandler<T>(enclosingType, invocationFunction));
    }
 
-   public static <T> T newProxy(Class<T> enclosingType, Function<Invocation, Result> invocationFunction) {
+   public static <T> T newProxy(Class<T> enclosingType, Function<Invocation, Object> invocationFunction) {
       checkNotNull(invocationFunction, "invocationFunction");
       return newProxy(enclosingType,
             new FunctionalInvocationHandler<T>(TypeToken.of(enclosingType), invocationFunction));
@@ -100,9 +98,9 @@ public final class FunctionalReflection {
    private static final class FunctionalInvocationHandler<T> extends
          com.google.common.reflect.AbstractInvocationHandler {
       private final TypeToken<T> enclosingType;
-      private final Function<Invocation, Result> invocationFunction;
+      private final Function<Invocation, Object> invocationFunction;
 
-      private FunctionalInvocationHandler(TypeToken<T> enclosingType, Function<Invocation, Result> invocationFunction) {
+      private FunctionalInvocationHandler(TypeToken<T> enclosingType, Function<Invocation, Object> invocationFunction) {
          this.enclosingType = enclosingType;
          this.invocationFunction = invocationFunction;
       }
@@ -117,17 +115,12 @@ public final class FunctionalReflection {
          Invokable<?, Object> invokable = Invokable.from(invoked);
          // not yet support the proxy arg
          Invocation invocation = Invocation.create(invokable, args);
-         Result result;
          try {
-            result = invocationFunction.apply(invocation);
+            return invocationFunction.apply(invocation);
          } catch (RuntimeException e) {
-            result = Result.fail(e);
+            propagateIfPossible(e, invocation.getInvokable().getExceptionTypes());
+            throw propagate(e);
          }
-         if (result.getThrowable().isPresent()) {
-            propagateIfPossible(result.getThrowable().get(), invocation.getInvokable().getExceptionTypes());
-            throw propagate(result.getThrowable().get());
-         }
-         return result.getResult().orNull();
       }
 
       @Override
