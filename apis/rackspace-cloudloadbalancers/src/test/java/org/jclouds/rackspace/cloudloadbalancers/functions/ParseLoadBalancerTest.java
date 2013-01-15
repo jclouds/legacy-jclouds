@@ -22,6 +22,7 @@ import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.rackspace.cloudloadbalancers.domain.AccessRule;
+import org.jclouds.rackspace.cloudloadbalancers.domain.AccessRuleWithId;
 import org.jclouds.rackspace.cloudloadbalancers.domain.ConnectionThrottle;
 import org.jclouds.rackspace.cloudloadbalancers.domain.HealthMonitor;
 import org.jclouds.rackspace.cloudloadbalancers.domain.HealthMonitor.Type;
@@ -75,8 +76,8 @@ public class ParseLoadBalancerTest extends BaseItemParserTest<LoadBalancer> {
             .sourceAddresses(SourceAddresses.builder().ipv6Public("2001:4800:7901::5/64").ipv4Public("174.143.139.137").ipv4Servicenet("10.183.250.137").build())
             .connectionThrottle(ConnectionThrottle.builder().maxConnections(100).minConnections(10).maxConnectionRate(50).rateInterval(60).build())
             .accessRules(ImmutableSet.of(
-                  AccessRule.builder().id(22215).type(AccessRule.Type.DENY).address("1.2.3.4/32").build(),
-                  AccessRule.builder().id(22217).type(AccessRule.Type.ALLOW).address("12.0.0.0/8").build()))
+                  new AccessRuleWithId(22215, "1.2.3.4/32", AccessRule.Type.DENY),
+                  new AccessRuleWithId(22217, "12.0.0.0/8", AccessRule.Type.ALLOW)))
             .virtualIPs(ImmutableSet.of(
                   VirtualIP.builder().id(1000).address("206.10.10.210").type(VirtualIP.Type.PUBLIC).ipVersion(IPVersion.IPV4).build(),
                   VirtualIP.builder().id(1001).address("2001:4800:7901:0000:9a32:3c2a:0000:0001").type(VirtualIP.Type.PUBLIC).ipVersion(IPVersion.IPV6).build()))

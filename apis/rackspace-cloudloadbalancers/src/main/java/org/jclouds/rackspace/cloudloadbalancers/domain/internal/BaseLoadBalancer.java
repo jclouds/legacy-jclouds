@@ -25,7 +25,6 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.rackspace.cloudloadbalancers.domain.AccessRule;
 import org.jclouds.rackspace.cloudloadbalancers.domain.ConnectionThrottle;
 import org.jclouds.rackspace.cloudloadbalancers.domain.HealthMonitor;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
@@ -62,7 +61,6 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
    protected Map<String, Boolean> connectionLogging;
    protected ConnectionThrottle connectionThrottle;
    protected HealthMonitor healthMonitor;
-   protected Set<AccessRule> accessList;
    protected Set<Metadata> metadata;
 
    // for serialization only
@@ -73,8 +71,7 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
          @Nullable Algorithm algorithm, @Nullable Integer timeout, @Nullable Boolean halfClosed,
          @Nullable Map<String, SessionPersistenceType> sessionPersistence,
          @Nullable Map<String, Boolean> connectionLogging, @Nullable ConnectionThrottle connectionThrottle,
-         @Nullable HealthMonitor healthMonitor, @Nullable Set<AccessRule> accessRules,
-         @Nullable Set<Metadata> metadata) {
+         @Nullable HealthMonitor healthMonitor, @Nullable Set<Metadata> metadata) {
       this.name = checkNotNull(name, "name");
       this.protocol = protocol;// null on deleted LB
       this.port = port;// null on deleted LB
@@ -86,7 +83,6 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
       this.connectionLogging = connectionLogging;
       this.connectionThrottle = connectionThrottle;
       this.healthMonitor = healthMonitor;
-      this.accessList = accessRules;
       this.metadata = metadata;
    }
 
@@ -172,14 +168,6 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
    }
 
    /**
-    * @return accessRules, which may be null if accessRules has not been set.
-    */
-   @Nullable
-   public Set<AccessRule> getAccessRules() {
-      return accessList;
-   }
-
-   /**
     * @return metadata, which may be null if metadata has not been set.
     */
    @Nullable
@@ -192,7 +180,7 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
             .add("port", port).add("nodes", nodes).add("timeout", timeout).add("algorithm", algorithm)
             .add("timeout", timeout).add("sessionPersistenceType", getSessionPersistenceType())
             .add("connectionLogging", connectionLogging).add("connectionThrottle", connectionThrottle)
-            .add("healthMonitor", healthMonitor).add("accessRules", accessList).add("metadata", metadata);
+            .add("healthMonitor", healthMonitor).add("metadata", metadata);
    }
 
    @Override
@@ -300,7 +288,6 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
       protected Map<String, Boolean> connectionLogging;
       protected ConnectionThrottle connectionThrottle;
       protected HealthMonitor healthMonitor;
-      protected Set<AccessRule> accessRules;
       protected Set<Metadata> metadata;
 
       /**
@@ -428,17 +415,6 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
       }
 
       /**
-       * The access list management feature allows fine-grained network access controls to be applied to the load 
-       * balancer's virtual IP address.
-       * 
-       * @see AccessRule
-       */
-      public Builder<N, T> accessRules(@Nullable Set<AccessRule> accessRules) {
-         this.accessRules = accessRules;
-         return this;
-      }
-
-      /**
        * Information (metadata) that can be associated with each load balancer for the client's personal use.
        */
       public Builder<N, T> metadata(@Nullable Set<Metadata> metadata) {
@@ -448,7 +424,7 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
 
       public BaseLoadBalancer<N, T> build() {
          return new BaseLoadBalancer<N, T>(name, protocol, port, nodes, algorithm, timeout, halfClosed,
-               sessionPersistence, connectionLogging, connectionThrottle, healthMonitor, accessRules, metadata);
+               sessionPersistence, connectionLogging, connectionThrottle, healthMonitor, metadata);
       }
 
       public Builder<N, T> from(T baseLB) {
@@ -456,8 +432,7 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
                .algorithm(baseLB.getAlgorithm()).timeout(baseLB.getTimeout()).halfClosed(baseLB.isHalfClosed())
                .nodes(baseLB.getNodes()).sessionPersistenceType(baseLB.getSessionPersistenceType())
                .connectionLogging(baseLB.isConnectionLogging()).connectionThrottle(baseLB.getConnectionThrottle())
-               .healthMonitor(baseLB.getHealthMonitor()).accessRules(baseLB.getAccessRules())
-               .metadata(baseLB.getMetadata());
+               .healthMonitor(baseLB.getHealthMonitor()).metadata(baseLB.getMetadata());
       }
    }
 

@@ -24,41 +24,49 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
- * The access list management feature allows fine-grained network access controls to be applied to the load balancer's 
+ * The access rule management feature allows fine-grained network access controls to be applied to the load balancer's 
  * virtual IP address. A single IP address, multiple IP addresses, or entire network subnets can be added as an access
- * rule. Items that are configured with the ALLOW type will always take precedence over items with the DENY type. To 
- * reject traffic from all items except for those with the ALLOW type, add an access rules with an address of 
+ * rule. Rules that are configured with the ALLOW type will always take precedence over rules with the DENY type. To 
+ * reject traffic from all rules except for those with the ALLOW type, add an access rules with an address of 
  * "0.0.0.0/0" and a DENY type.
  * 
  * @author Everett Toews
  */
 public class AccessRule {
 
-   private final int id;
    private final Type type;
    private final String address;
+   
+   /**
+    * Use this method to easily construct {@link Type#ALLOW} rules for the address.
+    */
+   public static AccessRule allow(String address) {
+      return new AccessRule(address, Type.ALLOW);
+   }
+   
+   /**
+    * Use this method to easily construct {@link Type#DENY} rules for the address.
+    */
+   public static AccessRule deny(String address) {
+      return new AccessRule(address, Type.DENY);
+   }
 
-   protected AccessRule(int id, Type type, String address) {
-      this.id = id;
-      this.type = checkNotNull(type, "type");
+   public AccessRule(String address, Type type) {
       this.address = checkNotNull(address, "address");
-   }
-
-   public int getId() {
-      return this.id;
-   }
-
-   public Type getType() {
-      return this.type;
+      this.type = checkNotNull(type, "type");
    }
 
    public String getAddress() {
       return this.address;
    }
 
+   public Type getType() {
+      return this.type;
+   }
+
    @Override
    public int hashCode() {
-      return Objects.hashCode(id);
+      return Objects.hashCode(address);
    }
 
    @Override
@@ -67,12 +75,12 @@ public class AccessRule {
       if (obj == null || getClass() != obj.getClass()) return false;
       AccessRule that = AccessRule.class.cast(obj);
       
-      return Objects.equal(this.id, that.id);
+      return Objects.equal(this.address, that.address);
    }
    
    protected ToStringHelper string() {
-      return Objects.toStringHelper(this)
-            .add("id", id).add("type", type).add("address", address);
+      return Objects.toStringHelper(this).omitNullValues()
+            .add("address", address).add("type", type);
    }
    
    @Override
@@ -82,12 +90,12 @@ public class AccessRule {
 
    public static enum Type {
       /**
-       * Specifies items that will always take precedence over items with the DENY type.
+       * Specifies rules that will always take precedence over rules with the DENY type.
        */
       ALLOW, 
       
       /**
-       * Specifies items to which traffic can be denied.
+       * Specifies rules to which traffic can be denied.
        */
       DENY, 
       
@@ -100,54 +108,5 @@ public class AccessRule {
             return UNRECOGNIZED;
          }
       }
-   }
-
-   public static class Builder {
-      private int id;
-      private Type type;
-      private String address;
-   
-      /** 
-       * @see AccessRule#getId()
-       */
-      public Builder id(int id) {
-         this.id = id;
-         return this;
-      }
-
-      /** 
-       * @see Type
-       */
-      public Builder type(Type type) {
-         this.type = type;
-         return this;
-      }
-
-      /** 
-       * IP address for item to add to access list.
-       */
-      public Builder address(String address) {
-         this.address = address;
-         return this;
-      }
-
-      public AccessRule build() {
-         return new AccessRule(id, type, address);
-      }
-      
-      public Builder from(AccessRule in) {
-         return this
-               .id(in.getId())
-               .type(in.getType())
-               .address(in.getAddress());
-      }
-   }
-
-   public static Builder builder() {
-      return new Builder();
-   }
-
-   public Builder toBuilder() {
-      return new Builder().from(this);
    }
 }

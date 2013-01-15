@@ -22,10 +22,12 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.logging.Logger;
+import org.jclouds.rackspace.cloudloadbalancers.domain.AccessRuleWithId;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer.Builder;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.assistedinject.Assisted;
 
@@ -56,7 +58,7 @@ public class ConvertLB implements Function<LB, LoadBalancer> {
                .timeout(lb.getTimeout()).algorithm(lb.getAlgorithm()).halfClosed(lb.isHalfClosed())
                .sessionPersistenceType(lb.getSessionPersistenceType()).connectionLogging(lb.isConnectionLogging())
                .connectionThrottle(lb.getConnectionThrottle()).healthMonitor(lb.getHealthMonitor())
-               .accessRules(lb.getAccessRules()).metadata(lb.getMetadata()).virtualIPs(lb.virtualIps);
+               .metadata(lb.getMetadata()).virtualIPs(lb.virtualIps);
 
          if (lb.cluster.size() == 1)
             builder.clusterName(Iterables.get(lb.cluster.values(), 0));
@@ -70,6 +72,10 @@ public class ConvertLB implements Function<LB, LoadBalancer> {
             builder.sslTermination(lb.sslTermination);
          if (lb.sourceAddresses != null)
             builder.sourceAddresses(lb.sourceAddresses);
+         if (lb.accessList == null)
+            builder.accessRules(ImmutableSet.<AccessRuleWithId> of());
+         else
+            builder.accessRules(lb.accessList);
 
          return builder.build();
       }
