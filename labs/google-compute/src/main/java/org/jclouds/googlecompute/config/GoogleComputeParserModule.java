@@ -21,6 +21,7 @@ package org.jclouds.googlecompute.config;
 
 import com.google.common.collect.ForwardingMap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Range;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -32,6 +33,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import org.jclouds.googlecompute.domain.Firewall;
 import org.jclouds.googlecompute.domain.Operation;
 import org.jclouds.googlecompute.domain.Project;
 import org.jclouds.json.config.GsonModule;
@@ -48,6 +50,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jclouds.googlecompute.domain.Firewall.Rule;
+
 /**
  * @author David Alves
  */
@@ -61,13 +65,14 @@ public class GoogleComputeParserModule extends AbstractModule {
    @Provides
    @Singleton
    public Map<Type, Object> provideCustomAdapterBindings() {
-      return ImmutableMap.<Type, Object>of(
-              Metadata.class, new MetadataTypeAdapter(),
-              Operation.class, new OperationTypeAdapter(),
-              Header.class, new HeaderTypeAdapter(),
-              ClaimSet.class, new ClaimSetTypeAdapter(),
-              Project.class, new ProjectTypeAdapter()
-      );
+      return new ImmutableMap.Builder<Type, Object>()
+              .put(Metadata.class, new MetadataTypeAdapter())
+              .put(Operation.class, new OperationTypeAdapter())
+              .put(Header.class, new HeaderTypeAdapter())
+              .put(ClaimSet.class, new ClaimSetTypeAdapter())
+              .put(Project.class, new ProjectTypeAdapter())
+              .put(Rule.class, new RuleTypeAdapter())
+              .build();
    }
 
    /**
@@ -186,6 +191,45 @@ public class GoogleComputeParserModule extends AbstractModule {
                     externalIpAddresses);
          }
 
+      }
+   }
+
+   private static class RuleTypeAdapter implements JsonDeserializer<Firewall.Rule>, JsonSerializer<Firewall.Rule> {
+
+      @Override
+      public Firewall.Rule deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws
+              JsonParseException {
+         JsonObject rule = json.getAsJsonObject();
+         Rule.Builder builder = Rule.builder();
+         builder.IPProtocol(Rule.IPProtocol.fromValue(rule.get("IPProtocol").getAsString()));
+         if (rule.get("ports") != null) {
+            JsonArray ports = (JsonArray) rule.get("ports");
+            for (JsonElement port : ports) {
+               String portAsString = port.getAsString();
+               if (portAsString.contains("-")) {
+                  String[] split = portAsString.split("-");
+                  builder.addPortRange(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+               } else {
+                  builder.addPort(Integer.parseInt(portAsString));
+               }
+            }
+         }
+         return builder.build();
+      }
+
+      @Override
+      public JsonElement serialize(Firewall.Rule src, Type typeOfSrc, JsonSerializationContext context) {
+         JsonObject ruleObject = new JsonObject();
+         ruleObject.addProperty("IPProtocol", src.getIPProtocol().value());
+         if (src.getPorts() != null && !src.getPorts().isEmpty()) {
+            JsonArray ports = new JsonArray();
+            for (Range<Integer> range : src.getPorts().asRanges()) {
+               ports.add(new JsonPrimitive(range.lowerEndpoint() == range.upperEndpoint() ? range.lowerEndpoint() + "" :
+                       range.lowerEndpoint() + "-" + range.upperEndpoint()));
+            }
+            ruleObject.add("ports", ports);
+         }
+         return ruleObject;
       }
    }
 }
