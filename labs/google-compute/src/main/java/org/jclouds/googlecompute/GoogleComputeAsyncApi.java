@@ -21,6 +21,7 @@ package org.jclouds.googlecompute;
 import com.google.common.annotations.Beta;
 import org.jclouds.googlecompute.features.DiskAsyncApi;
 import org.jclouds.googlecompute.features.FirewallAsyncApi;
+import org.jclouds.googlecompute.features.ImageAsyncApi;
 import org.jclouds.googlecompute.features.KernelAsyncApi;
 import org.jclouds.googlecompute.features.MachineTypeAsyncApi;
 import org.jclouds.googlecompute.features.NetworkAsyncApi;
@@ -62,10 +63,21 @@ public interface GoogleComputeAsyncApi {
    FirewallAsyncApi getFirewallApiForProject(@PathParam("project") String projectName);
 
    /**
+    * Provides asynchronous access to Image features
+    *
+    * @param projectName the name of the project
+    */
+   @Delegate
+   @Path("/projects/{project}")
+   ImageAsyncApi getImageApiForProject(@PathParam("project") String projectName);
+
+   /**
     * Provides asynchronous access to Kernel features
     *
     * @param projectName the name of the project
     */
+   @Delegate
+   @Path("/projects/{project}")
    KernelAsyncApi getKernelApiForProject(@PathParam("project") String projectName);
 
    /**
