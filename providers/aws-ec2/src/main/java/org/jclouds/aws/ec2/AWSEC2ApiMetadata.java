@@ -64,8 +64,8 @@ public class AWSEC2ApiMetadata extends EC2ApiMetadata {
    public static Properties defaultProperties() {
       Properties properties = EC2ApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", SECONDS.toMillis(90) + "");
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "AWSAMIClient.describeImagesInRegion", MINUTES.toMillis(5) + "");
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "SpotInstanceClient.describeSpotPriceHistoryInRegion", MINUTES.toMillis(2) + "");
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "ec2:DescribeImages", MINUTES.toMillis(5) + "");
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "ec2:DescribeSpotInstanceRequests", MINUTES.toMillis(2) + "");
       properties.remove(PROPERTY_EC2_AMI_OWNERS);
       // auth fail sometimes happens in EC2, as the rc.local script that injects the
       // authorized key executes after ssh has started.  

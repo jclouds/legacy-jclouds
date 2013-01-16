@@ -65,7 +65,7 @@ public class SQSApiMetadata extends BaseRestApiMetadata {
       Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", SECONDS.toMillis(30) + "");
       // this will gracefully attempt to resolve name issues
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "QueueApi.create", SECONDS.toMillis(61) + "");
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "sqs:CreateQueue", SECONDS.toMillis(61) + "");
       properties.setProperty(CREATE_QUEUE_MAX_RETRIES, "60");
       properties.setProperty(CREATE_QUEUE_RETRY_INTERVAL, "1000");
       properties.setProperty(PROPERTY_AUTH_TAG, "AWS");

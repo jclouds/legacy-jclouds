@@ -117,9 +117,18 @@ public class BlockOnFuture implements Function<ListenableFuture<?>, Object> {
 
    // override timeout by values configured in properties(in ms)
    private Optional<Long> timeoutInNanos(Invokable<?, ?> invoked, Map<String, Long> timeouts) {
-      String className = enclosingType.getRawType().getSimpleName();
-      Optional<Long> timeoutMillis = fromNullable(timeouts.get(className + "." + invoked.getName())).or(
-            fromNullable(timeouts.get(className))).or(fromNullable(timeouts.get("default")));
+      Optional<Long> defaultMillis = fromNullable(timeouts.get("default"));
+      Optional<Long> timeoutMillis;
+      if (invoked.isAnnotationPresent(Named.class)) {
+         String commandName = invoked.getAnnotation(Named.class).value();
+         timeoutMillis = fromNullable(timeouts.get(commandName)).or(defaultMillis);
+      } else {
+         // TODO: remove old logic, once Named annotations are present on all methods
+         String className = enclosingType.getRawType().getSimpleName().replace("AsyncClient", "Client")
+               .replace("AsyncApi", "Api");
+         timeoutMillis = fromNullable(timeouts.get(className + "." + invoked.getName())).or(
+               fromNullable(timeouts.get(className))).or(defaultMillis);
+      }
       if (timeoutMillis.isPresent())
          return Optional.of(TimeUnit.MILLISECONDS.toNanos(timeoutMillis.get()));
       return Optional.absent();

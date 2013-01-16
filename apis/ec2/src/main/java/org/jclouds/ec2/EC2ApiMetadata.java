@@ -82,7 +82,7 @@ public class EC2ApiMetadata extends BaseRestApiMetadata {
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", MINUTES.toMillis(3) + "");
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "AMIClient.describeImagesInRegion", MINUTES.toMillis(5) + "");
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "ec2:DescribeImages", MINUTES.toMillis(5) + "");
       properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
       properties.setProperty(PROPERTY_HEADER_TAG, "amz");
       properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "*");

@@ -101,11 +101,11 @@ public class InvokeHttpMethod<S, A> implements Function<Invocation, Object> {
       if (isFuture(in.getInvokable())) {
          return createFuture(in);
       }
-      @SuppressWarnings("rawtypes")
-      Invokable async = checkNotNull(sync2AsyncInvokables.getIfPresent(in.getInvokable()), "invokable %s not in %s",
-            in.getInvokable(), sync2AsyncInvokables);
-      checkState(isFuture(async), "not a future: %s", async);
-      return blocker.create(enclosingType, in).apply(createFuture(Invocation.create(async, in.getArgs())));
+      Invocation async = Invocation.create(
+            checkNotNull(sync2AsyncInvokables.getIfPresent(in.getInvokable()), "invokable %s not in %s",
+                  in.getInvokable(), sync2AsyncInvokables), in.getArgs());
+      checkState(isFuture(async.getInvokable()), "not a future: %s", async);
+      return blocker.create(enclosingType, async).apply(createFuture(async));
    }
 
    private boolean isFuture(Invokable<?, ?> in) {
