@@ -48,7 +48,8 @@ import com.google.inject.Module;
  */
 public class CloudLoadBalancersApiMetadata extends BaseRestApiMetadata {
 
-   public static final TypeToken<RestContext<CloudLoadBalancersApi, CloudLoadBalancersAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudLoadBalancersApi, CloudLoadBalancersAsyncApi>>() {
+   public static final TypeToken<RestContext<CloudLoadBalancersApi, CloudLoadBalancersAsyncApi>> CONTEXT_TOKEN = 
+         new TypeToken<RestContext<CloudLoadBalancersApi, CloudLoadBalancersAsyncApi>>() {
       private static final long serialVersionUID = 1L;
    };
 

@@ -28,6 +28,8 @@ import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.AccessRuleApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.AccessRuleAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.NodeAsyncApi;
@@ -52,6 +54,7 @@ public class CloudLoadBalancersRestClientModule extends
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
             .put(LoadBalancerApi.class, LoadBalancerAsyncApi.class)
             .put(NodeApi.class, NodeAsyncApi.class)
+            .put(AccessRuleApi.class, AccessRuleAsyncApi.class)
             .build();
 
    public CloudLoadBalancersRestClientModule() {

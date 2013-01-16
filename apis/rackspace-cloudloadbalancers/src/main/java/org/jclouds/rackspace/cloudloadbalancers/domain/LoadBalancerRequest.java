@@ -40,6 +40,7 @@ import com.google.common.collect.ImmutableSet;
 public class LoadBalancerRequest extends BaseLoadBalancer<NodeRequest, LoadBalancerRequest> {
 
    private final Set<Map<String, String>> virtualIps;
+   private final Set<AccessRule> accessRules;
 
    public LoadBalancerRequest(String name, String protocol, @Nullable Integer port, Set<NodeRequest> nodes,
          @Nullable Algorithm algorithm, @Nullable Integer timeout, @Nullable Boolean halfClosed,
@@ -48,8 +49,8 @@ public class LoadBalancerRequest extends BaseLoadBalancer<NodeRequest, LoadBalan
          @Nullable HealthMonitor healthMonitor, @Nullable Set<AccessRule> accessRules,
          @Nullable Set<Metadata> metadata, VirtualIP.Type virtualIPType, Integer virtualIPId) {
       this(name, protocol, port, nodes, algorithm, timeout, halfClosed, sessionPersistenceType, connectionLogging,
-            connectionThrottle, healthMonitor, accessRules, metadata, getVirtualIPsFromOptions(virtualIPType,
-                  virtualIPId));
+            connectionThrottle, healthMonitor, accessRules, metadata, 
+            getVirtualIPsFromOptions(virtualIPType, virtualIPId));
    }
 
    public LoadBalancerRequest(String name, String protocol, @Nullable Integer port, Set<NodeRequest> nodes,
@@ -59,8 +60,9 @@ public class LoadBalancerRequest extends BaseLoadBalancer<NodeRequest, LoadBalan
          @Nullable HealthMonitor healthMonitor, @Nullable Set<AccessRule> accessRules,
          @Nullable Set<Metadata> metadata, Set<Map<String, String>> virtualIPsFromOptions) {
       super(name, protocol, port, nodes, algorithm, timeout, halfClosed, sessionPersistenceType, connectionLogging,
-            connectionThrottle, healthMonitor, accessRules, metadata);
+            connectionThrottle, healthMonitor, metadata);
       this.virtualIps = checkNotNull(virtualIPsFromOptions, "virtualIPsFromOptions");
+      this.accessRules = accessRules;
    }
 
    static Set<Map<String, String>> getVirtualIPsFromOptions(VirtualIP.Type virtualIPType, Integer virtualIPId) {
@@ -79,7 +81,7 @@ public class LoadBalancerRequest extends BaseLoadBalancer<NodeRequest, LoadBalan
             .add("port", port).add("nodes", nodes).add("timeout", timeout).add("algorithm", algorithm)
             .add("timeout", timeout).add("sessionPersistenceType", getSessionPersistenceType())
             .add("connectionLogging", isConnectionLogging()).add("connectionThrottle", connectionThrottle)
-            .add("healthMonitor", healthMonitor).add("accessRules", accessList).add("metadata", metadata)
+            .add("healthMonitor", healthMonitor).add("accessRules", accessRules).add("metadata", metadata)
             .add("virtualIps", virtualIps);
    }
 
@@ -92,19 +94,40 @@ public class LoadBalancerRequest extends BaseLoadBalancer<NodeRequest, LoadBalan
       private VirtualIP.Type virtualIPType;
       private Integer virtualIPId;
       private Set<Map<String, String>> virtualIps;
+      private Set<AccessRule> accessRules;
 
+      /**
+       * @see VirtualIP
+       */
       public Builder virtualIPId(Integer virtualIPId) {
          this.virtualIPId = virtualIPId;
          return this;
       }
 
+      /**
+       * @see VirtualIP
+       */
       public Builder virtualIPType(VirtualIP.Type virtualIPType) {
          this.virtualIPType = virtualIPType;
          return this;
       }
 
+      /**
+       * @see VirtualIP
+       */
       private Builder virtualIPs(Set<Map<String, String>> virtualIPs) {
          this.virtualIps = virtualIPs;
+         return this;
+      }
+
+      /**
+       * The access list management feature allows fine-grained network access controls to be applied to the load 
+       * balancer's virtual IP address.
+       * 
+       * @see AccessRule
+       */
+      public Builder accessRules(Iterable<AccessRule> accessRules) {
+         this.accessRules = ImmutableSet.<AccessRule> copyOf(checkNotNull(accessRules, "accessRules"));
          return this;
       }
 
@@ -151,14 +174,6 @@ public class LoadBalancerRequest extends BaseLoadBalancer<NodeRequest, LoadBalan
        * {@inheritDoc}
        */
       @Override
-      public Builder from(LoadBalancerRequest in) {
-         return Builder.class.cast(super.from(in)).virtualIPs(in.virtualIps);
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
       public Builder name(String name) {
          return Builder.class.cast(super.name(name));
       }
@@ -179,6 +194,13 @@ public class LoadBalancerRequest extends BaseLoadBalancer<NodeRequest, LoadBalan
          return Builder.class.cast(super.protocol(protocol));
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder from(LoadBalancerRequest in) {
+         return Builder.class.cast(super.from(in)).virtualIPs(in.virtualIps);
+      }
    }
 
    @SuppressWarnings("unchecked")
