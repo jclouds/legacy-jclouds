@@ -18,25 +18,9 @@
  */
 package org.jclouds.azure.management.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
-import java.util.Collection;
 import java.util.Map;
 
-import javax.inject.Singleton;
 import javax.net.ssl.SSLContext;
 
 import org.jclouds.azure.management.AzureManagementApi;
@@ -53,19 +37,13 @@ import org.jclouds.azure.management.features.OperationApi;
 import org.jclouds.azure.management.features.OperationAsyncApi;
 import org.jclouds.azure.management.features.RoleApi;
 import org.jclouds.azure.management.features.RoleAsyncApi;
+import org.jclouds.azure.management.suppliers.KeyStoreSupplier;
 import org.jclouds.azure.management.suppliers.SSLContextWithKeysSupplier;
-import org.jclouds.crypto.Crypto;
-import org.jclouds.crypto.Pems;
-import org.jclouds.io.InputSuppliers;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.annotations.Credential;
-import org.jclouds.rest.annotations.Identity;
 import org.jclouds.rest.config.RestClientModule;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -76,13 +54,12 @@ import com.google.inject.TypeLiteral;
 @ConfiguresRestClient
 public class AzureManagementRestClientModule extends RestClientModule<AzureManagementApi, AzureManagementAsyncApi> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
-            .put(LocationApi.class, LocationAsyncApi.class)
-            .put(RoleApi.class, RoleAsyncApi.class)
-            .put(HostedServiceApi.class, HostedServiceAsyncApi.class)
-            .put(OSImageApi.class, OSImageAsyncApi.class)
-            .put(OperationApi.class, OperationAsyncApi.class)
-            .put(DiskApi.class, DiskAsyncApi.class)
-            .build();
+         .put(LocationApi.class, LocationAsyncApi.class)
+         .put(RoleApi.class, RoleAsyncApi.class)
+         .put(HostedServiceApi.class, HostedServiceAsyncApi.class)
+         .put(OSImageApi.class, OSImageAsyncApi.class)
+         .put(OperationApi.class, OperationAsyncApi.class)
+         .put(DiskApi.class, DiskAsyncApi.class).build();
 
    public AzureManagementRestClientModule() {
       super(DELEGATE_MAP);
@@ -94,59 +71,9 @@ public class AzureManagementRestClientModule extends RestClientModule<AzureManag
       bind(new TypeLiteral<Supplier<SSLContext>>() {
       }).to(new TypeLiteral<SSLContextWithKeysSupplier>() {
       });
+      bind(new TypeLiteral<Supplier<KeyStore>>() {
+      }).to(new TypeLiteral<KeyStoreSupplier>() {
+      });
    }
 
-   /**
-    * TODO copied from FGCP, should be put in a common place
-    * 
-    * @author Dies Koper
-    */
-   @Provides
-   @Singleton
-   protected KeyStore provideKeyStore(Crypto crypto, @Identity String cert, @Credential String keyStorePassword)
-            throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException,
-            InvalidKeySpecException {
-      KeyStore keyStore = KeyStore.getInstance("PKCS12");
-
-      File certFile = new File(checkNotNull(cert));
-      if (certFile.isFile()) { // cert is path to pkcs12 file
-
-         keyStore.load(new FileInputStream(certFile), keyStorePassword.toCharArray());
-      } else { // cert is PEM encoded, containing private key and certs
-
-         // split in private key and certs
-         int privateKeyBeginIdx = cert.indexOf("-----BEGIN PRIVATE KEY");
-         int privateKeyEndIdx = cert.indexOf("-----END PRIVATE KEY");
-         String pemPrivateKey = cert.substring(privateKeyBeginIdx, privateKeyEndIdx + 26);
-
-         String pemCerts = "";
-         int certsBeginIdx = 0;
-
-         do {
-            certsBeginIdx = cert.indexOf("-----BEGIN CERTIFICATE", certsBeginIdx);
-
-            if (certsBeginIdx >= 0) {
-               int certsEndIdx = cert.indexOf("-----END CERTIFICATE", certsBeginIdx) + 26;
-               pemCerts += cert.substring(certsBeginIdx, certsEndIdx);
-               certsBeginIdx = certsEndIdx;
-            }
-         } while (certsBeginIdx != -1);
-
-         // parse private key
-         KeySpec keySpec = Pems.privateKeySpec(InputSuppliers.of(pemPrivateKey));
-         PrivateKey privateKey = crypto.rsaKeyFactory().generatePrivate(keySpec);
-
-         // populate keystore with private key and certs
-         CertificateFactory cf = CertificateFactory.getInstance("X.509");
-         @SuppressWarnings("unchecked")
-         Collection<Certificate> certs = (Collection<Certificate>) cf.generateCertificates(new ByteArrayInputStream(
-                  pemCerts.getBytes(Charsets.UTF_8)));
-         keyStore.load(null);
-         keyStore.setKeyEntry("dummy", privateKey, keyStorePassword.toCharArray(),
-                  certs.toArray(new java.security.cert.Certificate[0]));
-
-      }
-
-      return keyStore;
-   }
 }

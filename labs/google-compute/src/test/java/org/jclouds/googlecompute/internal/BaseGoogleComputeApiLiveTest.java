@@ -37,6 +37,7 @@ import org.jclouds.oauth.v2.OAuthTestUtils;
 import org.jclouds.rest.RestContext;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
@@ -78,7 +79,8 @@ public class BaseGoogleComputeApiLiveTest extends BaseContextLiveTest<RestContex
    }
 
    protected String getUserProject() {
-      return context.utils().injector().getInstance(Key.get(String.class, UserProject.class));
+      return context.utils().injector().getInstance(Key.get(new TypeLiteral<Supplier<String>>() {
+      }, UserProject.class)).get();
    }
 
    protected Predicate<AtomicReference<Operation>> getOperationDonePredicate() {

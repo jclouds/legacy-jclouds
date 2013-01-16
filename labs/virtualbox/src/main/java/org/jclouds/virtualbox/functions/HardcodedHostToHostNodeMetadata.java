@@ -23,18 +23,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 
-import javax.annotation.Resource;
-import javax.inject.Named;
-
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Provider;
-import org.jclouds.logging.Logger;
-import org.jclouds.rest.annotations.Credential;
-import org.jclouds.rest.annotations.Identity;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -43,33 +36,25 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 @Singleton
-public class HardcodedHostToHostNodeMetadata implements
-      Function<NodeMetadata, NodeMetadata> {
-
-   @Resource
-   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-   protected Logger logger = Logger.NULL;
-
+public class HardcodedHostToHostNodeMetadata implements Function<NodeMetadata, NodeMetadata> {
+   
    private final Supplier<URI> providerSupplier;
-   private final String username;
-   private final String password;
+   private final Supplier<Credentials> creds;
 
    @Inject
-   public HardcodedHostToHostNodeMetadata(
-         @Provider Supplier<URI> providerSupplier,
-         @Nullable @Identity String identity,
-         @Nullable @Credential String credential) {
-      this.providerSupplier = checkNotNull(providerSupplier,
-            "endpoint to virtualbox websrvd is needed");
-      this.username = identity;
-      this.password = credential.equals("CHANGE_ME") ? "" : credential;
+   public HardcodedHostToHostNodeMetadata(@Provider Supplier<URI> providerSupplier,
+         @Provider Supplier<Credentials> creds) {
+      this.providerSupplier = checkNotNull(providerSupplier, "endpoint to virtualbox websrvd is needed");
+      this.creds = creds;
    }
 
    @Override
    public NodeMetadata apply(NodeMetadata host) {
+      Credentials currentCreds = checkNotNull(creds.get(), "credential supplier returned null");
+      String username = currentCreds.identity;
+      String password = currentCreds.credential.equals("CHANGE_ME") ? "" : currentCreds.credential;
 
-      LoginCredentials.Builder credentialsBuilder = LoginCredentials.builder(
-            host.getCredentials()).user(username);
+      LoginCredentials.Builder credentialsBuilder = LoginCredentials.builder(host.getCredentials()).user(username);
       if (!password.isEmpty())
          credentialsBuilder.password(password);
 

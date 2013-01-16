@@ -19,18 +19,19 @@
 package org.jclouds.jenkins.v1.filters;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.jenkins.v1.JenkinsApiMetadata.ANONYMOUS_IDENTITY;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.jenkins.v1.JenkinsApiMetadata;
-import org.jclouds.rest.annotations.Identity;
+import org.jclouds.location.Provider;
 
-import com.google.common.base.Optional;
+import com.google.common.base.Supplier;
 
 /**
  * @author Adrian Cole
@@ -39,18 +40,19 @@ import com.google.common.base.Optional;
 @Singleton
 public class BasicAuthenticationUnlessAnonymous implements HttpRequestFilter {
 
-   private final Optional<BasicAuthentication> auth;
+   private final Supplier<Credentials> creds;
+   private final BasicAuthentication auth;
 
    @Inject
-   public BasicAuthenticationUnlessAnonymous(@Identity String user, BasicAuthentication auth) {
-      this.auth = JenkinsApiMetadata.ANONYMOUS_IDENTITY.equals(checkNotNull(user, "user")) ? Optional
-               .<BasicAuthentication> absent() : Optional.of(checkNotNull(auth, "auth"));
+   public BasicAuthenticationUnlessAnonymous(@Provider Supplier<Credentials> creds, BasicAuthentication auth) {
+      this.creds = checkNotNull(creds, "creds");
+      this.auth = checkNotNull(auth, "auth");
    }
 
    @Override
    public HttpRequest filter(HttpRequest request) throws HttpException {
-      if (auth.isPresent())
-         return auth.get().filter(request);
-      return request;
+      if (ANONYMOUS_IDENTITY.equals(checkNotNull(creds.get().identity, "user")))
+         return request;
+      return auth.filter(request);
    }
 }

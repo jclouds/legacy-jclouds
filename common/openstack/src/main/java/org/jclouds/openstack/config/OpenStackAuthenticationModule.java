@@ -110,11 +110,11 @@ public class OpenStackAuthenticationModule extends AbstractModule {
    @Provides
    @Singleton
    protected Supplier<AuthenticationResponse> provideAuthenticationResponseSupplier(
-            final LoadingCache<Credentials, AuthenticationResponse> cache, @Provider final Credentials creds) {
+         final LoadingCache<Credentials, AuthenticationResponse> cache, @Provider final Supplier<Credentials> creds) {
       return new Supplier<AuthenticationResponse>() {
          @Override
          public AuthenticationResponse get() {
-            return cache.getUnchecked(creds);
+            return cache.getUnchecked(creds.get());
          }
       };
    }

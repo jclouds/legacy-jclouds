@@ -19,7 +19,6 @@
 package org.jclouds.vcloud.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG;
 
 import javax.inject.Inject;
@@ -31,41 +30,31 @@ import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefault;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class DefaultOrgForUser implements Function<String, Supplier<ReferenceType>> {
+public class DefaultOrgForUser implements Supplier<ReferenceType> {
 
    private final OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefault selector;
-   private final Supplier<VCloudSession> sessionSupplier;
+   private final Supplier<VCloudSession> session;
 
    @Inject
    public DefaultOrgForUser(ValueOfConfigurationKeyOrNull valueOfConfigurationKeyOrNull,
-         @Org Predicate<ReferenceType> defaultSelector, Supplier<VCloudSession> sessionSupplier) {
+         @Org Predicate<ReferenceType> defaultSelector, Supplier<VCloudSession> session) {
       this.selector = new OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefault(checkNotNull(
             valueOfConfigurationKeyOrNull, "valueOfConfigurationKeyOrNull"), PROPERTY_VCLOUD_DEFAULT_ORG, checkNotNull(
             defaultSelector, "defaultSelector"));
-      this.sessionSupplier = checkNotNull(sessionSupplier, "sessionSupplier");
+      this.session = checkNotNull(session, "session");
    }
 
    @Override
-   public Supplier<ReferenceType> apply(final String user) {
-      return Suppliers.compose(new Function<VCloudSession, ReferenceType>() {
-
-         @Override
-         public ReferenceType apply(VCloudSession session) {
-            checkState(session != null, "could not retrieve Session at %s", user);
-            return selector.apply(session.getOrgs().values());
-         }
-
-      }, sessionSupplier);
+   public ReferenceType get() {
+      return selector.apply(session.get().getOrgs().values());
    }
 
 }

@@ -29,13 +29,15 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
-import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.internal.VolumeImpl;
+import org.jclouds.domain.Credentials;
+import org.jclouds.location.Provider;
 import org.jclouds.predicates.SocketOpen;
-import org.jclouds.rest.annotations.Identity;
 
+import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -68,9 +70,9 @@ public class StubComputeServiceDependenciesModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected ConcurrentMap<String, NodeMetadata> provideNodesForIdentity(@Identity String identity)
+   protected ConcurrentMap<String, NodeMetadata> provideNodesForIdentity(@Provider Supplier<Credentials> creds)
             throws ExecutionException {
-      return backing.get(identity);
+      return backing.get(creds.get().identity);
    }
 
    protected static final LoadingCache<String, AtomicInteger> nodeIds = CacheBuilder.newBuilder().build(
@@ -85,8 +87,8 @@ public class StubComputeServiceDependenciesModule extends AbstractModule {
 
    @Provides
    @Named("NODE_ID")
-   protected Integer provideNodeIdForIdentity(@Identity String identity) throws ExecutionException {
-      return nodeIds.get(identity).incrementAndGet();
+   protected Integer provideNodeIdForIdentity(@Provider Supplier<Credentials> creds) throws ExecutionException {
+      return nodeIds.get(creds.get().identity).incrementAndGet();
    }
 
    @Singleton
