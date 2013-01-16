@@ -18,6 +18,7 @@
  */
 package org.jclouds.config;
 
+import static com.google.common.base.Suppliers.ofInstance;
 import static org.easymock.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
@@ -74,7 +75,7 @@ public class BindRestContextWithWildcardExtendsExplicitAndRawTypeTest {
    private Injector injectorFor(ProviderMetadata md) {
       return Guice.createInjector(
                new BindNameToContext("test"),
-               new BindProviderMetadataContextAndCredentials(md, new Credentials("user", "pass")),
+               new BindProviderMetadataContextAndCredentials(md, ofInstance(new Credentials("user", "pass"))),
                new BindRestContextWithWildcardExtendsExplicitAndRawType(RestApiMetadata.class.cast(md
                                  .getApiMetadata())),
                                  
