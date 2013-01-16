@@ -28,8 +28,9 @@ import javax.inject.Inject;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.predicates.UserPredicates;
+import org.jclouds.domain.Credentials;
+import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.annotations.Identity;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
@@ -45,18 +46,18 @@ public class GetCurrentUser implements Supplier<User> {
    protected Logger logger = Logger.NULL;
 
    private final CloudStackClient client;
-   private final String identity;
+   private final Supplier<Credentials> creds;
 
    @Inject
-   public GetCurrentUser(CloudStackClient client, @Identity String identity) {
+   public GetCurrentUser(CloudStackClient client, @Provider Supplier<Credentials> creds) {
       this.client = checkNotNull(client, "client");
-      this.identity = checkNotNull(identity, "identity");
+      this.creds = checkNotNull(creds, "creds");
    }
 
    @Override
    public User get() {
       Iterable<User> users = Iterables.concat(client.getAccountClient().listAccounts());
-      Predicate<User> apiKeyMatches = UserPredicates.apiKeyEquals(identity);
+      Predicate<User> apiKeyMatches = UserPredicates.apiKeyEquals(creds.get().identity);
       User currentUser = null;
       try {
          currentUser = Iterables.find(users, apiKeyMatches);

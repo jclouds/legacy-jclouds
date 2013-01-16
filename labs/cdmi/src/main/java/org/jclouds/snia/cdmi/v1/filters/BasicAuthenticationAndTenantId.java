@@ -18,17 +18,21 @@
  */
 package org.jclouds.snia.cdmi.v1.filters;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.net.HttpHeaders.AUTHORIZATION;
+import static org.jclouds.http.filters.BasicAuthentication.basic;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.crypto.Crypto;
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.location.Provider;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.rest.annotations.Credential;
-import org.jclouds.rest.annotations.Identity;
+
+import com.google.common.base.Supplier;
 
 /**
  * Uses Basic Authentication to sign the request, and adds the {@code TID} header.
@@ -39,23 +43,23 @@ import org.jclouds.rest.annotations.Identity;
  */
 @Singleton
 public class BasicAuthenticationAndTenantId implements HttpRequestFilter {
-   private final String tenantId;
-   private final BasicAuthentication basicAuthentication;
+   private final Supplier<Credentials> creds;
 
    @Inject
-   public BasicAuthenticationAndTenantId(@Identity String tenantIdAndUsername, @Credential String password,
-            Crypto crypto) {
-      if (tenantIdAndUsername.indexOf(':') == -1) {
-         throw new AuthorizationException(String.format("Identity %s does not match format tenantId:username",
-                  tenantIdAndUsername), null);
-      }
-      this.tenantId = tenantIdAndUsername.substring(0, tenantIdAndUsername.indexOf(':'));
-      String username = tenantIdAndUsername.substring(tenantIdAndUsername.indexOf(':') + 1);
-      this.basicAuthentication = new BasicAuthentication(username, password, crypto);
+   public BasicAuthenticationAndTenantId(@Provider Supplier<Credentials> creds) {
+      this.creds = checkNotNull(creds, "creds");
    }
 
    @Override
    public HttpRequest filter(HttpRequest request) throws HttpException {
-      return basicAuthentication.filter(request.toBuilder().replaceHeader("TID", tenantId).build());
+      Credentials currentCreds = checkNotNull(creds.get(), "credential supplier returned null");
+      if (currentCreds.identity.indexOf(':') == -1) {
+         throw new AuthorizationException(String.format("Identity %s does not match format tenantId:username",
+               currentCreds.identity), null);
+      }
+      String tenantId = currentCreds.identity.substring(0, currentCreds.identity.indexOf(':'));
+      String username = currentCreds.identity.substring(currentCreds.identity.indexOf(':') + 1);
+      return request.toBuilder().replaceHeader("TID", tenantId)
+            .replaceHeader(AUTHORIZATION, basic(username, currentCreds.credential)).build();
    }
 }

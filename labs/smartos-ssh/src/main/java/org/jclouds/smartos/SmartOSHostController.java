@@ -1,5 +1,7 @@
 package org.jclouds.smartos;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -11,12 +13,10 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.json.Json;
 import org.jclouds.location.Provider;
-import org.jclouds.rest.annotations.Credential;
-import org.jclouds.rest.annotations.Identity;
 import org.jclouds.smartos.compute.domain.DataSet;
 import org.jclouds.smartos.compute.domain.VM;
 import org.jclouds.smartos.compute.domain.VmSpecification;
@@ -34,8 +34,7 @@ import com.google.common.util.concurrent.RateLimiter;
  */
 public class SmartOSHostController {
    protected final String hostname;
-   protected final String username;
-   protected final String password;
+   protected final Supplier<Credentials> creds;
    protected final SshClient.Factory sshClientFactory;
    protected final Json json;
 
@@ -59,11 +58,10 @@ public class SmartOSHostController {
    }
 
    @Inject
-   protected SmartOSHostController(@Provider Supplier<URI> provider, @Nullable @Identity String identity,
-            @Nullable @Credential String credential, SshClient.Factory sshFactory, Json json) {
+   protected SmartOSHostController(@Provider Supplier<URI> provider,
+         @org.jclouds.location.Provider final Supplier<Credentials> creds, SshClient.Factory sshFactory, Json json) {
       this.hostname = provider.get().getHost();
-      this.username = identity;
-      this.password = credential;
+      this.creds = creds;
       this.sshClientFactory = sshFactory;
       this.json = json;
    }
@@ -76,22 +74,16 @@ public class SmartOSHostController {
       return hostname;
    }
 
-   public String getUsername() {
-      return username;
-   }
-
-   public String getPassword() {
-      return password;
-   }
-
    public SshClient.Factory getSshClientFactory() {
       return sshClientFactory;
    }
 
    protected SshClient getConnection() {
       if (_connection == null) {
+         Credentials currentCreds = checkNotNull(creds.get(), "credential supplier returned null");
 
-         LoginCredentials credentials = new LoginCredentials.Builder().user(username).password(password).build();
+         LoginCredentials credentials = new LoginCredentials.Builder().user(currentCreds.identity)
+               .password(currentCreds.credential).build();
 
          _connection = getSshClientFactory().create(HostAndPort.fromParts(hostname, 22), credentials);
 

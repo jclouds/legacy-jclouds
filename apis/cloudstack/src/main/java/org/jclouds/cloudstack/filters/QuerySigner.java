@@ -38,16 +38,17 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.crypto.Crypto;
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
+import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
-import org.jclouds.rest.annotations.Credential;
-import org.jclouds.rest.annotations.Identity;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.TreeMultimap;
@@ -63,8 +64,7 @@ import com.google.common.io.ByteProcessor;
 public class QuerySigner implements AuthenticationFilter, RequestSigner {
 
    private final SignatureWire signatureWire;
-   private final String accessKey;
-   private final String secretKey;
+   private final Supplier<Credentials> creds;
    private final Crypto crypto;
    private final HttpUtils utils;
 
@@ -73,11 +73,9 @@ public class QuerySigner implements AuthenticationFilter, RequestSigner {
    private Logger signatureLog = Logger.NULL;
 
    @Inject
-   public QuerySigner(SignatureWire signatureWire, @Identity String accessKey, @Credential String secretKey,
-         Crypto crypto, HttpUtils utils) {
+   public QuerySigner(SignatureWire signatureWire, @Provider Supplier<Credentials> creds, Crypto crypto, HttpUtils utils) {
       this.signatureWire = signatureWire;
-      this.accessKey = accessKey;
-      this.secretKey = secretKey;
+      this.creds = creds;
       this.crypto = crypto;
       this.utils = utils;
    }
@@ -103,7 +101,7 @@ public class QuerySigner implements AuthenticationFilter, RequestSigner {
    public String sign(String toSign) {
       String signature;
       try {
-         ByteProcessor<byte[]> hmacSHA1 = asByteProcessor(crypto.hmacSHA1(secretKey.getBytes()));
+         ByteProcessor<byte[]> hmacSHA1 = asByteProcessor(crypto.hmacSHA1(creds.get().credential.getBytes()));
          signature = base64().encode(readBytes(toInputStream(toSign), hmacSHA1));
          if (signatureWire.enabled())
             signatureWire.input(toInputStream(signature));
@@ -130,7 +128,7 @@ public class QuerySigner implements AuthenticationFilter, RequestSigner {
 
    @VisibleForTesting
    void addSigningParams(Multimap<String, String> params) {
-      params.replaceValues("apiKey", ImmutableList.of(accessKey));
+      params.replaceValues("apiKey", ImmutableList.of(creds.get().identity));
       params.removeAll("signature");
    }
 

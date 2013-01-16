@@ -49,6 +49,7 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.Constants;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.date.TimeStamp;
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
@@ -57,10 +58,9 @@ import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.annotations.ApiVersion;
-import org.jclouds.rest.annotations.Credential;
-import org.jclouds.rest.annotations.Identity;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
@@ -83,8 +83,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
 
    private final SignatureWire signatureWire;
    private final String apiVersion;
-   private final String accessKey;
-   private final String secretKey;
+   private final Supplier<Credentials> creds;
    private final Provider<String> dateService;
    private final Crypto crypto;
    private final HttpUtils utils;
@@ -94,13 +93,12 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    private Logger signatureLog = Logger.NULL;
 
    @Inject
-   public FormSigner(SignatureWire signatureWire, @ApiVersion String apiVersion, @Identity String accessKey,
-            @Credential String secretKey, @TimeStamp Provider<String> dateService,
-            Crypto crypto, HttpUtils utils) {
+   public FormSigner(SignatureWire signatureWire, @ApiVersion String apiVersion,
+         @org.jclouds.location.Provider Supplier<Credentials> creds, @TimeStamp Provider<String> dateService,
+         Crypto crypto, HttpUtils utils) {
       this.signatureWire = signatureWire;
       this.apiVersion = apiVersion;
-      this.accessKey = accessKey;
-      this.secretKey = secretKey;
+      this.creds = creds;
       this.dateService = dateService;
       this.crypto = crypto;
       this.utils = utils;
@@ -168,7 +166,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    public String sign(String toSign) {
       String signature;
       try {
-         ByteProcessor<byte[]> hmacSHA256 = asByteProcessor(crypto.hmacSHA256(secretKey.getBytes(UTF_8)));
+         ByteProcessor<byte[]> hmacSHA256 = asByteProcessor(crypto.hmacSHA256(creds.get().credential.getBytes(UTF_8)));
          signature = base64().encode(readBytes(toInputStream(toSign), hmacSHA256));
          if (signatureWire.enabled())
             signatureWire.input(toInputStream(signature));
@@ -207,7 +205,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
       params.replaceValues(SIGNATURE_METHOD, ImmutableList.of("HmacSHA256"));
       params.replaceValues(SIGNATURE_VERSION, ImmutableList.of("2"));
       params.replaceValues(TIMESTAMP, ImmutableList.of(dateService.get()));
-      params.replaceValues(AWS_ACCESS_KEY_ID, ImmutableList.of(accessKey));
+      params.replaceValues(AWS_ACCESS_KEY_ID, ImmutableList.of(creds.get().identity));
       params.removeAll(SIGNATURE);
    }
 

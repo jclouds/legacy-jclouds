@@ -27,9 +27,7 @@ import java.util.Properties;
 import org.jclouds.ContextBuilder;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
-import org.jclouds.nodepool.Backend;
 import org.jclouds.nodepool.config.NodePoolProperties;
-import org.jclouds.rest.annotations.Credential;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
@@ -58,8 +56,6 @@ public class NodePoolComputeServiceContextTest {
                .getInstance(Key.get(new TypeLiteral<Supplier<ComputeService>>() {
                }, Backend.class)).get();
 
-      assertEquals(stub.getContext().unwrap().getIdentity(), "foo");
-      assertEquals(stub.getContext().utils().injector().getInstance(Key.get(String.class, Credential.class)), "bar");
       assertEquals(stub.getContext().unwrap().getProviderMetadata().getEndpoint(), "gooend");
       assertEquals(stub.getContext().unwrap().getProviderMetadata().getApiMetadata().getVersion(), "1.1");
       assertEquals(stub.getContext().unwrap().getProviderMetadata().getApiMetadata().getBuildVersion().get(), "1.1-2");
