@@ -21,9 +21,12 @@ package org.jclouds.ec2.options;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.ec2.options.internal.BaseEC2RequestOptions;
-import org.jclouds.rest.annotations.Identity;
+import org.jclouds.location.Provider;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 
@@ -49,15 +52,16 @@ import com.google.inject.Inject;
  */
 public class BundleInstanceS3StorageOptions extends BaseEC2RequestOptions {
 
-   @Inject(optional = true)
-   @Identity
-   String currentAwsAccessKeyId;
+   @Inject
+   @VisibleForTesting
+   @Provider
+   Supplier<Credentials> creds;
 
    @Override
    public Multimap<String, String> buildFormParameters() {
       if (getAwsAccessKeyId() == null) {
-         checkState(currentAwsAccessKeyId != null, "currentAwsAccessKeyId should have been injected");
-         bucketOwnedBy(currentAwsAccessKeyId);
+         checkState(creds != null, "creds should have been injected");
+         bucketOwnedBy(creds.get().identity);
       }
       return super.buildFormParameters();
    }
@@ -82,11 +86,11 @@ public class BundleInstanceS3StorageOptions extends BaseEC2RequestOptions {
 
    public static class Builder {
       /**
-       * @see BundleInstanceS3StorageOptions#bucketOwnedBy(ccessKeyId)
+       * @see BundleInstanceS3StorageOptions#bucketOwnedBy(accessKeyId)
        */
-      public static BundleInstanceS3StorageOptions bucketOwnedBy(String ccessKeyId) {
+      public static BundleInstanceS3StorageOptions bucketOwnedBy(String accessKeyId) {
          BundleInstanceS3StorageOptions options = new BundleInstanceS3StorageOptions();
-         return options.bucketOwnedBy(ccessKeyId);
+         return options.bucketOwnedBy(accessKeyId);
       }
 
    }

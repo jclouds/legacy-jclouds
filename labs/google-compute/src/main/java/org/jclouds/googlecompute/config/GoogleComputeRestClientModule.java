@@ -18,12 +18,15 @@
  */
 package org.jclouds.googlecompute.config;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Suppliers.compose;
+
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+
+import javax.inject.Singleton;
+
+import org.jclouds.domain.Credentials;
 import org.jclouds.googlecompute.GoogleComputeApi;
 import org.jclouds.googlecompute.GoogleComputeAsyncApi;
 import org.jclouds.googlecompute.domain.Operation;
@@ -52,13 +55,16 @@ import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.annotations.Identity;
 import org.jclouds.rest.config.RestClientModule;
 
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static com.google.common.base.Preconditions.checkState;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Splitter;
+import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * Configures the GoogleCompute connection.
@@ -97,10 +103,15 @@ public class GoogleComputeRestClientModule extends RestClientModule<GoogleComput
    }
 
    @Provides
+   @Singleton
    @UserProject
-   public String provideProject(@Identity String identity) {
-      checkState(identity.indexOf("@") != 1, "identity should be in project_id@developer.gserviceaccount.com format");
-      return Iterables.get(Splitter.on("@").split(identity), 0);
+   public Supplier<String> supplyProject(
+         @org.jclouds.location.Provider final Supplier<Credentials> creds) {
+      return compose(new Function<Credentials, String>() {
+         public String apply(Credentials in) {
+            checkState(in.identity.indexOf("@") != 1, "identity should be in project_id@developer.gserviceaccount.com format");
+            return Iterables.get(Splitter.on("@").split(in.identity), 0);
+         }
+      }, creds);
    }
-
 }

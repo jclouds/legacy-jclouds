@@ -33,9 +33,8 @@ import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.annotations.Api;
 import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.annotations.BuildVersion;
-import org.jclouds.rest.annotations.Credential;
-import org.jclouds.rest.annotations.Identity;
 
+import com.google.common.base.Supplier;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
@@ -56,9 +55,9 @@ import com.google.inject.name.Names;
 public class BindProviderMetadataContextAndCredentials extends AbstractModule {
 
    private final ProviderMetadata providerMetadata;
-   private final Credentials creds;
+   private final Supplier<Credentials> creds;
 
-   public BindProviderMetadataContextAndCredentials(ProviderMetadata providerMetadata, Credentials creds) {
+   public BindProviderMetadataContextAndCredentials(ProviderMetadata providerMetadata, Supplier<Credentials> creds) {
       this.providerMetadata = checkNotNull(providerMetadata, "providerMetadata");
       this.creds = checkNotNull(creds, "creds");
    }
@@ -70,11 +69,7 @@ public class BindProviderMetadataContextAndCredentials extends AbstractModule {
       toBind.putAll(providerMetadata.getApiMetadata().getDefaultProperties());
       toBind.putAll(providerMetadata.getDefaultProperties());
       Names.bindProperties(binder(), toBind);
-      bind(Credentials.class).annotatedWith(Provider.class).toInstance(creds);
-      bindConstant().annotatedWith(Identity.class).to(creds.identity);
-      // nullable
-      bind(String.class).annotatedWith(Credential.class).toProvider(
-               com.google.inject.util.Providers.of(creds.credential));
+      bind(new TypeLiteral<Supplier<Credentials>>(){}).annotatedWith(Provider.class).toInstance(creds);
       bindConstant().annotatedWith(Provider.class).to(providerMetadata.getId());
       bind(new TypeLiteral<Set<String>>() {
       }).annotatedWith(Iso3166.class).toInstance(providerMetadata.getIso3166Codes());

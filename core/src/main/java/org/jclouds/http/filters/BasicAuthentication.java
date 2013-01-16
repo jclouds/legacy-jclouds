@@ -26,12 +26,13 @@ import static java.lang.String.format;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.crypto.Crypto;
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.rest.annotations.Credential;
-import org.jclouds.rest.annotations.Identity;
+import org.jclouds.location.Provider;
+
+import com.google.common.base.Supplier;
 
 /**
  * Uses Basic Authentication to sign the request.
@@ -43,22 +44,24 @@ import org.jclouds.rest.annotations.Identity;
 @Singleton
 public class BasicAuthentication implements HttpRequestFilter {
 
-   private final String header;
+   private final Supplier<Credentials> creds;
 
    @Inject
-   public BasicAuthentication(@Identity String user, @Credential String password, Crypto crypto) {
-      checkNotNull(user, "user");
-      checkNotNull(password, "password");
-      this.header = basic(user, password);
+   public BasicAuthentication(@Provider Supplier<Credentials> creds) {
+      this.creds = checkNotNull(creds, "creds");
    }
 
    public static String basic(String user, String password) {
-      return new StringBuilder("Basic ").append(base64().encode(format("%s:%s", user, password).getBytes(UTF_8)))
+      return new StringBuilder("Basic ").append(
+            base64().encode(
+                  format("%s:%s", checkNotNull(user, "user"), checkNotNull(password, "password")).getBytes(UTF_8)))
             .toString();
    }
 
    @Override
    public HttpRequest filter(HttpRequest request) throws HttpException {
-      return request.toBuilder().replaceHeader(AUTHORIZATION, header).build();
+      Credentials currentCreds = checkNotNull(creds.get(), "credential supplier returned null");
+      return request.toBuilder().replaceHeader(AUTHORIZATION, basic(currentCreds.identity, currentCreds.credential))
+            .build();
    }
 }

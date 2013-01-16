@@ -19,7 +19,6 @@
 package org.jclouds.openstack.keystone.v2_0.config;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Throwables.propagate;
 import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
 
 import java.util.Map;
@@ -194,15 +193,11 @@ public class KeystoneAuthenticationModule extends AbstractModule {
    @Provides
    @Singleton
    protected Supplier<Access> provideAccessSupplier(final LoadingCache<Credentials, Access> cache,
-            @Provider final Credentials creds) {
+         @Provider final Supplier<Credentials> creds) {
       return new Supplier<Access>() {
          @Override
          public Access get() {
-            try {
-               return cache.get(creds);
-            } catch (ExecutionException e) {
-               throw propagate(e.getCause());
-            }
+            return cache.getUnchecked(creds.get());
          }
       };
    }

@@ -29,13 +29,14 @@ import javax.inject.Named;
 
 import org.jclouds.Constants;
 import org.jclouds.date.TimeStamp;
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.annotations.Credential;
-import org.jclouds.rest.annotations.Identity;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -43,8 +44,7 @@ import com.google.common.collect.ImmutableMap;
  */
 public class SharedKeyLiteAuthentication implements HttpRequestFilter {
 
-   private final String apiKey;
-   private final String secret;
+   private final Supplier<Credentials> creds;
    private final Long timeStamp;
    private final HttpUtils utils;
 
@@ -53,10 +53,8 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    Logger signatureLog = Logger.NULL;
 
    @Inject
-   public SharedKeyLiteAuthentication(@Identity String apiKey, @Credential String secret, @TimeStamp Long timeStamp,
-            HttpUtils utils) {
-      this.apiKey = apiKey;
-      this.secret = secret;
+   public SharedKeyLiteAuthentication(@Provider Supplier<Credentials> creds, @TimeStamp Long timeStamp, HttpUtils utils) {
+      this.creds = creds;
       this.timeStamp = timeStamp;
       this.utils = utils;
    }
@@ -65,13 +63,14 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    public HttpRequest filter(HttpRequest request) {
       String toSign = createStringToSign();
       String signatureMd5 = getMd5For(toSign);
-      request = request.toBuilder().replaceQueryParams(ImmutableMap.of("sig", signatureMd5, "api_key" ,apiKey)).build();
+      request = request.toBuilder()
+            .replaceQueryParams(ImmutableMap.of("sig", signatureMd5, "api_key", creds.get().identity)).build();
       utils.logRequest(signatureLog, request, "<<");
       return request;
    }
 
    private String createStringToSign() {
-      return format("%s%s%s", apiKey, secret, timeStamp);
+      return format("%s%s%s", creds.get().identity, creds.get().credential, timeStamp);
    }
 
    private String getMd5For(String stringToHash) {

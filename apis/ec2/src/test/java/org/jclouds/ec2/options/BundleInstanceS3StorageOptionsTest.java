@@ -21,10 +21,12 @@ package org.jclouds.ec2.options;
 import static org.jclouds.ec2.options.BundleInstanceS3StorageOptions.Builder.bucketOwnedBy;
 import static org.testng.Assert.assertEquals;
 
-import com.google.common.collect.ImmutableList;
-
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Tests possible uses of BundleInstanceS3StorageOptions and
@@ -56,7 +58,7 @@ public class BundleInstanceS3StorageOptionsTest {
    @Test
    public void testNullBucketOwnedBy() {
       BundleInstanceS3StorageOptions options = new BundleInstanceS3StorageOptions();
-      options.currentAwsAccessKeyId = "foo";
+      options.creds = Suppliers.ofInstance(new Credentials("foo", null));
       assertEquals(options.buildFormParameters().get("Storage.S3.AWSAccessKeyId"), ImmutableList.of("foo"));
    }
 

@@ -69,7 +69,6 @@ public class OAuthCredentials extends Credentials {
          return this;
       }
 
-      @SuppressWarnings("unchecked")
       public OAuthCredentials build() {
          return new OAuthCredentials(checkNotNull(identity), credential, privateKey);
       }
