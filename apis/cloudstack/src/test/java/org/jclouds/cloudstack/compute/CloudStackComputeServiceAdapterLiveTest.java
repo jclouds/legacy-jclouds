@@ -63,13 +63,13 @@ import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.rest.annotations.Identity;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -104,7 +104,6 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
          @Override
          protected void configure() {
             bindProperties(binder(), setupProperties());
-            bind(String.class).annotatedWith(Identity.class).toInstance(identity);
             bind(new TypeLiteral<Supplier<User>>() {
             }).annotatedWith(Memoized.class).to(GetCurrentUser.class).in(Scopes.SINGLETON);
             bind(new TypeLiteral<Supplier<Map<String, Network>>>() {
@@ -124,6 +123,12 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
             bind(new TypeLiteral<Supplier<LoadingCache<String, Zone>>>() {}).
                to(ZoneIdToZoneSupplier.class);
             install(new FactoryModuleBuilder().build(StaticNATVirtualMachineInNetwork.Factory.class));
+         }
+         
+         @Provides
+         @Singleton
+         Supplier<Credentials> supplyCredentials(){
+            return Suppliers.ofInstance(new Credentials(identity, credential));
          }
 
          @Provides

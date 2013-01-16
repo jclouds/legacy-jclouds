@@ -18,6 +18,7 @@
  */
 package org.jclouds.nodepool.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.nodepool.config.NodePoolProperties.BACKEND_GROUP;
 
@@ -82,15 +83,16 @@ public class BindBackendComputeService extends BindJcloudsModules {
    @Backend
    @Exposed
    protected Supplier<ComputeService> makeBackendComputeService(@Backend final String provider,
-            @Backend final Set<Module> modules, @Provider final Credentials creds,
+            @Backend final Set<Module> modules, @Provider final Supplier<Credentials> creds,
             @Backend final Supplier<Properties> overrides, final Closer closer) {
       return Suppliers.memoize(new Supplier<ComputeService>() {
 
          @Override
          public ComputeService get() {
+            Credentials currentCreds = checkNotNull(creds.get(), "credential supplier returned null");
             ComputeServiceContext ctx = ContextBuilder.newBuilder(provider)
-                     .credentials(creds.identity, creds.credential).overrides(overrides.get()).modules(modules)
-                     .buildView(ComputeServiceContext.class);
+                  .credentials(currentCreds.identity, currentCreds.credential).overrides(overrides.get())
+                  .modules(modules).buildView(ComputeServiceContext.class);
             closer.addToClose(ctx);
             return ctx.getComputeService();
          }

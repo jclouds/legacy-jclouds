@@ -24,10 +24,13 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.rest.annotations.Identity;
+import org.jclouds.location.Provider;
+
+import com.google.common.base.Supplier;
 
 /**
  * RimuHosting Authentication is a Authorization Header.
@@ -41,8 +44,8 @@ public class RimuHostingAuthentication implements HttpRequestFilter {
    private final String header;
 
    @Inject
-   public RimuHostingAuthentication(@Identity String apikey) {
-      this.header = String.format("rimuhosting apikey=%s", checkNotNull(apikey, "apikey"));
+   public RimuHostingAuthentication(@Provider Supplier<Credentials> creds) {
+      this.header = String.format("rimuhosting apikey=%s", checkNotNull(creds, "creds").get().identity);
    }
 
    @Override

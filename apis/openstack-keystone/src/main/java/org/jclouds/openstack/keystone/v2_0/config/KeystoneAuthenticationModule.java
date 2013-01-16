@@ -198,15 +198,11 @@ public class KeystoneAuthenticationModule extends AbstractModule {
    @Provides
    @Singleton
    protected Supplier<Access> provideAccessSupplier(final LoadingCache<Credentials, Access> cache,
-            @Provider final Credentials creds) {
+         @Provider final Supplier<Credentials> creds) {
       return new Supplier<Access>() {
          @Override
          public Access get() {
-            try {
-               return cache.get(creds);
-            } catch (ExecutionException e) {
-               throw propagate(e.getCause());
-            }
+            return cache.getUnchecked(creds.get());
          }
       };
    }

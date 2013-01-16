@@ -31,7 +31,6 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.nodepool.Backend;
-import org.jclouds.rest.annotations.Credential;
 import org.jclouds.ssh.SshClient;
 import org.testng.annotations.Test;
 
@@ -65,8 +64,6 @@ public class BindBackendComputeServiceTest {
                .getInstance(Key.get(new TypeLiteral<Supplier<ComputeService>>() {
                }, Backend.class)).get();
 
-      assertEquals(stub.getContext().unwrap().getIdentity(), "foo");
-      assertEquals(stub.getContext().utils().injector().getInstance(Key.get(String.class, Credential.class)), "bar");
       assertEquals(stub.getContext().unwrap().getProviderMetadata().getEndpoint(), "gooend");
       assertEquals(stub.getContext().unwrap().getProviderMetadata().getApiMetadata().getVersion(), "1.1");
       assertEquals(stub.getContext().unwrap().getProviderMetadata().getApiMetadata().getBuildVersion().get(), "1.1-2");

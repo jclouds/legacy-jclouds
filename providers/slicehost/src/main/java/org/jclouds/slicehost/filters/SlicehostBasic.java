@@ -24,11 +24,14 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.rest.annotations.Identity;
+import org.jclouds.location.Provider;
+
+import com.google.common.base.Supplier;
 
 /**
  * 
@@ -36,16 +39,16 @@ import org.jclouds.rest.annotations.Identity;
  */
 @Singleton
 public class SlicehostBasic implements HttpRequestFilter {
-   private final String apikey;
+   private final Supplier<Credentials> creds;
 
    @Inject
-   public SlicehostBasic(@Identity String apikey) {
-      this.apikey = checkNotNull(apikey, "apikey");
+   public SlicehostBasic(@Provider Supplier<Credentials> creds) {
+      this.creds = checkNotNull(creds, "creds");
    }
 
    @Override
    public HttpRequest filter(HttpRequest request) throws HttpException {
       return request.toBuilder().replaceHeader(HttpHeaders.AUTHORIZATION,
-            String.format("Basic %s", CryptoStreams.base64(apikey.getBytes()))).build();
+            String.format("Basic %s", CryptoStreams.base64(creds.get().identity.getBytes()))).build();
    }
 }

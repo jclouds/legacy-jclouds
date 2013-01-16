@@ -22,7 +22,6 @@ import static com.google.common.base.Throwables.propagate;
 import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.Constants;
@@ -314,15 +313,11 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
    @Provides
    @Singleton
    protected Supplier<LoginResponse> provideLoginResponseSupplier(final LoadingCache<Credentials, LoginResponse> cache,
-            @Provider final Credentials creds) {
+         @Provider final Supplier<Credentials> creds) {
       return new Supplier<LoginResponse>() {
          @Override
          public LoginResponse get() {
-            try {
-               return cache.get(creds);
-            } catch (ExecutionException e) {
-               throw propagate(e.getCause());
-            }
+            return cache.getUnchecked(creds.get());
          }
       };
    }

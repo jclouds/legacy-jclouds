@@ -20,10 +20,10 @@ package org.jclouds.vcloud.director.v1_5.config;
 
 import static com.google.common.base.Throwables.propagate;
 import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.Constants;
@@ -263,15 +263,11 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
    @Provides
    @Singleton
    protected Supplier<SessionWithToken> provideSessionWithTokenSupplier(
-         final LoadingCache<Credentials, SessionWithToken> cache, @Provider final Credentials creds) {
+         final LoadingCache<Credentials, SessionWithToken> cache, @Provider final Supplier<Credentials> creds) {
       return new Supplier<SessionWithToken>() {
          @Override
          public SessionWithToken get() {
-            try {
-               return cache.get(creds);
-            } catch (ExecutionException e) {
-               throw propagate(e.getCause());
-            }
+            return cache.getUnchecked(creds.get());
          }
       };
    }

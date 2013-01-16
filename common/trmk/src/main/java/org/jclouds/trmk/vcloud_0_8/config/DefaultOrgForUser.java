@@ -19,7 +19,6 @@
 package org.jclouds.trmk.vcloud_0_8.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG;
 
 import javax.inject.Inject;
@@ -32,7 +31,6 @@ import org.jclouds.trmk.vcloud_0_8.endpoints.Org;
 import org.jclouds.trmk.vcloud_0_8.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefault;
 import org.jclouds.util.Suppliers2;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 
@@ -41,31 +39,23 @@ import com.google.common.base.Supplier;
  * @author Adrian Cole
  */
 @Singleton
-public class DefaultOrgForUser implements Function<String, Supplier<ReferenceType>> {
+public class DefaultOrgForUser implements Supplier<ReferenceType> {
 
    private final OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefault selector;
-   private final Supplier<VCloudSession> sessionSupplier;
+   private final Supplier<VCloudSession> session;
 
    @Inject
    public DefaultOrgForUser(ValueOfConfigurationKeyOrNull valueOfConfigurationKeyOrNull,
-         @Org Predicate<ReferenceType> defaultSelector, Supplier<VCloudSession> sessionSupplier) {
+         @Org Predicate<ReferenceType> defaultSelector, Supplier<VCloudSession> session) {
       this.selector = new OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefault(checkNotNull(
             valueOfConfigurationKeyOrNull, "valueOfConfigurationKeyOrNull"), PROPERTY_VCLOUD_DEFAULT_ORG, checkNotNull(
             defaultSelector, "defaultSelector"));
-      this.sessionSupplier = checkNotNull(sessionSupplier, "sessionSupplier");
+      this.session = checkNotNull(session, "session");
    }
 
    @Override
-   public Supplier<ReferenceType> apply(final String user) {
-      return Suppliers2.compose(new Function<VCloudSession, ReferenceType>() {
-
-         @Override
-         public ReferenceType apply(VCloudSession session) {
-            checkState(session != null, "could not retrieve Session at %s", user);
-            return selector.apply(session.getOrgs().values());
-         }
-
-      }, sessionSupplier);
+   public ReferenceType get() {
+      return selector.apply(session.get().getOrgs().values());
    }
 
 }

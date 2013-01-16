@@ -28,7 +28,6 @@ import static org.jclouds.blobstore.util.BlobStoreUtils.cleanRequest;
 import java.lang.reflect.Method;
 import java.security.InvalidKeyException;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -41,6 +40,7 @@ import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.TimeStamp;
+import org.jclouds.domain.Credentials;
 import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageAsyncApi;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.options.GetOptions;
@@ -49,8 +49,7 @@ import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.swift.TemporaryUrlKey;
 import org.jclouds.openstack.swift.blobstore.functions.BlobToObject;
 import org.jclouds.openstack.swift.domain.SwiftObject;
-import org.jclouds.rest.annotations.Credential;
-import org.jclouds.rest.annotations.Identity;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 /**
@@ -67,9 +66,7 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
 
    private final Provider<Long> unixEpochTimestampProvider;
    private final Supplier<Access> access;
-   private String tenantId;
-   private final String accessKeyId;
-   private final String secretKey;
+   private final Supplier<Credentials> creds;
 
    private final BlobToObject blobToObject;
    private final BlobToHttpGetOptions blob2HttpGetOptions;
@@ -79,20 +76,17 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
    private final Method createMethod;
 
    @Inject
-   public HPCloudObjectStorageBlobRequestSigner(RestAnnotationProcessor<HPCloudObjectStorageAsyncApi> processor, BlobToObject blobToObject,
-            BlobToHttpGetOptions blob2HttpGetOptions,
-            Crypto crypto, @TimeStamp Provider<Long> unixEpochTimestampProvider,
-            Supplier<Access> access,
-            @Identity String accessKey, @Credential String secretKey)
-            throws SecurityException, NoSuchMethodException {
+   public HPCloudObjectStorageBlobRequestSigner(RestAnnotationProcessor<HPCloudObjectStorageAsyncApi> processor,
+         BlobToObject blobToObject, BlobToHttpGetOptions blob2HttpGetOptions, Crypto crypto,
+         @TimeStamp Provider<Long> unixEpochTimestampProvider, Supplier<Access> access,
+         @org.jclouds.location.Provider final Supplier<Credentials> creds) throws SecurityException,
+         NoSuchMethodException {
       this.processor = checkNotNull(processor, "processor");
       this.crypto = checkNotNull(crypto, "crypto");
 
       this.unixEpochTimestampProvider = checkNotNull(unixEpochTimestampProvider, "unixEpochTimestampProvider");
       this.access = checkNotNull(access, "access");
-      // accessKey is of the form tenantName:accessKeyId (not tenantId)
-      this.accessKeyId = accessKey.substring(accessKey.indexOf(':') + 1);
-      this.secretKey = secretKey;
+      this.creds = checkNotNull(creds, "creds");
 
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
@@ -101,12 +95,6 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
                GetOptions[].class);
       this.deleteMethod = HPCloudObjectStorageAsyncApi.class.getMethod("removeObject", String.class, String.class);
       this.createMethod = HPCloudObjectStorageAsyncApi.class.getMethod("putObject", String.class, SwiftObject.class);
-   }
-
-   @PostConstruct
-   public void populateTenantId() {
-      // Defer call from constructor since access.get issues an RPC.
-      this.tenantId = access.get().getToken().getTenant().get().getId();
    }
 
    @Override
@@ -142,6 +130,12 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
    }
 
    private HttpRequest signForTemporaryAccess(HttpRequest request, long timeInSeconds) {
+      Credentials currentCreds = checkNotNull(creds.get(), "credential supplier returned null");
+      // accessKey is of the form tenantName:accessKeyId (not tenantId)
+      String accessKeyId = currentCreds.identity.substring(currentCreds.identity.indexOf(':') + 1);
+      String secretKey = currentCreds.credential;
+      String tenantId = access.get().getToken().getTenant().get().getId();
+      
       HttpRequest.Builder builder = request.toBuilder();
       // HP Cloud does not use X-Auth-Token for temporary signed URLs and
       // leaking this allows clients arbitrary privileges until token timeout.

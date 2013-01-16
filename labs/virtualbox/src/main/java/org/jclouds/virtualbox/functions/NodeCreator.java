@@ -41,11 +41,10 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.options.RunScriptOptions;
+import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Provider;
-import org.jclouds.rest.annotations.Credential;
-import org.jclouds.rest.annotations.Identity;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.virtualbox.VirtualBoxApiMetadata;
 import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
@@ -106,8 +105,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
             MachineUtils machineUtils, RunScriptOnNode.Factory scriptRunnerFactory, MachineController machineController,
             Supplier<NodeMetadata> host,
             @Provider Supplier<URI> providerSupplier,
-            @Nullable @Identity String identity,
-            @Nullable @Credential String credential) {
+            @Provider Supplier<Credentials> credentials) {
       this.manager = manager;
       this.cloner = cloner;
       this.runScriptOnNodeFactory = checkNotNull(runScriptOnNodeFactory, "runScriptOnNodeFactory");
@@ -116,8 +114,8 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
       this.host = checkNotNull(host, "host");
       this.providerSupplier = checkNotNull(providerSupplier,
             "endpoint to virtualbox websrvd is needed");
-      this.username = identity;
-      this.password = credential;
+      this.username = credentials.get().identity;
+      this.password = credentials.get().credential;
    }
 
    @Override

@@ -33,6 +33,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.CIMOperatingSystem;
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
@@ -42,7 +43,6 @@ import org.jclouds.location.Provider;
 import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.annotations.Identity;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.savvis.vpdc.VPDCAsyncApi;
@@ -69,6 +69,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
@@ -107,12 +108,12 @@ public class VPDCRestClientModule extends RestClientModule<VPDCApi, VPDCAsyncApi
    @org.jclouds.savvis.vpdc.internal.Org
    @Singleton
    protected Supplier<Set<org.jclouds.savvis.vpdc.domain.Resource>> provideOrgs(Supplier<VCloudSession> cache,
-            @Identity final String user) {
-      return Suppliers2.compose(new Function<VCloudSession, Set<org.jclouds.savvis.vpdc.domain.Resource>>() {
+         @org.jclouds.location.Provider final Supplier<Credentials> creds) {
+      return Suppliers.compose(new Function<VCloudSession, Set<org.jclouds.savvis.vpdc.domain.Resource>>() {
 
          @Override
          public Set<org.jclouds.savvis.vpdc.domain.Resource> apply(VCloudSession input) {
-            checkState(input.getOrgs().size() > 0, "No orgs present for user: " + user);
+            checkState(input.getOrgs().size() > 0, "No orgs present for user: " + creds.get());
             return input.getOrgs();
          }
 

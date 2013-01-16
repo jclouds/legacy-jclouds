@@ -22,18 +22,20 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.annotations.Name;
+import org.jclouds.domain.Credentials;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.location.Provider;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.Utils;
-import org.jclouds.rest.annotations.Identity;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorContext;
-import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminAsyncApi;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminApi;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncApi;
+import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminAsyncApi;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorApi;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncApi;
 
+import com.google.common.base.Supplier;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 
@@ -46,10 +48,11 @@ public class VCloudDirectorContextImpl extends RestContextImpl<VCloudDirectorApi
    private final RestContext<VCloudDirectorAdminApi, VCloudDirectorAdminAsyncApi> adminContext;
 
    @Inject
-   VCloudDirectorContextImpl(@Name String name, ProviderMetadata providerMetadata, @Identity String identity, Utils utils, Closer closer,
-            Injector injector, RestContext<VCloudDirectorAdminApi, VCloudDirectorAdminAsyncApi> adminContext) {
-      super(name,  providerMetadata, identity, utils, closer, injector, TypeLiteral.get(VCloudDirectorApi.class),
-               TypeLiteral.get(VCloudDirectorAsyncApi.class));
+   VCloudDirectorContextImpl(@Name String name, ProviderMetadata providerMetadata,
+         @Provider Supplier<Credentials> creds, Utils utils, Closer closer, Injector injector,
+         RestContext<VCloudDirectorAdminApi, VCloudDirectorAdminAsyncApi> adminContext) {
+      super(name, providerMetadata, creds, utils, closer, injector, TypeLiteral.get(VCloudDirectorApi.class),
+            TypeLiteral.get(VCloudDirectorAsyncApi.class));
       this.adminContext = adminContext;
    }
    

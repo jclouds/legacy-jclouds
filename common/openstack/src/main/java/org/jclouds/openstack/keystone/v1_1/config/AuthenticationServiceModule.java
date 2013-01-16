@@ -118,15 +118,11 @@ public class AuthenticationServiceModule extends AbstractModule {
    @Provides
    @Singleton
    protected Supplier<Auth> provideAuthSupplier(final LoadingCache<Credentials, Auth> cache,
-            @Provider final Credentials creds) {
+         @Provider final Supplier<Credentials> creds) {
       return new Supplier<Auth>() {
          @Override
          public Auth get() {
-            try {
-               return cache.get(creds);
-            } catch (ExecutionException e) {
-               throw propagate(e.getCause());
-            }
+            return cache.getUnchecked(creds.get());
          }
       };
    }
