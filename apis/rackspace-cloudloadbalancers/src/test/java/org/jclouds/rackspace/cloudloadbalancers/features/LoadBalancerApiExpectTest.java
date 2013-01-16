@@ -58,7 +58,7 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
       assertEquals(loadBalancers, testLoadBalancers());
    }
 
-   public void testGetLoadBalancer() {
+   public void testGetLoadBalancer() throws Exception {
       URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000");
       LoadBalancerApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
@@ -71,7 +71,7 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
       assertEquals(loadBalancer, testLoadBalancer());
    }
 
-   public void testCreateLoadBalancer() {
+   public void testCreateLoadBalancer() throws Exception {
       URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers");
       LoadBalancerApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,

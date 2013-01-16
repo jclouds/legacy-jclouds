@@ -49,6 +49,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
    private final int nodeCount;
    private final SSLTermination sslTermination;
    private final SourceAddresses sourceAddresses;
+   private final Set<AccessRuleWithId> accessRules;
 
    public LoadBalancer(String region, int id, String name, String protocol, @Nullable Integer port, Set<Node> nodes,
          @Nullable Integer timeout, @Nullable Boolean halfClosed, @Nullable Algorithm algorithm, Status status,
@@ -56,10 +57,10 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
          String clusterName, Date created, Date updated, @Nullable Map<String, Boolean> connectionLogging,
          @Nullable ConnectionThrottle connectionThrottle, boolean contentCaching, int nodeCount,
          @Nullable HealthMonitor healthMonitor, @Nullable SSLTermination sslTermination,
-         SourceAddresses sourceAddresses, @Nullable Set<AccessRule> accessRules,
+         SourceAddresses sourceAddresses, Set<AccessRuleWithId> accessRules,
          @Nullable Set<Metadata> metadata) {
       super(name, protocol, port, nodes, algorithm, timeout, halfClosed, sessionPersistenceType, connectionLogging,
-            connectionThrottle, healthMonitor, accessRules, metadata);
+            connectionThrottle, healthMonitor, metadata);
       this.region = checkNotNull(region, "region");
       checkArgument(id != -1, "id must be specified");
       this.id = id;
@@ -72,6 +73,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
       this.nodeCount = nodeCount;
       this.sslTermination = sslTermination;
       this.sourceAddresses = sourceAddresses;
+      this.accessRules = accessRules == null ? ImmutableSet.<AccessRuleWithId> of() : ImmutableSet.copyOf(accessRules);
    }
 
    public String getRegion() {
@@ -151,6 +153,10 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
       return sourceAddresses;
    }
 
+   public Set<AccessRuleWithId> getAccessRules() {
+      return accessRules;
+   }
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this).omitNullValues().add("id", id).add("region", region).add("status", status)
             .add("name", name).add("protocol", protocol).add("port", port).add("nodeCount", getNodeCount())
@@ -159,7 +165,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
             .add("contentCaching", contentCaching).add("sessionPersistenceType", getSessionPersistenceType())
             .add("sslTermination", sslTermination).add("connectionLogging", isConnectionLogging())
             .add("connectionThrottle", connectionThrottle).add("healthMonitor", healthMonitor)
-            .add("accessRules", accessList).add("metadata", getMetadata()).add("sourceAddresses", sourceAddresses)
+            .add("accessRules", accessRules).add("metadata", getMetadata()).add("sourceAddresses", sourceAddresses)
             .add("virtualIPs", virtualIPs);
    }
 
@@ -253,6 +259,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
       private int nodeCount = 0;
       private SSLTermination sslTermination;
       private SourceAddresses sourceAddresses;
+      private Set<AccessRuleWithId> accessRules;
 
       public Builder region(String region) {
          this.region = region;
@@ -302,15 +309,21 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
          return this;
       }
 
-      public Builder sslTermination(@Nullable SSLTermination sslTermination) {
-         this.sslTermination = sslTermination;
+      public Builder sslTermination(SSLTermination sslTermination) {
+         this.sslTermination = checkNotNull(sslTermination, "sslTermination");
          return this;
       }
 
-      public Builder sourceAddresses(@Nullable SourceAddresses sourceAddresses) {
-         this.sourceAddresses = sourceAddresses;
+      public Builder sourceAddresses(SourceAddresses sourceAddresses) {
+         this.sourceAddresses = checkNotNull(sourceAddresses, "sourceAddresses");
          return this;
       }
+
+      public Builder accessRules(Iterable<AccessRuleWithId> accessRules) {
+         this.accessRules = ImmutableSet.copyOf(checkNotNull(accessRules, "accessRules"));
+         return this;
+      }
+
 
       public LoadBalancer build() {
          return new LoadBalancer(region, id, name, protocol, port, nodes, timeout, halfClosed, algorithm, status,
@@ -414,14 +427,6 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
       @Override
       public Builder healthMonitor(@Nullable HealthMonitor healthMonitor) {
          return Builder.class.cast(super.healthMonitor(healthMonitor));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder accessRules(@Nullable Set<AccessRule> accessRules) {
-         return Builder.class.cast(super.accessRules(accessRules));
       }
 
       /**

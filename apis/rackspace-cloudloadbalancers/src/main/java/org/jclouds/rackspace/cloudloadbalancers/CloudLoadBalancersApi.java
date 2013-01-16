@@ -25,6 +25,7 @@ import javax.ws.rs.PathParam;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Zone;
 import org.jclouds.location.functions.ZoneToEndpoint;
+import org.jclouds.rackspace.cloudloadbalancers.features.AccessRuleApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.NodeApi;
 import org.jclouds.rest.annotations.Delegate;
@@ -62,4 +63,11 @@ public interface CloudLoadBalancersApi {
    NodeApi getNodeApiForZoneAndLoadBalancer(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 
+   /**
+    * Provides synchronous access to Access Rule features.
+    */
+   @Delegate
+   @Path("/loadbalancers/{lbId}")
+   AccessRuleApi getAccessRuleApiForZoneAndLoadBalancer(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 }

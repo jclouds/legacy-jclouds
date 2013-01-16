@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer.Status;
+import org.jclouds.rackspace.cloudloadbalancers.domain.AccessRuleWithId;
 import org.jclouds.rackspace.cloudloadbalancers.domain.Node;
 import org.jclouds.rackspace.cloudloadbalancers.domain.SSLTermination;
 import org.jclouds.rackspace.cloudloadbalancers.domain.SourceAddresses;
@@ -47,6 +48,7 @@ class LB extends BaseLoadBalancer<Node, LB> {
    Map<String, Boolean> contentCaching = Maps.newLinkedHashMap();
    SSLTermination sslTermination;
    SourceAddresses sourceAddresses;
+   Set<AccessRuleWithId> accessList;
 
    @Override
    public int hashCode() {
