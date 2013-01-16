@@ -102,7 +102,7 @@ public interface SecurityGroupAsyncApi {
     */
    @DELETE
    @Path("/os-security-groups/{id}")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Boolean> delete(@PathParam("id") String id);
 
