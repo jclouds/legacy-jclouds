@@ -54,13 +54,12 @@ public class ParseKernels extends ParseJson<ListPage<Kernel>> {
 
       @Override
       protected Function<Object, IterableWithMarker<Kernel>> fetchNextPage(final String projectName,
-                                                                           final String marker,
                                                                            final ListOptions options) {
          return new Function<Object, IterableWithMarker<Kernel>>() {
 
             @Override
             public IterableWithMarker<Kernel> apply(Object input) {
-               return api.getKernelApiForProject(projectName).listAtMarker(marker, options);
+               return api.getKernelApiForProject(projectName).listAtMarker(input.toString(), options);
             }
          };
       }
