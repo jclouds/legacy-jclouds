@@ -27,7 +27,9 @@ import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.hpcloud.objectstorage.blobstore.HPCloudObjectStorageBlobRequestSigner;
 import org.jclouds.hpcloud.objectstorage.blobstore.config.HPCloudObjectStorageBlobStoreContextModule;
 import org.jclouds.hpcloud.objectstorage.config.HPCloudObjectStorageRestClientModule;
+import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.RegionModule;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.swift.SwiftKeystoneApiMetadata;
 import org.jclouds.openstack.swift.blobstore.config.TemporaryUrlExtensionModule;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule.KeystoneStorageEndpointModule;
@@ -64,6 +66,8 @@ public class HPCloudObjectStorageApiMetadata extends SwiftKeystoneApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = SwiftKeystoneApiMetadata.defaultProperties();
+      properties.setProperty(KeystoneProperties.CREDENTIAL_TYPE,
+            CredentialTypes.API_ACCESS_KEY_CREDENTIALS);
       return properties;
    }
 

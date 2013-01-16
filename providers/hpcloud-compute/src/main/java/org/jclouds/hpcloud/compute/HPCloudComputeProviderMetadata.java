@@ -28,8 +28,10 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.hpcloud.compute.config.HPCloudComputeServiceContextModule;
+import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.ZoneModule;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.nova.v2_0.NovaApiMetadata;
 import org.jclouds.openstack.nova.v2_0.config.NovaParserModule;
 import org.jclouds.openstack.nova.v2_0.config.NovaRestClientModule;
@@ -72,6 +74,8 @@ public class HPCloudComputeProviderMetadata extends BaseProviderMetadata {
       properties.setProperty(AUTO_ALLOCATE_FLOATING_IPS, "true");
       properties.setProperty(AUTO_GENERATE_KEYPAIRS, "true");
       properties.setProperty(TEMPLATE, "osFamily=UBUNTU,osVersionMatches=1[012].[01][04],os64Bit=true,locationId=az-2.region-a.geo-1");
+      properties.setProperty(KeystoneProperties.CREDENTIAL_TYPE,
+            CredentialTypes.API_ACCESS_KEY_CREDENTIALS);
       return properties;
    }
    
