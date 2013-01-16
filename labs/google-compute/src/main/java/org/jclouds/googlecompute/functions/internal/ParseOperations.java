@@ -54,13 +54,12 @@ public class ParseOperations extends ParseJson<ListPage<Operation>> {
 
       @Override
       protected Function<Object, IterableWithMarker<Operation>> fetchNextPage(final String projectName,
-                                                                              final String marker,
                                                                               final ListOptions options) {
          return new Function<Object, IterableWithMarker<Operation>>() {
 
             @Override
             public IterableWithMarker<Operation> apply(Object input) {
-               return api.getOperationApiForProject(projectName).listAtMarker(marker, options);
+               return api.getOperationApiForProject(projectName).listAtMarker(input.toString(), options);
             }
          };
       }

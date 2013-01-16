@@ -54,13 +54,12 @@ public class ParseMachineTypes extends ParseJson<ListPage<MachineType>> {
 
       @Override
       protected Function<Object, IterableWithMarker<MachineType>> fetchNextPage(final String projectName,
-                                                                                final String marker,
                                                                                 final ListOptions options) {
          return new Function<Object, IterableWithMarker<MachineType>>() {
 
             @Override
             public IterableWithMarker<MachineType> apply(Object input) {
-               return api.getMachineTypeApiForProject(projectName).listAtMarker(marker, options);
+               return api.getMachineTypeApiForProject(projectName).listAtMarker(input.toString(), options);
             }
          };
       }
