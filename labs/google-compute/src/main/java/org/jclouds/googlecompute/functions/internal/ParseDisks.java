@@ -56,13 +56,12 @@ public class ParseDisks extends ParseJson<ListPage<Disk>> {
 
       @Override
       protected Function<Object, IterableWithMarker<Disk>> fetchNextPage(final String projectName,
-                                                                         final String marker,
                                                                          final ListOptions options) {
          return new Function<Object, IterableWithMarker<Disk>>() {
 
             @Override
             public IterableWithMarker<Disk> apply(Object input) {
-               return api.getDiskApiForProject(projectName).listAtMarker(marker, options);
+               return api.getDiskApiForProject(projectName).listAtMarker(input.toString(), options);
             }
          };
       }

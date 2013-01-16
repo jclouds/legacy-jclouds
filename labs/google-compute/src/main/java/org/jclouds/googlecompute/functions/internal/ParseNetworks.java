@@ -54,13 +54,12 @@ public class ParseNetworks extends ParseJson<ListPage<Network>> {
 
       @Override
       protected Function<Object, IterableWithMarker<Network>> fetchNextPage(final String projectName,
-                                                                            final String marker,
                                                                             final ListOptions options) {
          return new Function<Object, IterableWithMarker<Network>>() {
 
             @Override
             public IterableWithMarker<Network> apply(Object input) {
-               return api.getNetworkApiForProject(projectName).listAtMarker(marker, options);
+               return api.getNetworkApiForProject(projectName).listAtMarker(input.toString(), options);
             }
          };
       }
