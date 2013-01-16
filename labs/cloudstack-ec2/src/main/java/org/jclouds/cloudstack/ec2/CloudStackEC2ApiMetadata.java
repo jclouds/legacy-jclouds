@@ -57,7 +57,7 @@ public class CloudStackEC2ApiMetadata extends EC2ApiMetadata {
    
    public static Properties defaultProperties() {
       Properties properties = EC2ApiMetadata.defaultProperties();
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "AMIClient.describeImagesInRegion", MINUTES.toMillis(15) + "");
+      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "ec2:DescribeImages", MINUTES.toMillis(15) + "");
       return properties;
    }
 
