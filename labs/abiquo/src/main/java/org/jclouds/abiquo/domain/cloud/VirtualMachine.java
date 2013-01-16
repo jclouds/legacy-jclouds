@@ -612,7 +612,7 @@ public class VirtualMachine extends DomainWithTasksWrapper<VirtualMachineWithNod
       }
 
       public Builder nameLabel(final String nameLabel) {
-         this.nameLabel = nameLabel;
+         this.nameLabel = checkNotNull(nameLabel, "nameLabel must not be null");
          return this;
       }
 
@@ -683,7 +683,7 @@ public class VirtualMachine extends DomainWithTasksWrapper<VirtualMachineWithNod
 
       public VirtualMachine build() {
          VirtualMachineWithNodeExtendedDto dto = new VirtualMachineWithNodeExtendedDto();
-         dto.setNodeName(nameLabel);
+         dto.setNodeName(checkNotNull(nameLabel, ValidationErrors.MISSING_REQUIRED_FIELD + "nameLabel"));
          dto.setDescription(description);
          dto.setHdInBytes(template.getHdRequired());
          dto.setVdrpIP(vncAddress);
