@@ -24,12 +24,15 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.Utils;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.reflect.TypeToken;
 
 /** 
@@ -38,10 +41,12 @@ import com.google.common.reflect.TypeToken;
 @Test(groups = "unit", testName = "BaseViewTest")
 public class BaseViewTest {
 
+   static Supplier<Credentials> creds = Suppliers.ofInstance(new Credentials("identity", null));
+
    private static class Water extends ContextImpl {
 
       protected Water() {
-         super("water", createMock(ProviderMetadata.class), "identity", createMock(Utils.class), createMock(Closer.class));
+         super("water", createMock(ProviderMetadata.class), creds, createMock(Utils.class), createMock(Closer.class));
       }
 
       @Override
@@ -57,7 +62,7 @@ public class BaseViewTest {
    private static class PeanutButter extends ContextImpl {
 
       protected PeanutButter() {
-         super("peanutbutter", createMock(ProviderMetadata.class), "identity", createMock(Utils.class), createMock(Closer.class));
+         super("peanutbutter", createMock(ProviderMetadata.class), creds, createMock(Utils.class), createMock(Closer.class));
       }
 
       @Override

@@ -18,16 +18,19 @@
  */
 package org.jclouds.http.filters;
 
+import static com.google.common.base.Suppliers.ofInstance;
+import static com.google.common.collect.Queues.newArrayDeque;
 import static com.google.common.net.HttpHeaders.AUTHORIZATION;
+import static java.util.Arrays.asList;
 import static org.testng.Assert.assertEquals;
 
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
+import java.util.Deque;
 
-import org.jclouds.encryption.internal.JCECrypto;
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Supplier;
 
 /**
  * 
@@ -35,15 +38,30 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit")
 public class BasicAuthenticationTest {
+   private static final Credentials credential1 = new Credentials("Aladdin", "open sesame");
+   private static final Credentials credential2 = new Credentials("Little", "Mermaid");
 
-   private static final String USER = "Aladdin";
-   private static final String PASSWORD = "open sesame";
+   public void testAuth() {
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://localhost").build();
+      request = new BasicAuthentication(ofInstance(credential1)).filter(request);
+      assertEquals(request.getFirstHeaderOrNull(AUTHORIZATION), "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==");
+      request = new BasicAuthentication(ofInstance(credential2)).filter(request);
+      assertEquals(request.getFirstHeaderOrNull(AUTHORIZATION), "Basic TGl0dGxlOk1lcm1haWQ=");
+   }
 
-   public void testAuth() throws UnsupportedEncodingException, NoSuchAlgorithmException, CertificateException {
-      BasicAuthentication filter = new BasicAuthentication(USER, PASSWORD, new JCECrypto(null));
+   public void testAuthWithRuntimePasswordChange() {
+      Supplier<Credentials> credentialRotation = new Supplier<Credentials>() {
+         Deque<Credentials> rotation = newArrayDeque(asList(credential1, credential2));
+
+         public Credentials get() {
+            return rotation.poll();
+         }
+      };
+      BasicAuthentication filter = new BasicAuthentication(credentialRotation);
       HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://localhost").build();
       request = filter.filter(request);
       assertEquals(request.getFirstHeaderOrNull(AUTHORIZATION), "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==");
+      request = filter.filter(request);
+      assertEquals(request.getFirstHeaderOrNull(AUTHORIZATION), "Basic TGl0dGxlOk1lcm1haWQ=");
    }
-
 }

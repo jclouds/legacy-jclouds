@@ -18,6 +18,7 @@
  */
 package org.jclouds;
 
+import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.containsPattern;
 import static com.google.common.base.Predicates.instanceOf;
@@ -30,7 +31,17 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
-import static org.jclouds.Constants.*;
+import static com.google.common.collect.Lists.newArrayListWithCapacity;
+import static com.google.common.collect.Maps.filterKeys;
+import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.jclouds.Constants.PROPERTY_API;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
+import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_IDENTITY;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
+import static org.jclouds.Constants.PROPERTY_PROVIDER;
 import static org.jclouds.util.Throwables2.propagateAuthorizationOrOriginalException;
 
 import java.util.ArrayList;
@@ -78,6 +89,8 @@ import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -182,18 +195,18 @@ public class ContextBuilder {
    protected final String providerId;
    protected Optional<String> endpoint = Optional.absent();
    protected Optional<String> identity = Optional.absent();
+   protected Optional<Supplier<Credentials>> credentialsSupplierOption = Optional.absent();
    @Nullable
    protected String credential;
    protected ApiMetadata apiMetadata;
    protected String apiVersion;
    protected String buildVersion;
    protected Optional<Properties> overrides = Optional.absent();
-   protected List<Module> modules = new ArrayList<Module>(3);
+   protected List<Module> modules = newArrayListWithCapacity(3);
 
    @Override
    public String toString() {
-      return Objects.toStringHelper("").add("providerMetadata", providerMetadata).add("apiMetadata", apiMetadata)
-               .toString();
+      return toStringHelper("").add("providerMetadata", providerMetadata).add("apiMetadata", apiMetadata).toString();
    }
 
    protected ContextBuilder(ProviderMetadata providerMetadata) {
@@ -225,6 +238,20 @@ public class ContextBuilder {
      return this;
    }
 
+   /**
+    * returns the current login credentials. jclouds will not cache this value. Use this when you need to change
+    * credentials at runtime.
+    */
+   public ContextBuilder credentialsSupplier(Supplier<Credentials> credentialsSupplier) {
+      this.credentialsSupplierOption = Optional.of(checkNotNull(credentialsSupplier, "credentialsSupplier"));
+      return this;
+   }
+   
+   /**
+    * constant value of the cloud identity and credential.
+    * 
+    * @param credential (optional depending on {@link ApiMetadata#getCredentialName()}
+    */
    public ContextBuilder credentials(String identity, @Nullable String credential) {
       this.identity = Optional.of(checkNotNull(identity, "identity"));
       this.credential = credential;
@@ -282,14 +309,29 @@ public class ContextBuilder {
 
       Properties expanded = expandProperties(resolved);
 
-      Credentials creds = new Credentials(getAndRemove(expanded, PROPERTY_IDENTITY), getAndRemove(expanded,
-               PROPERTY_CREDENTIAL));
+      Supplier<Credentials> credentialsSupplier = buildCredentialsSupplier(expanded);
 
-      ProviderMetadata providerMetadata = new UpdateProviderMetadataFromProperties(apiMetadata, this.providerMetadata).apply(expanded);
+      ProviderMetadata providerMetadata = new UpdateProviderMetadataFromProperties(apiMetadata, this.providerMetadata)
+            .apply(expanded);
 
-      //We use either the specified name (optional) or a hash of provider/api, endpoint, api version & identity. Hash is used to be something readable.
+      // We use either the specified name (optional) or a hash of provider/api, endpoint, api version & identity. Hash
+      // is used to be something readable.
       return buildInjector(name.or(String.valueOf(Objects.hashCode(providerMetadata.getId(),
-               providerMetadata.getEndpoint(), providerMetadata.getApiMetadata().getVersion(), creds.identity))), providerMetadata, creds, modules);
+            providerMetadata.getEndpoint(), providerMetadata.getApiMetadata().getVersion(), credentialsSupplier))),
+            providerMetadata, credentialsSupplier, modules);
+   }
+
+   protected Supplier<Credentials> buildCredentialsSupplier(Properties expanded) {
+      Credentials creds = new Credentials(getAndRemove(expanded, PROPERTY_IDENTITY), getAndRemove(expanded,
+            PROPERTY_CREDENTIAL));
+
+      Supplier<Credentials> credentialsSupplier;
+      if (credentialsSupplierOption.isPresent()) {
+         credentialsSupplier = credentialsSupplierOption.get();
+      } else {
+         credentialsSupplier = Suppliers.ofInstance(creds);
+      }
+      return credentialsSupplier;
    }
 
    private static String getAndRemove(Properties expanded, String key) {
@@ -333,7 +375,7 @@ public class ContextBuilder {
       return Guice.createInjector(new BindPropertiesToExpandedValues(resolved)).getInstance(Properties.class);
    }
 
-   public static Injector buildInjector(String name, ProviderMetadata providerMetadata, Credentials creds, List<Module> inputModules) {
+   public static Injector buildInjector(String name, ProviderMetadata providerMetadata, Supplier<Credentials> creds, List<Module> inputModules) {
       List<Module> modules = newArrayList();
       modules.addAll(inputModules);
       boolean restModuleSpecifiedByUser = restClientModulePresent(inputModules);
@@ -404,8 +446,7 @@ public class ContextBuilder {
    @SuppressWarnings( { "unchecked" })
    static Map<String, Object> propertiesPrefixedWithJcloudsApiOrProviderId(Properties properties, String apiId,
             String providerId) {
-      return Maps.filterKeys(Map.class.cast(properties), containsPattern("^(jclouds|" + providerId + "|" + apiId
-               + ").*"));
+      return filterKeys(Map.class.cast(properties), containsPattern("^(jclouds|" + providerId + "|" + apiId + ").*"));
    }
 
    @VisibleForTesting

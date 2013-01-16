@@ -18,6 +18,7 @@
  */
 package org.jclouds;
 
+import static com.google.common.base.Suppliers.ofInstance;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
@@ -28,6 +29,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.domain.Credentials;
 import org.jclouds.events.config.EventBusModule;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.IntegrationTestClient;
@@ -41,7 +43,6 @@ import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.annotations.ApiVersion;
-import org.jclouds.rest.annotations.Identity;
 import org.jclouds.rest.config.CredentialStoreModule;
 import org.testng.annotations.Test;
 
@@ -115,8 +116,23 @@ public class ContextBuilderTest {
       overrides.setProperty(Constants.PROPERTY_IDENTITY, "foo");
       overrides.setProperty(Constants.PROPERTY_CREDENTIAL, "BAR");
       ContextBuilder withCredsInProps = testContextBuilder().overrides(overrides);
-      String identity = withCredsInProps.buildInjector().getInstance(Key.get(String.class, Identity.class));
-      assertEquals(identity, "foo");
+      Credentials creds = withCredsInProps.buildInjector()
+            .getInstance(Key.get(new TypeLiteral<Supplier<Credentials>>() {
+            }, Provider.class)).get();
+      assertEquals(creds, new Credentials("foo", "BAR"));
+   }
+
+   @Test
+   public void testProviderMetadataWithCredentialsSetSupplier() {
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_IDENTITY, "foo");
+      overrides.setProperty(Constants.PROPERTY_CREDENTIAL, "BAR");
+      ContextBuilder withCredsSupplier = testContextBuilder().credentialsSupplier(
+            ofInstance(new Credentials("foo", "BAR")));
+      Credentials creds = withCredsSupplier.buildInjector()
+            .getInstance(Key.get(new TypeLiteral<Supplier<Credentials>>() {
+            }, Provider.class)).get();
+      assertEquals(creds, new Credentials("foo", "BAR"));
    }
    
    @Test

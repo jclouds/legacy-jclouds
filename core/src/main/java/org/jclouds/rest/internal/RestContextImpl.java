@@ -23,13 +23,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import javax.inject.Inject;
 
 import org.jclouds.annotations.Name;
+import org.jclouds.domain.Credentials;
 import org.jclouds.internal.ContextImpl;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.location.Provider;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.Utils;
-import org.jclouds.rest.annotations.Identity;
 
+import com.google.common.base.Supplier;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Singleton;
@@ -45,9 +47,10 @@ public class RestContextImpl<S, A> extends ContextImpl implements RestContext<S,
    private final S syncApi;
 
    @Inject
-   protected RestContextImpl(@Name String name, ProviderMetadata providerMetadata, @Identity String identity, Utils utils, Closer closer,
-            Injector injector, TypeLiteral<S> syncApi, TypeLiteral<A> asyncApi) {
-      super(name, providerMetadata, identity, utils, closer);
+   protected RestContextImpl(@Name String name, ProviderMetadata providerMetadata,
+         @Provider Supplier<Credentials> creds, Utils utils, Closer closer, Injector injector, TypeLiteral<S> syncApi,
+         TypeLiteral<A> asyncApi) {
+      super(name, providerMetadata, creds, utils, closer);
       checkNotNull(injector, "injector");
       this.asyncApi = injector.getInstance(Key.get(checkNotNull(asyncApi, "asyncApi")));
       this.syncApi = injector.getInstance(Key.get(checkNotNull(syncApi, "syncApi")));
