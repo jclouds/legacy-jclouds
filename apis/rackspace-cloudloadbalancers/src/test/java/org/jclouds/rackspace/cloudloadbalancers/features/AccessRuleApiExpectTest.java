@@ -19,6 +19,7 @@
 package org.jclouds.rackspace.cloudloadbalancers.features;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.List;
@@ -39,7 +40,7 @@ import com.google.common.collect.ImmutableList;
  */
 @Test(groups = "unit")
 public class AccessRuleApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudLoadBalancersApi> {
-   public void testListAccessList() {
+   public void testListAccessRules() {
       URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000/accesslist");
       AccessRuleApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
@@ -49,10 +50,10 @@ public class AccessRuleApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
       ).getAccessRuleApiForZoneAndLoadBalancer("DFW", 2000);
 
       Iterable<AccessRuleWithId> accessList = api.list();
-      assertEquals(accessList, getAccessList());
+      assertEquals(accessList, getAccessRules());
    }
 
-   public void testCreateAccessList() {
+   public void testCreateAccessRules() {
       URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000/accesslist");
       AccessRuleApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
@@ -78,7 +79,7 @@ public class AccessRuleApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
             HttpResponse.builder().statusCode(200).build()
       ).getAccessRuleApiForZoneAndLoadBalancer("DFW", 2000);
 
-      api.remove(23);
+      assertTrue(api.remove(23));
    }
 
    public void testRemoveManyAccessRules() {
@@ -91,7 +92,7 @@ public class AccessRuleApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
       ).getAccessRuleApiForZoneAndLoadBalancer("DFW", 2000);
 
       List<Integer> accessRuleIds = ImmutableList.<Integer> of(23, 24);
-      api.remove(accessRuleIds);
+      assertTrue(api.remove(accessRuleIds));
    }
 
    public void testRemoveAllAccessRules() {
@@ -103,14 +104,14 @@ public class AccessRuleApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
             HttpResponse.builder().statusCode(200).build()
       ).getAccessRuleApiForZoneAndLoadBalancer("DFW", 2000);
 
-      api.removeAll();
+      assertTrue(api.removeAll());
    }
 
-   private Iterable<AccessRule> getAccessList() {
-      AccessRule accessRule1 = new AccessRuleWithId(23, "206.160.163.21", AccessRule.Type.DENY);
-      AccessRule accessRule2 = new AccessRuleWithId(24, "206.160.165.11", AccessRule.Type.DENY);
-      AccessRule accessRule3 = new AccessRuleWithId(25, "206.160.163.22", AccessRule.Type.DENY);
+   private Iterable<AccessRuleWithId> getAccessRules() {
+      AccessRuleWithId accessRule1 = new AccessRuleWithId(23, "206.160.163.21", AccessRule.Type.DENY);
+      AccessRuleWithId accessRule2 = new AccessRuleWithId(24, "206.160.165.11", AccessRule.Type.DENY);
+      AccessRuleWithId accessRule3 = new AccessRuleWithId(25, "206.160.163.22", AccessRule.Type.DENY);
 
-      return ImmutableList.<AccessRule> of(accessRule1, accessRule2, accessRule3);
+      return ImmutableList.<AccessRuleWithId> of(accessRule1, accessRule2, accessRule3);
    }
 }

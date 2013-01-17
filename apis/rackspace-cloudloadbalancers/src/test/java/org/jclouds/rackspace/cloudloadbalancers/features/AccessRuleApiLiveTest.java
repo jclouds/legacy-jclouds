@@ -76,7 +76,7 @@ public class AccessRuleApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
       LoadBalancerRequest lbRequest = LoadBalancerRequest.builder()
             .name(prefix+"-jclouds").protocol("HTTP").port(80).virtualIPType(Type.PUBLIC).node(nodeRequest).build(); 
 
-      zone = Iterables.getFirst(clbApi.getConfiguredZones(), null);
+      zone = "ORD";//Iterables.getFirst(clbApi.getConfiguredZones(), null);
       lb = clbApi.getLoadBalancerApiForZone(zone).create(lbRequest);
       
       assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
@@ -96,7 +96,7 @@ public class AccessRuleApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
       AccessRuleWithId removedAccessRule = Iterables.getFirst(actualAccessList, null);
       accessRules.remove(removedAccessRule.getAddress());
       
-      clbApi.getAccessRuleApiForZoneAndLoadBalancer(zone, lb.getId()).remove(removedAccessRule.getId());
+      assertTrue(clbApi.getAccessRuleApiForZoneAndLoadBalancer(zone, lb.getId()).remove(removedAccessRule.getId()));
       assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
       
       assertExpectedAccessRules(accessRules);
@@ -111,7 +111,7 @@ public class AccessRuleApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
       accessRules.remove(removedAccessRule1.getAddress());
       accessRules.remove(removedAccessRule2.getAddress());
       
-      clbApi.getAccessRuleApiForZoneAndLoadBalancer(zone, lb.getId()).remove(removedAccessRuleIds);
+      assertTrue(clbApi.getAccessRuleApiForZoneAndLoadBalancer(zone, lb.getId()).remove(removedAccessRuleIds));
       assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
       
       assertExpectedAccessRules(accessRules);
@@ -119,7 +119,7 @@ public class AccessRuleApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    
    @Test(dependsOnMethods = "testRemoveManyAccessRules")
    public void testRemoveAllAccessRules() throws Exception {
-      clbApi.getAccessRuleApiForZoneAndLoadBalancer(zone, lb.getId()).removeAll();
+      assertTrue(clbApi.getAccessRuleApiForZoneAndLoadBalancer(zone, lb.getId()).removeAll());
       assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
       
       assertExpectedAccessRules(new HashMap<String, AccessRule>());

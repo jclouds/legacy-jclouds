@@ -28,7 +28,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.Fallbacks.EmptyPagedIterableOnNotFoundOr404;
-import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.FalseOnNotFoundOr404;
 import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.rackspace.cloudloadbalancers.domain.AccessRule;
@@ -55,9 +55,9 @@ public interface AccessRuleAsyncApi {
     */
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
-   @Fallback(NullOnNotFoundOr404.class)
+   @Fallback(VoidOnNotFoundOr404.class)
    @Path("/accesslist")
-   ListenableFuture<Void> create(@WrapWith("accessList") Iterable<AccessRule> accessList);
+   ListenableFuture<Void> create(@WrapWith("accessList") Iterable<AccessRule> accessRules);
 
    /**
     * @see AccessRuleApi#list()
@@ -73,26 +73,26 @@ public interface AccessRuleAsyncApi {
     * @see AccessRuleApi#remove(int)
     */
    @DELETE
-   @Fallback(VoidOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    @Path("/accesslist/{id}")
    @Consumes("*/*")
-   ListenableFuture<Void> remove(@PathParam("id") int id);
+   ListenableFuture<Boolean> remove(@PathParam("id") int id);
 
    /**
     * @see AccessRuleApi#remove(Iterable)
     */
    @DELETE
-   @Fallback(VoidOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    @Path("/accesslist")
    @Consumes("*/*")
-   ListenableFuture<Void> remove(@QueryParam("id") Iterable<Integer> ids);
+   ListenableFuture<Boolean> remove(@QueryParam("id") Iterable<Integer> ids);
 
    /**
     * @see AccessRuleApi#removeAll()
     */
    @DELETE
-   @Fallback(VoidOnNotFoundOr404.class)
+   @Fallback(FalseOnNotFoundOr404.class)
    @Path("/accesslist")
    @Consumes("*/*")
-   ListenableFuture<Void> removeAll();
+   ListenableFuture<Boolean> removeAll();
 }
