@@ -32,7 +32,7 @@ import com.google.common.collect.FluentIterable;
  *
  * @author Adam Lowe
  * @see org.jclouds.glesys.features.EmailAccountAsyncApi
- * @see <a href="https://customer.glesys.com/api.php" />
+ * @see <a href="https://github.com/GleSYS/API/wiki/API-Documentation" />
  */
 public interface EmailAccountApi {
 

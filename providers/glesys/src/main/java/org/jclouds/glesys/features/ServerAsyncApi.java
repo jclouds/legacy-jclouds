@@ -21,6 +21,7 @@ package org.jclouds.glesys.features;
 import java.util.Map;
 import java.util.SortedMap;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -64,7 +65,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  * @author Adam Lowe
  * @see ServerApi
- * @see <a href="https://customer.glesys.com/api.php" />
+ * @see <a href="https://github.com/GleSYS/API/wiki/API-Documentation" />
  */
 @RequestFilters(BasicAuthentication.class)
 public interface ServerAsyncApi {
@@ -72,6 +73,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#list
     */
+   @Named("server:list")
    @POST
    @Path("/server/list/format/json")
    @SelectJson("servers")
@@ -82,6 +84,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#get
     */
+   @Named("server:details")
    @POST
    @Path("/server/details/format/json")
    @SelectJson("server")
@@ -93,6 +96,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#getStatus
     */
+   @Named("server:status")
    @POST
    @Path("/server/status/format/json")
    @SelectJson("server")
@@ -103,6 +107,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#getLimits
     */
+   @Named("server:limits")
    @POST
    @Path("/server/limits/format/json")
    @SelectJson("limits")
@@ -113,6 +118,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#getConsole
     */
+   @Named("server:console")
    @POST
    @Path("/server/console/format/json")
    @SelectJson("console")
@@ -123,6 +129,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#getAllowedArgumentsForCreateByPlatform
     */
+   @Named("server:allowedarguments")
    @GET
    @Path("/server/allowedarguments/format/json")
    @SelectJson("argumentslist")
@@ -132,6 +139,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#listTemplates
     */
+   @Named("server:templates")
    @GET
    @Path("/server/templates/format/json")
    @ResponseParser(ParseTemplatesFromHttpResponse.class)
@@ -142,6 +150,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#stop
     */
+   @Named("server:resetlimit")
    @POST
    @Path("/server/resetlimit/format/json")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -151,6 +160,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#reboot
     */
+   @Named("server:reboot")
    @POST
    @SelectJson("server")
    @Path("/server/reboot/format/json")
@@ -160,6 +170,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#start
     */
+   @Named("server:start")
    @POST
    @SelectJson("server")
    @Path("/server/start/format/json")
@@ -169,6 +180,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#stop
     */
+   @Named("server:stop")
    @POST
    @SelectJson("server")
    @Path("/server/stop/format/json")
@@ -178,6 +190,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#hardStop
     */
+   @Named("server:stop:hard")
    @POST
    @SelectJson("server")
    @Path("/server/stop/format/json")
@@ -188,6 +201,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#createWithHostnameAndRootPassword
     */
+   @Named("server:create")
    @POST
    @SelectJson("server")
    @Path("/server/create/format/json")
@@ -200,6 +214,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#clone
     */
+   @Named("server:clone")
    @POST
    @Path("/server/clone/format/json")
    @SelectJson("server")
@@ -210,6 +225,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#update
     */
+   @Named("server:edit")
    @POST
    @Path("/server/edit/format/json")
    @SelectJson("server")
@@ -219,6 +235,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#destroy
     */
+   @Named("server:destroy")
    @POST
    @Path("/server/destroy/format/json")
    ListenableFuture<Void> destroy(@FormParam("serverid") String id, DestroyServerOptions keepIp);
@@ -226,6 +243,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#resetPassword
     */
+   @Named("server:resetpassword")
    @POST
    @Path("/server/resetpassword/format/json")
    @SelectJson("server")
@@ -235,6 +253,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#getResourceUsage
     */
+   @Named("server:resourceusage")
    @POST
    @Path("/server/resourceusage/format/json")
    @SelectJson("usage")
