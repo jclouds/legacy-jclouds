@@ -30,7 +30,7 @@ import org.jclouds.loadbalancer.domain.LoadBalancerType;
 import org.jclouds.loadbalancer.domain.internal.LoadBalancerMetadataImpl;
 import org.jclouds.location.predicates.LocationPredicates;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
-import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP;
+import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIPWithId;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -62,10 +62,10 @@ public class LoadBalancerToLoadBalancerMetadata implements Function<LoadBalancer
       // TODO Builder
       return new LoadBalancerMetadataImpl(LoadBalancerType.LB, String.valueOf(input.getId()), input.getName(), id, location, null,
                ImmutableMap.<String, String> of(), Iterables.transform(input.getVirtualIPs(),
-                        new Function<VirtualIP, String>() {
+                        new Function<VirtualIPWithId, String>() {
 
                            @Override
-                           public String apply(VirtualIP arg0) {
+                           public String apply(VirtualIPWithId arg0) {
                               return arg0.getAddress();
                            }
 

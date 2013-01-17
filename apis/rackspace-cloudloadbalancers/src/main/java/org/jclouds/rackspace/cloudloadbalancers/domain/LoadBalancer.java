@@ -41,7 +41,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
    private final String region;
    private final int id;
    private final Status status;
-   private final Set<VirtualIP> virtualIPs;
+   private final Set<VirtualIPWithId> virtualIPs;
    private final String clusterName;
    private final Date created;
    private final Date updated;
@@ -53,7 +53,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
 
    public LoadBalancer(String region, int id, String name, String protocol, @Nullable Integer port, Set<Node> nodes,
          @Nullable Integer timeout, @Nullable Boolean halfClosed, @Nullable Algorithm algorithm, Status status,
-         Set<VirtualIP> virtualIPs, @Nullable Map<String, SessionPersistenceType> sessionPersistenceType,
+         Set<VirtualIPWithId> virtualIPs, @Nullable Map<String, SessionPersistenceType> sessionPersistenceType,
          String clusterName, Date created, Date updated, @Nullable Map<String, Boolean> connectionLogging,
          @Nullable ConnectionThrottle connectionThrottle, boolean contentCaching, int nodeCount,
          @Nullable HealthMonitor healthMonitor, @Nullable SSLTermination sslTermination,
@@ -94,7 +94,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
    /**
     * @see VirtualIP
     */
-   public Set<VirtualIP> getVirtualIPs() {
+   public Set<VirtualIPWithId> getVirtualIPs() {
       return virtualIPs;
    }
 
@@ -251,7 +251,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
       private String region;
       private int id = -1;
       private Status status;
-      private Set<VirtualIP> virtualIPs = ImmutableSet.<VirtualIP> of();
+      private Set<VirtualIPWithId> virtualIPs = ImmutableSet.<VirtualIPWithId> of();
       private String clusterName;
       private Date created;
       private Date updated;
@@ -276,8 +276,8 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
          return this;
       }
 
-      public Builder virtualIPs(Iterable<VirtualIP> virtualIPs) {
-         this.virtualIPs = ImmutableSet.<VirtualIP> copyOf(checkNotNull(virtualIPs, "virtualIPs"));
+      public Builder virtualIPs(Iterable<VirtualIPWithId> virtualIPs) {
+         this.virtualIPs = ImmutableSet.<VirtualIPWithId> copyOf(checkNotNull(virtualIPs, "virtualIPs"));
          return this;
       }
 

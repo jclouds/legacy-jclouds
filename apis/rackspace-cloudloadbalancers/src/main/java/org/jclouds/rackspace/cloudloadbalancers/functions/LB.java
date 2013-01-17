@@ -22,12 +22,12 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer.Status;
 import org.jclouds.rackspace.cloudloadbalancers.domain.AccessRuleWithId;
+import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer.Status;
 import org.jclouds.rackspace.cloudloadbalancers.domain.Node;
 import org.jclouds.rackspace.cloudloadbalancers.domain.SSLTermination;
 import org.jclouds.rackspace.cloudloadbalancers.domain.SourceAddresses;
-import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP;
+import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIPWithId;
 import org.jclouds.rackspace.cloudloadbalancers.domain.internal.BaseLoadBalancer;
 
 import com.google.common.base.Objects;
@@ -41,7 +41,7 @@ class LB extends BaseLoadBalancer<Node, LB> {
    int id;
    int nodeCount;
    Status status;
-   Set<VirtualIP> virtualIps = Sets.newLinkedHashSet();
+   Set<VirtualIPWithId> virtualIps = Sets.newLinkedHashSet();
    Map<String, String> cluster = Maps.newLinkedHashMap();
    Map<String, Date> created = Maps.newLinkedHashMap();
    Map<String, Date> updated = Maps.newLinkedHashMap();
