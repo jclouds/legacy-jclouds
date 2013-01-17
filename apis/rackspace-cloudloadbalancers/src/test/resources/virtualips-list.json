@@ -1,0 +1,22 @@
+{
+    "virtualIps": [
+        {
+            "address": "166.78.34.87",
+            "id": 5557,
+            "type": "PUBLIC",
+            "ipVersion": "IPV4"
+        },
+        {
+            "address": "2001:4800:7901:0000:9a32:3c2a:0000:0001",
+            "id": 9076419,
+            "type": "PUBLIC",
+            "ipVersion": "IPV6"
+        },
+        {
+            "address": "2001:4800:7901:0000:9a32:3c2a:0000:0002",
+            "id": 9079727,
+            "type": "PUBLIC",
+            "ipVersion": "IPV6"
+        }
+    ]
+}

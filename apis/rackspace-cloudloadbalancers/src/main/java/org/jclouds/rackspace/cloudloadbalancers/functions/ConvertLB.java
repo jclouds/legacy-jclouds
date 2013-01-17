@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import org.jclouds.logging.Logger;
 import org.jclouds.rackspace.cloudloadbalancers.domain.AccessRuleWithId;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
+import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIPWithId;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer.Builder;
 
 import com.google.common.base.Function;
@@ -58,7 +59,7 @@ public class ConvertLB implements Function<LB, LoadBalancer> {
                .timeout(lb.getTimeout()).algorithm(lb.getAlgorithm()).halfClosed(lb.isHalfClosed())
                .sessionPersistenceType(lb.getSessionPersistenceType()).connectionLogging(lb.isConnectionLogging())
                .connectionThrottle(lb.getConnectionThrottle()).healthMonitor(lb.getHealthMonitor())
-               .metadata(lb.getMetadata()).virtualIPs(lb.virtualIps);
+               .metadata(lb.getMetadata());
 
          if (lb.cluster.size() == 1)
             builder.clusterName(Iterables.get(lb.cluster.values(), 0));
@@ -76,6 +77,10 @@ public class ConvertLB implements Function<LB, LoadBalancer> {
             builder.accessRules(ImmutableSet.<AccessRuleWithId> of());
          else
             builder.accessRules(lb.accessList);
+         if (lb.virtualIps == null)
+            builder.virtualIPs(ImmutableSet.<VirtualIPWithId> of());
+         else
+            builder.virtualIPs(lb.virtualIps);
 
          return builder.build();
       }

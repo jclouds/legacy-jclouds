@@ -33,7 +33,7 @@ import org.jclouds.rackspace.cloudloadbalancers.domain.Node;
 import org.jclouds.rackspace.cloudloadbalancers.domain.SSLTermination;
 import org.jclouds.rackspace.cloudloadbalancers.domain.SourceAddresses;
 import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP;
-import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP.IPVersion;
+import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIPWithId;
 import org.jclouds.rackspace.cloudloadbalancers.domain.internal.BaseLoadBalancer.Algorithm;
 import org.jclouds.rackspace.cloudloadbalancers.domain.internal.BaseLoadBalancer.SessionPersistenceType;
 import org.testng.annotations.Test;
@@ -79,8 +79,8 @@ public class ParseLoadBalancerTest extends BaseItemParserTest<LoadBalancer> {
                   new AccessRuleWithId(22215, "1.2.3.4/32", AccessRule.Type.DENY),
                   new AccessRuleWithId(22217, "12.0.0.0/8", AccessRule.Type.ALLOW)))
             .virtualIPs(ImmutableSet.of(
-                  VirtualIP.builder().id(1000).address("206.10.10.210").type(VirtualIP.Type.PUBLIC).ipVersion(IPVersion.IPV4).build(),
-                  VirtualIP.builder().id(1001).address("2001:4800:7901:0000:9a32:3c2a:0000:0001").type(VirtualIP.Type.PUBLIC).ipVersion(IPVersion.IPV6).build()))
+                  new VirtualIPWithId(VirtualIP.Type.PUBLIC, VirtualIP.IPVersion.IPV4, 1000, "206.10.10.210"),
+                  new VirtualIPWithId(VirtualIP.Type.PUBLIC, VirtualIP.IPVersion.IPV6, 1001, "2001:4800:7901:0000:9a32:3c2a:0000:0001")))
             .nodes(ImmutableSet.of(
                   Node.builder().id(1041).address("10.1.1.1").port(80).condition(Node.Condition.ENABLED).status(Node.Status.ONLINE).build(), 
                   Node.builder().id(1411).address("10.1.1.2").port(80).condition(Node.Condition.ENABLED).status(Node.Status.ONLINE).build()))
