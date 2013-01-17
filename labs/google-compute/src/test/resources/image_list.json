@@ -1,0 +1,21 @@
+{
+ "kind": "compute#imageList",
+ "id": "projects/google/images",
+ "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/google/images",
+ "items": [
+  {
+   "kind": "compute#image",
+   "id": "12941197498378735318",
+   "creationTimestamp": "2012-07-16T22:16:13.468",
+   "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/google/images/centos-6-2-v20120326",
+   "name": "centos-6-2-v20120326",
+   "description": "DEPRECATED. CentOS 6.2 image; Created Mon, 26 Mar 2012 21:19:09 +0000",
+   "sourceType": "RAW",
+   "preferredKernel": "https://www.googleapis.com/compute/v1beta13/projects/google/kernels/gce-20120326",
+   "rawDisk": {
+    "source": "",
+    "containerType": "TAR"
+   }
+  }
+  ]
+}

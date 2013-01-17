@@ -1,0 +1,50 @@
+{
+ "kind": "compute#imageList",
+ "id": "projects/google/images",
+ "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/google/images",
+ "nextPageToken": "CgVJTUFHRRIbZ29vZ2xlLmdjZWwtMTAtMDQtdjIwMTIxMTA2",
+ "items": [
+  {
+   "kind": "compute#image",
+   "id": "12920641029336858796",
+   "creationTimestamp": "2012-06-21T22:59:56.392-07:00",
+   "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/google/images/centos-6-2-v20120621",
+   "name": "centos-6-2-v20120621",
+   "description": "CentOS 6.2; Created Thu, 21 Jun 2012 14:22:21 +0000",
+   "sourceType": "RAW",
+   "preferredKernel": "https://www.googleapis.com/compute/v1beta13/projects/google/kernels/gce-20120621",
+   "rawDisk": {
+    "source": "",
+    "containerType": "TAR"
+   }
+  },
+  {
+   "kind": "compute#image",
+   "id": "12994279803511049620",
+   "creationTimestamp": "2012-09-18T08:52:47.584-07:00",
+   "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/google/images/centos-6-v20120912",
+   "name": "centos-6-v20120912",
+   "description": "CentOS 6; Created Wed, 12 Sep 2012 00:00:00 +0000",
+   "sourceType": "RAW",
+   "preferredKernel": "https://www.googleapis.com/compute/v1beta13/projects/google/kernels/gce-v20120912",
+   "rawDisk": {
+    "source": "",
+    "containerType": "TAR"
+   }
+  },
+  {
+   "kind": "compute#image",
+   "id": "13037720516378381209",
+   "creationTimestamp": "2012-11-09T11:40:41.079-08:00",
+   "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/google/images/centos-6-v20121106",
+   "name": "centos-6-v20121106",
+   "description": "SCSI-enabled CentOS 6; Created Tue, 06 Nov 2012 00:00:00 +0000",
+   "sourceType": "RAW",
+   "preferredKernel": "https://www.googleapis.com/compute/v1beta13/projects/google/kernels/gce-v20121106",
+   "rawDisk": {
+    "source": "",
+    "containerType": "TAR"
+   }
+  }
+ ]
+}

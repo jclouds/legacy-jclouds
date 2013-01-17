@@ -1,0 +1,49 @@
+{
+ "kind": "compute#imageList",
+ "id": "projects/google/images",
+ "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/google/images",
+ "items": [
+  {
+   "kind": "compute#image",
+   "id": "13037722963789596520",
+   "creationTimestamp": "2012-11-09T11:43:28.749-08:00",
+   "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/google/images/gcel-10-04-v20121106",
+   "name": "gcel-10-04-v20121106",
+   "description": "SCSI-enabled GCEL 10.04 LTS; Created Tue, 06 Nov 2012 00:00:00 +0000",
+   "sourceType": "RAW",
+   "preferredKernel": "https://www.googleapis.com/compute/v1beta13/projects/google/kernels/gce-v20121106",
+   "rawDisk": {
+    "source": "",
+    "containerType": "TAR"
+   }
+  },
+  {
+   "kind": "compute#image",
+   "id": "13037721421359523565",
+   "creationTimestamp": "2012-11-09T11:40:51.994-08:00",
+   "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/google/images/gcel-12-04-v20121106",
+   "name": "gcel-12-04-v20121106",
+   "description": "SCSI-enabled GCEL 12.04 LTS; Created Tue, 06 Nov 2012 00:00:00 +0000",
+   "sourceType": "RAW",
+   "preferredKernel": "https://www.googleapis.com/compute/v1beta13/projects/google/kernels/gce-v20121106",
+   "rawDisk": {
+    "source": "",
+    "containerType": "TAR"
+   }
+  },
+  {
+   "kind": "compute#image",
+   "id": "12941198995845323366",
+   "creationTimestamp": "2012-07-16T15:18:50.405-07:00",
+   "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/google/images/ubuntu-10-04-v20110728",
+   "name": "ubuntu-10-04-v20110728",
+   "description": "DEPRECATED. GCEL 10.04 LTS; Created Thu, 28 Jul 2011 16:45:51 +0000",
+   "sourceType": "RAW",
+   "preferredKernel": "https://www.googleapis.com/compute/v1beta13/projects/google/kernels/gce-20110728",
+   "rawDisk": {
+    "source": "",
+    "containerType": "TAR"
+   }
+  }
+ ]
+}
