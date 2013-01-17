@@ -18,7 +18,6 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.domain;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Objects;
@@ -26,36 +25,26 @@ import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * A virtual IP (VIP) makes a load balancer accessible by clients. The load balancing service
- * supports either a public VIP, routable on the public Internet, or a ServiceNet address, routable
+ * supports either a public virtual IP, routable on the public Internet, or a ServiceNet address, routable
  * only within the region in which the load balancer resides.
  * 
- * @author Adrian Cole
+ * @author Everett Toews
  */
-public class VirtualIP implements Comparable<VirtualIP> {
+public class VirtualIP {
 
-   private int id;
-   private String address;
    private Type type;
    private IPVersion ipVersion;
 
-   // for serialization only
-   VirtualIP() {
+   /**
+    * Use this method to easily create virtual IPs. Only public IPv6 virtual IPs can be created.
+    */
+   public static VirtualIP publicIPv6() {
+      return new VirtualIP(Type.PUBLIC, IPVersion.IPV6);
    }
-
-   public VirtualIP(int id, String address, Type type, IPVersion ipVersion) {
-      checkArgument(id != -1, "id must be specified");
-      this.id = id;
-      this.address = checkNotNull(address, "address");
+   
+   protected VirtualIP(Type type, IPVersion ipVersion) {
       this.type = checkNotNull(type, "type");
       this.ipVersion = checkNotNull(ipVersion, "ipVersion");
-   }
-
-   public int getId() {
-      return id;
-   }
-
-   public String getAddress() {
-      return address;
    }
 
    public Type getType() {
@@ -66,14 +55,9 @@ public class VirtualIP implements Comparable<VirtualIP> {
       return ipVersion;
    }
 
-   @Override
-   public int compareTo(VirtualIP arg0) {
-      return address.compareTo(arg0.address);
-   }
-
    protected ToStringHelper string() {
       return Objects.toStringHelper(this).omitNullValues()
-            .add("id", id).add("address", address).add("ipVersion", ipVersion).add("type", type);
+            .add("ipVersion", ipVersion).add("type", type);
    }
    
    @Override
@@ -83,7 +67,7 @@ public class VirtualIP implements Comparable<VirtualIP> {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(id);
+      return Objects.hashCode(ipVersion, type);
    }
 
    @Override
@@ -92,7 +76,8 @@ public class VirtualIP implements Comparable<VirtualIP> {
       if (obj == null || getClass() != obj.getClass()) return false;
 
       VirtualIP that = VirtualIP.class.cast(obj);
-      return Objects.equal(this.id, that.id);
+      return Objects.equal(this.ipVersion, that.ipVersion)
+            && Objects.equal(this.type, that.type);
    }
 
    /**
@@ -104,7 +89,7 @@ public class VirtualIP implements Comparable<VirtualIP> {
        */
       PUBLIC,
       /**
-       * An address that is routable only on ServiceNet.
+       * An address that is routable only on the Rackspace ServiceNet.
        */
       SERVICENET, UNRECOGNIZED;
 
@@ -132,41 +117,5 @@ public class VirtualIP implements Comparable<VirtualIP> {
             return UNRECOGNIZED;
          }
       }
-
-   }
-
-   public static class Builder {
-      private int id = -1;
-      private String address;
-      private Type type;
-      private IPVersion ipVersion = IPVersion.IPV4;
-
-      public Builder id(int id) {
-         this.id = id;
-         return this;
-      }
-
-      public Builder address(String address) {
-         this.address = address;
-         return this;
-      }
-
-      public Builder type(Type type) {
-         this.type = type;
-         return this;
-      }
-
-      public Builder ipVersion(IPVersion ipVersion) {
-         this.ipVersion = ipVersion;
-         return this;
-      }
-
-      public VirtualIP build() {
-         return new VirtualIP(id, address, type, ipVersion);
-      }
-   }
-   
-   public static Builder builder() {
-      return new Builder();
    }
 }

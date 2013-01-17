@@ -27,6 +27,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.json.BaseIterableWithMarkerParserTest;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer.Status;
+import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIPWithId;
 import org.jclouds.rackspace.cloudloadbalancers.domain.internal.BaseLoadBalancer.Algorithm;
 import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP;
 import org.testng.annotations.Test;
@@ -57,8 +58,7 @@ public class ParseLoadBalancersTest extends BaseIterableWithMarkerParserTest<Loa
                   .status(Status.ACTIVE)
                   .nodeCount(1)
                   .virtualIPs(ImmutableSet.of(
-                        VirtualIP.builder().id(403).address("206.55.130.1")
-                              .type(VirtualIP.Type.PUBLIC).ipVersion(VirtualIP.IPVersion.IPV4).build()))
+                        new VirtualIPWithId(VirtualIP.Type.PUBLIC, VirtualIP.IPVersion.IPV4, 403, "206.55.130.1")))
                   .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:42Z"))
                   .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:44Z")).build(),
             LoadBalancer
@@ -72,8 +72,7 @@ public class ParseLoadBalancersTest extends BaseIterableWithMarkerParserTest<Loa
                   .status(Status.ACTIVE)
                   .nodeCount(1)
                   .virtualIPs(ImmutableSet.of(
-                        VirtualIP.builder().id(401).address("206.55.130.2")
-                              .type(VirtualIP.Type.PUBLIC).ipVersion(VirtualIP.IPVersion.IPV4).build()))
+                        new VirtualIPWithId(VirtualIP.Type.PUBLIC, VirtualIP.IPVersion.IPV4, 401, "206.55.130.2")))
                   .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:42Z"))
                   .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:44Z")).build());
    }
