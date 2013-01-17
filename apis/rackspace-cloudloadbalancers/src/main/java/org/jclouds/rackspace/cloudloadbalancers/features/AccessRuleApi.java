@@ -31,14 +31,14 @@ import org.jclouds.rackspace.cloudloadbalancers.domain.AccessRuleWithId;
  */
 public interface AccessRuleApi {
    /**
-    * Create a new access list or append to an existing access list.
+    * Create new access rules or append to existing access rules.
     * 
-    * When creating an access list, one or more AccessRules are required. If a populated access list already exists 
+    * When creating access rules, one or more AccessRules are required. If populated access rules already exist 
     * for the load balancer, it will be appended to with subsequent creates. One access list may include up to 100 
     * AccessRules. A single address or subnet definition is considered unique and cannot be duplicated between rules
     * in an access list.
     */
-   void create(Iterable<AccessRule> accessList);
+   void create(Iterable<AccessRule> accessRules);
 
    /**
     * List the AccessRules
@@ -47,16 +47,22 @@ public interface AccessRuleApi {
    
    /**
     * Remove an access rule from the access list.
+    * 
+    * @return true on a successful removal, false if the access rule was not found
     */
-   void remove(int id);
+   boolean remove(int id);
    
    /**
     * Batch delete the access rules given the specified ids.
+    * 
+    * @return true on a successful removal, false if the access rule was not found
     */
-   void remove(Iterable<Integer> ids);
+   boolean remove(Iterable<Integer> ids);
    
    /**
     * Remove the entire access list.
+    * 
+    * @return true on a successful removal, false if the access rule was not found
     */
-   void removeAll();
+   boolean removeAll();
 }
