@@ -18,6 +18,7 @@
  */
 package org.jclouds.glesys.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -43,7 +44,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  *
  * @author Adam Lowe
  * @see ArchiveApi
- * @see <a href="https://customer.glesys.com/api.php" />
+ * @see <a href="https://github.com/GleSYS/API/wiki/API-Documentation" />
  */
 @RequestFilters(BasicAuthentication.class)
 public interface ArchiveAsyncApi {
@@ -51,6 +52,7 @@ public interface ArchiveAsyncApi {
    /**
     * @see ArchiveApi#list
     */
+   @Named("archive:list")
    @POST
    @Path("/archive/list/format/json")
    @SelectJson("archives")
@@ -61,6 +63,7 @@ public interface ArchiveAsyncApi {
    /**
     * @see ArchiveApi#get
     */
+   @Named("archive:details")
    @POST
    @Path("/archive/details/format/json")
    @SelectJson("details")
@@ -71,6 +74,7 @@ public interface ArchiveAsyncApi {
    /**
     * @see ArchiveApi#createWithCredentialsAndSize
     */
+   @Named("archive:create")
    @POST
    @Path("/archive/create/format/json")
    @SelectJson("details")
@@ -81,6 +85,7 @@ public interface ArchiveAsyncApi {
    /**
     * @see ArchiveApi#delete
     */
+   @Named("archive:delete")
    @POST
    @Path("/archive/delete/format/json")
    ListenableFuture<Void> delete(@FormParam("username") String username);
@@ -88,6 +93,7 @@ public interface ArchiveAsyncApi {
    /**
     * @see ArchiveApi#resize
     */
+   @Named("archive:resize")
    @POST
    @Path("/archive/resize/format/json")
    @SelectJson("details")
@@ -96,6 +102,7 @@ public interface ArchiveAsyncApi {
    /**
     * @see ArchiveApi#changePassword
     */
+   @Named("archive:changepassword")
    @POST
    @Path("/archive/changepassword/format/json")
    @SelectJson("details")
@@ -105,6 +112,7 @@ public interface ArchiveAsyncApi {
    /**
     * @see org.jclouds.glesys.features.ArchiveApi#getAllowedArguments
     */
+   @Named("archive:allowedarguments")
    @GET
    @Path("/archive/allowedarguments/format/json")
    @SelectJson("argumentslist")

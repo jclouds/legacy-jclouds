@@ -18,6 +18,7 @@
  */
 package org.jclouds.glesys.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -46,7 +47,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  *
  * @author Adam Lowe
  * @see org.jclouds.glesys.features.EmailAccountApi
- * @see <a href="https://customer.glesys.com/api.php" />
+ * @see <a href="https://github.com/GleSYS/API/wiki/API-Documentation" />
  */
 @RequestFilters(BasicAuthentication.class)
 public interface EmailAccountAsyncApi {
@@ -54,6 +55,7 @@ public interface EmailAccountAsyncApi {
    /**
     * @see org.jclouds.glesys.features.EmailAccountApi#getOverview
     */
+   @Named("email:overview")
    @POST
    @Path("/email/overview/format/json")
    @SelectJson("overview")
@@ -64,6 +66,7 @@ public interface EmailAccountAsyncApi {
    /**
     * @see org.jclouds.glesys.features.EmailAccountApi#listDomain
     */
+   @Named("email:list:accounts")
    @POST
    @Path("/email/list/format/json")
    @SelectJson("emailaccounts")
@@ -74,6 +77,7 @@ public interface EmailAccountAsyncApi {
    /**
     * @see org.jclouds.glesys.features.EmailAccountApi#listAliasesInDomain
     */
+   @Named("email:list:aliases")
    @POST
    @Path("/email/list/format/json")
    @SelectJson("emailaliases")
@@ -84,6 +88,7 @@ public interface EmailAccountAsyncApi {
    /**
     * @see org.jclouds.glesys.features.EmailAccountApi#createWithPassword
     */
+   @Named("email:createaccount")
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @SelectJson("emailaccount")
@@ -93,6 +98,7 @@ public interface EmailAccountAsyncApi {
    /**
     * @see org.jclouds.glesys.features.EmailAccountApi#createAlias
     */
+   @Named("email:createalias")
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @SelectJson("alias")
@@ -102,6 +108,7 @@ public interface EmailAccountAsyncApi {
    /**
     * @see org.jclouds.glesys.features.EmailAccountApi#update
     */
+   @Named("email:editaccount")
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @SelectJson("emailaccount")
@@ -111,6 +118,7 @@ public interface EmailAccountAsyncApi {
    /**
     * @see org.jclouds.glesys.features.EmailAccountApi#updateAlias
     */
+   @Named("email:editalias")
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @SelectJson("alias")
@@ -120,6 +128,7 @@ public interface EmailAccountAsyncApi {
    /**
     * @see org.jclouds.glesys.features.EmailAccountApi#delete
     */
+   @Named("email:delete")
    @POST
    @Path("/email/delete/format/json")
    @Fallback(TrueOnNotFoundOr404.class)
