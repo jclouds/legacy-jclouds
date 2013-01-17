@@ -44,7 +44,7 @@ import com.google.common.collect.FluentIterable;
  * @author Adrian Cole
  * @author Adam Lowe
  * @see ServerAsyncApi
- * @see <a href="https://customer.glesys.com/api.php" />
+ * @see <a href="https://github.com/GleSYS/API/wiki/API-Documentation" />
  */
 public interface ServerApi {
 

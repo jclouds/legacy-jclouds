@@ -20,6 +20,7 @@ package org.jclouds.glesys.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -48,7 +49,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  *
  * @author Adam Lowe
  * @see DomainApi
- * @see <a href="https://customer.glesys.com/api.php" />
+ * @see <a href="https://github.com/GleSYS/API/wiki/API-Documentation" />
  */
 @RequestFilters(BasicAuthentication.class)
 public interface DomainAsyncApi {
@@ -56,6 +57,7 @@ public interface DomainAsyncApi {
    /**
     * @see org.jclouds.glesys.features.DomainApi#list
     */
+   @Named("domain:list")
    @POST
    @Path("/domain/list/format/json")
    @SelectJson("domains")
@@ -66,6 +68,7 @@ public interface DomainAsyncApi {
    /**
     * @see org.jclouds.glesys.features.DomainApi#get
     */
+   @Named("domain:details")
    @POST
    @Path("/domain/details/format/json")
    @SelectJson("domain")
@@ -76,6 +79,7 @@ public interface DomainAsyncApi {
    /**
     * @see DomainApi#create
     */
+   @Named("domain:add")
    @POST
    @Path("/domain/add/format/json")
    @SelectJson("domain")
@@ -85,6 +89,7 @@ public interface DomainAsyncApi {
    /**
     * @see DomainApi#update
     */
+   @Named("domain:edit")
    @POST
    @Path("/domain/edit/format/json")
    @SelectJson("domain")
@@ -95,6 +100,7 @@ public interface DomainAsyncApi {
    /**
     * @see DomainApi#delete
     */
+   @Named("domain:delete")
    @POST
    @Path("/domain/delete/format/json")
    ListenableFuture<Void> delete(@FormParam("domainname") String domain);
@@ -102,6 +108,7 @@ public interface DomainAsyncApi {
    /**
     * @see DomainApi#listRecords
     */
+   @Named("domain:listrecords")
    @POST
    @Path("/domain/listrecords/format/json")
    @SelectJson("records")
@@ -111,6 +118,7 @@ public interface DomainAsyncApi {
    /**
     * @see DomainApi#createRecord
     */
+   @Named("domain:addrecord")
    @POST
    @Path("/domain/addrecord/format/json")
    @SelectJson("record")
@@ -122,6 +130,7 @@ public interface DomainAsyncApi {
    /**
     * @see DomainApi#updateRecord
     */
+   @Named("domain:updaterecord")
    @POST
    @Path("/domain/updaterecord/format/json")
    @SelectJson("record")
@@ -131,6 +140,7 @@ public interface DomainAsyncApi {
    /**
     * @see DomainApi#deleteRecord
     */
+   @Named("domain:deleterecord")
    @POST
    @Path("/domain/deleterecord/format/json")
    ListenableFuture<Void> deleteRecord(@FormParam("recordid") String recordId);

@@ -29,7 +29,7 @@ import com.google.common.collect.FluentIterable;
  *
  * @author Adrian Cole, Mattias Holmqvist, Adam Lowe
  * @see IpAsyncApi
- * @see <a href="https://customer.glesys.com/api.php" />
+ * @see <a href="https://github.com/GleSYS/API/wiki/API-Documentation" />
  */
 public interface IpApi {
    /**
