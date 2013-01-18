@@ -56,16 +56,18 @@ public class Node extends BaseNode<Node> {
 
    private int id;
    private Status status;
-
+   private Metadata metadata = new Metadata();
+   
    // for serialization only
-   Node() {
+   protected Node() {
    }
 
-   public Node(int id, String address, int port, Condition condition, Type type, Status status, Integer weight) {
+   public Node(String address, int port, Condition condition, Type type, Integer weight, int id, Status status, Metadata metadata) {
       super(address, port, condition, type, weight);
       checkArgument(id != -1, "id must be specified");
       this.id = id;
       this.status = checkNotNull(status, "status");
+      this.metadata = metadata != null ? metadata : this.metadata;
    }
 
    public int getId() {
@@ -76,10 +78,14 @@ public class Node extends BaseNode<Node> {
       return status;
    }
 
+   public Metadata getMetadata() {
+      return metadata;
+   }
+
    protected ToStringHelper string() {
       return Objects.toStringHelper(this).omitNullValues()
             .add("id", id).add("address", address).add("port", port).add("condition", condition)
-            .add("type", type).add("weight", weight).add("status", status);
+            .add("type", type).add("weight", weight).add("status", status).add("metadata", metadata);
    }
    
    @Override
@@ -136,6 +142,7 @@ public class Node extends BaseNode<Node> {
    public static class Builder extends BaseNode.Builder<Node> {
       private int id = -1;
       private Status status;
+      private Metadata metadata;
 
       public Builder id(int id) {
          this.id = id;
@@ -150,9 +157,14 @@ public class Node extends BaseNode<Node> {
          return this;
       }
 
+      public Builder metadata(Metadata metadata) {
+         this.metadata = checkNotNull(metadata, "metadata");
+         return this;
+      }
+
       @Override
       public Node build() {
-         return new Node(id, address, port, condition, type, status, weight);
+         return new Node(address, port, condition, type, weight, id, status, metadata);
       }
 
       /**
@@ -196,7 +208,7 @@ public class Node extends BaseNode<Node> {
       }
       @Override
       public Builder from(Node in) {
-         return Builder.class.cast(super.from(in)).id(in.getId()).status(in.getStatus());
+         return Builder.class.cast(super.from(in)).id(in.getId()).status(in.getStatus()).metadata(in.getMetadata());
       }
    }
 

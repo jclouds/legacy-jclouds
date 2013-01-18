@@ -19,6 +19,7 @@
 package org.jclouds.rackspace.cloudloadbalancers.features;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.Set;
@@ -30,6 +31,7 @@ import org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersApi;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerAttributes;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerRequest;
+import org.jclouds.rackspace.cloudloadbalancers.domain.Metadata;
 import org.jclouds.rackspace.cloudloadbalancers.domain.NodeRequest;
 import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP;
 import org.jclouds.rackspace.cloudloadbalancers.functions.ParseLoadBalancerTest;
@@ -37,6 +39,7 @@ import org.jclouds.rackspace.cloudloadbalancers.functions.ParseLoadBalancersTest
 import org.jclouds.rackspace.cloudloadbalancers.internal.BaseCloudLoadBalancerApiExpectTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
 /**
@@ -55,7 +58,7 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
       ).getLoadBalancerApiForZone("DFW");
 
       Set<LoadBalancer> loadBalancers = api.list().concat().toSet();
-      assertEquals(loadBalancers, testLoadBalancers());
+      assertEquals(loadBalancers, getExpectedLoadBalancers());
    }
 
    public void testGetLoadBalancer() throws Exception {
@@ -68,7 +71,7 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
       ).getLoadBalancerApiForZone("DFW");
 
       LoadBalancer loadBalancer = api.get(2000);
-      assertEquals(loadBalancer, testLoadBalancer());
+      assertEquals(loadBalancer, getExpectedLoadBalancer());
    }
 
    public void testCreateLoadBalancer() throws Exception {
@@ -109,7 +112,7 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
       
       LoadBalancer loadBalancer = api.create(lbRequest);
       
-      assertEquals(loadBalancer, testLoadBalancer());
+      assertEquals(loadBalancer, getExpectedLoadBalancer());
    }
 
    public void testUpdateLoadBalancerAttributes() {
@@ -146,11 +149,84 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
       api.remove(2000);
    }
 
-   private Object testLoadBalancer() {
+   public void testListMetadata() {
+      URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000/metadata");
+      LoadBalancerApi api = requestsSendResponses(
+            rackspaceAuthWithUsernameAndApiKey,
+            responseWithAccess, 
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/metadata-list.json")).build()
+      ).getLoadBalancerApiForZone("DFW");
+
+      Metadata metadata = api.getMetadata(2000);
+      assertEquals(metadata, getExpectedMetadataWithIds());
+   }
+
+   public void testCreateMetadata() {
+      URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000/metadata");
+      LoadBalancerApi api = requestsSendResponses(
+            rackspaceAuthWithUsernameAndApiKey,
+            responseWithAccess, 
+            authenticatedGET()
+               .method("POST")
+               .endpoint(endpoint)
+               .payload(payloadFromResourceWithContentType("/metadata-create.json", MediaType.APPLICATION_JSON)).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/metadata-list.json")).build()
+      ).getLoadBalancerApiForZone("DFW");
+         
+      Metadata metadata = api.createMetadata(2000, getExpectedMetadata());
+      assertEquals(metadata, getExpectedMetadataWithIds());
+   }
+
+   public void testRemoveSingleMetadata() {
+      URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000/metadata/23");
+      LoadBalancerApi api = requestsSendResponses(
+            rackspaceAuthWithUsernameAndApiKey,
+            responseWithAccess, 
+            authenticatedGET().method("DELETE").endpoint(endpoint).replaceHeader("Accept", MediaType.WILDCARD).build(),
+            HttpResponse.builder().statusCode(200).build()
+      ).getLoadBalancerApiForZone("DFW");
+
+      assertTrue(api.removeMetadatum(2000, 23));
+   }
+
+   public void testRemoveManyMetadata() {
+      URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000/metadata?id=23&id=24");
+      LoadBalancerApi api = requestsSendResponses(
+            rackspaceAuthWithUsernameAndApiKey,
+            responseWithAccess, 
+            authenticatedGET().method("DELETE").endpoint(endpoint).replaceHeader("Accept", MediaType.WILDCARD).build(),
+            HttpResponse.builder().statusCode(200).build()
+      ).getLoadBalancerApiForZone("DFW");
+      
+      
+      
+      assertTrue(api.removeMetadata(2000, ImmutableList.<Integer> of(23, 24)));
+   }
+
+   private Object getExpectedLoadBalancer() {
       return new ParseLoadBalancerTest().expected();
    }
 
-   private Set<LoadBalancer> testLoadBalancers() {      
+   private Set<LoadBalancer> getExpectedLoadBalancers() {      
       return new ParseLoadBalancersTest().data();
    }   
+
+   private Metadata getExpectedMetadata() {
+      Metadata metadata = new Metadata();
+      metadata.put("color", "red");
+      metadata.put("label", "web-load-balancer");
+      metadata.put("os", "ubuntu");
+
+      return metadata;
+   }
+
+   private Metadata getExpectedMetadataWithIds() {
+      Metadata metadata = getExpectedMetadata();
+      metadata.putId("color", 1);
+      metadata.putId("label", 2);
+      metadata.putId("os", 3);
+
+      return metadata;
+   }
 }

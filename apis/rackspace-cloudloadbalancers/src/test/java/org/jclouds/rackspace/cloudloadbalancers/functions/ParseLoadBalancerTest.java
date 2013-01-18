@@ -58,6 +58,12 @@ public class ParseLoadBalancerTest extends BaseItemParserTest<LoadBalancer> {
 
    @Override
    public LoadBalancer expected() {
+      Metadata metadata = new Metadata();
+      metadata.put("color", "red");
+      metadata.putId("color", 1);
+      metadata.put("label", "web-load-balancer");
+      metadata.putId("label", 2);
+      
       return LoadBalancer
             .builder()
             .region("DFW")
@@ -88,9 +94,7 @@ public class ParseLoadBalancerTest extends BaseItemParserTest<LoadBalancer> {
             .clusterName("c1.dfw1")
             .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:42Z"))
             .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:44Z"))
-            .metadata(ImmutableSet.<Metadata> of(
-               Metadata.builder().id(1).key("color").value("red").build(), 
-               Metadata.builder().id(2).key("label").value("web-load-balancer").build())).build();
+            .metadata(metadata).build();
    }
 
    // add factory binding as this is not default
