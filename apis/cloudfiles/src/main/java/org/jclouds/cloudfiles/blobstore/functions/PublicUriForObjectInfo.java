@@ -44,16 +44,28 @@ public class PublicUriForObjectInfo implements Function<ObjectInfo, URI> {
       this.cdnContainer = cdnContainer;
    }
 
+   private static final URI NEGATIVE_ENTRY = URI.create("http://127.0.0.1");
+
    public URI apply(ObjectInfo from) {
       if (from == null)
          return null;
-      try {
-         return uriBuilder(cdnContainer.getUnchecked(from.getContainer()))
-               .clearQuery().appendPath(from.getName()).build();
-      } catch (NullPointerException e) {
-         // nulls not permitted from cache loader
+      String containerName = from.getContainer();
+      if (containerName == null)
          return null;
+      try {
+         URI uri = cdnContainer.getUnchecked(containerName);
+         if (uri == NEGATIVE_ENTRY) {  // intentionally use reference equality
+            // TODO: GetCDNMetadata.load returns null on failure cases.  We use
+            // a negative entry to avoid repeatedly issuing failed CDN queries.
+            // The LoadingCache removes this value after its normal expiry.
+            return null;
+         }
+         return uriBuilder(uri).clearQuery().appendPath(from.getName()).build();
       } catch (CacheLoader.InvalidCacheLoadException e) {
+         // nulls not permitted from cache loader
+         cdnContainer.put(containerName, NEGATIVE_ENTRY);
+         return null;
+      } catch (NullPointerException e) {
          // nulls not permitted from cache loader
          return null;
       }
