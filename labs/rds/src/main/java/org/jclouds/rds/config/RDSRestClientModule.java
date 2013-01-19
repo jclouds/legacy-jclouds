@@ -18,21 +18,22 @@
  */
 package org.jclouds.rds.config;
 
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
+
 import java.util.Map;
 
 import org.jclouds.aws.config.FormSigningRestClientModule;
-import org.jclouds.rds.RDSAsyncApi;
 import org.jclouds.rds.RDSApi;
-import org.jclouds.rds.features.InstanceAsyncApi;
+import org.jclouds.rds.RDSAsyncApi;
 import org.jclouds.rds.features.InstanceApi;
-import org.jclouds.rds.features.SecurityGroupAsyncApi;
+import org.jclouds.rds.features.InstanceAsyncApi;
 import org.jclouds.rds.features.SecurityGroupApi;
-import org.jclouds.rds.features.SubnetGroupAsyncApi;
+import org.jclouds.rds.features.SecurityGroupAsyncApi;
 import org.jclouds.rds.features.SubnetGroupApi;
+import org.jclouds.rds.features.SubnetGroupAsyncApi;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.reflect.TypeToken;
 
 /**
  * Configures the RDS connection.
@@ -48,6 +49,6 @@ public class RDSRestClientModule extends FormSigningRestClientModule<RDSApi, RDS
             .build();
 
    public RDSRestClientModule() {
-      super(TypeToken.of(RDSApi.class), TypeToken.of(RDSAsyncApi.class), DELEGATE_MAP);
+      super(typeTokenOf(RDSApi.class), typeTokenOf(RDSAsyncApi.class), DELEGATE_MAP);
    }
 }

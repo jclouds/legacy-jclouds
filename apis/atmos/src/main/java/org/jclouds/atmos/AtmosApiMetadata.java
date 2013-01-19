@@ -22,6 +22,7 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 
 import java.net.URI;
 import java.util.Properties;
@@ -87,7 +88,7 @@ public class AtmosApiMetadata extends BaseRestApiMetadata {
          .version("1.4.0")
          .defaultEndpoint("https://accesspoint.atmosonline.com")
          .defaultProperties(AtmosApiMetadata.defaultProperties())
-         .view(TypeToken.of(BlobStoreContext.class))
+         .view(typeTokenOf(BlobStoreContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(AtmosRestClientModule.class, AtmosBlobStoreContextModule.class));
       }
 

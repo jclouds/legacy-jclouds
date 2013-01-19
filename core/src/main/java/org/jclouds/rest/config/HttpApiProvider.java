@@ -18,6 +18,8 @@
  */
 package org.jclouds.rest.config;
 
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
+
 import java.lang.reflect.Proxy;
 
 import javax.inject.Inject;
@@ -28,7 +30,6 @@ import org.jclouds.rest.internal.InvokeHttpMethod;
 
 import com.google.common.cache.Cache;
 import com.google.common.reflect.Invokable;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
 /**
@@ -45,7 +46,7 @@ public class HttpApiProvider<S, A> implements Provider<S> {
          DelegatesToInvocationFunction<S, InvokeHttpMethod> httpInvoker, Class<S> apiType, Class<A> asyncApiType) {
       this.httpInvoker = httpInvoker;
       this.apiType = apiType;
-      RestModule.putInvokables(TypeToken.of(apiType), TypeToken.of(asyncApiType), invokables);
+      RestModule.putInvokables(typeTokenOf(apiType), typeTokenOf(asyncApiType), invokables);
    }
 
    @SuppressWarnings("unchecked")

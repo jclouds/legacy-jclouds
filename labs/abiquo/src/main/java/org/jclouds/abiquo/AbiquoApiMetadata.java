@@ -18,12 +18,12 @@
  */
 
 package org.jclouds.abiquo;
-
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.Constants.PROPERTY_MAX_REDIRECTS;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.abiquo.config.AbiquoProperties.ASYNC_TASK_MONITOR_DELAY;
 import static org.jclouds.abiquo.config.AbiquoProperties.CREDENTIAL_IS_TOKEN;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 
 import java.net.URI;
 import java.util.Properties;
@@ -91,7 +91,7 @@ public class AbiquoApiMetadata extends BaseRestApiMetadata {
                .defaultEndpoint("http://localhost/api")
                .version(AbiquoAsyncApi.API_VERSION)
                .buildVersion(AbiquoAsyncApi.BUILD_VERSION)
-               .view(TypeToken.of(AbiquoContext.class))
+               .view(typeTokenOf(AbiquoContext.class))
                .defaultProperties(AbiquoApiMetadata.defaultProperties())
                .defaultModules(
                      ImmutableSet.<Class<? extends Module>> of(AbiquoRestClientModule.class,

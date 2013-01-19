@@ -21,6 +21,7 @@ package org.jclouds.azure.management;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.azure.management.config.AzureManagementProperties.SUBSCRIPTION_ID;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 
 import java.net.URI;
 import java.util.Properties;
@@ -82,7 +83,7 @@ public class AzureManagementApiMetadata extends BaseRestApiMetadata {
          .endpointName("Service Management Endpoint ending in your Subscription Id")
          .documentation(URI.create("http://msdn.microsoft.com/en-us/library/ee460799"))
          .defaultProperties(AzureManagementApiMetadata.defaultProperties())
-         .view(TypeToken.of(ComputeServiceContext.class))
+         .view(typeTokenOf(ComputeServiceContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>> of(AzureManagementComputeServiceContextModule.class, AzureManagementRestClientModule.class));
       }
 

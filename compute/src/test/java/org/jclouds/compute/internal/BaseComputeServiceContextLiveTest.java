@@ -18,6 +18,8 @@
  */
 package org.jclouds.compute.internal;
 
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
+
 import org.jclouds.compute.ComputeServiceContext;
 
 import com.google.common.reflect.TypeToken;
@@ -29,7 +31,7 @@ public abstract class BaseComputeServiceContextLiveTest extends BaseGenericCompu
 
    @Override
    protected TypeToken<ComputeServiceContext> viewType() {
-      return TypeToken.of(ComputeServiceContext.class);
+      return typeTokenOf(ComputeServiceContext.class);
    }
    
 }

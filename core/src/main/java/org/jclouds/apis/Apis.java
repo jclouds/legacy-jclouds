@@ -21,6 +21,7 @@ package org.jclouds.apis;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
@@ -115,7 +116,7 @@ public class Apis {
    }
    
    public static Iterable<ApiMetadata> viewableAs(Class<? extends View> type) {
-      return filter(all(), ApiPredicates.viewableAs(TypeToken.of(type)));
+      return filter(all(), ApiPredicates.viewableAs(typeTokenOf(type)));
    }
 
    /**

@@ -20,6 +20,7 @@ package org.jclouds.blobstore.integration.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagateIfPossible;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -523,7 +524,7 @@ public class BaseBlobStoreIntegrationTest extends BaseViewLiveTest<BlobStoreCont
 
    @Override
    protected TypeToken<BlobStoreContext> viewType() {
-      return TypeToken.of(BlobStoreContext.class);
+      return typeTokenOf(BlobStoreContext.class);
    }
 
 }

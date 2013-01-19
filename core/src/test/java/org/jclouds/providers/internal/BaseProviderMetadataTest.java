@@ -19,6 +19,7 @@
 package org.jclouds.providers.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
@@ -62,7 +63,7 @@ public abstract class BaseProviderMetadataTest {
    public void testOfApiContains() {
       if (expectedApi == null)
          Logger.getAnonymousLogger().warning("please update your test class");
-      ImmutableSet<ProviderMetadata> ofApi = ImmutableSet.copyOf(Providers.apiMetadataAssignableFrom(TypeToken.of(expectedApi.getClass())));
+      ImmutableSet<ProviderMetadata> ofApi = ImmutableSet.copyOf(Providers.apiMetadataAssignableFrom(typeTokenOf(expectedApi.getClass())));
       assert ofApi.contains(toTest) : String.format("%s not found in %s", toTest, ofApi);
    }
 

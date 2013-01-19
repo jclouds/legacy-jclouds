@@ -20,6 +20,7 @@ package org.jclouds.savvis.vpdc;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 import static org.jclouds.savvis.vpdc.reference.VPDCConstants.PROPERTY_VPDC_TIMEOUT_TASK_COMPLETED;
 
 import java.net.URI;
@@ -80,7 +81,7 @@ public class VPDCApiMetadata extends BaseRestApiMetadata {
          .buildVersion("2.3")
          .defaultEndpoint("https://api.savvis.net/vpdc")
          .defaultProperties(VPDCApiMetadata.defaultProperties())
-         .view(TypeToken.of(ComputeServiceContext.class))
+         .view(typeTokenOf(ComputeServiceContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(VPDCRestClientModule.class, VPDCComputeServiceContextModule.class));
 
       }

@@ -21,6 +21,7 @@ package org.jclouds.softlayer;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 
 import java.net.URI;
 import java.util.Properties;
@@ -81,7 +82,7 @@ public class SoftLayerApiMetadata extends BaseRestApiMetadata {
          .version("3")
          .defaultEndpoint("https://api.softlayer.com/rest")
          .defaultProperties(SoftLayerApiMetadata.defaultProperties())
-         .view(TypeToken.of(ComputeServiceContext.class))
+         .view(typeTokenOf(ComputeServiceContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(SoftLayerRestClientModule.class, SoftLayerComputeServiceContextModule.class));
       }
 

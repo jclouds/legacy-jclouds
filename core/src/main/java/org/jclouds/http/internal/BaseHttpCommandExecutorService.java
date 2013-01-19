@@ -20,6 +20,7 @@ package org.jclouds.http.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.io.ByteStreams.copy;
+import static com.google.common.io.ByteStreams.nullOutputStream;
 import static org.jclouds.http.HttpUtils.checkRequestHasContentLengthOrChunkedEncoding;
 import static org.jclouds.http.HttpUtils.wirePayloadIfEnabled;
 
@@ -47,7 +48,6 @@ import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Throwables2;
 
-import com.google.common.io.NullOutputStream;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 
@@ -106,7 +106,7 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
       public void close() throws IOException {
          if (!closed) {
             try {
-               copy(this, new NullOutputStream());
+               copy(this, nullOutputStream());
             } catch (IOException e) {
             } finally {
                closed = true;

@@ -20,6 +20,7 @@ package org.jclouds.util;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createNiceMock;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
 import static org.jclouds.util.Throwables2.propagateIfPossible;
 import static org.testng.Assert.assertEquals;
@@ -147,14 +148,14 @@ public class Throwables2Test {
    @Test(expectedExceptions = TestException.class)
    public void testPropagateExceptionThatsInList() throws Throwable {
       Exception e = new TestException();
-      propagateIfPossible(e, ImmutableSet.<TypeToken<? extends Throwable>> of(TypeToken.of(TestException.class)));
+      propagateIfPossible(e, ImmutableSet.<TypeToken<? extends Throwable>> of(typeTokenOf(TestException.class)));
    }
 
    @Test(expectedExceptions = TestException.class)
    public void testPropagateWrappedExceptionThatsInList() throws Throwable {
       Exception e = new TestException();
       propagateIfPossible(new RuntimeException(e),
-            ImmutableSet.<TypeToken<? extends Throwable>> of(TypeToken.of(TestException.class)));
+            ImmutableSet.<TypeToken<? extends Throwable>> of(typeTokenOf(TestException.class)));
    }
 
    public void testPropagateIfPossibleDoesnThrowExceptionNotInList() throws Throwable {

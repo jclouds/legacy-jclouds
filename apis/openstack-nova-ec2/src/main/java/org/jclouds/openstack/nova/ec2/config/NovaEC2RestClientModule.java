@@ -18,6 +18,8 @@
  */
 package org.jclouds.openstack.nova.ec2.config;
 
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
+
 import java.util.Map;
 
 import javax.inject.Singleton;
@@ -55,7 +57,6 @@ import org.jclouds.openstack.nova.ec2.xml.NovaDescribeImagesResponseHandler;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 
@@ -78,7 +79,7 @@ public class NovaEC2RestClientModule extends EC2RestClientModule<NovaEC2Client, 
          .build();
 
    public NovaEC2RestClientModule() {
-      super(TypeToken.of(NovaEC2Client.class), TypeToken.of(NovaEC2AsyncClient.class), DELEGATE_MAP);
+      super(typeTokenOf(NovaEC2Client.class), typeTokenOf(NovaEC2AsyncClient.class), DELEGATE_MAP);
    }
    
    @Override
