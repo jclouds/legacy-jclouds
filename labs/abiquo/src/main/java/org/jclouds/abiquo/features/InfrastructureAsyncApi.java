@@ -19,6 +19,7 @@
 
 package org.jclouds.abiquo.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -124,6 +125,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listDatacenters()
     */
+   @Named("datacenter:list")
    @GET
    @Path("/datacenters")
    @Consumes(DatacentersDto.BASE_MEDIA_TYPE)
@@ -133,6 +135,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#createDatacenter(DatacenterDto)
     */
+   @Named("datacenter:create")
    @POST
    @Path("/datacenters")
    @Produces(DatacenterDto.BASE_MEDIA_TYPE)
@@ -143,6 +146,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#getDatacenter(Integer)
     */
+   @Named("datacenter:get")
    @GET
    @Path("/datacenters/{datacenter}")
    @Consumes(DatacenterDto.BASE_MEDIA_TYPE)
@@ -153,6 +157,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#updateDatacenter(DatacenterDto)
     */
+   @Named("datacenter:update")
    @PUT
    @Produces(DatacenterDto.BASE_MEDIA_TYPE)
    @Consumes(DatacenterDto.BASE_MEDIA_TYPE)
@@ -163,6 +168,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#deleteDatacenter(DatacenterDto)
     */
+   @Named("datacenter:delete")
    @DELETE
    ListenableFuture<Void> deleteDatacenter(@EndpointLink("edit") @BinderParam(BindToPath.class) DatacenterDto datacenter);
 
@@ -170,6 +176,7 @@ public interface InfrastructureAsyncApi {
     * @see InfrastructureApi#discoverSingleMachine(DatacenterDto, String,
     *      HypervisorType, String, String)
     */
+   @Named("machine:discover")
    @GET
    @Consumes(MachineDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -183,6 +190,7 @@ public interface InfrastructureAsyncApi {
     * @see InfrastructureApi#discoverSingleMachine(DatacenterDto, String,
     *      HypervisorType, String, String, MachineOptions)
     */
+   @Named("machine:discover")
    @GET
    @Consumes(MachineDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -196,6 +204,7 @@ public interface InfrastructureAsyncApi {
     * @see InfrastructureApi#discoverMultipleMachines(DatacenterDto, String,
     *      String, HypervisorType, String, String)
     */
+   @Named("machine:discover")
    @GET
    @Consumes(MachinesDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -210,6 +219,7 @@ public interface InfrastructureAsyncApi {
     * @see InfrastructureApi#discoverMultipleMachines(DatacenterDto, String,
     *      String, HypervisorType, String, String, MachineOptions)
     */
+   @Named("machine:discover")
    @GET
    @Consumes(MachinesDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -223,6 +233,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listLimits(DatacenterDto)
     */
+   @Named("limit:list")
    @GET
    @Consumes(DatacentersLimitsDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -233,6 +244,7 @@ public interface InfrastructureAsyncApi {
     * @see InfrastructureApi#checkMachineState(DatacenterDto, String, String,
     *      HypervisorType, String, String)
     */
+   @Named("machine:checkstate")
    @GET
    @Consumes(MachineStateDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -246,6 +258,7 @@ public interface InfrastructureAsyncApi {
     * @see InfrastructureApi#checkMachineState(DatacenterDto, String, String,
     *      HypervisorType, String, String, MachineOptions)
     */
+   @Named("machine:checkstate")
    @GET
    @Consumes(MachineStateDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -259,6 +272,7 @@ public interface InfrastructureAsyncApi {
     * @see InfrastructureApi#checkMachineIpmiState(DatacenterDto, String,
     *      String, String)
     */
+   @Named("machine:checkipmi")
    @GET
    @Consumes(MachineIpmiStateDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -271,6 +285,7 @@ public interface InfrastructureAsyncApi {
     * @see InfrastructureApi#checkMachineIpmiState(DatacenterDto, String,
     *      String, String, IpmiOptions)
     */
+   @Named("machine:checkipmi")
    @GET
    @Consumes(MachineIpmiStateDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -285,6 +300,7 @@ public interface InfrastructureAsyncApi {
     * @see InfrastructureApi#getHypervisorTypeFromMachine(DatacenterDto,
     *      DatacenterOptions)
     */
+   @Named("hypervisortype:getfrommachine")
    @GET
    @Consumes(MediaType.TEXT_PLAIN)
    @ResponseParser(ReturnStringIf2xx.class)
@@ -294,6 +310,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#getHypervisorTypes(DatacenterDto)
     */
+   @Named("hypervisortype:list")
    @GET
    @Consumes(HypervisorTypesDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -305,6 +322,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listRacks(DatacenterDto)
     */
+   @Named("rack:list")
    @GET
    @Consumes(RacksDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -313,6 +331,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#createRack(DatacenterDto, RackDto)
     */
+   @Named("rack:create")
    @POST
    @Produces(RackDto.BASE_MEDIA_TYPE)
    @Consumes(RackDto.BASE_MEDIA_TYPE)
@@ -323,6 +342,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#getRack(DatacenterDto, Integer)
     */
+   @Named("rack:get")
    @GET
    @Consumes(RackDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -333,6 +353,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#updateRack(RackDto)
     */
+   @Named("rack:update")
    @PUT
    @Consumes(RackDto.BASE_MEDIA_TYPE)
    @Produces(RackDto.BASE_MEDIA_TYPE)
@@ -342,6 +363,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#deleteRack(RackDto)
     */
+   @Named("rack:delete")
    @DELETE
    ListenableFuture<Void> deleteRack(@EndpointLink("edit") @BinderParam(BindToPath.class) RackDto rack);
 
@@ -350,6 +372,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listManagedRacks(DatacenterDto)
     */
+   @Named("ucs:listracks")
    @EnterpriseEdition
    @GET
    @Consumes(UcsRacksDto.BASE_MEDIA_TYPE)
@@ -360,6 +383,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#createManagedRack(DatacenterDto, UcsRackDto)
     */
+   @Named("ucs:createrack")
    @EnterpriseEdition
    @POST
    @Produces(UcsRackDto.BASE_MEDIA_TYPE)
@@ -372,6 +396,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#getManagedRack(DatacenterDto, Integer)
     */
+   @Named("ucs:getrack")
    @EnterpriseEdition
    @GET
    @Consumes(UcsRackDto.BASE_MEDIA_TYPE)
@@ -384,6 +409,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#updateManagedRack(UcsRackDto)
     */
+   @Named("ucs:updaterack")
    @EnterpriseEdition
    @PUT
    @Consumes(UcsRackDto.BASE_MEDIA_TYPE)
@@ -395,6 +421,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listServiceProfiles(UcsRackDto)
     */
+   @Named("ucs:listserviceprofiles")
    @EnterpriseEdition
    @GET
    @Consumes(LogicServersDto.BASE_MEDIA_TYPE)
@@ -405,6 +432,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listServiceProfiles(UcsRackDto, QueryOptions)
     */
+   @Named("ucs:listserviceprofiles")
    @EnterpriseEdition
    @GET
    @Consumes(LogicServersDto.BASE_MEDIA_TYPE)
@@ -415,6 +443,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listServiceProfileTemplates(UcsRackDto)
     */
+   @Named("ucs:listserviceprofiletemplates")
    @EnterpriseEdition
    @GET
    @Consumes(LogicServersDto.BASE_MEDIA_TYPE)
@@ -426,6 +455,7 @@ public interface InfrastructureAsyncApi {
     * @see InfrastructureApi#listServiceProfileTemplates(UcsRackDto,
     *      LogicServerOptions)
     */
+   @Named("ucs:listserviceproviletemplates")
    @EnterpriseEdition
    @GET
    @Consumes(LogicServersDto.BASE_MEDIA_TYPE)
@@ -436,6 +466,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listOrganizations(UcsRackDto)
     */
+   @Named("ucs:listorganizations")
    @EnterpriseEdition
    @GET
    @Consumes(OrganizationsDto.BASE_MEDIA_TYPE)
@@ -446,6 +477,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listOrganizations(UcsRackDto, OrganizationOptions)
     */
+   @Named("ucs:listorganizations")
    @EnterpriseEdition
    @GET
    @Consumes(OrganizationsDto.BASE_MEDIA_TYPE)
@@ -457,6 +489,7 @@ public interface InfrastructureAsyncApi {
     * @see InfrastructureApi#cloneLogicServer(UcsRackDto, LogicServerDto,
     *      OrganizationDto, String)
     */
+   @Named("ucs:clonelogicserver")
    @EnterpriseEdition
    @POST
    ListenableFuture<Void> cloneLogicServer(@EndpointLink("ls-clone") @BinderParam(BindToPath.class) UcsRackDto rack,
@@ -468,6 +501,7 @@ public interface InfrastructureAsyncApi {
     * @see InfrastructureApi#associateLogicServer(UcsRackDto, LogicServerDto,
     *      OrganizationDto, String)
     */
+   @Named("ucs:associatelogicserver")
    @EnterpriseEdition
    @POST
    ListenableFuture<Void> associateLogicServer(
@@ -480,6 +514,7 @@ public interface InfrastructureAsyncApi {
     * @see InfrastructureApi#associateTemplate(UcsRackDto, LogicServerDto,
     *      OrganizationDto, String, String)
     */
+   @Named("ucs:associatetemplate")
    @EnterpriseEdition
    @POST
    ListenableFuture<Void> associateTemplate(
@@ -492,6 +527,7 @@ public interface InfrastructureAsyncApi {
     * @see InfrastructureApi#cloneAndAssociateLogicServer(UcsRackDto,
     *      LogicServerDto, OrganizationDto, String, String)
     */
+   @Named("ucs:cloneandassociatelogicserver")
    @EnterpriseEdition
    @POST
    ListenableFuture<Void> cloneAndAssociateLogicServer(
@@ -503,6 +539,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#dissociateLogicServer(UcsRackDto, LogicServerDto)
     */
+   @Named("ucs:dissociatelogicserver")
    @EnterpriseEdition
    @POST
    ListenableFuture<Void> dissociateLogicServer(
@@ -512,6 +549,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#deleteLogicServer(UcsRackDto, LogicServerDto)
     */
+   @Named("ucs:deletelogicserver")
    @EnterpriseEdition
    @POST
    ListenableFuture<Void> deleteLogicServer(@EndpointLink("ls-delete") @BinderParam(BindToPath.class) UcsRackDto rack,
@@ -520,6 +558,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listFsms(UcsRackDto, String)
     */
+   @Named("ucs:listfsms")
    @EnterpriseEdition
    @GET
    @Consumes(FsmsDto.BASE_MEDIA_TYPE)
@@ -532,6 +571,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listRemoteServices(DatacenterDto)
     */
+   @Named("rs:list")
    @GET
    @Consumes(RemoteServicesDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -542,6 +582,7 @@ public interface InfrastructureAsyncApi {
     * @see InfrastructureApi#createRemoteService(DatacenterDto,
     *      RemoteServiceDto)
     */
+   @Named("rs:create")
    @POST
    @Produces(RemoteServiceDto.BASE_MEDIA_TYPE)
    @Consumes(RemoteServiceDto.BASE_MEDIA_TYPE)
@@ -553,6 +594,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#getRemoteService(DatacenterDto, RemoteServiceType)
     */
+   @Named("rs:get")
    @GET
    @Consumes(RemoteServiceDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -564,6 +606,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#updateRemoteService(RemoteServiceDto)
     */
+   @Named("rs:update")
    @PUT
    @Consumes(RemoteServiceDto.BASE_MEDIA_TYPE)
    @Produces(RemoteServiceDto.BASE_MEDIA_TYPE)
@@ -574,6 +617,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#deleteRemoteService(RemoteServiceDto)
     */
+   @Named("rs:delete")
    @DELETE
    ListenableFuture<Void> deleteRemoteService(
          @EndpointLink("edit") @BinderParam(BindToPath.class) RemoteServiceDto remoteService);
@@ -581,6 +625,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#isAvailable(RemoteServiceDto)
     */
+   @Named("rs:available")
    @GET
    @Fallback(FalseIfNotAvailable.class)
    ListenableFuture<Boolean> isAvailable(
@@ -591,6 +636,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listMachines(RackDto)
     */
+   @Named("machine:list")
    @GET
    @Consumes(MachinesDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -599,6 +645,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#createMachine(RackDto, MachineDto)
     */
+   @Named("machine:create")
    @POST
    @Produces(MachineDto.BASE_MEDIA_TYPE)
    @Consumes(MachineDto.BASE_MEDIA_TYPE)
@@ -609,6 +656,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#getMachine(RackDto, Integer)
     */
+   @Named("machine:get")
    @GET
    @Consumes(MachineDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -619,6 +667,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#checkMachineState(MachineDto)
     */
+   @Named("machine:checkstate")
    @GET
    @Consumes(MachineStateDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -629,6 +678,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#checkMachineIpmiState(MachineDto)
     */
+   @Named("machine:checkipmi")
    @GET
    @Consumes(MachineIpmiStateDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -638,6 +688,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#updateMachine(MachineDto)
     */
+   @Named("machine:update")
    @PUT
    @Produces(MachineDto.BASE_MEDIA_TYPE)
    @Consumes(MachineDto.BASE_MEDIA_TYPE)
@@ -648,12 +699,14 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#deleteMachine(MachineDto)
     */
+   @Named("machine:delete")
    @DELETE
    ListenableFuture<Void> deleteMachine(@EndpointLink("edit") @BinderParam(BindToPath.class) MachineDto machine);
 
    /**
     * @see InfrastructureApi#reserveMachine(EnterpriseDto, MachineDto)
     */
+   @Named("machine:reserve")
    @POST
    @Consumes(MachineDto.BASE_MEDIA_TYPE)
    @Produces(MachineDto.BASE_MEDIA_TYPE)
@@ -665,6 +718,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#cancelReservation(EnterpriseDto, MachineDto)
     */
+   @Named("machine:cancelreservation")
    @DELETE
    ListenableFuture<Void> cancelReservation(
          @EndpointLink("reservedmachines") @BinderParam(BindToPath.class) EnterpriseDto enterprise,
@@ -675,6 +729,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#powerOff(MachineDto)
     */
+   @Named("machine:poweroff")
    @EnterpriseEdition
    @PUT
    ListenableFuture<Void> powerOff(@EndpointLink("poweroff") @BinderParam(BindToPath.class) MachineDto machine);
@@ -682,6 +737,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#powerOn(MachineDto)
     */
+   @Named("machine:poweron")
    @EnterpriseEdition
    @PUT
    ListenableFuture<Void> powerOn(@EndpointLink("poweron") @BinderParam(BindToPath.class) MachineDto machine);
@@ -689,6 +745,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#getLogicServer(MachineDto)
     */
+   @Named("machine:getlogicserver")
    @EnterpriseEdition
    @GET
    @Consumes(LogicServerDto.BASE_MEDIA_TYPE)
@@ -699,6 +756,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#ledOn(MachineDto)
     */
+   @Named("machine:ledon")
    @EnterpriseEdition
    @POST
    ListenableFuture<Void> ledOn(@EndpointLink("ledon") @BinderParam(BindToPath.class) MachineDto machine);
@@ -706,6 +764,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#ledOff(MachineDto)
     */
+   @Named("machine:ledoff")
    @EnterpriseEdition
    @POST
    ListenableFuture<Void> ledOff(@EndpointLink("ledoff") @BinderParam(BindToPath.class) MachineDto machine);
@@ -713,6 +772,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#getLedLocator(MachineDto)
     */
+   @Named("machine:getlocatorled")
    @EnterpriseEdition
    @GET
    @Consumes(BladeLocatorLedDto.BASE_MEDIA_TYPE)
@@ -720,11 +780,10 @@ public interface InfrastructureAsyncApi {
    ListenableFuture<BladeLocatorLedDto> getLocatorLed(
          @EndpointLink("led") @BinderParam(BindToPath.class) MachineDto machine);
 
-   /*********************** Storage Device ***********************/
-
    /**
     * @see InfrastructureApi#listVirtualMachinesByMachine(MachineDto)
     */
+   @Named("machine:listvms")
    @GET
    @Consumes(VirtualMachinesWithNodeExtendedDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -734,6 +793,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#getVirtualMachine(MachineDto, Integer)
     */
+   @Named("machine:getvm")
    @GET
    @Fallback(NullOnNotFoundOr404.class)
    @Consumes(VirtualMachineWithNodeExtendedDto.BASE_MEDIA_TYPE)
@@ -747,6 +807,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listStorageDevices(DatacenterDto)
     */
+   @Named("storagedevice:list")
    @EnterpriseEdition
    @GET
    @Consumes(StorageDevicesDto.BASE_MEDIA_TYPE)
@@ -757,6 +818,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listSupportedStorageDevices(DatacenterDto)
     */
+   @Named("storagedevice:listsupported")
    @EnterpriseEdition
    @GET
    @Consumes(StorageDevicesMetadataDto.BASE_MEDIA_TYPE)
@@ -767,6 +829,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#getStorageDevice(DatacenterDto, Integer)
     */
+   @Named("storagedevice:get")
    @EnterpriseEdition
    @GET
    @Consumes(StorageDeviceDto.BASE_MEDIA_TYPE)
@@ -780,6 +843,7 @@ public interface InfrastructureAsyncApi {
     * @see InfrastructureApi#createStorageDevice(DatacenterDto,
     *      StorageDeviceDto)
     */
+   @Named("storagedevice:create")
    @EnterpriseEdition
    @POST
    @Produces(StorageDeviceDto.BASE_MEDIA_TYPE)
@@ -792,6 +856,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#deleteStorageDevice(StorageDeviceDto)
     */
+   @Named("storagedevice:delete")
    @EnterpriseEdition
    @DELETE
    ListenableFuture<Void> deleteStorageDevice(
@@ -800,6 +865,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#updateStorageDevice(StorageDeviceDto)
     */
+   @Named("storagedevice:update")
    @EnterpriseEdition
    @PUT
    @Produces(StorageDeviceDto.BASE_MEDIA_TYPE)
@@ -813,6 +879,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listTiers(DatacenterDto)
     */
+   @Named("tier:list")
    @EnterpriseEdition
    @GET
    @Consumes(TiersDto.BASE_MEDIA_TYPE)
@@ -822,6 +889,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#updateTier(TierDto)
     */
+   @Named("tier:update")
    @EnterpriseEdition
    @PUT
    @Produces(TierDto.BASE_MEDIA_TYPE)
@@ -832,6 +900,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#getTier(DatacenterDto, Integer)
     */
+   @Named("tier:get")
    @EnterpriseEdition
    @GET
    @Consumes(TierDto.BASE_MEDIA_TYPE)
@@ -846,6 +915,7 @@ public interface InfrastructureAsyncApi {
     * @see InfrastructureApi#listStoragePools(StorageDeviceDto,
     *      StoragePoolOptions)
     */
+   @Named("storagepool:list")
    @EnterpriseEdition
    @GET
    @Consumes(StoragePoolsDto.BASE_MEDIA_TYPE)
@@ -857,6 +927,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listStoragePools(TierDto)
     */
+   @Named("storagepool:list")
    @EnterpriseEdition
    @GET
    @Consumes(StoragePoolsDto.BASE_MEDIA_TYPE)
@@ -866,6 +937,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#createStoragePool(StorageDeviceDto, StoragePoolDto)
     */
+   @Named("storagepool:create")
    @EnterpriseEdition
    @POST
    @Consumes(StoragePoolDto.BASE_MEDIA_TYPE)
@@ -878,6 +950,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#updateStoragePool(StoragePoolDto)
     */
+   @Named("storagepool:update")
    @EnterpriseEdition
    @PUT
    // For the most strangest reason in world, compiler does not accept
@@ -891,6 +964,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#deleteStoragePool(StoragePoolDto)
     */
+   @Named("storagepool:delete")
    @EnterpriseEdition
    @DELETE
    ListenableFuture<Void> deleteStoragePool(
@@ -899,6 +973,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#getStoragePool(StorageDeviceDto, String)
     */
+   @Named("storagepool:get")
    @EnterpriseEdition
    @GET
    @Consumes(StoragePoolDto.BASE_MEDIA_TYPE)
@@ -912,6 +987,7 @@ public interface InfrastructureAsyncApi {
     * @see InfrastructureApi#refreshStoragePool(StoragePoolDto,
     *      StoragePoolOptions)
     */
+   @Named("storagepool:refresh")
    @EnterpriseEdition
    @GET
    @Consumes(StoragePoolDto.BASE_MEDIA_TYPE)
@@ -924,6 +1000,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listNetworks(DatacenterDto)
     */
+   @Named("network:list")
    @EnterpriseEdition
    @GET
    @Consumes(VLANNetworksDto.BASE_MEDIA_TYPE)
@@ -934,6 +1011,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listNetwork(DatacenterDto, NetworkOptions)
     */
+   @Named("network:list")
    @EnterpriseEdition
    @GET
    @Consumes(VLANNetworksDto.BASE_MEDIA_TYPE)
@@ -944,6 +1022,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#getNetwork(DatacenterDto, Integer)
     */
+   @Named("network:get")
    @EnterpriseEdition
    @GET
    @Consumes(VLANNetworkDto.BASE_MEDIA_TYPE)
@@ -956,6 +1035,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#createNetwork(DatacenterDto, VLANNetworkDto)
     */
+   @Named("network:create")
    @EnterpriseEdition
    @POST
    @Produces(VLANNetworkDto.BASE_MEDIA_TYPE)
@@ -968,6 +1048,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#updateNetwork(VLANNetworkDto)
     */
+   @Named("network:update")
    @EnterpriseEdition
    @PUT
    @Produces(VLANNetworkDto.BASE_MEDIA_TYPE)
@@ -979,6 +1060,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#deleteNetwork(VLANNetworkDto)
     */
+   @Named("network:delete")
    @EnterpriseEdition
    @DELETE
    ListenableFuture<Void> deleteNetwork(@EndpointLink("edit") @BinderParam(BindToPath.class) VLANNetworkDto network);
@@ -986,6 +1068,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#checkTagAvailability(DatacenterDto, Integer)
     */
+   @Named("network:checktag")
    @EnterpriseEdition
    @GET
    @Path("/datacenters/{datacenter}/network/action/checkavailability")
@@ -1000,6 +1083,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listPublicIps(VLANNetworkDto)
     */
+   @Named("publicnetwork:listips")
    @GET
    @Consumes(PublicIpsDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -1009,6 +1093,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listPublicIps(VLANNetworkDto, IpOptions)
     */
+   @Named("publicnetwork:listips")
    @GET
    @Consumes(PublicIpsDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -1018,6 +1103,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#getPublicIp(VLANNetworkDto, Integer)
     */
+   @Named("publicnetwork:getip")
    @GET
    @Consumes(PublicIpDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -1028,6 +1114,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listExternalIps(VLANNetworkDto)
     */
+   @Named("externalnetwork:listips")
    @GET
    @Consumes(ExternalIpsDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -1037,6 +1124,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listExternalIps(VLANNetworkDto, IpOptions)
     */
+   @Named("externalnetwork:listips")
    @GET
    @Consumes(ExternalIpsDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -1046,6 +1134,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#getExternalIp(VLANNetworkDto, Integer)
     */
+   @Named("externalnetwork:getip")
    @GET
    @Consumes(ExternalIpDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -1056,6 +1145,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listUnmanagedIps(VLANNetworkDto)
     */
+   @Named("unmanagednetwork:listips")
    @GET
    @Consumes(UnmanagedIpsDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -1065,6 +1155,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listUnmanagedIps(VLANNetworkDto, IpOptions)
     */
+   @Named("unmanagednetwork:listips")
    @GET
    @Consumes(UnmanagedIpsDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -1074,6 +1165,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#getUnmanagedIp(VLANNetworkDto, Integer)
     */
+   @Named("unmanagednetwork:getip")
    @GET
    @Consumes(UnmanagedIpDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -1086,6 +1178,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#listNetworkServiceTypes(DatacenterDto)
     */
+   @Named("networkservicetype:list")
    @GET
    @Consumes(NetworkServiceTypesDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -1096,6 +1189,7 @@ public interface InfrastructureAsyncApi {
     * @see InfrastructureApi#createNetworkServiceType(DatacenterDto,
     *      NetworkServiceTypeDto)
     */
+   @Named("networkservicetype:create")
    @POST
    @Produces(NetworkServiceTypeDto.BASE_MEDIA_TYPE)
    @Consumes(NetworkServiceTypeDto.BASE_MEDIA_TYPE)
@@ -1107,6 +1201,7 @@ public interface InfrastructureAsyncApi {
    /**
     * @see InfrastructureApi#getNetworkServiceType(DatacenterDto, Integer)
     */
+   @Named("networkservicetype:get")
    @GET
    @Consumes(NetworkServiceTypeDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -1122,6 +1217,7 @@ public interface InfrastructureAsyncApi {
     *           the instance to update with the new values.
     * @return the updated entity.
     */
+   @Named("networkservicetype:update")
    @PUT
    @Produces(NetworkServiceTypeDto.BASE_MEDIA_TYPE)
    @Consumes(NetworkServiceTypeDto.BASE_MEDIA_TYPE)
@@ -1135,6 +1231,7 @@ public interface InfrastructureAsyncApi {
     * @param nstDto
     *           the entity to delete
     */
+   @Named("networkservicetype:delete")
    @DELETE
    ListenableFuture<Void> deleteNetworkServiceType(
          @EndpointLink("edit") @BinderParam(BindToPath.class) NetworkServiceTypeDto nstDto);

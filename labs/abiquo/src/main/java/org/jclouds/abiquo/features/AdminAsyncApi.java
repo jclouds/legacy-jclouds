@@ -19,6 +19,7 @@
 
 package org.jclouds.abiquo.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -67,6 +68,7 @@ public interface AdminAsyncApi {
    /**
     * @see AdminApi#getCurrentUser()
     */
+   @Named("user:get")
    @GET
    @Path("/login")
    @Consumes(UserDto.BASE_MEDIA_TYPE)
@@ -78,6 +80,7 @@ public interface AdminAsyncApi {
    /**
     * @see AdminApi#listRoles()
     */
+   @Named("role:list")
    @GET
    @Path("/admin/roles")
    @Consumes(RolesDto.BASE_MEDIA_TYPE)
@@ -87,6 +90,7 @@ public interface AdminAsyncApi {
    /**
     * @see AdminApi#listRoles(Enterprise enterprise)
     */
+   @Named("role:list")
    @GET
    @Path("/admin/roles")
    @Consumes(RolesDto.BASE_MEDIA_TYPE)
@@ -97,6 +101,7 @@ public interface AdminAsyncApi {
    /**
     * @see AdminApi#getRole(UserDto)
     */
+   @Named("role:get")
    @GET
    @Consumes(RoleDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -106,6 +111,7 @@ public interface AdminAsyncApi {
    /**
     * @see AdminApi#getRole(Integer)
     */
+   @Named("role:get")
    @GET
    @Path("/admin/roles/{role}")
    @Consumes(RoleDto.BASE_MEDIA_TYPE)
@@ -116,12 +122,14 @@ public interface AdminAsyncApi {
    /**
     * @see AdminApi#deleteRole(RoleDto)
     */
+   @Named("role:delete")
    @DELETE
    ListenableFuture<Void> deleteRole(@EndpointLink("edit") @BinderParam(BindToPath.class) RoleDto role);
 
    /**
     * @see AdminApi#updateRole(RoleDto)
     */
+   @Named("role:update")
    @PUT
    @Produces(RoleDto.BASE_MEDIA_TYPE)
    @Consumes(RoleDto.BASE_MEDIA_TYPE)
@@ -131,6 +139,7 @@ public interface AdminAsyncApi {
    /**
     * @see AdminApi#createRole(RoleDto)
     */
+   @Named("role:create")
    @POST
    @Path("/admin/roles")
    @Produces(RoleDto.BASE_MEDIA_TYPE)
@@ -141,6 +150,7 @@ public interface AdminAsyncApi {
    /**
     * @see AdminApi#listPrivileges(RoleDto)
     */
+   @Named("privilege:list")
    @GET
    @Consumes(PrivilegesDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser

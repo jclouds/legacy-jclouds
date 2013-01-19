@@ -19,6 +19,7 @@
 
 package org.jclouds.abiquo.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -73,6 +74,7 @@ public interface VirtualMachineTemplateAsyncApi {
     * @see VirtualMachineTemplateApi#listVirtualMachineTemplates(Integer,
     *      Integer)
     */
+   @Named("template:list")
    @GET
    @Path("/{enterprise}/datacenterrepositories/{datacenterrepository}/virtualmachinetemplates")
    @Consumes(VirtualMachineTemplatesDto.BASE_MEDIA_TYPE)
@@ -85,6 +87,7 @@ public interface VirtualMachineTemplateAsyncApi {
     * @see VirtualMachineTemplateApi#listVirtualMachineTemplates(Integer,
     *      Integer, VirtualMachineTemplateOptions)
     */
+   @Named("template:list")
    @GET
    @Path("/{enterprise}/datacenterrepositories/{datacenterrepository}/virtualmachinetemplates")
    @Consumes(VirtualMachineTemplatesDto.BASE_MEDIA_TYPE)
@@ -97,6 +100,7 @@ public interface VirtualMachineTemplateAsyncApi {
     * @see VirtualMachineTemplateApi#getVirtualMachineTemplate(Integer, Integer,
     *      Integer)
     */
+   @Named("template:get")
    @GET
    @Path("/{enterprise}/datacenterrepositories/{datacenterrepository}/virtualmachinetemplates/{virtualmachinetemplate}")
    @Consumes(VirtualMachineTemplateDto.BASE_MEDIA_TYPE)
@@ -109,6 +113,7 @@ public interface VirtualMachineTemplateAsyncApi {
    /**
     * @see VirtualMachineTemplateApi#updateVirtualMachineTemplate(VirtualMachineTemplateDto)
     */
+   @Named("template:update")
    @PUT
    @Produces(VirtualMachineTemplateDto.BASE_MEDIA_TYPE)
    @Consumes(VirtualMachineTemplateDto.BASE_MEDIA_TYPE)
@@ -119,6 +124,7 @@ public interface VirtualMachineTemplateAsyncApi {
    /**
     * @see VirtualMachineTemplateApi#deleteVirtualMachineTemplate(VirtualMachineTemplateDto)
     */
+   @Named("template:delete")
    @DELETE
    ListenableFuture<Void> deleteVirtualMachineTemplate(
          @EndpointLink("edit") @BinderParam(BindToPath.class) VirtualMachineTemplateDto template);
@@ -127,6 +133,7 @@ public interface VirtualMachineTemplateAsyncApi {
     * @see VirtualMachineTemplateApi#createPersistentVirtualMachineTemplate(DatacenterRepositoryDto,
     *      VirtualMachineTemplatePersistentDto)
     */
+   @Named("template:createpersistent")
    @POST
    @Consumes(AcceptedRequestDto.BASE_MEDIA_TYPE)
    @Produces(VirtualMachineTemplatePersistentDto.BASE_MEDIA_TYPE)
@@ -142,6 +149,7 @@ public interface VirtualMachineTemplateAsyncApi {
    /**
     * @see VirtualMachineTemplateApi#listConversions(VirtualMachineTemplateDto)
     */
+   @Named("conversion:list")
    @GET
    @Consumes(ConversionsDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -152,6 +160,7 @@ public interface VirtualMachineTemplateAsyncApi {
     * @see VirtualMachineTemplateApi#listConversions(VirtualMachineTemplateDto,
     *      ConversionOptions)
     */
+   @Named("conversion:list")
    @GET
    @Consumes(ConversionsDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -163,6 +172,7 @@ public interface VirtualMachineTemplateAsyncApi {
     * @see VirtualMachineTemplateApi#getConversion(VirtualMachineTemplateDto,
     *      DiskFormatType)
     */
+   @Named("conversion:get")
    @GET
    @Consumes(ConversionDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -174,6 +184,7 @@ public interface VirtualMachineTemplateAsyncApi {
    /**
     * @see VirtualMachineTemplateApi#updateConversion(ConversionDto)
     */
+   @Named("conversion:request")
    @PUT
    @ResponseParser(ReturnTaskReferenceOrNull.class)
    @Consumes(AcceptedRequestDto.BASE_MEDIA_TYPE)
