@@ -21,6 +21,7 @@ package org.jclouds.cloudservers;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 
 import java.net.URI;
 import java.util.Properties;
@@ -79,7 +80,7 @@ public class CloudServersApiMetadata extends BaseRestApiMetadata {
          .version("1.0")
          .defaultEndpoint("https://auth.api.rackspacecloud.com")
          .defaultProperties(CloudServersApiMetadata.defaultProperties())
-         .view(TypeToken.of(ComputeServiceContext.class))
+         .view(typeTokenOf(ComputeServiceContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudServersRestClientModule.class, CloudServersComputeServiceContextModule.class));
       }
 

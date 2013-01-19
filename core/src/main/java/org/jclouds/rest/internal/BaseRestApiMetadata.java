@@ -19,6 +19,7 @@
 package org.jclouds.rest.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 
 import java.util.Properties;
 
@@ -71,7 +72,7 @@ public abstract class BaseRestApiMetadata extends BaseApiMetadata implements Res
          checkNotNull(asyncApi, "asyncApi");
          javaApi(api, asyncApi)
          .name(String.format("%s->%s", api.getSimpleName(), asyncApi.getSimpleName()))
-         .context(contextToken(TypeToken.of(api), TypeToken.of(asyncApi)))
+         .context(contextToken(typeTokenOf(api), typeTokenOf(asyncApi)))
          .defaultProperties(BaseRestApiMetadata.defaultProperties());
       }
 

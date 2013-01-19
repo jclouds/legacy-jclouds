@@ -18,17 +18,18 @@
  */
 package org.jclouds.cloudwatch.config;
 
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
+
 import java.util.Map;
 
 import org.jclouds.aws.config.FormSigningRestClientModule;
-import org.jclouds.cloudwatch.CloudWatchAsyncApi;
 import org.jclouds.cloudwatch.CloudWatchApi;
-import org.jclouds.cloudwatch.features.MetricAsyncApi;
+import org.jclouds.cloudwatch.CloudWatchAsyncApi;
 import org.jclouds.cloudwatch.features.MetricApi;
+import org.jclouds.cloudwatch.features.MetricAsyncApi;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.reflect.TypeToken;
 
 /**
  * Configures the Monitoring connection.
@@ -42,7 +43,7 @@ public class CloudWatchRestClientModule extends FormSigningRestClientModule<Clou
          .build();
    
    public CloudWatchRestClientModule() {
-      super(TypeToken.of(CloudWatchApi.class), TypeToken.of(CloudWatchAsyncApi.class), DELEGATE_MAP);
+      super(typeTokenOf(CloudWatchApi.class), typeTokenOf(CloudWatchAsyncApi.class), DELEGATE_MAP);
    }
 
 }

@@ -18,23 +18,24 @@
  */
 package org.jclouds.elb.config;
 
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
+
 import java.util.Map;
 
 import org.jclouds.aws.config.FormSigningRestClientModule;
-import org.jclouds.elb.ELBAsyncApi;
 import org.jclouds.elb.ELBApi;
-import org.jclouds.elb.features.InstanceAsyncApi;
-import org.jclouds.elb.features.InstanceApi;
-import org.jclouds.elb.features.LoadBalancerAsyncApi;
-import org.jclouds.elb.features.LoadBalancerApi;
-import org.jclouds.elb.features.PolicyAsyncApi;
-import org.jclouds.elb.features.PolicyApi;
-import org.jclouds.elb.features.AvailabilityZoneAsyncApi;
+import org.jclouds.elb.ELBAsyncApi;
 import org.jclouds.elb.features.AvailabilityZoneApi;
+import org.jclouds.elb.features.AvailabilityZoneAsyncApi;
+import org.jclouds.elb.features.InstanceApi;
+import org.jclouds.elb.features.InstanceAsyncApi;
+import org.jclouds.elb.features.LoadBalancerApi;
+import org.jclouds.elb.features.LoadBalancerAsyncApi;
+import org.jclouds.elb.features.PolicyApi;
+import org.jclouds.elb.features.PolicyAsyncApi;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.reflect.TypeToken;
 
 /**
  * Configures the ELB connection.
@@ -51,6 +52,6 @@ public class ELBRestClientModule extends FormSigningRestClientModule<ELBApi, ELB
             .build();
 
    public ELBRestClientModule() {
-      super(TypeToken.of(ELBApi.class), TypeToken.of(ELBAsyncApi.class), DELEGATE_MAP);
+      super(typeTokenOf(ELBApi.class), typeTokenOf(ELBAsyncApi.class), DELEGATE_MAP);
    }
 }

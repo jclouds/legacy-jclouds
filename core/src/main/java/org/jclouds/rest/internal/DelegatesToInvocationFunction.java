@@ -17,13 +17,13 @@
  * under the License.
  */
 package org.jclouds.rest.internal;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.notNull;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.all;
 import static com.google.common.collect.Iterables.find;
 import static com.google.inject.util.Types.newParameterizedType;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 import static org.jclouds.util.Optionals2.isReturnTypeOptional;
 import static org.jclouds.util.Optionals2.unwrapIfOptional;
 import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
@@ -148,7 +148,7 @@ public final class DelegatesToInvocationFunction<S, F extends Function<Invocatio
    DelegatesToInvocationFunction(Injector injector, SetCaller setCaller, Map<Class<?>, Class<?>> syncToAsync,
          TypeLiteral<S> enclosingType, Function<InvocationSuccess, Optional<Object>> optionalConverter, F methodInvoker) {
       this.injector = checkNotNull(injector, "injector");
-      this.enclosingType = (TypeToken<S>) TypeToken.of(checkNotNull(enclosingType, "enclosingType").getType());
+      this.enclosingType = (TypeToken<S>) typeTokenOf(checkNotNull(enclosingType, "enclosingType").getType());
       this.setCaller = checkNotNull(setCaller, "setCaller");
       this.syncToAsync = checkNotNull(syncToAsync, "syncToAsync");
       this.optionalConverter = checkNotNull(optionalConverter, "optionalConverter");

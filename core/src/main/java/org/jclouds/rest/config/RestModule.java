@@ -23,6 +23,7 @@ import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.util.concurrent.Atomics.newReference;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
 import static org.jclouds.util.Maps2.transformKeys;
 import static org.jclouds.util.Predicates2.startsWith;
@@ -42,7 +43,6 @@ import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.internal.FilterStringsBoundToInjectorByName;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.location.config.LocationModule;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
@@ -56,6 +56,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.Invokable;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -87,9 +88,9 @@ public class RestModule extends AbstractModule {
    @Singleton
    protected Cache<Invokable<?, ?>, Invokable<?, ?>> seedKnownSync2AsyncInvokables() {
       Cache<Invokable<?, ?>, Invokable<?, ?>> sync2AsyncBuilder = CacheBuilder.newBuilder().build();
-      putInvokables(TypeToken.of(HttpClient.class), TypeToken.of(HttpAsyncClient.class), sync2AsyncBuilder);
+      putInvokables(typeTokenOf(HttpClient.class), typeTokenOf(HttpAsyncClient.class), sync2AsyncBuilder);
       for (Class<?> s : sync2Async.keySet()) {
-         putInvokables(TypeToken.of(s), TypeToken.of(sync2Async.get(s)), sync2AsyncBuilder);
+         putInvokables(typeTokenOf(s), typeTokenOf(sync2Async.get(s)), sync2AsyncBuilder);
       }
       return sync2AsyncBuilder;
    }

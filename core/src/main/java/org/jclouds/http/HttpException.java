@@ -25,15 +25,17 @@ package org.jclouds.http;
  */
 public class HttpException extends RuntimeException {
 
-    public HttpException(String s) {
-	super(s);
-    }
+   private static final long serialVersionUID = 1L;
 
-    public HttpException(String s, Throwable throwable) {
-	super(s, throwable);
-    }
+   public HttpException(String s) {
+      super(s);
+   }
 
-    public HttpException(Throwable throwable) {
-	super(throwable);
-    }
+   public HttpException(String s, Throwable throwable) {
+      super(s, throwable);
+   }
+
+   public HttpException(Throwable throwable) {
+      super(throwable);
+   }
 }

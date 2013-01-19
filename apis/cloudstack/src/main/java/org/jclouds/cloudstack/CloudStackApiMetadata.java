@@ -20,6 +20,7 @@ package org.jclouds.cloudstack;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 
 import java.net.URI;
 import java.util.Properties;
@@ -80,7 +81,7 @@ public class CloudStackApiMetadata extends BaseRestApiMetadata {
          .documentation(URI.create("http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html"))
          .defaultEndpoint("http://localhost:8080/client/api")
          .version("2.2")
-         .view(TypeToken.of(CloudStackContext.class))
+         .view(typeTokenOf(CloudStackContext.class))
          .defaultProperties(CloudStackApiMetadata.defaultProperties())
          .defaultModules(ImmutableSet.<Class<? extends Module>> builder()
                                      .add(CloudStackParserModule.class)

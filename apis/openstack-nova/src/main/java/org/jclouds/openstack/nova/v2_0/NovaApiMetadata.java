@@ -25,6 +25,7 @@ import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERV
 import static org.jclouds.openstack.nova.v2_0.config.NovaProperties.AUTO_ALLOCATE_FLOATING_IPS;
 import static org.jclouds.openstack.nova.v2_0.config.NovaProperties.AUTO_GENERATE_KEYPAIRS;
 import static org.jclouds.openstack.nova.v2_0.config.NovaProperties.TIMEOUT_SECURITYGROUP_PRESENT;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 
 import java.net.URI;
 import java.util.Properties;
@@ -97,7 +98,7 @@ public class NovaApiMetadata extends BaseRestApiMetadata {
          .version("1.1")
          .defaultEndpoint("http://localhost:5000/v2.0/")
          .defaultProperties(NovaApiMetadata.defaultProperties())
-         .view(TypeToken.of(ComputeServiceContext.class))
+         .view(typeTokenOf(ComputeServiceContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
                                      .add(KeystoneAuthenticationModule.class)
                                      .add(ZoneModule.class)

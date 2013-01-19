@@ -22,6 +22,7 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 import static org.testng.Assert.assertEquals;
 
 import java.util.concurrent.ExecutionException;
@@ -67,7 +68,7 @@ public class BlockOnFutureTest {
 
    @BeforeClass
    void setupInvocations() throws SecurityException, NoSuchMethodException {
-      enclosingType = TypeToken.of(ThingAsyncApi.class);
+      enclosingType = typeTokenOf(ThingAsyncApi.class);
       get = Invocation.create(enclosingType.method(ThingAsyncApi.class.getDeclaredMethod("get")), ImmutableList.of());
       namedGet = Invocation.create(enclosingType.method(ThingAsyncApi.class.getDeclaredMethod("namedGet")),
             ImmutableList.of());

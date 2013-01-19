@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.internal;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.get;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 
@@ -85,7 +86,7 @@ public class BaseCloudStackClientLiveTest extends BaseGenericComputeServiceConte
    
    @Override
    protected TypeToken<CloudStackContext> viewType() {
-      return TypeToken.of(CloudStackContext.class);
+      return typeTokenOf(CloudStackContext.class);
    }
    
    @Override

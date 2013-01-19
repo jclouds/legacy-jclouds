@@ -18,6 +18,8 @@
  */
 package org.jclouds.aws.ec2.config;
 
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
+
 import java.util.Map;
 
 import javax.inject.Singleton;
@@ -68,7 +70,6 @@ import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
@@ -97,7 +98,7 @@ public class AWSEC2RestClientModule extends EC2RestClientModule<AWSEC2Client, AW
          .build();
 
    public AWSEC2RestClientModule() {
-      super(TypeToken.of(AWSEC2Client.class), TypeToken.of(AWSEC2AsyncClient.class), DELEGATE_MAP);
+      super(typeTokenOf(AWSEC2Client.class), typeTokenOf(AWSEC2AsyncClient.class), DELEGATE_MAP);
    }
 
    @Singleton

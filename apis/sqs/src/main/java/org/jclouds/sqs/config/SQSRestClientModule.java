@@ -18,6 +18,8 @@
  */
 package org.jclouds.sqs.config;
 
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
+
 import java.util.Map;
 
 import org.jclouds.aws.config.FormSigningRestClientModule;
@@ -39,7 +41,6 @@ import org.jclouds.sqs.handlers.ParseSQSErrorFromXmlContent;
 import org.jclouds.sqs.handlers.SQSErrorRetryHandler;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.reflect.TypeToken;
 
 /**
  * Configures the SQS connection.
@@ -55,7 +56,7 @@ public class SQSRestClientModule extends FormSigningRestClientModule<SQSApi, SQS
          .build();
 
    public SQSRestClientModule() {
-      super(TypeToken.of(SQSApi.class), TypeToken.of(SQSAsyncApi.class), DELEGATE_MAP);
+      super(typeTokenOf(SQSApi.class), typeTokenOf(SQSAsyncApi.class), DELEGATE_MAP);
    }
    
    @Override

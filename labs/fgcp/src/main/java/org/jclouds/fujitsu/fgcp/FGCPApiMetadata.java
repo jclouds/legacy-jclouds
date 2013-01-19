@@ -20,6 +20,7 @@ package org.jclouds.fujitsu.fgcp;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 
 import java.net.URI;
 import java.util.Properties;
@@ -32,7 +33,6 @@ import org.jclouds.fujitsu.fgcp.compute.config.FGCPComputeServiceContextModule;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 
 /**
@@ -80,7 +80,7 @@ public class FGCPApiMetadata extends BaseRestApiMetadata {
                .defaultEndpoint(
                      "https://api.globalcloud.fujitsu.com.au/ovissapi/endpoint")
                .defaultProperties(FGCPApiMetadata.defaultProperties())
-               .view(TypeToken.of(ComputeServiceContext.class))
+               .view(typeTokenOf(ComputeServiceContext.class))
                .defaultModules(
                      ImmutableSet.<Class<? extends Module>> of(
                            FGCPComputeServiceContextModule.class,
