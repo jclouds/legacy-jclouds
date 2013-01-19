@@ -18,6 +18,7 @@
  */
 package org.jclouds.abiquo.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -70,6 +71,7 @@ public interface PricingAsyncApi {
    /**
     * @see ConfigApi#listCurrencies()
     */
+   @Named("currency:list")
    @GET
    @Path("/currencies")
    @Consumes(CurrenciesDto.BASE_MEDIA_TYPE)
@@ -79,6 +81,7 @@ public interface PricingAsyncApi {
    /**
     * @see ConfigApi#getCurrency(Integer)
     */
+   @Named("currency:get")
    @GET
    @Path("/currencies/{currency}")
    @Consumes(CurrencyDto.BASE_MEDIA_TYPE)
@@ -89,6 +92,7 @@ public interface PricingAsyncApi {
    /**
     * @see ConfigApi#createCurrency(CurrencyDto)
     */
+   @Named("currency:create")
    @POST
    @Path("/currencies")
    @Produces(CurrencyDto.BASE_MEDIA_TYPE)
@@ -99,6 +103,7 @@ public interface PricingAsyncApi {
    /**
     * @see ConfigApi#updateCurrency(CurrencyDto)
     */
+   @Named("currency:update")
    @PUT
    @Produces(CurrencyDto.BASE_MEDIA_TYPE)
    @Consumes(CurrencyDto.BASE_MEDIA_TYPE)
@@ -109,6 +114,7 @@ public interface PricingAsyncApi {
    /**
     * @see ConfigApi#deleteCurrency(CurrencyDto)
     */
+   @Named("currency:delete")
    @DELETE
    ListenableFuture<Void> deleteCurrency(@EndpointLink("edit") @BinderParam(BindToPath.class) CurrencyDto currency);
 
@@ -117,6 +123,7 @@ public interface PricingAsyncApi {
    /**
     * @see PricingApi#listCostCodes()
     */
+   @Named("costcode:list")
    @GET
    @Path("/costcodes")
    @Consumes(CostCodesDto.BASE_MEDIA_TYPE)
@@ -126,6 +133,7 @@ public interface PricingAsyncApi {
    /**
     * @see PricingApi#getCostCode(Integer)
     */
+   @Named("costcode:get")
    @GET
    @Path("/costcodes/{costcode}")
    @Consumes(CostCodeDto.BASE_MEDIA_TYPE)
@@ -136,6 +144,7 @@ public interface PricingAsyncApi {
    /**
     * @see PricingApi#createCostCode(CostCodeDto)
     */
+   @Named("costcode:create")
    @POST
    @Path("/costcodes")
    @Produces(CostCodeDto.BASE_MEDIA_TYPE)
@@ -146,6 +155,7 @@ public interface PricingAsyncApi {
    /**
     * @see PricingApi#updateCostCode(CostCodeDto)
     */
+   @Named("costcode:update")
    @PUT
    @Produces(CostCodeDto.BASE_MEDIA_TYPE)
    @Consumes(CostCodeDto.BASE_MEDIA_TYPE)
@@ -156,6 +166,7 @@ public interface PricingAsyncApi {
    /**
     * @see PricingApi#deleteCostCode(CostCodeDto)
     */
+   @Named("costcode:delete")
    @DELETE
    ListenableFuture<Void> deleteCostCode(@EndpointLink("edit") @BinderParam(BindToPath.class) CostCodeDto costcode);
 
@@ -164,6 +175,7 @@ public interface PricingAsyncApi {
    /**
     * @see PricingApi#listPricingTemplates()
     */
+   @Named("pricingtemplate:list")
    @GET
    @Path("/pricingtemplates")
    @Consumes(PricingTemplatesDto.BASE_MEDIA_TYPE)
@@ -173,6 +185,7 @@ public interface PricingAsyncApi {
    /**
     * @see PricingApi#getPricingTemplate(Integer)
     */
+   @Named("pricingtemplate:get")
    @GET
    @Path("/pricingtemplates/{pricingtemplate}")
    @Consumes(PricingTemplateDto.BASE_MEDIA_TYPE)
@@ -183,6 +196,7 @@ public interface PricingAsyncApi {
    /**
     * @see PricingApi#createPricingTemplate(PricingTemplateDto)
     */
+   @Named("pricingtemplate:create")
    @POST
    @Path("/pricingtemplates")
    @Produces(PricingTemplateDto.BASE_MEDIA_TYPE)
@@ -194,6 +208,7 @@ public interface PricingAsyncApi {
    /**
     * @see PricingApi#updatePricingTemplate(PricingTemplateDto)
     */
+   @Named("pricingtemplate:update")
    @PUT
    @Produces(PricingTemplateDto.BASE_MEDIA_TYPE)
    @Consumes(PricingTemplateDto.BASE_MEDIA_TYPE)
@@ -204,6 +219,7 @@ public interface PricingAsyncApi {
    /**
     * @see PricingApi#deletePricingTemplate(PricingTemplateDto)
     */
+   @Named("pricingtemplate:delete")
    @DELETE
    ListenableFuture<Void> deletePricingTemplate(
          @EndpointLink("edit") @BinderParam(BindToPath.class) PricingTemplateDto pricingtemplate);
@@ -213,6 +229,7 @@ public interface PricingAsyncApi {
    /**
     * @see PricingApi#getCostCodeCurrency(Integer)
     */
+   @Named("costcodecurrency:get")
    @GET
    @Path("/costcodes/{costcode}/currencies")
    @Consumes(CostCodeCurrenciesDto.BASE_MEDIA_TYPE)
@@ -224,6 +241,7 @@ public interface PricingAsyncApi {
    /**
     * @see PricingApi#updateCostCodeCurrencies(CostCodeCurrenciesDto)
     */
+   @Named("costcodecurrency:update")
    @PUT
    @Path("/costcodes/{costcode}/currencies")
    @Produces(CostCodeCurrenciesDto.BASE_MEDIA_TYPE)
@@ -237,6 +255,7 @@ public interface PricingAsyncApi {
    /**
     * @see PricingApi#getPricingCostCodes(Integer)
     */
+   @Named("pricingcostcode:get")
    @GET
    @Path("/pricingtemplates/{pricingtemplate}/costcodes")
    @Consumes(PricingCostCodesDto.BASE_MEDIA_TYPE)
@@ -247,6 +266,7 @@ public interface PricingAsyncApi {
    /**
     * @see PricingApi#getPricingCostCode(Integer)
     */
+   @Named("pricingcostcode:get")
    @GET
    @Path("/pricingtemplates/{pricingtemplate}/costcodes/{costcode}")
    @Consumes(PricingCostCodeDto.BASE_MEDIA_TYPE)
@@ -258,6 +278,7 @@ public interface PricingAsyncApi {
    /**
     * @see PricingApi#updatePricingCostCode(PricingCostCodeDto)
     */
+   @Named("pricingcostcode:update")
    @PUT
    @Path("/pricingtemplates/{pricingtemplate}/costcodes/{costcode}")
    @Produces(PricingCostCodeDto.BASE_MEDIA_TYPE)
@@ -272,6 +293,7 @@ public interface PricingAsyncApi {
    /**
     * @see PricingApi#getPricingTiers(Integer)
     */
+   @Named("pricingtier:get")
    @GET
    @Path("/pricingtemplates/{pricingtemplate}/tiers")
    @Consumes(PricingTiersDto.BASE_MEDIA_TYPE)
@@ -282,6 +304,7 @@ public interface PricingAsyncApi {
    /**
     * @see PricingApi#getPricingTier(Integer)
     */
+   @Named("pricingtier:get")
    @GET
    @Path("/pricingtemplates/{pricingtemplate}/tiers/{tier}")
    @Consumes(PricingTierDto.BASE_MEDIA_TYPE)
@@ -293,6 +316,7 @@ public interface PricingAsyncApi {
    /**
     * @see PricingApi#updatePricingTier(PricingTierDto)
     */
+   @Named("pricingtier:update")
    @PUT
    @Path("/pricingtemplates/{pricingtemplate}/tiers/{tier}")
    @Produces(PricingTierDto.BASE_MEDIA_TYPE)

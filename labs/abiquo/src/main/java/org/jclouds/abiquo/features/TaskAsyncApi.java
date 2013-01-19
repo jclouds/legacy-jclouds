@@ -19,6 +19,7 @@
 
 package org.jclouds.abiquo.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 
@@ -55,6 +56,7 @@ public interface TaskAsyncApi {
    /**
     * @see TaskApi#getTask(RESTLink)
     */
+   @Named("task:get")
    @GET
    @Consumes(TaskDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -64,6 +66,7 @@ public interface TaskAsyncApi {
    /**
     * @see TaskApi#listTasks(SingleResourceTransportDto)
     */
+   @Named("task:list")
    @GET
    @Consumes(TasksDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser

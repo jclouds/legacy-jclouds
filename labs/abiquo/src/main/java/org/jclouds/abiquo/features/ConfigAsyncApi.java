@@ -19,6 +19,7 @@
 
 package org.jclouds.abiquo.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -71,7 +72,7 @@ public interface ConfigAsyncApi {
    /**
     * @see ConfigApi#listLicenses()
     */
-
+   @Named("license:list")
    @EnterpriseEdition
    @GET
    @Path("/licenses")
@@ -82,6 +83,7 @@ public interface ConfigAsyncApi {
    /**
     * @see ConfigApi#listLicenses(LicenseOptions)
     */
+   @Named("license:list")
    @EnterpriseEdition
    @GET
    @Path("/licenses")
@@ -92,6 +94,7 @@ public interface ConfigAsyncApi {
    /**
     * @see ConfigApi#addLicense(LicenseDto)
     */
+   @Named("license:add")
    @EnterpriseEdition
    @POST
    @Produces(LicenseDto.BASE_MEDIA_TYPE)
@@ -103,6 +106,7 @@ public interface ConfigAsyncApi {
    /**
     * @see ConfigApi#removeLicense(LicenseDto)
     */
+   @Named("license:remove")
    @DELETE
    @EnterpriseEdition
    ListenableFuture<Void> removeLicense(@EndpointLink("edit") @BinderParam(BindToPath.class) LicenseDto license);
@@ -112,6 +116,7 @@ public interface ConfigAsyncApi {
    /**
     * @see ConfigApi#listPrivileges()
     */
+   @Named("privilege:list")
    @GET
    @Path("/privileges")
    @Consumes(PrivilegesDto.BASE_MEDIA_TYPE)
@@ -121,6 +126,7 @@ public interface ConfigAsyncApi {
    /**
     * @see ConfigApi#getPrivilege(Integer)
     */
+   @Named("privilege:get")
    @GET
    @Path("/privileges/{privilege}")
    @Consumes(PrivilegeDto.BASE_MEDIA_TYPE)
@@ -133,6 +139,7 @@ public interface ConfigAsyncApi {
    /**
     * @see ConfigApi#listSystemProperties()
     */
+   @Named("property:list")
    @GET
    @Path("/properties")
    @Consumes(SystemPropertiesDto.BASE_MEDIA_TYPE)
@@ -142,6 +149,7 @@ public interface ConfigAsyncApi {
    /**
     * @see ConfigApi#listSystemProperties(PropertyOptions)
     */
+   @Named("property:list")
    @GET
    @Path("/properties")
    @Consumes(SystemPropertiesDto.BASE_MEDIA_TYPE)
@@ -151,6 +159,7 @@ public interface ConfigAsyncApi {
    /**
     * @see ConfigApi#updateSystemProperty(VirtualDatacenterDto)
     */
+   @Named("property:update")
    @PUT
    @Produces(SystemPropertyDto.BASE_MEDIA_TYPE)
    @Consumes(SystemPropertyDto.BASE_MEDIA_TYPE)
@@ -163,6 +172,7 @@ public interface ConfigAsyncApi {
    /**
     * @see ConfigApi#listCategories()
     */
+   @Named("category:list")
    @GET
    @Path("/categories")
    @Consumes(CategoriesDto.BASE_MEDIA_TYPE)
@@ -172,6 +182,7 @@ public interface ConfigAsyncApi {
    /**
     * @see ConfigApi#getCategory(Integer)
     */
+   @Named("category:get")
    @GET
    @Path("/categories/{category}")
    @Consumes(CategoryDto.BASE_MEDIA_TYPE)
@@ -182,6 +193,7 @@ public interface ConfigAsyncApi {
    /**
     * @see ConfigApi#createCategory(CategoryDto)
     */
+   @Named("category:create")
    @POST
    @Path("/categories")
    @Produces(CategoryDto.BASE_MEDIA_TYPE)
@@ -192,6 +204,7 @@ public interface ConfigAsyncApi {
    /**
     * @see ConfigApi#updateCategory(CategoryDto)
     */
+   @Named("category:update")
    @PUT
    @Produces(CategoryDto.BASE_MEDIA_TYPE)
    @Consumes(CategoryDto.BASE_MEDIA_TYPE)
@@ -202,6 +215,7 @@ public interface ConfigAsyncApi {
    /**
     * @see ConfigApi#deleteCategory(CategoryDto)
     */
+   @Named("category:delete")
    @DELETE
    ListenableFuture<Void> deleteCategory(@EndpointLink("edit") @BinderParam(BindToPath.class) CategoryDto category);
 }
