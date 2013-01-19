@@ -79,10 +79,6 @@
   org.jclouds.ssh.SshClient$Factory
   (^org.jclouds.ssh.SshClient
      create
-     [_ ^HostAndPort socket ^Credentials credentials]
-     (factory-fn socket (.identity credentials) (.credential credentials)))
-  (^org.jclouds.ssh.SshClient
-     create
      [_ ^HostAndPort socket ^LoginCredentials credentials]
      (factory-fn socket (.identity credentials) (.credential credentials)))
   )

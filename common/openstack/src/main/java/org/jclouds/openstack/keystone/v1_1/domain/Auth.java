@@ -22,13 +22,8 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Map;
-import java.util.Set;
-
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 
 /**
@@ -77,49 +72,15 @@ public class Auth implements Comparable<Auth> {
          return token(from.getToken()).serviceCatalog(from.getServiceCatalog());
       }
    }
-
-   protected Auth() {
-      // we want serializers like Gson to work w/o using sun.misc.Unsafe,
-      // prohibited in GAE. This also implies fields are not final.
-      // see http://code.google.com/p/jclouds/issues/detail?id=925
-   }
   
-   protected Token token;
-   // TODO: get gson multimap adapter!
-   protected Map<String, Set<Endpoint>> serviceCatalog = ImmutableMap.of();
+   protected final Token token;
+   protected final Multimap<String, Endpoint> serviceCatalog;
 
    public Auth(Token token, Multimap<String, Endpoint> serviceCatalog) {
       this.token = checkNotNull(token, "token");
-      this.serviceCatalog = toOldSchool(ImmutableMultimap.copyOf(checkNotNull(serviceCatalog, "serviceCatalog")));
+      this.serviceCatalog = ImmutableMultimap.copyOf(checkNotNull(serviceCatalog, "serviceCatalog"));
    }
 
-   /**
-    * The traditional way to represent a graph in Java is Map<V, Set<V>>, which is awkward in a number of ways. Guava's
-    * Multimap framework makes it easy to handle a mapping from keys to multiple values.
-    * <p/>
-    * Until we write or discover a gson Multimap deserializer, we may be stuck with this.
-    * 
-    * TODO: ask on stackoverflow and/or jesse wilson
-    */
-   @Deprecated
-   private static <K, V> Map<K, Set<V>> toOldSchool(Multimap<K, V> in) {
-      ImmutableMap.Builder<K, Set<V>> out = ImmutableMap.builder();
-      for (K type : in.keySet())
-         out.put(type, ImmutableSet.copyOf(in.get(type)));
-      return out.build();
-   }
-
-   /**
-    * @see #toOldSchool
-    */
-   @Deprecated
-   private static <K, V> ImmutableMultimap<K, V> fromOldSchool(Map<K, Set<V>> in) {
-      ImmutableMultimap.Builder<K, V> out = ImmutableMultimap.builder();
-      for (K type : in.keySet())
-         out.putAll(type, ImmutableSet.copyOf(in.get(type)));
-      return out.build();
-   }
-   
    /**
     * TODO
     */
@@ -131,7 +92,7 @@ public class Auth implements Comparable<Auth> {
     * TODO
     */
    public Multimap<String, Endpoint> getServiceCatalog() {
-      return fromOldSchool(serviceCatalog);
+      return serviceCatalog;
    }
 
    @Override

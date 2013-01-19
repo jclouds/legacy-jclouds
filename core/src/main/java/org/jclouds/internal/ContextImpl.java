@@ -102,14 +102,6 @@ public class ContextImpl implements Context {
     * {@inheritDoc}
     */
    @Override
-   public URI getEndpoint() {
-      return URI.create(providerMetadata.getEndpoint());
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
    public Utils getUtils() {
       return utils();
    }
@@ -117,22 +109,6 @@ public class ContextImpl implements Context {
    @Override
    public Utils utils() {
       return utils;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getApiVersion() {
-      return providerMetadata.getApiMetadata().getVersion();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getBuildVersion() {
-      return providerMetadata.getApiMetadata().getBuildVersion().orNull();
    }
 
    /**
@@ -214,22 +190,6 @@ public class ContextImpl implements Context {
    @Override
    public LocationScope getScope() {
       return LocationScope.PROVIDER;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Map<String, Credentials> credentialStore() {
-      return utils().credentialStore();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Map<String, Credentials> getCredentialStore() {
-      return utils().credentialStore();
    }
 
 }

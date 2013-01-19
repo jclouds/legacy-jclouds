@@ -19,10 +19,10 @@
 package org.jclouds.cloudstack.features;
 
 import static org.jclouds.cloudstack.options.ListISOsOptions.Builder.accountInDomain;
-
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
+import org.jclouds.cloudstack.CloudStackApiMetadata;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.ISO;
 import org.jclouds.cloudstack.internal.BaseCloudStackExpectTest;
@@ -221,6 +221,6 @@ public class ISOClientExpectTest extends BaseCloudStackExpectTest<ISOClient> {
    
    @Override
    protected ISOClient clientFrom(CloudStackContext context) {
-      return context.getProviderSpecificContext().getApi().getISOClient();
+      return context.unwrap(CloudStackApiMetadata.CONTEXT_TOKEN).getApi().getISOClient();
    }
 }

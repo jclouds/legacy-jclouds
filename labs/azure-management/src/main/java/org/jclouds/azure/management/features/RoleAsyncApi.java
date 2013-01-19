@@ -52,109 +52,76 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Headers(keys = "x-ms-version", values = "2012-03-01")
 public interface RoleAsyncApi {
 
-	 @GET
-	 @Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roles/{roleName}")
-	 @Consumes(MediaType.APPLICATION_ATOM_XML)
-	 @JAXBResponseParser
-	 @Fallback(NullOnNotFoundOr404.class)
-	 ListenableFuture<PersistentVMRole> getRole(@PathParam("serviceName")
-	 String serviceName,
-	 @PathParam("deploymentName") String deploymentName,
-	 @PathParam("roleName") String roleName);
+   @GET
+   @Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roles/{roleName}")
+   @Consumes(MediaType.APPLICATION_ATOM_XML)
+   @JAXBResponseParser
+   @Fallback(NullOnNotFoundOr404.class)
+   ListenableFuture<PersistentVMRole> getRole(@PathParam("serviceName")
+   String serviceName,
+   @PathParam("deploymentName") String deploymentName,
+   @PathParam("roleName") String roleName);
 
-	// This is a PaaS REST service ! => Delete the deployment instead
-	// @DELETE
-	// @Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roles/{roleName}")
-	// @Consumes(MediaType.APPLICATION_ATOM_XML)
-	// @JAXBResponseParser
-	// @Fallback(NullOnNotFoundOr404.class)
-	// ListenableFuture<Void> deleteRole(@PathParam("serviceName") String
-	// serviceName,
-	// @PathParam("deploymentName") String deploymentName,
-	// @PathParam("roleName") String roleName);
+   @POST
+   // Warning : the url in the documentation is WRONG ! @see
+   // http://social.msdn.microsoft.com/Forums/pl-PL/WAVirtualMachinesforWindows/thread/7ba2367b-e450-49e0-89e4-46c240e9d213
+   @Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roleInstances/{roleName}/Operations")
+   @Consumes(MediaType.APPLICATION_ATOM_XML)
+   @Produces(MediaType.APPLICATION_ATOM_XML)
+   @Fallback(NullOnNotFoundOr404.class)
+   @ResponseParser(ParseRequestIdHeader.class)
+   @Payload(value = "<RestartRoleOperation xmlns=\"http://schemas.microsoft.com/windowsazure\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><OperationType>RestartRoleOperation</OperationType></RestartRoleOperation>")
+   ListenableFuture<String> restartRole(
+         @PathParam("serviceName") String serviceName,
+         @PathParam("deploymentName") String deploymentName,
+         @PathParam("roleName") String roleName);
 
-	@POST
-	// Warning : the url in the documentation is WRONG ! @see
-	// http://social.msdn.microsoft.com/Forums/pl-PL/WAVirtualMachinesforWindows/thread/7ba2367b-e450-49e0-89e4-46c240e9d213
-	@Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roleInstances/{roleName}/Operations")
-	@Consumes(MediaType.APPLICATION_ATOM_XML)
-	@Produces(MediaType.APPLICATION_ATOM_XML)
-	@Fallback(NullOnNotFoundOr404.class)
-	@ResponseParser(ParseRequestIdHeader.class)
-	@Payload(value = "<RestartRoleOperation xmlns=\"http://schemas.microsoft.com/windowsazure\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><OperationType>RestartRoleOperation</OperationType></RestartRoleOperation>")
-	ListenableFuture<String> restartRole(
-			@PathParam("serviceName") String serviceName,
-			@PathParam("deploymentName") String deploymentName,
-			@PathParam("roleName") String roleName);
+   @POST
+   @Path("/services/hostedservices/{serviceName}/deployments")
+   @Produces(MediaType.APPLICATION_ATOM_XML)
+   @Consumes(MediaType.APPLICATION_ATOM_XML)
+   @Fallback(NullOnNotFoundOr404.class)
+   @ResponseParser(ParseRequestIdHeader.class)
+   ListenableFuture<String> createDeployment(
+         @PathParam("serviceName") String serviceName,
+         @BinderParam(BindDeploymentParamsToXmlPayload.class) DeploymentParams deploymentParams);
 
-	// This is a PaaS REST service !
-	// @POST
-	// @Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roles")
-	// @Produces(MediaType.APPLICATION_ATOM_XML)
-	// @Consumes(MediaType.TEXT_PLAIN)
-	// @Fallback(NullOnNotFoundOr404.class)
-	// ListenableFuture<Void> addRole(@PathParam("serviceName") String
-	// serviceName,
-	// @PathParam("deploymentName") String deploymentName,
-	// @BinderParam(BindToXMLPayload.class) PersistentVMRole role);
-
-//	@Deprecated
-//	@POST
-//	@Path("/services/hostedservices/{serviceName}/deployments")
-//	@Produces(MediaType.APPLICATION_ATOM_XML)
-//	@Consumes(MediaType.TEXT_PLAIN)
-//	@Fallback(NullOnNotFoundOr404.class)
-//	@ResponseParser(ParseRequestIdHeader.class)
-//	ListenableFuture<String> createVirtualMachineDeployment(
-//			@PathParam("serviceName") String serviceName,
-//			@BinderParam(BindToXMLPayload.class) Deployment deployment);
-
-	@POST
-	@Path("/services/hostedservices/{serviceName}/deployments")
-	@Produces(MediaType.APPLICATION_ATOM_XML)
-	@Consumes(MediaType.APPLICATION_ATOM_XML)
-	@Fallback(NullOnNotFoundOr404.class)
-	@ResponseParser(ParseRequestIdHeader.class)
-	ListenableFuture<String> createDeployment(
-			@PathParam("serviceName") String serviceName,
-			@BinderParam(BindDeploymentParamsToXmlPayload.class) DeploymentParams deploymentParams);
-
-	@POST
-	@Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roleInstances/{roleName}/Operations")
-	@Consumes(MediaType.APPLICATION_ATOM_XML)
-	@Produces(MediaType.APPLICATION_ATOM_XML)
-	@Fallback(NullOnNotFoundOr404.class)
-	@ResponseParser(ParseRequestIdHeader.class)
-	@Payload(value = "<CaptureRoleOperation xmlns=\"http://schemas.microsoft.com/windowsazure\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><OperationType>CaptureRoleOperation</OperationType><PostCaptureAction>Delete</PostCaptureAction><TargetImageLabel>{imageLabel}</TargetImageLabel><TargetImageName>{imageName}</TargetImageName></CaptureRoleOperation>")
-	ListenableFuture<String> captureRole(
-			@PathParam("serviceName") String serviceName,
-			@PathParam("deploymentName") String deploymentName,
-			@PathParam("roleName") String roleName,
-			@PayloadParam("imageName") String imageName,
-			@PayloadParam("imageLabel") String imageLabel);
-	
-	@POST
-	@Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roleInstances/{roleName}/Operations")
-	@Consumes(MediaType.APPLICATION_ATOM_XML)
-	@Produces(MediaType.APPLICATION_ATOM_XML)
-	@Fallback(NullOnNotFoundOr404.class)
-	@ResponseParser(ParseRequestIdHeader.class)
-	@Payload(value = "<ShutdownRoleOperation xmlns=\"http://schemas.microsoft.com/windowsazure\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><OperationType>ShutdownRoleOperation</OperationType></ShutdownRoleOperation>")
-	ListenableFuture<String> shutdownRole(
-			@PathParam("serviceName") String serviceName,
-			@PathParam("deploymentName") String deploymentName,
-			@PathParam("roleName") String roleName);
-	
-	@POST
-	@Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roleInstances/{roleName}/Operations")
-	@Consumes(MediaType.APPLICATION_ATOM_XML)
-	@Produces(MediaType.APPLICATION_ATOM_XML)
-	@Fallback(NullOnNotFoundOr404.class)
-	@ResponseParser(ParseRequestIdHeader.class)
-	@Payload(value = "<StartRoleOperation xmlns=\"http://schemas.microsoft.com/windowsazure\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><OperationType>StartRoleOperation</OperationType></StartRoleOperation>")
-	ListenableFuture<String> startRole(
-			@PathParam("serviceName") String serviceName,
-			@PathParam("deploymentName") String deploymentName,
-			@PathParam("roleName") String roleName);
+   @POST
+   @Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roleInstances/{roleName}/Operations")
+   @Consumes(MediaType.APPLICATION_ATOM_XML)
+   @Produces(MediaType.APPLICATION_ATOM_XML)
+   @Fallback(NullOnNotFoundOr404.class)
+   @ResponseParser(ParseRequestIdHeader.class)
+   @Payload(value = "<CaptureRoleOperation xmlns=\"http://schemas.microsoft.com/windowsazure\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><OperationType>CaptureRoleOperation</OperationType><PostCaptureAction>Delete</PostCaptureAction><TargetImageLabel>{imageLabel}</TargetImageLabel><TargetImageName>{imageName}</TargetImageName></CaptureRoleOperation>")
+   ListenableFuture<String> captureRole(
+         @PathParam("serviceName") String serviceName,
+         @PathParam("deploymentName") String deploymentName,
+         @PathParam("roleName") String roleName,
+         @PayloadParam("imageName") String imageName,
+         @PayloadParam("imageLabel") String imageLabel);
+   
+   @POST
+   @Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roleInstances/{roleName}/Operations")
+   @Consumes(MediaType.APPLICATION_ATOM_XML)
+   @Produces(MediaType.APPLICATION_ATOM_XML)
+   @Fallback(NullOnNotFoundOr404.class)
+   @ResponseParser(ParseRequestIdHeader.class)
+   @Payload(value = "<ShutdownRoleOperation xmlns=\"http://schemas.microsoft.com/windowsazure\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><OperationType>ShutdownRoleOperation</OperationType></ShutdownRoleOperation>")
+   ListenableFuture<String> shutdownRole(
+         @PathParam("serviceName") String serviceName,
+         @PathParam("deploymentName") String deploymentName,
+         @PathParam("roleName") String roleName);
+   
+   @POST
+   @Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roleInstances/{roleName}/Operations")
+   @Consumes(MediaType.APPLICATION_ATOM_XML)
+   @Produces(MediaType.APPLICATION_ATOM_XML)
+   @Fallback(NullOnNotFoundOr404.class)
+   @ResponseParser(ParseRequestIdHeader.class)
+   @Payload(value = "<StartRoleOperation xmlns=\"http://schemas.microsoft.com/windowsazure\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><OperationType>StartRoleOperation</OperationType></StartRoleOperation>")
+   ListenableFuture<String> startRole(
+         @PathParam("serviceName") String serviceName,
+         @PathParam("deploymentName") String deploymentName,
+         @PathParam("roleName") String roleName);
 
 }

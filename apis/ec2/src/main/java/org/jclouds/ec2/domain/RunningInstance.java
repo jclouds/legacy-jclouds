@@ -473,14 +473,6 @@ public class RunningInstance implements Comparable<RunningInstance> {
    public Map<String, BlockDevice> getEbsBlockDevices() {
       return ebsBlockDevices;
    }
-
-   /**
-    * @see #getGroupNames()
-    */
-   @Deprecated
-   public Set<String> getGroupIds() {
-      return getGroupNames();
-   }
    
    /**
     * Names of the security groups.

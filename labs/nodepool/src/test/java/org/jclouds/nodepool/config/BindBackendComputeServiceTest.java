@@ -27,7 +27,6 @@ import java.util.Properties;
 
 import org.jclouds.ContextBuilder;
 import org.jclouds.compute.ComputeService;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.nodepool.Backend;
@@ -80,14 +79,7 @@ public class BindBackendComputeServiceTest {
       }
 
       private static class Factory implements SshClient.Factory {
-
-         @Override
          public SshClient create(HostAndPort socket, LoginCredentials credentials) {
-            return createNiceMock(SshClient.class);
-         }
-
-         @Override
-         public SshClient create(HostAndPort socket, Credentials credentials) {
             return createNiceMock(SshClient.class);
          }
       }

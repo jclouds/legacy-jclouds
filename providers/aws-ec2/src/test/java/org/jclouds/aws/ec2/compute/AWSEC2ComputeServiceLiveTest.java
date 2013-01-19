@@ -186,7 +186,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          SecurityGroup secgroup = getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(instance
                   .getRegion(), "jclouds#" + group));
 
-         assert secgroup.getIpPermissions().size() == 0 : secgroup;
+         assert secgroup.size() == 0 : secgroup;
 
          // try to run a script with the original keyPair
          runScriptWithCreds(group, first.getOperatingSystem(), LoginCredentials.builder().user(

@@ -52,8 +52,6 @@ import com.google.inject.TypeLiteral;
  */
 @EnterpriseEdition
 public class StoragePool extends DomainWrapper<StoragePoolDto> {
-   /** The default value for the used space. */
-   private static final long DEFAULT_USED_SIZE = 0;
 
    /** The datacenter where the storage device is. */
    // Package protected to allow the storage device to be set automatically when
@@ -185,22 +183,10 @@ public class StoragePool extends DomainWrapper<StoragePoolDto> {
 
    public static class Builder {
       private RestContext<AbiquoApi, AbiquoAsyncApi> context;
-
       private StorageDevice storageDevice;
-
-      private Long availableSizeInMb;
-
-      // The enabled flag is still not used. It will be added when Abiquo
-      // includes anstorage
-      // allocator
-
-      // private Boolean enabled;
-
       private String name;
-
       private Long totalSizeInMb;
 
-      private Long usedSizeInMb = DEFAULT_USED_SIZE;
 
       public Builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final StorageDevice storageDevice) {
          super();
@@ -215,61 +201,22 @@ public class StoragePool extends DomainWrapper<StoragePoolDto> {
          return this;
       }
 
-      /**
-       * @deprecated This value is no longer used in Abiquo and will be removed
-       *             in future versions.
-       */
-      @Deprecated
-      public Builder availableSizeInMb(final long availableSizeInMb) {
-         this.availableSizeInMb = availableSizeInMb;
-         return this;
-      }
-
       public Builder name(final String name) {
          this.name = name;
          return this;
       }
 
-      // The enabled flag is still not used. It will be added when Abiquo
-      // includes anstorage
-      // allocator
-
-      // public Builder enabled(final boolean enabled)
-      // {
-      // this.enabled = enabled;
-      // return this;
-      // }
 
       public Builder totalSizeInMb(final long totalSizeInMb) {
          this.totalSizeInMb = totalSizeInMb;
-         if (availableSizeInMb == null) {
-            availableSizeInMb = totalSizeInMb;
-         }
          return this;
       }
 
-      /**
-       * @deprecated This value is no longer used in Abiquo and will be removed
-       *             in future versions.
-       */
-      @Deprecated
-      public Builder usedSizeInMb(final long usedSizeInMb) {
-         this.usedSizeInMb = usedSizeInMb;
-         return this;
-      }
 
       public StoragePool build() {
          StoragePoolDto dto = new StoragePoolDto();
-         dto.setAvailableSizeInMb(availableSizeInMb);
-
-         // The enabled flag is still not used. It will be added when Abiquo
-         // includes anstorage
-         // allocator
-         // dto.setEnabled(enabled);
-
          dto.setName(name);
          dto.setTotalSizeInMb(totalSizeInMb);
-         dto.setUsedSizeInMb(usedSizeInMb);
          StoragePool storagePool = new StoragePool(context, dto);
          storagePool.storageDevice = storageDevice;
          return storagePool;
@@ -277,35 +224,13 @@ public class StoragePool extends DomainWrapper<StoragePoolDto> {
 
       public static Builder fromStoragePool(final StoragePool in) {
          Builder builder = StoragePool.builder(in.context, in.getStorageDevice())
-               .availableSizeInMb(in.getAvailableSizeInMb())/*
-                                                             * .enabled(in.
-                                                             * getEnabled())
-                                                             */
-               .totalSizeInMb(in.getTotalSizeInMb()).usedSizeInMb(in.getUsedSizeInMb());
+               .totalSizeInMb(in.getTotalSizeInMb());
 
          return builder;
       }
    }
 
    // Delegate methods
-
-   /**
-    * @deprecated This value is no longer used in Abiquo and will be removed in
-    *             future versions.
-    */
-   @Deprecated
-   public long getAvailableSizeInMb() {
-      return target.getAvailableSizeInMb();
-   }
-
-   // The enabled flag is still not used. It will be added when Abiquo includes
-   // anstorage
-   // allocator
-
-   // public boolean getEnabled()
-   // {
-   // return target.getEnabled();
-   // }
 
    public String getName() {
       return target.getName();
@@ -314,24 +239,6 @@ public class StoragePool extends DomainWrapper<StoragePoolDto> {
    public long getTotalSizeInMb() {
       return target.getTotalSizeInMb();
    }
-
-   /**
-    * @deprecated This value is no longer used in Abiquo and will be removed in
-    *             future versions.
-    */
-   @Deprecated
-   public long getUsedSizeInMb() {
-      return target.getUsedSizeInMb();
-   }
-
-   // The enabled flag is still not used. It will be added when Abiquo includes
-   // anstorage
-   // allocator
-
-   // public void setEnabled(final boolean enabled)
-   // {
-   // target.setEnabled(enabled);
-   // }
 
    public void setName(final String name) {
       target.setName(name);

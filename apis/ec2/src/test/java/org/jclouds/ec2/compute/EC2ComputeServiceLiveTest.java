@@ -158,7 +158,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          // make sure our dummy group has no rules
          SecurityGroup secgroup = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(null,
                   "jclouds#" + group + "#" + instance.getRegion()));
-         assert secgroup.getIpPermissions().size() == 0 : secgroup;
+         assert secgroup.size() == 0 : secgroup;
 
          // try to run a script with the original keyPair
          runScriptWithCreds(group, first.getOperatingSystem(),

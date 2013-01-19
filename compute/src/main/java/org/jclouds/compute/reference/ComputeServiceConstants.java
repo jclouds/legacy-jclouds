@@ -17,10 +17,6 @@
  * under the License.
  */
 package org.jclouds.compute.reference;
-import static org.jclouds.compute.config.ComputeServiceProperties.BLACKLIST_NODES;
-import static org.jclouds.compute.config.ComputeServiceProperties.IMAGE_AUTHENTICATE_SUDO;
-import static org.jclouds.compute.config.ComputeServiceProperties.IMAGE_ID;
-import static org.jclouds.compute.config.ComputeServiceProperties.IMAGE_LOGIN_USER;
 import static org.jclouds.compute.config.ComputeServiceProperties.INIT_STATUS_INITIAL_PERIOD;
 import static org.jclouds.compute.config.ComputeServiceProperties.INIT_STATUS_MAX_PERIOD;
 import static org.jclouds.compute.config.ComputeServiceProperties.OS_VERSION_MAP_JSON;
@@ -54,67 +50,6 @@ public interface ComputeServiceConstants {
 
    public static final String COMPUTE_LOGGER = "jclouds.compute";
    public static final String LOCAL_PARTITION_GB_PATTERN = "disk_drive/%s/gb";
-   
-   /**
-    * @see ComputeServiceProperties#TIMEOUT_NODE_TERMINATED
-    */
-   @Deprecated
-   public static final String PROPERTY_TIMEOUT_NODE_TERMINATED = TIMEOUT_NODE_TERMINATED;
-   /**
-    * @see ComputeServiceProperties#TIMEOUT_NODE_RUNNING
-    */
-   @Deprecated
-   public static final String PROPERTY_TIMEOUT_NODE_RUNNING = TIMEOUT_NODE_RUNNING;
-   /**
-    * @see ComputeServiceProperties#TIMEOUT_NODE_SUSPENDED
-    */
-   @Deprecated
-   public static final String PROPERTY_TIMEOUT_NODE_SUSPENDED = TIMEOUT_NODE_SUSPENDED;
-   /**
-    * @see ComputeServiceProperties#TIMEOUT_SCRIPT_COMPLETE
-    */
-   @Deprecated
-   public static final String PROPERTY_TIMEOUT_SCRIPT_COMPLETE = TIMEOUT_SCRIPT_COMPLETE;
-   /**
-    * @see ComputeServiceProperties#TIMEOUT_PORT_OPEN
-    */
-   @Deprecated
-   public static final String PROPERTY_TIMEOUT_PORT_OPEN = TIMEOUT_PORT_OPEN;
-   /**
-    * @see ComputeServiceProperties#INIT_STATUS_INITIAL_PERIOD
-    */
-   @Deprecated
-   public static final String PROPERTY_INIT_STATUS_INITIAL_PERIOD = INIT_STATUS_INITIAL_PERIOD;
-   /**
-    * @see ComputeServiceProperties#INIT_STATUS_MAX_PERIOD
-    */
-   @Deprecated
-   public static final String PROPERTY_INIT_STATUS_MAX_PERIOD = INIT_STATUS_MAX_PERIOD;
-   /**
-    * @see ComputeServiceProperties#IMAGE_ID
-    */
-   @Deprecated
-   public static final String PROPERTY_IMAGE_ID = IMAGE_ID;
-   /**
-    * @see ComputeServiceProperties#IMAGE_LOGIN_USER
-    */
-   @Deprecated
-   public static final String PROPERTY_IMAGE_LOGIN_USER = IMAGE_LOGIN_USER;
-   /**
-    * @see ComputeServiceProperties#IMAGE_AUTHENTICATE_SUDO
-    */
-   @Deprecated
-   public static final String PROPERTY_IMAGE_AUTHENTICATE_SUDO = IMAGE_AUTHENTICATE_SUDO;
-   /**
-    * @see ComputeServiceProperties#BLACKLIST_NODES
-    */
-   @Deprecated
-   public static final String PROPERTY_BLACKLIST_NODES = BLACKLIST_NODES;
-   /**
-    * @see ComputeServiceProperties#OS_VERSION_MAP_JSON
-    */
-   @Deprecated
-   public static final String PROPERTY_OS_VERSION_MAP_JSON = OS_VERSION_MAP_JSON;
 
    @Singleton
    public static class NamingConvention {

@@ -87,14 +87,11 @@ public class Resource implements Comparable<Resource> {
       }
 
       public Resource build() {
-         return new Resource(this);
+         return new Resource(id, name, links);
       }
 
       public T fromResource(Resource in) {
-         return this
-               .id(in.getId())
-               .name(in.getName())
-               .links(in.getLinks());
+         return id(in.getId()).name(in.getName()).links(in.getLinks());
       }
    }
 
@@ -113,13 +110,6 @@ public class Resource implements Comparable<Resource> {
       this.id = checkNotNull(id);
       this.name = name;
       this.links = links == null ? ImmutableSet.<Link>of() : ImmutableSet.copyOf(links);
-   }
-   
-   @Deprecated
-   protected Resource(Builder<?> builder) {
-      this.id = checkNotNull(builder.id, "id");
-      this.name = builder.name;
-      this.links = ImmutableSet.copyOf(checkNotNull(builder.links, "links"));
    }
    
    /**

@@ -165,14 +165,6 @@ public class Reservation<T extends RunningInstance> extends ForwardingSet<T> imp
    public String getRegion() {
       return region;
    }
-
-   /**
-    * @see #getGroupNames()
-    */
-   @Deprecated
-   public Set<String> getGroupIds() {
-      return groupNames;
-   }
    
    /**
     * Names of the security groups.

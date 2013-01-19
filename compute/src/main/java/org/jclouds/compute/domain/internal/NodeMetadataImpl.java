@@ -99,15 +99,6 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
     * {@inheritDoc}
     */
    @Override
-   @Deprecated
-   public String getAdminPassword() {
-      return (credentials != null && credentials.shouldAuthenticateSudo()) ? credentials.getPassword() : null;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
    public LoginCredentials getCredentials() {
       return credentials;
    }
@@ -126,15 +117,6 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    @Override
    public Set<String> getPrivateAddresses() {
       return privateAddresses;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   @Deprecated
-   public org.jclouds.compute.domain.NodeState getState() {
-      return org.jclouds.compute.domain.NodeState.from(status);
    }
 
    /**

@@ -33,14 +33,12 @@ import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.reflect.Invocation;
-import com.google.common.reflect.Invokable;
-import org.jclouds.rest.Providers;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code BlobStoreUtils}
@@ -49,18 +47,6 @@ import com.google.common.collect.Iterables;
  */
 @Test(groups = "unit")
 public class BlobStoreUtilsTest {
-
-   @Test
-   public void testSupportedBlobStoreProviders() {
-      Iterable<String> providers = BlobStoreUtils.getSupportedProviders();
-      assert Iterables.contains(providers, "transient") : providers;
-   }
-
-   @Test
-   public void testSupportedProviders() {
-      Iterable<String> providers = Providers.getSupportedProviders();
-      assert Iterables.contains(providers, "transient") : providers;
-   }
 
    public void testCreateParentIfNeededAsyncNoPath() {
       AsyncBlobStore asyncBlobStore = createMock(AsyncBlobStore.class);

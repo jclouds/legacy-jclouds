@@ -567,16 +567,6 @@ public abstract class BaseVCloudDirectorApiLiveTest extends BaseContextLiveTest<
       return vAppTemplate;
    }
 
-   @Deprecated
-   public URI toAdminUri(Reference ref) {
-      return toAdminUri(ref.getHref());
-   }
-
-   @Deprecated
-   public URI toAdminUri(URI uri) {
-      return Reference.builder().href(uri).build().toAdminReference(endpoint).getHref();
-   }
-
    protected void assertTaskSucceeds(Task task) {
       assertTrue(retryTaskSuccess.apply(task), String.format(TASK_COMPLETE_TIMELY, task));
    }
