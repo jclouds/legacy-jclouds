@@ -19,6 +19,7 @@
 
 package org.jclouds.abiquo.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -116,6 +117,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#listVirtualDatacenters(VirtualDatacenterOptions)
     */
+   @Named("vdc:list")
    @GET
    @Path("/virtualdatacenters")
    @Consumes(VirtualDatacentersDto.BASE_MEDIA_TYPE)
@@ -125,6 +127,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#getVirtualDatacenter(Integer)
     */
+   @Named("vdc:get")
    @GET
    @Path("/virtualdatacenters/{virtualdatacenter}")
    @Fallback(NullOnNotFoundOr404.class)
@@ -137,6 +140,7 @@ public interface CloudAsyncApi {
     * @see CloudApi#createVirtualDatacenter(VirtualDatacenterDto, Datacenter,
     *      Enterprise)
     */
+   @Named("vdc:create")
    @POST
    @Path("/virtualdatacenters")
    @Consumes(VirtualDatacenterDto.BASE_MEDIA_TYPE)
@@ -150,6 +154,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#updateVirtualDatacenter(VirtualDatacenterDto)
     */
+   @Named("vdc:update")
    @PUT
    @Consumes(VirtualDatacenterDto.BASE_MEDIA_TYPE)
    @Produces(VirtualDatacenterDto.BASE_MEDIA_TYPE)
@@ -160,6 +165,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#deleteVirtualDatacenter(VirtualDatacenterDto)
     */
+   @Named("vdc:delete")
    @DELETE
    ListenableFuture<Void> deleteVirtualDatacenter(
          @EndpointLink("edit") @BinderParam(BindToPath.class) VirtualDatacenterDto virtualDatacenter);
@@ -167,6 +173,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#listAvailableTemplates(VirtualDatacenterDto)
     */
+   @Named("vdc:listtemplates")
    @GET
    @Consumes(VirtualMachineTemplatesDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -177,6 +184,7 @@ public interface CloudAsyncApi {
     * @see CloudApi#listAvailableTemplates(VirtualDatacenterDto,
     *      VirtualMachineTemplateOptions)
     */
+   @Named("vdc:listtemplates")
    @GET
    @Consumes(VirtualMachineTemplatesDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -187,6 +195,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#listStorageTiers(VirtualDatacenterDto)
     */
+   @Named("vdc:listtiers")
    @EnterpriseEdition
    @GET
    @Consumes(TiersDto.BASE_MEDIA_TYPE)
@@ -197,6 +206,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#getStorageTier(VirtualDatacenterDto, Integer)
     */
+   @Named("vdc:gettier")
    @EnterpriseEdition
    @GET
    @Fallback(NullOnNotFoundOr404.class)
@@ -211,6 +221,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#listAvailablePublicIps(VirtualDatacenterDto, IpOptions)
     */
+   @Named("vdc:listavailablepublicips")
    @GET
    @Consumes(PublicIpsDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -221,6 +232,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#listPurchasedPublicIps(VirtualDatacenterDto, IpOptions)
     */
+   @Named("vdc:listpurchasedpublicips")
    @GET
    @Consumes(PublicIpsDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -231,6 +243,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#purchasePublicIp(PublicIpDto)
     */
+   @Named("vdc:purchasepublicip")
    @PUT
    @Consumes(PublicIpDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -240,6 +253,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#releasePublicIp(PublicIpDto)
     */
+   @Named("vdc:releasepublicip")
    @PUT
    @Consumes(PublicIpDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -251,6 +265,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#listPrivateNetworks(VirtualDatacenter)
     */
+   @Named("privatenetwork:list")
    @GET
    @Consumes(VLANNetworksDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -260,6 +275,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#getPrivateNetwork(VirtualDatacenterDto, Integer)
     */
+   @Named("privatenetwork:get")
    @GET
    @Fallback(NullOnNotFoundOr404.class)
    @Consumes(VLANNetworkDto.BASE_MEDIA_TYPE)
@@ -271,6 +287,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#createPrivateNetwork(VirtualDatacenterDto, VLANNetworkDto)
     */
+   @Named("privatenetwork:create")
    @POST
    @Consumes(VLANNetworkDto.BASE_MEDIA_TYPE)
    @Produces(VLANNetworkDto.BASE_MEDIA_TYPE)
@@ -282,6 +299,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#updatePrivateNetwork(VLANNetworkDto)
     */
+   @Named("privatenetwork:update")
    @PUT
    @Consumes(VLANNetworkDto.BASE_MEDIA_TYPE)
    @Produces(VLANNetworkDto.BASE_MEDIA_TYPE)
@@ -292,6 +310,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#deletePrivateNetwork(VLANNetworkDto)
     */
+   @Named("privatenetwork:delete")
    @DELETE
    ListenableFuture<Void> deletePrivateNetwork(
          @EndpointLink("edit") @BinderParam(BindToPath.class) VLANNetworkDto privateNetwork);
@@ -299,6 +318,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#getDefaultNetwork(VirtualDatacenterDto)
     */
+   @Named("vdc:getdefaultnetwork")
    @GET
    @Consumes(VLANNetworkDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -308,6 +328,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#setDefaultNetwork(VirtualDatacenterDto, VLANNetworkDto)
     */
+   @Named("vdc:setdefaultnetwork")
    @PUT
    @Produces(LinksDto.BASE_MEDIA_TYPE)
    ListenableFuture<Void> setDefaultNetwork(
@@ -319,6 +340,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#listPrivateNetworkIps(VLANNetworkDto)
     */
+   @Named("privatenetwork:listips")
    @GET
    @Consumes(PrivateIpsDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -328,6 +350,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#listPrivateNetworkIps(VLANNetworkDto, IpOptions)
     */
+   @Named("privatenetwork:listips")
    @GET
    @Consumes(PrivateIpsDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -337,6 +360,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#getPrivateNetworkIp(VLANNetworkDto, Integer)
     */
+   @Named("privatenetwork:getip")
    @GET
    @Consumes(PrivateIpDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -349,6 +373,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#listVirtualAppliances(VirtualDatacenterDto)
     */
+   @Named("vapp:list")
    @GET
    @Consumes(VirtualAppliancesDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -358,6 +383,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#getVirtualAppliance(VirtualDatacenterDto, Integer)
     */
+   @Named("vapp:get")
    @GET
    @Fallback(NullOnNotFoundOr404.class)
    @Consumes(VirtualApplianceDto.BASE_MEDIA_TYPE)
@@ -369,6 +395,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#getVirtualApplianceState(VirtualApplianceDto)
     */
+   @Named("vapp:getstate")
    @GET
    @Consumes(VirtualApplianceStateDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -379,6 +406,7 @@ public interface CloudAsyncApi {
     * @see CloudApi#createVirtualAppliance(VirtualDatacenterDto,
     *      VirtualApplianceDto)
     */
+   @Named("vapp:create")
    @POST
    @Consumes(VirtualApplianceDto.BASE_MEDIA_TYPE)
    @Produces(VirtualApplianceDto.BASE_MEDIA_TYPE)
@@ -390,6 +418,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#updateVirtualAppliance(VirtualApplianceDto)
     */
+   @Named("vapp:update")
    @PUT
    @Consumes(VirtualApplianceDto.BASE_MEDIA_TYPE)
    @Produces(VirtualApplianceDto.BASE_MEDIA_TYPE)
@@ -400,6 +429,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#deleteVirtualAppliance(VirtualApplianceDto)
     */
+   @Named("vapp:delete")
    @DELETE
    ListenableFuture<Void> deleteVirtualAppliance(
          @EndpointLink("edit") @BinderParam(BindToPath.class) VirtualApplianceDto virtualAppliance);
@@ -408,6 +438,7 @@ public interface CloudAsyncApi {
     * @see CloudApi#deleteVirtualAppliance(VirtualApplianceDto,
     *      VirtualApplianceOptions)
     */
+   @Named("vapp:delete")
    @DELETE
    ListenableFuture<Void> deleteVirtualAppliance(
          @EndpointLink("edit") @BinderParam(BindToPath.class) VirtualApplianceDto virtualAppliance,
@@ -417,6 +448,7 @@ public interface CloudAsyncApi {
     * @see CloudApi#deployVirtualAppliance(VirtualApplianceDto,
     *      VirtualMachineTaskDto)
     */
+   @Named("vapp:deploy")
    @POST
    @Consumes(AcceptedRequestDto.BASE_MEDIA_TYPE)
    @Produces(VirtualMachineTaskDto.BASE_MEDIA_TYPE)
@@ -429,6 +461,7 @@ public interface CloudAsyncApi {
     * @see CloudApi#undeployVirtualAppliance(VirtualApplianceDto,
     *      VirtualMachineTaskDto)
     */
+   @Named("vapp:undeploy")
    @POST
    @Consumes(AcceptedRequestDto.BASE_MEDIA_TYPE)
    @Produces(VirtualMachineTaskDto.BASE_MEDIA_TYPE)
@@ -440,6 +473,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#getVirtualAppliancePrice(VirtualApplianceDto)
     */
+   @Named("vapp:gerprice")
    @GET
    @Consumes(MediaType.TEXT_PLAIN)
    @ResponseParser(ReturnStringIf2xx.class)
@@ -451,6 +485,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#listVirtualMachines(VirtualApplianceDto)
     */
+   @Named("vm:list")
    @GET
    @Consumes(VirtualMachinesWithNodeExtendedDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -461,6 +496,7 @@ public interface CloudAsyncApi {
     * @see CloudApi#listVirtualMachines(VirtualApplianceDto,
     *      VirtualMachineOptions)
     */
+   @Named("vm:list")
    @GET
    @Consumes(VirtualMachinesWithNodeExtendedDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -471,6 +507,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#getVirtualMachine(VirtualApplianceDto, Integer)
     */
+   @Named("vm:get")
    @GET
    @Fallback(NullOnNotFoundOr404.class)
    @Consumes(VirtualMachineWithNodeExtendedDto.BASE_MEDIA_TYPE)
@@ -483,6 +520,7 @@ public interface CloudAsyncApi {
     * @see CloudApi#createVirtualMachine(VirtualApplianceDto,
     *      VirtualMachineWithNodeExtendedDto)
     */
+   @Named("vm:create")
    @POST
    @Consumes(VirtualMachineWithNodeExtendedDto.BASE_MEDIA_TYPE)
    @Produces(VirtualMachineWithNodeExtendedDto.BASE_MEDIA_TYPE)
@@ -494,6 +532,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#deleteVirtualMachine(VirtualMachineDto)
     */
+   @Named("vm:delete")
    @DELETE
    ListenableFuture<Void> deleteVirtualMachine(
          @EndpointLink("edit") @BinderParam(BindToPath.class) VirtualMachineDto virtualMachine);
@@ -501,6 +540,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#updateVirtualMachine(VirtualMachineWithNodeExtendedDto)
     */
+   @Named("vm:update")
    @PUT
    @ResponseParser(ReturnTaskReferenceOrNull.class)
    @Consumes(AcceptedRequestDto.BASE_MEDIA_TYPE)
@@ -512,6 +552,7 @@ public interface CloudAsyncApi {
     * @see CloudApi#updateVirtualMachine(VirtualMachineDto,
     *      VirtualMachineOptions)
     */
+   @Named("vm:update")
    @PUT
    @ResponseParser(ReturnTaskReferenceOrNull.class)
    @Consumes(AcceptedRequestDto.BASE_MEDIA_TYPE)
@@ -524,6 +565,7 @@ public interface CloudAsyncApi {
     * @see CloudApi#changeVirtualMachineState(VirtualMachineDto,
     *      VirtualMachineStateDto)
     */
+   @Named("vm:changestate")
    @PUT
    @Consumes(AcceptedRequestDto.BASE_MEDIA_TYPE)
    @Produces(VirtualMachineStateDto.BASE_MEDIA_TYPE)
@@ -535,6 +577,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#getVirtualMachineState(VirtualMachineDto)
     */
+   @Named("vm:getstate")
    @GET
    @Consumes(VirtualMachineStateDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -544,6 +587,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#listNetworkConfigurations(VirtualMachineDto)
     */
+   @Named("vm:listnetworkconfigurations")
    @GET
    @Consumes(VMNetworkConfigurationsDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -554,6 +598,7 @@ public interface CloudAsyncApi {
     * @see CloudApi#setGatewayNetwork(VirtualMachineDto,
     *      VMNetworkConfigurationDto)
     */
+   @Named("vm:setgateway")
    @PUT
    @Produces(LinksDto.BASE_MEDIA_TYPE)
    ListenableFuture<Void> setGatewayNetwork(
@@ -563,6 +608,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#rebootVirtualMachine(VirtualMachineDto)
     */
+   @Named("vm:reboot")
    @POST
    @Consumes(AcceptedRequestDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -574,6 +620,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#getVirtualMachineTemplate(VirtualMachineTemplateDto)
     */
+   @Named("vm:gettemplate")
    @GET
    @Consumes(VirtualMachineTemplateDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -583,6 +630,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#listAttachedVolumes(VirtualMachineDto)
     */
+   @Named("vm:listvolumes")
    @GET
    @Consumes(VolumesManagementDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -592,6 +640,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#detachAllVolumes(VirtualMachineDto)
     */
+   @Named("vm:detachvolumes")
    @DELETE
    @ResponseParser(ReturnTaskReferenceOrNull.class)
    @Consumes(AcceptedRequestDto.BASE_MEDIA_TYPE)
@@ -602,6 +651,7 @@ public interface CloudAsyncApi {
     * @see CloudApi#replaceVolumes(VirtualMachineDto, VirtualMachineOptions,
     *      VolumeManagementDto...)
     */
+   @Named("vm:changevolumes")
    @PUT
    @ResponseParser(ReturnTaskReferenceOrNull.class)
    @Consumes(AcceptedRequestDto.BASE_MEDIA_TYPE)
@@ -613,6 +663,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#listAttachedHardDisks(VirtualMachineDto)
     */
+   @Named("vm:listharddisks")
    @GET
    @Consumes(DisksManagementDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -622,6 +673,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#detachAllHardDisks(VirtualMachineDto)
     */
+   @Named("vm:detachharddisks")
    @DELETE
    @ResponseParser(ReturnTaskReferenceOrNull.class)
    @Consumes(AcceptedRequestDto.BASE_MEDIA_TYPE)
@@ -631,6 +683,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#replaceHardDisks(VirtualMachineDto, DiskManagementDto...)
     */
+   @Named("vm:changeharddisks")
    @PUT
    @ResponseParser(ReturnTaskReferenceOrNull.class)
    @Consumes(AcceptedRequestDto.BASE_MEDIA_TYPE)
@@ -643,6 +696,7 @@ public interface CloudAsyncApi {
     * @see CloudApi#deployVirtualMachine(VirtualMachineDto,
     *      VirtualMachineTaskDto)
     */
+   @Named("vm:deploy")
    @POST
    @Consumes(AcceptedRequestDto.BASE_MEDIA_TYPE)
    @Produces(VirtualMachineTaskDto.BASE_MEDIA_TYPE)
@@ -655,6 +709,7 @@ public interface CloudAsyncApi {
     * @see CloudApi#undeployVirtualMachine(VirtualMachineDto,
     *      VirtualMachineTaskDto)
     */
+   @Named("vm:undeploy")
    @POST
    @Consumes(AcceptedRequestDto.BASE_MEDIA_TYPE)
    @Produces(VirtualMachineTaskDto.BASE_MEDIA_TYPE)
@@ -668,6 +723,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#listHardDisks(VirtualDatacenterDto)
     */
+   @Named("harddisk:list")
    @GET
    @Consumes(DisksManagementDto.BASE_MEDIA_TYPE)
    @JAXBResponseParser
@@ -677,6 +733,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#getHardDisk(VirtualDatacenterDto, Integer)
     */
+   @Named("harddisk:get")
    @GET
    @Fallback(NullOnNotFoundOr404.class)
    @Consumes(DiskManagementDto.BASE_MEDIA_TYPE)
@@ -688,6 +745,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#createHardDisk(VirtualDatacenterDto, DiskManagementDto)
     */
+   @Named("harddisk:create")
    @POST
    @Consumes(DiskManagementDto.BASE_MEDIA_TYPE)
    @Produces(DiskManagementDto.BASE_MEDIA_TYPE)
@@ -699,6 +757,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#deleteHardDisk(DiskManagementDto)
     */
+   @Named("harddisk:delete")
    @DELETE
    ListenableFuture<Void> deleteHardDisk(@EndpointLink("edit") @BinderParam(BindToPath.class) DiskManagementDto hardDisk);
 
@@ -707,6 +766,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#listVolumes(VirtualDatacenterDto)
     */
+   @Named("volume:list")
    @EnterpriseEdition
    @GET
    @Consumes(VolumesManagementDto.BASE_MEDIA_TYPE)
@@ -717,6 +777,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#listVolumes(VirtualDatacenterDto, VolumeOptions)
     */
+   @Named("volume:list")
    @EnterpriseEdition
    @GET
    @Consumes(VolumesManagementDto.BASE_MEDIA_TYPE)
@@ -728,6 +789,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#getVolume(VirtualDatacenterDto, Integer)
     */
+   @Named("volume:get")
    @EnterpriseEdition
    @GET
    @Fallback(NullOnNotFoundOr404.class)
@@ -740,6 +802,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#createVolume(VirtualDatacenterDto, VolumeManagementDto)
     */
+   @Named("volume:create")
    @EnterpriseEdition
    @POST
    @Consumes(VolumeManagementDto.BASE_MEDIA_TYPE)
@@ -752,6 +815,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#updateVolume(VolumeManagementDto)
     */
+   @Named("volume:update")
    @EnterpriseEdition
    @PUT
    @ResponseParser(ReturnTaskReferenceOrNull.class)
@@ -763,6 +827,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#updateVolume(VolumeManagementDto)
     */
+   @Named("volume:delete")
    @EnterpriseEdition
    @DELETE
    ListenableFuture<Void> deleteVolume(@EndpointLink("edit") @BinderParam(BindToPath.class) VolumeManagementDto volume);
@@ -770,6 +835,7 @@ public interface CloudAsyncApi {
    /**
     * @see CloudApi#moveVolume(VolumeManagementDto, VirtualDatacenterDto)
     */
+   @Named("volume:move")
    @EnterpriseEdition
    @POST
    @Fallback(MovedVolume.class)

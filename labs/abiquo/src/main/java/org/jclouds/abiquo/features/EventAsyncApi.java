@@ -19,6 +19,7 @@
 
 package org.jclouds.abiquo.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -46,6 +47,7 @@ public interface EventAsyncApi {
    /**
     * @see EventApi#listEvents()
     */
+   @Named("event:list")
    @GET
    @Path("/events")
    @Consumes(EventsDto.BASE_MEDIA_TYPE)
@@ -55,6 +57,7 @@ public interface EventAsyncApi {
    /**
     * @see EventApi#listEvents()
     */
+   @Named("event:list")
    @GET
    @Path("/events")
    @Consumes(EventsDto.BASE_MEDIA_TYPE)
