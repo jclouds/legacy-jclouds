@@ -22,20 +22,25 @@ import static org.jclouds.rackspace.cloudloadbalancers.predicates.LoadBalancerPr
 import static org.jclouds.rackspace.cloudloadbalancers.predicates.LoadBalancerPredicates.awaitDeleted;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerAttributes;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerRequest;
+import org.jclouds.rackspace.cloudloadbalancers.domain.Metadata;
 import org.jclouds.rackspace.cloudloadbalancers.domain.NodeRequest;
 import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP.Type;
 import org.jclouds.rackspace.cloudloadbalancers.internal.BaseCloudLoadBalancersApiLiveTest;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
@@ -146,6 +151,39 @@ public class LoadBalancerApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
          }
       }
    }
+   
+   @Test(dependsOnMethods = "testListLoadBalancers")
+   public void testLoadBalancerMetadata() throws Exception {
+      for (LoadBalancer lb: lbs) {
+         Map<String, String> metadataMap = ImmutableMap.<String, String> of(
+               "key1", "value1",
+               "key2", "value2",
+               "key3", "value3");
+         
+         Metadata metadata = clbApi.getLoadBalancerApiForZone(lb.getRegion()).createMetadata(lb.getId(), metadataMap);
+         assertEquals(metadata, getExpectedMetadata());
+         assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(lb.getRegion())).apply(lb));
+
+         metadata = clbApi.getLoadBalancerApiForZone(lb.getRegion()).getMetadata(lb.getId());
+         assertEquals(metadata, getExpectedMetadata());
+
+         assertTrue(clbApi.getLoadBalancerApiForZone(lb.getRegion()).updateMetadatum(lb.getId(), metadata.getId("key1"), "key1-updated"));
+         assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(lb.getRegion())).apply(lb));
+         metadata = clbApi.getLoadBalancerApiForZone(lb.getRegion()).getMetadata(lb.getId());
+         assertEquals(metadata.get("key1"), "key1-updated");
+
+         assertTrue(clbApi.getLoadBalancerApiForZone(lb.getRegion()).removeMetadatum(lb.getId(), metadata.getId("key1")));
+         assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(lb.getRegion())).apply(lb));
+         metadata = clbApi.getLoadBalancerApiForZone(lb.getRegion()).getMetadata(lb.getId());
+         assertNull(metadata.get("key1"));
+
+         assertTrue(clbApi.getLoadBalancerApiForZone(lb.getRegion()).removeMetadata(lb.getId(), 
+               ImmutableList.<Integer> of(metadata.getId("key2"), metadata.getId("key3"))));
+         assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(lb.getRegion())).apply(lb));
+         metadata = clbApi.getLoadBalancerApiForZone(lb.getRegion()).getMetadata(lb.getId());
+         assertEquals(metadata.size(), 0);
+      }
+   }
 
    private void checkLBInRegion(String region, LoadBalancer lb, String name) {
       assertEquals(lb.getRegion(), region);
@@ -155,4 +193,12 @@ public class LoadBalancerApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
       assertEquals(Iterables.get(lb.getVirtualIPs(), 0).getType(), Type.PUBLIC);
    }
 
+   private Metadata getExpectedMetadata() {
+      Metadata metadata = new Metadata();
+      metadata.put("key1", "value1");
+      metadata.put("key2", "value2");
+      metadata.put("key3", "value3");
+
+      return metadata;
+   }
 }

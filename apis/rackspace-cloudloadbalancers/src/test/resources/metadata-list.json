@@ -1,0 +1,19 @@
+{
+    "metadata": [
+        {
+            "id": "1",
+            "key": "color",
+            "value": "red"
+        },
+        {
+            "id": "2",
+            "key": "label",
+            "value": "web-load-balancer"
+        },
+        {
+            "id": "3",
+            "key": "os",
+            "value": "ubuntu"
+        }
+    ]
+}

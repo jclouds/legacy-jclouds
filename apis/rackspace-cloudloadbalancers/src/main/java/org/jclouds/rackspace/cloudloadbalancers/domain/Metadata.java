@@ -18,94 +18,53 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.domain;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
+import java.util.Map;
+import java.util.Set;
 
+import com.google.common.collect.ForwardingMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
+ * Key and value must be 256 characters or less. All UTF-8 characters are valid.
+ * </p>
+ * Use the *Id methods when you need to get a metadata id for updating and removal.
+ * 
  * @author Everett Toews
  */
-public class Metadata {
-   private int id;
-   private String key;
-   private String value;
+public class Metadata extends ForwardingMap<String, String> {
+   private Map<String, String> metadata = Maps.newHashMap();
+   private Map<String, Integer> keyToId = Maps.newHashMap();
    
-   private Metadata(Integer id, String key, String value) {
-      this.id = id;
-      this.key = key;
-      this.value = value;
+   public Metadata(Metadata metadata) {
+      super();
+      this.metadata.putAll(metadata);
    }
    
-   public int getId() {
-      return id;
-   }
-   
-   public String getKey() {
-      return key;
-   }
-   
-   public String getValue() {
-      return value;
+   public Metadata() {
+      super();
    }
 
    @Override
-   public int hashCode() {
-      return Objects.hashCode(id);
+   protected Map<String, String> delegate() {
+      return metadata;
+   }
+   
+   public int getId(String key) {
+      return keyToId.get(key);
+   }
+   
+   public Integer putId(String key, int id) {
+      return keyToId.put(key, id);
    }
 
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj) return true;
-      if (obj == null || getClass() != obj.getClass()) return false;
-      Metadata that = Metadata.class.cast(obj);
+   public Iterable<Integer> getIds() {
+      Set<Integer> ids = Sets.newHashSet();
       
-      return Objects.equal(this.id, that.id);
-   }
-   
-   protected ToStringHelper string() {
-      return Objects.toStringHelper(this).omitNullValues()
-            .add("id", id).add("key", key).add("value", value);
-   }
-   
-   @Override
-   public String toString() {
-      return string().toString();
-   }
-
-   public static class Builder {
-      private Integer id;
-      private String key;
-      private String value;
-
-      public Builder id(Integer id) {
-         this.id = id;
-         return this;
+      for (String key: keyToId.keySet()) {
+         ids.add(keyToId.get(key));
       }
-
-      public Builder key(String key) {
-         this.key = key;
-         return this;
-      }
-
-      public Builder value(String value) {
-         this.value = value;
-         return this;
-      }
-
-      public Metadata build() {
-         return new Metadata(id, key, value);
-      }
-
-      public Builder from(Metadata in) {
-         return id(in.getId()).key(in.getKey()).value(in.getValue());
-      }
-   }
-
-   public static Builder builder() {
-      return new Builder();
-   }
-
-   public Builder toBuilder() {
-      return new Builder().from(this);
+      
+      return ids;
    }
 }
