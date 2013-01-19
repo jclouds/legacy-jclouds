@@ -63,7 +63,7 @@ public class BindSupportedDevicesLinkToPathTest {
       Invokable<?, ?> withEndpointLink = Invokable.from(InfrastructureAsyncApi.class.getMethod(
             "listSupportedStorageDevices", DatacenterDto.class));
 
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder(InfrastructureAsyncApi.class)
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
             .invocation(Invocation.create(withEndpointLink, ImmutableList.<Object> of(datacenter)))
             .method(HttpMethod.GET)
             .endpoint(URI.create("http://foo/bar")).build();
@@ -80,7 +80,7 @@ public class BindSupportedDevicesLinkToPathTest {
       Invokable<?, ?> withEndpointLink = Invokable.from(InfrastructureAsyncApi.class.getMethod(
             "listSupportedStorageDevices", DatacenterDto.class));
 
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder(InfrastructureAsyncApi.class)
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
             .invocation(Invocation.create(withEndpointLink, ImmutableList.<Object> of(datacenter)))
             .method(HttpMethod.GET)
             .endpoint(URI.create("http://foo/bar")).build();

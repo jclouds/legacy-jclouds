@@ -43,11 +43,11 @@ import com.google.common.reflect.Invokable;
 @Test(testName = "FalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExistsTest")
 public class FalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExistsTest {
 
-   GeneratedHttpRequest<S3Client> putBucket;
+   GeneratedHttpRequest putBucket;
 
    @BeforeClass
    void setUp() throws SecurityException, NoSuchMethodException {
-      putBucket = GeneratedHttpRequest.builder(S3Client.class)
+      putBucket = GeneratedHttpRequest.builder()
             .method("PUT")
             .endpoint("https://adriancole-blobstore113.s3.amazonaws.com/")
             .invocation(

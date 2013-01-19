@@ -36,10 +36,10 @@ import com.google.inject.TypeLiteral;
 @Singleton
 public class AsyncHttpApiProvider<A> implements Provider<A> {
    private final Class<? super A> asyncApiType;
-   private final DelegatesToInvocationFunction<A, A, InvokeHttpMethod<A, A>> httpInvoker;
+   private final DelegatesToInvocationFunction<A, InvokeHttpMethod> httpInvoker;
 
    @Inject
-   private AsyncHttpApiProvider(DelegatesToInvocationFunction<A, A, InvokeHttpMethod<A, A>> httpInvoker,
+   private AsyncHttpApiProvider(DelegatesToInvocationFunction<A, InvokeHttpMethod> httpInvoker,
          TypeLiteral<A> asyncApiType) {
       this.httpInvoker = httpInvoker;
       this.asyncApiType = asyncApiType.getRawType();

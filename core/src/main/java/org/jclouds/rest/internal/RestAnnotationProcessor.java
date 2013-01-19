@@ -78,8 +78,6 @@ import org.jclouds.io.payloads.Part.PartOptions;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 import org.jclouds.reflect.Invocation;
-import com.google.common.reflect.Invokable;
-import com.google.common.reflect.Parameter;
 import org.jclouds.rest.Binder;
 import org.jclouds.rest.InputParamValidator;
 import org.jclouds.rest.annotations.ApiVersion;
@@ -122,7 +120,8 @@ import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.primitives.Chars;
-import com.google.common.reflect.TypeToken;
+import com.google.common.reflect.Invokable;
+import com.google.common.reflect.Parameter;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -130,11 +129,9 @@ import com.google.inject.TypeLiteral;
 
 /**
  * 
- * @author adriancole
- * 
- * @param <A>
+ * @author Adrian Cole
  */
-public class RestAnnotationProcessor<A> implements Function<Invocation, GeneratedHttpRequest<A>> {
+public class RestAnnotationProcessor implements Function<Invocation, GeneratedHttpRequest> {
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -152,17 +149,13 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
    private final String apiVersion;
    private final String buildVersion;
    private final InputParamValidator inputParamValidator;
-   private final GetAcceptHeaders<A> getAcceptHeaders;
-   private final TypeToken<A> enclosingType;
-   private final TypeToken<?> callerEnclosingType;
+   private final GetAcceptHeaders getAcceptHeaders;
    private final Invocation caller;
 
-   @SuppressWarnings("unchecked")
    @Inject
    private RestAnnotationProcessor(Injector injector, @ApiVersion String apiVersion, @BuildVersion String buildVersion,
          HttpUtils utils, ContentMetadataCodec contentMetadataCodec, InputParamValidator inputParamValidator,
-         GetAcceptHeaders<A> getAcceptHeaders, TypeLiteral<A> enclosingType,
-         @Nullable @Named("caller") TypeToken<?> callerEnclosingType, @Nullable @Named("caller") Invocation caller) {
+         GetAcceptHeaders getAcceptHeaders, @Nullable @Named("caller") Invocation caller) {
       this.injector = injector;
       this.utils = utils;
       this.contentMetadataCodec = contentMetadataCodec;
@@ -170,22 +163,20 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
       this.buildVersion = buildVersion;
       this.inputParamValidator = inputParamValidator;
       this.getAcceptHeaders = getAcceptHeaders;
-      this.enclosingType = (TypeToken<A>) TypeToken.of(enclosingType.getType());
-      this.callerEnclosingType = callerEnclosingType;
       this.caller = caller;
    }
 
    /**
-    * Note this is dangerous as it cannot pass the inheriting class! Using this when subclassing interfaces may result
-    * in lost data.
+    * Note this is dangerous as it cannot pass the inheriting class! Using this
+    * when subclassing interfaces may result in lost data.
     */
    @Deprecated
-   public GeneratedHttpRequest<A> createRequest(Invokable<?, ?> invokable, List<Object> args) {
+   public GeneratedHttpRequest createRequest(Invokable<?, ?> invokable, List<Object> args) {
       return apply(Invocation.create(invokable, args));
    }
 
    @Override
-   public GeneratedHttpRequest<A> apply(Invocation invocation) {
+   public GeneratedHttpRequest apply(Invocation invocation) {
       checkNotNull(invocation, "invocation");
       inputParamValidator.validateMethodParametersOrThrow(invocation);
 
@@ -196,7 +187,7 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
          if (endpoint.isPresent())
             logger.trace("using endpoint %s from invocation.getArgs() for %s", endpoint, invocation);
       } else if (caller != null) {
-         endpoint = getEndpointFor(callerEnclosingType, caller);
+         endpoint = getEndpointFor(caller);
          if (endpoint.isPresent())
             logger.trace("using endpoint %s from caller %s for %s", endpoint, caller, invocation);
          else
@@ -207,8 +198,8 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
 
       if (!endpoint.isPresent())
          throw new NoSuchElementException(format("no endpoint found for %s", invocation));
-      GeneratedHttpRequest.Builder<A> requestBuilder = GeneratedHttpRequest.builder(enclosingType)
-            .invocation(invocation).callerEnclosingType(callerEnclosingType).caller(caller);
+      GeneratedHttpRequest.Builder requestBuilder = GeneratedHttpRequest.builder().invocation(invocation)
+            .caller(caller);
       if (r != null) {
          requestBuilder.fromHttpRequest(r);
       } else {
@@ -221,14 +212,14 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
 
       tokenValues.put(Constants.PROPERTY_API_VERSION, apiVersion);
       tokenValues.put(Constants.PROPERTY_BUILD_VERSION, buildVersion);
-
-      UriBuilder uriBuilder = uriBuilder(endpoint.get().toString()); // URI template in rfc6570 form
+      // URI template in rfc6570 form
+      UriBuilder uriBuilder = uriBuilder(endpoint.get().toString());
 
       overridePathEncoding(uriBuilder, invocation);
 
       if (caller != null)
-         tokenValues.putAll(addPathAndGetTokens(callerEnclosingType, caller, uriBuilder));
-      tokenValues.putAll(addPathAndGetTokens(enclosingType, invocation, uriBuilder));
+         tokenValues.putAll(addPathAndGetTokens(caller, uriBuilder));
+      tokenValues.putAll(addPathAndGetTokens(invocation, uriBuilder));
 
       Multimap<String, Object> formParams = addFormParams(tokenValues, invocation);
       Multimap<String, Object> queryParams = addQueryParams(tokenValues, invocation);
@@ -298,7 +289,7 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
       if (payload != null) {
          requestBuilder.payload(payload);
       }
-      GeneratedHttpRequest<A> request = requestBuilder.build();
+      GeneratedHttpRequest request = requestBuilder.build();
 
       org.jclouds.rest.MapBinder mapBinder = getMapPayloadBinderOrNull(invocation);
       if (mapBinder != null) {
@@ -319,7 +310,7 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
       return request;
    }
 
-   private static <A> A findOrNull(Iterable<Object> args, Class<A> clazz) {
+   private static <T> T findOrNull(Iterable<Object> args, Class<T> clazz) {
       return clazz.cast(tryFind(args, instanceOf(clazz)).orNull());
    }
 
@@ -332,9 +323,9 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
    }
 
    private void overridePathEncoding(UriBuilder uriBuilder, Invocation invocation) {
-      if (enclosingType.getRawType().isAnnotationPresent(SkipEncoding.class)) {
-         uriBuilder
-               .skipPathEncoding(Chars.asList(enclosingType.getRawType().getAnnotation(SkipEncoding.class).value()));
+      if (invocation.getInvokable().getOwnerType().getRawType().isAnnotationPresent(SkipEncoding.class)) {
+         uriBuilder.skipPathEncoding(Chars.asList(invocation.getInvokable().getOwnerType().getRawType()
+               .getAnnotation(SkipEncoding.class).value()));
       }
       if (invocation.getInvokable().isAnnotationPresent(SkipEncoding.class)) {
          uriBuilder.skipPathEncoding(Chars.asList(invocation.getInvokable().getAnnotation(SkipEncoding.class).value()));
@@ -353,7 +344,7 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
    }
 
    protected Optional<URI> findEndpoint(Invocation invocation) {
-      Optional<URI> endpoint = getEndpointFor(enclosingType, invocation);
+      Optional<URI> endpoint = getEndpointFor(invocation);
       if (endpoint.isPresent())
          logger.trace("using endpoint %s for %s", endpoint, invocation);
       if (!endpoint.isPresent()) {
@@ -366,10 +357,9 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
       return endpoint;
    }
 
-   private Multimap<String, Object> addPathAndGetTokens(TypeToken<?> enclosingType, Invocation invocation,
-         UriBuilder uriBuilder) {
-      if (enclosingType.getRawType().isAnnotationPresent(Path.class))
-         uriBuilder.appendPath(enclosingType.getRawType().getAnnotation(Path.class).value());
+   private Multimap<String, Object> addPathAndGetTokens(Invocation invocation, UriBuilder uriBuilder) {
+      if (invocation.getInvokable().getOwnerType().getRawType().isAnnotationPresent(Path.class))
+         uriBuilder.appendPath(invocation.getInvokable().getOwnerType().getRawType().getAnnotation(Path.class).value());
       if (invocation.getInvokable().isAnnotationPresent(Path.class))
          uriBuilder.appendPath(invocation.getInvokable().getAnnotation(Path.class).value());
       return getPathParamKeyValues(invocation);
@@ -377,8 +367,8 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
 
    private Multimap<String, Object> addFormParams(Multimap<String, ?> tokenValues, Invocation invocation) {
       Multimap<String, Object> formMap = LinkedListMultimap.create();
-      if (enclosingType.getRawType().isAnnotationPresent(FormParams.class)) {
-         FormParams form = enclosingType.getRawType().getAnnotation(FormParams.class);
+      if (invocation.getInvokable().getOwnerType().getRawType().isAnnotationPresent(FormParams.class)) {
+         FormParams form = invocation.getInvokable().getOwnerType().getRawType().getAnnotation(FormParams.class);
          addForm(formMap, form, tokenValues);
       }
 
@@ -395,8 +385,8 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
 
    private Multimap<String, Object> addQueryParams(Multimap<String, ?> tokenValues, Invocation invocation) {
       Multimap<String, Object> queryMap = LinkedListMultimap.create();
-      if (enclosingType.getRawType().isAnnotationPresent(QueryParams.class)) {
-         QueryParams query = enclosingType.getRawType().getAnnotation(QueryParams.class);
+      if (invocation.getInvokable().getOwnerType().getRawType().isAnnotationPresent(QueryParams.class)) {
+         QueryParams query = invocation.getInvokable().getOwnerType().getRawType().getAnnotation(QueryParams.class);
          addQuery(queryMap, query, tokenValues);
       }
 
@@ -446,12 +436,13 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
 
    private List<HttpRequestFilter> getFiltersIfAnnotated(Invocation invocation) {
       List<HttpRequestFilter> filters = newArrayList();
-      if (enclosingType.getRawType().isAnnotationPresent(RequestFilters.class)) {
-         for (Class<? extends HttpRequestFilter> clazz : enclosingType.getRawType().getAnnotation(RequestFilters.class)
-               .value()) {
+      if (invocation.getInvokable().getOwnerType().getRawType().isAnnotationPresent(RequestFilters.class)) {
+         for (Class<? extends HttpRequestFilter> clazz : invocation.getInvokable().getOwnerType().getRawType()
+               .getAnnotation(RequestFilters.class).value()) {
             HttpRequestFilter instance = injector.getInstance(clazz);
             filters.add(instance);
-            logger.trace("adding filter %s from annotation on %s", instance, enclosingType.getRawType().getName());
+            logger.trace("adding filter %s from annotation on %s", instance, invocation.getInvokable().getOwnerType()
+                  .getRawType().getName());
          }
       }
       if (invocation.getInvokable().isAnnotationPresent(RequestFilters.class)) {
@@ -500,14 +491,14 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
    private static final TypeLiteral<Supplier<URI>> uriSupplierLiteral = new TypeLiteral<Supplier<URI>>() {
    };
 
-   protected Optional<URI> getEndpointFor(TypeToken<?> enclosingType, Invocation invocation) {
+   protected Optional<URI> getEndpointFor(Invocation invocation) {
       URI endpoint = getEndpointInParametersOrNull(invocation, injector);
       if (endpoint == null) {
          Endpoint annotation;
          if (invocation.getInvokable().isAnnotationPresent(Endpoint.class)) {
             annotation = invocation.getInvokable().getAnnotation(Endpoint.class);
-         } else if (enclosingType.getRawType().isAnnotationPresent(Endpoint.class)) {
-            annotation = enclosingType.getRawType().getAnnotation(Endpoint.class);
+         } else if (invocation.getInvokable().getOwnerType().getRawType().isAnnotationPresent(Endpoint.class)) {
+            annotation = invocation.getInvokable().getOwnerType().getRawType().getAnnotation(Endpoint.class);
          } else {
             logger.trace("no annotations on class or invocation.getInvoked(): %s", invocation.getInvokable());
             return Optional.absent();
@@ -567,11 +558,11 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
    }
 
    private boolean shouldAddHostHeader(Invocation invocation) {
-      return (enclosingType.getRawType().isAnnotationPresent(VirtualHost.class) || invocation.getInvokable()
-            .isAnnotationPresent(VirtualHost.class));
+      return (invocation.getInvokable().getOwnerType().getRawType().isAnnotationPresent(VirtualHost.class) || invocation
+            .getInvokable().isAnnotationPresent(VirtualHost.class));
    }
 
-   private GeneratedHttpRequest<A> decorateRequest(GeneratedHttpRequest<A> request) throws NegativeArraySizeException {
+   private GeneratedHttpRequest decorateRequest(GeneratedHttpRequest request) throws NegativeArraySizeException {
       Invocation invocation = request.getInvocation();
       List<Object> args = request.getInvocation().getArgs();
       Set<Parameter> binderOrWrapWith = ImmutableSet.copyOf(concat(
@@ -590,14 +581,19 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
          if (args.size() >= position + 1 && arg != null) {
             Class<?> parameterType = entry.getType().getRawType();
             Class<? extends Object> argType = arg.getClass();
-            if (!argType.isArray() && parameterType.isArray()) {// TODO: && invocation.getInvokable().isVarArgs()) {
+            if (!argType.isArray() && parameterType.isArray()) {// TODO: &&
+                                                                // invocation.getInvokable().isVarArgs())
+                                                                // {
                int arrayLength = args.size() - invocation.getInvokable().getParameters().size() + 1;
                if (arrayLength == 0)
                   break OUTER;
                arg = (Object[]) Array.newInstance(arg.getClass(), arrayLength);
                System.arraycopy(args.toArray(), position, arg, 0, arrayLength);
                shouldBreak = true;
-            } else if (argType.isArray() && parameterType.isArray()){// TODO: && invocation.getInvokable().isVarArgs()) {
+            } else if (argType.isArray() && parameterType.isArray()) {// TODO:
+                                                                      // &&
+                                                                      // invocation.getInvokable().isVarArgs())
+                                                                      // {
             } else {
                if (arg.getClass().isArray()) {
                   Object[] payloadArray = (Object[]) arg;
@@ -610,7 +606,9 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
             if (shouldBreak)
                break OUTER;
          } else {
-            if (position + 1 == invocation.getInvokable().getParameters().size() && entry.getType().isArray())// TODO: && invocation.getInvokable().isVarArgs())
+            if (position + 1 == invocation.getInvokable().getParameters().size() && entry.getType().isArray())// TODO:
+                                                                                                              // &&
+                                                                                                              // invocation.getInvokable().isVarArgs())
                continue OUTER;
 
             if (entry.isAnnotationPresent(Nullable.class)) {
@@ -640,7 +638,8 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
    private Set<HttpRequestOptions> findOptionsIn(Invocation invocation) {
       ImmutableSet.Builder<HttpRequestOptions> result = ImmutableSet.builder();
       for (int index : invokableToIndexesOfOptions.getUnchecked(invocation.getInvokable())) {
-         if (invocation.getArgs().size() >= index + 1) {// accommodate varinvocation.getArgs()
+         if (invocation.getArgs().size() >= index + 1) {// accommodate
+                                                        // varinvocation.getArgs()
             if (invocation.getArgs().get(index) instanceof Object[]) {
                for (Object option : (Object[]) invocation.getArgs().get(index)) {
                   if (option instanceof HttpRequestOptions) {
@@ -680,8 +679,8 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
    }
 
    private void addProducesIfPresentOnTypeOrMethod(Multimap<String, String> headers, Invocation invocation) {
-      if (enclosingType.getRawType().isAnnotationPresent(Produces.class)) {
-         Produces header = enclosingType.getRawType().getAnnotation(Produces.class);
+      if (invocation.getInvokable().getOwnerType().getRawType().isAnnotationPresent(Produces.class)) {
+         Produces header = invocation.getInvokable().getOwnerType().getRawType().getAnnotation(Produces.class);
          headers.replaceValues(CONTENT_TYPE, asList(header.value()));
       }
       if (invocation.getInvokable().isAnnotationPresent(Produces.class)) {
@@ -692,8 +691,8 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
 
    private void addHeaderIfAnnotationPresentOnMethod(Multimap<String, String> headers, Invocation invocation,
          Multimap<String, ?> tokenValues) {
-      if (enclosingType.getRawType().isAnnotationPresent(Headers.class)) {
-         Headers header = enclosingType.getRawType().getAnnotation(Headers.class);
+      if (invocation.getInvokable().getOwnerType().getRawType().isAnnotationPresent(Headers.class)) {
+         Headers header = invocation.getInvokable().getOwnerType().getRawType().getAnnotation(Headers.class);
          addHeader(headers, header, tokenValues);
       }
       if (invocation.getInvokable().isAnnotationPresent(Headers.class)) {
@@ -732,8 +731,8 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
       for (Parameter param : parametersWithAnnotation(invocation.getInvokable(), PathParam.class)) {
          PathParam pathParam = param.getAnnotation(PathParam.class);
          String paramKey = pathParam.value();
-         Optional<?> paramValue = getParamValue(invocation, param.getAnnotation(ParamParser.class),
-               param.hashCode(), paramKey);
+         Optional<?> paramValue = getParamValue(invocation, param.getAnnotation(ParamParser.class), param.hashCode(),
+               paramKey);
          if (paramValue.isPresent())
             pathParamValues.put(paramKey, paramValue.get().toString());
       }
@@ -744,7 +743,8 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
          String paramKey) {
       Object arg = invocation.getArgs().get(argIndex);
       if (extractor != null && checkPresentOrNullable(invocation, paramKey, argIndex, arg)) {
-         arg = injector.getInstance(extractor.value()).apply(arg); // ParamParsers can deal with nullable parameters
+         // ParamParsers can deal with nullable parameters
+         arg = injector.getInstance(extractor.value()).apply(arg);
       }
       checkPresentOrNullable(invocation, paramKey, argIndex, arg);
       return Optional.fromNullable(arg);
@@ -752,8 +752,8 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
 
    private boolean checkPresentOrNullable(Invocation invocation, String paramKey, int argIndex, Object arg) {
       if (arg == null && !invocation.getInvokable().getParameters().get(argIndex).isAnnotationPresent(Nullable.class))
-         throw new NullPointerException(format("param{%s} for invocation %s.%s", paramKey, enclosingType.getRawType()
-               .getSimpleName(), invocation.getInvokable().getName()));
+         throw new NullPointerException(format("param{%s} for invocation %s.%s", paramKey, invocation.getInvokable()
+               .getOwnerType().getRawType().getSimpleName(), invocation.getInvokable().getName()));
       return true;
    }
 
@@ -762,8 +762,8 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
       for (Parameter param : parametersWithAnnotation(invocation.getInvokable(), FormParam.class)) {
          FormParam formParam = param.getAnnotation(FormParam.class);
          String paramKey = formParam.value();
-         Optional<?> paramValue = getParamValue(invocation, param.getAnnotation(ParamParser.class),
-               param.hashCode(), paramKey);
+         Optional<?> paramValue = getParamValue(invocation, param.getAnnotation(ParamParser.class), param.hashCode(),
+               paramKey);
          if (paramValue.isPresent())
             formParamValues.put(paramKey, paramValue.get().toString());
       }
@@ -775,8 +775,8 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
       for (Parameter param : parametersWithAnnotation(invocation.getInvokable(), QueryParam.class)) {
          QueryParam queryParam = param.getAnnotation(QueryParam.class);
          String paramKey = queryParam.value();
-         Optional<?> paramValue = getParamValue(invocation, param.getAnnotation(ParamParser.class),
-               param.hashCode(), paramKey);
+         Optional<?> paramValue = getParamValue(invocation, param.getAnnotation(ParamParser.class), param.hashCode(),
+               paramKey);
          if (paramValue.isPresent())
             if (paramValue.get() instanceof Iterable) {
                @SuppressWarnings("unchecked")
@@ -794,8 +794,8 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
       for (Parameter param : parametersWithAnnotation(invocation.getInvokable(), PayloadParam.class)) {
          PayloadParam payloadParam = param.getAnnotation(PayloadParam.class);
          String paramKey = payloadParam.value();
-         Optional<?> paramValue = getParamValue(invocation, param.getAnnotation(ParamParser.class),
-               param.hashCode(), paramKey);
+         Optional<?> paramValue = getParamValue(invocation, param.getAnnotation(ParamParser.class), param.hashCode(),
+               paramKey);
          if (paramValue.isPresent())
             payloadParamValues.put(paramKey, paramValue.get());
       }
@@ -804,12 +804,8 @@ public class RestAnnotationProcessor<A> implements Function<Invocation, Generate
 
    @Override
    public String toString() {
-      String callerString = null;
-      if (callerEnclosingType != null) {
-         callerString = String.format("%s.%s%s", callerEnclosingType.getRawType().getSimpleName(), caller
-               .getInvokable().getName(), caller.getArgs());
-      }
-      return Objects.toStringHelper("").omitNullValues().add("caller", callerString)
-            .add("enclosingType", enclosingType.getRawType().getSimpleName()).toString();
+      String callerString = String.format("%s.%s%s", caller.getInvokable().getOwnerType().getRawType().getSimpleName(),
+            caller.getInvokable().getName(), caller.getArgs());
+      return Objects.toStringHelper("").omitNullValues().add("caller", callerString).toString();
    }
 }

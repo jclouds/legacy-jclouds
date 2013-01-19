@@ -45,35 +45,30 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.reflect.Invokable;
-import com.google.common.reflect.TypeToken;
 import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Injector;
-import com.google.inject.TypeLiteral;
 
-public class InvokeHttpMethod<S, A> implements Function<Invocation, Object> {
+public class InvokeHttpMethod implements Function<Invocation, Object> {
 
    @Resource
    private Logger logger = Logger.NULL;
 
    private final Injector injector;
-   private final TypeToken<A> enclosingType;
    private final Cache<Invokable<?, ?>, Invokable<?, ?>> sync2AsyncInvokables;
-   private final RestAnnotationProcessor<A> annotationProcessor;
+   private final RestAnnotationProcessor annotationProcessor;
    private final HttpCommandExecutorService http;
-   private final TransformerForRequest<A> transformerForRequest;
+   private final TransformerForRequest transformerForRequest;
    private final ListeningExecutorService userExecutor;
    private final BlockOnFuture.Factory blocker;
 
-   @SuppressWarnings("unchecked")
    @Inject
-   private InvokeHttpMethod(Injector injector, TypeLiteral<A> enclosingType,
-         Cache<Invokable<?, ?>, Invokable<?, ?>> sync2AsyncInvokables, RestAnnotationProcessor<A> annotationProcessor,
-         HttpCommandExecutorService http, TransformerForRequest<A> transformerForRequest,
+   private InvokeHttpMethod(Injector injector, Cache<Invokable<?, ?>, Invokable<?, ?>> sync2AsyncInvokables,
+         RestAnnotationProcessor annotationProcessor, HttpCommandExecutorService http,
+         TransformerForRequest transformerForRequest,
          @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, BlockOnFuture.Factory blocker) {
       this.injector = injector;
-      this.enclosingType = (TypeToken<A>) TypeToken.of(enclosingType.getType());
       this.sync2AsyncInvokables = sync2AsyncInvokables;
       this.annotationProcessor = annotationProcessor;
       this.http = http;
@@ -105,7 +100,7 @@ public class InvokeHttpMethod<S, A> implements Function<Invocation, Object> {
             checkNotNull(sync2AsyncInvokables.getIfPresent(in.getInvokable()), "invokable %s not in %s",
                   in.getInvokable(), sync2AsyncInvokables), in.getArgs());
       checkState(isFuture(async.getInvokable()), "not a future: %s", async);
-      return blocker.create(enclosingType, async).apply(createFuture(async));
+      return blocker.create(async).apply(createFuture(async));
    }
 
    private boolean isFuture(Invokable<?, ?> in) {
@@ -115,7 +110,7 @@ public class InvokeHttpMethod<S, A> implements Function<Invocation, Object> {
    public ListenableFuture<?> createFuture(Invocation invocation) {
       String name = invocation.getInvokable().toString();
       logger.trace(">> converting %s", name);
-      GeneratedHttpRequest<A> request = annotationProcessor.apply(invocation);
+      GeneratedHttpRequest request = annotationProcessor.apply(invocation);
       logger.trace("<< converted %s to %s", name, request.getRequestLine());
 
       Function<HttpResponse, ?> transformer = transformerForRequest.apply(request);
@@ -138,7 +133,7 @@ public class InvokeHttpMethod<S, A> implements Function<Invocation, Object> {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      InvokeHttpMethod<?, ?> that = InvokeHttpMethod.class.cast(o);
+      InvokeHttpMethod that = InvokeHttpMethod.class.cast(o);
       return equal(this.annotationProcessor, that.annotationProcessor);
    }
 

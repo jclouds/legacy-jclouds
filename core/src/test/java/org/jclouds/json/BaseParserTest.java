@@ -33,18 +33,15 @@ import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.reflect.Invocation;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.TransformerForRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.TypeParameter;
-import com.google.common.reflect.TypeToken;
+import com.google.common.reflect.Invokable;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 
 /**
  * 
@@ -61,17 +58,10 @@ public abstract class BaseParserTest<T, G> {
 
    @SuppressWarnings("unchecked")
    protected Function<HttpResponse, T> parser(Injector i) {
-      TypeToken<TransformerForRequest<T>> token = new TypeToken<TransformerForRequest<T>>() {
-         private static final long serialVersionUID = 1L;
-      }.where(new TypeParameter<T>() {
-      }, new TypeToken<T>(getClass()) {
-         private static final long serialVersionUID = 1L;
-      });
-      Key<TransformerForRequest<T>> xform = (Key<TransformerForRequest<T>>) Key.get(token.getType());
       try {
          return (Function<HttpResponse, T>) i
                .createChildInjector(new SaxParserModule())
-               .getInstance(xform)
+               .getInstance(TransformerForRequest.class)
                .getTransformerForMethod(
                      Invocation.create(Invokable.from(getClass().getMethod("expected")), ImmutableList.of()), i);
       } catch (Exception e) {

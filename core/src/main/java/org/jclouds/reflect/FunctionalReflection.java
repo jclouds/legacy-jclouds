@@ -112,8 +112,7 @@ public final class FunctionalReflection {
             args = ImmutableList.copyOf(args);
          else
             args = Collections.unmodifiableList(args);
-         Invokable<?, Object> invokable = Invokable.from(invoked);
-         // not yet support the proxy arg
+         Invokable<?, Object> invokable = enclosingType.method(invoked);
          Invocation invocation = Invocation.create(invokable, args);
          try {
             return invocationFunction.apply(invocation);

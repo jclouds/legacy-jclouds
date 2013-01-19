@@ -44,7 +44,7 @@ import com.google.common.reflect.Invokable;
  */
 @Singleton
 public class AzureBlobRequestSigner implements BlobRequestSigner {
-   private final RestAnnotationProcessor<AzureBlobAsyncClient> processor;
+   private final RestAnnotationProcessor processor;
    private final BlobToAzureBlob blobToBlob;
    private final BlobToHttpGetOptions blob2HttpGetOptions;
 
@@ -53,7 +53,7 @@ public class AzureBlobRequestSigner implements BlobRequestSigner {
    private final Invokable<?, ?> createMethod;
 
    @Inject
-   public AzureBlobRequestSigner(RestAnnotationProcessor<AzureBlobAsyncClient> processor, BlobToAzureBlob blobToBlob,
+   public AzureBlobRequestSigner(RestAnnotationProcessor processor, BlobToAzureBlob blobToBlob,
          BlobToHttpGetOptions blob2HttpGetOptions) throws SecurityException, NoSuchMethodException {
       this.processor = checkNotNull(processor, "processor");
       this.blobToBlob = checkNotNull(blobToBlob, "blobToBlob");

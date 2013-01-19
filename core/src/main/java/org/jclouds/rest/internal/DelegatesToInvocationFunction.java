@@ -72,13 +72,11 @@ import com.google.inject.util.Types;
 /**
  * @param <S>
  *           The enclosing type of the interface that a dynamic proxy like this implements
- * @param <A>
- *           The enclosing type that is processed by this proxy
  * @param <F>
  *           The function that implements this dynamic proxy
  */
 @Beta
-public final class DelegatesToInvocationFunction<S, A, F extends Function<Invocation, Object>> implements
+public final class DelegatesToInvocationFunction<S, F extends Function<Invocation, Object>> implements
       InvocationHandler {
 
    private static final Object[] NO_ARGS = {};
@@ -120,8 +118,7 @@ public final class DelegatesToInvocationFunction<S, A, F extends Function<Invoca
          args = ImmutableList.copyOf(args);
       else
          args = Collections.unmodifiableList(args);
-      Invokable<?, Object> invokable = Invokable.from(invoked);
-      // not yet support the proxy arg
+      Invokable<?, Object> invokable = enclosingType.method(invoked);
       Invocation invocation = Invocation.create(invokable, args);
       try {
          return handle(invocation);
@@ -161,7 +158,7 @@ public final class DelegatesToInvocationFunction<S, A, F extends Function<Invoca
    private Object propagateContextToDelegate(Invocation caller) {
       Class<?> returnType = unwrapIfOptional(caller.getInvokable().getReturnType());
       Function<Invocation, Object> delegate;
-      setCaller.enter(enclosingType, caller);
+      setCaller.enter(caller);
       try {
          @SuppressWarnings("unchecked")
          Key<Function<Invocation, Object>> delegateType = (Key<Function<Invocation, Object>>) methodInvokerFor(returnType);

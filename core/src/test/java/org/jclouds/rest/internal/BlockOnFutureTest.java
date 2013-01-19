@@ -82,22 +82,21 @@ public class BlockOnFutureTest {
    }
 
    public void testUnnamedMethodWithDefaultPropTimeout() throws Exception {
-      Function<ListenableFuture<?>, Object> withOverride = new BlockOnFuture(ImmutableMap.of("default", 250L),
-            enclosingType, get);
+      Function<ListenableFuture<?>, Object> withOverride = new BlockOnFuture(ImmutableMap.of("default", 250L), get);
       assertEquals(withOverride.apply(future), "foo");
       verify(future);
    }
 
    public void testUnnamedMethodWithClassPropTimeout() throws Exception {
       Function<ListenableFuture<?>, Object> withOverride = new BlockOnFuture(ImmutableMap.of("default", 50L,
-            "ThingApi", 250L), enclosingType, get);
+            "ThingApi", 250L), get);
       assertEquals(withOverride.apply(future), "foo");
       verify(future);
    }
 
    public void testUnnamedMethodWithMethodPropTimeout() throws Exception {
       Function<ListenableFuture<?>, Object> withOverride = new BlockOnFuture(ImmutableMap.of("default", 50L,
-            "ThingApi", 100L, "ThingApi.get", 250L), enclosingType, get);
+            "ThingApi", 100L, "ThingApi.get", 250L), get);
       assertEquals(withOverride.apply(future), "foo");
       verify(future);
    }
@@ -108,23 +107,21 @@ public class BlockOnFutureTest {
       expect(future.get()).andReturn("foo");
       replay(future);
 
-      Function<ListenableFuture<?>, Object> noOverrides = new BlockOnFuture(ImmutableMap.<String, Long> of(),
-            enclosingType, get);
+      Function<ListenableFuture<?>, Object> noOverrides = new BlockOnFuture(ImmutableMap.<String, Long> of(), get);
 
       assertEquals(noOverrides.apply(future), "foo");
       verify(future);
    }
 
    public void testNamedMethodWithDefaultPropTimeout() throws Exception {
-      Function<ListenableFuture<?>, Object> withOverride = new BlockOnFuture(ImmutableMap.of("default", 250L),
-            enclosingType, namedGet);
+      Function<ListenableFuture<?>, Object> withOverride = new BlockOnFuture(ImmutableMap.of("default", 250L), namedGet);
       assertEquals(withOverride.apply(future), "foo");
       verify(future);
    }
 
    public void testNamedMethodWithMethodPropTimeout() throws Exception {
       Function<ListenableFuture<?>, Object> withOverride = new BlockOnFuture(ImmutableMap.of("default", 50L,
-            "ThingApi", 100L, "ns:get", 250L), enclosingType, namedGet);
+            "ThingApi", 100L, "ns:get", 250L), namedGet);
       assertEquals(withOverride.apply(future), "foo");
       verify(future);
    }
@@ -135,11 +132,10 @@ public class BlockOnFutureTest {
       expect(future.get()).andReturn("foo");
       replay(future);
 
-      Function<ListenableFuture<?>, Object> noOverrides = new BlockOnFuture(ImmutableMap.<String, Long> of(),
-            enclosingType, namedGet);
+      Function<ListenableFuture<?>, Object> noOverrides = new BlockOnFuture(ImmutableMap.<String, Long> of(), namedGet);
 
       assertEquals(noOverrides.apply(future), "foo");
       verify(future);
    }
-   
+
 }
