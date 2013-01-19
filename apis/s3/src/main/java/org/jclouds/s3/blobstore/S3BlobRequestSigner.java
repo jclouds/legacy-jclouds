@@ -38,6 +38,7 @@ import org.jclouds.s3.options.PutObjectOptions;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.Invokable;
+import com.google.common.reflect.TypeToken;
 
 /**
  * 
@@ -45,7 +46,7 @@ import com.google.common.reflect.Invokable;
  */
 @Singleton
 public class S3BlobRequestSigner<T extends S3AsyncClient> implements BlobRequestSigner {
-   private final RestAnnotationProcessor<T> processor;
+   private final RestAnnotationProcessor processor;
    private final BlobToObject blobToObject;
    private final BlobToHttpGetOptions blob2HttpGetOptions;
 
@@ -54,16 +55,17 @@ public class S3BlobRequestSigner<T extends S3AsyncClient> implements BlobRequest
    private final Invokable<?, ?> createMethod;
 
    @Inject
-   public S3BlobRequestSigner(RestAnnotationProcessor<T> processor, BlobToObject blobToObject,
-         BlobToHttpGetOptions blob2HttpGetOptions, Class<T> interfaceType) throws SecurityException,
+   public S3BlobRequestSigner(RestAnnotationProcessor processor, BlobToObject blobToObject,
+         BlobToHttpGetOptions blob2HttpGetOptions, Class<T> interfaceClass) throws SecurityException,
          NoSuchMethodException {
       this.processor = checkNotNull(processor, "processor");
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
-      this.getMethod = Invokable.from(interfaceType.getMethod("getObject", String.class, String.class,
+      TypeToken<T> interfaceType = TypeToken.of(interfaceClass);
+      this.getMethod = interfaceType.method(interfaceClass.getMethod("getObject", String.class, String.class,
             GetOptions[].class));
-      this.deleteMethod = Invokable.from(interfaceType.getMethod("deleteObject", String.class, String.class));
-      this.createMethod = Invokable.from(interfaceType.getMethod("putObject", String.class, S3Object.class,
+      this.deleteMethod = interfaceType.method(interfaceClass.getMethod("deleteObject", String.class, String.class));
+      this.createMethod = interfaceType.method(interfaceClass.getMethod("putObject", String.class, S3Object.class,
             PutObjectOptions[].class));
    }
 

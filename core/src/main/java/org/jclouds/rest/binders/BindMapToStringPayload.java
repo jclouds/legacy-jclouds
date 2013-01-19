@@ -45,7 +45,7 @@ public class BindMapToStringPayload implements MapBinder {
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       checkNotNull(postParams, "postParams");
-      GeneratedHttpRequest<?> r = GeneratedHttpRequest.class.cast(checkNotNull(request, "request"));
+      GeneratedHttpRequest r = GeneratedHttpRequest.class.cast(checkNotNull(request, "request"));
       Invokable<?, ?> invoked = r.getInvocation().getInvokable();
       checkArgument(invoked.isAnnotationPresent(Payload.class),
             "method %s must have @Payload annotation to use this binder", invoked);

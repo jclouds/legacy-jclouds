@@ -57,7 +57,7 @@ import com.google.inject.name.Named;
  * @author David Alves
  */
 @Singleton
-public class BuildTokenRequest implements Function<GeneratedHttpRequest<?>, TokenRequest> {
+public class BuildTokenRequest implements Function<GeneratedHttpRequest, TokenRequest> {
 
    private final String assertionTargetDescription;
    private final String signatureAlgorithm;
@@ -90,7 +90,7 @@ public class BuildTokenRequest implements Function<GeneratedHttpRequest<?>, Toke
    }
 
    @Override
-   public TokenRequest apply(GeneratedHttpRequest<?> request) {
+   public TokenRequest apply(GeneratedHttpRequest request) {
       long now = TimeUnit.SECONDS.convert(ticker.read(), TimeUnit.NANOSECONDS);
 
       // fetch the token
@@ -114,10 +114,10 @@ public class BuildTokenRequest implements Function<GeneratedHttpRequest<?>, Toke
               .build();
    }
 
-   protected String getOAuthScopes(GeneratedHttpRequest<?> request) {
+   protected String getOAuthScopes(GeneratedHttpRequest request) {
       Invokable<?, ?> invokable = request.getInvocation().getInvokable();
       
-      OAuthScopes classScopes = request.getEnclosingType().getRawType().getAnnotation(OAuthScopes.class);
+      OAuthScopes classScopes = invokable.getOwnerType().getRawType().getAnnotation(OAuthScopes.class);
       OAuthScopes methodScopes = invokable.getAnnotation(OAuthScopes.class);
 
       // if no annotations are present the rely on globally set scopes
@@ -125,7 +125,7 @@ public class BuildTokenRequest implements Function<GeneratedHttpRequest<?>, Toke
          checkState(globalScopes != null, String.format("REST class or method should be annotated " +
                  "with OAuthScopes specifying required permissions. Alternatively a global property " +
                  "\"oauth.scopes\" may be set to define scopes globally. REST Class: %s, Method: %s",
-                 request.getEnclosingType(),
+                 invokable.getOwnerType(),
                  invokable.getName()));
          return globalScopes;
       }

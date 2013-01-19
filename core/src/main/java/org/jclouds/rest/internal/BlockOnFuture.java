@@ -39,7 +39,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.reflect.Invokable;
-import com.google.common.reflect.TypeToken;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.google.common.util.concurrent.UncheckedTimeoutException;
@@ -52,22 +51,19 @@ public class BlockOnFuture implements Function<ListenableFuture<?>, Object> {
        * @param invocation
        *           context for how the future was created
        */
-      BlockOnFuture create(TypeToken<?> enclosingType, Invocation invocation);
+      BlockOnFuture create(Invocation invocation);
    }
 
    @Resource
    private Logger logger = Logger.NULL;
 
    private final Map<String, Long> timeouts;
-   private final TypeToken<?> enclosingType;
    private final Invocation invocation;
 
    @Inject
    @VisibleForTesting
-   BlockOnFuture(@Named("TIMEOUTS") Map<String, Long> timeouts, @Assisted TypeToken<?> enclosingType,
-         @Assisted Invocation invocation) {
+   BlockOnFuture(@Named("TIMEOUTS") Map<String, Long> timeouts, @Assisted Invocation invocation) {
       this.timeouts = timeouts;
-      this.enclosingType = enclosingType;
       this.invocation = invocation;
    }
 
@@ -124,7 +120,7 @@ public class BlockOnFuture implements Function<ListenableFuture<?>, Object> {
          timeoutMillis = fromNullable(timeouts.get(commandName)).or(defaultMillis);
       } else {
          // TODO: remove old logic, once Named annotations are present on all methods
-         String className = enclosingType.getRawType().getSimpleName().replace("AsyncClient", "Client")
+         String className = invoked.getOwnerType().getRawType().getSimpleName().replace("AsyncClient", "Client")
                .replace("AsyncApi", "Api");
          timeoutMillis = fromNullable(timeouts.get(className + "." + invoked.getName())).or(
                fromNullable(timeouts.get(className))).or(defaultMillis);

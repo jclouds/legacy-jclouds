@@ -27,22 +27,13 @@ import org.jclouds.reflect.Invocation;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
-import com.google.inject.Inject;
-import com.google.inject.TypeLiteral;
 
-class GetAcceptHeaders<T> implements Function<Invocation, Set<String>> {
-   private Class<T> enclosingType;
-
-   @SuppressWarnings("unchecked")
-   @Inject
-   GetAcceptHeaders(TypeLiteral<T> enclosingType) {
-      this.enclosingType = (Class<T>) enclosingType.getRawType();
-   }
+class GetAcceptHeaders implements Function<Invocation, Set<String>> {
 
    @Override
    public Set<String> apply(Invocation invocation) {
       Optional<Consumes> accept = Optional.fromNullable(invocation.getInvokable().getAnnotation(Consumes.class)).or(
-            Optional.fromNullable(enclosingType.getAnnotation(Consumes.class)));
+            Optional.fromNullable(invocation.getInvokable().getOwnerType().getRawType().getAnnotation(Consumes.class)));
       return (accept.isPresent()) ? ImmutableSet.copyOf(accept.get().value()) : ImmutableSet.<String> of();
    }
 }

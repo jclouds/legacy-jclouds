@@ -50,12 +50,9 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
 import com.google.common.reflect.Invokable;
-import com.google.common.reflect.TypeParameter;
-import com.google.common.reflect.TypeToken;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 
 /**
  * 
@@ -179,25 +176,6 @@ public abstract class BaseRestApiTest {
 
    protected void assertResponseParserClassEquals(Invokable<?, ?> method, GeneratedHttpRequest request,
          @Nullable Class<?> parserClass) {
-      assertEquals(transformer(method.getDeclaringClass()).apply(request).getClass(), parserClass);
+      assertEquals(injector.getInstance(TransformerForRequest.class).apply(request).getClass(), parserClass);
    }
-
-   protected <T> RestAnnotationProcessor<T> processor(Class<T> type) {
-      TypeToken<RestAnnotationProcessor<T>> token = new TypeToken<RestAnnotationProcessor<T>>() {
-         private static final long serialVersionUID = 1L;
-      }.where(new TypeParameter<T>() {
-      }, type);
-      Key<RestAnnotationProcessor<T>> rapKey = (Key<RestAnnotationProcessor<T>>) Key.get(token.getType());
-      return injector.getInstance(rapKey);
-   }
-
-   protected <T> TransformerForRequest<T> transformer(Class<T> type) {
-      TypeToken<TransformerForRequest<T>> token = new TypeToken<TransformerForRequest<T>>() {
-         private static final long serialVersionUID = 1L;
-      }.where(new TypeParameter<T>() {
-      }, type);
-      Key<TransformerForRequest<T>> rapKey = (Key<TransformerForRequest<T>>) Key.get(token.getType());
-      return injector.getInstance(rapKey);
-   }
-
 }

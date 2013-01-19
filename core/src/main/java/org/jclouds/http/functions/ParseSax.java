@@ -214,8 +214,8 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
       }
       
       @Override
-      protected GeneratedHttpRequest<?> getRequest() {
-         return (GeneratedHttpRequest<?>) super.getRequest();
+      protected GeneratedHttpRequest getRequest() {
+         return (GeneratedHttpRequest) super.getRequest();
       }
    }
 

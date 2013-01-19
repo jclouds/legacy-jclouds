@@ -42,11 +42,11 @@ import static com.google.common.base.Preconditions.checkState;
 @Singleton
 public class OAuthAuthenticator implements HttpRequestFilter {
 
-   private Function<GeneratedHttpRequest<?>, TokenRequest> tokenRequestBuilder;
+   private Function<GeneratedHttpRequest, TokenRequest> tokenRequestBuilder;
    private Function<TokenRequest, Token> tokenFetcher;
 
    @Inject
-   OAuthAuthenticator(Function<GeneratedHttpRequest<?>, TokenRequest> tokenRequestBuilder, LoadingCache<TokenRequest,
+   OAuthAuthenticator(Function<GeneratedHttpRequest, TokenRequest> tokenRequestBuilder, LoadingCache<TokenRequest,
            Token> tokenFetcher) {
       this.tokenRequestBuilder = tokenRequestBuilder;
       this.tokenFetcher = tokenFetcher;
@@ -55,7 +55,7 @@ public class OAuthAuthenticator implements HttpRequestFilter {
    @Override
    public HttpRequest filter(HttpRequest request) throws HttpException {
       checkState(request instanceof GeneratedHttpRequest, "request must be an instance of GeneratedHttpRequest");
-      GeneratedHttpRequest<?> generatedHttpRequest = GeneratedHttpRequest.class.cast(request);
+      GeneratedHttpRequest generatedHttpRequest = GeneratedHttpRequest.class.cast(request);
       TokenRequest tokenRequest = tokenRequestBuilder.apply(generatedHttpRequest);
       Token token = tokenFetcher.apply(tokenRequest);
       return request.toBuilder().addHeader("Authorization", String.format("%s %s",

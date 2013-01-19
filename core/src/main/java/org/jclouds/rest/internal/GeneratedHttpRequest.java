@@ -30,99 +30,65 @@ import org.jclouds.reflect.Invocation;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Multimap;
-import com.google.common.reflect.TypeToken;
 
 /**
  * 
- * @author adriancole
- * 
- * @param <A>
- *           enclosing type of the interface parsed to generate this request.
+ * @author Adrian Cole
  */
-public final class GeneratedHttpRequest<A> extends HttpRequest {
-   public static <A> Builder<A> builder(Class<A> enclosingType) {
-      return new Builder<A>(TypeToken.of(enclosingType));
+public final class GeneratedHttpRequest extends HttpRequest {
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   public static <A> Builder<A> builder(TypeToken<A> enclosingType) {
-      return new Builder<A>(enclosingType);
+   public Builder toBuilder() {
+      return new Builder().fromGeneratedHttpRequest(this);
    }
 
-   public Builder<A> toBuilder() {
-      return new Builder<A>(enclosingType).fromGeneratedHttpRequest(this);
-   }
-
-   public final static class Builder<A> extends HttpRequest.Builder<Builder<A>> {
-      private final TypeToken<A> enclosingType;
-
-      private Builder(TypeToken<A> enclosingType) {
-         this.enclosingType = checkNotNull(enclosingType, "enclosingType");
-      }
-
+   public final static class Builder extends HttpRequest.Builder<Builder> {
       private Invocation invocation;
-      private Optional<TypeToken<?>> callerEnclosingType = Optional.absent();
       private Optional<Invocation> caller = Optional.absent();
 
       /**
        * @see GeneratedHttpRequest#getInvocation()
        */
-      public Builder<A> invocation(Invocation invocation) {
+      public Builder invocation(Invocation invocation) {
          this.invocation = checkNotNull(invocation, "invocation");
-         return this;
-      }
-
-      /**
-       * @see GeneratedHttpRequest#getCallerEnclosingType()
-       */
-      public Builder<A> callerEnclosingType(@Nullable TypeToken<?> callerEnclosingType) {
-         this.callerEnclosingType = Optional.<TypeToken<?>> fromNullable(callerEnclosingType);
          return this;
       }
 
       /**
        * @see GeneratedHttpRequest#getCaller()
        */
-      public Builder<A> caller(@Nullable Invocation caller) {
+      public Builder caller(@Nullable Invocation caller) {
          this.caller = Optional.fromNullable(caller);
          return this;
       }
 
-      public GeneratedHttpRequest<A> build() {
-         return new GeneratedHttpRequest<A>(method, endpoint, headers.build(), payload, filters.build(), enclosingType,
-               invocation, callerEnclosingType, caller);
+      public GeneratedHttpRequest build() {
+         return new GeneratedHttpRequest(method, endpoint, headers.build(), payload, filters.build(), invocation,
+               caller);
       }
 
-      public Builder<A> fromGeneratedHttpRequest(GeneratedHttpRequest<A> in) {
-         return super.fromHttpRequest(in).invocation(in.invocation)
-               .callerEnclosingType(in.getCallerEnclosingType().orNull()).caller(in.getCaller().orNull());
+      public Builder fromGeneratedHttpRequest(GeneratedHttpRequest in) {
+         return super.fromHttpRequest(in).invocation(in.invocation).caller(in.getCaller().orNull());
       }
 
       @Override
-      protected Builder<A> self() {
+      protected Builder self() {
          return this;
       }
    }
 
-   private final TypeToken<A> enclosingType;
    private final Invocation invocation;
-   private final Optional<TypeToken<?>> callerEnclosingType;
    private final Optional<Invocation> caller;
 
    protected GeneratedHttpRequest(String method, URI endpoint, Multimap<String, String> headers,
-         @Nullable Payload payload, Iterable<HttpRequestFilter> filters, TypeToken<A> enclosingType,
-         Invocation invocation, Optional<TypeToken<?>> callerEnclosingType, Optional<Invocation> caller) {
+         @Nullable Payload payload, Iterable<HttpRequestFilter> filters, Invocation invocation,
+         Optional<Invocation> caller) {
       super(method, endpoint, headers, payload, filters);
-      this.enclosingType = checkNotNull(enclosingType, "enclosingType");
       this.invocation = checkNotNull(invocation, "invocation");
-      this.callerEnclosingType = checkNotNull(callerEnclosingType, "callerEnclosingType");
       this.caller = checkNotNull(caller, "caller");
-   }
-
-   /**
-    * different than {@link #getDeclaringClass()} when this is a member of a class it was not declared in.
-    */
-   public TypeToken<?> getEnclosingType() {
-      return enclosingType;
    }
 
    /**
@@ -130,14 +96,6 @@ public final class GeneratedHttpRequest<A> extends HttpRequest {
     */
    public Invocation getInvocation() {
       return invocation;
-   }
-
-   /**
-    * different than {@link #getDeclaringClass()} when {@link #getCaller()} is a member of a class it was not declared
-    * in.
-    */
-   public Optional<TypeToken<?>> getCallerEnclosingType() {
-      return callerEnclosingType;
    }
 
    public Optional<Invocation> getCaller() {
