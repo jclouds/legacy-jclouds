@@ -45,7 +45,7 @@ import com.google.common.reflect.Invokable;
  */
 @Singleton
 public class AtmosBlobRequestSigner implements BlobRequestSigner {
-   private final RestAnnotationProcessor<AtmosAsyncClient> processor;
+   private final RestAnnotationProcessor processor;
    private final BlobToObject blobToObject;
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
 
@@ -54,7 +54,7 @@ public class AtmosBlobRequestSigner implements BlobRequestSigner {
    private final Invokable<?, ?> createMethod;
 
    @Inject
-   public AtmosBlobRequestSigner(RestAnnotationProcessor<AtmosAsyncClient> processor, BlobToObject blobToObject,
+   public AtmosBlobRequestSigner(RestAnnotationProcessor processor, BlobToObject blobToObject,
          BlobToHttpGetOptions blob2ObjectGetOptions) throws SecurityException, NoSuchMethodException {
       this.processor = checkNotNull(processor, "processor");
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");

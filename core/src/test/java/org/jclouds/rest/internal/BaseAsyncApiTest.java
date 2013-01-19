@@ -33,10 +33,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Binder;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Module;
 
 /**
@@ -46,7 +44,7 @@ import com.google.inject.Module;
 @Test(groups = "unit")
 public abstract class BaseAsyncApiTest<T> extends BaseRestApiTest {
 
-   protected RestAnnotationProcessor<T> processor;
+   protected RestAnnotationProcessor processor;
 
    protected abstract void checkFilters(HttpRequest request);
 
@@ -65,16 +63,11 @@ public abstract class BaseAsyncApiTest<T> extends BaseRestApiTest {
    protected void setupFactory() throws IOException {
       injector = createInjector();
       parserFactory = injector.getInstance(ParseSax.Factory.class);
-      processor = injector.getInstance(rapKey);
+      processor = injector.getInstance(RestAnnotationProcessor.class);
    }
 
    protected String identity = "identity";
    protected String credential = "credential";
-   @SuppressWarnings("unchecked")
-   Key<RestAnnotationProcessor<T>> rapKey = (Key<RestAnnotationProcessor<T>>) Key
-         .get(new TypeToken<RestAnnotationProcessor<T>>(getClass()) {
-            private static final long serialVersionUID = 1L;
-         }.getType());
 
    /**
     * @see org.jclouds.providers.Providers#withId

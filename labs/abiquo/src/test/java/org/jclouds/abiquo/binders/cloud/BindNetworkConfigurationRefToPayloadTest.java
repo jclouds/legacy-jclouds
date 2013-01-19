@@ -70,7 +70,7 @@ public class BindNetworkConfigurationRefToPayloadTest {
 
       Invokable<?, ?> method = Invokable.from(TestNetworkConfig.class.getMethod("withAll", VirtualMachineDto.class,
             VLANNetworkDto.class));
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder(TestNetworkConfig.class)
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
             .invocation(Invocation.create(method, Lists.<Object> newArrayList(vm, null)))
             .method(HttpMethod.GET)
             .endpoint(URI.create("http://localhost")).build();
@@ -86,7 +86,7 @@ public class BindNetworkConfigurationRefToPayloadTest {
 
       Invokable<?, ?> method = Invokable.from(TestNetworkConfig.class.getMethod("withAll", VirtualMachineDto.class,
             VLANNetworkDto.class));
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder(TestNetworkConfig.class)
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
             .invocation(Invocation.create(method, ImmutableList.<Object> of(vm, network)))
             .method(HttpMethod.GET)
             .endpoint(URI.create("http://localhost")).build();
@@ -101,7 +101,7 @@ public class BindNetworkConfigurationRefToPayloadTest {
 
       Invokable<?, ?> method = Invokable.from(TestNetworkConfig.class.getMethod("withoutVirtualMachine",
             VLANNetworkDto.class));
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder(TestNetworkConfig.class)
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
             .invocation(Invocation.create(method, ImmutableList.<Object> of(network)))
             .method(HttpMethod.GET)
             .endpoint(URI.create("http://localhost")).build();
@@ -116,7 +116,7 @@ public class BindNetworkConfigurationRefToPayloadTest {
 
       Invokable<?, ?> method = Invokable.from(TestNetworkConfig.class.getMethod("withAll", VirtualMachineDto.class,
             VLANNetworkDto.class));
-      GeneratedHttpRequest request = GeneratedHttpRequest.builder(TestNetworkConfig.class)
+      GeneratedHttpRequest request = GeneratedHttpRequest.builder()
             .invocation(Invocation.create(method, ImmutableList.<Object> of(vm, network)))
             .method(HttpMethod.GET)
             .endpoint(URI.create("http://localhost")).build();

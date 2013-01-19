@@ -64,7 +64,7 @@ public class BindMoveVolumeToPathTest {
    private static GeneratedHttpRequest generatedHttpRequest() throws SecurityException, NoSuchMethodException {
       Invokable<?, ?> withEndpointLink = Invokable.from(CloudAsyncApi.class.getMethod("moveVolume", VolumeManagementDto.class,
             VirtualDatacenterDto.class));
-      return GeneratedHttpRequest.builder(CloudAsyncApi.class)
+      return GeneratedHttpRequest.builder()
             .invocation(Invocation.create(withEndpointLink, ImmutableList.<Object> of(CloudResources.volumePut(), CloudResources.virtualDatacenterPut())))
             .method(HttpMethod.POST).endpoint(URI.create("http://localhost")).build();
    }

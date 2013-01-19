@@ -38,11 +38,11 @@ import com.google.inject.Provider;
 @Singleton
 public class HttpApiProvider<S, A> implements Provider<S> {
    private final Class<? super S> apiType;
-   private final DelegatesToInvocationFunction<S, A, InvokeHttpMethod<S, A>> httpInvoker;
+   private final DelegatesToInvocationFunction<S, InvokeHttpMethod> httpInvoker;
 
    @Inject
    private HttpApiProvider(Cache<Invokable<?, ?>, Invokable<?, ?>> invokables,
-         DelegatesToInvocationFunction<S, A, InvokeHttpMethod<S, A>> httpInvoker, Class<S> apiType, Class<A> asyncApiType) {
+         DelegatesToInvocationFunction<S, InvokeHttpMethod> httpInvoker, Class<S> apiType, Class<A> asyncApiType) {
       this.httpInvoker = httpInvoker;
       this.apiType = apiType;
       RestModule.putInvokables(TypeToken.of(apiType), TypeToken.of(asyncApiType), invokables);
@@ -54,5 +54,4 @@ public class HttpApiProvider<S, A> implements Provider<S> {
    public S get() {
       return (S) Proxy.newProxyInstance(apiType.getClassLoader(), new Class<?>[] { apiType }, httpInvoker);
    }
-
 }

@@ -104,7 +104,7 @@ public class RestModule extends AbstractModule {
                      "invoked %s has different typed exceptions than delegated invoked %s", invoked, delegatedMethod);
                invoked.setAccessible(true);
                delegatedMethod.setAccessible(true);
-               cache.put(Invokable.from(invoked), Invokable.from(delegatedMethod));
+               cache.put(sync.method(invoked), async.method(delegatedMethod));
             } catch (SecurityException e) {
                throw propagate(e);
             } catch (NoSuchMethodException e) {

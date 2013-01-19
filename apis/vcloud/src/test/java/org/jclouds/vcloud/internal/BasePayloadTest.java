@@ -40,10 +40,10 @@ public class BasePayloadTest {
       }
    }));
 
-   protected GeneratedHttpRequest<?> requestForArgs(List<Object> args) {
+   protected GeneratedHttpRequest requestForArgs(List<Object> args) {
       try {
          Invocation invocation = Invocation.create(Invokable.from(String.class.getDeclaredMethod("toString")), args);
-         return GeneratedHttpRequest.builder(String.class).method("POST").endpoint(URI.create("http://localhost/key"))
+         return GeneratedHttpRequest.builder().method("POST").endpoint(URI.create("http://localhost/key"))
                .invocation(invocation).build();
       } catch (SecurityException e) {
          throw Throwables.propagate(e);

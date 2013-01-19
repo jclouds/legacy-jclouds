@@ -55,7 +55,7 @@ import com.google.common.base.Optional;
 public abstract class CallerArg0ToPagedIterable<T, I extends CallerArg0ToPagedIterable<T, I>> implements
          Function<IterableWithMarker<T>, PagedIterable<T>>, InvocationContext<I> {
 
-   private GeneratedHttpRequest<?> request;
+   private GeneratedHttpRequest request;
 
    @Override
    public PagedIterable<T> apply(IterableWithMarker<T> input) {
