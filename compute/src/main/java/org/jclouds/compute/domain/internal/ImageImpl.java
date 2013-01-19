@@ -107,16 +107,6 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
       return defaultCredentials;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   @Deprecated
-   public String getAdminPassword() {
-      return (defaultCredentials != null && defaultCredentials.shouldAuthenticateSudo()) ? defaultCredentials
-               .getPassword() : null;
-   }
-
    // equals and toString from super are sufficient to establish identity equivalence
 
    protected ToStringHelper string() {

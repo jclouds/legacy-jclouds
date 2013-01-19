@@ -22,6 +22,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
+import org.jclouds.cloudstack.CloudStackApiMetadata;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.Zone;
@@ -89,6 +90,6 @@ public class ZoneClientExpectTest extends BaseCloudStackExpectTest<ZoneClient> {
 
    @Override
    protected ZoneClient clientFrom(CloudStackContext context) {
-      return context.getProviderSpecificContext().getApi().getZoneClient();
+      return context.unwrap(CloudStackApiMetadata.CONTEXT_TOKEN).getApi().getZoneClient();
    }
 }

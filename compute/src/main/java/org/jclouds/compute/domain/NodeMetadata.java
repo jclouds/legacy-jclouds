@@ -20,6 +20,7 @@ package org.jclouds.compute.domain;
 
 import java.util.Set;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
@@ -103,33 +104,9 @@ public interface NodeMetadata extends ComputeMetadataIncludingStatus<NodeMetadat
    OperatingSystem getOperatingSystem();
 
    /**
-    * Current State of the node; replaced by {@link #getStatus()}
-    * <h3>Note</h3>
-    * will be removed in jclouds 1.6!
-    * @see #getStatus()
-    */
-   @Deprecated
-   NodeState getState();
-
-   /**
     * @return the TCP port used for terminal connections. Generally, this is port 22 for ssh.
     */
    int getLoginPort();
-
-   /**
-    * <h4>will be removed in jclouds 1.4.0</h4>
-    * 
-    * secures access to root with a password. This password is required to access either the console
-    * or run sudo as root.
-    * <p/>
-    * ex. {@code echo 'password' |sudo -S command}
-    * 
-    * @return root or console password, if configured, or null.
-    * @see LoginCredentials#shouldAuthenticateSudo
-    */
-   @Nullable
-   @Deprecated
-   String getAdminPassword();
 
    /**
     * If possible, these are returned upon all detail requests. However, it is often the case that

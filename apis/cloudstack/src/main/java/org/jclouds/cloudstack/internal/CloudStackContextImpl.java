@@ -22,8 +22,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.Context;
-import org.jclouds.cloudstack.CloudStackAsyncClient;
-import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.CloudStackDomainAsyncClient;
 import org.jclouds.cloudstack.CloudStackDomainClient;
@@ -53,11 +51,6 @@ public class CloudStackContextImpl extends ComputeServiceContextImpl implements 
       super(backend, backendType, computeService, utils);
       this.domainContext = domainContext;
       this.globalContext = globalContext;
-   }
-
-   @Override
-   public RestContext<CloudStackClient, CloudStackAsyncClient> getProviderSpecificContext() {
-      return unwrap();
    }
 
    @Override

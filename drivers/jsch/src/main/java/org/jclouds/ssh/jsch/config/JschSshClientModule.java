@@ -21,7 +21,6 @@ package org.jclouds.ssh.jsch.config;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.ssh.SshClient;
@@ -64,11 +63,6 @@ public class JschSshClientModule extends AbstractModule {
          SshClient client = new JschSshClient(backoffLimitedRetryHandler, socket, credentials, timeout);
          injector.injectMembers(client);// add logger
          return client;
-      }
-      
-      @Override
-      public SshClient create(HostAndPort socket, Credentials credentials) {
-         return create(socket, LoginCredentials.fromCredentials(credentials));
       }
    }
 }

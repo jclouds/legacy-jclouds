@@ -29,11 +29,10 @@ import static org.jclouds.scriptbuilder.domain.Statements.pipeHttpResponseToBash
 import java.net.URI;
 import java.util.Formatter;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeMetadataIncludingStatus;
 import org.jclouds.compute.domain.Hardware;
@@ -51,9 +50,8 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.reflect.TypeToken;
+import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -171,11 +169,6 @@ public class ComputeServiceUtils {
             return input.getName().equalsIgnoreCase(name);
          }
       });
-   }
-
-   @Deprecated
-   public static Iterable<String> getSupportedProviders() {
-      return org.jclouds.rest.Providers.getSupportedProvidersOfType(TypeToken.of(ComputeServiceContext.class));
    }
    
    /**

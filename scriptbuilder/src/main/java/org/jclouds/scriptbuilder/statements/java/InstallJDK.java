@@ -31,21 +31,9 @@ import org.jclouds.scriptbuilder.domain.StatementList;
  * @author Adrian Cole
  */
 public class InstallJDK {
-   // TODO: this doesn't work
-   public static Statement fromOracle() {
-      throw new UnsupportedOperationException("Oracle JDK install doesn't currently work due to license agreement");
-   }
 
    public static Statement fromOpenJDK() {
       return new FromOpenJDK();
-   }
-
-   /**
-    * @see fromOpenJDK
-    */
-   @Deprecated
-   public static Statement fromURL() {
-      return fromOpenJDK();
    }
 
    public static Statement fromURL(URI url) {

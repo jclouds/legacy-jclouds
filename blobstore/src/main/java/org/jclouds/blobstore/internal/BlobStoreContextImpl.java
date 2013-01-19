@@ -118,12 +118,6 @@ public class BlobStoreContextImpl extends BaseView implements BlobStoreContext {
       return blobRequestSigner;
    }
 
-   @SuppressWarnings("unchecked")
-   @Override
-   public <S, A> RestContext<S, A> getProviderSpecificContext() {
-      return (RestContext<S, A>) delegate();
-   }
-
    @Override
    public void close() {
       Closeables.closeQuietly(delegate());

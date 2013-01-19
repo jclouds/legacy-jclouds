@@ -21,7 +21,6 @@ package org.jclouds.vcloud.director.v1_5.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertNotNull;
 
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.Constants;
@@ -97,90 +96,6 @@ public abstract class BaseVCloudDirectorExpectTest<T> extends BaseRestApiExpectT
                .build())
          .payload(payloadFromResourceWithContentType("/session.xml", VCloudDirectorMediaType.SESSION + ";version=1.5"))
          .build();
-
-   
-   @Deprecated
-   protected HttpRequest getStandardRequest(String method, String path) {
-      return getStandardRequest(method, path, VCloudDirectorMediaType.ANY);
-   }
-
-   @Deprecated
-   protected HttpRequest getStandardRequest(String method, URI uri) {
-      return getStandardRequest(method, uri, VCloudDirectorMediaType.ANY);
-   }
-
-   @Deprecated
-   protected HttpRequest getStandardRequest(String method, String path, String mediaType) {
-      return getStandardRequest(method, URI.create(endpoint + path), VCloudDirectorMediaType.ANY);
-   }
-
-   @Deprecated
-   protected HttpRequest getStandardPayloadRequest(String method, String command, String relativeFilePath, 
-         String postMediaType) {
-      return getStandardPayloadRequest(method, URI.create(endpoint + command), relativeFilePath, postMediaType);
-   }
-   
-   @Deprecated
-   protected HttpRequest getStandardPayloadRequest(String method, URI uri, String relativeFilePath, 
-         String postMediaType) {
-      return getStandardRequestWithPayload(method, uri, VCloudDirectorMediaType.ANY, relativeFilePath, postMediaType);
-   }
-   
-   @Deprecated
-   protected HttpRequest getStandardRequest(String method, URI uri, String mediaType) {
-      return HttpRequest.builder()
-            .method(method)
-            .endpoint(uri)
-            .headers(ImmutableMultimap.<String, String> builder()
-                  .put("Accept", mediaType)
-                  .put("x-vcloud-authorization", token)
-                  .put(HttpHeaders.COOKIE, "vcloud-token=" + token)
-                  .build())
-            .build();
-   }
-   
-   @Deprecated
-   protected HttpRequest getStandardRequestWithPayload(String method, String path, String relativeFilePath, String mediaType) {
-      return getStandardRequestWithPayload(method, path, VCloudDirectorMediaType.ANY, relativeFilePath, mediaType);
-   }
-   
-   @Deprecated
-   protected HttpRequest getStandardRequestWithPayload(String method, URI uri, String relativeFilePath, String mediaType) {
-      return getStandardRequestWithPayload(method, uri, VCloudDirectorMediaType.ANY, relativeFilePath, mediaType);
-   }
-
-   @Deprecated
-   protected HttpRequest getStandardRequestWithPayload(String method, String path, String acceptType, String relativeFilePath, String mediaType) {
-      URI uri = URI.create(endpoint + path);
-      return getStandardRequestWithPayload(method, uri, acceptType, relativeFilePath, mediaType);
-   }
-
-   @Deprecated
-   protected HttpRequest getStandardRequestWithPayload(String method, URI uri, String acceptType, String relativeFilePath, String mediaType) {
-      return HttpRequest.builder()
-            .method(method)
-            .endpoint(uri)
-            .headers(ImmutableMultimap.<String, String> builder()
-                  .put("Accept", acceptType)
-                  .put("x-vcloud-authorization", token)
-                  .put(HttpHeaders.COOKIE, "vcloud-token=" + token)
-                  .build())
-            .payload(payloadFromResourceWithContentType(relativeFilePath, mediaType))
-            .build();
-   }
-
-   @Deprecated
-   protected HttpResponse getStandardPayloadResponse(String relativeFilePath, String mediaType) {
-      return getStandardPayloadResponse(200, relativeFilePath, mediaType);
-   }
-
-   @Deprecated
-   protected HttpResponse getStandardPayloadResponse(int statusCode, String relativeFilePath, String mediaType) {
-      return HttpResponse.builder()
-            .statusCode(statusCode)
-            .payload(payloadFromResourceWithContentType(relativeFilePath, mediaType + ";version=1.5"))
-            .build();
-   }
       
    /**
     * Implicitly adds x-vcloud-authorization header with token. 

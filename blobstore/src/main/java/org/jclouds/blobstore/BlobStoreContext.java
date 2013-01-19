@@ -24,7 +24,6 @@ import org.jclouds.View;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.Utils;
 
 import com.google.inject.ImplementedBy;
@@ -115,15 +114,6 @@ public interface BlobStoreContext extends Closeable, View {
     * @see #getUtils
     */
    Utils utils();
-
-   /**
-    * will be removed in jclouds 1.6
-    * 
-    * @see View#getInputType
-    * @see View#unwrap
-    */
-   @Deprecated
-   <S, A> RestContext<S, A> getProviderSpecificContext();
 
    /**
     * closes threads and resources related to this connection.

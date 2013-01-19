@@ -20,7 +20,6 @@ package org.jclouds.ssh;
 
 import org.jclouds.compute.domain.ExecChannel;
 import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.io.Payload;
 
@@ -32,14 +31,6 @@ import com.google.common.net.HostAndPort;
 public interface SshClient {
 
    interface Factory {
-
-      /**
-       * To be removed in jclouds 1.5.0
-       * 
-       * @see #create(com.google.common.net.HostAndPort, LoginCredentials)
-       */
-      @Deprecated
-      SshClient create(HostAndPort socket, Credentials credentials);
 
       SshClient create(HostAndPort socket, LoginCredentials credentials);
 

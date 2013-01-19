@@ -20,8 +20,6 @@ package org.jclouds.compute.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Map;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -29,10 +27,8 @@ import org.jclouds.Context;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.Utils;
-import org.jclouds.domain.Credentials;
 import org.jclouds.internal.BaseView;
 import org.jclouds.location.Provider;
-import org.jclouds.rest.RestContext;
 
 import com.google.common.reflect.TypeToken;
 
@@ -57,12 +53,6 @@ public class ComputeServiceContextImpl extends BaseView implements ComputeServic
       return computeService;
    }
 
-   @SuppressWarnings("unchecked")
-   @Override
-   public <S, A> RestContext<S, A> getProviderSpecificContext() {
-      return (RestContext<S, A>) delegate();
-   }
-
    @Override
    public void close() {
       delegate().close();
@@ -77,15 +67,4 @@ public class ComputeServiceContextImpl extends BaseView implements ComputeServic
    public Utils utils() {
       return utils;
    }
-
-   @Override
-   public Map<String, Credentials> credentialStore() {
-      return utils().credentialStore();
-   }
-
-   @Override
-   public Map<String, Credentials> getCredentialStore() {
-      return utils().credentialStore();
-   }
-
 }
