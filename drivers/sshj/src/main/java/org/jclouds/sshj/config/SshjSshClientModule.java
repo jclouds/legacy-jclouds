@@ -65,10 +65,5 @@ public class SshjSshClientModule extends AbstractModule {
          injector.injectMembers(client);// add logger
          return client;
       }
-
-      @Override
-      public SshClient create(HostAndPort socket, Credentials credentials) {
-         return create(socket, LoginCredentials.fromCredentials(credentials));
-      }
    }
 }

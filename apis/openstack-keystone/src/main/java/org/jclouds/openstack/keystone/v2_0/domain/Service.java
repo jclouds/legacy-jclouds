@@ -86,14 +86,6 @@ public class Service extends ForwardingSet<Endpoint> {
          return self();
       }
 
-      /**
-       * @see #endpoints(Iterable)
-       */
-      @Deprecated
-      public T endpoints(Endpoint... in) {
-         return endpoints(ImmutableSet.copyOf(in));
-      }
-
       public Service build() {
          return new Service(type, name, endpoints.build());
       }
@@ -139,14 +131,6 @@ public class Service extends ForwardingSet<Endpoint> {
     */
    public String getName() {
       return this.name;
-   }
-
-   /**
-    * Please use this as a Set
-    */
-   @Deprecated
-   public Set<Endpoint> getEndpoints() {
-      return this.endpoints;
    }
 
    @Override

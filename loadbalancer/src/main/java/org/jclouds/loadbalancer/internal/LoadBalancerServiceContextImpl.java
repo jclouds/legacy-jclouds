@@ -28,7 +28,6 @@ import org.jclouds.internal.BaseView;
 import org.jclouds.loadbalancer.LoadBalancerService;
 import org.jclouds.loadbalancer.LoadBalancerServiceContext;
 import org.jclouds.location.Provider;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.Utils;
 
 import com.google.common.io.Closeables;
@@ -63,12 +62,6 @@ public class LoadBalancerServiceContextImpl extends BaseView implements LoadBala
    @Override
    public Utils utils() {
       return utils;
-   }
-
-   @SuppressWarnings("unchecked")
-   @Override
-   public <S, A> RestContext<S, A> getProviderSpecificContext() {
-      return (RestContext<S, A>) delegate();
    }
 
    @Override

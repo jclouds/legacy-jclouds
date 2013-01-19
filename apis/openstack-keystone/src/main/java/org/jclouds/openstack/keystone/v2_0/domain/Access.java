@@ -87,23 +87,6 @@ public class Access extends ForwardingSet<Service> implements Comparable<Access>
          return self();
       }
 
-      /**
-       * @see #services(Iterable)
-       */
-      @Deprecated
-      public T serviceCatalog(Set<Service> serviceCatalog) {
-         this.serviceCatalog.addAll(serviceCatalog);
-         return self();
-      }
-
-      /**
-       * @see #services(Iterable)
-       */
-      @Deprecated
-      public T serviceCatalog(Service... in) {
-         return serviceCatalog(ImmutableSet.copyOf(in));
-      }
-
       public Access build() {
          return new Access(token, user, serviceCatalog.build());
       }
@@ -143,14 +126,6 @@ public class Access extends ForwardingSet<Service> implements Comparable<Access>
     */
    public User getUser() {
       return this.user;
-   }
-
-   /**
-    * Please access the service catalog via normal collection mechanisms
-    */
-   @Deprecated
-   public Set<Service> getServiceCatalog() {
-      return this.serviceCatalog;
    }
 
    @Override

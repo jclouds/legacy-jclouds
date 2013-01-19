@@ -90,14 +90,6 @@ public class User extends ForwardingSet<Role> {
          return self();
       }
 
-      /**
-       * @see #roles(Iterable)
-       */
-      @Deprecated
-      public T roles(Role... in) {
-         return roles(ImmutableSet.copyOf(in));
-      }
-
       public User build() {
          return new User(id, name, roles.build());
       }
@@ -144,15 +136,6 @@ public class User extends ForwardingSet<Role> {
     */
    public String getName() {
       return this.name;
-   }
-
-   /**
-    * Please use User as a Set
-    * @return the roles assigned to the user
-    */
-   @Deprecated
-   public Set<Role> getRoles() {
-      return this.roles;
    }
 
    @Override

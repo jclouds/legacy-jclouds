@@ -20,8 +20,7 @@
 (ns org.jclouds.blobstore2-test
   (:use [org.jclouds.blobstore2] :reload-all)
   (:use [clojure.test])
-  (:import [org.jclouds.blobstore BlobStoreContextFactory]
-           [java.io ByteArrayInputStream ByteArrayOutputStream
+  (:import [java.io ByteArrayInputStream ByteArrayOutputStream
             StringBufferInputStream]
            [org.jclouds.util Strings2]))
 

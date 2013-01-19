@@ -26,7 +26,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
@@ -36,7 +35,6 @@ import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.collect.Maps;
-import com.google.common.reflect.TypeToken;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -92,11 +90,6 @@ public class BlobStoreUtils {
       } else {
          return Futures.immediateFuture(null);
       }
-   }
-
-   @Deprecated
-   public static Iterable<String> getSupportedProviders() {
-      return org.jclouds.rest.Providers.getSupportedProvidersOfType(TypeToken.of(BlobStoreContext.class));
    }
    
    public static MutableBlobMetadata copy(MutableBlobMetadata in) {

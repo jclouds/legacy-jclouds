@@ -19,17 +19,13 @@
 package org.jclouds;
 
 import java.io.Closeable;
-import java.net.URI;
-import java.util.Map;
 
-import org.jclouds.domain.Credentials;
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.domain.Location;
 import org.jclouds.internal.ContextImpl;
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.Utils;
 
-import com.google.common.annotations.Beta;
 import com.google.inject.ImplementedBy;
 
 /**
@@ -54,24 +50,6 @@ public interface Context extends Location, Closeable {
    String getName();
 
    /**
-    * will be removed in jclouds 1.6
-    * 
-    * @see Utils#getCredentialStore()
-    */
-   @Deprecated
-   @Beta
-   Map<String, Credentials> getCredentialStore();
-
-   /**
-    * will be removed in jclouds 1.6
-    * 
-    * @see Utils#credentialStore()
-    */
-   @Deprecated
-   @Beta
-   Map<String, Credentials> credentialStore();
-
-   /**
     * @return the providerMetadata used to create this context
     * @see ContextBuilder#newBuilder(org.jclouds.providers.ProviderMetadata)
     */
@@ -82,33 +60,6 @@ public interface Context extends Location, Closeable {
     * @see ApiMetadata#getDefaultIdentity
     */
    String getIdentity();
-   
-   /**
-    * will be removed in jclouds 1.6
-    * @see #getProviderMetadata()
-    * @see ProviderMetadata#getEndpoint()
-    */
-   @Deprecated
-   URI getEndpoint();
-   
-   /**
-    * will be removed in jclouds 1.6
-    * @see #getProviderMetadata()
-    * @see ProviderMetadata#getApiMetadata()
-    * @see ApiMetadata#getVersion()
-    */
-   @Deprecated
-   String getApiVersion();
-   
-   /**
-    * will be removed in jclouds 1.6
-    * @see #getProviderMetadata()
-    * @see ProviderMetadata#getApiMetadata()
-    * @see ApiMetadata#getBuildVersion()
-    */
-   @Deprecated
-   @Nullable
-   String getBuildVersion();
 
    Utils getUtils();
 

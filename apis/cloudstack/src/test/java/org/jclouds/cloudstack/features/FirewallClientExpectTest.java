@@ -24,6 +24,7 @@ import static org.testng.Assert.assertNull;
 import java.net.URI;
 import java.util.Set;
 
+import org.jclouds.cloudstack.CloudStackApiMetadata;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.FirewallRule;
@@ -285,6 +286,6 @@ public class FirewallClientExpectTest extends BaseCloudStackExpectTest<FirewallC
    
    @Override
    protected FirewallClient clientFrom(CloudStackContext context) {
-      return context.getProviderSpecificContext().getApi().getFirewallClient();
+      return context.unwrap(CloudStackApiMetadata.CONTEXT_TOKEN).getApi().getFirewallClient();
    }
 }

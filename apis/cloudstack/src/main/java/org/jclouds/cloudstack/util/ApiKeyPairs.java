@@ -67,7 +67,7 @@ public class ApiKeyPairs {
                .credentials(String.format("%s/%s", checkNotNull(domain, "domain"), checkNotNull(username, "username")), password)
                .overrides(overrides).build(CloudStackContext.class);
 
-         CloudStackClient client = context.getProviderSpecificContext().getApi();
+         CloudStackClient client = context.unwrap(CloudStackApiMetadata.CONTEXT_TOKEN).getApi();
          Set<Account> listOfAccounts = client.getAccountClient().listAccounts();
 
          domain = (domain.equals("") || domain.equals("/")) ? "ROOT" : domain;

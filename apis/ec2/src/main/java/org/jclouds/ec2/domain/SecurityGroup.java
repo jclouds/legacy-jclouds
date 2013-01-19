@@ -194,14 +194,6 @@ public class SecurityGroup extends ForwardingSet<IpPermission> {
       return description;
    }
 
-   /**
-    * Please use this class as a collection
-    */
-   @Deprecated
-   public Set<IpPermission> getIpPermissions() {
-      return ipPermissions;
-   }
-
    @Override
    public int hashCode() {
       return Objects.hashCode(region, id, name, ownerId);

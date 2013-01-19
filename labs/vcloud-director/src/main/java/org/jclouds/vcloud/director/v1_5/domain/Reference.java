@@ -204,12 +204,4 @@ public class Reference {
       return Objects.toStringHelper("").add("href", href).add("name", name).add("type", type);
    }
 
-   /**
-    * @see VCloudDirectorApi#resolveEntity
-    */
-   @Deprecated
-   public Reference toAdminReference(String endpoint) {
-      return toBuilder().type(null).href(URI.create(getHref().toASCIIString().replace(endpoint, endpoint + "/admin")))
-               .build();
-   }
 }

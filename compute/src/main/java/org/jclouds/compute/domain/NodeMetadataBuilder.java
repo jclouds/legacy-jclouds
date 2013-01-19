@@ -73,17 +73,6 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
       this.backendStatus = backendStatus;
       return this;
    }
-   
-   /**
-    * <h3>Note</h3>
-    * will be removed in jclouds 1.6!
-    * @see #status
-    */
-   @Deprecated
-   public NodeMetadataBuilder state(NodeState state) {
-      this.status = checkNotNull(state, "state").toStatus();
-      return this;
-   }
 
    public NodeMetadataBuilder publicAddresses(Iterable<String> publicAddresses) {
       this.publicAddresses = ImmutableSet.copyOf(checkNotNull(publicAddresses, "publicAddresses"));

@@ -24,6 +24,7 @@ import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
+import org.jclouds.cloudstack.CloudStackApiMetadata;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.EncryptedPasswordAndPrivateKey;
 import org.jclouds.cloudstack.functions.WindowsLoginCredentialsFromEncryptedData;
@@ -86,6 +87,6 @@ public class VirtualMachineClientExpectTest extends BaseCloudStackExpectTest<Vir
 
    @Override
    protected VirtualMachineClient clientFrom(CloudStackContext context) {
-      return context.getProviderSpecificContext().getApi().getVirtualMachineClient();
+      return context.unwrap(CloudStackApiMetadata.CONTEXT_TOKEN).getApi().getVirtualMachineClient();
    }
 }

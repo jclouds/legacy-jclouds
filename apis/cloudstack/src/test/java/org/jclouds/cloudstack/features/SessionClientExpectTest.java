@@ -26,6 +26,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.net.URI;
 
+import org.jclouds.cloudstack.CloudStackApiMetadata;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.LoginResponse;
@@ -94,6 +95,6 @@ public class SessionClientExpectTest extends BaseCloudStackExpectTest<SessionCli
 
    @Override
    protected SessionClient clientFrom(CloudStackContext context) {
-      return context.getProviderSpecificContext().getApi().getSessionClient();
+      return context.unwrap(CloudStackApiMetadata.CONTEXT_TOKEN).getApi().getSessionClient();
    }
 }
