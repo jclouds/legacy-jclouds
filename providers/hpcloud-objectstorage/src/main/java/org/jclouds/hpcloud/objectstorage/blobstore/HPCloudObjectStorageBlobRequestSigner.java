@@ -28,6 +28,7 @@ import static com.google.common.io.BaseEncoding.base16;
 import static com.google.common.io.ByteStreams.readBytes;
 import static org.jclouds.blobstore.util.BlobStoreUtils.cleanRequest;
 import static org.jclouds.crypto.Macs.asByteProcessor;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 import static org.jclouds.util.Strings2.toInputStream;
 
 import java.io.IOException;
@@ -100,8 +101,7 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
 
       Class<?> interfaceClass = HPCloudObjectStorageAsyncApi.class;
-      TypeToken<?> interfaceType = TypeToken.of(HPCloudObjectStorageAsyncApi.class);
-
+      TypeToken<?> interfaceType = typeTokenOf(HPCloudObjectStorageAsyncApi.class);
       this.getMethod = interfaceType.method(interfaceClass.getMethod("getObject", String.class, String.class,
             GetOptions[].class));
       this.deleteMethod = interfaceType.method(interfaceClass.getMethod("removeObject", String.class, String.class));

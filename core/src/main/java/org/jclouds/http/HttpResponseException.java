@@ -32,6 +32,8 @@ import org.jclouds.util.Strings2;
  */
 public class HttpResponseException extends RuntimeException {
 
+   private static final long serialVersionUID = 1L;
+
    protected final HttpCommand command;
    protected final HttpResponse response;
    private String content;

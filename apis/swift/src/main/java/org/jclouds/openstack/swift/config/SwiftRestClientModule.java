@@ -17,7 +17,7 @@
  * under the License.
  */
 package org.jclouds.openstack.swift.config;
-
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 import static org.jclouds.util.Suppliers2.getLastValueInMap;
 
 import java.net.URI;
@@ -63,7 +63,7 @@ public class SwiftRestClientModule<S extends CommonSwiftClient, A extends Common
 
    @SuppressWarnings("unchecked")
    public SwiftRestClientModule() {
-      this(TypeToken.class.cast(TypeToken.of(SwiftClient.class)), TypeToken.class.cast(TypeToken
+      this(TypeToken.class.cast(typeTokenOf(SwiftClient.class)), TypeToken.class.cast(TypeToken
             .of(SwiftAsyncClient.class)), ImmutableMap.<Class<?>, Class<?>> of());
    }
 

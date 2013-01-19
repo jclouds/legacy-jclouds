@@ -20,6 +20,7 @@ package org.jclouds.joyent.cloudapi.v6_5;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 
 import java.net.URI;
 import java.util.Properties;
@@ -84,7 +85,7 @@ public class JoyentCloudApiMetadata extends BaseRestApiMetadata {
          .version("~6.5")
          .defaultEndpoint("https://api.joyentcloud.com")
          .defaultProperties(JoyentCloudApiMetadata.defaultProperties())
-         .view(TypeToken.of(ComputeServiceContext.class))
+         .view(typeTokenOf(ComputeServiceContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>> of(DatacentersAreZonesModule.class, JoyentCloudRestClientModule.class, JoyentCloudComputeServiceContextModule.class));
       }
 

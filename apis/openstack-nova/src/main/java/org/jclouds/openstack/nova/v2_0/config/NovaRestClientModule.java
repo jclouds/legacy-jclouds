@@ -18,6 +18,8 @@
  */
 package org.jclouds.openstack.nova.v2_0.config;
 
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
+
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
@@ -119,7 +121,7 @@ public class NovaRestClientModule<S extends NovaApi, A extends NovaAsyncApi> ext
    
    @SuppressWarnings("unchecked")
    public NovaRestClientModule() {
-      super(TypeToken.class.cast(TypeToken.of(NovaApi.class)), TypeToken.class.cast(TypeToken.of(NovaAsyncApi.class)), DELEGATE_MAP);
+      super(TypeToken.class.cast(typeTokenOf(NovaApi.class)), TypeToken.class.cast(typeTokenOf(NovaAsyncApi.class)), DELEGATE_MAP);
    }
 
    protected NovaRestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType,

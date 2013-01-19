@@ -25,6 +25,7 @@ import static com.google.common.io.BaseEncoding.base16;
 import static com.google.common.io.ByteStreams.readBytes;
 import static org.jclouds.blobstore.util.BlobStoreUtils.cleanRequest;
 import static org.jclouds.crypto.Macs.asByteProcessor;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 import static org.jclouds.util.Strings2.toInputStream;
 
 import java.io.IOException;
@@ -98,7 +99,7 @@ public class SwiftBlobSigner<T extends CommonSwiftAsyncClient> implements BlobRe
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
 
-      TypeToken<?> owner = TypeToken.of(interfaceType.getType());
+      TypeToken<?> owner = typeTokenOf(interfaceType.getType());
       this.getMethod = owner.method(interfaceType.getRawType().getMethod("getObject", String.class, String.class,
             GetOptions[].class));
       this.deleteMethod = owner

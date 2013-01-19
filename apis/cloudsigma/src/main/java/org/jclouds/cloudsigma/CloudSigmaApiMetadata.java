@@ -22,6 +22,7 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.cloudsigma.reference.CloudSigmaConstants.PROPERTY_VNC_PASSWORD;
 import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 
 import java.net.URI;
 import java.util.Properties;
@@ -86,7 +87,7 @@ public class CloudSigmaApiMetadata extends BaseRestApiMetadata {
          .version("1.0")
          .defaultEndpoint("https://api.cloudsigma.com")
          .defaultProperties(CloudSigmaApiMetadata.defaultProperties())
-         .view(TypeToken.of(ComputeServiceContext.class))
+         .view(typeTokenOf(ComputeServiceContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudSigmaRestClientModule.class, CloudSigmaComputeServiceContextModule.class));
       }
 

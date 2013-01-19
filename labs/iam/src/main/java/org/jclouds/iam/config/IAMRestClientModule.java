@@ -18,17 +18,18 @@
  */
 package org.jclouds.iam.config;
 
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
+
 import java.util.Map;
 
 import org.jclouds.aws.config.FormSigningRestClientModule;
-import org.jclouds.iam.IAMAsyncApi;
 import org.jclouds.iam.IAMApi;
-import org.jclouds.iam.features.UserAsyncApi;
+import org.jclouds.iam.IAMAsyncApi;
 import org.jclouds.iam.features.UserApi;
+import org.jclouds.iam.features.UserAsyncApi;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.reflect.TypeToken;
 
 /**
  * Configures the Monitoring connection.
@@ -42,7 +43,7 @@ public class IAMRestClientModule extends FormSigningRestClientModule<IAMApi, IAM
          .build();
    
    public IAMRestClientModule() {
-      super(TypeToken.of(IAMApi.class), TypeToken.of(IAMAsyncApi.class), DELEGATE_MAP);
+      super(typeTokenOf(IAMApi.class), typeTokenOf(IAMAsyncApi.class), DELEGATE_MAP);
    }
 
 }

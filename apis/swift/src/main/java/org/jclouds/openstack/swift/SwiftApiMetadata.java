@@ -23,6 +23,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
 
 import java.net.URI;
 import java.util.Properties;
@@ -91,7 +92,7 @@ public class SwiftApiMetadata extends BaseRestApiMetadata {
          .documentation(URI.create("http://api.openstack.org/"))
          .version("1.0")
          .defaultProperties(SwiftApiMetadata.defaultProperties())
-         .view(TypeToken.of(BlobStoreContext.class))
+         .view(typeTokenOf(BlobStoreContext.class))
          .context(CONTEXT_TOKEN)
          .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
                                      .add(StorageEndpointModule.class)

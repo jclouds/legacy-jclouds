@@ -18,6 +18,8 @@
  */
 package org.jclouds.rest.internal;
 
+import static org.jclouds.reflect.Reflection2.typeTokenOf;
+
 import java.util.Set;
 
 import org.jclouds.View;
@@ -44,7 +46,7 @@ public abstract class BaseRestApiMetadataTest extends BaseApiMetadataTest {
 
    @Test
    public void testContextAssignableFromRestContext() {
-      Set<ApiMetadata> all = ImmutableSet.copyOf(Apis.contextAssignableFrom(TypeToken.of(RestContext.class)));
+      Set<ApiMetadata> all = ImmutableSet.copyOf(Apis.contextAssignableFrom(typeTokenOf(RestContext.class)));
       assert all.contains(toTest) : String.format("%s not found in %s", toTest, all);
    }
 
