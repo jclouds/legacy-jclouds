@@ -513,7 +513,7 @@ public class AsyncMonitorTest {
       };
    }
 
-   private static class CoutingEventHandler {
+   static class CoutingEventHandler {
       public int numCompletes = 0;
 
       public int numFailures = 0;
