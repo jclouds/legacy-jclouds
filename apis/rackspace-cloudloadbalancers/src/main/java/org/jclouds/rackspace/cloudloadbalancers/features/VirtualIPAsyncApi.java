@@ -18,6 +18,7 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -54,6 +55,7 @@ public interface VirtualIPAsyncApi {
    /**
     * @see VirtualIPApi#create(VirtualIP)
     */
+   @Named("virtualip:create")
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @Fallback(NullOnNotFoundOr404.class)
@@ -63,6 +65,7 @@ public interface VirtualIPAsyncApi {
    /**
     * @see VirtualIPApi#list()
     */
+   @Named("virtualip:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Fallback(EmptyPagedIterableOnNotFoundOr404.class)
@@ -73,6 +76,7 @@ public interface VirtualIPAsyncApi {
    /**
     * @see VirtualIPApi#remove(int)
     */
+   @Named("virtualip:remove")
    @DELETE
    @Fallback(FalseOnNotFoundOr404.class)
    @Path("/virtualips/{id}")
@@ -82,6 +86,7 @@ public interface VirtualIPAsyncApi {
    /**
     * @see VirtualIPApi#remove(Iterable)
     */
+   @Named("virtualip:remove")
    @DELETE
    @Fallback(FalseOnNotFoundOr404.class)
    @Path("/virtualips")

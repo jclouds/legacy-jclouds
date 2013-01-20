@@ -22,6 +22,7 @@ import java.net.URI;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -71,6 +72,7 @@ public interface CloudFilesAsyncClient extends CommonSwiftAsyncClient {
    /**
     * @see CloudFilesClient#listCDNContainers
     */
+   @Named("cdn:listcontainers")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
@@ -81,6 +83,7 @@ public interface CloudFilesAsyncClient extends CommonSwiftAsyncClient {
    /**
     * @see CloudFilesClient#getCDNMetadata
     */
+   @Named("cdn:getmetadata")
    @HEAD
    @ResponseParser(ParseContainerCDNMetadataFromHeaders.class)
    @Fallback(NullOnContainerNotFound.class)
@@ -91,6 +94,7 @@ public interface CloudFilesAsyncClient extends CommonSwiftAsyncClient {
    /**
     * @see CloudFilesClient#enableCDN(String, long, boolean);
     */
+   @Named("cdn:enable")
    @PUT
    @Path("/{container}")
    @Headers(keys = CloudFilesHeaders.CDN_ENABLED, values = "True")
@@ -103,6 +107,7 @@ public interface CloudFilesAsyncClient extends CommonSwiftAsyncClient {
    /**
     * @see CloudFilesClient#enableCDN(String, long);
     */
+   @Named("cdn:enable")
    @PUT
    @Path("/{container}")
    @Headers(keys = CloudFilesHeaders.CDN_ENABLED, values = "True")
@@ -114,6 +119,7 @@ public interface CloudFilesAsyncClient extends CommonSwiftAsyncClient {
    /**
     * @see CloudFilesClient#enableCDN(String)
     */
+   @Named("cdn:enable")
    @PUT
    @Path("/{container}")
    @Headers(keys = CloudFilesHeaders.CDN_ENABLED, values = "True")
@@ -124,6 +130,7 @@ public interface CloudFilesAsyncClient extends CommonSwiftAsyncClient {
    /**
     * @see CloudFilesClient#updateCDN(long, boolean)
     */
+   @Named("cdn:update")
    @POST
    @Path("/{container}")
    @ResponseParser(ParseCdnUriFromHeaders.class)
@@ -135,6 +142,7 @@ public interface CloudFilesAsyncClient extends CommonSwiftAsyncClient {
    /**
     * @see CloudFilesClient#updateCDN(boolean)
     */
+   @Named("cdn:update")
    @POST
    @Path("/{container}")
    @ResponseParser(ParseCdnUriFromHeaders.class)
@@ -145,6 +153,7 @@ public interface CloudFilesAsyncClient extends CommonSwiftAsyncClient {
    /**
     * @see CloudFilesClient#updateCDN(long)
     */
+   @Named("cdn:update")
    @POST
    @Path("/{container}")
    @ResponseParser(ParseCdnUriFromHeaders.class)
@@ -155,6 +164,7 @@ public interface CloudFilesAsyncClient extends CommonSwiftAsyncClient {
    /**
     * @see CloudFilesClient#disableCDN
     */
+   @Named("cdn:disable")
    @POST
    @Path("/{container}")
    @Headers(keys = CloudFilesHeaders.CDN_ENABLED, values = "False")
@@ -164,6 +174,7 @@ public interface CloudFilesAsyncClient extends CommonSwiftAsyncClient {
    /**
     * @see CloudFilesClient#purgeCDNObject(String, String, Iterable)
     */
+   @Named("cdn:purgeobject")
    @DELETE
    @Path("/{container}/{object}")
    @Headers(keys = CloudFilesHeaders.CDN_CONTAINER_PURGE_OBJECT_EMAIL, values = "{email}")
@@ -175,6 +186,7 @@ public interface CloudFilesAsyncClient extends CommonSwiftAsyncClient {
    /**
     * @see CloudFilesClient#purgeCDNObject(String, String)
     */
+   @Named("cdn:purgeobject")
    @DELETE
    @Path("/{container}/{object}")
    @Endpoint(CDNManagement.class)
@@ -184,6 +196,7 @@ public interface CloudFilesAsyncClient extends CommonSwiftAsyncClient {
    /**
     * @see CloudFilesClient#setCDNStaticWebsiteIndex
     */
+   @Named("cdn:setstaticwebsiteindex")
    @POST
    @Path("/{container}")
    @Headers(keys = CloudFilesHeaders.CDN_WEBSITE_INDEX, values = "{index}")
@@ -193,6 +206,7 @@ public interface CloudFilesAsyncClient extends CommonSwiftAsyncClient {
    /**
     * @see CloudFilesClient#setCDNStaticWebsiteError
     */
+   @Named("cdn:setstaticwebsiteerror")
    @POST
    @Path("/{container}")
    @Headers(keys = CloudFilesHeaders.CDN_WEBSITE_ERROR, values = "{error}")
