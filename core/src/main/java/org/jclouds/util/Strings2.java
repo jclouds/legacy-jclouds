@@ -19,13 +19,13 @@
 package org.jclouds.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.io.Closeables.closeQuietly;
 import static org.jclouds.util.Patterns.TOKEN_TO_PATTERN;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -149,7 +149,7 @@ public class Strings2 {
    public static String toStringAndClose(InputStream input) throws IOException {
       checkNotNull(input, "input");
       try {
-         return new String(toByteArray(input), Charsets.UTF_8);
+         return CharStreams.toString(new InputStreamReader(input, Charsets.UTF_8));
       } finally {
          closeQuietly(input);
       }
