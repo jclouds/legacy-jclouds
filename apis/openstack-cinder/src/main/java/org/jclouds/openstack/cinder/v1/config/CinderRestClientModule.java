@@ -18,7 +18,7 @@
  */
 package org.jclouds.openstack.cinder.v1.config;
 
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.net.URI;
 import java.util.Map;
@@ -68,7 +68,7 @@ public class CinderRestClientModule<S extends CinderApi, A extends CinderAsyncAp
 
    @SuppressWarnings("unchecked")
    public CinderRestClientModule() {
-      super(TypeToken.class.cast(typeTokenOf(CinderApi.class)), TypeToken.class.cast(typeTokenOf(CinderAsyncApi.class)), DELEGATE_MAP);
+      super(TypeToken.class.cast(typeToken(CinderApi.class)), TypeToken.class.cast(typeToken(CinderAsyncApi.class)), DELEGATE_MAP);
    }
 
    protected CinderRestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType, Map<Class<?>, Class<?>> sync2Async) {

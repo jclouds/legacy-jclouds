@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
@@ -41,14 +43,13 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code TemplateAsyncClient}
  * 
@@ -60,7 +61,7 @@ import com.google.common.collect.ImmutableSet;
 public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<TemplateAsyncClient> {
 
    public void testCreateTemplate() throws NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(TemplateAsyncClient.class.getMethod("createTemplate", TemplateMetadata.class, CreateTemplateOptions[].class));
+      Invokable<?, ?> method = method(TemplateAsyncClient.class, "createTemplate", TemplateMetadata.class, CreateTemplateOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(TemplateMetadata.builder().name("thename").osTypeId("10").displayText("description").build()));
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/client/api?response=json&command=createTemplate&name=thename&ostypeid=10&displaytext=description HTTP/1.1");
@@ -75,7 +76,7 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
    }
 
    public void testCreateTemplateOptions() throws NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(TemplateAsyncClient.class.getMethod("createTemplate", TemplateMetadata.class, CreateTemplateOptions[].class));
+      Invokable<?, ?> method = method(TemplateAsyncClient.class, "createTemplate", TemplateMetadata.class, CreateTemplateOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(TemplateMetadata.builder().name("thename").osTypeId("10").displayText("description").build(), CreateTemplateOptions.Builder.bits(32).isFeatured(true).isPublic(true).passwordEnabled(true).requiresHVM(true).snapshotId("11").volumeId("12")));
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/client/api?response=json&command=createTemplate&bits=32&isfeatured=true&ispublic=true&passwordenabled=true&requireshvm=true&snapshotid=11&volumeid=12&name=thename&ostypeid=10&displaytext=description HTTP/1.1");
@@ -102,7 +103,7 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
                                              .addQueryParam("displaytext", "description").build();
 
    public void testRegisterTemplate() throws NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(TemplateAsyncClient.class.getMethod("registerTemplate", TemplateMetadata.class, String.class, String.class, String.class, String.class, RegisterTemplateOptions[].class));
+      Invokable<?, ?> method = method(TemplateAsyncClient.class, "registerTemplate", TemplateMetadata.class, String.class, String.class, String.class, String.class, RegisterTemplateOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(TemplateMetadata.builder().name("thename").osTypeId("10").displayText("description").build(), Template.Format.QCOW2, "xen", "http://example.com/", 20));
 
       assertRequestLineEquals(httpRequest, registerTemplate.getRequestLine());
@@ -138,7 +139,7 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
                                                     .addQueryParam("displaytext", "description").build();
 
    public void testRegisterTemplateOptions() throws NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(TemplateAsyncClient.class.getMethod("registerTemplate", TemplateMetadata.class, String.class, String.class, String.class, String.class, RegisterTemplateOptions[].class));
+      Invokable<?, ?> method = method(TemplateAsyncClient.class, "registerTemplate", TemplateMetadata.class, String.class, String.class, String.class, String.class, RegisterTemplateOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(TemplateMetadata.builder().name("thename").osTypeId("10").displayText("description").build(), Template.Format.QCOW2, "xen", "http://example.com/", 20,
          RegisterTemplateOptions.Builder.accountInDomain("mydomain", "3").bits(32).checksum("ABC").isExtractable(true).isFeatured(true).isPublic(true).passwordEnabled(true).requiresHVM(true)));
 
@@ -154,7 +155,7 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
    }
 
    public void testUpdateTemplate() throws NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(TemplateAsyncClient.class.getMethod("updateTemplate", String.class, UpdateTemplateOptions[].class));
+      Invokable<?, ?> method = method(TemplateAsyncClient.class, "updateTemplate", String.class, UpdateTemplateOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(17));
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/client/api?response=json&command=updateTemplate&id=17 HTTP/1.1");
@@ -169,7 +170,7 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
    }
 
    public void testUpdateTemplateOptions() throws NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(TemplateAsyncClient.class.getMethod("updateTemplate", String.class, UpdateTemplateOptions[].class));
+      Invokable<?, ?> method = method(TemplateAsyncClient.class, "updateTemplate", String.class, UpdateTemplateOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(17, UpdateTemplateOptions.Builder.bootable(true).displayText("description").format(Template.Format.VHD).name("thename").osTypeId("12").passwordEnabled(true)));
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/client/api?response=json&command=updateTemplate&id=17&bootable=true&displaytext=description&format=VHD&name=thename&ostypeid=12&passwordenabled=true HTTP/1.1");
@@ -192,7 +193,7 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
                                          .addQueryParam("destzoneid", "19").build();
 
    public void testCopyTemplate() throws NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(TemplateAsyncClient.class.getMethod("copyTemplateToZone", String.class, String.class, String.class));
+      Invokable<?, ?> method = method(TemplateAsyncClient.class, "copyTemplateToZone", String.class, String.class, String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(17, 18, 19));
 
       assertRequestLineEquals(httpRequest,copyTemplate.getRequestLine());
@@ -207,7 +208,7 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
    }
 
    public void testDeleteTemplate() throws NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(TemplateAsyncClient.class.getMethod("deleteTemplate", String.class, DeleteTemplateOptions[].class));
+      Invokable<?, ?> method = method(TemplateAsyncClient.class, "deleteTemplate", String.class, DeleteTemplateOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(17));
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/client/api?response=json&command=deleteTemplate&id=17 HTTP/1.1");
@@ -222,7 +223,7 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
    }
 
    public void testDeleteTemplateOptions() throws NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(TemplateAsyncClient.class.getMethod("deleteTemplate", String.class, DeleteTemplateOptions[].class));
+      Invokable<?, ?> method = method(TemplateAsyncClient.class, "deleteTemplate", String.class, DeleteTemplateOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(17, DeleteTemplateOptions.Builder.zoneId("8")));
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/client/api?response=json&command=deleteTemplate&id=17&zoneid=8 HTTP/1.1");
@@ -237,7 +238,7 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
    }
 
    public void testListTemplates() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TemplateAsyncClient.class.getMethod("listTemplates"));
+      Invokable<?, ?> method = method(TemplateAsyncClient.class, "listTemplates");
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
@@ -254,7 +255,7 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
    }
 
    public void testListTemplatesOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TemplateAsyncClient.class.getMethod("listTemplates", ListTemplatesOptions.class));
+      Invokable<?, ?> method = method(TemplateAsyncClient.class, "listTemplates", ListTemplatesOptions.class);
       GeneratedHttpRequest httpRequest = processor
             .createRequest(
                   method, ImmutableList.<Object> of(
@@ -276,7 +277,7 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
    }
 
    public void testGetTemplate() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TemplateAsyncClient.class.getMethod("getTemplateInZone", String.class, String.class));
+      Invokable<?, ?> method = method(TemplateAsyncClient.class, "getTemplateInZone", String.class, String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5, 1));
 
       assertRequestLineEquals(
@@ -295,7 +296,7 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
    }
 
    public void testUpdateTemplatePermissions() throws NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(TemplateAsyncClient.class.getMethod("updateTemplatePermissions", String.class, UpdateTemplatePermissionsOptions[].class));
+      Invokable<?, ?> method = method(TemplateAsyncClient.class, "updateTemplatePermissions", String.class, UpdateTemplatePermissionsOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(17));
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/client/api?response=json&command=updateTemplatePermissions&id=17 HTTP/1.1");
@@ -310,7 +311,7 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
    }
 
    public void testUpdateTemplatePermissionsOptions() throws NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(TemplateAsyncClient.class.getMethod("updateTemplatePermissions", String.class, UpdateTemplatePermissionsOptions[].class));
+      Invokable<?, ?> method = method(TemplateAsyncClient.class, "updateTemplatePermissions", String.class, UpdateTemplatePermissionsOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(17, UpdateTemplatePermissionsOptions.Builder.accounts(ImmutableSet.of("5", "6")).isExtractable(true).isFeatured(true).isPublic(true).op(UpdateTemplatePermissionsOptions.Operation.add)));
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/client/api?response=json&command=updateTemplatePermissions&id=17&accounts=5,6&isextractable=true&isfeatured=true&ispublic=true&op=add HTTP/1.1");
@@ -325,7 +326,7 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
    }
 
    public void testListTemplatePermissions() throws NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(TemplateAsyncClient.class.getMethod("listTemplatePermissions", String.class, AccountInDomainOptions[].class));
+      Invokable<?, ?> method = method(TemplateAsyncClient.class, "listTemplatePermissions", String.class, AccountInDomainOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(17));
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/client/api?response=json&command=listTemplatePermissions&listAll=true&id=17 HTTP/1.1");
@@ -340,7 +341,7 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
    }
 
    public void testListTemplatePermissionsOptions() throws NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(TemplateAsyncClient.class.getMethod("listTemplatePermissions", String.class, AccountInDomainOptions[].class));
+      Invokable<?, ?> method = method(TemplateAsyncClient.class, "listTemplatePermissions", String.class, AccountInDomainOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(17, AccountInDomainOptions.Builder.accountInDomain("fred", "8")));
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/client/api?response=json&command=listTemplatePermissions&listAll=true&id=17&account=fred&domainid=8 HTTP/1.1");
@@ -363,7 +364,7 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
                                             .addQueryParam("zoneid", "5").build();
 
    public void testExtractTemplate() throws NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(TemplateAsyncClient.class.getMethod("extractTemplate", String.class, ExtractMode.class, String.class, ExtractTemplateOptions[].class));
+      Invokable<?, ?> method = method(TemplateAsyncClient.class, "extractTemplate", String.class, ExtractMode.class, String.class, ExtractTemplateOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(3, ExtractMode.HTTP_DOWNLOAD, 5));
 
       assertRequestLineEquals(httpRequest, extractTemplate.getRequestLine());
@@ -387,7 +388,7 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
                                                    .addQueryParam("url", "http%3A//example.com/").build();
 
    public void testExtractTemplateOptions() throws NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(TemplateAsyncClient.class.getMethod("extractTemplate", String.class, ExtractMode.class, String.class, ExtractTemplateOptions[].class));
+      Invokable<?, ?> method = method(TemplateAsyncClient.class, "extractTemplate", String.class, ExtractMode.class, String.class, ExtractTemplateOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(3, ExtractMode.HTTP_DOWNLOAD, 5, ExtractTemplateOptions.Builder.url("http://example.com/")));
 
       assertRequestLineEquals(httpRequest, extractTemplateOptions.getRequestLine());

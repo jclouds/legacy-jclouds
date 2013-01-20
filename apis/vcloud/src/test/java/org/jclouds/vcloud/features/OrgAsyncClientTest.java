@@ -18,13 +18,14 @@
  */
 package org.jclouds.vcloud.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 import java.net.URI;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.functions.ParseSax;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.vcloud.internal.BaseVCloudAsyncClientTest;
 import org.jclouds.vcloud.xml.OrgHandler;
@@ -32,7 +33,7 @@ import org.jclouds.vcloud.xml.OrgListHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code OrgAsyncClient}
  * 
@@ -44,7 +45,7 @@ import com.google.common.collect.ImmutableList;
 public class OrgAsyncClientTest extends BaseVCloudAsyncClientTest<OrgAsyncClient> {
 
    public void testlistOrgs() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(OrgAsyncClient.class.getMethod("listOrgs"));
+      Invokable<?, ?> method = method(OrgAsyncClient.class, "listOrgs");
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(request, "GET https://vcenterprise.bluelock.com/api/v1.0/org HTTP/1.1");
@@ -59,7 +60,7 @@ public class OrgAsyncClientTest extends BaseVCloudAsyncClientTest<OrgAsyncClient
    }
 
    public void testOrg() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(OrgAsyncClient.class.getMethod("getOrg", URI.class));
+      Invokable<?, ?> method = method(OrgAsyncClient.class, "getOrg", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/org/1")));
 
@@ -75,7 +76,7 @@ public class OrgAsyncClientTest extends BaseVCloudAsyncClientTest<OrgAsyncClient
    }
 
    public void testFindOrgNamed() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(OrgAsyncClient.class.getMethod("findOrgNamed", String.class));
+      Invokable<?, ?> method = method(OrgAsyncClient.class, "findOrgNamed", String.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("org"));
 
       assertRequestLineEquals(request, "GET https://vcenterprise.bluelock.com/api/v1.0/org/1 HTTP/1.1");

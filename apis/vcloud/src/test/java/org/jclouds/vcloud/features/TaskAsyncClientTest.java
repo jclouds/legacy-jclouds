@@ -18,13 +18,14 @@
  */
 package org.jclouds.vcloud.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 import java.net.URI;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.vcloud.internal.BaseVCloudAsyncClientTest;
 import org.jclouds.vcloud.xml.TaskHandler;
@@ -32,7 +33,7 @@ import org.jclouds.vcloud.xml.TasksListHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code TaskAsyncClient}
  * 
@@ -44,7 +45,7 @@ import com.google.common.collect.ImmutableList;
 public class TaskAsyncClientTest extends BaseVCloudAsyncClientTest<TaskAsyncClient> {
 
    public void testGetTasksList() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TaskAsyncClient.class.getMethod("getTasksList", URI.class));
+      Invokable<?, ?> method = method(TaskAsyncClient.class, "getTasksList", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/tasksList/1")));
 
@@ -60,7 +61,7 @@ public class TaskAsyncClientTest extends BaseVCloudAsyncClientTest<TaskAsyncClie
    }
 
    public void testFindTasksListInOrgNamed() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TaskAsyncClient.class.getMethod("findTasksListInOrgNamed", String.class));
+      Invokable<?, ?> method = method(TaskAsyncClient.class, "findTasksListInOrgNamed", String.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("org"));
 
       assertRequestLineEquals(request, "GET https://vcenterprise.bluelock.com/api/v1.0/tasksList/1 HTTP/1.1");
@@ -75,7 +76,7 @@ public class TaskAsyncClientTest extends BaseVCloudAsyncClientTest<TaskAsyncClie
    }
 
    public void testGetTask() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TaskAsyncClient.class.getMethod("getTask", URI.class));
+      Invokable<?, ?> method = method(TaskAsyncClient.class, "getTask", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/task/1")));
 
@@ -91,7 +92,7 @@ public class TaskAsyncClientTest extends BaseVCloudAsyncClientTest<TaskAsyncClie
    }
 
    public void testCancelTask() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TaskAsyncClient.class.getMethod("cancelTask", URI.class));
+      Invokable<?, ?> method = method(TaskAsyncClient.class, "cancelTask", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/task/1")));
 

@@ -25,7 +25,7 @@ import static com.google.common.io.BaseEncoding.base16;
 import static com.google.common.io.ByteStreams.readBytes;
 import static org.jclouds.blobstore.util.BlobStoreUtils.cleanRequest;
 import static org.jclouds.crypto.Macs.asByteProcessor;
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.method;
 import static org.jclouds.util.Strings2.toInputStream;
 
 import java.io.IOException;
@@ -56,9 +56,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteProcessor;
 import com.google.common.reflect.Invokable;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
-import com.google.inject.TypeLiteral;
 
 /**
  * @author Adrian Cole
@@ -89,7 +87,7 @@ public class SwiftBlobSigner<T extends CommonSwiftAsyncClient> implements BlobRe
    protected SwiftBlobSigner(BlobToObject blobToObject, BlobToHttpGetOptions blob2HttpGetOptions, Crypto crypto,
          @TimeStamp Provider<Long> unixEpochTimestampProvider,
          @TemporaryUrlKey Supplier<String> temporaryUrlKeySupplier, RestAnnotationProcessor processor,
-         TypeLiteral<T> interfaceType) throws SecurityException, NoSuchMethodException {
+         Class<T> ownerType) throws SecurityException, NoSuchMethodException {
       this.processor = checkNotNull(processor, "processor");
       this.crypto = checkNotNull(crypto, "crypto");
 
@@ -98,14 +96,9 @@ public class SwiftBlobSigner<T extends CommonSwiftAsyncClient> implements BlobRe
 
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
-
-      TypeToken<?> owner = typeTokenOf(interfaceType.getType());
-      this.getMethod = owner.method(interfaceType.getRawType().getMethod("getObject", String.class, String.class,
-            GetOptions[].class));
-      this.deleteMethod = owner
-            .method(interfaceType.getRawType().getMethod("removeObject", String.class, String.class));
-      this.createMethod = owner.method(interfaceType.getRawType().getMethod("putObject", String.class,
-            SwiftObject.class));
+      this.getMethod = method(ownerType, "getObject", String.class, String.class, GetOptions[].class);
+      this.deleteMethod = method(ownerType, "removeObject", String.class, String.class);
+      this.createMethod = method(ownerType, "putObject", String.class, SwiftObject.class);
    }
 
    @Override

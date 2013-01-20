@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudsigma.binders;
 
+import static org.jclouds.reflect.Reflection2.method;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -27,7 +28,6 @@ import java.util.Map;
 
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.reflect.Invocation;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
@@ -35,7 +35,6 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Guice;
-
 /**
  * 
  * @author Adrian Cole
@@ -64,12 +63,10 @@ public class BindCloneDriveOptionsToPlainTextStringTest {
 
    protected GeneratedHttpRequest requestForArgs(List<Object> args) {
       try {
-         Invocation invocation = Invocation.create(Invokable.from(String.class.getDeclaredMethod("toString")), args);
+         Invocation invocation = Invocation.create(method(String.class, "toString"), args);
          return GeneratedHttpRequest.builder().method("POST").endpoint(URI.create("http://localhost/key"))
                .invocation(invocation).build();
       } catch (SecurityException e) {
-         throw Throwables.propagate(e);
-      } catch (NoSuchMethodException e) {
          throw Throwables.propagate(e);
       }
    }

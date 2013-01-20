@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.jclouds.reflect.Reflection2.method;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -33,14 +34,13 @@ import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.ssh.SshKeys;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code SSHKeyPairAsyncClient}
  *
@@ -50,7 +50,7 @@ import com.google.common.collect.ImmutableList;
 public class SSHKeyPairAsyncClientTest extends BaseCloudStackAsyncClientTest<SSHKeyPairAsyncClient> {
 
    public void testListSSHKeyPairs() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(SSHKeyPairAsyncClient.class.getMethod("listSSHKeyPairs", ListSSHKeyPairsOptions[].class));
+      Invokable<?, ?> method = method(SSHKeyPairAsyncClient.class, "listSSHKeyPairs", ListSSHKeyPairsOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
@@ -67,7 +67,7 @@ public class SSHKeyPairAsyncClientTest extends BaseCloudStackAsyncClientTest<SSH
    }
 
    public void testListSSHKeyPairsOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(SSHKeyPairAsyncClient.class.getMethod("listSSHKeyPairs", ListSSHKeyPairsOptions[].class));
+      Invokable<?, ?> method = method(SSHKeyPairAsyncClient.class, "listSSHKeyPairs", ListSSHKeyPairsOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListSSHKeyPairsOptions.Builder.name("jclouds")));
 
       assertRequestLineEquals(httpRequest,
@@ -84,7 +84,7 @@ public class SSHKeyPairAsyncClientTest extends BaseCloudStackAsyncClientTest<SSH
    }
 
    public void testGetSSHKeyPair() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(SSHKeyPairAsyncClient.class.getMethod("getSSHKeyPair", String.class));
+      Invokable<?, ?> method = method(SSHKeyPairAsyncClient.class, "getSSHKeyPair", String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("jclouds-keypair"));
 
       assertRequestLineEquals(httpRequest,
@@ -102,7 +102,7 @@ public class SSHKeyPairAsyncClientTest extends BaseCloudStackAsyncClientTest<SSH
    }
 
    public void testRegisterSSHKeyPair() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(SSHKeyPairAsyncClient.class.getMethod("registerSSHKeyPair", String.class, String.class));
+      Invokable<?, ?> method = method(SSHKeyPairAsyncClient.class, "registerSSHKeyPair", String.class, String.class);
       String publicKey = URLEncoder.encode(SshKeys.generate().get("public"), "UTF-8");
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("jclouds-keypair", publicKey));
       assertRequestLineEquals(httpRequest,
@@ -122,7 +122,7 @@ public class SSHKeyPairAsyncClientTest extends BaseCloudStackAsyncClientTest<SSH
 
 
    public void testDeleteSSHKeyPair() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(SSHKeyPairAsyncClient.class.getMethod("deleteSSHKeyPair", String.class));
+      Invokable<?, ?> method = method(SSHKeyPairAsyncClient.class, "deleteSSHKeyPair", String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("jclouds-keypair"));
 
       assertRequestLineEquals(httpRequest,

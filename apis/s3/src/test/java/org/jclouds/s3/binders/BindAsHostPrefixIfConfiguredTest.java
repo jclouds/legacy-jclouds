@@ -18,6 +18,7 @@
  */
 package org.jclouds.s3.binders;
 
+import static org.jclouds.reflect.Reflection2.method;
 import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_SERVICE_PATH;
 import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS;
 import static org.testng.Assert.assertEquals;
@@ -33,7 +34,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.Invokable;
-
 /**
  * Tests behavior of {@code BindAsHostPrefixIfConfigured}
  * 
@@ -61,7 +61,7 @@ public class BindAsHostPrefixIfConfiguredTest extends BaseS3AsyncClientTest<S3As
       request = binder.bindToRequest(request, "testbucket.example.com");
       assertEquals(request.getRequestLine(), "GET http://euc/services/Walrus/testbucket.example.com HTTP/1.1");
 
-      Invokable<?, ?> method = Invokable.from(S3AsyncClient.class.getMethod("deleteObject", String.class, String.class));
+      Invokable<?, ?> method = method(S3AsyncClient.class, "deleteObject", String.class, String.class);
       request = processor.createRequest(method, ImmutableList.<Object> of("testbucket.example.com", "test.jpg"));
 
       assertRequestLineEquals(request, "DELETE http://euc/services/Walrus/testbucket.example.com/test.jpg HTTP/1.1");

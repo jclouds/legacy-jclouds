@@ -20,7 +20,7 @@ package org.jclouds.loadbalancer;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertNotNull;
 
@@ -184,6 +184,6 @@ public abstract class BaseLoadBalancerServiceLiveTest extends BaseViewLiveTest<L
 
    @Override
    protected TypeToken<LoadBalancerServiceContext> viewType() {
-      return typeTokenOf(LoadBalancerServiceContext.class);
+      return typeToken(LoadBalancerServiceContext.class);
    }
 }

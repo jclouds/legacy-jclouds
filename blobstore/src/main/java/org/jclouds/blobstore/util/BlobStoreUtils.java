@@ -19,7 +19,6 @@
 package org.jclouds.blobstore.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
 
 import java.util.List;
 import java.util.Map;

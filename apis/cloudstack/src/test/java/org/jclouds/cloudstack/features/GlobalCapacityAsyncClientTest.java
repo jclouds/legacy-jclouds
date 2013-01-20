@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
@@ -25,12 +27,11 @@ import org.jclouds.cloudstack.domain.Capacity;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListCapacityOptions;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code GlobalCapacityAsyncClient}
  *
@@ -42,7 +43,7 @@ import com.google.common.collect.ImmutableList;
 public class GlobalCapacityAsyncClientTest extends BaseCloudStackAsyncClientTest<GlobalCapacityAsyncClient> {
 
    public void testListCapacity() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GlobalCapacityAsyncClient.class.getMethod("listCapacity", ListCapacityOptions[].class));
+      Invokable<?, ?> method = method(GlobalCapacityAsyncClient.class, "listCapacity", ListCapacityOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
@@ -58,7 +59,7 @@ public class GlobalCapacityAsyncClientTest extends BaseCloudStackAsyncClientTest
    }
 
    public void testListCapacityOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GlobalCapacityAsyncClient.class.getMethod("listCapacity", ListCapacityOptions[].class));
+      Invokable<?, ?> method = method(GlobalCapacityAsyncClient.class, "listCapacity", ListCapacityOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListCapacityOptions.Builder.hostId("3").keyword("fred").podId("4").type(Capacity.Type.CPU_ALLOCATED_MHZ).zoneId("6")));
 
       assertRequestLineEquals(httpRequest,

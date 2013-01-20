@@ -19,6 +19,8 @@
 
 package org.jclouds.abiquo.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.abiquo.AbiquoFallbacks.NullOn303;
@@ -34,7 +36,6 @@ import com.abiquo.server.core.task.TaskDto;
 import com.abiquo.server.core.task.TasksDto;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.Invokable;
-
 /**
  * Tests annotation parsing of {@code TaskAsyncApi}
  * 
@@ -46,7 +47,7 @@ public class TaskAsyncApiTest extends BaseAbiquoAsyncApiTest<TaskAsyncApi> {
    /*********************** Task ***********************/
 
    public void testGetTaskVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TaskAsyncApi.class.getMethod("getTask", RESTLink.class));
+      Invokable<?, ?> method = method(TaskAsyncApi.class, "getTask", RESTLink.class);
       GeneratedHttpRequest request = processor
             .createRequest(
                   method,
@@ -68,7 +69,7 @@ public class TaskAsyncApiTest extends BaseAbiquoAsyncApiTest<TaskAsyncApi> {
    }
 
    public void testListTasksVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TaskAsyncApi.class.getMethod("listTasks", SingleResourceTransportDto.class));
+      Invokable<?, ?> method = method(TaskAsyncApi.class, "listTasks", SingleResourceTransportDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(CloudResources.virtualMachinePut()));
 
       assertRequestLineEquals(request,
@@ -84,7 +85,7 @@ public class TaskAsyncApiTest extends BaseAbiquoAsyncApiTest<TaskAsyncApi> {
    }
 
    public void testGetTaskVirtualMachineTemplate() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TaskAsyncApi.class.getMethod("getTask", RESTLink.class));
+      Invokable<?, ?> method = method(TaskAsyncApi.class, "getTask", RESTLink.class);
       GeneratedHttpRequest request = processor
             .createRequest(
                   method,
@@ -106,7 +107,7 @@ public class TaskAsyncApiTest extends BaseAbiquoAsyncApiTest<TaskAsyncApi> {
    }
 
    public void testListTasksVirtualMachineTemplate() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TaskAsyncApi.class.getMethod("listTasks", SingleResourceTransportDto.class));
+      Invokable<?, ?> method = method(TaskAsyncApi.class, "listTasks", SingleResourceTransportDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(TemplateResources.virtualMachineTemplatePut()));
 
       assertRequestLineEquals(request,

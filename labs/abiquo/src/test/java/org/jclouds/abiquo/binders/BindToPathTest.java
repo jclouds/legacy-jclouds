@@ -18,7 +18,7 @@
  */
 
 package org.jclouds.abiquo.binders;
-
+import static org.jclouds.reflect.Reflection2.method;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
@@ -60,7 +60,7 @@ public class BindToPathTest {
 
    @Test(expectedExceptions = NullPointerException.class)
    public void testInvalidNullInput() throws SecurityException, NoSuchMethodException {
-      Invokable<?, ?> withEndpointLink = Invokable.from(TestEndpointLink.class.getMethod("withEndpointLink", TestDto.class));
+      Invokable<?, ?> withEndpointLink = method(TestEndpointLink.class, "withEndpointLink", TestDto.class);
       GeneratedHttpRequest request = GeneratedHttpRequest.builder()
             .invocation(Invocation.create(withEndpointLink, ImmutableList.<Object> of(new TestDto())))
             .method(HttpMethod.GET)
@@ -72,7 +72,7 @@ public class BindToPathTest {
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testInvalidInputType() throws SecurityException, NoSuchMethodException {
-      Invokable<?, ?> withEndpointLink = Invokable.from(TestEndpointLink.class.getMethod("withEndpointLink", TestDto.class));
+      Invokable<?, ?> withEndpointLink = method(TestEndpointLink.class, "withEndpointLink", TestDto.class);
       GeneratedHttpRequest request = GeneratedHttpRequest.builder()
             .invocation(Invocation.create(withEndpointLink, ImmutableList.<Object> of(new TestDto())))
             .method(HttpMethod.GET)
@@ -85,7 +85,7 @@ public class BindToPathTest {
    @Test(expectedExceptions = BindException.class)
    public void testAnnotationNotPresent() throws SecurityException, NoSuchMethodException {
       TestDto dto = new TestDto();
-      Invokable<?, ?> withoutEndpointLink = Invokable.from(TestEndpointLink.class.getMethod("withoutEndpointLink", TestDto.class));
+      Invokable<?, ?> withoutEndpointLink = method(TestEndpointLink.class, "withoutEndpointLink", TestDto.class);
       GeneratedHttpRequest request = GeneratedHttpRequest.builder()
             .invocation(Invocation.create(withoutEndpointLink, ImmutableList.<Object> of(dto)))
             .method(HttpMethod.GET)
@@ -98,7 +98,7 @@ public class BindToPathTest {
    @Test(expectedExceptions = NullPointerException.class)
    public void testLinkNotPresent() throws SecurityException, NoSuchMethodException {
       TestDto dto = new TestDto();
-      Invokable<?, ?> withUnexistingLink = Invokable.from(TestEndpointLink.class.getMethod("withUnexistingLink", TestDto.class));
+      Invokable<?, ?> withUnexistingLink = method(TestEndpointLink.class, "withUnexistingLink", TestDto.class);
       GeneratedHttpRequest request = GeneratedHttpRequest.builder()
             .invocation(Invocation.create(withUnexistingLink, ImmutableList.<Object> of(dto)))
             .method(HttpMethod.GET)
@@ -110,7 +110,7 @@ public class BindToPathTest {
 
    public void testBindWithoutParameters() throws SecurityException, NoSuchMethodException {
       TestDto dto = new TestDto();
-      Invokable<?, ?> withEndpointLink = Invokable.from(TestEndpointLink.class.getMethod("withEndpointLink", TestDto.class));
+      Invokable<?, ?> withEndpointLink = method(TestEndpointLink.class, "withEndpointLink", TestDto.class);
       GeneratedHttpRequest request = GeneratedHttpRequest.builder()
             .invocation(Invocation.create(withEndpointLink, ImmutableList.<Object> of(dto)))
             .method(HttpMethod.GET)
@@ -123,7 +123,7 @@ public class BindToPathTest {
 
    public void testBindWithQueryParameters() throws SecurityException, NoSuchMethodException {
       TestDto dto = new TestDto();
-      Invokable<?, ?> withEndpointLink = Invokable.from(TestEndpointLink.class.getMethod("withEndpointLink", TestDto.class));
+      Invokable<?, ?> withEndpointLink = method(TestEndpointLink.class, "withEndpointLink", TestDto.class);
       GeneratedHttpRequest request = GeneratedHttpRequest.builder()
             .invocation(Invocation.create(withEndpointLink, ImmutableList.<Object> of(dto)))
             .method(HttpMethod.GET)

@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.cloudstack.domain.ResourceLimit;
@@ -25,12 +27,11 @@ import org.jclouds.cloudstack.domain.ResourceLimit.ResourceType;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code DomainLimitAsyncClient}
  * 
@@ -40,7 +41,7 @@ import com.google.common.collect.ImmutableList;
 public class DomainLimitAsyncClientTest extends BaseCloudStackAsyncClientTest<DomainLimitAsyncClient> {
 
    public void testUpdateResourceLimit() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(DomainLimitAsyncClient.class.getMethod("updateResourceLimit", ResourceLimit.class));
+      Invokable<?, ?> method = method(DomainLimitAsyncClient.class, "updateResourceLimit", ResourceLimit.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(
             ResourceLimit.builder().resourceType(ResourceType.SNAPSHOT).account("foo").domainId("100").max(101).build()));
 

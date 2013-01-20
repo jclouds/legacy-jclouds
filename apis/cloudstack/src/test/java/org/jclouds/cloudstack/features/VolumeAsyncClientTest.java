@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
@@ -26,12 +28,11 @@ import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListVolumesOptions;
 import org.jclouds.http.HttpRequest;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code EventAsyncClient}
  * 
@@ -43,7 +44,7 @@ import com.google.common.collect.ImmutableList;
 public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeAsyncClient> {
 
    public void testListVolumes() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VolumeAsyncClient.class.getMethod("listVolumes", ListVolumesOptions[].class));
+      Invokable<?, ?> method = method(VolumeAsyncClient.class, "listVolumes", ListVolumesOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
@@ -59,7 +60,7 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
    }
 
    public void testGetVolume() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VolumeAsyncClient.class.getMethod("getVolume", String.class));
+      Invokable<?, ?> method = method(VolumeAsyncClient.class, "getVolume", String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(111L));
 
       assertRequestLineEquals(httpRequest,
@@ -83,8 +84,8 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
                                                      .addQueryParam("zoneid", "111").build();
 
    public void testCreateVolumeWithSnapshot() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VolumeAsyncClient.class.getMethod("createVolumeFromSnapshotInZone", String.class, String.class,
-            String.class));
+      Invokable<?, ?> method = method(VolumeAsyncClient.class, "createVolumeFromSnapshotInZone", String.class, String.class,
+            String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("jclouds-volume", 999L, 111l));
 
       assertRequestLineEquals(httpRequest, createVolumeFromSnapshot.getRequestLine());
@@ -105,8 +106,8 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
                                                          .addQueryParam("zoneid", "111").build();
 
    public void testCreateVolumeFromDiskOffering() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VolumeAsyncClient.class.getMethod("createVolumeFromDiskOfferingInZone", String.class, String.class,
-            String.class));
+      Invokable<?, ?> method = method(VolumeAsyncClient.class, "createVolumeFromDiskOfferingInZone", String.class, String.class,
+            String.class);
 
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("jclouds-volume", 999L, 111L));
 
@@ -120,7 +121,7 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
    }
 
    public void testAttachVolume() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VolumeAsyncClient.class.getMethod("attachVolume", String.class, String.class));
+      Invokable<?, ?> method = method(VolumeAsyncClient.class, "attachVolume", String.class, String.class);
 
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(111L, 999L));
 
@@ -135,7 +136,7 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
    }
 
    public void testDetachVolume() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VolumeAsyncClient.class.getMethod("detachVolume", String.class));
+      Invokable<?, ?> method = method(VolumeAsyncClient.class, "detachVolume", String.class);
 
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(111L));
 
@@ -150,7 +151,7 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
    }
 
    public void testDeleteVolume() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VolumeAsyncClient.class.getMethod("deleteVolume", String.class));
+      Invokable<?, ?> method = method(VolumeAsyncClient.class, "deleteVolume", String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(111L));
 
       assertRequestLineEquals(httpRequest,

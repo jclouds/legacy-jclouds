@@ -18,16 +18,17 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListStoragePoolsOptions;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code GlobalStoragePoolAsyncClient}
  *
@@ -37,7 +38,7 @@ import com.google.common.collect.ImmutableList;
 public class GlobalStoragePoolAsyncClientTest extends BaseCloudStackAsyncClientTest<GlobalStoragePoolAsyncClient> {
 
    public void testListStoragePools() throws NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(GlobalStoragePoolAsyncClient.class.getMethod("listStoragePools", ListStoragePoolsOptions[].class));
+      Invokable<?, ?> method = method(GlobalStoragePoolAsyncClient.class, "listStoragePools", ListStoragePoolsOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
@@ -53,7 +54,7 @@ public class GlobalStoragePoolAsyncClientTest extends BaseCloudStackAsyncClientT
    }
 
    public void testListStoragePoolsOptions() throws NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(GlobalStoragePoolAsyncClient.class.getMethod("listStoragePools", ListStoragePoolsOptions[].class));
+      Invokable<?, ?> method = method(GlobalStoragePoolAsyncClient.class, "listStoragePools", ListStoragePoolsOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListStoragePoolsOptions.Builder.clusterId("3").id("4").ipAddress("192.168.42.42").keyword("fred").name("bob").path("/mnt/store42").podId("4").zoneId("5")));
 
       assertRequestLineEquals(httpRequest,

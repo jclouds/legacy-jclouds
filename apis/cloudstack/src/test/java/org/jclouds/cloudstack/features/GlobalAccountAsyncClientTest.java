@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
@@ -26,12 +28,11 @@ import org.jclouds.cloudstack.options.UpdateAccountOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code GlobalAccountAsyncClient}
  *
@@ -53,8 +54,8 @@ public class GlobalAccountAsyncClientTest extends BaseCloudStackAsyncClientTest<
                                    .build();
 
    public void testCreateAccount() throws Exception {
-      Invokable<?, ?> method = Invokable.from(GlobalAccountAsyncClient.class.getMethod("createAccount", String.class, Account.Type.class,
-         String.class, String.class, String.class, String.class, CreateAccountOptions[].class));
+      Invokable<?, ?> method = method(GlobalAccountAsyncClient.class, "createAccount", String.class, Account.Type.class,
+         String.class, String.class, String.class, String.class, CreateAccountOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("user", Account.Type.USER, "email@example.com",
          "FirstName", "LastName", "hashed-password"));
 
@@ -79,8 +80,8 @@ public class GlobalAccountAsyncClientTest extends BaseCloudStackAsyncClientTest<
                                    .build();
 
    public void testUpdateAccount() throws Exception {
-      Invokable<?, ?> method = Invokable.from(GlobalAccountAsyncClient.class.getMethod("updateAccount", String.class, String.class,
-         String.class, UpdateAccountOptions[].class));
+      Invokable<?, ?> method = method(GlobalAccountAsyncClient.class, "updateAccount", String.class, String.class,
+         String.class, UpdateAccountOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("account", 42L, "new-account-name"));
 
       assertRequestLineEquals(httpRequest, update.getRequestLine());
@@ -95,7 +96,7 @@ public class GlobalAccountAsyncClientTest extends BaseCloudStackAsyncClientTest<
    }
 
    public void testDeleteAccount() throws Exception {
-      Invokable<?, ?> method = Invokable.from(GlobalAccountAsyncClient.class.getMethod("deleteAccount", String.class));
+      Invokable<?, ?> method = method(GlobalAccountAsyncClient.class, "deleteAccount", String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(42L));
 
       assertRequestLineEquals(httpRequest,

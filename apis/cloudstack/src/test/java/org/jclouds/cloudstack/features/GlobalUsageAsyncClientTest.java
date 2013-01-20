@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -26,12 +28,11 @@ import org.jclouds.cloudstack.options.GenerateUsageRecordsOptions;
 import org.jclouds.cloudstack.options.ListUsageRecordsOptions;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code GlobalUsageAsyncClient}
  *
@@ -49,8 +50,8 @@ public class GlobalUsageAsyncClientTest extends BaseCloudStackAsyncClientTest<Gl
       c.set(Calendar.DAY_OF_MONTH, 31);
       Date end = c.getTime();
 
-      Invokable<?, ?> method = Invokable.from(GlobalUsageAsyncClient.class.getMethod("generateUsageRecords",
-         Date.class, Date.class, GenerateUsageRecordsOptions[].class));
+      Invokable<?, ?> method = method(GlobalUsageAsyncClient.class, "generateUsageRecords",
+         Date.class, Date.class, GenerateUsageRecordsOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(start, end));
 
       assertRequestLineEquals(httpRequest,
@@ -74,8 +75,8 @@ public class GlobalUsageAsyncClientTest extends BaseCloudStackAsyncClientTest<Gl
       c.set(Calendar.DAY_OF_MONTH, 31);
       Date end = c.getTime();
 
-      Invokable<?, ?> method = Invokable.from(GlobalUsageAsyncClient.class.getMethod("generateUsageRecords",
-         Date.class, Date.class, GenerateUsageRecordsOptions[].class));
+      Invokable<?, ?> method = method(GlobalUsageAsyncClient.class, "generateUsageRecords",
+         Date.class, Date.class, GenerateUsageRecordsOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(start, end, GenerateUsageRecordsOptions.Builder.domainId("42")));
 
       assertRequestLineEquals(httpRequest,
@@ -99,8 +100,8 @@ public class GlobalUsageAsyncClientTest extends BaseCloudStackAsyncClientTest<Gl
       c.set(Calendar.DAY_OF_MONTH, 31);
       Date end = c.getTime();
 
-      Invokable<?, ?> method = Invokable.from(GlobalUsageAsyncClient.class.getMethod("listUsageRecords",
-         Date.class, Date.class, ListUsageRecordsOptions[].class));
+      Invokable<?, ?> method = method(GlobalUsageAsyncClient.class, "listUsageRecords",
+         Date.class, Date.class, ListUsageRecordsOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(start, end));
 
       assertRequestLineEquals(httpRequest,
@@ -124,8 +125,8 @@ public class GlobalUsageAsyncClientTest extends BaseCloudStackAsyncClientTest<Gl
       c.set(Calendar.DAY_OF_MONTH, 31);
       Date end = c.getTime();
 
-      Invokable<?, ?> method = Invokable.from(GlobalUsageAsyncClient.class.getMethod("listUsageRecords",
-         Date.class, Date.class, ListUsageRecordsOptions[].class));
+      Invokable<?, ?> method = method(GlobalUsageAsyncClient.class, "listUsageRecords",
+         Date.class, Date.class, ListUsageRecordsOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(start, end, ListUsageRecordsOptions.Builder.accountInDomain("fred", "42").accountId("41").keyword("bob")));
 
       assertRequestLineEquals(httpRequest,

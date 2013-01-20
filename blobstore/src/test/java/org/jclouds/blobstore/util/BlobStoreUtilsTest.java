@@ -24,6 +24,7 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.jclouds.blobstore.util.BlobStoreUtils.createParentIfNeededAsync;
 import static org.jclouds.blobstore.util.BlobStoreUtils.getNameFor;
+import static org.jclouds.reflect.Reflection2.method;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
@@ -38,8 +39,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
-
 /**
  * Tests behavior of {@code BlobStoreUtils}
  * 
@@ -126,12 +125,10 @@ public class BlobStoreUtilsTest {
 
    GeneratedHttpRequest requestForEndpointAndArgs(String endpoint, List<Object> args) {
       try {
-         Invocation invocation = Invocation.create(Invokable.from(String.class.getDeclaredMethod("toString")), args);
+         Invocation invocation = Invocation.create(method(String.class, "toString"), args);
          return GeneratedHttpRequest.builder().method("POST").endpoint(URI.create(endpoint)).invocation(invocation)
                .build();
       } catch (SecurityException e) {
-         throw Throwables.propagate(e);
-      } catch (NoSuchMethodException e) {
          throw Throwables.propagate(e);
       }
    }

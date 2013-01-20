@@ -18,7 +18,7 @@
  */
 package org.jclouds.openstack.keystone.v2_0.config;
 
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 import static org.jclouds.util.Suppliers2.getLastValueInMap;
 
 import java.net.URI;
@@ -91,7 +91,7 @@ public class KeystoneRestClientModule<S extends KeystoneApi, A extends KeystoneA
 
    @SuppressWarnings("unchecked")
    public KeystoneRestClientModule() {
-      super(TypeToken.class.cast(typeTokenOf(KeystoneApi.class)), TypeToken.class.cast(typeTokenOf(KeystoneAsyncApi.class)), DELEGATE_MAP);
+      super(TypeToken.class.cast(typeToken(KeystoneApi.class)), TypeToken.class.cast(typeToken(KeystoneAsyncApi.class)), DELEGATE_MAP);
    }
 
    protected KeystoneRestClientModule(TypeToken<S> syncApiType, TypeToken<A> asyncApiType, Map<Class<?>, Class<?>> sync2Async) {

@@ -18,6 +18,8 @@
  */
 package org.jclouds.ec2.services;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
@@ -26,12 +28,11 @@ import org.jclouds.ec2.xml.BundleTaskHandler;
 import org.jclouds.ec2.xml.DescribeBundleTasksResponseHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code WindowsAsyncClient}
  * 
@@ -58,8 +59,8 @@ public class WindowsAsyncClientTest extends BaseEC2AsyncClientTest<WindowsAsyncC
                                                    .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testBundleInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(WindowsAsyncClient.class.getMethod("bundleInstanceInRegion", String.class, String.class,
-               String.class, String.class, String.class, BundleInstanceS3StorageOptions[].class));
+      Invokable<?, ?> method = method(WindowsAsyncClient.class, "bundleInstanceInRegion", String.class, String.class,
+               String.class, String.class, String.class, BundleInstanceS3StorageOptions[].class);
       GeneratedHttpRequest request = processor
                .createRequest(
                         method,
@@ -102,8 +103,8 @@ public class WindowsAsyncClientTest extends BaseEC2AsyncClientTest<WindowsAsyncC
                                                           .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testBundleInstanceInRegionOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(WindowsAsyncClient.class.getMethod("bundleInstanceInRegion", String.class, String.class,
-               String.class, String.class, String.class, BundleInstanceS3StorageOptions[].class));
+      Invokable<?, ?> method = method(WindowsAsyncClient.class, "bundleInstanceInRegion", String.class, String.class,
+               String.class, String.class, String.class, BundleInstanceS3StorageOptions[].class);
       GeneratedHttpRequest request = processor
                .createRequest(
                         method,
@@ -130,7 +131,7 @@ public class WindowsAsyncClientTest extends BaseEC2AsyncClientTest<WindowsAsyncC
    }
 
    public void testDescribeBundleTasks() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(WindowsAsyncClient.class.getMethod("describeBundleTasksInRegion", String.class, String[].class));
+      Invokable<?, ?> method = method(WindowsAsyncClient.class, "describeBundleTasksInRegion", String.class, String[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -146,7 +147,7 @@ public class WindowsAsyncClientTest extends BaseEC2AsyncClientTest<WindowsAsyncC
    }
 
    public void testDescribeBundleTasksArgs() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(WindowsAsyncClient.class.getMethod("describeBundleTasksInRegion", String.class, String[].class));
+      Invokable<?, ?> method = method(WindowsAsyncClient.class, "describeBundleTasksInRegion", String.class, String[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");

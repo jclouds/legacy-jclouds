@@ -18,6 +18,8 @@
  */
 package org.jclouds.savvis.vpdc.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.Set;
@@ -27,7 +29,6 @@ import org.jclouds.cim.OSType;
 import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.functions.ParseSax;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.savvis.vpdc.domain.VMSpec;
 import org.jclouds.savvis.vpdc.xml.TaskHandler;
@@ -39,9 +40,9 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.reflect.Invokable;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
-
 /**
  * Tests annotation parsing of {@code VMAsyncApi}
  * 
@@ -51,7 +52,7 @@ import com.google.inject.TypeLiteral;
 public class VMAsyncApiTest extends BaseVPDCAsyncApiTest<VMAsyncApi> {
 
    public void testAddVMIntoVDCURI() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VMAsyncApi.class.getMethod("addVMIntoVDC", URI.class, VMSpec.class));
+      Invokable<?, ?> method = method(VMAsyncApi.class, "addVMIntoVDC", URI.class, VMSpec.class);
 
       CIMOperatingSystem os = Iterables.find(injector.getInstance(Key.get(new TypeLiteral<Set<CIMOperatingSystem>>() {
       })), new Predicate<CIMOperatingSystem>() {
@@ -81,7 +82,7 @@ public class VMAsyncApiTest extends BaseVPDCAsyncApiTest<VMAsyncApi> {
    }
 
    public void testAddVMIntoVDC() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VMAsyncApi.class.getMethod("addVMIntoVDC", String.class, String.class, VMSpec.class));
+      Invokable<?, ?> method = method(VMAsyncApi.class, "addVMIntoVDC", String.class, String.class, VMSpec.class);
 
       CIMOperatingSystem os = Iterables.find(injector.getInstance(Key.get(new TypeLiteral<Set<CIMOperatingSystem>>() {
       })), new Predicate<CIMOperatingSystem>() {
@@ -109,7 +110,7 @@ public class VMAsyncApiTest extends BaseVPDCAsyncApiTest<VMAsyncApi> {
    }
    
    public void testCaptureVApp() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VMAsyncApi.class.getMethod("captureVApp", String.class, String.class, URI.class));
+      Invokable<?, ?> method = method(VMAsyncApi.class, "captureVApp", String.class, String.class, URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("100000.0", "2736", URI.create("https://api.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/vApp/1001")));
 
       assertRequestLineEquals(request,
@@ -125,7 +126,7 @@ public class VMAsyncApiTest extends BaseVPDCAsyncApiTest<VMAsyncApi> {
    }
    
    public void testCloneVApp() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VMAsyncApi.class.getMethod("cloneVApp", URI.class, String.class, String.class));
+      Invokable<?, ?> method = method(VMAsyncApi.class, "cloneVApp", URI.class, String.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI.create("https://api.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/vApp/1001"), "clonedvm", "VM Tier01"));
 
       assertRequestLineEquals(request,
@@ -141,7 +142,7 @@ public class VMAsyncApiTest extends BaseVPDCAsyncApiTest<VMAsyncApi> {
    }
    
    public void testAddMultipleVMsIntoVDCURI() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VMAsyncApi.class.getMethod("addMultipleVMsIntoVDC", URI.class, Iterable.class));
+      Invokable<?, ?> method = method(VMAsyncApi.class, "addMultipleVMsIntoVDC", URI.class, Iterable.class);
 
       CIMOperatingSystem os = Iterables.find(injector.getInstance(Key.get(new TypeLiteral<Set<CIMOperatingSystem>>() {
       })), new Predicate<CIMOperatingSystem>() {
@@ -171,8 +172,7 @@ public class VMAsyncApiTest extends BaseVPDCAsyncApiTest<VMAsyncApi> {
    }
 
    public void testAddMultipleVMsIntoVDC() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VMAsyncApi.class
-               .getMethod("addMultipleVMsIntoVDC", String.class, String.class, Iterable.class));
+      Invokable<?, ?> method = method(VMAsyncApi.class, "addMultipleVMsIntoVDC", String.class, String.class, Iterable.class);
 
       CIMOperatingSystem os = Iterables.find(injector.getInstance(Key.get(new TypeLiteral<Set<CIMOperatingSystem>>() {
       })), new Predicate<CIMOperatingSystem>() {
@@ -200,7 +200,7 @@ public class VMAsyncApiTest extends BaseVPDCAsyncApiTest<VMAsyncApi> {
    }
 
    public void testRemoveVMFromVDC() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VMAsyncApi.class.getMethod("removeVMFromVDC", String.class, String.class, String.class));
+      Invokable<?, ?> method = method(VMAsyncApi.class, "removeVMFromVDC", String.class, String.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("11", "22", "33"));
 
       assertRequestLineEquals(request,
@@ -216,7 +216,7 @@ public class VMAsyncApiTest extends BaseVPDCAsyncApiTest<VMAsyncApi> {
    }
 
    public void testRemoveVM() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VMAsyncApi.class.getMethod("removeVM", URI.class));
+      Invokable<?, ?> method = method(VMAsyncApi.class, "removeVM", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://api.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33")));
 
@@ -233,7 +233,7 @@ public class VMAsyncApiTest extends BaseVPDCAsyncApiTest<VMAsyncApi> {
    }
 
    public void testPowerOffVM() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VMAsyncApi.class.getMethod("powerOffVM", URI.class));
+      Invokable<?, ?> method = method(VMAsyncApi.class, "powerOffVM", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://api.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33")));
 
@@ -250,7 +250,7 @@ public class VMAsyncApiTest extends BaseVPDCAsyncApiTest<VMAsyncApi> {
    }
 
    public void testPowerOnVM() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VMAsyncApi.class.getMethod("powerOnVM", URI.class));
+      Invokable<?, ?> method = method(VMAsyncApi.class, "powerOnVM", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://api.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33")));
 

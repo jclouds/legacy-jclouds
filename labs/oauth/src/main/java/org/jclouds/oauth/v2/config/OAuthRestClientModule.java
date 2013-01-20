@@ -1,6 +1,6 @@
 package org.jclouds.oauth.v2.config;
 
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.net.URI;
 
@@ -14,7 +14,6 @@ import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Provides;
 
 /**
@@ -26,8 +25,7 @@ import com.google.inject.Provides;
 public class OAuthRestClientModule extends RestClientModule<OAuthApi, OAuthAsyncApi> {
 
    public OAuthRestClientModule() {
-      super(TypeToken.class.cast(typeTokenOf(OAuthApi.class)), TypeToken.class.cast(typeTokenOf(OAuthAsyncApi
-              .class)));
+      super(typeToken(OAuthApi.class), typeToken(OAuthAsyncApi.class));
    }
 
    @Provides

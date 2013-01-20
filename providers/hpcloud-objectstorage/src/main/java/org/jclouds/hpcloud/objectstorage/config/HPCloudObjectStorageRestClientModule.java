@@ -17,8 +17,7 @@
  * under the License.
  */
 package org.jclouds.hpcloud.objectstorage.config;
-
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 import static org.jclouds.util.Suppliers2.getLastValueInMap;
 
 import java.net.URI;
@@ -55,7 +54,7 @@ public class HPCloudObjectStorageRestClientModule extends
             CDNContainerApi.class, CDNContainerAsyncApi.class).build();
 
    public HPCloudObjectStorageRestClientModule() {
-      super(typeTokenOf(HPCloudObjectStorageApi.class), typeTokenOf(HPCloudObjectStorageAsyncApi.class),
+      super(typeToken(HPCloudObjectStorageApi.class), typeToken(HPCloudObjectStorageAsyncApi.class),
                DELEGATE_MAP);
    }
 

@@ -18,6 +18,8 @@
  */
 package org.jclouds.aws.ec2.services;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 import java.util.Date;
 
@@ -32,13 +34,12 @@ import org.jclouds.aws.ec2.xml.SpotInstancesHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code SpotInstanceAsyncClient}
  * 
@@ -63,8 +64,8 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
                                                  .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testRequestSpotInstance() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(SpotInstanceAsyncClient.class.getMethod("requestSpotInstanceInRegion", String.class,
-            float.class, String.class, String.class));
+      Invokable<?, ?> method = method(SpotInstanceAsyncClient.class, "requestSpotInstanceInRegion", String.class,
+            float.class, String.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, 0.01f, "m1.small", "ami-voo"));
 
       request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
@@ -104,8 +105,8 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
                                                         .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testRequestSpotInstancesOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(SpotInstanceAsyncClient.class.getMethod("requestSpotInstancesInRegion", String.class,
-            float.class, int.class, LaunchSpecification.class, RequestSpotInstancesOptions[].class));
+      Invokable<?, ?> method = method(SpotInstanceAsyncClient.class, "requestSpotInstancesInRegion", String.class,
+            float.class, int.class, LaunchSpecification.class, RequestSpotInstancesOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("eu-west-1", 0.01, 3,
             LaunchSpecification.builder().instanceType("m1.small").imageId("ami-voo").availabilityZone("eu-west-1a")
                   .kernelId("kernelId").securityGroupName("group1").build(), new RequestSpotInstancesOptions().validFrom(from)
@@ -126,8 +127,8 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
    }
 
    public void testCancelSpotInstanceRequests() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(SpotInstanceAsyncClient.class.getMethod("cancelSpotInstanceRequestsInRegion", String.class,
-            String[].class));
+      Invokable<?, ?> method = method(SpotInstanceAsyncClient.class, "cancelSpotInstanceRequestsInRegion", String.class,
+            String[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "id"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -143,8 +144,8 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
    }
 
    public void testDescribeSpotInstanceRequests() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(SpotInstanceAsyncClient.class.getMethod("describeSpotInstanceRequestsInRegion", String.class,
-            String[].class));
+      Invokable<?, ?> method = method(SpotInstanceAsyncClient.class, "describeSpotInstanceRequestsInRegion", String.class,
+            String[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -160,8 +161,8 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
    }
 
    public void testDescribeSpotInstanceRequestsArgs() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(SpotInstanceAsyncClient.class.getMethod("describeSpotInstanceRequestsInRegion", String.class,
-            String[].class));
+      Invokable<?, ?> method = method(SpotInstanceAsyncClient.class, "describeSpotInstanceRequestsInRegion", String.class,
+            String[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -179,8 +180,8 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
    }
 
    public void testDescribeSpotPriceHistory() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(SpotInstanceAsyncClient.class.getMethod("describeSpotPriceHistoryInRegion", String.class,
-            DescribeSpotPriceHistoryOptions[].class));
+      Invokable<?, ?> method = method(SpotInstanceAsyncClient.class, "describeSpotPriceHistoryInRegion", String.class,
+            DescribeSpotPriceHistoryOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -199,8 +200,8 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
    Date to = new Date(1234567891011l);
 
    public void testDescribeSpotPriceHistoryArgs() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(SpotInstanceAsyncClient.class.getMethod("describeSpotPriceHistoryInRegion", String.class,
-            DescribeSpotPriceHistoryOptions[].class));
+      Invokable<?, ?> method = method(SpotInstanceAsyncClient.class, "describeSpotPriceHistoryInRegion", String.class,
+            DescribeSpotPriceHistoryOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, DescribeSpotPriceHistoryOptions.Builder.from(from)
             .to(to).productDescription("description").instanceType("m1.small")));
 

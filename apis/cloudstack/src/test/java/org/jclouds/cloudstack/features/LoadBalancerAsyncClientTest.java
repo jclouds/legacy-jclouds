@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
@@ -30,12 +32,11 @@ import org.jclouds.cloudstack.options.UpdateLoadBalancerRuleOptions;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code LoadBalancerAsyncClient}
  * 
@@ -46,8 +47,8 @@ import com.google.common.collect.ImmutableList;
 @Test(groups = "unit", testName = "LoadBalancerAsyncClientTest")
 public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<LoadBalancerAsyncClient> {
    public void testListLoadBalancerRules() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(LoadBalancerAsyncClient.class.getMethod("listLoadBalancerRules",
-            ListLoadBalancerRulesOptions[].class));
+      Invokable<?, ?> method = method(LoadBalancerAsyncClient.class, "listLoadBalancerRules",
+            ListLoadBalancerRulesOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
@@ -64,8 +65,8 @@ public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<L
    }
 
    public void testListLoadBalancerRulesOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(LoadBalancerAsyncClient.class.getMethod("listLoadBalancerRules",
-            ListLoadBalancerRulesOptions[].class));
+      Invokable<?, ?> method = method(LoadBalancerAsyncClient.class, "listLoadBalancerRules",
+            ListLoadBalancerRulesOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListLoadBalancerRulesOptions.Builder.publicIPId("3")));
 
       assertRequestLineEquals(httpRequest,
@@ -92,8 +93,8 @@ public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<L
                                                    .addQueryParam("publicport", "22").build();
 
    public void testCreateLoadBalancerRuleForPublicIP() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(LoadBalancerAsyncClient.class.getMethod("createLoadBalancerRuleForPublicIP", String.class,
-            Algorithm.class, String.class, int.class, int.class, CreateLoadBalancerRuleOptions[].class));
+      Invokable<?, ?> method = method(LoadBalancerAsyncClient.class, "createLoadBalancerRuleForPublicIP", String.class,
+            Algorithm.class, String.class, int.class, int.class, CreateLoadBalancerRuleOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(6, Algorithm.LEASTCONN, "tcp", 22, 22));
 
       assertRequestLineEquals(httpRequest, createLoadBalancerRule.getRequestLine());
@@ -109,7 +110,7 @@ public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<L
    }
 
    public void testUpdateLoadBalancerRule() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(LoadBalancerAsyncClient.class.getMethod("updateLoadBalancerRule", String.class, UpdateLoadBalancerRuleOptions[].class));
+      Invokable<?, ?> method = method(LoadBalancerAsyncClient.class, "updateLoadBalancerRule", String.class, UpdateLoadBalancerRuleOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,
@@ -125,7 +126,7 @@ public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<L
    }
 
    public void testDeleteLoadBalancerRule() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(LoadBalancerAsyncClient.class.getMethod("deleteLoadBalancerRule", String.class));
+      Invokable<?, ?> method = method(LoadBalancerAsyncClient.class, "deleteLoadBalancerRule", String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,
@@ -143,8 +144,8 @@ public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<L
 
    public void testListVirtualMachinesAssignedToLoadBalancerRule() throws SecurityException, NoSuchMethodException,
          IOException {
-      Invokable<?, ?> method = Invokable.from(LoadBalancerAsyncClient.class.getMethod("listVirtualMachinesAssignedToLoadBalancerRule",
-            String.class));
+      Invokable<?, ?> method = method(LoadBalancerAsyncClient.class, "listVirtualMachinesAssignedToLoadBalancerRule",
+            String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,

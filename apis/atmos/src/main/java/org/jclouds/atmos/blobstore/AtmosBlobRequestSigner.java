@@ -20,6 +20,7 @@ package org.jclouds.atmos.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.blobstore.util.BlobStoreUtils.cleanRequest;
+import static org.jclouds.reflect.Reflection2.method;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -59,10 +60,9 @@ public class AtmosBlobRequestSigner implements BlobRequestSigner {
       this.processor = checkNotNull(processor, "processor");
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
-      this.getMethod = Invokable.from(AtmosAsyncClient.class.getMethod("readFile", String.class, GetOptions[].class));
-      this.deleteMethod = Invokable.from(AtmosAsyncClient.class.getMethod("deletePath", String.class));
-      this.createMethod = Invokable.from(AtmosAsyncClient.class.getMethod("createFile", String.class,
-            AtmosObject.class, PutOptions[].class));
+      this.getMethod = method(AtmosAsyncClient.class, "readFile", String.class, GetOptions[].class);
+      this.deleteMethod = method(AtmosAsyncClient.class, "deletePath", String.class);
+      this.createMethod = method(AtmosAsyncClient.class, "createFile", String.class, AtmosObject.class, PutOptions[].class);
    }
 
    @Override

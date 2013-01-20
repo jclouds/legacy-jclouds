@@ -17,8 +17,7 @@
  * under the License.
  */
 package org.jclouds.s3.config;
-
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.net.URI;
 import java.util.Set;
@@ -77,7 +76,7 @@ public class S3RestClientModule<S extends S3Client, A extends S3AsyncClient> ext
 
    @SuppressWarnings("unchecked")
    public S3RestClientModule() {
-      this(TypeToken.class.cast(typeTokenOf(S3Client.class)), TypeToken.class.cast(typeTokenOf(S3AsyncClient.class)));
+      this(TypeToken.class.cast(typeToken(S3Client.class)), TypeToken.class.cast(typeToken(S3AsyncClient.class)));
    }
 
    protected S3RestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType) {

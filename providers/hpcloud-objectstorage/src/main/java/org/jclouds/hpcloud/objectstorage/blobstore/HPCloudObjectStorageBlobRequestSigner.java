@@ -28,7 +28,7 @@ import static com.google.common.io.BaseEncoding.base16;
 import static com.google.common.io.ByteStreams.readBytes;
 import static org.jclouds.blobstore.util.BlobStoreUtils.cleanRequest;
 import static org.jclouds.crypto.Macs.asByteProcessor;
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.method;
 import static org.jclouds.util.Strings2.toInputStream;
 
 import java.io.IOException;
@@ -59,7 +59,6 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteProcessor;
 import com.google.common.reflect.Invokable;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
 /**
@@ -100,12 +99,9 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
 
-      Class<?> interfaceClass = HPCloudObjectStorageAsyncApi.class;
-      TypeToken<?> interfaceType = typeTokenOf(HPCloudObjectStorageAsyncApi.class);
-      this.getMethod = interfaceType.method(interfaceClass.getMethod("getObject", String.class, String.class,
-            GetOptions[].class));
-      this.deleteMethod = interfaceType.method(interfaceClass.getMethod("removeObject", String.class, String.class));
-      this.createMethod = interfaceType.method(interfaceClass.getMethod("putObject", String.class, SwiftObject.class));
+      this.getMethod = method(HPCloudObjectStorageAsyncApi.class, "getObject", String.class, String.class, GetOptions[].class);
+      this.deleteMethod = method(HPCloudObjectStorageAsyncApi.class, "removeObject", String.class, String.class);
+      this.createMethod = method(HPCloudObjectStorageAsyncApi.class, "putObject", String.class, SwiftObject.class);
    }
 
    @Override

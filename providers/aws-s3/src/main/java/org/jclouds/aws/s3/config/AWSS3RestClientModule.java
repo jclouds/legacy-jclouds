@@ -19,7 +19,7 @@
 package org.jclouds.aws.s3.config;
 
 import static org.jclouds.aws.domain.Region.US_STANDARD;
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import javax.inject.Singleton;
 
@@ -47,7 +47,7 @@ import com.google.inject.Provides;
 public class AWSS3RestClientModule extends S3RestClientModule<AWSS3Client, AWSS3AsyncClient> {
    
    public AWSS3RestClientModule() {
-      super(typeTokenOf(AWSS3Client.class), typeTokenOf(AWSS3AsyncClient.class));
+      super(typeToken(AWSS3Client.class), typeToken(AWSS3AsyncClient.class));
    }
    
    @Override

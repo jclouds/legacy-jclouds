@@ -18,7 +18,7 @@
  */
 package org.jclouds.cloudfiles.config;
 
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.net.URI;
 import java.util.Map;
@@ -50,7 +50,7 @@ import com.google.inject.Scopes;
 @ConfiguresRestClient
 public class CloudFilesRestClientModule extends SwiftRestClientModule<CloudFilesClient, CloudFilesAsyncClient> {
    public CloudFilesRestClientModule() {
-      super(typeTokenOf(CloudFilesClient.class), typeTokenOf(CloudFilesAsyncClient.class), ImmutableMap
+      super(typeToken(CloudFilesClient.class), typeToken(CloudFilesAsyncClient.class), ImmutableMap
                .<Class<?>, Class<?>> of());
    }
 

@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
@@ -25,12 +27,11 @@ import org.jclouds.cloudstack.functions.ParseEventTypesFromHttpResponse;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListEventsOptions;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code EventAsyncClient}
  *
@@ -42,7 +43,7 @@ import com.google.common.collect.ImmutableList;
 public class EventAsyncClientTest extends BaseCloudStackAsyncClientTest<EventAsyncClient> {
 
    public void testListEventTypes() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(EventAsyncClient.class.getMethod("listEventTypes"));
+      Invokable<?, ?> method = method(EventAsyncClient.class, "listEventTypes");
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
@@ -58,7 +59,7 @@ public class EventAsyncClientTest extends BaseCloudStackAsyncClientTest<EventAsy
    }
 
    public void testListEvents() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(EventAsyncClient.class.getMethod("listEvents", ListEventsOptions[].class));
+      Invokable<?, ?> method = method(EventAsyncClient.class, "listEvents", ListEventsOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
@@ -75,7 +76,7 @@ public class EventAsyncClientTest extends BaseCloudStackAsyncClientTest<EventAsy
    }
 
    public void testEventsListOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(EventAsyncClient.class.getMethod("listEvents", ListEventsOptions[].class));
+      Invokable<?, ?> method = method(EventAsyncClient.class, "listEvents", ListEventsOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListEventsOptions.Builder.account("jclouds")));
 
       assertRequestLineEquals(httpRequest,

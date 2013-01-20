@@ -18,7 +18,7 @@
  */
 package org.jclouds.openstack.nova.ec2.config;
 
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.util.Map;
 
@@ -79,7 +79,7 @@ public class NovaEC2RestClientModule extends EC2RestClientModule<NovaEC2Client, 
          .build();
 
    public NovaEC2RestClientModule() {
-      super(typeTokenOf(NovaEC2Client.class), typeTokenOf(NovaEC2AsyncClient.class), DELEGATE_MAP);
+      super(typeToken(NovaEC2Client.class), typeToken(NovaEC2AsyncClient.class), DELEGATE_MAP);
    }
    
    @Override

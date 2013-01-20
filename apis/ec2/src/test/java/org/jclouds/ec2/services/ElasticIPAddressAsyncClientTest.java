@@ -18,6 +18,8 @@
  */
 package org.jclouds.ec2.services;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
@@ -26,12 +28,11 @@ import org.jclouds.ec2.xml.DescribeAddressesResponseHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code ElasticIPAddressAsyncClient}
  * 
@@ -42,8 +43,8 @@ import com.google.common.collect.Lists;
 public class ElasticIPAddressAsyncClientTest extends BaseEC2AsyncClientTest<ElasticIPAddressAsyncClient> {
 
    public void testDisassociateAddress() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(ElasticIPAddressAsyncClient.class.getMethod("disassociateAddressInRegion", String.class,
-            String.class));
+      Invokable<?, ?> method = method(ElasticIPAddressAsyncClient.class, "disassociateAddressInRegion", String.class,
+            String.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "127.0.0.1"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -72,8 +73,8 @@ public class ElasticIPAddressAsyncClientTest extends BaseEC2AsyncClientTest<Elas
                                              .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testAssociateAddress() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(ElasticIPAddressAsyncClient.class.getMethod("associateAddressInRegion", String.class,
-            String.class, String.class));
+      Invokable<?, ?> method = method(ElasticIPAddressAsyncClient.class, "associateAddressInRegion", String.class,
+            String.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "127.0.0.1", "me"));
 
       request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
@@ -91,7 +92,7 @@ public class ElasticIPAddressAsyncClientTest extends BaseEC2AsyncClientTest<Elas
    }
 
    public void testReleaseAddress() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(ElasticIPAddressAsyncClient.class.getMethod("releaseAddressInRegion", String.class, String.class));
+      Invokable<?, ?> method = method(ElasticIPAddressAsyncClient.class, "releaseAddressInRegion", String.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "127.0.0.1"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -107,8 +108,8 @@ public class ElasticIPAddressAsyncClientTest extends BaseEC2AsyncClientTest<Elas
    }
 
    public void testDescribeAddresses() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(ElasticIPAddressAsyncClient.class.getMethod("describeAddressesInRegion", String.class,
-            String[].class));
+      Invokable<?, ?> method = method(ElasticIPAddressAsyncClient.class, "describeAddressesInRegion", String.class,
+            String[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "127.0.0.1"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -124,7 +125,7 @@ public class ElasticIPAddressAsyncClientTest extends BaseEC2AsyncClientTest<Elas
    }
 
    public void testAllocateAddress() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(ElasticIPAddressAsyncClient.class.getMethod("allocateAddressInRegion", String.class));
+      Invokable<?, ?> method = method(ElasticIPAddressAsyncClient.class, "allocateAddressInRegion", String.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
