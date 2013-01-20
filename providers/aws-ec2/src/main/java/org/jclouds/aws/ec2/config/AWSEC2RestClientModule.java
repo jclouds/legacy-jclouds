@@ -17,8 +17,7 @@
  * under the License.
  */
 package org.jclouds.aws.ec2.config;
-
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.util.Map;
 
@@ -98,7 +97,7 @@ public class AWSEC2RestClientModule extends EC2RestClientModule<AWSEC2Client, AW
          .build();
 
    public AWSEC2RestClientModule() {
-      super(typeTokenOf(AWSEC2Client.class), typeTokenOf(AWSEC2AsyncClient.class), DELEGATE_MAP);
+      super(typeToken(AWSEC2Client.class), typeToken(AWSEC2AsyncClient.class), DELEGATE_MAP);
    }
 
    @Singleton

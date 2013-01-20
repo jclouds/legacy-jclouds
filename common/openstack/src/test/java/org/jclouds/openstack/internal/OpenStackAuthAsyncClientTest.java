@@ -18,6 +18,8 @@
  */
 package org.jclouds.openstack.internal;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.apis.ApiMetadata;
@@ -26,14 +28,13 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.openstack.functions.ParseAuthenticationResponseFromHeaders;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.AnonymousRestApiMetadata;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code OpenStackAuthAsyncClient}
  * 
@@ -44,7 +45,7 @@ import com.google.common.collect.ImmutableList;
 public class OpenStackAuthAsyncClientTest extends BaseAsyncClientTest<OpenStackAuthAsyncClient> {
 
    public void testAuthenticate() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(OpenStackAuthAsyncClient.class.getMethod("authenticate", String.class, String.class));
+      Invokable<?, ?> method = method(OpenStackAuthAsyncClient.class, "authenticate", String.class, String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("foo", "bar"));
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/v1.0 HTTP/1.1");
@@ -58,7 +59,7 @@ public class OpenStackAuthAsyncClientTest extends BaseAsyncClientTest<OpenStackA
    }
 
    public void testAuthenticateStorage() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(OpenStackAuthAsyncClient.class.getMethod("authenticateStorage", String.class, String.class));
+      Invokable<?, ?> method = method(OpenStackAuthAsyncClient.class, "authenticateStorage", String.class, String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("foo", "bar"));
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/v1.0 HTTP/1.1");

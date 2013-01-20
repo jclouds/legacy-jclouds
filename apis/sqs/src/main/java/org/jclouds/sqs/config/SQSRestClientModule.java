@@ -18,7 +18,8 @@
  */
 package org.jclouds.sqs.config;
 
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.util.Map;
 
@@ -56,7 +57,7 @@ public class SQSRestClientModule extends FormSigningRestClientModule<SQSApi, SQS
          .build();
 
    public SQSRestClientModule() {
-      super(typeTokenOf(SQSApi.class), typeTokenOf(SQSAsyncApi.class), DELEGATE_MAP);
+      super(typeToken(SQSApi.class), typeToken(SQSAsyncApi.class), DELEGATE_MAP);
    }
    
    @Override

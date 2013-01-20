@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
@@ -30,12 +32,11 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code NATAsyncClient}
  * 
@@ -46,7 +47,7 @@ import com.google.common.collect.ImmutableList;
 @Test(groups = "unit", testName = "NATAsyncClientTest")
 public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncClient> {
    public void testListIPForwardingRules() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(NATAsyncClient.class.getMethod("listIPForwardingRules", ListIPForwardingRulesOptions[].class));
+      Invokable<?, ?> method = method(NATAsyncClient.class, "listIPForwardingRules", ListIPForwardingRulesOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
@@ -63,7 +64,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
    }
 
    public void testListIPForwardingRulesOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(NATAsyncClient.class.getMethod("listIPForwardingRules", ListIPForwardingRulesOptions[].class));
+      Invokable<?, ?> method = method(NATAsyncClient.class, "listIPForwardingRules", ListIPForwardingRulesOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(
             ListIPForwardingRulesOptions.Builder.virtualMachineId("3")));
 
@@ -81,7 +82,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
    }
 
    public void testGetIPForwardingRule() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(NATAsyncClient.class.getMethod("getIPForwardingRule", String.class));
+      Invokable<?, ?> method = method(NATAsyncClient.class, "getIPForwardingRule", String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,
@@ -106,8 +107,8 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
 
    public void testCreateIPForwardingRuleForVirtualMachine() throws SecurityException, NoSuchMethodException,
          IOException {
-      Invokable<?, ?> method = Invokable.from(NATAsyncClient.class.getMethod("createIPForwardingRule", String.class, String.class, int.class,
-            CreateIPForwardingRuleOptions[].class));
+      Invokable<?, ?> method = method(NATAsyncClient.class, "createIPForwardingRule", String.class, String.class, int.class,
+            CreateIPForwardingRuleOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(7, "tcp", 22));
 
       assertRequestLineEquals(httpRequest, createIpForwardingRule.getRequestLine());
@@ -133,8 +134,8 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
 
    public void testCreateIPForwardingRuleForVirtualMachineOptions() throws SecurityException, NoSuchMethodException,
          IOException {
-      Invokable<?, ?> method = Invokable.from(NATAsyncClient.class.getMethod("createIPForwardingRule", String.class, String.class, int.class,
-            CreateIPForwardingRuleOptions[].class));
+      Invokable<?, ?> method = method(NATAsyncClient.class, "createIPForwardingRule", String.class, String.class, int.class,
+            CreateIPForwardingRuleOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(7, "tcp", 22,
             CreateIPForwardingRuleOptions.Builder.endPort(22)));
 
@@ -151,7 +152,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
    }
 
    public void testEnableStaticNATForVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(NATAsyncClient.class.getMethod("enableStaticNATForVirtualMachine", String.class, String.class));
+      Invokable<?, ?> method = method(NATAsyncClient.class, "enableStaticNATForVirtualMachine", String.class, String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5, 6));
 
       assertRequestLineEquals(httpRequest,
@@ -168,7 +169,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
    }
 
    public void testDisableStaticNATOnPublicIP() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(NATAsyncClient.class.getMethod("disableStaticNATOnPublicIP", String.class));
+      Invokable<?, ?> method = method(NATAsyncClient.class, "disableStaticNATOnPublicIP", String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,
@@ -185,7 +186,7 @@ public class NATAsyncClientTest extends BaseCloudStackAsyncClientTest<NATAsyncCl
    }
 
    public void testDeleteIPForwardingRule() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(NATAsyncClient.class.getMethod("deleteIPForwardingRule", String.class));
+      Invokable<?, ?> method = method(NATAsyncClient.class, "deleteIPForwardingRule", String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,

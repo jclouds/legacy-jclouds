@@ -18,7 +18,7 @@
  */
 package org.jclouds.openstack.quantum.v1_0.config;
 
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.net.URI;
 import java.util.Map;
@@ -74,7 +74,7 @@ public class QuantumRestClientModule<S extends QuantumApi, A extends QuantumAsyn
 
    @SuppressWarnings("unchecked")
    public QuantumRestClientModule() {
-      super(TypeToken.class.cast(typeTokenOf(QuantumApi.class)), TypeToken.class.cast(typeTokenOf(QuantumAsyncApi.class)), DELEGATE_MAP);
+      super(TypeToken.class.cast(typeToken(QuantumApi.class)), TypeToken.class.cast(typeToken(QuantumAsyncApi.class)), DELEGATE_MAP);
    }
 
    protected QuantumRestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType, Map<Class<?>, Class<?>> sync2Async) {

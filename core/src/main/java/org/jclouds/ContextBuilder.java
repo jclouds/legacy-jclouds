@@ -42,7 +42,7 @@ import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_IDENTITY;
 import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 import static org.jclouds.Constants.PROPERTY_PROVIDER;
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 import static org.jclouds.util.Throwables2.propagateAuthorizationOrOriginalException;
 
 import java.util.List;
@@ -491,7 +491,7 @@ public class ContextBuilder {
       // TODO: move this up
       if (apiMetadata instanceof RestApiMetadata) {
          RestApiMetadata rest = RestApiMetadata.class.cast(apiMetadata);
-         modules.add(new RestClientModule(typeTokenOf(rest.getApi()), typeTokenOf(rest.getAsyncApi())));
+         modules.add(new RestClientModule(typeToken(rest.getApi()), typeToken(rest.getAsyncApi())));
       } else {
          modules.add(new RestModule());
       }
@@ -568,7 +568,7 @@ public class ContextBuilder {
     * @see #buildView(TypeToken)
     */
    public <V extends View> V buildView(Class<V> viewType) {
-     return buildView(typeTokenOf(viewType));
+     return buildView(typeToken(viewType));
    }
    
    /**

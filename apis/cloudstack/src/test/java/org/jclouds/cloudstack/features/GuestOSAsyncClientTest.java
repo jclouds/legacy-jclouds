@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
@@ -28,13 +30,12 @@ import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListOSTypesOptions;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code GuestOSAsyncClient}
  * 
@@ -46,7 +47,7 @@ import com.google.common.collect.ImmutableList;
 public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestOSAsyncClient> {
 
    public void testGetOSCategory() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GuestOSAsyncClient.class.getMethod("getOSCategory", String.class));
+      Invokable<?, ?> method = method(GuestOSAsyncClient.class, "getOSCategory", String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(11l));
 
       assertRequestLineEquals(httpRequest,
@@ -63,7 +64,7 @@ public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestO
    }
 
    public void testListOSCategories() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GuestOSAsyncClient.class.getMethod("listOSCategories"));
+      Invokable<?, ?> method = method(GuestOSAsyncClient.class, "listOSCategories");
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
@@ -80,7 +81,7 @@ public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestO
    }
 
    public void testGetOSType() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GuestOSAsyncClient.class.getMethod("getOSType", String.class));
+      Invokable<?, ?> method = method(GuestOSAsyncClient.class, "getOSType", String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(11l));
 
       assertRequestLineEquals(httpRequest,
@@ -98,7 +99,7 @@ public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestO
    }
 
    public void testListOSTypes() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GuestOSAsyncClient.class.getMethod("listOSTypes", ListOSTypesOptions[].class));
+      Invokable<?, ?> method = method(GuestOSAsyncClient.class, "listOSTypes", ListOSTypesOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
@@ -115,7 +116,7 @@ public class GuestOSAsyncClientTest extends BaseCloudStackAsyncClientTest<GuestO
    }
 
    public void testListOSTypesOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GuestOSAsyncClient.class.getMethod("listOSTypes", ListOSTypesOptions[].class));
+      Invokable<?, ?> method = method(GuestOSAsyncClient.class, "listOSTypes", ListOSTypesOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListOSTypesOptions.Builder.OSCategoryId("11")));
 
       assertRequestLineEquals(httpRequest,

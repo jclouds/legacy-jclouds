@@ -18,16 +18,17 @@
  */
 package org.jclouds.aws.ec2.services;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.aws.ec2.xml.MonitoringStateHandler;
 import org.jclouds.http.functions.ParseSax;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code MonitoringAsyncClient}
  * 
@@ -38,8 +39,8 @@ import com.google.common.collect.Lists;
 public class MonitoringAsyncClientTest extends BaseAWSEC2AsyncClientTest<MonitoringAsyncClient> {
 
    public void testUnmonitorInstances() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(MonitoringAsyncClient.class.getMethod("unmonitorInstancesInRegion", String.class, String.class,
-            String[].class));
+      Invokable<?, ?> method = method(MonitoringAsyncClient.class, "unmonitorInstancesInRegion", String.class, String.class,
+            String[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "instance1", "instance2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -55,8 +56,8 @@ public class MonitoringAsyncClientTest extends BaseAWSEC2AsyncClientTest<Monitor
    }
 
    public void testMonitorInstances() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(MonitoringAsyncClient.class.getMethod("monitorInstancesInRegion", String.class, String.class,
-            String[].class));
+      Invokable<?, ?> method = method(MonitoringAsyncClient.class, "monitorInstancesInRegion", String.class, String.class,
+            String[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "instance1", "instance2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");

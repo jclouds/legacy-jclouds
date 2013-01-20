@@ -18,17 +18,18 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.cloudstack.functions.ParseNamesFromHttpResponse;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code HypervisorAsyncClient}
  * 
@@ -40,7 +41,7 @@ import com.google.common.collect.ImmutableList;
 public class HypervisorAsyncClientTest extends BaseCloudStackAsyncClientTest<HypervisorAsyncClient> {
 
    public void testListHypervisors() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(HypervisorAsyncClient.class.getMethod("listHypervisors"));
+      Invokable<?, ?> method = method(HypervisorAsyncClient.class, "listHypervisors");
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
@@ -57,7 +58,7 @@ public class HypervisorAsyncClientTest extends BaseCloudStackAsyncClientTest<Hyp
    }
 
    public void testListHypervisorsInZon() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(HypervisorAsyncClient.class.getMethod("listHypervisorsInZone", String.class));
+      Invokable<?, ?> method = method(HypervisorAsyncClient.class, "listHypervisorsInZone", String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(11));
 
       assertRequestLineEquals(httpRequest,

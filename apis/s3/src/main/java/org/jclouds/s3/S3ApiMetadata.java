@@ -27,7 +27,7 @@ import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.DIRECTORY_SUFFIX_FOLDER;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_SERVICE_PATH;
 import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS;
 
@@ -116,7 +116,7 @@ public class S3ApiMetadata extends BaseRestApiMetadata {
          .version(S3AsyncClient.VERSION)
          .defaultProperties(S3ApiMetadata.defaultProperties())
          .context(CONTEXT_TOKEN)
-         .view(typeTokenOf(S3BlobStoreContext.class))
+         .view(typeToken(S3BlobStoreContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(S3RestClientModule.class, S3BlobStoreContextModule.class));
       }
 

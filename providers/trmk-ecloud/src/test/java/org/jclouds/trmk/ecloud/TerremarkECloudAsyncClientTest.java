@@ -18,6 +18,7 @@
  */
 package org.jclouds.trmk.ecloud;
 
+import static org.jclouds.reflect.Reflection2.method;
 import static org.jclouds.trmk.vcloud_0_8.options.AddInternetServiceOptions.Builder.disabled;
 import static org.testng.Assert.assertEquals;
 
@@ -29,7 +30,6 @@ import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.trmk.vcloud_0_8.domain.Protocol;
@@ -58,7 +58,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code TerremarkECloudAsyncClient}
  * 
@@ -75,7 +75,7 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testNetwork() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("getNetwork", URI.class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "getNetwork", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(
             URI.create("https://vcloud.safesecureweb.com/api/v0.8/vdcItem/2")));
 
@@ -91,7 +91,7 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testDelete() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("deleteVApp", URI.class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "deleteVApp", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(
             URI.create("https://vcloud.safesecureweb.com/api/v0.8/vApp/1")));
 
@@ -107,8 +107,8 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testFindNetworkInOrgVDCNamed() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("findNetworkInOrgVDCNamed", String.class,
-            String.class, String.class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "findNetworkInOrgVDCNamed", String.class,
+            String.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("org", "vdc", "network"));
 
       assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/network/1990 HTTP/1.1");
@@ -126,7 +126,7 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
     * ignore parameter of catalog id since this doesn't work
     */
    public void testCatalog() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("getCatalog", URI.class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "getCatalog", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI.create("https://catalog")));
 
       assertRequestLineEquals(request, "GET https://catalog HTTP/1.1");
@@ -141,7 +141,7 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testGetVDC() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("getVDC", URI.class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "getVDC", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI.create("https://vcloud/vdc/1")));
 
       assertRequestLineEquals(request, "GET https://vcloud/vdc/1 HTTP/1.1");
@@ -156,8 +156,8 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testInstantiateVAppTemplateInVDCURI() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("instantiateVAppTemplateInVDC", URI.class, URI.class,
-            String.class, InstantiateVAppTemplateOptions[].class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "instantiateVAppTemplateInVDC", URI.class, URI.class,
+            String.class, InstantiateVAppTemplateOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(
             URI.create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"), URI.create("https://vcloud/vAppTemplate/3"),
             "name"));
@@ -178,8 +178,8 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
 
    public void testInstantiateVAppTemplateInVDCURIOptions() throws SecurityException, NoSuchMethodException,
          IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("instantiateVAppTemplateInVDC", URI.class, URI.class,
-            String.class, InstantiateVAppTemplateOptions[].class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "instantiateVAppTemplateInVDC", URI.class, URI.class,
+            String.class, InstantiateVAppTemplateOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(
             method, ImmutableList.<Object> of(
             URI.create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"),
@@ -204,7 +204,7 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testActivatePublicIpInVDC() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("activatePublicIpInVDC", URI.class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "activatePublicIpInVDC", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(
             URI.create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1")));
 
@@ -220,7 +220,7 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testGetAllInternetServices() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("getAllInternetServicesInVDC", URI.class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "getAllInternetServicesInVDC", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(
             URI.create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1")));
 
@@ -236,7 +236,7 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testGetInternetService() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("getInternetService", URI.class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "getInternetService", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI.create("https://vcloud/extensions/internetService/12")));
 
       assertRequestLineEquals(request, "GET https://vcloud/extensions/internetService/12 HTTP/1.1");
@@ -251,7 +251,7 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testDeleteInternetService() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("deleteInternetService", URI.class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "deleteInternetService", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI.create("https://vcloud/extensions/internetService/12")));
 
       assertRequestLineEquals(request, "DELETE https://vcloud/extensions/internetService/12 HTTP/1.1");
@@ -266,8 +266,8 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testAddInternetServiceToExistingIp() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("addInternetServiceToExistingIp", URI.class,
-            String.class, Protocol.class, int.class, AddInternetServiceOptions[].class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "addInternetServiceToExistingIp", URI.class,
+            String.class, Protocol.class, int.class, AddInternetServiceOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI.create("https://vcloud/extensions/publicIp/12"),
             "name", Protocol.TCP, 22));
 
@@ -287,8 +287,8 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testAddInternetServiceToExistingIpOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("addInternetServiceToExistingIp", URI.class,
-            String.class, Protocol.class, int.class, AddInternetServiceOptions[].class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "addInternetServiceToExistingIp", URI.class,
+            String.class, Protocol.class, int.class, AddInternetServiceOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI.create("https://vcloud/extensions/publicIp/12"),
             "name", Protocol.TCP, 22, disabled().withDescription("yahoo").monitorDisabled()));
 
@@ -306,8 +306,8 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testAddNode() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("addNode", URI.class, String.class, String.class,
-            int.class, AddNodeOptions[].class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "addNode", URI.class, String.class, String.class,
+            int.class, AddNodeOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI.create("https://vcloud/extensions/internetService/12"),
             "10.2.2.2", "name", 22));
 
@@ -327,8 +327,8 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testAddNodeOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("addNode", URI.class, String.class, String.class,
-            int.class, AddNodeOptions[].class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "addNode", URI.class, String.class, String.class,
+            int.class, AddNodeOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI.create("https://vcloud/extensions/internetService/12"),
             "10.2.2.2", "name", 22, AddNodeOptions.Builder.disabled().withDescription("yahoo")));
 
@@ -348,7 +348,7 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testGetKeyPairInOrg() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("findKeyPairInOrg", URI.class, String.class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "findKeyPairInOrg", URI.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(
             URI.create("https://vcloud.safesecureweb.com/api/v0.8/org/1"), "keyPair"));
 
@@ -364,8 +364,8 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testConfigureNodeWithDescription() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("configureNode", URI.class, String.class,
-            boolean.class, String.class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "configureNode", URI.class, String.class,
+            boolean.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI.create("https://vcloud/extensions/nodeService/12"),
             "name", true, "eggs"));
 
@@ -383,8 +383,8 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testConfigureNodeNoDescription() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("configureNode", URI.class, String.class,
-            boolean.class, String.class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "configureNode", URI.class, String.class,
+            boolean.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(URI.create("https://vcloud/extensions/nodeService/12"),
             "name", true, null));
 
@@ -402,7 +402,7 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testGetNodes() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("getNodes", URI.class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "getNodes", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI.create("https://vcloud/extensions/internetService/12")));
 
       assertRequestLineEquals(request, "GET https://vcloud/extensions/internetService/12/nodeServices HTTP/1.1");
@@ -417,7 +417,7 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testDeleteNode() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("deleteNode", URI.class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "deleteNode", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI.create("https://vcloud/extensions/nodeService/12")));
 
       assertRequestLineEquals(request, "DELETE https://vcloud/extensions/nodeService/12 HTTP/1.1");
@@ -432,7 +432,7 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testGetCustomizationOptionsOfCatalogItem() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("getCustomizationOptions", URI.class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "getCustomizationOptions", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI.create("https://vcloud/extensions/template/12")));
 
       assertRequestLineEquals(request, "GET https://vcloud/extensions/template/12 HTTP/1.1");
@@ -448,7 +448,7 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testListKeyPairsInOrg() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("listKeyPairsInOrg", URI.class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "listKeyPairsInOrg", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(
             URI.create("https://vcloud.safesecureweb.com/api/v0.8/org/1")));
 
@@ -465,12 +465,12 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testListKeyPairsInOrgNotFound() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("listKeyPairsInOrg", URI.class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "listKeyPairsInOrg", URI.class);
       processor.createRequest(method, ImmutableList.<Object> of(URI.create("d")));
    }
 
    public void testGetKeyPair() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("getKeyPair", URI.class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "getKeyPair", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI.create("https://vcloud/extensions/key/12")));
 
       assertRequestLineEquals(request, "GET https://vcloud/extensions/key/12 HTTP/1.1");
@@ -485,7 +485,7 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testDeleteKeyPair() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("deleteKeyPair", URI.class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "deleteKeyPair", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI.create("https://vcloud/extensions/key/12")));
 
       assertRequestLineEquals(request, "DELETE https://vcloud/extensions/key/12 HTTP/1.1");
@@ -500,7 +500,7 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testGetNode() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("getNode", URI.class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "getNode", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI.create("https://vcloud/extensions/nodeService/12")));
 
       assertRequestLineEquals(request, "GET https://vcloud/extensions/nodeService/12 HTTP/1.1");
@@ -515,7 +515,7 @@ public class TerremarkECloudAsyncClientTest extends BaseTerremarkECloudAsyncClie
    }
 
    public void testGetExtendedInfo() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkECloudAsyncClient.class.getMethod("getVAppExtendedInfo", URI.class));
+      Invokable<?, ?> method = method(TerremarkECloudAsyncClient.class, "getVAppExtendedInfo", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI.create("https://vcloud/extensions/vapp/12")));
 
       assertRequestLineEquals(request, "GET https://vcloud/extensions/vapp/12 HTTP/1.1");

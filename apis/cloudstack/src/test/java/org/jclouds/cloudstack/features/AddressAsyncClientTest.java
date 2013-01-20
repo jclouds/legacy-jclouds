@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
@@ -31,13 +33,12 @@ import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code AddressAsyncClient}
  * 
@@ -48,7 +49,7 @@ import com.google.common.collect.ImmutableList;
 @Test(groups = "unit", testName = "AddressAsyncClientTest")
 public class AddressAsyncClientTest extends BaseCloudStackAsyncClientTest<AddressAsyncClient> {
    public void testListPublicIPAddresses() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AddressAsyncClient.class.getMethod("listPublicIPAddresses", ListPublicIPAddressesOptions[].class));
+      Invokable<?, ?> method = method(AddressAsyncClient.class, "listPublicIPAddresses", ListPublicIPAddressesOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
@@ -65,7 +66,7 @@ public class AddressAsyncClientTest extends BaseCloudStackAsyncClientTest<Addres
    }
 
    public void testListPublicIPAddressesOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AddressAsyncClient.class.getMethod("listPublicIPAddresses", ListPublicIPAddressesOptions[].class));
+      Invokable<?, ?> method = method(AddressAsyncClient.class, "listPublicIPAddresses", ListPublicIPAddressesOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(
             ListPublicIPAddressesOptions.Builder.accountInDomain("adrian", "6").usesVirtualNetwork(true)));
 
@@ -84,7 +85,7 @@ public class AddressAsyncClientTest extends BaseCloudStackAsyncClientTest<Addres
    }
 
    public void testGetPublicIPAddress() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AddressAsyncClient.class.getMethod("getPublicIPAddress", String.class));
+      Invokable<?, ?> method = method(AddressAsyncClient.class, "getPublicIPAddress", String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,
@@ -102,8 +103,8 @@ public class AddressAsyncClientTest extends BaseCloudStackAsyncClientTest<Addres
    }
 
    public void testAssociateIPAddressInZone() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AddressAsyncClient.class.getMethod("associateIPAddressInZone", String.class,
-            AssociateIPAddressOptions[].class));
+      Invokable<?, ?> method = method(AddressAsyncClient.class, "associateIPAddressInZone", String.class,
+            AssociateIPAddressOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(6));
 
       assertRequestLineEquals(httpRequest,
@@ -120,7 +121,7 @@ public class AddressAsyncClientTest extends BaseCloudStackAsyncClientTest<Addres
    }
 
    public void testDisassociateIPAddress() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AddressAsyncClient.class.getMethod("disassociateIPAddress", String.class));
+      Invokable<?, ?> method = method(AddressAsyncClient.class, "disassociateIPAddress", String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
 
       assertRequestLineEquals(httpRequest,

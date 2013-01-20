@@ -18,6 +18,7 @@
  */
 package org.jclouds.trmk.vcloud_0_8.internal;
 
+import static org.jclouds.reflect.Reflection2.method;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -26,14 +27,13 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.trmk.vcloud_0_8.xml.SupportedVersionsHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code VCloudVersionsAsyncClient}
  * 
@@ -44,7 +44,7 @@ import com.google.common.collect.ImmutableList;
 public class TerremarkVCloudVersionsAsyncClientTest extends BaseAsyncClientTest<TerremarkVCloudVersionsAsyncClient> {
 
    public void testVersions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkVCloudVersionsAsyncClient.class.getMethod("getSupportedVersions"));
+      Invokable<?, ?> method = method(TerremarkVCloudVersionsAsyncClient.class, "getSupportedVersions");
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.of());
 
       assertEquals(request.getRequestLine(), "GET http://localhost:8080/versions HTTP/1.1");

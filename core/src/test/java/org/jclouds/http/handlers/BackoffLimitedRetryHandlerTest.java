@@ -17,7 +17,7 @@
  * under the License.
  */
 package org.jclouds.http.handlers;
-
+import static org.jclouds.reflect.Reflection2.method;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -125,7 +125,7 @@ public class BackoffLimitedRetryHandlerTest {
          .getInstance(RestAnnotationProcessor.class);
 
    private HttpCommand createCommand() throws SecurityException, NoSuchMethodException {
-      Invokable<?, Object> method = Invokable.from(IntegrationTestAsyncClient.class.getMethod("download", String.class));
+      Invokable<IntegrationTestAsyncClient, String> method = method(IntegrationTestAsyncClient.class, "download", String.class);
 
       return new HttpCommand(processor.createRequest(method, ImmutableList.<Object> of("1")));
    }

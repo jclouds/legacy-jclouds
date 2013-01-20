@@ -18,18 +18,19 @@
  */
 package org.jclouds.ec2.services;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.ec2.xml.DescribeKeyPairsResponseHandler;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code KeyPairAsyncClient}
  * 
@@ -40,7 +41,7 @@ import com.google.common.collect.Lists;
 public class KeyPairAsyncClientTest extends BaseEC2AsyncClientTest<KeyPairAsyncClient> {
 
    public void testDeleteKeyPair() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(KeyPairAsyncClient.class.getMethod("deleteKeyPairInRegion", String.class, String.class));
+      Invokable<?, ?> method = method(KeyPairAsyncClient.class, "deleteKeyPairInRegion", String.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "mykey"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -56,7 +57,7 @@ public class KeyPairAsyncClientTest extends BaseEC2AsyncClientTest<KeyPairAsyncC
    }
 
    public void testDescribeKeyPairs() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(KeyPairAsyncClient.class.getMethod("describeKeyPairsInRegion", String.class, String[].class));
+      Invokable<?, ?> method = method(KeyPairAsyncClient.class, "describeKeyPairsInRegion", String.class, String[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -72,7 +73,7 @@ public class KeyPairAsyncClientTest extends BaseEC2AsyncClientTest<KeyPairAsyncC
    }
 
    public void testDescribeKeyPairsArgs() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(KeyPairAsyncClient.class.getMethod("describeKeyPairsInRegion", String.class, String[].class));
+      Invokable<?, ?> method = method(KeyPairAsyncClient.class, "describeKeyPairsInRegion", String.class, String[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");

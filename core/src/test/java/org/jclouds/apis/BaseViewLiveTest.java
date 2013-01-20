@@ -18,7 +18,7 @@
  */
 package org.jclouds.apis;
 
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.util.Properties;
 
@@ -48,7 +48,7 @@ public abstract class BaseViewLiveTest<V extends View> extends BaseContextLiveTe
    
    @Override
    protected TypeToken<Context> contextType() {
-     return typeTokenOf(Context.class);
+     return typeToken(Context.class);
    }
    
    protected V createView(Properties props, Iterable<Module> modules) {

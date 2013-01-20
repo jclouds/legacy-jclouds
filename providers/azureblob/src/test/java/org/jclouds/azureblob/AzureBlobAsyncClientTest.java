@@ -20,6 +20,7 @@ package org.jclouds.azureblob;
 
 import static org.jclouds.azure.storage.options.ListOptions.Builder.maxResults;
 import static org.jclouds.azureblob.options.CreateContainerOptions.Builder.withPublicAccess;
+import static org.jclouds.reflect.Reflection2.method;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -45,7 +46,6 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.options.GetOptions;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
@@ -53,7 +53,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code AzureBlobAsyncClient}
  * 
@@ -64,7 +64,7 @@ import com.google.common.collect.ImmutableMultimap;
 public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsyncClient> {
 
    public void testListContainers() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AzureBlobAsyncClient.class.getMethod("listContainers", ListOptions[].class));
+      Invokable<?, ?> method = method(AzureBlobAsyncClient.class, "listContainers", ListOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(request, "GET https://identity.blob.core.windows.net/?comp=list HTTP/1.1");
@@ -78,7 +78,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
    }
 
    public void testListContainersOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AzureBlobAsyncClient.class.getMethod("listContainers", ListOptions[].class));
+      Invokable<?, ?> method = method(AzureBlobAsyncClient.class, "listContainers", ListOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(maxResults(1).marker("marker").prefix("prefix")));
 
       assertRequestLineEquals(request,
@@ -92,8 +92,8 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
    }
 
    public void testCreateContainer() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AzureBlobAsyncClient.class.getMethod("createContainer", String.class,
-               CreateContainerOptions[].class));
+      Invokable<?, ?> method = method(AzureBlobAsyncClient.class, "createContainer", String.class,
+               CreateContainerOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("container"));
 
       assertRequestLineEquals(request,
@@ -107,7 +107,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
    }
 
    public void testDeleteContainer() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AzureBlobAsyncClient.class.getMethod("deleteContainer", String.class));
+      Invokable<?, ?> method = method(AzureBlobAsyncClient.class, "deleteContainer", String.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("container"));
 
       assertRequestLineEquals(request,
@@ -121,8 +121,8 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
    }
 
    public void testCreateContainerOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AzureBlobAsyncClient.class.getMethod("createContainer", String.class,
-               CreateContainerOptions[].class));
+      Invokable<?, ?> method = method(AzureBlobAsyncClient.class, "createContainer", String.class,
+               CreateContainerOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("container", withPublicAccess(PublicAccess.BLOB)
                .withMetadata(ImmutableMultimap.of("foo", "bar"))));
 
@@ -138,7 +138,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
    }
 
    public void testCreateRootContainer() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AzureBlobAsyncClient.class.getMethod("createRootContainer", CreateContainerOptions[].class));
+      Invokable<?, ?> method = method(AzureBlobAsyncClient.class, "createRootContainer", CreateContainerOptions[].class);
 
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.of());
 
@@ -152,7 +152,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
    }
 
    public void testDeleteRootContainer() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AzureBlobAsyncClient.class.getMethod("deleteRootContainer"));
+      Invokable<?, ?> method = method(AzureBlobAsyncClient.class, "deleteRootContainer");
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(request, "DELETE https://identity.blob.core.windows.net/$root?restype=container HTTP/1.1");
@@ -165,7 +165,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
    }
 
    public void testCreateRootContainerOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AzureBlobAsyncClient.class.getMethod("createRootContainer", CreateContainerOptions[].class));
+      Invokable<?, ?> method = method(AzureBlobAsyncClient.class, "createRootContainer", CreateContainerOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(withPublicAccess(PublicAccess.BLOB).withMetadata(
                ImmutableMultimap.of("foo", "bar"))));
 
@@ -180,7 +180,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
    }
 
    public void testListBlobs() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AzureBlobAsyncClient.class.getMethod("listBlobs", String.class, ListBlobsOptions[].class));
+      Invokable<?, ?> method = method(AzureBlobAsyncClient.class, "listBlobs", String.class, ListBlobsOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("container"));
 
       assertRequestLineEquals(request,
@@ -194,7 +194,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
    }
 
    public void testListRootBlobs() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AzureBlobAsyncClient.class.getMethod("listBlobs", ListBlobsOptions[].class));
+      Invokable<?, ?> method = method(AzureBlobAsyncClient.class, "listBlobs", ListBlobsOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(request,
@@ -208,7 +208,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
    }
 
    public void testContainerProperties() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AzureBlobAsyncClient.class.getMethod("getContainerProperties", String.class));
+      Invokable<?, ?> method = method(AzureBlobAsyncClient.class, "getContainerProperties", String.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("container"));
 
       assertRequestLineEquals(request,
@@ -222,7 +222,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
    }
 
    public void testGetPublicAccessForContainer() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AzureBlobAsyncClient.class.getMethod("getPublicAccessForContainer", String.class));
+      Invokable<?, ?> method = method(AzureBlobAsyncClient.class, "getPublicAccessForContainer", String.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("container"));
 
       assertRequestLineEquals(request,
@@ -236,7 +236,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
    }
 
    public void testSetResourceMetadata() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AzureBlobAsyncClient.class.getMethod("setResourceMetadata", String.class, Map.class));
+      Invokable<?, ?> method = method(AzureBlobAsyncClient.class, "setResourceMetadata", String.class, Map.class);
       GeneratedHttpRequest request = processor.createRequest(method,
             ImmutableList.<Object> of("container", ImmutableMap.of("key", "value")));
 
@@ -251,7 +251,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
    }
 
    public void testGetBlob() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AzureBlobAsyncClient.class.getMethod("getBlob", String.class, String.class, GetOptions[].class));
+      Invokable<?, ?> method = method(AzureBlobAsyncClient.class, "getBlob", String.class, String.class, GetOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("container", "blob"));
 
       assertRequestLineEquals(request, "GET https://identity.blob.core.windows.net/container/blob HTTP/1.1");
@@ -264,7 +264,7 @@ public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsync
    }
 
    public void testSetBlobMetadata() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AzureBlobAsyncClient.class.getMethod("setBlobMetadata", String.class, String.class, Map.class));
+      Invokable<?, ?> method = method(AzureBlobAsyncClient.class, "setBlobMetadata", String.class, String.class, Map.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("container", "blob", ImmutableMap.of("key", "value")));
 
       assertRequestLineEquals(request,

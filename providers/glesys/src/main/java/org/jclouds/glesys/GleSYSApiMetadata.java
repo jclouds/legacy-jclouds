@@ -21,7 +21,7 @@ package org.jclouds.glesys;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.net.URI;
 import java.util.Properties;
@@ -84,7 +84,7 @@ public class GleSYSApiMetadata extends BaseRestApiMetadata {
          .buildVersion("3.5.0")
          .defaultEndpoint("https://api.glesys.com")
          .defaultProperties(GleSYSApiMetadata.defaultProperties())
-         .view(typeTokenOf(ComputeServiceContext.class))
+         .view(typeToken(ComputeServiceContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(GleSYSComputeServiceContextModule.class, GleSYSRestClientModule.class));
       }
 

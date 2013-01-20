@@ -17,7 +17,7 @@
  * under the License.
  */
 package org.jclouds.vcloud;
-
+import static org.jclouds.reflect.Reflection2.method;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -26,13 +26,13 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.vcloud.xml.SupportedVersionsHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code VCloudVersionsAsyncClient}
@@ -44,7 +44,7 @@ import com.google.common.collect.ImmutableList;
 public class VCloudVersionsAsyncClientTest extends BaseAsyncClientTest<VCloudVersionsAsyncClient> {
 
    public void testVersions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VCloudVersionsAsyncClient.class.getMethod("getSupportedVersions"));
+      Invokable<?, ?> method = method(VCloudVersionsAsyncClient.class, "getSupportedVersions");
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.of());
 
       assertEquals(request.getRequestLine(), "GET http://localhost:8080/versions HTTP/1.1");

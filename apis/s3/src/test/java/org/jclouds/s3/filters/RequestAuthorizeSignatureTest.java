@@ -19,6 +19,7 @@
 package org.jclouds.s3.filters;
 
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+import static org.jclouds.reflect.Reflection2.method;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Properties;
@@ -41,8 +42,6 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
-import com.google.common.reflect.Invokable;
-
 /**
  * Tests behavior of {@code RequestAuthorizeSignature}
  * 
@@ -88,7 +87,7 @@ public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest<S3Async
    @Test
    void testAppendBucketNameHostHeader() throws SecurityException, NoSuchMethodException {
       GeneratedHttpRequest request = processor.createRequest(
-            Invokable.from(S3AsyncClient.class.getMethod("getBucketLocation", String.class)),
+            method(S3AsyncClient.class, "getBucketLocation", String.class),
             ImmutableList.<Object> of("bucket"));
       StringBuilder builder = new StringBuilder();
       filter.appendBucketName(request, builder);
@@ -105,7 +104,7 @@ public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest<S3Async
 
    private GeneratedHttpRequest putBucketAcl() throws NoSuchMethodException {
       return processor.createRequest(
-            Invokable.from(S3AsyncClient.class.getMethod("putBucketACL", String.class, AccessControlList.class)),
+            method(S3AsyncClient.class, "putBucketACL", String.class, AccessControlList.class),
             ImmutableList.<Object> of("bucket",
                   AccessControlList.fromCannedAccessPolicy(CannedAccessPolicy.PRIVATE, "1234")));
    }
@@ -121,7 +120,7 @@ public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest<S3Async
    }
 
    private GeneratedHttpRequest listOwnedBuckets() throws NoSuchMethodException {
-      return processor.createRequest(Invokable.from(S3AsyncClient.class.getMethod("listOwnedBuckets")),
+      return processor.createRequest(method(S3AsyncClient.class, "listOwnedBuckets"),
             ImmutableList.of());
    }
 
@@ -138,14 +137,14 @@ public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest<S3Async
    private HttpRequest putObject() throws NoSuchMethodException {
       S3Object object = blobToS3Object.apply(BindBlobToMultipartFormTest.TEST_BLOB);
       object.getMetadata().getUserMetadata().put("Adrian", "foo");
-      return processor.createRequest(Invokable.from(S3AsyncClient.class.getMethod("putObject", String.class,
-            S3Object.class, PutObjectOptions[].class)), ImmutableList.<Object> of("bucket", object));
+      return processor.createRequest(method(S3AsyncClient.class, "putObject", String.class,
+            S3Object.class, PutObjectOptions[].class), ImmutableList.<Object> of("bucket", object));
    }
 
    @Test
    void testAppendBucketNameURIHost() throws SecurityException, NoSuchMethodException {
       GeneratedHttpRequest request = processor.createRequest(
-            Invokable.from(S3AsyncClient.class.getMethod("getBucketLocation", String.class)),
+            method(S3AsyncClient.class, "getBucketLocation", String.class),
             ImmutableList.<Object> of("bucket"));
       assertEquals(request.getEndpoint().getHost(), "bucket.s3.amazonaws.com");
    }

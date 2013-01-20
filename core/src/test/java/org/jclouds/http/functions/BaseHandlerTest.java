@@ -19,6 +19,7 @@
 package org.jclouds.http.functions;
 
 import static com.google.common.base.Throwables.propagate;
+import static org.jclouds.reflect.Reflection2.method;
 
 import java.util.List;
 
@@ -29,7 +30,6 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -54,10 +54,8 @@ public class BaseHandlerTest {
    @BeforeTest
    protected void setUpRequest() {
       try {
-         toString = Invocation.create(Invokable.from(String.class.getDeclaredMethod("toString")), ImmutableList.of());
+         toString = Invocation.create(method(String.class, "toString"), ImmutableList.of());
       } catch (SecurityException e) {
-         throw propagate(e);
-      } catch (NoSuchMethodException e) {
          throw propagate(e);
       }
       request = GeneratedHttpRequest.builder().method("POST").endpoint("http://localhost/key").invocation(toString)

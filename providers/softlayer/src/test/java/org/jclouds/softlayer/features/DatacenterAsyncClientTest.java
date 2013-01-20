@@ -18,18 +18,19 @@
  */
 package org.jclouds.softlayer.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.http.functions.ParseJson;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests annotation parsing of {@code DatacenterAsyncClient}
  * 
@@ -39,7 +40,7 @@ import com.google.common.collect.Iterables;
 public class DatacenterAsyncClientTest extends BaseSoftLayerAsyncClientTest<DatacenterAsyncClient> {
 
    public void testListDatacenters() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(DatacenterAsyncClient.class.getMethod("listDatacenters"));
+      Invokable<?, ?> method = method(DatacenterAsyncClient.class, "listDatacenters");
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
@@ -68,7 +69,7 @@ public class DatacenterAsyncClientTest extends BaseSoftLayerAsyncClientTest<Data
    }
 
    public void testGetDatacenter() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(DatacenterAsyncClient.class.getMethod("getDatacenter", long.class));
+      Invokable<?, ?> method = method(DatacenterAsyncClient.class, "getDatacenter", long.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(1234));
 
       assertRequestLineEquals(httpRequest,

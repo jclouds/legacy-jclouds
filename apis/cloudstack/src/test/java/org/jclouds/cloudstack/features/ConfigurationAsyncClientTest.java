@@ -18,17 +18,18 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code ConfigurationAsyncClient}
  * 
@@ -40,7 +41,7 @@ import com.google.common.collect.ImmutableList;
 public class ConfigurationAsyncClientTest extends BaseCloudStackAsyncClientTest<ConfigurationAsyncClient> {
 
    public void testListCapabilities() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(ConfigurationAsyncClient.class.getMethod("listCapabilities"));
+      Invokable<?, ?> method = method(ConfigurationAsyncClient.class, "listCapabilities");
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,

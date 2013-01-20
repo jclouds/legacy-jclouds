@@ -18,6 +18,8 @@
  */
 package org.jclouds.gogrid.services;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
@@ -26,13 +28,12 @@ import org.jclouds.gogrid.domain.PowerCommand;
 import org.jclouds.gogrid.functions.ParseCredentialsFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseOptionsFromJsonResponse;
 import org.jclouds.gogrid.options.GetServerListOptions;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code GridServerAsyncClient}
  * 
@@ -44,7 +45,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
 
    @Test
    public void testGetServerListWithOptions() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GridServerAsyncClient.class.getMethod("getServerList", GetServerListOptions[].class));
+      Invokable<?, ?> method = method(GridServerAsyncClient.class, "getServerList", GetServerListOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(
                new GetServerListOptions.Builder().onlySandboxServers()));
 
@@ -67,7 +68,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
 
    @Test
    public void testGetServersByName() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GridServerAsyncClient.class.getMethod("getServersByName", String[].class));
+      Invokable<?, ?> method = method(GridServerAsyncClient.class, "getServersByName", String[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("server1"));
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/get?v=1.6&name=server1 HTTP/1.1");
@@ -88,7 +89,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
 
    @Test
    public void testGetServersById() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GridServerAsyncClient.class.getMethod("getServersById", long[].class));
+      Invokable<?, ?> method = method(GridServerAsyncClient.class, "getServersById", long[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(123L));
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/get?v=1.6&id=123 HTTP/1.1");
@@ -110,7 +111,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
 
    @Test
    public void testPowerServer() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GridServerAsyncClient.class.getMethod("power", String.class, PowerCommand.class));
+      Invokable<?, ?> method = method(GridServerAsyncClient.class, "power", String.class, PowerCommand.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("PowerServer",
                PowerCommand.RESTART));
 
@@ -133,7 +134,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
 
    @Test
    public void testDeleteByName() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GridServerAsyncClient.class.getMethod("deleteByName", String.class));
+      Invokable<?, ?> method = method(GridServerAsyncClient.class, "deleteByName", String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("PowerServer"));
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/delete?v=1.6&"
@@ -155,7 +156,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
 
    @Test
    public void testGetRamSizes() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GridServerAsyncClient.class.getMethod("getRamSizes"));
+      Invokable<?, ?> method = method(GridServerAsyncClient.class, "getRamSizes");
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/common/lookup/list?v=1.6&lookup=server.ram "
@@ -178,7 +179,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
 
    @Test
    public void testServerCredentials() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GridServerAsyncClient.class.getMethod("getServerCredentials", long.class));
+      Invokable<?, ?> method = method(GridServerAsyncClient.class, "getServerCredentials", long.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(1));
 
       assertRequestLineEquals(httpRequest,
@@ -193,7 +194,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
 
    @Test
    public void testTypes() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GridServerAsyncClient.class.getMethod("getTypes"));
+      Invokable<?, ?> method = method(GridServerAsyncClient.class, "getTypes");
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
@@ -208,7 +209,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
 
    @Test
    public void testEditServerDescription() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GridServerAsyncClient.class.getMethod("editServerDescription", long.class, String.class));
+      Invokable<?, ?> method = method(GridServerAsyncClient.class, "editServerDescription", long.class, String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(2, "newDesc"));
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/edit?v=1.6&"
@@ -230,7 +231,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
    
    @Test
    public void testEditServerRam() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GridServerAsyncClient.class.getMethod("editServerRam", long.class, String.class));
+      Invokable<?, ?> method = method(GridServerAsyncClient.class, "editServerRam", long.class, String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(2, "1GB"));
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/edit?v=1.6&"
@@ -252,7 +253,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
    
    @Test
    public void testEditServerType() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GridServerAsyncClient.class.getMethod("editServerType", long.class, String.class));
+      Invokable<?, ?> method = method(GridServerAsyncClient.class, "editServerType", long.class, String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(2, "web"));
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/edit?v=1.6&"

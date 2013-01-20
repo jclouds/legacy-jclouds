@@ -23,7 +23,8 @@ import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.all;
 import static com.google.common.collect.Iterables.find;
 import static com.google.inject.util.Types.newParameterizedType;
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.method;
+import static org.jclouds.reflect.Reflection2.typeToken;
 import static org.jclouds.util.Optionals2.isReturnTypeOptional;
 import static org.jclouds.util.Optionals2.unwrapIfOptional;
 import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
@@ -66,7 +67,6 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.ProvisionException;
-import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
 
 /**
@@ -96,10 +96,11 @@ public final class DelegatesToInvocationFunction<S, F extends Function<Invocatio
     * </ul>
     * <li>other method calls are dispatched to {@link #handleInvocation}.
     * </ul>
-    * @throws Throwable 
+    * 
+    * @throws Throwable
     */
    @Override
-   public final Object invoke(Object proxy, Method invoked, @Nullable Object[] argv) throws Throwable  {
+   public final Object invoke(Object proxy, Method invoked, @Nullable Object[] argv) throws Throwable {
       if (argv == null) {
          argv = NO_ARGS;
       }
@@ -118,7 +119,7 @@ public final class DelegatesToInvocationFunction<S, F extends Function<Invocatio
          args = ImmutableList.copyOf(args);
       else
          args = Collections.unmodifiableList(args);
-      Invokable<?, Object> invokable = enclosingType.method(invoked);
+      Invokable<?, Object> invokable = method(ownerType, invoked);
       Invocation invocation = Invocation.create(invokable, args);
       try {
          return handle(invocation);
@@ -135,20 +136,19 @@ public final class DelegatesToInvocationFunction<S, F extends Function<Invocatio
          return propagateContextToDelegate(invocation);
       return methodInvoker.apply(invocation);
    }
-   
+
    private final Injector injector;
-   private final TypeToken<S> enclosingType;
+   private final TypeToken<S> ownerType;
    private final SetCaller setCaller;
    private final Map<Class<?>, Class<?>> syncToAsync;
    private final Function<InvocationSuccess, Optional<Object>> optionalConverter;
    private final F methodInvoker;
 
-   @SuppressWarnings("unchecked")
    @Inject
    DelegatesToInvocationFunction(Injector injector, SetCaller setCaller, Map<Class<?>, Class<?>> syncToAsync,
-         TypeLiteral<S> enclosingType, Function<InvocationSuccess, Optional<Object>> optionalConverter, F methodInvoker) {
+         Class<S> ownerType, Function<InvocationSuccess, Optional<Object>> optionalConverter, F methodInvoker) {
       this.injector = checkNotNull(injector, "injector");
-      this.enclosingType = (TypeToken<S>) typeTokenOf(checkNotNull(enclosingType, "enclosingType").getType());
+      this.ownerType = typeToken(checkNotNull(ownerType, "ownerType"));
       this.setCaller = checkNotNull(setCaller, "setCaller");
       this.syncToAsync = checkNotNull(syncToAsync, "syncToAsync");
       this.optionalConverter = checkNotNull(optionalConverter, "optionalConverter");
@@ -174,7 +174,7 @@ public final class DelegatesToInvocationFunction<S, F extends Function<Invocatio
    }
 
    /**
-    * attempts to guess the generic type params for the delegate's invocation function based on the supplied type 
+    * attempts to guess the generic type params for the delegate's invocation function based on the supplied type
     */
    private Key<?> methodInvokerFor(Class<?> returnType) {
       switch (methodInvoker.getClass().getTypeParameters().length) {
@@ -256,8 +256,7 @@ public final class DelegatesToInvocationFunction<S, F extends Function<Invocatio
 
    @Override
    public String toString() {
-      return Objects.toStringHelper("").omitNullValues()
-            .add("enclosingType", enclosingType.getRawType().getSimpleName()).add("methodInvoker", methodInvoker)
-            .toString();
+      return Objects.toStringHelper("").omitNullValues().add("ownerType", ownerType.getRawType().getSimpleName())
+            .add("methodInvoker", methodInvoker).toString();
    }
 }

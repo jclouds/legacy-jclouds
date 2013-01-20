@@ -19,6 +19,7 @@
 package org.jclouds.ec2.services;
 
 import static org.jclouds.ec2.options.DescribeImagesOptions.Builder.executableBy;
+import static org.jclouds.reflect.Reflection2.method;
 
 import java.io.IOException;
 
@@ -34,13 +35,12 @@ import org.jclouds.ec2.xml.PermissionHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code AMIAsyncClient}
  * 
@@ -64,8 +64,8 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
                                         .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testCreateImage() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("createImageInRegion", String.class, String.class, String.class,
-               CreateImageOptions[].class));
+      Invokable<?, ?> method = method(AMIAsyncClient.class, "createImageInRegion", String.class, String.class, String.class,
+               CreateImageOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "instanceId"));
 
       request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
@@ -97,8 +97,8 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
                                                .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testCreateImageOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("createImageInRegion", String.class, String.class, String.class,
-               CreateImageOptions[].class));
+      Invokable<?, ?> method = method(AMIAsyncClient.class, "createImageInRegion", String.class, String.class, String.class,
+               CreateImageOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "instanceId", new CreateImageOptions()
                .withDescription("description").noReboot()));
 
@@ -128,8 +128,8 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
                                            .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testDescribeImages() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("describeImagesInRegion", String.class,
-               DescribeImagesOptions[].class));
+      Invokable<?, ?> method = method(AMIAsyncClient.class, "describeImagesInRegion", String.class,
+               DescribeImagesOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
 
       request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
@@ -163,8 +163,8 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
                                                   .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testDescribeImagesOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("describeImagesInRegion", String.class,
-               DescribeImagesOptions[].class));
+      Invokable<?, ?> method = method(AMIAsyncClient.class, "describeImagesInRegion", String.class,
+               DescribeImagesOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, executableBy("me").ownedBy("fred", "nancy").imageIds(
                "1", "2")));
 
@@ -195,7 +195,7 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
                                             .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testDeregisterImage() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("deregisterImageInRegion", String.class, String.class));
+      Invokable<?, ?> method = method(AMIAsyncClient.class, "deregisterImageInRegion", String.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageId"));
 
       request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
@@ -226,8 +226,8 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
                                                       .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testRegisterImageFromManifest() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("registerImageFromManifestInRegion", String.class, String.class,
-               String.class, RegisterImageOptions[].class));
+      Invokable<?, ?> method = method(AMIAsyncClient.class, "registerImageFromManifestInRegion", String.class, String.class,
+               String.class, RegisterImageOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "pathToManifest"));
 
       request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
@@ -258,8 +258,8 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
                                                              .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testRegisterImageFromManifestOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("registerImageFromManifestInRegion", String.class, String.class,
-               String.class, RegisterImageOptions[].class));
+      Invokable<?, ?> method = method(AMIAsyncClient.class, "registerImageFromManifestInRegion", String.class, String.class,
+               String.class, RegisterImageOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "pathToManifest", new RegisterImageOptions()
                .withDescription("description")));
 
@@ -293,8 +293,8 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
                                                      .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testRegisterImageBackedByEBS() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("registerUnixImageBackedByEbsInRegion", String.class,
-               String.class, String.class, RegisterImageBackedByEbsOptions[].class));
+      Invokable<?, ?> method = method(AMIAsyncClient.class, "registerUnixImageBackedByEbsInRegion", String.class,
+               String.class, String.class, RegisterImageBackedByEbsOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageName", "snapshotId"));
 
       request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
@@ -334,8 +334,8 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
                                                             .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testRegisterImageBackedByEBSOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("registerUnixImageBackedByEbsInRegion", String.class,
-               String.class, String.class, RegisterImageBackedByEbsOptions[].class));
+      Invokable<?, ?> method = method(AMIAsyncClient.class, "registerUnixImageBackedByEbsInRegion", String.class,
+               String.class, String.class, RegisterImageBackedByEbsOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageName", "snapshotId",
                new RegisterImageBackedByEbsOptions().withDescription("description").addBlockDeviceFromSnapshot(
                         "/dev/device", null, "snapshot").addNewBlockDevice("/dev/newdevice", "newblock", 100)));
@@ -368,8 +368,8 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
                                                            .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testGetBlockDeviceMappingsForImage() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("getBlockDeviceMappingsForImageInRegion", String.class,
-               String.class));
+      Invokable<?, ?> method = method(AMIAsyncClient.class, "getBlockDeviceMappingsForImageInRegion", String.class,
+               String.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageId"));
 
       request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
@@ -400,7 +400,7 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
                                                         .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testGetLaunchPermissionForImage() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("getLaunchPermissionForImageInRegion", String.class, String.class));
+      Invokable<?, ?> method = method(AMIAsyncClient.class, "getLaunchPermissionForImageInRegion", String.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageId"));
 
       request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
@@ -435,8 +435,8 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
                                                           .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testAddLaunchPermissionsToImage() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("addLaunchPermissionsToImageInRegion", String.class,
-               Iterable.class, Iterable.class, String.class));
+      Invokable<?, ?> method = method(AMIAsyncClient.class, "addLaunchPermissionsToImageInRegion", String.class,
+               Iterable.class, Iterable.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, ImmutableList.of("bob", "sue"), ImmutableList
                .of("all"), "imageId"));
 
@@ -472,8 +472,8 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
                                                    .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testRemoveLaunchPermissionsFromImage() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("removeLaunchPermissionsFromImageInRegion", String.class,
-               Iterable.class, Iterable.class, String.class));
+      Invokable<?, ?> method = method(AMIAsyncClient.class, "removeLaunchPermissionsFromImageInRegion", String.class,
+               Iterable.class, Iterable.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, ImmutableList.of("bob", "sue"), ImmutableList
                .of("all"), "imageId"));
 
@@ -504,8 +504,8 @@ public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
                                                           .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testResetLaunchPermissionsOnImage() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AMIAsyncClient.class.getMethod("resetLaunchPermissionsOnImageInRegion", String.class,
-               String.class));
+      Invokable<?, ?> method = method(AMIAsyncClient.class, "resetLaunchPermissionsOnImageInRegion", String.class,
+               String.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "imageId"));
 
       request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);

@@ -18,7 +18,6 @@
  */
 package org.jclouds.rest.config;
 
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
 
 import java.lang.reflect.Proxy;
 
@@ -46,7 +45,7 @@ public class HttpApiProvider<S, A> implements Provider<S> {
          DelegatesToInvocationFunction<S, InvokeHttpMethod> httpInvoker, Class<S> apiType, Class<A> asyncApiType) {
       this.httpInvoker = httpInvoker;
       this.apiType = apiType;
-      RestModule.putInvokables(typeTokenOf(apiType), typeTokenOf(asyncApiType), invokables);
+      RestModule.putInvokables(apiType, asyncApiType, invokables);
    }
 
    @SuppressWarnings("unchecked")

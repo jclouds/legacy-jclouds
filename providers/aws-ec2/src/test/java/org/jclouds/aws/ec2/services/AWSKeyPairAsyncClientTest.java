@@ -18,6 +18,8 @@
  */
 package org.jclouds.aws.ec2.services;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
@@ -26,12 +28,11 @@ import org.jclouds.ec2.xml.KeyPairResponseHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code AWSKeyPairAsyncClient}
  * 
@@ -42,7 +43,7 @@ import com.google.common.collect.Lists;
 public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyPairAsyncClient> {
 
    public void testCreateKeyPair() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AWSKeyPairAsyncClient.class.getMethod("createKeyPairInRegion", String.class, String.class));
+      Invokable<?, ?> method = method(AWSKeyPairAsyncClient.class, "createKeyPairInRegion", String.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "mykey"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -71,8 +72,8 @@ public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyP
                                           .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testImportKeyPair() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AWSKeyPairAsyncClient.class.getMethod("importKeyPairInRegion", String.class, String.class,
-            String.class));
+      Invokable<?, ?> method = method(AWSKeyPairAsyncClient.class, "importKeyPairInRegion", String.class, String.class,
+            String.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "mykey", "ssh-rsa AA"));
 
       request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
@@ -90,7 +91,7 @@ public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyP
    }
 
    public void testDeleteKeyPair() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AWSKeyPairAsyncClient.class.getMethod("deleteKeyPairInRegion", String.class, String.class));
+      Invokable<?, ?> method = method(AWSKeyPairAsyncClient.class, "deleteKeyPairInRegion", String.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "mykey"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -106,8 +107,8 @@ public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyP
    }
 
    public void testDescribeKeyPairs() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AWSKeyPairAsyncClient.class.getMethod("describeKeyPairsInRegion", String.class,
-            String[].class));
+      Invokable<?, ?> method = method(AWSKeyPairAsyncClient.class, "describeKeyPairsInRegion", String.class,
+            String[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -123,8 +124,8 @@ public class AWSKeyPairAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSKeyP
    }
 
    public void testDescribeKeyPairsArgs() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AWSKeyPairAsyncClient.class.getMethod("describeKeyPairsInRegion", String.class,
-            String[].class));
+      Invokable<?, ?> method = method(AWSKeyPairAsyncClient.class, "describeKeyPairsInRegion", String.class,
+            String[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");

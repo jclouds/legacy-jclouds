@@ -18,16 +18,17 @@
  */
 package org.jclouds.softlayer.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.http.functions.ParseJson;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests annotation parsing of {@code AccountAsyncClient}
  *
@@ -37,7 +38,7 @@ import com.google.common.collect.ImmutableList;
 public class AccountAsyncClientTest extends BaseSoftLayerAsyncClientTest<AccountAsyncClient> {
 
    public void testGetActivePackages() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AccountAsyncClient.class.getMethod("getActivePackages"));
+      Invokable<?, ?> method = method(AccountAsyncClient.class, "getActivePackages");
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(

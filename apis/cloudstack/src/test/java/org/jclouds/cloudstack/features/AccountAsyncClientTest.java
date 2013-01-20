@@ -17,6 +17,7 @@
  * under the License.
  */
 package org.jclouds.cloudstack.features;
+import static org.jclouds.reflect.Reflection2.method;
 
 import java.io.IOException;
 
@@ -26,12 +27,12 @@ import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListAccountsOptions;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code AccountAsyncClient}
@@ -44,7 +45,7 @@ import com.google.common.collect.ImmutableList;
 public class AccountAsyncClientTest extends BaseCloudStackAsyncClientTest<AccountAsyncClient> {
 
    public void testListAccounts() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AccountAsyncClient.class.getMethod("listAccounts", ListAccountsOptions[].class));
+      Invokable<?, ?> method = method(AccountAsyncClient.class, "listAccounts", ListAccountsOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
@@ -61,7 +62,7 @@ public class AccountAsyncClientTest extends BaseCloudStackAsyncClientTest<Accoun
    }
 
    public void testListAccountsOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AccountAsyncClient.class.getMethod("listAccounts", ListAccountsOptions[].class));
+      Invokable<?, ?> method = method(AccountAsyncClient.class, "listAccounts", ListAccountsOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(
             ListAccountsOptions.Builder.accountInDomain("jclouds", "123")));
 
@@ -79,7 +80,7 @@ public class AccountAsyncClientTest extends BaseCloudStackAsyncClientTest<Accoun
    }
 
    public void testGetAccount() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(AccountAsyncClient.class.getMethod("getAccount", String.class));
+      Invokable<?, ?> method = method(AccountAsyncClient.class, "getAccount", String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("3"));
 
       assertRequestLineEquals(httpRequest,

@@ -1,6 +1,6 @@
 package org.jclouds.openstack.swift.config;
 
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.CommonSwiftClient;
@@ -19,7 +19,7 @@ import com.google.inject.Scopes;
 public class SwiftKeystoneRestClientModule extends SwiftRestClientModule<SwiftKeystoneClient, SwiftKeystoneAsyncClient> {
 
    public SwiftKeystoneRestClientModule() {
-      super(typeTokenOf(SwiftKeystoneClient.class), typeTokenOf(SwiftKeystoneAsyncClient.class), ImmutableMap
+      super(typeToken(SwiftKeystoneClient.class), typeToken(SwiftKeystoneAsyncClient.class), ImmutableMap
                .<Class<?>, Class<?>> of());
    }
 

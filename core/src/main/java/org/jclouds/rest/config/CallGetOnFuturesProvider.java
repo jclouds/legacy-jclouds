@@ -18,7 +18,6 @@
  */
 package org.jclouds.rest.config;
 
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
 
 import java.lang.reflect.Proxy;
 
@@ -47,7 +46,7 @@ public class CallGetOnFuturesProvider<S, A> implements Provider<S> {
          Class<A> asyncApiType) {
       this.syncInvoker = syncInvoker;
       this.apiType = apiType;
-      RestModule.putInvokables(typeTokenOf(apiType), typeTokenOf(asyncApiType), invokables);
+      RestModule.putInvokables(apiType, asyncApiType, invokables);
    }
 
    @SuppressWarnings("unchecked")

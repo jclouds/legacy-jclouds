@@ -18,6 +18,7 @@
  */
 package org.jclouds.json;
 
+import static org.jclouds.reflect.Reflection2.method;
 import static org.testng.Assert.assertEquals;
 
 import java.lang.annotation.ElementType;
@@ -39,7 +40,6 @@ import org.testng.annotations.Test;
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -62,8 +62,7 @@ public abstract class BaseParserTest<T, G> {
          return (Function<HttpResponse, T>) i
                .createChildInjector(new SaxParserModule())
                .getInstance(TransformerForRequest.class)
-               .getTransformerForMethod(
-                     Invocation.create(Invokable.from(getClass().getMethod("expected")), ImmutableList.of()), i);
+               .getTransformerForMethod(Invocation.create(method(getClass(), "expected"), ImmutableList.of()), i);
       } catch (Exception e) {
          throw Throwables.propagate(e);
       }

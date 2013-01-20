@@ -18,19 +18,20 @@
  */
 package org.jclouds.trmk.ecloud.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 import java.net.URI;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.http.functions.ParseSax;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.trmk.ecloud.BaseTerremarkECloudAsyncClientTest;
 import org.jclouds.trmk.vcloud_0_8.xml.DataCentersHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code DataCenterOperationsAsyncClient}
  * 
@@ -43,7 +44,7 @@ public class DataCenterOperationsAsyncClientTest extends
       BaseTerremarkECloudAsyncClientTest<DataCenterOperationsAsyncClient> {
 
    public void testlistDataCenters() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(DataCenterOperationsAsyncClient.class.getMethod("listDataCenters", URI.class));
+      Invokable<?, ?> method = method(DataCenterOperationsAsyncClient.class, "listDataCenters", URI.class);
       GeneratedHttpRequest request = processor
             .createRequest(
                   method, ImmutableList.<Object> of(
@@ -62,7 +63,7 @@ public class DataCenterOperationsAsyncClientTest extends
    }
 
    public void testlistDataCentersInOrg() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(DataCenterOperationsAsyncClient.class.getMethod("listDataCentersInOrg", URI.class));
+      Invokable<?, ?> method = method(DataCenterOperationsAsyncClient.class, "listDataCentersInOrg", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(
             URI.create("https://vcloud.safesecureweb.com/api/v0.8/org/1")));
 

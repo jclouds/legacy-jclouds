@@ -18,16 +18,17 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListHostsOptions;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code GlobalHostAsyncClient}
  *
@@ -37,7 +38,7 @@ import com.google.common.collect.ImmutableList;
 public class GlobalHostAsyncClientTest extends BaseCloudStackAsyncClientTest<GlobalHostAsyncClient> {
 
    public void testListHosts() throws Exception {
-      Invokable<?, ?> method = Invokable.from(GlobalHostAsyncClient.class.getMethod("listHosts", ListHostsOptions[].class));
+      Invokable<?, ?> method = method(GlobalHostAsyncClient.class, "listHosts", ListHostsOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,

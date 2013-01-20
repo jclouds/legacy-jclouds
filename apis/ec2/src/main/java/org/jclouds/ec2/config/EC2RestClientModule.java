@@ -18,7 +18,7 @@
  */
 package org.jclouds.ec2.config;
 
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.util.Map;
 
@@ -92,7 +92,7 @@ public class EC2RestClientModule<S extends EC2Api, A extends EC2AsyncApi> extend
    @SuppressWarnings("unchecked")
    public EC2RestClientModule() {
       // retaining top-level type of EC2Client vs EC2Api until we migrate all functionality up
-      super(TypeToken.class.cast(typeTokenOf(EC2Client.class)), TypeToken.class.cast(typeTokenOf(EC2AsyncClient.class)), DELEGATE_MAP);
+      super(TypeToken.class.cast(typeToken(EC2Client.class)), TypeToken.class.cast(typeToken(EC2AsyncClient.class)), DELEGATE_MAP);
    }
 
    protected EC2RestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType,

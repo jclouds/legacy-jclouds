@@ -1,5 +1,6 @@
 package org.jclouds.openstack.v2_0.functions;
 
+import static org.jclouds.reflect.Reflection2.method;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
@@ -24,7 +25,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import com.google.common.reflect.Invokable;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provides;
@@ -66,15 +66,13 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
    }
 
    InvocationSuccess getFloatingIPExtension(List<Object> args) throws SecurityException, NoSuchMethodException {
-      return InvocationSuccess.create(Invocation.create(
-            Invokable.from(NovaAsyncApi.class.getDeclaredMethod("getFloatingIPExtensionForZone", String.class)),
-            args), "foo");
+      return InvocationSuccess.create(
+            Invocation.create(method(NovaAsyncApi.class, "getFloatingIPExtensionForZone", String.class), args), "foo");
    }
 
    InvocationSuccess getKeyPairExtension(List<Object> args) throws SecurityException, NoSuchMethodException {
-      return InvocationSuccess.create(Invocation.create(
-            Invokable.from(NovaAsyncApi.class.getDeclaredMethod("getKeyPairExtensionForZone", String.class)),
-            args), "foo");
+      return InvocationSuccess.create(
+            Invocation.create(method(NovaAsyncApi.class, "getKeyPairExtensionForZone", String.class), args), "foo");
    }
 
    public void testPresentWhenExtensionsIncludeNamespaceFromAnnotationAbsentWhenNot() throws SecurityException, NoSuchMethodException {
