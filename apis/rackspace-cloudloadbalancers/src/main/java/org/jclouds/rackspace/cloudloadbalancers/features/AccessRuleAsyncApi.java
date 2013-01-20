@@ -18,6 +18,7 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -53,6 +54,7 @@ public interface AccessRuleAsyncApi {
    /**
     * @see AccessRuleApi#create(Iterable)
     */
+   @Named("accessrule:create")
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @Fallback(VoidOnNotFoundOr404.class)
@@ -62,6 +64,7 @@ public interface AccessRuleAsyncApi {
    /**
     * @see AccessRuleApi#list()
     */
+   @Named("accessrule:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Fallback(EmptyPagedIterableOnNotFoundOr404.class)
@@ -72,6 +75,7 @@ public interface AccessRuleAsyncApi {
    /**
     * @see AccessRuleApi#remove(int)
     */
+   @Named("accessrule:remove")
    @DELETE
    @Fallback(FalseOnNotFoundOr404.class)
    @Path("/accesslist/{id}")
@@ -81,6 +85,7 @@ public interface AccessRuleAsyncApi {
    /**
     * @see AccessRuleApi#remove(Iterable)
     */
+   @Named("accessrule:remove")
    @DELETE
    @Fallback(FalseOnNotFoundOr404.class)
    @Path("/accesslist")
@@ -90,6 +95,7 @@ public interface AccessRuleAsyncApi {
    /**
     * @see AccessRuleApi#removeAll()
     */
+   @Named("accessrule:remove")
    @DELETE
    @Fallback(FalseOnNotFoundOr404.class)
    @Path("/accesslist")

@@ -18,6 +18,7 @@
  */
 package org.jclouds.rackspace.cloudidentity.v2_0;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -48,6 +49,7 @@ public interface CloudIdentityAuthenticationAsyncApi extends AuthenticationAsync
    /**
     * @see CloudIdentityAuthenticationAsyncApi#authenticateWithTenantNameAndCredentials(String,ApiKeyCredentials)
     */
+   @Named("auth:tenantnameandcreds")
    @POST
    @SelectJson("access")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -59,6 +61,7 @@ public interface CloudIdentityAuthenticationAsyncApi extends AuthenticationAsync
    /**
     * @see CloudIdentityAuthenticationAsyncApi#authenticateWithTenantIdAndCredentials(String,ApiKeyCredentials)
     */
+   @Named("auth:tenantidandcreds")
    @POST
    @SelectJson("access")
    @Consumes(MediaType.APPLICATION_JSON)
