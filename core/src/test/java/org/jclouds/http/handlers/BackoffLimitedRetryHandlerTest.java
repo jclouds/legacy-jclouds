@@ -30,6 +30,7 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.io.Payloads;
+import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -127,7 +128,7 @@ public class BackoffLimitedRetryHandlerTest {
    private HttpCommand createCommand() throws SecurityException, NoSuchMethodException {
       Invokable<IntegrationTestAsyncClient, String> method = method(IntegrationTestAsyncClient.class, "download", String.class);
 
-      return new HttpCommand(processor.createRequest(method, ImmutableList.<Object> of("1")));
+      return new HttpCommand(processor.apply(Invocation.create(method, ImmutableList.<Object> of("1"))));
    }
 
    @Test

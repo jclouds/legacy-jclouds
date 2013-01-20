@@ -98,7 +98,6 @@ public class BindLoggersAnnotatedWithResourceTest {
    }
 
    public static class C {
-      @SuppressWarnings("unused")
       @Inject
       private Logger logger = Logger.NULL;
    }
@@ -111,11 +110,9 @@ public class BindLoggersAnnotatedWithResourceTest {
    }
 
    public static class D {
-      @SuppressWarnings("unused")
       @Resource
       private Logger logger = Logger.NULL;
 
-      @SuppressWarnings("unused")
       @Resource
       private Logger blogger;
 

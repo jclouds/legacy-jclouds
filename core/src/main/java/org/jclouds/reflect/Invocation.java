@@ -19,12 +19,14 @@
 package org.jclouds.reflect;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.Invokable;
 
 /**
@@ -41,6 +43,19 @@ public final class Invocation {
     */
    public static Invocation create(Invokable<?, ?> invokable, List<Object> args) {
       return new Invocation(invokable, args);
+   }
+
+   /**
+    * invocation without arguments.
+    * 
+    * @throws IllegalArgumentException
+    *            if in invokable requires arguments
+    */
+   public static Invocation create(Invokable<?, ?> invokable) {
+      checkArgument(
+            invokable.getParameters().size() == 0 || (invokable.getParameters().size() == 1 && invokable.isVarArgs()),
+            "please specify arguments to %s", invokable);
+      return create(invokable, ImmutableList.of());
    }
 
    private final Invokable<?, ?> invokable;

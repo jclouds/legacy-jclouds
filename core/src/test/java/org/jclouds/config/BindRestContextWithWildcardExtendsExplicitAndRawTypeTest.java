@@ -24,6 +24,7 @@ import static org.testng.Assert.assertEquals;
 
 import javax.inject.Inject;
 
+import org.jclouds.Context;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.IntegrationTestClient;
@@ -48,7 +49,7 @@ import com.google.inject.Injector;
 @Test(groups = "unit", testName = "BindRestContextWithWildcardExtendsExplicitAndRawTypeTest")
 public class BindRestContextWithWildcardExtendsExplicitAndRawTypeTest {
 
-   @SuppressWarnings( { "unused", "unchecked" })
+   @SuppressWarnings("rawtypes")
    private static class ExpectedBindings {
 
       private final RestContext raw;
@@ -92,7 +93,7 @@ public class BindRestContextWithWildcardExtendsExplicitAndRawTypeTest {
                });
    }
 
-   @SuppressWarnings( { "unused", "unchecked" })
+   @SuppressWarnings("rawtypes")
    private static class ExpectedBindingsWithWildCardExtends {
 
       private final RestContext raw;
@@ -110,13 +111,13 @@ public class BindRestContextWithWildcardExtendsExplicitAndRawTypeTest {
 
    }
 
-   @SuppressWarnings("unchecked")
    @Test
    public void testRawExplicitAndWildCardExtends() {
       ProviderMetadata md = AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(
                IntegrationTestClient.class, IntegrationTestAsyncClient.class, "http://localhost");
 
-      TypeToken wildCardExtendsType = new TypeToken<RestContext<? extends IntegrationTestClient, ? extends IntegrationTestAsyncClient>>() {
+      TypeToken<? extends Context> wildCardExtendsType = new TypeToken<RestContext<? extends IntegrationTestClient, ? extends IntegrationTestAsyncClient>>() {
+         private static final long serialVersionUID = 1L;
       };
       
       md = md.toBuilder().apiMetadata(md.getApiMetadata().toBuilder().context(wildCardExtendsType).build()).build();
