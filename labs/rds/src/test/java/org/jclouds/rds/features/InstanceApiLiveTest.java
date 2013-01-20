@@ -29,7 +29,7 @@ import static org.testng.Assert.assertTrue;
 import java.util.logging.Logger;
 
 import org.jclouds.collect.IterableWithMarker;
-import org.jclouds.predicates.InetSocketAddressConnect;
+import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rds.domain.Authorization;
 import org.jclouds.rds.domain.Authorization.Status;
 import org.jclouds.rds.domain.Instance;
@@ -64,7 +64,8 @@ public class InstanceApiLiveTest extends BaseRDSApiLiveTest {
    public void setupContext() {
       super.setupContext();
       securityGroup = createSecurityGroupAndAuthorizeIngressToAll(INSTANCE);
-      socketTester = retry(new InetSocketAddressConnect(), 180, 1, 1, SECONDS);
+      SocketOpen socketOpen = context.utils().injector().getInstance(SocketOpen.class);
+      socketTester = retry(socketOpen, 180, 1, 1, SECONDS);
       instanceAvailable = retry(new Predicate<Instance>() {
          public boolean apply(Instance input) {
             return api().get(input.getId()).getStatus() == Instance.Status.AVAILABLE;

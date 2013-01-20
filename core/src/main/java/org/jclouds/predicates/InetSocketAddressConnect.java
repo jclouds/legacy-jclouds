@@ -18,9 +18,13 @@
  */
 package org.jclouds.predicates;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.Socket;
+import java.net.URI;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -28,6 +32,8 @@ import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 import com.google.common.net.HostAndPort;
 import com.google.inject.Inject;
 
@@ -47,6 +53,14 @@ public class InetSocketAddressConnect implements SocketOpen {
    @Named("org.jclouds.socket_timeout")
    private int timeout = 2000;
 
+   private final Function<URI, Proxy> proxyForURI;
+
+   @VisibleForTesting
+   @Inject
+   InetSocketAddressConnect(Function<URI, Proxy> proxyForURI) {
+      this.proxyForURI = checkNotNull(proxyForURI, "proxyForURI");
+   }
+   
    @Override
    public boolean apply(HostAndPort socketA) {
       InetSocketAddress socketAddress = new InetSocketAddress(socketA.getHostText(), socketA
@@ -54,7 +68,8 @@ public class InetSocketAddressConnect implements SocketOpen {
       Socket socket = null;
       try {
          logger.trace("testing socket %s", socketAddress);
-         socket = new Socket();
+         socket = new Socket(
+               proxyForURI.apply(URI.create("socket://" + socketA.getHostText() + ":" + socketA.getPort())));
          socket.setReuseAddress(false);
          socket.setSoLinger(false, 1);
          socket.setSoTimeout(timeout);

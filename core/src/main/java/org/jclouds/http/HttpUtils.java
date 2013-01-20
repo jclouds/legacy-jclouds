@@ -79,27 +79,11 @@ public class HttpUtils {
    @Named(Constants.PROPERTY_RELAX_HOSTNAME)
    private boolean relaxHostname = false;
 
-   @Inject(optional = true)
-   @Named(Constants.PROPERTY_PROXY_SYSTEM)
-   private boolean systemProxies = System.getProperty("java.net.useSystemProxies") != null ? Boolean
-         .parseBoolean(System.getProperty("java.net.useSystemProxies")) : false;
-
    private final int globalMaxConnections;
    private final int globalMaxConnectionsPerHost;
    private final int connectionTimeout;
    private final int soTimeout;
-   @Inject(optional = true)
-   @Named(Constants.PROPERTY_PROXY_HOST)
-   private String proxyHost;
-   @Inject(optional = true)
-   @Named(Constants.PROPERTY_PROXY_PORT)
-   private Integer proxyPort;
-   @Inject(optional = true)
-   @Named(Constants.PROPERTY_PROXY_USER)
-   private String proxyUser;
-   @Inject(optional = true)
-   @Named(Constants.PROPERTY_PROXY_PASSWORD)
-   private String proxyPassword;
+   
    @Inject(optional = true)
    @Named(Constants.PROPERTY_TRUST_ALL_CERTS)
    private boolean trustAllCerts;
@@ -113,34 +97,6 @@ public class HttpUtils {
       this.connectionTimeout = connectionTimeout;
       this.globalMaxConnections = globalMaxConnections;
       this.globalMaxConnectionsPerHost = globalMaxConnectionsPerHost;
-   }
-
-   /**
-    * @see org.jclouds.Constants.PROPERTY_PROXY_HOST
-    */
-   public String getProxyHost() {
-      return proxyHost;
-   }
-
-   /**
-    * @see org.jclouds.Constants.PROPERTY_PROXY_PORT
-    */
-   public Integer getProxyPort() {
-      return proxyPort;
-   }
-
-   /**
-    * @see org.jclouds.Constants.PROPERTY_PROXY_USER
-    */
-   public String getProxyUser() {
-      return proxyUser;
-   }
-
-   /**
-    * @see org.jclouds.Constants.PROPERTY_PROXY_PASSWORD
-    */
-   public String getProxyPassword() {
-      return proxyPassword;
    }
 
    public int getSocketOpenTimeout() {
@@ -157,10 +113,6 @@ public class HttpUtils {
 
    public boolean trustAllCerts() {
       return trustAllCerts;
-   }
-
-   public boolean useSystemProxies() {
-      return systemProxies;
    }
 
    public int getMaxConnections() {
