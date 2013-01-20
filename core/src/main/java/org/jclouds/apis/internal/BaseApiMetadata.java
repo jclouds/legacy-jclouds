@@ -32,7 +32,7 @@ import static org.jclouds.Constants.PROPERTY_SCHEDULER_THREADS;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.Constants.PROPERTY_SO_TIMEOUT;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.net.URI;
 import java.util.Properties;
@@ -93,7 +93,7 @@ public abstract class BaseApiMetadata implements ApiMetadata {
       private Optional<String> defaultCredential = Optional.absent();
       private Properties defaultProperties = BaseApiMetadata.defaultProperties();
       private URI documentation;
-      private TypeToken<? extends Context> context = typeTokenOf(Context.class);
+      private TypeToken<? extends Context> context = typeToken(Context.class);
       private Set<Class<? extends Module>> defaultModules = ImmutableSet.of();
 
       /**
@@ -119,7 +119,7 @@ public abstract class BaseApiMetadata implements ApiMetadata {
        */
       @Override
       public T view(Class<? extends View> view) {
-         return view(typeTokenOf(checkNotNull(view, "view")));
+         return view(typeToken(checkNotNull(view, "view")));
       }
       
       /**

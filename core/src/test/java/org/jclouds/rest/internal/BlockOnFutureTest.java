@@ -22,7 +22,7 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.method;
 import static org.testng.Assert.assertEquals;
 
 import java.util.concurrent.ExecutionException;
@@ -39,7 +39,6 @@ import org.testng.annotations.Test;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.reflect.TypeToken;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -62,16 +61,13 @@ public class BlockOnFutureTest {
       }
    }
 
-   private TypeToken<ThingAsyncApi> enclosingType;
    private Invocation get;
    private Invocation namedGet;
 
    @BeforeClass
    void setupInvocations() throws SecurityException, NoSuchMethodException {
-      enclosingType = typeTokenOf(ThingAsyncApi.class);
-      get = Invocation.create(enclosingType.method(ThingAsyncApi.class.getDeclaredMethod("get")), ImmutableList.of());
-      namedGet = Invocation.create(enclosingType.method(ThingAsyncApi.class.getDeclaredMethod("namedGet")),
-            ImmutableList.of());
+      get = Invocation.create(method(ThingAsyncApi.class, "get"), ImmutableList.of());
+      namedGet = Invocation.create(method(ThingAsyncApi.class, "namedGet"), ImmutableList.of());
    }
 
    @SuppressWarnings("unchecked")

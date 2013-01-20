@@ -19,7 +19,7 @@
 package org.jclouds.internal;
 
 import static org.easymock.EasyMock.createMock;
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.fail;
@@ -64,22 +64,22 @@ public class BaseViewTest {
    private static class Wine extends BaseView {
 
       protected Wine() {
-         super(new Water(), typeTokenOf(Water.class));
+         super(new Water(), typeToken(Water.class));
       }
    }
 
    public void testWaterTurnedIntoWine() {
       Wine wine = new Wine();
-      assertEquals(wine.getBackendType(), typeTokenOf(Water.class));
-      assertEquals(wine.unwrap(typeTokenOf(Water.class)).getClass(), Water.class);
+      assertEquals(wine.getBackendType(), typeToken(Water.class));
+      assertEquals(wine.unwrap(typeToken(Water.class)).getClass(), Water.class);
       assertEquals(wine.unwrap().getClass(), Water.class);
    }
 
    public void testPeanutButterDidntTurnIntoWine() {
       Wine wine = new Wine();
-      assertNotEquals(wine.getBackendType(), typeTokenOf(PeanutButter.class));
+      assertNotEquals(wine.getBackendType(), typeToken(PeanutButter.class));
       try {
-         wine.unwrap(typeTokenOf(PeanutButter.class));
+         wine.unwrap(typeToken(PeanutButter.class));
          fail();
       } catch (IllegalArgumentException e) {
          assertEquals(e.getMessage(), "backend type: org.jclouds.internal.BaseViewTest$Water not assignable from org.jclouds.internal.BaseViewTest$PeanutButter");

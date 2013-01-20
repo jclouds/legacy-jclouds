@@ -17,10 +17,9 @@
  * under the License.
  */
 package org.jclouds.providers;
-
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
@@ -117,7 +116,7 @@ public class Providers {
    }
 
    public static Iterable<ProviderMetadata> viewableAs(Class<? extends View> viewableAs) {
-      return filter(all(), ProviderPredicates.viewableAs(typeTokenOf(viewableAs)));
+      return filter(all(), ProviderPredicates.viewableAs(typeToken(viewableAs)));
    }
 
    /**
@@ -179,7 +178,7 @@ public class Providers {
 
    public static Iterable<ProviderMetadata> boundedByIso3166Code(String iso3166Code,
             Class<? extends View> viewableAs) {
-      return boundedByIso3166Code(iso3166Code, typeTokenOf(viewableAs));
+      return boundedByIso3166Code(iso3166Code, typeToken(viewableAs));
    }
 
    /**
@@ -215,6 +214,6 @@ public class Providers {
 
    public static Iterable<ProviderMetadata> collocatedWith(ProviderMetadata providerMetadata,
             Class<? extends View> viewableAs) {
-      return collocatedWith(providerMetadata, typeTokenOf(viewableAs));
+      return collocatedWith(providerMetadata, typeToken(viewableAs));
    }
 }

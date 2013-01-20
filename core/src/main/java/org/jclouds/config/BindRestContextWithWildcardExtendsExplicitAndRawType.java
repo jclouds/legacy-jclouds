@@ -17,10 +17,9 @@
  * under the License.
  */
 package org.jclouds.config;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import org.jclouds.rest.RestApiMetadata;
 import org.jclouds.rest.RestContext;
@@ -50,8 +49,8 @@ public class BindRestContextWithWildcardExtendsExplicitAndRawType extends Abstra
    @SuppressWarnings("unchecked")
    @Override
    protected void configure() {
-      TypeToken<?> concreteType = BaseRestApiMetadata.contextToken(typeTokenOf(restApiMetadata.getApi()), TypeToken
-               .of(restApiMetadata.getAsyncApi()));
+      TypeToken<?> concreteType = BaseRestApiMetadata.contextToken(typeToken(restApiMetadata.getApi()),
+            typeToken(restApiMetadata.getAsyncApi()));
       // bind explicit type
       bind(TypeLiteral.get(concreteType.getType())).to(
             TypeLiteral.class.cast(TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class,
