@@ -41,13 +41,14 @@ public class LoadBalancerRequest extends BaseLoadBalancer<NodeRequest, LoadBalan
 
    private final Set<Map<String, String>> virtualIps;
    private final Set<AccessRule> accessRules;
+   private final Map<String, String> metadata;
 
    public LoadBalancerRequest(String name, String protocol, @Nullable Integer port, Set<NodeRequest> nodes,
          @Nullable Algorithm algorithm, @Nullable Integer timeout, @Nullable Boolean halfClosed,
          @Nullable Map<String, SessionPersistenceType> sessionPersistenceType,
          @Nullable Map<String, Boolean> connectionLogging, @Nullable ConnectionThrottle connectionThrottle,
          @Nullable HealthMonitor healthMonitor, @Nullable Set<AccessRule> accessRules,
-         @Nullable Set<Metadata> metadata, VirtualIP.Type virtualIPType, Integer virtualIPId) {
+         @Nullable Map<String, String> metadata, VirtualIP.Type virtualIPType, Integer virtualIPId) {
       this(name, protocol, port, nodes, algorithm, timeout, halfClosed, sessionPersistenceType, connectionLogging,
             connectionThrottle, healthMonitor, accessRules, metadata, 
             getVirtualIPsFromOptions(virtualIPType, virtualIPId));
@@ -58,11 +59,20 @@ public class LoadBalancerRequest extends BaseLoadBalancer<NodeRequest, LoadBalan
          @Nullable Map<String, SessionPersistenceType> sessionPersistenceType,
          @Nullable Map<String, Boolean> connectionLogging, @Nullable ConnectionThrottle connectionThrottle,
          @Nullable HealthMonitor healthMonitor, @Nullable Set<AccessRule> accessRules,
-         @Nullable Set<Metadata> metadata, Set<Map<String, String>> virtualIPsFromOptions) {
+         @Nullable Map<String, String> metadata, Set<Map<String, String>> virtualIPsFromOptions) {
       super(name, protocol, port, nodes, algorithm, timeout, halfClosed, sessionPersistenceType, connectionLogging,
-            connectionThrottle, healthMonitor, metadata);
+            connectionThrottle, healthMonitor);
       this.virtualIps = checkNotNull(virtualIPsFromOptions, "virtualIPsFromOptions");
       this.accessRules = accessRules;
+      this.metadata = metadata;
+   }   
+
+   public Map<String, String> getMetadata() {
+      return metadata != null ? metadata : ImmutableMap.<String, String> of();
+   }
+
+   public Set<AccessRule> getAccessRules() {
+      return accessRules != null ? accessRules : ImmutableSet.<AccessRule> of();
    }
 
    static Set<Map<String, String>> getVirtualIPsFromOptions(VirtualIP.Type virtualIPType, Integer virtualIPId) {
@@ -95,6 +105,7 @@ public class LoadBalancerRequest extends BaseLoadBalancer<NodeRequest, LoadBalan
       private Integer virtualIPId;
       private Set<Map<String, String>> virtualIps;
       private Set<AccessRule> accessRules;
+      private Map<String, String> metadata;
 
       /**
        * @see VirtualIP
@@ -128,6 +139,14 @@ public class LoadBalancerRequest extends BaseLoadBalancer<NodeRequest, LoadBalan
        */
       public Builder accessRules(Iterable<AccessRule> accessRules) {
          this.accessRules = ImmutableSet.<AccessRule> copyOf(checkNotNull(accessRules, "accessRules"));
+         return this;
+      }
+
+      /**
+       * Information (metadata) that can be associated with each load balancer for the client's personal use.
+       */
+      public Builder metadata(Map<String, String> metadata) {
+         this.metadata = ImmutableMap.<String, String> copyOf(checkNotNull(metadata, "metadata"));
          return this;
       }
 

@@ -18,6 +18,8 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.features;
 
+import java.util.Map;
+
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
 import org.jclouds.http.HttpResponseException;
@@ -25,6 +27,7 @@ import org.jclouds.openstack.v2_0.options.PaginationOptions;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerAttributes;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerRequest;
+import org.jclouds.rackspace.cloudloadbalancers.domain.Metadata;
 
 /**
  * Provides synchronous access to CloudLoadBalancers LoadBalancer features.
@@ -104,4 +107,43 @@ public interface LoadBalancerApi {
     *           to remove
     */
    void remove(int id);
+   
+   /**
+    * When a metadata item is added, it is assigned a unique identifier that can be used for mutating operations such
+    * as changing the value attribute or removing it. Key and value must be 256 characters or less. 
+    * All UTF-8 characters are valid.
+    */
+   Metadata createMetadata(int id, Map<String, String> metadata);
+    
+   /**
+    * List a load balancer's metadata.
+    */
+   Metadata getMetadata(int id);
+   
+   /**
+    * Update metadatum. Key and value must be 256 characters or less. All UTF-8 characters are valid.
+    * 
+    * @return true on a successful update, false if the metadatum was not found
+    */
+   boolean updateMetadatum(int id, int metadatumId, String value);
+
+   /**
+    * Remove metadatum.
+    * 
+    * @see LoadBalancerApi#remove(int, Iterable)
+    * 
+    * @return true on a successful removal, false if the metadatum was not found
+    */
+   boolean removeMetadatum(int id, int metadatumId);
+   
+   /**
+    * Batch delete metadata given the specified ids.
+    * 
+    * The current default limit is ten ids per request. Any and all configuration data is immediately purged and is 
+    * not recoverable. If one or more of the items in the list cannot be removed due to its current status, an 
+    * exception is thrown along with the ids of the ones the system identified as potential failures for this request.
+    * 
+    * @return true on a successful removal, false if the metadata was not found
+    */
+   boolean removeMetadata(int id, Iterable<Integer> metadataIds);
 }

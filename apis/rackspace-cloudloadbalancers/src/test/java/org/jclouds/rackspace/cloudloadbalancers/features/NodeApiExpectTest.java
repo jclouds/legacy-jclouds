@@ -19,6 +19,7 @@
 package org.jclouds.rackspace.cloudloadbalancers.features;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.Set;
@@ -27,13 +28,14 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersApi;
+import org.jclouds.rackspace.cloudloadbalancers.domain.Metadata;
 import org.jclouds.rackspace.cloudloadbalancers.domain.Node;
 import org.jclouds.rackspace.cloudloadbalancers.domain.NodeAttributes;
 import org.jclouds.rackspace.cloudloadbalancers.domain.NodeRequest;
-import org.jclouds.rackspace.cloudloadbalancers.features.NodeApi;
 import org.jclouds.rackspace.cloudloadbalancers.internal.BaseCloudLoadBalancerApiExpectTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 
@@ -52,7 +54,7 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
       ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
 
       Set<Node> nodes = api.list().concat().toSet();
-      assertEquals(nodes, testNodes());
+      assertEquals(nodes, getExpectedNodes());
    }
 
    public void testGetNodeInLoadBalancer() {
@@ -106,7 +108,7 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
       Set<NodeRequest> nodeRequests = ImmutableSortedSet.<NodeRequest> of(nodeRequest1, nodeRequest2, nodeRequest3);
       
       Set<Node> nodes = api.add(nodeRequests);
-      assertEquals(nodes, testNodes());
+      assertEquals(nodes, getExpectedNodes());
    }
 
    public void testUpdateAttributesForNodeInLoadBalancer() {
@@ -152,7 +154,80 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
       api.remove(nodeIds);
    }
 
-   private Set<Node> testNodes() {
+   public void testListMetadata() {
+      URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000/nodes/410/metadata");
+      NodeApi api = requestsSendResponses(
+            rackspaceAuthWithUsernameAndApiKey,
+            responseWithAccess, 
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/metadata-list.json")).build()
+      ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
+
+      Metadata metadata = api.getMetadata(410);
+      assertEquals(metadata, getExpectedMetadataWithIds());
+   }
+
+   public void testCreateMetadata() {
+      URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000/nodes/410/metadata");
+      NodeApi api = requestsSendResponses(
+            rackspaceAuthWithUsernameAndApiKey,
+            responseWithAccess, 
+            authenticatedGET()
+               .method("POST")
+               .endpoint(endpoint)
+               .payload(payloadFromResourceWithContentType("/metadata-create.json", MediaType.APPLICATION_JSON)).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/metadata-list.json")).build()
+      ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
+         
+      Metadata metadata = api.createMetadata(410, getExpectedMetadata());
+      assertEquals(metadata, getExpectedMetadataWithIds());
+   }
+
+   public void testRemoveSingleMetadata() {
+      URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000/nodes/410/metadata/23");
+      NodeApi api = requestsSendResponses(
+            rackspaceAuthWithUsernameAndApiKey,
+            responseWithAccess, 
+            authenticatedGET().method("DELETE").endpoint(endpoint).replaceHeader("Accept", MediaType.WILDCARD).build(),
+            HttpResponse.builder().statusCode(200).build()
+      ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
+
+      assertTrue(api.removeMetadatum(410, 23));
+   }
+
+   public void testRemoveManyMetadata() {
+      URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000/nodes/410/metadata?id=23&id=24");
+      NodeApi api = requestsSendResponses(
+            rackspaceAuthWithUsernameAndApiKey,
+            responseWithAccess, 
+            authenticatedGET().method("DELETE").endpoint(endpoint).replaceHeader("Accept", MediaType.WILDCARD).build(),
+            HttpResponse.builder().statusCode(200).build()
+      ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
+      
+      
+      
+      assertTrue(api.removeMetadata(410, ImmutableList.<Integer> of(23, 24)));
+   }
+
+   private Metadata getExpectedMetadata() {
+      Metadata metadata = new Metadata();
+      metadata.put("color", "red");
+      metadata.put("label", "web-load-balancer");
+      metadata.put("os", "ubuntu");
+
+      return metadata;
+   }
+
+   private Metadata getExpectedMetadataWithIds() {
+      Metadata metadata = getExpectedMetadata();
+      metadata.putId("color", 1);
+      metadata.putId("label", 2);
+      metadata.putId("os", 3);
+
+      return metadata;
+   }
+
+   private Set<Node> getExpectedNodes() {
       Node node1 = Node.builder()
             .id(410)
             .address("10.1.1.1")

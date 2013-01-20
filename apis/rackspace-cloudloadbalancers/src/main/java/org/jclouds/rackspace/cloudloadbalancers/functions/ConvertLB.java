@@ -24,8 +24,9 @@ import javax.inject.Inject;
 import org.jclouds.logging.Logger;
 import org.jclouds.rackspace.cloudloadbalancers.domain.AccessRuleWithId;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
-import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIPWithId;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer.Builder;
+import org.jclouds.rackspace.cloudloadbalancers.domain.Metadata;
+import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIPWithId;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
@@ -58,8 +59,7 @@ public class ConvertLB implements Function<LB, LoadBalancer> {
                .protocol(lb.getProtocol()).port(lb.getPort()).nodeCount(lb.nodeCount).nodes(lb.getNodes())
                .timeout(lb.getTimeout()).algorithm(lb.getAlgorithm()).halfClosed(lb.isHalfClosed())
                .sessionPersistenceType(lb.getSessionPersistenceType()).connectionLogging(lb.isConnectionLogging())
-               .connectionThrottle(lb.getConnectionThrottle()).healthMonitor(lb.getHealthMonitor())
-               .metadata(lb.getMetadata());
+               .connectionThrottle(lb.getConnectionThrottle()).healthMonitor(lb.getHealthMonitor());
 
          if (lb.cluster.size() == 1)
             builder.clusterName(Iterables.get(lb.cluster.values(), 0));
@@ -81,6 +81,10 @@ public class ConvertLB implements Function<LB, LoadBalancer> {
             builder.virtualIPs(ImmutableSet.<VirtualIPWithId> of());
          else
             builder.virtualIPs(lb.virtualIps);
+         if (lb.metadata == null)
+            builder.metadata(new Metadata());
+         else
+            builder.metadata(ParseMetadata.transformCLBMetadataToMetadata(lb.metadata));
 
          return builder.build();
       }

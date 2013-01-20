@@ -28,7 +28,6 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rackspace.cloudloadbalancers.domain.ConnectionThrottle;
 import org.jclouds.rackspace.cloudloadbalancers.domain.HealthMonitor;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
-import org.jclouds.rackspace.cloudloadbalancers.domain.Metadata;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerApi;
 
 import com.google.common.base.Objects;
@@ -61,7 +60,6 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
    protected Map<String, Boolean> connectionLogging;
    protected ConnectionThrottle connectionThrottle;
    protected HealthMonitor healthMonitor;
-   protected Set<Metadata> metadata;
 
    // for serialization only
    protected BaseLoadBalancer() {
@@ -71,7 +69,7 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
          @Nullable Algorithm algorithm, @Nullable Integer timeout, @Nullable Boolean halfClosed,
          @Nullable Map<String, SessionPersistenceType> sessionPersistence,
          @Nullable Map<String, Boolean> connectionLogging, @Nullable ConnectionThrottle connectionThrottle,
-         @Nullable HealthMonitor healthMonitor, @Nullable Set<Metadata> metadata) {
+         @Nullable HealthMonitor healthMonitor) {
       this.name = checkNotNull(name, "name");
       this.protocol = protocol;// null on deleted LB
       this.port = port;// null on deleted LB
@@ -83,7 +81,6 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
       this.connectionLogging = connectionLogging;
       this.connectionThrottle = connectionThrottle;
       this.healthMonitor = healthMonitor;
-      this.metadata = metadata;
    }
 
    @Override
@@ -167,20 +164,12 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
       return healthMonitor;
    }
 
-   /**
-    * @return metadata, which may be null if metadata has not been set.
-    */
-   @Nullable
-   public Set<Metadata> getMetadata() {
-      return metadata;
-   }
-
    protected ToStringHelper string() {
       return Objects.toStringHelper(this).omitNullValues().add("name", name).add("protocol", protocol)
             .add("port", port).add("nodes", nodes).add("timeout", timeout).add("algorithm", algorithm)
             .add("timeout", timeout).add("sessionPersistenceType", getSessionPersistenceType())
             .add("connectionLogging", connectionLogging).add("connectionThrottle", connectionThrottle)
-            .add("healthMonitor", healthMonitor).add("metadata", metadata);
+            .add("healthMonitor", healthMonitor);
    }
 
    @Override
@@ -288,7 +277,6 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
       protected Map<String, Boolean> connectionLogging;
       protected ConnectionThrottle connectionThrottle;
       protected HealthMonitor healthMonitor;
-      protected Set<Metadata> metadata;
 
       /**
        * Required. Name of the load balancer to create. The name must be 128 characters or less in length, and all 
@@ -414,17 +402,9 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
          return this;
       }
 
-      /**
-       * Information (metadata) that can be associated with each load balancer for the client's personal use.
-       */
-      public Builder<N, T> metadata(@Nullable Set<Metadata> metadata) {
-         this.metadata = metadata;
-         return this;
-      }
-
       public BaseLoadBalancer<N, T> build() {
          return new BaseLoadBalancer<N, T>(name, protocol, port, nodes, algorithm, timeout, halfClosed,
-               sessionPersistence, connectionLogging, connectionThrottle, healthMonitor, metadata);
+               sessionPersistence, connectionLogging, connectionThrottle, healthMonitor);
       }
 
       public Builder<N, T> from(T baseLB) {
@@ -432,7 +412,7 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
                .algorithm(baseLB.getAlgorithm()).timeout(baseLB.getTimeout()).halfClosed(baseLB.isHalfClosed())
                .nodes(baseLB.getNodes()).sessionPersistenceType(baseLB.getSessionPersistenceType())
                .connectionLogging(baseLB.isConnectionLogging()).connectionThrottle(baseLB.getConnectionThrottle())
-               .healthMonitor(baseLB.getHealthMonitor()).metadata(baseLB.getMetadata());
+               .healthMonitor(baseLB.getHealthMonitor());
       }
    }
 
