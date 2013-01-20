@@ -20,6 +20,7 @@ package org.jclouds.openstack.nova.v2_0.extensions;
 
 import java.util.Map;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -61,6 +62,7 @@ public interface HostAggregateAsyncApi {
    /**
     * @see HostAggregateApi#list()
     */
+   @Named("hostaggregate:list")
    @GET
    @SelectJson("aggregates")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -70,6 +72,7 @@ public interface HostAggregateAsyncApi {
    /**
     * @see HostAggregateApi#get(String)
     */
+   @Named("hostaggregate:get")
    @GET
    @Path("/{id}")
    @SelectJson("aggregate")
@@ -80,6 +83,7 @@ public interface HostAggregateAsyncApi {
    /**
     * @see HostAggregateApi#createInAvailabilityZone(String, String)
     */
+   @Named("hostaggregate:create")
    @POST
    @SelectJson("aggregate")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -91,6 +95,7 @@ public interface HostAggregateAsyncApi {
    /**
     * @see HostAggregateApi#updateName
     */
+   @Named("hostaggregate:update")
    @POST
    @Path("/{id}")
    @SelectJson("aggregate")
@@ -101,6 +106,7 @@ public interface HostAggregateAsyncApi {
    /**
     * @see HostAggregateApi#updateAvailabilityZone
     */
+   @Named("hostaggregate:update")
    @POST
    @Path("/{id}")
    @SelectJson("aggregate")
@@ -111,6 +117,7 @@ public interface HostAggregateAsyncApi {
    /**
     * @see HostAggregateApi#delete(String)
     */
+   @Named("hostaggregate:delete")
    @DELETE
    @Path("/{id}")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -120,6 +127,7 @@ public interface HostAggregateAsyncApi {
    /**
     * @see HostAggregateApi#addHost(String,String)
     */
+   @Named("hostaggregate:addhost")
    @POST
    @Path("/{id}/action")
    @SelectJson("aggregate")
@@ -132,6 +140,7 @@ public interface HostAggregateAsyncApi {
    /**
     * @see HostAggregateApi#removeHost(String,String)
     */
+   @Named("hostaggregate:removehost")
    @POST
    @Path("/{id}/action")
    @SelectJson("aggregate")
@@ -143,6 +152,7 @@ public interface HostAggregateAsyncApi {
    /**
     * @see HostAggregateApi#setMetadata
     */
+   @Named("hostaggregate:setmetadata")
    @POST
    @Path("/{id}/action")
    @SelectJson("aggregate")

@@ -20,6 +20,7 @@ package org.jclouds.openstack.v2_0.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -52,6 +53,7 @@ public interface ExtensionAsyncApi {
    /**
     * @see ExtensionApi#list
     */
+   @Named("extension:list")
    @GET
    @SelectJson("extensions")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -62,6 +64,7 @@ public interface ExtensionAsyncApi {
    /**
     * @see ExtensionApi#get
     */
+   @Named("extension:get")
    @GET
    @SelectJson("extension")
    @Consumes(MediaType.APPLICATION_JSON)

@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.keystone.v2_0.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -60,6 +61,7 @@ public interface TenantAsyncApi {
    /**
     * @see TenantApi#list()
     */
+   @Named("tenant:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/tenants")
@@ -70,6 +72,7 @@ public interface TenantAsyncApi {
    ListenableFuture<? extends PagedIterable<? extends Tenant>> list();
 
    /** @see TenantApi#list(PaginationOptions) */
+   @Named("tenant:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/tenants")
@@ -79,6 +82,7 @@ public interface TenantAsyncApi {
    ListenableFuture<? extends PaginatedCollection<? extends Tenant>> list(PaginationOptions options);
 
    /** @see TenantApi#get(String) */
+   @Named("tenant:get")
    @GET
    @SelectJson("tenant")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -88,6 +92,7 @@ public interface TenantAsyncApi {
    ListenableFuture<? extends Tenant> get(@PathParam("tenantId") String tenantId);
 
    /** @see TenantApi#getByName(String) */
+   @Named("tenant:get")
    @GET
    @SelectJson("tenant")
    @Consumes(MediaType.APPLICATION_JSON)

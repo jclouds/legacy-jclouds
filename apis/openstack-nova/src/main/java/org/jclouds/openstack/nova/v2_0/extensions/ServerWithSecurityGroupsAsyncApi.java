@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -52,6 +53,7 @@ public interface ServerWithSecurityGroupsAsyncApi {
    /**
     * @see ServerWithSecurityGroupsApi#get(String)
     */
+   @Named("server:get")
    @GET
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)

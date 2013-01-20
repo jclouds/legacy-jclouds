@@ -20,6 +20,7 @@ package org.jclouds.openstack.keystone.v2_0.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -49,6 +50,7 @@ public interface ServiceAsyncApi {
    /**
     * @see ServiceApi#listTenants()
     */
+   @Named("service:listtenants")
    @GET
    @SelectJson("tenants")
    @Consumes(MediaType.APPLICATION_JSON)

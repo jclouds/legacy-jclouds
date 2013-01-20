@@ -20,6 +20,7 @@ package org.jclouds.openstack.keystone.v2_0.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
@@ -56,6 +57,7 @@ public interface TokenAsyncApi {
 
    
    /** @see TokenApi#get(String) */
+   @Named("token:get")
    @GET
    @SelectJson("token")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -65,6 +67,7 @@ public interface TokenAsyncApi {
    ListenableFuture<? extends Token> get(@PathParam("token") String token);
 
    /** @see TokenApi#getUserOfToken(String) */
+   @Named("token:getuser")
    @GET
    @SelectJson("user")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -74,6 +77,7 @@ public interface TokenAsyncApi {
    ListenableFuture<? extends User> getUserOfToken(@PathParam("token") String token);
 
    /** @see TokenApi#isValid(String) */
+   @Named("token:valid")
    @HEAD
    @Path("/tokens/{token}")
    @RequestFilters(AuthenticateRequest.class)
@@ -81,6 +85,7 @@ public interface TokenAsyncApi {
    ListenableFuture<Boolean> isValid(@PathParam("token") String token);
 
    /** @see TokenApi#listEndpointsForToken(String) */
+   @Named("token:listendpoints")
    @GET
    @SelectJson("endpoints")
    @Consumes(MediaType.APPLICATION_JSON)

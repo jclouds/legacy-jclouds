@@ -20,6 +20,7 @@ package org.jclouds.openstack.keystone.v2_0.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -64,6 +65,7 @@ public interface UserAsyncApi {
    /**
     * @see UserApi#list()
     */
+   @Named("user:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/users")
@@ -74,6 +76,7 @@ public interface UserAsyncApi {
    ListenableFuture<? extends PagedIterable<? extends User>> list();
 
    /** @see UserApi#list(PaginationOptions) */
+   @Named("user:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/users")
@@ -83,6 +86,7 @@ public interface UserAsyncApi {
    ListenableFuture<? extends PaginatedCollection<? extends User>> list(PaginationOptions options);
 
    /** @see UserApi#get(String) */
+   @Named("user:get")
    @GET
    @SelectJson("user")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -92,6 +96,7 @@ public interface UserAsyncApi {
    ListenableFuture<? extends User> get(@PathParam("userId") String userId);
 
    /** @see UserApi#getByName(String) */
+   @Named("user:get")
    @GET
    @SelectJson("user")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -101,6 +106,7 @@ public interface UserAsyncApi {
    ListenableFuture<? extends User> getByName(@QueryParam("name") String userName);
 
    /** @see UserApi#listRolesOfUser(String) */
+   @Named("user:listroles")
    @GET
    @SelectJson("roles")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -110,6 +116,7 @@ public interface UserAsyncApi {
    ListenableFuture<? extends Set<? extends Role>> listRolesOfUser(@PathParam("userId") String userId);
 
    /** @see UserApi#listRolesOfUserOnTenant(String, String) */
+   @Named("user:listroles")
    @GET
    @SelectJson("roles")
    @Consumes(MediaType.APPLICATION_JSON)

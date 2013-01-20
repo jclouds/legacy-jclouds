@@ -21,6 +21,7 @@ package org.jclouds.openstack.swift;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -83,6 +84,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#getAccountStatistics
     */
+   @Named("swift:getaccountstats")
    @HEAD
    @Path("/")
    @Consumes(MediaType.WILDCARD)
@@ -92,6 +94,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#listContainers
     */
+   @Named("swift:listcontainers")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
@@ -101,6 +104,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#getContainerMetadata
     */
+   @Named("swift:getcontainermetadata")
    @Beta
    @HEAD
    @Path("/{container}")
@@ -112,6 +116,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#setContainerMetadata
     */
+   @Named("swift:setcontainermetadata")
    @POST
    @Path("/{container}")
    @Fallback(FalseOnContainerNotFound.class)
@@ -121,6 +126,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#deleteContainerMetadata
     */
+   @Named("swift:deletecontainermetadata")
    @POST
    @Path("/{container}")
    @Fallback(FalseOnContainerNotFound.class)
@@ -130,6 +136,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#createContainer
     */
+   @Named("swift:createcontainer")
    @PUT
    @Path("/{container}")
    ListenableFuture<Boolean> createContainer(@PathParam("container") String container,
@@ -138,6 +145,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#setObjectInfo
     */
+   @Named("swift:setobjectinfo")
    @POST
    @Path("/{container}/{name}")
    ListenableFuture<Boolean> setObjectInfo(@PathParam("container") String container, 
@@ -147,6 +155,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#createContainer
     */
+   @Named("swift:createcontainer")
    @PUT
    @Path("/{container}")
    ListenableFuture<Boolean> createContainer(@PathParam("container") String container);
@@ -154,6 +163,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#deleteContainerIfEmpty
     */
+   @Named("swift:deletecontainerifempty")
    @DELETE
    @Fallback(TrueOn404FalseOn409.class)
    @Path("/{container}")
@@ -162,6 +172,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#listObjects
     */
+   @Named("swift:listobjects")
    @GET
    @QueryParams(keys = "format", values = "json")
    @ResponseParser(ParseObjectInfoListFromJsonResponse.class)
@@ -172,6 +183,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#containerExists
     */
+   @Named("swift:containerexists")
    @HEAD
    @Path("/{container}")
    @Consumes(MediaType.WILDCARD)
@@ -181,6 +193,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#putObject
     */
+   @Named("swift:putobject")
    @PUT
    @Path("/{container}/{name}")
    @ResponseParser(ParseETagHeader.class)
@@ -190,6 +203,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#copyObject
     */
+   @Named("swift:copyobject")
    @PUT
    @Path("/{destinationContainer}/{destinationObject}")
    @Headers(keys = SwiftHeaders.OBJECT_COPY_FROM, values = "/{sourceContainer}/{sourceObject}")
@@ -202,6 +216,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#getObject
     */
+   @Named("swift:getobject")
    @GET
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
    @Fallback(NullOnKeyNotFound.class)
@@ -213,6 +228,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#getObjectInfo
     */
+   @Named("swift:getobjectinfo")
    @HEAD
    @ResponseParser(ParseObjectInfoFromHeaders.class)
    @Fallback(NullOnKeyNotFound.class)
@@ -224,6 +240,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#objectExists
     */
+   @Named("swift:objectexists")
    @HEAD
    @Fallback(FalseOnKeyNotFound.class)
    @Path("/{container}/{name}")
@@ -234,12 +251,14 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#removeObject
     */
+   @Named("swift:removeobject")
    @DELETE
    @Fallback(VoidOnNotFoundOr404.class)
    @Path("/{container}/{name}")
    ListenableFuture<Void> removeObject(@PathParam("container") String container, 
                                        @PathParam("name") String name);
 
+   @Named("swift:putobjectmanifest")
    @PUT
    @Path("/{container}/{name}")
    @ResponseParser(ParseETagHeader.class)

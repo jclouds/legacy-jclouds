@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.cinder.v1.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -56,6 +57,7 @@ public interface SnapshotAsyncApi {
    /**
     * @see SnapshotApi#list()
     */
+   @Named("snapshot:list")
    @GET
    @Path("/snapshots")
    @SelectJson("snapshots")
@@ -66,6 +68,7 @@ public interface SnapshotAsyncApi {
    /**
     * @see SnapshotApi#listInDetail()
     */
+   @Named("snapshot:list")
    @GET
    @Path("/snapshots/detail")
    @SelectJson("snapshots")
@@ -76,6 +79,7 @@ public interface SnapshotAsyncApi {
    /**
     * @see SnapshotApi#get(String)
     */
+   @Named("snapshot:get")
    @GET
    @Path("/snapshots/{id}")
    @SelectJson("snapshot")
@@ -86,6 +90,7 @@ public interface SnapshotAsyncApi {
    /**
     * @see SnapshotApi#create(String, CreateSnapshotOptions...)
     */
+   @Named("snapshot:create")
    @POST
    @Path("/snapshots")
    @SelectJson("snapshot")
@@ -97,6 +102,7 @@ public interface SnapshotAsyncApi {
    /**
     * @see SnapshotApi#delete(String)
     */
+   @Named("snapshot:delete")
    @DELETE
    @Path("/snapshots/{id}")
    @Consumes(MediaType.APPLICATION_JSON)

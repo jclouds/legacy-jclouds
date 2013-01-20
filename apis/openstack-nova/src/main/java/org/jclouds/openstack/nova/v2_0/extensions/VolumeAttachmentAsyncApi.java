@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -57,6 +58,7 @@ public interface VolumeAttachmentAsyncApi {
    /**
     * @see VolumeAttachmentApi#listAttachmentsOnServer(String)
     */
+   @Named("volumeattachment:list")
    @GET
    @Path("/servers/{server_id}/os-volume_attachments")
    @SelectJson("volumeAttachments")
@@ -68,6 +70,7 @@ public interface VolumeAttachmentAsyncApi {
    /**
     * @see VolumeAttachmentApi#getAttachmentForVolumeOnServer(String, String)
     */
+   @Named("volumeattachment:get")
    @GET
    @Path("/servers/{server_id}/os-volume_attachments/{id}")
    @SelectJson("volumeAttachment")
@@ -80,6 +83,7 @@ public interface VolumeAttachmentAsyncApi {
    /**
     * @see VolumeAttachmentApi#attachVolumeToServerAsDevice(String, String, String)
     */
+   @Named("volumeattachment:attach")
    @POST
    @Path("/servers/{server_id}/os-volume_attachments")
    @SelectJson("volumeAttachment")
@@ -94,6 +98,7 @@ public interface VolumeAttachmentAsyncApi {
    /**
     * @see VolumeAttachmentApi#detachVolumeFromServer(String, String)
     */
+   @Named("volumeattachment:detach")
    @DELETE
    @Path("/servers/{server_id}/os-volume_attachments/{id}")
    @Consumes(MediaType.APPLICATION_JSON)
