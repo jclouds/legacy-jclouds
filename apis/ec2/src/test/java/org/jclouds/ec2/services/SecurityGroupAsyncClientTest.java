@@ -18,6 +18,8 @@
  */
 package org.jclouds.ec2.services;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
@@ -28,12 +30,11 @@ import org.jclouds.ec2.xml.DescribeSecurityGroupsResponseHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code SecurityGroupAsyncClient}
  * 
@@ -44,8 +45,8 @@ import com.google.common.collect.Lists;
 public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<SecurityGroupAsyncClient> {
 
    public void testDeleteSecurityGroup() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(SecurityGroupAsyncClient.class.getMethod("deleteSecurityGroupInRegion", String.class,
-            String.class));
+      Invokable<?, ?> method = method(SecurityGroupAsyncClient.class, "deleteSecurityGroupInRegion", String.class,
+            String.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -74,8 +75,8 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
                                                 .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testCreateSecurityGroup() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(SecurityGroupAsyncClient.class.getMethod("createSecurityGroupInRegion", String.class,
-            String.class, String.class));
+      Invokable<?, ?> method = method(SecurityGroupAsyncClient.class, "createSecurityGroupInRegion", String.class,
+            String.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "description"));
 
       request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
@@ -93,8 +94,8 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
    }
 
    public void testDescribeSecurityGroups() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(SecurityGroupAsyncClient.class.getMethod("describeSecurityGroupsInRegion", String.class,
-            String[].class));
+      Invokable<?, ?> method = method(SecurityGroupAsyncClient.class, "describeSecurityGroupsInRegion", String.class,
+            String[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList((String) null));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -110,8 +111,8 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
    }
 
    public void testDescribeSecurityGroupsArgs() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(SecurityGroupAsyncClient.class.getMethod("describeSecurityGroupsInRegion", String.class,
-            String[].class));
+      Invokable<?, ?> method = method(SecurityGroupAsyncClient.class, "describeSecurityGroupsInRegion", String.class,
+            String[].class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", "2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -127,8 +128,8 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
    }
 
    public void testAuthorizeSecurityGroupIngressGroup() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(SecurityGroupAsyncClient.class.getMethod("authorizeSecurityGroupIngressInRegion", String.class,
-            String.class, UserIdGroupPair.class));
+      Invokable<?, ?> method = method(SecurityGroupAsyncClient.class, "authorizeSecurityGroupIngressInRegion", String.class,
+            String.class, UserIdGroupPair.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "group", new UserIdGroupPair("sourceUser",
             "sourceGroup")));
 
@@ -163,8 +164,8 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
                                                               .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testAuthorizeSecurityGroupIngressCidr() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(SecurityGroupAsyncClient.class.getMethod("authorizeSecurityGroupIngressInRegion", String.class,
-            String.class, IpProtocol.class, int.class, int.class, String.class));
+      Invokable<?, ?> method = method(SecurityGroupAsyncClient.class, "authorizeSecurityGroupIngressInRegion", String.class,
+            String.class, IpProtocol.class, int.class, int.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "group", IpProtocol.TCP, 6000, 7000, "0.0.0.0/0"));
 
       request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
@@ -181,8 +182,8 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
    }
 
    public void testRevokeSecurityGroupIngressGroup() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(SecurityGroupAsyncClient.class.getMethod("revokeSecurityGroupIngressInRegion", String.class,
-            String.class, UserIdGroupPair.class));
+      Invokable<?, ?> method = method(SecurityGroupAsyncClient.class, "revokeSecurityGroupIngressInRegion", String.class,
+            String.class, UserIdGroupPair.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "group", new UserIdGroupPair("sourceUser",
             "sourceGroup")));
 
@@ -217,8 +218,8 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
                                                            .addFormParam("AWSAccessKeyId", "identity").build();
 
    public void testRevokeSecurityGroupIngressCidr() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(SecurityGroupAsyncClient.class.getMethod("revokeSecurityGroupIngressInRegion", String.class,
-            String.class, IpProtocol.class, int.class, int.class, String.class));
+      Invokable<?, ?> method = method(SecurityGroupAsyncClient.class, "revokeSecurityGroupIngressInRegion", String.class,
+            String.class, IpProtocol.class, int.class, int.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "group", IpProtocol.TCP, 6000, 7000, "0.0.0.0/0"));
 
       request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);

@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
@@ -26,14 +28,13 @@ import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListZonesOptions;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code ZoneAsyncClient}
  * 
@@ -44,7 +45,7 @@ import com.google.common.collect.Iterables;
 @Test(groups = "unit", testName = "ZoneAsyncClientTest")
 public class ZoneAsyncClientTest extends BaseCloudStackAsyncClientTest<ZoneAsyncClient> {
    public void testListZones() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(ZoneAsyncClient.class.getMethod("listZones", ListZonesOptions[].class));
+      Invokable<?, ?> method = method(ZoneAsyncClient.class, "listZones", ListZonesOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
@@ -71,7 +72,7 @@ public class ZoneAsyncClientTest extends BaseCloudStackAsyncClientTest<ZoneAsync
    }
 
    public void testListZonesOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(ZoneAsyncClient.class.getMethod("listZones", ListZonesOptions[].class));
+      Invokable<?, ?> method = method(ZoneAsyncClient.class, "listZones", ListZonesOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListZonesOptions.Builder.available(true).domainId("5")
             .id("6")));
 
@@ -89,7 +90,7 @@ public class ZoneAsyncClientTest extends BaseCloudStackAsyncClientTest<ZoneAsync
    }
 
    public void testGetZone() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(ZoneAsyncClient.class.getMethod("getZone", String.class));
+      Invokable<?, ?> method = method(ZoneAsyncClient.class, "getZone", String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(6));
 
       assertRequestLineEquals(httpRequest,

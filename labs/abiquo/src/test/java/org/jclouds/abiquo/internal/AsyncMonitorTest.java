@@ -521,7 +521,6 @@ public class AsyncMonitorTest {
       public int numTimeouts = 0;
 
       @Subscribe
-      @SuppressWarnings("unused")
       public void handle(final MonitorEvent<?> event) {
          switch (event.getType()) {
             case COMPLETED:

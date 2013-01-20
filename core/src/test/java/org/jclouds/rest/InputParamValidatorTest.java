@@ -18,6 +18,8 @@
  */
 package org.jclouds.rest;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
 
@@ -36,7 +38,6 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.Invokable;
 import com.google.inject.Injector;
-
 @Test(groups = "unit")
 public class InputParamValidatorTest {
 
@@ -59,10 +60,10 @@ public class InputParamValidatorTest {
     */
    @Test
    public void testInputParamsValidation() throws Exception {
-      Invokable<?, ?> allParamsValidatedMethod = Invokable.from(InputParamValidatorForm.class.getMethod(
-            "allParamsValidated", String.class, String.class));
-      Invokable<?, ?> oneParamValidatedMethod = Invokable.from(InputParamValidatorForm.class.getMethod(
-            "oneParamValidated", String.class, String.class));
+      Invokable<?, ?> allParamsValidatedMethod = method(InputParamValidatorForm.class, "allParamsValidated",
+            String.class, String.class);
+      Invokable<?, ?> oneParamValidatedMethod = method(InputParamValidatorForm.class, "oneParamValidated",
+            String.class, String.class);
       restAnnotationProcessor.createRequest(allParamsValidatedMethod, ImmutableList.<Object> of("blah", "blah"));
       restAnnotationProcessor.createRequest(oneParamValidatedMethod, ImmutableList.<Object> of("blah", "blah"));
 
@@ -98,7 +99,7 @@ public class InputParamValidatorTest {
 
    @Test(expectedExceptions = ClassCastException.class)
    public void testWrongPredicateTypeLiteral() throws Exception {
-      Invocation invocation = Invocation.create(Invokable.from(WrongValidator.class.getMethod("method", Integer.class)),
+      Invocation invocation = Invocation.create(method(WrongValidator.class, "method", Integer.class),
             ImmutableList.<Object> of(55));
       new InputParamValidator(injector).validateMethodParametersOrThrow(invocation);
    }

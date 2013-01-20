@@ -18,7 +18,7 @@
  */
 package org.jclouds.aws.s3;
 
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.util.Properties;
 
@@ -69,7 +69,7 @@ public class AWSS3ApiMetadata extends S3ApiMetadata {
          .name("Amazon-specific S3 API")
          .defaultProperties(AWSS3ApiMetadata.defaultProperties())
          .context(CONTEXT_TOKEN)
-         .view(typeTokenOf(AWSS3BlobStoreContext.class))
+         .view(typeToken(AWSS3BlobStoreContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(AWSS3RestClientModule.class, AWSS3BlobStoreContextModule.class));
       }
       

@@ -18,7 +18,7 @@
  */
 package org.jclouds.elb.config;
 
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.util.Map;
 
@@ -52,6 +52,6 @@ public class ELBRestClientModule extends FormSigningRestClientModule<ELBApi, ELB
             .build();
 
    public ELBRestClientModule() {
-      super(typeTokenOf(ELBApi.class), typeTokenOf(ELBAsyncApi.class), DELEGATE_MAP);
+      super(typeToken(ELBApi.class), typeToken(ELBAsyncApi.class), DELEGATE_MAP);
    }
 }

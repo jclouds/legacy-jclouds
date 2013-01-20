@@ -19,6 +19,8 @@
 
 package org.jclouds.abiquo.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.http.functions.ParseXMLWithJAXB;
@@ -28,7 +30,6 @@ import org.testng.annotations.Test;
 import com.abiquo.server.core.event.EventsDto;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.Invokable;
-
 /**
  * Tests annotation parsing of {@code EventAsyncApi}
  * 
@@ -38,7 +39,7 @@ import com.google.common.reflect.Invokable;
 @Test(groups = "unit", testName = "EventAsyncApiTest")
 public class EventAsyncApiTest extends BaseAbiquoAsyncApiTest<EventAsyncApi> {
    public void testListEvents() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(EventAsyncApi.class.getMethod("listEvents"));
+      Invokable<?, ?> method = method(EventAsyncApi.class, "listEvents");
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(request, "GET http://localhost/api/events HTTP/1.1");

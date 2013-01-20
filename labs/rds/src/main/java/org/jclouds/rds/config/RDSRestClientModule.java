@@ -18,7 +18,8 @@
  */
 package org.jclouds.rds.config;
 
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.util.Map;
 
@@ -49,6 +50,6 @@ public class RDSRestClientModule extends FormSigningRestClientModule<RDSApi, RDS
             .build();
 
    public RDSRestClientModule() {
-      super(typeTokenOf(RDSApi.class), typeTokenOf(RDSAsyncApi.class), DELEGATE_MAP);
+      super(typeToken(RDSApi.class), typeToken(RDSAsyncApi.class), DELEGATE_MAP);
    }
 }

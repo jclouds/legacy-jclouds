@@ -18,19 +18,20 @@
  */
 package org.jclouds.trmk.ecloud.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 import java.net.URI;
 
 import org.jclouds.Fallbacks.EmptyMapOnNotFoundOr404;
 import org.jclouds.http.functions.ParseSax;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.trmk.ecloud.BaseTerremarkECloudAsyncClientTest;
 import org.jclouds.trmk.ecloud.xml.TagNameToUsageCountHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code TagOperationsAsyncClient}
  * 
@@ -42,7 +43,7 @@ import com.google.common.collect.ImmutableList;
 public class TagOperationsAsyncClientTest extends BaseTerremarkECloudAsyncClientTest<TagOperationsAsyncClient> {
 
    public void testgetTagNameToUsageCount() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TagOperationsAsyncClient.class.getMethod("getTagNameToUsageCount", URI.class));
+      Invokable<?, ?> method = method(TagOperationsAsyncClient.class, "getTagNameToUsageCount", URI.class);
       GeneratedHttpRequest request = processor
             .createRequest(
                   method, ImmutableList.<Object> of(
@@ -61,7 +62,7 @@ public class TagOperationsAsyncClientTest extends BaseTerremarkECloudAsyncClient
    }
 
    public void testgetTagNameToUsageCountInOrg() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TagOperationsAsyncClient.class.getMethod("getTagNameToUsageCountInOrg", URI.class));
+      Invokable<?, ?> method = method(TagOperationsAsyncClient.class, "getTagNameToUsageCountInOrg", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(
             URI.create("https://vcloud.safesecureweb.com/api/v0.8/org/1")));
 

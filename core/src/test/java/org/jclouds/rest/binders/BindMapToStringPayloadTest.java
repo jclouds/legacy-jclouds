@@ -18,6 +18,7 @@
  */
 package org.jclouds.rest.binders;
 
+import static org.jclouds.reflect.Reflection2.method;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
@@ -33,10 +34,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.reflect.TypeToken;
-
 import com.google.common.reflect.Invokable;
-
 /**
  * Tests behavior of {@code BindMapToStringPayload}
  * 
@@ -56,7 +54,7 @@ public class BindMapToStringPayloadTest {
 
    @Test
    public void testCorrect() throws SecurityException, NoSuchMethodException {
-      Invokable<?, Object> testPayload = Invokable.from(TestPayload.class.getMethod("testPayload", String.class));
+      Invokable<?, Object> testPayload = method(TestPayload.class, "testPayload", String.class);
       GeneratedHttpRequest request = GeneratedHttpRequest.builder()
             .invocation(Invocation.create(testPayload, ImmutableList.<Object> of("robot")))
             .method("POST").endpoint("http://localhost").build();
@@ -70,7 +68,7 @@ public class BindMapToStringPayloadTest {
    
    @Test
    public void testDecodes() throws SecurityException, NoSuchMethodException {
-      Invokable<?, Object> testPayload = Invokable.from(TestPayload.class.getMethod("changeAdminPass", String.class));
+      Invokable<?, Object> testPayload = method(TestPayload.class, "changeAdminPass", String.class);
       GeneratedHttpRequest request = GeneratedHttpRequest.builder()
             .invocation(Invocation.create(testPayload, ImmutableList.<Object> of("foo")))
             .method("POST").endpoint("http://localhost").build();
@@ -84,7 +82,7 @@ public class BindMapToStringPayloadTest {
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustHavePayloadAnnotation() throws SecurityException, NoSuchMethodException {
-      Invokable<?, Object> noPayload = Invokable.from(TestPayload.class.getMethod("noPayload", String.class));
+      Invokable<?, Object> noPayload = method(TestPayload.class, "noPayload", String.class);
       GeneratedHttpRequest request = GeneratedHttpRequest.builder()
             .invocation(Invocation.create(noPayload, ImmutableList.<Object> of("robot")))
             .method("POST").endpoint("http://localhost").build();

@@ -18,7 +18,7 @@
  */
 package org.jclouds.iam.config;
 
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.util.Map;
 
@@ -43,7 +43,7 @@ public class IAMRestClientModule extends FormSigningRestClientModule<IAMApi, IAM
          .build();
    
    public IAMRestClientModule() {
-      super(typeTokenOf(IAMApi.class), typeTokenOf(IAMAsyncApi.class), DELEGATE_MAP);
+      super(typeToken(IAMApi.class), typeToken(IAMAsyncApi.class), DELEGATE_MAP);
    }
 
 }

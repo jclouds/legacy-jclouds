@@ -18,7 +18,7 @@
  */
 package org.jclouds.cloudwatch.config;
 
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.util.Map;
 
@@ -43,7 +43,7 @@ public class CloudWatchRestClientModule extends FormSigningRestClientModule<Clou
          .build();
    
    public CloudWatchRestClientModule() {
-      super(typeTokenOf(CloudWatchApi.class), typeTokenOf(CloudWatchAsyncApi.class), DELEGATE_MAP);
+      super(typeToken(CloudWatchApi.class), typeToken(CloudWatchAsyncApi.class), DELEGATE_MAP);
    }
 
 }

@@ -19,18 +19,21 @@
 package org.jclouds.rest.config;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagate;
+import static com.google.common.collect.Iterables.toArray;
+import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.util.concurrent.Atomics.newReference;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.method;
+import static org.jclouds.reflect.Reflection2.methods;
 import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
 import static org.jclouds.util.Maps2.transformKeys;
 import static org.jclouds.util.Predicates2.startsWith;
 
 import java.lang.reflect.Method;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -57,7 +60,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.Invokable;
-import com.google.common.reflect.TypeToken;
+import com.google.common.reflect.Parameter;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
@@ -80,7 +83,7 @@ public class RestModule extends AbstractModule {
    public RestModule(Map<Class<?>, Class<?>> sync2Async) {
       this.sync2Async = sync2Async;
    }
-   
+
    /**
     * seeds well-known invokables.
     */
@@ -88,31 +91,40 @@ public class RestModule extends AbstractModule {
    @Singleton
    protected Cache<Invokable<?, ?>, Invokable<?, ?>> seedKnownSync2AsyncInvokables() {
       Cache<Invokable<?, ?>, Invokable<?, ?>> sync2AsyncBuilder = CacheBuilder.newBuilder().build();
-      putInvokables(typeTokenOf(HttpClient.class), typeTokenOf(HttpAsyncClient.class), sync2AsyncBuilder);
+      putInvokables(HttpClient.class, HttpAsyncClient.class, sync2AsyncBuilder);
       for (Class<?> s : sync2Async.keySet()) {
-         putInvokables(typeTokenOf(s), typeTokenOf(sync2Async.get(s)), sync2AsyncBuilder);
+         putInvokables(s, sync2Async.get(s), sync2AsyncBuilder);
       }
       return sync2AsyncBuilder;
    }
 
    // accessible for ClientProvider
-   public static void putInvokables(TypeToken<?> sync, TypeToken<?> async, Cache<Invokable<?, ?>, Invokable<?, ?>> cache) {
-      for (Method invoked : sync.getRawType().getMethods()) {
+   public static void putInvokables(Class<?> sync, Class<?> async, Cache<Invokable<?, ?>, Invokable<?, ?>> cache) {
+      for (Invokable<?, ?> invoked : methods(sync)) {
          if (!objectMethods.contains(invoked)) {
             try {
-               Method delegatedMethod = async.getRawType().getMethod(invoked.getName(), invoked.getParameterTypes());
-               checkArgument(Arrays.equals(delegatedMethod.getExceptionTypes(), invoked.getExceptionTypes()),
+               Invokable<?, ?> delegatedMethod = method(async, invoked.getName(), getParameterTypes(invoked));
+               checkArgument(delegatedMethod.getExceptionTypes().equals(invoked.getExceptionTypes()),
                      "invoked %s has different typed exceptions than delegated invoked %s", invoked, delegatedMethod);
                invoked.setAccessible(true);
                delegatedMethod.setAccessible(true);
-               cache.put(sync.method(invoked), async.method(delegatedMethod));
+               cache.put(invoked, delegatedMethod);
             } catch (SecurityException e) {
-               throw propagate(e);
-            } catch (NoSuchMethodException e) {
                throw propagate(e);
             }
          }
       }
+   }
+
+   /**
+    * for portability with {@link Class#getMethod(String, Class...)}
+    */
+   private static Class<?>[] getParameterTypes(Invokable<?, ?> in) {
+      return toArray(transform(checkNotNull(in, "invokable").getParameters(), new Function<Parameter, Class<?>>() {
+         public Class<?> apply(Parameter input) {
+            return input.getType().getRawType();
+         }
+      }), Class.class);
    }
 
    protected void installLocations() {

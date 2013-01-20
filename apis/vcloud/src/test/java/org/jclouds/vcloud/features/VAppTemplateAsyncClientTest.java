@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud.features;
 
+import static org.jclouds.reflect.Reflection2.method;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.addNetworkConfig;
 
 import java.io.IOException;
@@ -26,7 +27,6 @@ import java.net.URI;
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.ovf.xml.EnvelopeHandler;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.domain.network.FenceMode;
@@ -41,7 +41,7 @@ import org.jclouds.vcloud.xml.VAppTemplateHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code VAppTemplateAsyncClient}
  * 
@@ -54,8 +54,8 @@ public class VAppTemplateAsyncClientTest extends BaseVCloudAsyncClientTest<VAppT
 
    public void testCreateVAppInVDCByInstantiatingTemplate() throws SecurityException, NoSuchMethodException,
             IOException {
-      Invokable<?, ?> method = Invokable.from(VAppTemplateAsyncClient.class.getMethod("createVAppInVDCByInstantiatingTemplate", String.class,
-               URI.class, URI.class, InstantiateVAppTemplateOptions[].class));
+      Invokable<?, ?> method = method(VAppTemplateAsyncClient.class, "createVAppInVDCByInstantiatingTemplate", String.class,
+               URI.class, URI.class, InstantiateVAppTemplateOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("my-vapp", URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"), URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/3"),
@@ -79,16 +79,16 @@ public class VAppTemplateAsyncClientTest extends BaseVCloudAsyncClientTest<VAppT
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testCreateVAppInVDCByInstantiatingTemplateOptionsIllegalName() throws SecurityException,
             NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VAppTemplateAsyncClient.class.getMethod("createVAppInVDCByInstantiatingTemplate", String.class,
-               URI.class, URI.class, InstantiateVAppTemplateOptions[].class));
+      Invokable<?, ?> method = method(VAppTemplateAsyncClient.class, "createVAppInVDCByInstantiatingTemplate", String.class,
+               URI.class, URI.class, InstantiateVAppTemplateOptions[].class);
       processor.createRequest(method, ImmutableList.<Object> of("CentOS 01", URI.create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"), URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"), addNetworkConfig(new NetworkConfig(null,
                URI.create("https://vcenterprise.bluelock.com/api/v1.0/network/1991"), null))));
    }
 
    public void testcopyVAppTemplateToVDCAndName() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VAppTemplateAsyncClient.class.getMethod("copyVAppTemplateToVDCAndName", URI.class, URI.class,
-               String.class, CloneVAppTemplateOptions[].class));
+      Invokable<?, ?> method = method(VAppTemplateAsyncClient.class, "copyVAppTemplateToVDCAndName", URI.class, URI.class,
+               String.class, CloneVAppTemplateOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/4181"), URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"), "my-vapptemplate"));
@@ -107,8 +107,8 @@ public class VAppTemplateAsyncClientTest extends BaseVCloudAsyncClientTest<VAppT
    }
 
    public void testcopyVAppTemplateToVDCAndNameOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VAppTemplateAsyncClient.class.getMethod("copyVAppTemplateToVDCAndName", URI.class, URI.class,
-               String.class, CloneVAppTemplateOptions[].class));
+      Invokable<?, ?> method = method(VAppTemplateAsyncClient.class, "copyVAppTemplateToVDCAndName", URI.class, URI.class,
+               String.class, CloneVAppTemplateOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/201"), URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"), "new-linux-server",
@@ -128,8 +128,8 @@ public class VAppTemplateAsyncClientTest extends BaseVCloudAsyncClientTest<VAppT
    }
 
    public void testmoveVAppTemplateToVDCAndRenameOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VAppTemplateAsyncClient.class.getMethod("moveVAppTemplateToVDCAndRename", URI.class, URI.class,
-               String.class, CloneVAppTemplateOptions[].class));
+      Invokable<?, ?> method = method(VAppTemplateAsyncClient.class, "moveVAppTemplateToVDCAndRename", URI.class, URI.class,
+               String.class, CloneVAppTemplateOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/201"), URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"), "new-linux-server",
@@ -149,8 +149,8 @@ public class VAppTemplateAsyncClientTest extends BaseVCloudAsyncClientTest<VAppT
    }
 
    public void testcaptureVAppAsTemplateInVDC() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VAppTemplateAsyncClient.class.getMethod("captureVAppAsTemplateInVDC", URI.class, String.class,
-               URI.class, CaptureVAppOptions[].class));
+      Invokable<?, ?> method = method(VAppTemplateAsyncClient.class, "captureVAppAsTemplateInVDC", URI.class, String.class,
+               URI.class, CaptureVAppOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vapp/4181"), "my-template", URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1")));
@@ -170,8 +170,8 @@ public class VAppTemplateAsyncClientTest extends BaseVCloudAsyncClientTest<VAppT
    }
 
    public void testcaptureVAppAsTemplateInVDCOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VAppTemplateAsyncClient.class.getMethod("captureVAppAsTemplateInVDC", URI.class, String.class,
-               URI.class, CaptureVAppOptions[].class));
+      Invokable<?, ?> method = method(VAppTemplateAsyncClient.class, "captureVAppAsTemplateInVDC", URI.class, String.class,
+               URI.class, CaptureVAppOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vapp/201"), "my-template", URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"), new CaptureVAppOptions()
@@ -191,8 +191,8 @@ public class VAppTemplateAsyncClientTest extends BaseVCloudAsyncClientTest<VAppT
    }
 
    public void testFindVAppTemplate() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VAppTemplateAsyncClient.class.getMethod("findVAppTemplateInOrgCatalogNamed", String.class,
-               String.class, String.class));
+      Invokable<?, ?> method = method(VAppTemplateAsyncClient.class, "findVAppTemplateInOrgCatalogNamed", String.class,
+               String.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("org", "catalog", "template"));
 
       assertRequestLineEquals(request, "GET https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/2 HTTP/1.1");
@@ -207,7 +207,7 @@ public class VAppTemplateAsyncClientTest extends BaseVCloudAsyncClientTest<VAppT
    }
 
    public void testVAppTemplateURI() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VAppTemplateAsyncClient.class.getMethod("getVAppTemplate", URI.class));
+      Invokable<?, ?> method = method(VAppTemplateAsyncClient.class, "getVAppTemplate", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/2")));
 
@@ -223,7 +223,7 @@ public class VAppTemplateAsyncClientTest extends BaseVCloudAsyncClientTest<VAppT
    }
 
    public void testGetOvfEnvelopeForVAppTemplate() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(VAppTemplateAsyncClient.class.getMethod("getOvfEnvelopeForVAppTemplate", URI.class));
+      Invokable<?, ?> method = method(VAppTemplateAsyncClient.class, "getOvfEnvelopeForVAppTemplate", URI.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/2")));
 

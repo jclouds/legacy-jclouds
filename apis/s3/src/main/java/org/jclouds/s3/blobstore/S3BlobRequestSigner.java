@@ -20,7 +20,7 @@ package org.jclouds.s3.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.blobstore.util.BlobStoreUtils.cleanRequest;
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.method;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -39,7 +39,6 @@ import org.jclouds.s3.options.PutObjectOptions;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.Invokable;
-import com.google.common.reflect.TypeToken;
 
 /**
  * 
@@ -62,12 +61,9 @@ public class S3BlobRequestSigner<T extends S3AsyncClient> implements BlobRequest
       this.processor = checkNotNull(processor, "processor");
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");
       this.blob2HttpGetOptions = checkNotNull(blob2HttpGetOptions, "blob2HttpGetOptions");
-      TypeToken<T> interfaceType = typeTokenOf(interfaceClass);
-      this.getMethod = interfaceType.method(interfaceClass.getMethod("getObject", String.class, String.class,
-            GetOptions[].class));
-      this.deleteMethod = interfaceType.method(interfaceClass.getMethod("deleteObject", String.class, String.class));
-      this.createMethod = interfaceType.method(interfaceClass.getMethod("putObject", String.class, S3Object.class,
-            PutObjectOptions[].class));
+      this.getMethod = method(interfaceClass, "getObject", String.class, String.class, GetOptions[].class);
+      this.deleteMethod = method(interfaceClass, "deleteObject", String.class, String.class);
+      this.createMethod = method(interfaceClass, "putObject", String.class, S3Object.class, PutObjectOptions[].class);
    }
 
    @Override

@@ -17,6 +17,7 @@
  * under the License.
  */
 package org.jclouds.cloudstack.features;
+import static org.jclouds.reflect.Reflection2.method;
 
 import java.io.IOException;
 
@@ -24,11 +25,11 @@ import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListResourceLimitsOptions;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 
 /**
  * Tests behavior of {@code LimitAsyncClient}
@@ -39,7 +40,7 @@ import com.google.common.collect.ImmutableList;
 public class LimitAsyncClientTest extends BaseCloudStackAsyncClientTest<LimitAsyncClient> {
 
    public void testListResourceLimits() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(LimitAsyncClient.class.getMethod("listResourceLimits", ListResourceLimitsOptions[].class));
+      Invokable<?, ?> method = method(LimitAsyncClient.class, "listResourceLimits", ListResourceLimitsOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
@@ -56,7 +57,7 @@ public class LimitAsyncClientTest extends BaseCloudStackAsyncClientTest<LimitAsy
    }
 
    public void testListResourceLimitsOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(LimitAsyncClient.class.getMethod("listResourceLimits", ListResourceLimitsOptions[].class));
+      Invokable<?, ?> method = method(LimitAsyncClient.class, "listResourceLimits", ListResourceLimitsOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListResourceLimitsOptions.Builder.account("jclouds" , "23")));
 
       assertRequestLineEquals(httpRequest,

@@ -18,6 +18,8 @@
  */
 package org.jclouds.gogrid.services;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -29,13 +31,12 @@ import org.jclouds.gogrid.functions.ParseLoadBalancerFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseLoadBalancerListFromJsonResponse;
 import org.jclouds.gogrid.options.AddLoadBalancerOptions;
 import org.jclouds.http.HttpRequest;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code GridLoadBalancerAsyncClient}
  *
@@ -47,7 +48,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
 
    @Test
    public void testGetLoadBalancerList() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GridLoadBalancerAsyncClient.class.getMethod("getLoadBalancerList"));
+      Invokable<?, ?> method = method(GridLoadBalancerAsyncClient.class, "getLoadBalancerList");
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/list?v=1.5 HTTP/1.1");
@@ -84,8 +85,8 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
 
    @Test
    public void testAddLoadBalancer() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GridLoadBalancerAsyncClient.class.getMethod("addLoadBalancer", String.class, IpPortPair.class,
-            List.class, AddLoadBalancerOptions[].class));
+      Invokable<?, ?> method = method(GridLoadBalancerAsyncClient.class, "addLoadBalancer", String.class, IpPortPair.class,
+            List.class, AddLoadBalancerOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of("BalanceIt",
             IpPortPair.builder().ip(Ip.builder().ip("127.0.0.1").build()).port(80).build(),
             ImmutableList.of(IpPortPair.builder().ip(Ip.builder().ip("127.0.0.1").build()).port(8080).build(),
@@ -108,7 +109,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
 
    @Test
    public void testEditLoadBalancer() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GridLoadBalancerAsyncClient.class.getMethod("editLoadBalancer", long.class, List.class));
+      Invokable<?, ?> method = method(GridLoadBalancerAsyncClient.class, "editLoadBalancer", long.class, List.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(1l, ImmutableList.of(
             IpPortPair.builder().ip(Ip.builder().ip("127.0.0.1").build()).port(8080).build(),
             IpPortPair.builder().ip(Ip.builder().ip("127.0.0.1").build()).port(9090).build())));
@@ -135,7 +136,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
 
    @Test
    public void testEditLoadBalancerNamed() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GridLoadBalancerAsyncClient.class.getMethod("editLoadBalancerNamed", String.class, List.class));
+      Invokable<?, ?> method = method(GridLoadBalancerAsyncClient.class, "editLoadBalancerNamed", String.class, List.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("BalanceIt", ImmutableList.of(
             IpPortPair.builder().ip(Ip.builder().ip("127.0.0.1").build()).port(8080).build(),
             IpPortPair.builder().ip(Ip.builder().ip("127.0.0.1").build()).port(9090).build())));
@@ -162,7 +163,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
 
    @Test
    public void testGetLoadBalancersByName() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GridLoadBalancerAsyncClient.class.getMethod("getLoadBalancersByName", String[].class));
+      Invokable<?, ?> method = method(GridLoadBalancerAsyncClient.class, "getLoadBalancersByName", String[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(
             "My Load Balancer", "My Load Balancer 2"));
 
@@ -187,7 +188,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
 
    @Test
    public void testDeleteLoadBalancerById() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GridLoadBalancerAsyncClient.class.getMethod("deleteById", Long.class));
+      Invokable<?, ?> method = method(GridLoadBalancerAsyncClient.class, "deleteById", Long.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(55L));
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/"

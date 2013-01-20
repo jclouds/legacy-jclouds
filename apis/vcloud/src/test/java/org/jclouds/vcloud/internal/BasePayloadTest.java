@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud.internal;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.net.URI;
 import java.util.List;
 
@@ -28,7 +30,6 @@ import org.nnsoft.guice.rocoto.Rocoto;
 import org.nnsoft.guice.rocoto.configuration.ConfigurationModule;
 
 import com.google.common.base.Throwables;
-import com.google.common.reflect.Invokable;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -42,12 +43,10 @@ public class BasePayloadTest {
 
    protected GeneratedHttpRequest requestForArgs(List<Object> args) {
       try {
-         Invocation invocation = Invocation.create(Invokable.from(String.class.getDeclaredMethod("toString")), args);
+         Invocation invocation = Invocation.create(method(String.class, "toString"), args);
          return GeneratedHttpRequest.builder().method("POST").endpoint(URI.create("http://localhost/key"))
                .invocation(invocation).build();
       } catch (SecurityException e) {
-         throw Throwables.propagate(e);
-      } catch (NoSuchMethodException e) {
          throw Throwables.propagate(e);
       }
    }

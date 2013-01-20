@@ -18,18 +18,19 @@
  */
 package org.jclouds.gogrid.services;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.gogrid.domain.IpType;
 import org.jclouds.gogrid.functions.ParseIpListFromJsonResponse;
 import org.jclouds.gogrid.options.GetIpListOptions;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code GridIpAsyncClient}
  * 
@@ -41,7 +42,7 @@ public class GridIpAsyncClientTest extends BaseGoGridAsyncClientTest<GridIpAsync
 
    @Test
    public void testGetIpListWithOptions() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GridIpAsyncClient.class.getMethod("getIpList", GetIpListOptions[].class));
+      Invokable<?, ?> method = method(GridIpAsyncClient.class, "getIpList", GetIpListOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(new GetIpListOptions()
             .onlyUnassigned().onlyWithType(IpType.PUBLIC)));
 
@@ -65,7 +66,7 @@ public class GridIpAsyncClientTest extends BaseGoGridAsyncClientTest<GridIpAsync
 
    @Test
    public void testGetAssignedIpList() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GridIpAsyncClient.class.getMethod("getAssignedIpList"));
+      Invokable<?, ?> method = method(GridIpAsyncClient.class, "getAssignedIpList");
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,

@@ -18,18 +18,19 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.jclouds.reflect.Reflection2.method;
+
 import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.ListAlertsOptions;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.reflect.Invokable;
 /**
  * Tests behavior of {@code GlobalAlertsAsyncClient}
  *
@@ -41,7 +42,7 @@ import com.google.common.collect.ImmutableList;
 public class GlobalAlertAsyncClientTest extends BaseCloudStackAsyncClientTest<GlobalAlertAsyncClient> {
 
    public void testListAlerts() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GlobalAlertAsyncClient.class.getMethod("listAlerts", ListAlertsOptions[].class));
+      Invokable<?, ?> method = method(GlobalAlertAsyncClient.class, "listAlerts", ListAlertsOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
@@ -58,7 +59,7 @@ public class GlobalAlertAsyncClientTest extends BaseCloudStackAsyncClientTest<Gl
    }
 
    public void testListAlertsOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(GlobalAlertAsyncClient.class.getMethod("listAlerts", ListAlertsOptions[].class));
+      Invokable<?, ?> method = method(GlobalAlertAsyncClient.class, "listAlerts", ListAlertsOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(ListAlertsOptions.Builder.id("42").keyword("jclouds").type("TEMPLATE")));
 
       assertRequestLineEquals(httpRequest,

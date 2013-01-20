@@ -18,6 +18,7 @@
  */
 package org.jclouds.trmk.vcloud_0_8.internal;
 
+import static org.jclouds.reflect.Reflection2.method;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -30,7 +31,6 @@ import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.location.Provider;
 import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
-import com.google.common.reflect.Invokable;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.trmk.vcloud_0_8.endpoints.VCloudLogin;
@@ -39,6 +39,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Invokable;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -54,7 +55,7 @@ import com.google.inject.Provides;
 public class TerremarkVCloudLoginAsyncClientTest extends BaseAsyncClientTest<TerremarkVCloudLoginAsyncClient> {
 
    public void testLogin() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(TerremarkVCloudLoginAsyncClient.class.getMethod("login"));
+      Invokable<?, ?> method = method(TerremarkVCloudLoginAsyncClient.class, "login");
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.of());
 
       assertEquals(request.getRequestLine(), "POST http://localhost:8080/login HTTP/1.1");

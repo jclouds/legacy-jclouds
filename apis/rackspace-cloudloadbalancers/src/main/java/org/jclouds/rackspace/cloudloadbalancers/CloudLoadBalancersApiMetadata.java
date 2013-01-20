@@ -17,12 +17,11 @@
  * under the License.
  */
 package org.jclouds.rackspace.cloudloadbalancers;
-
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERVICE_TYPE;
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.net.URI;
 import java.util.Properties;
@@ -86,7 +85,7 @@ public class CloudLoadBalancersApiMetadata extends BaseRestApiMetadata {
                .version("1.0")
                .defaultEndpoint("https://identity.api.rackspacecloud.com/v2.0/")
                .defaultProperties(CloudLoadBalancersApiMetadata.defaultProperties())
-               .view(typeTokenOf(LoadBalancerServiceContext.class))
+               .view(typeToken(LoadBalancerServiceContext.class))
                .defaultModules(
                      ImmutableSet.<Class<? extends Module>> of(
                            CloudIdentityAuthenticationModule.class,

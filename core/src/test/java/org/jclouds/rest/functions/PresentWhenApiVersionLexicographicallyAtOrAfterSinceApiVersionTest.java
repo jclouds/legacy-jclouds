@@ -19,6 +19,7 @@
 package org.jclouds.rest.functions;
 
 import static com.google.common.base.Throwables.propagate;
+import static org.jclouds.reflect.Reflection2.method;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -35,7 +36,6 @@ import org.testng.annotations.Test;
 import com.google.common.base.Optional;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.Invokable;
 
 /**
  * Allows you to use simple api version comparison to determine if a feature is
@@ -165,9 +165,9 @@ public class PresentWhenApiVersionLexicographicallyAtOrAfterSinceApiVersionTest 
 
    InvocationSuccess getApi(String name, Class<?> target) {
       try {
-         return InvocationSuccess.create(Invocation.create(
-               Invokable.from(EC2AsyncApi.class.getDeclaredMethod("get" + name + "ApiForRegion", String.class)),
-               ImmutableList.<Object> of("region")), "present");
+         return InvocationSuccess.create(
+               Invocation.create(method(EC2AsyncApi.class, "get" + name + "ApiForRegion", String.class),
+                     ImmutableList.<Object> of("region")), "present");
       } catch (Exception e) {
          throw propagate(e);
       }

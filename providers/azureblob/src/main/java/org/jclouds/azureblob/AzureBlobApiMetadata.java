@@ -21,7 +21,7 @@ package org.jclouds.azureblob;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.net.URI;
 import java.util.Properties;
@@ -86,7 +86,7 @@ public class AzureBlobApiMetadata extends BaseRestApiMetadata {
          .defaultEndpoint("https://${jclouds.identity}.blob.core.windows.net")
          .documentation(URI.create("http://msdn.microsoft.com/en-us/library/dd135733.aspx"))
          .defaultProperties(AzureBlobApiMetadata.defaultProperties())
-         .view(typeTokenOf(BlobStoreContext.class))
+         .view(typeToken(BlobStoreContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(AzureBlobRestClientModule.class, AzureBlobStoreContextModule.class));
       }
       

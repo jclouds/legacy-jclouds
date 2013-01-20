@@ -17,12 +17,12 @@
  * under the License.
  */
 package org.jclouds.s3.fallbacks;
-
 import static com.google.common.util.concurrent.Futures.getUnchecked;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.jclouds.reflect.Reflection2.method;
 import static org.testng.Assert.assertFalse;
 
 import org.jclouds.aws.AWSResponseException;
@@ -35,7 +35,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
-import com.google.common.reflect.Invokable;
 
 /**
  * @author Adrian Cole
@@ -51,8 +50,8 @@ public class FalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExistsTes
             .method("PUT")
             .endpoint("https://adriancole-blobstore113.s3.amazonaws.com/")
             .invocation(
-                  Invocation.create(Invokable.from(S3Client.class.getMethod("putBucketInRegion", String.class,
-                        String.class, PutBucketOptions[].class)), Lists.<Object> newArrayList(null, "bucket"))).build();
+                  Invocation.create(method(S3Client.class, "putBucketInRegion", String.class,
+                        String.class, PutBucketOptions[].class), Lists.<Object> newArrayList(null, "bucket"))).build();
    }
 
    @Test

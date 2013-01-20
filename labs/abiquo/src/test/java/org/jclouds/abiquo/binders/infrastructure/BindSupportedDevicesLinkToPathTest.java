@@ -18,7 +18,7 @@
  */
 
 package org.jclouds.abiquo.binders.infrastructure;
-
+import static org.jclouds.reflect.Reflection2.method;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
@@ -60,8 +60,8 @@ public class BindSupportedDevicesLinkToPathTest {
 
       BindSupportedDevicesLinkToPath binder = new BindSupportedDevicesLinkToPath();
 
-      Invokable<?, ?> withEndpointLink = Invokable.from(InfrastructureAsyncApi.class.getMethod(
-            "listSupportedStorageDevices", DatacenterDto.class));
+      Invokable<?, ?> withEndpointLink = method(InfrastructureAsyncApi.class, "listSupportedStorageDevices",
+            DatacenterDto.class);
 
       GeneratedHttpRequest request = GeneratedHttpRequest.builder()
             .invocation(Invocation.create(withEndpointLink, ImmutableList.<Object> of(datacenter)))
@@ -77,8 +77,8 @@ public class BindSupportedDevicesLinkToPathTest {
 
       BindSupportedDevicesLinkToPath binder = new BindSupportedDevicesLinkToPath();
 
-      Invokable<?, ?> withEndpointLink = Invokable.from(InfrastructureAsyncApi.class.getMethod(
-            "listSupportedStorageDevices", DatacenterDto.class));
+      Invokable<?, ?> withEndpointLink = method(InfrastructureAsyncApi.class, "listSupportedStorageDevices",
+            DatacenterDto.class);
 
       GeneratedHttpRequest request = GeneratedHttpRequest.builder()
             .invocation(Invocation.create(withEndpointLink, ImmutableList.<Object> of(datacenter)))

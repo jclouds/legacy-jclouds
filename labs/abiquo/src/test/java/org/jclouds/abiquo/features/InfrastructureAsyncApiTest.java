@@ -20,6 +20,7 @@
 package org.jclouds.abiquo.features;
 
 import static org.jclouds.abiquo.domain.DomainUtils.withHeader;
+import static org.jclouds.reflect.Reflection2.method;
 
 import java.io.IOException;
 
@@ -90,7 +91,6 @@ import com.abiquo.server.core.infrastructure.storage.TierDto;
 import com.abiquo.server.core.infrastructure.storage.TiersDto;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.Invokable;
-
 /**
  * Tests annotation parsing of {@code InfrastructureAsyncApi}
  * 
@@ -101,7 +101,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    /*********************** Datacenter ***********************/
 
    public void testListDatacenters() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listDatacenters"));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listDatacenters");
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters HTTP/1.1");
@@ -116,7 +116,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testCreateDatacenter() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("createDatacenter", DatacenterDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "createDatacenter", DatacenterDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPost()));
 
       assertRequestLineEquals(request, "POST http://localhost/api/admin/datacenters HTTP/1.1");
@@ -132,7 +132,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testGetDatacenter() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("getDatacenter", Integer.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "getDatacenter", Integer.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(1));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1 HTTP/1.1");
@@ -147,7 +147,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testUpdateDatacenter() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("updateDatacenter", DatacenterDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "updateDatacenter", DatacenterDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut()));
 
       assertRequestLineEquals(request, "PUT http://localhost/api/admin/datacenters/1 HTTP/1.1");
@@ -163,7 +163,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testDeleteDatacenter() throws SecurityException, NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("deleteDatacenter", DatacenterDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "deleteDatacenter", DatacenterDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut()));
 
       assertRequestLineEquals(request, "DELETE http://localhost/api/admin/datacenters/1 HTTP/1.1");
@@ -178,7 +178,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testListLimitsDatacenter() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listLimits", DatacenterDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listLimits", DatacenterDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut()));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/action/getLimits HTTP/1.1");
@@ -195,8 +195,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    /*********************** Hypervisor ***********************/
 
    public void testGetHypervisorTypeFromMachine() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("getHypervisorTypeFromMachine", DatacenterDto.class,
-            DatacenterOptions.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "getHypervisorTypeFromMachine", DatacenterDto.class,
+            DatacenterOptions.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(),
             DatacenterOptions.builder().ip("10.60.1.120").build()));
 
@@ -213,7 +213,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testGetHypervisorTypesFromDatacenter() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("getHypervisorTypes", DatacenterDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "getHypervisorTypes", DatacenterDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut()));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/hypervisors HTTP/1.1");
@@ -230,7 +230,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    /*********************** Managed Rack ***********************/
 
    public void testListRacks() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listRacks", DatacenterDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listRacks", DatacenterDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut()));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/racks HTTP/1.1");
@@ -245,7 +245,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testCreateRack() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("createRack", DatacenterDto.class, RackDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "createRack", DatacenterDto.class, RackDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(),
             InfrastructureResources.rackPost()));
 
@@ -262,7 +262,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testGetRack() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("getRack", DatacenterDto.class, Integer.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "getRack", DatacenterDto.class, Integer.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(), 1));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/racks/1 HTTP/1.1");
@@ -277,7 +277,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testUpdateRack() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("updateRack", RackDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "updateRack", RackDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.rackPut()));
 
       assertRequestLineEquals(request, "PUT http://localhost/api/admin/datacenters/1/racks/1 HTTP/1.1");
@@ -293,7 +293,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testDeleteRack() throws SecurityException, NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("deleteRack", RackDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "deleteRack", RackDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.rackPut()));
 
       assertRequestLineEquals(request, "DELETE http://localhost/api/admin/datacenters/1/racks/1 HTTP/1.1");
@@ -310,7 +310,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    /*********************** Managed Rack ***********************/
 
    public void testListManagedRacks() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listManagedRacks", DatacenterDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listManagedRacks", DatacenterDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut()));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/racks HTTP/1.1");
@@ -325,8 +325,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testCreateManagedRack() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class
-            .getMethod("createManagedRack", DatacenterDto.class, UcsRackDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "createManagedRack", DatacenterDto.class, UcsRackDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(),
             InfrastructureResources.managedRackPost()));
 
@@ -343,7 +342,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testGetManagedRack() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("getManagedRack", DatacenterDto.class, Integer.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "getManagedRack", DatacenterDto.class, Integer.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(), 1));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/racks/1 HTTP/1.1");
@@ -358,7 +357,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testUpdateManagedRack() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("updateManagedRack", UcsRackDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "updateManagedRack", UcsRackDto.class);
 
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.managedRackPut()));
 
@@ -375,7 +374,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testListServiceProfiles() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listServiceProfiles", UcsRackDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listServiceProfiles", UcsRackDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.managedRackPut()));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/racks/1/logicservers HTTP/1.1");
@@ -392,8 +391,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    public void testListServiceProfilesWithOptions() throws SecurityException, NoSuchMethodException, IOException {
       FilterOptions options = FilterOptions.builder().startWith(1).limit(2).build();
 
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listServiceProfiles", UcsRackDto.class,
-            FilterOptions.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listServiceProfiles", UcsRackDto.class,
+            FilterOptions.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.managedRackPut(), options));
 
       assertRequestLineEquals(request,
@@ -409,7 +408,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testListOrganizations() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listOrganizations", UcsRackDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listOrganizations", UcsRackDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.managedRackPut()));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/racks/1/organizations HTTP/1.1");
@@ -426,8 +425,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    public void testListOrganizationsWithOptions() throws SecurityException, NoSuchMethodException, IOException {
       FilterOptions options = FilterOptions.builder().has("org").build();
 
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class
-            .getMethod("listOrganizations", UcsRackDto.class, FilterOptions.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listOrganizations", UcsRackDto.class, FilterOptions.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.managedRackPut(), options));
 
       assertRequestLineEquals(request,
@@ -443,7 +441,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testListServiceProfileTemplates() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listServiceProfileTemplates", UcsRackDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listServiceProfileTemplates", UcsRackDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.managedRackPut()));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/racks/1/lstemplates HTTP/1.1");
@@ -461,8 +459,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
          IOException {
       FilterOptions options = FilterOptions.builder().ascendant(true).build();
 
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listServiceProfileTemplates", UcsRackDto.class,
-            FilterOptions.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listServiceProfileTemplates", UcsRackDto.class,
+            FilterOptions.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.managedRackPut(), options));
 
       assertRequestLineEquals(request,
@@ -478,8 +476,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testAssociateLogicServer() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("associateLogicServer", UcsRackDto.class,
-            LogicServerDto.class, OrganizationDto.class, String.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "associateLogicServer", UcsRackDto.class,
+            LogicServerDto.class, OrganizationDto.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.managedRackPut(),
             InfrastructureResources.logicServerPut(), InfrastructureResources.organizationPut(), "blade"));
 
@@ -497,8 +495,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testAssociateTemplate() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("associateTemplate", UcsRackDto.class,
-            LogicServerDto.class, OrganizationDto.class, String.class, String.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "associateTemplate", UcsRackDto.class,
+            LogicServerDto.class, OrganizationDto.class, String.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.managedRackPut(),
             InfrastructureResources.logicServerPut(), InfrastructureResources.organizationPut(), "newname", "blade"));
 
@@ -516,8 +514,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testCloneAndAssociateLogicServer() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("cloneAndAssociateLogicServer", UcsRackDto.class,
-            LogicServerDto.class, OrganizationDto.class, String.class, String.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "cloneAndAssociateLogicServer", UcsRackDto.class,
+            LogicServerDto.class, OrganizationDto.class, String.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.managedRackPut(),
             InfrastructureResources.logicServerPut(), InfrastructureResources.organizationPut(), "newname", "blade"));
 
@@ -535,8 +533,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testDissociateLogicServer() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("dissociateLogicServer", UcsRackDto.class,
-            LogicServerDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "dissociateLogicServer", UcsRackDto.class,
+            LogicServerDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.managedRackPut(),
             InfrastructureResources.logicServerPut(), InfrastructureResources.organizationPut()));
 
@@ -553,8 +551,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testCloneLogicServer() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("cloneLogicServer", UcsRackDto.class,
-            LogicServerDto.class, OrganizationDto.class, String.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "cloneLogicServer", UcsRackDto.class,
+            LogicServerDto.class, OrganizationDto.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.managedRackPut(),
             InfrastructureResources.logicServerPut(), InfrastructureResources.organizationPut(), "name"));
 
@@ -572,8 +570,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testDeleteLogicServer() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("deleteLogicServer", UcsRackDto.class,
-            LogicServerDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "deleteLogicServer", UcsRackDto.class,
+            LogicServerDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.managedRackPut(),
             InfrastructureResources.logicServerPut()));
 
@@ -590,7 +588,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testListFsms() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listFsms", UcsRackDto.class, String.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listFsms", UcsRackDto.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.managedRackPut(), "dn"));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/racks/1/fsm?dn=dn HTTP/1.1");
@@ -607,7 +605,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    /*********************** Remote Service **********************/
 
    public void testListRemoteServices() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listRemoteServices", DatacenterDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listRemoteServices", DatacenterDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut()));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/remoteservices HTTP/1.1");
@@ -622,8 +620,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testCreateRemoteService() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("createRemoteService", DatacenterDto.class,
-            RemoteServiceDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "createRemoteService", DatacenterDto.class,
+            RemoteServiceDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(),
             InfrastructureResources.remoteServicePost()));
 
@@ -640,8 +638,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testGetRemoteService() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("getRemoteService", DatacenterDto.class,
-            RemoteServiceType.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "getRemoteService", DatacenterDto.class,
+            RemoteServiceType.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(),
             RemoteServiceType.STORAGE_SYSTEM_MONITOR));
 
@@ -658,7 +656,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testUpdateRemoteService() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("updateRemoteService", RemoteServiceDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "updateRemoteService", RemoteServiceDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.remoteServicePut()));
 
       assertRequestLineEquals(request,
@@ -675,7 +673,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testDeleteRemoteService() throws SecurityException, NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("deleteRemoteService", RemoteServiceDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "deleteRemoteService", RemoteServiceDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.remoteServicePut()));
 
       assertRequestLineEquals(request,
@@ -691,7 +689,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testIsAvailableRemoteService() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("isAvailable", RemoteServiceDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "isAvailable", RemoteServiceDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.remoteServicePut()));
 
       String checkUri = InfrastructureResources.remoteServicePut().searchLink("check").getHref();
@@ -709,8 +707,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    /*********************** Machine ***********************/
 
    public void testDiscoverSingleMachineWithoutOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("discoverSingleMachine", DatacenterDto.class,
-            String.class, HypervisorType.class, String.class, String.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "discoverSingleMachine", DatacenterDto.class,
+            String.class, HypervisorType.class, String.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(),
             "10.60.1.222", HypervisorType.XENSERVER, "user", "pass"));
 
@@ -730,8 +728,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testDiscoverSingleMachineAllParams() throws SecurityException, NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("discoverSingleMachine", DatacenterDto.class,
-            String.class, HypervisorType.class, String.class, String.class, MachineOptions.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "discoverSingleMachine", DatacenterDto.class,
+            String.class, HypervisorType.class, String.class, String.class, MachineOptions.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(),
             "80.80.80.80", HypervisorType.KVM, "user", "pass", MachineOptions.builder().port(8889).build()));
 
@@ -751,8 +749,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testDiscoverSingleMachineDefaultValues() throws SecurityException, NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("discoverSingleMachine", DatacenterDto.class,
-            String.class, HypervisorType.class, String.class, String.class, MachineOptions.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "discoverSingleMachine", DatacenterDto.class,
+            String.class, HypervisorType.class, String.class, String.class, MachineOptions.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(),
             "80.80.80.80", HypervisorType.KVM, "user", "pass", MachineOptions.builder().build()));
 
@@ -773,8 +771,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
 
    public void testDiscoverMultipleMachinesWithoutOptions() throws SecurityException, NoSuchMethodException,
          IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("discoverMultipleMachines", DatacenterDto.class,
-            String.class, String.class, HypervisorType.class, String.class, String.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "discoverMultipleMachines", DatacenterDto.class,
+            String.class, String.class, HypervisorType.class, String.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(),
             "10.60.1.222", "10.60.1.250", HypervisorType.XENSERVER, "user", "pass"));
 
@@ -794,8 +792,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testDiscoverMultipleMachinesAllParams() throws SecurityException, NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("discoverMultipleMachines", DatacenterDto.class,
-            String.class, String.class, HypervisorType.class, String.class, String.class, MachineOptions.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "discoverMultipleMachines", DatacenterDto.class,
+            String.class, String.class, HypervisorType.class, String.class, String.class, MachineOptions.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(),
             "80.80.80.80", "80.80.80.86", HypervisorType.KVM, "user", "pass", MachineOptions.builder().port(8889)
                   .build()));
@@ -816,8 +814,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testCheckMachineStateWithoutOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("checkMachineState", DatacenterDto.class, String.class,
-            HypervisorType.class, String.class, String.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "checkMachineState", DatacenterDto.class, String.class,
+            HypervisorType.class, String.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(),
             "10.60.1.222", HypervisorType.XENSERVER, "user", "pass"));
 
@@ -837,8 +835,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testCheckMachineStateAllParams() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("checkMachineState", DatacenterDto.class, String.class,
-            HypervisorType.class, String.class, String.class, MachineOptions.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "checkMachineState", DatacenterDto.class, String.class,
+            HypervisorType.class, String.class, String.class, MachineOptions.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(),
             "10.60.1.222", HypervisorType.XENSERVER, "user", "pass", MachineOptions.builder().port(8889).build()));
 
@@ -858,8 +856,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testCheckMachineIpmiStateWithoutOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("checkMachineIpmiState", DatacenterDto.class,
-            String.class, String.class, String.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "checkMachineIpmiState", DatacenterDto.class,
+            String.class, String.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(),
             "10.60.1.222", "user", "pass"));
 
@@ -879,8 +877,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testCheckMachineIpmiStateWithALLOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("checkMachineIpmiState", DatacenterDto.class,
-            String.class, String.class, String.class, IpmiOptions.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "checkMachineIpmiState", DatacenterDto.class,
+            String.class, String.class, String.class, IpmiOptions.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(),
             "10.60.1.222", "user", "pass", IpmiOptions.builder().port(8889).build()));
 
@@ -900,7 +898,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testListMachines() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listMachines", RackDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listMachines", RackDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.rackPut()));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/racks/1/machines HTTP/1.1");
@@ -915,7 +913,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testGetMachine() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("getMachine", RackDto.class, Integer.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "getMachine", RackDto.class, Integer.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.rackPut(), 1));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/racks/1/machines/1 HTTP/1.1");
@@ -930,7 +928,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testCheckMachineState() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("checkMachineState", MachineDto.class, boolean.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "checkMachineState", MachineDto.class, boolean.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.machinePut(), true));
 
       assertRequestLineEquals(request,
@@ -946,7 +944,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testCheckMachineIpmiState() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("checkMachineIpmiState", MachineDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "checkMachineIpmiState", MachineDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.machinePut()));
 
       assertRequestLineEquals(request,
@@ -962,7 +960,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testCreateMachine() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("createMachine", RackDto.class, MachineDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "createMachine", RackDto.class, MachineDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.rackPut(),
             InfrastructureResources.machinePost()));
 
@@ -979,7 +977,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testUpdateMachine() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("updateMachine", MachineDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "updateMachine", MachineDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.machinePut()));
 
       assertRequestLineEquals(request, "PUT http://localhost/api/admin/datacenters/1/racks/1/machines/1 HTTP/1.1");
@@ -995,7 +993,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testDeleteMachine() throws SecurityException, NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("deleteMachine", MachineDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "deleteMachine", MachineDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.machinePut()));
 
       assertRequestLineEquals(request, "DELETE http://localhost/api/admin/datacenters/1/racks/1/machines/1 HTTP/1.1");
@@ -1010,7 +1008,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testReserveMachine() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("reserveMachine", EnterpriseDto.class, MachineDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "reserveMachine", EnterpriseDto.class, MachineDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(EnterpriseResources.enterprisePut(),
             InfrastructureResources.machinePut()));
 
@@ -1027,8 +1025,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testCancelReservation() throws SecurityException, NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class
-            .getMethod("cancelReservation", EnterpriseDto.class, MachineDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "cancelReservation", EnterpriseDto.class, MachineDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(EnterpriseResources.enterprisePut(),
             InfrastructureResources.machinePut()));
 
@@ -1046,8 +1043,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    public void testListVirtualMachinesByMachine() throws SecurityException, NoSuchMethodException, IOException {
       MachineOptions options = MachineOptions.builder().sync(true).build();
 
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listVirtualMachinesByMachine", MachineDto.class,
-            MachineOptions.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listVirtualMachinesByMachine", MachineDto.class,
+            MachineOptions.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.machinePut(), options));
 
       assertRequestLineEquals(request,
@@ -1064,7 +1061,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
 
    public void testGetVirtualMachineByMachine() throws SecurityException, NoSuchMethodException, IOException {
 
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("getVirtualMachine", MachineDto.class, Integer.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "getVirtualMachine", MachineDto.class, Integer.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.machinePut(), 1));
 
       assertRequestLineEquals(request,
@@ -1082,7 +1079,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    /*********************** Blade ***********************/
 
    public void testPowerOff() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("powerOff", MachineDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "powerOff", MachineDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.machinePut()));
 
       assertRequestLineEquals(request,
@@ -1098,7 +1095,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testPowerOn() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("powerOn", MachineDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "powerOn", MachineDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.machinePut()));
 
       assertRequestLineEquals(request,
@@ -1114,7 +1111,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testGetLogicServer() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("getLogicServer", MachineDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "getLogicServer", MachineDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.machinePut()));
 
       assertRequestLineEquals(request,
@@ -1130,7 +1127,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testLedOn() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("ledOn", MachineDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "ledOn", MachineDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.machinePut()));
 
       assertRequestLineEquals(request,
@@ -1146,7 +1143,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testLedOff() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("ledOff", MachineDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "ledOff", MachineDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.machinePut()));
 
       assertRequestLineEquals(request,
@@ -1162,7 +1159,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testGetLocatorLed() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("getLocatorLed", MachineDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "getLocatorLed", MachineDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.machinePut()));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/racks/1/machines/1/led HTTP/1.1");
@@ -1179,7 +1176,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    /*********************** Storage Device ***********************/
 
    public void testListStorageDevices() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listStorageDevices", DatacenterDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listStorageDevices", DatacenterDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut()));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/storage/devices HTTP/1.1");
@@ -1194,7 +1191,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testListSupportedStorageDevices() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listSupportedStorageDevices", DatacenterDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listSupportedStorageDevices", DatacenterDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut()));
 
       assertRequestLineEquals(request,
@@ -1210,8 +1207,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testCreateStorageDevice() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("createStorageDevice", DatacenterDto.class,
-            StorageDeviceDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "createStorageDevice", DatacenterDto.class,
+            StorageDeviceDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(),
             InfrastructureResources.storageDevicePost()));
 
@@ -1228,7 +1225,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testDeleteStorageDevice() throws SecurityException, NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("deleteStorageDevice", StorageDeviceDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "deleteStorageDevice", StorageDeviceDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.storageDevicePut()));
 
       assertRequestLineEquals(request, "DELETE http://localhost/api/admin/datacenters/1/storage/devices/1 HTTP/1.1");
@@ -1243,7 +1240,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testUpdateStorageDevice() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("updateStorageDevice", StorageDeviceDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "updateStorageDevice", StorageDeviceDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.storageDevicePut()));
 
       assertRequestLineEquals(request, "PUT http://localhost/api/admin/datacenters/1/storage/devices/1 HTTP/1.1");
@@ -1259,7 +1256,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testGetStorageDevice() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("getStorageDevice", DatacenterDto.class, Integer.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "getStorageDevice", DatacenterDto.class, Integer.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(), 1));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/storage/devices/1 HTTP/1.1");
@@ -1276,7 +1273,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    /*********************** Tier ***********************/
 
    public void testListTiers() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listTiers", DatacenterDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listTiers", DatacenterDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut()));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/storage/tiers HTTP/1.1");
@@ -1291,7 +1288,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testUpdateTier() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("updateTier", TierDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "updateTier", TierDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.tierPut()));
 
       assertRequestLineEquals(request, "PUT http://localhost/api/admin/datacenters/1/storage/tiers/1 HTTP/1.1");
@@ -1307,7 +1304,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testGetTier() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("getTier", DatacenterDto.class, Integer.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "getTier", DatacenterDto.class, Integer.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(), 1));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/storage/tiers/1 HTTP/1.1");
@@ -1324,8 +1321,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    /*********************** StoragePool ***********************/
 
    public void testListSyncStoragePools() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listStoragePools", StorageDeviceDto.class,
-            StoragePoolOptions.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listStoragePools", StorageDeviceDto.class,
+            StoragePoolOptions.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.storageDevicePut(),
             StoragePoolOptions.builder().sync(true).build()));
 
@@ -1342,7 +1339,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testListStoragePoolsFromTier() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listStoragePools", TierDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listStoragePools", TierDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.tierPut(),
             StoragePoolOptions.builder().sync(true).build()));
 
@@ -1358,8 +1355,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testListStoragePoolsNoParams() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listStoragePools", StorageDeviceDto.class,
-            StoragePoolOptions.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listStoragePools", StorageDeviceDto.class,
+            StoragePoolOptions.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.storageDevicePut(),
             StoragePoolOptions.builder().build()));
 
@@ -1375,8 +1372,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testCreateStoragePool() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("createStoragePool", StorageDeviceDto.class,
-            StoragePoolDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "createStoragePool", StorageDeviceDto.class,
+            StoragePoolDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.storageDevicePut(),
             InfrastructureResources.storagePoolPost()));
 
@@ -1393,7 +1390,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testUpdateStoragePool() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("updateStoragePool", StoragePoolDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "updateStoragePool", StoragePoolDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.storagePoolPut()));
 
       assertRequestLineEquals(request,
@@ -1410,7 +1407,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testDeleteStoragePool() throws SecurityException, NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("deleteStoragePool", StoragePoolDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "deleteStoragePool", StoragePoolDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.storagePoolPut()));
 
       assertRequestLineEquals(request,
@@ -1426,7 +1423,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testGetStoragePool() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("getStoragePool", StorageDeviceDto.class, String.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "getStoragePool", StorageDeviceDto.class, String.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.storageDevicePut(),
             InfrastructureResources.storagePoolPut().getIdStorage()));
 
@@ -1443,8 +1440,8 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testRefreshStoragePool() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("refreshStoragePool", StoragePoolDto.class,
-            StoragePoolOptions.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "refreshStoragePool", StoragePoolDto.class,
+            StoragePoolOptions.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.storagePoolPut(),
             StoragePoolOptions.builder().sync(true).build()));
 
@@ -1463,7 +1460,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    /*********************** Network ***********************/
 
    public void testListNetworks() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listNetworks", DatacenterDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listNetworks", DatacenterDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut()));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/network HTTP/1.1");
@@ -1480,7 +1477,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    public void testListNetworksWithOptions() throws SecurityException, NoSuchMethodException, IOException {
       NetworkOptions options = NetworkOptions.builder().type(NetworkType.PUBLIC).build();
 
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listNetworks", DatacenterDto.class, NetworkOptions.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listNetworks", DatacenterDto.class, NetworkOptions.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(), options));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/network?type=PUBLIC HTTP/1.1");
@@ -1495,7 +1492,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testGetNetworks() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("getNetwork", DatacenterDto.class, Integer.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "getNetwork", DatacenterDto.class, Integer.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(), 1));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/network/1 HTTP/1.1");
@@ -1510,8 +1507,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testCreateNetwork() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class
-            .getMethod("createNetwork", DatacenterDto.class, VLANNetworkDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "createNetwork", DatacenterDto.class, VLANNetworkDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(),
             NetworkResources.vlanPost()));
 
@@ -1528,7 +1524,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testUpdateNetwork() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("updateNetwork", VLANNetworkDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "updateNetwork", VLANNetworkDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(NetworkResources.publicNetworkPut()));
 
       assertRequestLineEquals(request, "PUT http://localhost/api/admin/datacenters/1/network/1 HTTP/1.1");
@@ -1544,7 +1540,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testDeleteNetwork() throws SecurityException, NoSuchMethodException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("deleteNetwork", VLANNetworkDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "deleteNetwork", VLANNetworkDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(NetworkResources.publicNetworkPut()));
 
       assertRequestLineEquals(request, "DELETE http://localhost/api/admin/datacenters/1/network/1 HTTP/1.1");
@@ -1559,8 +1555,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testCheckTagAvailability() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class
-            .getMethod("checkTagAvailability", DatacenterDto.class, Integer.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "checkTagAvailability", DatacenterDto.class, Integer.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(InfrastructureResources.datacenterPut(), 2));
 
       assertRequestLineEquals(request,
@@ -1578,7 +1573,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    /*********************** Network IPs ***********************/
 
    public void testListPublicIps() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listPublicIps", VLANNetworkDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listPublicIps", VLANNetworkDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(NetworkResources.publicNetworkPut()));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/network/1/ips HTTP/1.1");
@@ -1594,7 +1589,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
 
    public void testListPublicIpsWithOptions() throws SecurityException, NoSuchMethodException, IOException {
       IpOptions options = IpOptions.builder().startWith(10).build();
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listPublicIps", VLANNetworkDto.class, IpOptions.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listPublicIps", VLANNetworkDto.class, IpOptions.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(NetworkResources.publicNetworkPut(), options));
 
       assertRequestLineEquals(request,
@@ -1610,7 +1605,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testGetPublicIp() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("getPublicIp", VLANNetworkDto.class, Integer.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "getPublicIp", VLANNetworkDto.class, Integer.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(NetworkResources.publicNetworkPut(), 1));
 
       assertRequestLineEquals(request, "GET http://localhost/api/admin/datacenters/1/network/1/ips/1 HTTP/1.1");
@@ -1625,7 +1620,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testListExternalIps() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listExternalIps", VLANNetworkDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listExternalIps", VLANNetworkDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(NetworkResources.externalNetworkPut()));
 
       assertRequestLineEquals(request,
@@ -1642,7 +1637,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
 
    public void testListExternalIpsWithOptions() throws SecurityException, NoSuchMethodException, IOException {
       IpOptions options = IpOptions.builder().startWith(10).build();
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listExternalIps", VLANNetworkDto.class, IpOptions.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listExternalIps", VLANNetworkDto.class, IpOptions.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(NetworkResources.externalNetworkPut(), options));
 
       assertRequestLineEquals(request,
@@ -1658,7 +1653,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testGetExternalIp() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("getExternalIp", VLANNetworkDto.class, Integer.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "getExternalIp", VLANNetworkDto.class, Integer.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(NetworkResources.externalNetworkPut(), 1));
 
       assertRequestLineEquals(request,
@@ -1674,7 +1669,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testListUnmanagedIps() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listUnmanagedIps", VLANNetworkDto.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listUnmanagedIps", VLANNetworkDto.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(NetworkResources.unmanagedNetworkPut()));
 
       assertRequestLineEquals(request,
@@ -1691,7 +1686,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
 
    public void testListUnmanagedIpsWithOptions() throws SecurityException, NoSuchMethodException, IOException {
       IpOptions options = IpOptions.builder().startWith(10).build();
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("listUnmanagedIps", VLANNetworkDto.class, IpOptions.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "listUnmanagedIps", VLANNetworkDto.class, IpOptions.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(NetworkResources.unmanagedNetworkPut(), options));
 
       assertRequestLineEquals(request,
@@ -1707,7 +1702,7 @@ public class InfrastructureAsyncApiTest extends BaseAbiquoAsyncApiTest<Infrastru
    }
 
    public void testGetUnmanagedIp() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = Invokable.from(InfrastructureAsyncApi.class.getMethod("getUnmanagedIp", VLANNetworkDto.class, Integer.class));
+      Invokable<?, ?> method = method(InfrastructureAsyncApi.class, "getUnmanagedIp", VLANNetworkDto.class, Integer.class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(NetworkResources.externalNetworkPut(), 1));
 
       assertRequestLineEquals(request,

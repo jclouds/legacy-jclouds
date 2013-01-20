@@ -18,7 +18,7 @@
  */
 package org.jclouds.abiquo.internal;
 
-import static org.jclouds.reflect.Reflection2.typeTokenOf;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.util.Properties;
 
@@ -59,7 +59,7 @@ public abstract class BaseAbiquoLiveApiTest extends BaseViewLiveTest<AbiquoConte
 
    @Override
    protected TypeToken<AbiquoContext> viewType() {
-      return typeTokenOf(AbiquoContext.class);
+      return typeToken(AbiquoContext.class);
    }
 
 }
