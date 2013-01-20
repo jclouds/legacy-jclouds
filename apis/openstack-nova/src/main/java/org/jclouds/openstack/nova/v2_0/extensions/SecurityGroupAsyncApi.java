@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -67,6 +68,7 @@ public interface SecurityGroupAsyncApi {
    /**
     * @see SecurityGroupApi#list
     */
+   @Named("securitygroup:list")
    @GET
    @SelectJson("security_groups")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -77,6 +79,7 @@ public interface SecurityGroupAsyncApi {
    /**
     * @see SecurityGroupApi#get
     */
+   @Named("securitygroup:get")
    @GET
    @Path("/os-security-groups/{id}")
    @SelectJson("security_group")
@@ -87,6 +90,7 @@ public interface SecurityGroupAsyncApi {
    /**
     * @see SecurityGroupApi#createWithDescription
     */
+   @Named("securitygroup:create")
    @POST
    @Path("/os-security-groups")
    @SelectJson("security_group")
@@ -100,6 +104,7 @@ public interface SecurityGroupAsyncApi {
    /**
     * @see SecurityGroupApi#delete
     */
+   @Named("securitygroup:delete")
    @DELETE
    @Path("/os-security-groups/{id}")
    @Fallback(FalseOnNotFoundOr404.class)
@@ -109,6 +114,7 @@ public interface SecurityGroupAsyncApi {
    /**
     * @see SecurityGroupApi#createRuleAllowingCidrBlock
     */
+   @Named("securitygroup:create")
    @POST
    @Path("/os-security-group-rules")
    @SelectJson("security_group_rule")
@@ -123,6 +129,7 @@ public interface SecurityGroupAsyncApi {
    /**
     * @see SecurityGroupApi#createRuleOnSecurityGroupToCidrBlock
     */
+   @Named("securitygroup:create")
    @POST
    @Path("/os-security-group-rules")
    @SelectJson("security_group_rule")
@@ -137,6 +144,7 @@ public interface SecurityGroupAsyncApi {
    /**
     * @see SecurityGroupApi#deleteRule
     */
+   @Named("securitygroup:delete")
    @DELETE
    @Path("/os-security-group-rules/{security_group_rule_ID}")
    @Fallback(FalseOnNotFoundOr404.class)

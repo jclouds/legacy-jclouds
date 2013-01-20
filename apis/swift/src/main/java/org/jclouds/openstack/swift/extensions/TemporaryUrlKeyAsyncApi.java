@@ -27,6 +27,7 @@ import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.HeaderParam;
@@ -45,6 +46,7 @@ public interface TemporaryUrlKeyAsyncApi {
    /**
     * @see TemporaryUrlKeyApi#getTemporaryUrlKey
     */
+   @Named("tempurlkey:get")
    @HEAD
    @Path("/")
    @Consumes(MediaType.WILDCARD)
@@ -54,6 +56,7 @@ public interface TemporaryUrlKeyAsyncApi {
    /**
     * @see TemporaryUrlKeyApi#setTemporaryUrlKey
     */
+   @Named("tempurlkey:set")
    @POST
    @Path("/")
    ListenableFuture<Void> setTemporaryUrlKey(@HeaderParam(SwiftHeaders.ACCOUNT_TEMPORARY_URL_KEY) String key);

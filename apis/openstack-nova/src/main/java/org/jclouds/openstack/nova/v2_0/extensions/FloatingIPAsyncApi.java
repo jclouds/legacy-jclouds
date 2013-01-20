@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -64,6 +65,7 @@ public interface FloatingIPAsyncApi {
    /**
     * @see FloatingIPApi#list
     */
+   @Named("floatingip:list")
    @GET
    @Path("/os-floating-ips")
    @SelectJson("floating_ips")
@@ -74,6 +76,7 @@ public interface FloatingIPAsyncApi {
    /**
     * @see FloatingIPApi#get
     */
+   @Named("floatingip:get")
    @GET
    @Path("/os-floating-ips/{id}")
    @SelectJson("floating_ip")
@@ -84,6 +87,7 @@ public interface FloatingIPAsyncApi {
    /**
     * @see FloatingIPApi#create
     */
+   @Named("floatingip:create")
    @POST
    @Path("/os-floating-ips")
    @SelectJson("floating_ip")
@@ -96,6 +100,7 @@ public interface FloatingIPAsyncApi {
    /**
     * @see FloatingIPApi#delete
     */
+   @Named("floatingip:delete")
    @DELETE
    @Consumes(MediaType.APPLICATION_JSON)
    @Fallback(NullOnNotFoundOr404.class)
@@ -105,6 +110,7 @@ public interface FloatingIPAsyncApi {
    /**
     * @see FloatingIPApi#addToServer
     */
+   @Named("floatingip:add")
    @POST
    @Path("/servers/{server}/action")
    @Consumes
@@ -116,6 +122,7 @@ public interface FloatingIPAsyncApi {
    /**
     * @see FloatingIPApi#removeFromServer
     */
+   @Named("floatingip:remove")
    @POST
    @Path("/servers/{server}/action")
    @Consumes

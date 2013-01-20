@@ -20,6 +20,7 @@ package org.jclouds.openstack.nova.v2_0.features;
 
 import java.util.Map;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -83,6 +84,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#list()
     */
+   @Named("server:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/servers")
@@ -93,6 +95,7 @@ public interface ServerAsyncApi {
    ListenableFuture<? extends PagedIterable<? extends Resource>> list();
 
    /** @see ServerApi#list(PaginationOptions) */
+   @Named("server:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/servers")
@@ -104,6 +107,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#listInDetail()
     */
+   @Named("server:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/servers/detail")
@@ -114,6 +118,7 @@ public interface ServerAsyncApi {
    ListenableFuture<? extends PagedIterable<? extends Server>> listInDetail();
 
    /** @see ServerApi#listInDetail(PaginationOptions) */
+   @Named("server:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/servers/detail")
@@ -125,6 +130,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#get
     */
+   @Named("server:get")
    @GET
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -135,6 +141,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#delete
     */
+   @Named("server:delete")
    @DELETE
    @Consumes
    @Fallback(FalseOnNotFoundOr404.class)
@@ -144,6 +151,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#start
     */
+   @Named("server:start")
    @POST
    @Path("/servers/{id}/action")
    @Consumes
@@ -154,6 +162,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#stop
     */
+   @Named("server:stop")
    @POST
    @Path("/servers/{id}/action")
    @Consumes
@@ -164,6 +173,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#reboot
     */
+   @Named("server:reboot")
    @POST
    @Path("/servers/{id}/action")
    @Consumes
@@ -174,6 +184,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#resize
     */
+   @Named("server:resize")
    @POST
    @Path("/servers/{id}/action")
    @Consumes
@@ -184,6 +195,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#confirmResize
     */
+   @Named("server:resize")
    @POST
    @Path("/servers/{id}/action")
    @Consumes
@@ -194,6 +206,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#revertResize
     */
+   @Named("server:resize")
    @POST
    @Path("/servers/{id}/action")
    @Consumes
@@ -204,6 +217,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#create
     */
+   @Named("server:create")
    @POST
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
@@ -215,6 +229,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#rebuild
     */
+   @Named("server:rebuild")
    @POST
    @Path("/servers/{id}/action")
    @Consumes
@@ -224,6 +239,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#changeAdminPass
     */
+   @Named("server:changeadminpass")
    @POST
    @Path("/servers/{id}/action")
    @Consumes
@@ -234,6 +250,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#rename
     */
+   @Named("server:rename")
    @PUT
    @Path("/servers/{id}")
    @Consumes
@@ -244,6 +261,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#createImageFromServer
     */
+   @Named("server:create")
    @POST
    @Path("/servers/{id}/action")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -256,6 +274,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#getMetadata
     */
+   @Named("server:getmetadata")
    @GET
    @SelectJson("metadata")
    @Path("/servers/{id}/metadata")
@@ -266,6 +285,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#setMetadata
     */
+   @Named("server:setmetadata")
    @PUT
    @SelectJson("metadata")
    @Path("/servers/{id}/metadata")
@@ -279,6 +299,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#updateMetadata
     */
+   @Named("server:updatemetadata")
    @POST
    @SelectJson("metadata")
    @Path("/servers/{id}/metadata")
@@ -292,6 +313,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#getMetadata
     */
+   @Named("server:getmetadata")
    @GET
    @Path("/servers/{id}/metadata/{key}")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -302,6 +324,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#updateMetadata
     */
+   @Named("server:updatemetadata")
    @PUT
    @Path("/servers/{id}/metadata/{key}")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -314,6 +337,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#deleteMetadata
     */
+   @Named("server:deletemetadata")
    @DELETE
    @Consumes
    @Path("/servers/{id}/metadata/{key}")
@@ -324,6 +348,7 @@ public interface ServerAsyncApi {
    /**
     * @see ServerApi#getDiagnostics
     */
+   @Named("server:getdiagnostics")
    @GET
    @Path("/servers/{id}/diagnostics")
    @Consumes(MediaType.APPLICATION_JSON)

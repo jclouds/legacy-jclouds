@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -66,6 +67,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(AuthenticateRequest.class)
 public interface KeyPairAsyncApi {
 
+   @Named("keypair:list")
    @GET
    @Path("/os-keypairs")
    @ResponseParser(ParseKeyPairs.class)
@@ -73,6 +75,7 @@ public interface KeyPairAsyncApi {
    @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
    ListenableFuture<? extends FluentIterable<? extends KeyPair>> list();
 
+   @Named("keypair:create")
    @POST
    @Path("/os-keypairs")
    @SelectJson("keypair")
@@ -81,6 +84,7 @@ public interface KeyPairAsyncApi {
    @Payload("%7B\"keypair\":%7B\"name\":\"{name}\"%7D%7D")
    ListenableFuture<? extends KeyPair> create(@PayloadParam("name") String name);
 
+   @Named("keypair:create")
    @POST
    @Path("/os-keypairs")
    @SelectJson("keypair")
@@ -90,6 +94,7 @@ public interface KeyPairAsyncApi {
    ListenableFuture<? extends KeyPair> createWithPublicKey(@PayloadParam("name") String name,
          @PayloadParam("public_key") String publicKey);
 
+   @Named("keypair:delete")
    @DELETE
    @Path("/os-keypairs/{name}")
    @Fallback(FalseOnNotFoundOr404.class)

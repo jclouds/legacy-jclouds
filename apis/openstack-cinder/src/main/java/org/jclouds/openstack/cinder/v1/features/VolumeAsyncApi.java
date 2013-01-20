@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.cinder.v1.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -56,6 +57,7 @@ public interface VolumeAsyncApi {
    /**
     * @see VolumeApi#list()
     */
+   @Named("volume:list")
    @GET
    @Path("/volumes")
    @SelectJson("volumes")
@@ -66,6 +68,7 @@ public interface VolumeAsyncApi {
    /**
     * @see VolumeApi#listInDetail()
     */
+   @Named("volume:list")
    @GET
    @Path("/volumes/detail")
    @SelectJson("volumes")
@@ -76,6 +79,7 @@ public interface VolumeAsyncApi {
    /**
     * @see VolumeApi#get(String)
     */
+   @Named("volume:get")
    @GET
    @Path("/volumes/{id}")
    @SelectJson("volume")
@@ -86,6 +90,7 @@ public interface VolumeAsyncApi {
    /**
     * @see VolumeApi#create(int, CreateVolumeOptions...)
     */
+   @Named("volume:create")
    @POST
    @Path("/volumes")
    @SelectJson("volume")
@@ -97,6 +102,7 @@ public interface VolumeAsyncApi {
    /**
     * @see VolumeApi#delete(String)
     */
+   @Named("volume:delete")
    @DELETE
    @Path("/volumes/{id}")
    @Consumes(MediaType.APPLICATION_JSON)

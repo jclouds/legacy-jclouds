@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.cinder.v1.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -49,6 +50,7 @@ public interface VolumeTypeAsyncApi {
    /**
     * @see VolumeTypeApi#list()
     */
+   @Named("volumetype:list")
    @GET
    @Path("/types")
    @SelectJson("volume_types")
@@ -59,6 +61,7 @@ public interface VolumeTypeAsyncApi {
    /**
     * @see VolumeTypeApi#get(String)
     */
+   @Named("volumetype:get")
    @GET
    @Path("/types/{id}")
    @SelectJson("volume_type")
