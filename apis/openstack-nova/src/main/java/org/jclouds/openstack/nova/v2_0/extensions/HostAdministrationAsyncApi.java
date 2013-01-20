@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -69,6 +70,7 @@ public interface HostAdministrationAsyncApi {
    /**
     * @see HostAdministrationApi#list()
     */
+   @Named("hostadmin:list")
    @GET
    @SelectJson("hosts")
    @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
@@ -77,6 +79,7 @@ public interface HostAdministrationAsyncApi {
    /**
     * @see HostAdministrationApi#listResourceUsage(String)
     */
+   @Named("hostadmin:listresource")
    @GET
    @Path("/{id}")
    @SelectJson("host")
@@ -86,6 +89,7 @@ public interface HostAdministrationAsyncApi {
    /**
     * @see HostAdministrationApi#enable(String)
     */
+   @Named("hostadmin:enable")
    @PUT
    @Produces(MediaType.APPLICATION_JSON)
    @Path("/{id}")
@@ -96,6 +100,7 @@ public interface HostAdministrationAsyncApi {
    /**
     * @see HostAdministrationApi#disable(String) 
     */
+   @Named("hostadmin:disable")
    @PUT
    @Produces(MediaType.APPLICATION_JSON)
    @Path("/{id}")
@@ -106,6 +111,7 @@ public interface HostAdministrationAsyncApi {
    /**
     * @see HostAdministrationApi#startMaintenance(String)
     */
+   @Named("hostadmin:startmaintenance")
    @PUT
    @Produces(MediaType.APPLICATION_JSON)
    @Path("/{id}")
@@ -116,6 +122,7 @@ public interface HostAdministrationAsyncApi {
    /**
     * @see HostAdministrationApi#stopMaintenance(String)
     */
+   @Named("hostadmin:stopmaintenance")
    @PUT
    @Produces(MediaType.APPLICATION_JSON)
    @Path("/{id}")
@@ -126,6 +133,7 @@ public interface HostAdministrationAsyncApi {
    /**
     * @see HostAdministrationApi#startup(String)
     */
+   @Named("hostadmin:startup")
    @GET
    @Path("/{id}/startup")
    @ResponseParser(PowerIsStartupResponseParser.class)
@@ -134,6 +142,7 @@ public interface HostAdministrationAsyncApi {
    /**
     * @see HostAdministrationApi#shutdown(String)
     */
+   @Named("hostadmin:shutdown")
    @GET
    @Path("/{id}/shutdown")
    @ResponseParser(PowerIsShutdownResponseParser.class)
@@ -142,6 +151,7 @@ public interface HostAdministrationAsyncApi {
    /**
     * @see HostAdministrationApi#reboot(String)
     */
+   @Named("hostadmin:reboot")
    @GET
    @Path("/{id}/reboot")
    @ResponseParser(PowerIsRebootResponseParser.class)

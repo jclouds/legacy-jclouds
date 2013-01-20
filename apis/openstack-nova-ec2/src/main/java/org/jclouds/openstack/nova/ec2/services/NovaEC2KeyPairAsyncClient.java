@@ -20,6 +20,7 @@ package org.jclouds.openstack.nova.ec2.services;
 
 import static org.jclouds.aws.reference.FormParameters.ACTION;
 
+import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -50,6 +51,7 @@ public interface NovaEC2KeyPairAsyncClient extends KeyPairAsyncClient {
    /**
     * @see NovaEC2KeyPairClient#importKeyPairInRegion(String, String, String)
     */
+   @Named("keypair:import")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "ImportKeyPair")

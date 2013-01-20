@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -58,6 +59,7 @@ public interface QuotaClassAsyncApi {
    /**
     * @see QuotaClassApi#get
     */
+   @Named("quotaclass:get")
    @GET
    @SelectJson("quota_class_set")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -68,6 +70,7 @@ public interface QuotaClassAsyncApi {
    /**
     * @see QuotaClassApi#update
     */
+   @Named("quotaclass:update")
    @PUT
    @Path("/{id}")
    @Produces(MediaType.APPLICATION_JSON)

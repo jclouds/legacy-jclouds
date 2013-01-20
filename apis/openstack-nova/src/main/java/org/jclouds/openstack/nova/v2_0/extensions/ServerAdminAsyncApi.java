@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -58,6 +59,7 @@ public interface ServerAdminAsyncApi {
    /**
     * @see ServerAdminApi#suspend(String)
     */
+   @Named("serveradmin:suspend")
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"suspend\":null}")
@@ -67,6 +69,7 @@ public interface ServerAdminAsyncApi {
    /**
     * @see ServerAdminApi#resume(String)
     */
+   @Named("serveradmin:resume")
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"resume\":null}")
@@ -76,6 +79,7 @@ public interface ServerAdminAsyncApi {
    /**
     * @see ServerAdminApi#migrate(String)
     */
+   @Named("serveradmin:migrate")
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"migrate\":null}")
@@ -85,6 +89,7 @@ public interface ServerAdminAsyncApi {
    /**
     * @see ServerAdminApi#lock(String)
     */
+   @Named("serveradmin:lock")
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"lock\":null}")
@@ -94,6 +99,7 @@ public interface ServerAdminAsyncApi {
    /**
     * @see ServerAdminApi#unlock(String)
     */
+   @Named("serveradmin:unlock")
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"unlock\":null}")
@@ -103,6 +109,7 @@ public interface ServerAdminAsyncApi {
    /**
     * @see ServerAdminApi#resetNetwork(String)
     */
+   @Named("serveradmin:resetnetwork")
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"resetNetwork\":null}")
@@ -112,6 +119,7 @@ public interface ServerAdminAsyncApi {
    /**
     * @see ServerAdminApi#createBackup
     */
+   @Named("serveradmin:createbackup")
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
@@ -127,6 +135,7 @@ public interface ServerAdminAsyncApi {
    /**
     * @see ServerAdminApi#pause(String)
     */
+   @Named("serveradmin:pause")
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"pause\":null}")
@@ -136,6 +145,7 @@ public interface ServerAdminAsyncApi {
    /**
     * @see ServerAdminApi#unpause(String)
     */
+   @Named("serveradmin:unpause")
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"unpause\":null}")
@@ -145,6 +155,7 @@ public interface ServerAdminAsyncApi {
    /**
     * @see ServerAdminApi#injectNetworkInfo(String)
     */
+   @Named("serveradmin:injectnetwork")
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"injectNetworkInfo\":null}")
@@ -154,6 +165,7 @@ public interface ServerAdminAsyncApi {
    /**
     * @see ServerAdminApi#liveMigrate(String)
     */
+   @Named("serveradmin:livemigrate")
    @POST
    @Produces(MediaType.APPLICATION_JSON)
    @Fallback(FalseOnNotFoundOr404.class)

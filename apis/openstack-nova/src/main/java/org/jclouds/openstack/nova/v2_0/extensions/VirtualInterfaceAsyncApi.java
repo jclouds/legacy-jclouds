@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -50,6 +51,7 @@ public interface VirtualInterfaceAsyncApi {
    /**
     * @see VirtualInterfaceApi#listOnServer(String)
     */
+   @Named("virtualinterface:list")
    @GET
    @SelectJson("virtual_interfaces")
    @Consumes(MediaType.APPLICATION_JSON)

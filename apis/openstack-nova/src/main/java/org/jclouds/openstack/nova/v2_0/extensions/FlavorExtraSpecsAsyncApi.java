@@ -20,6 +20,7 @@ package org.jclouds.openstack.nova.v2_0.extensions;
 
 import java.util.Map;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -65,6 +66,7 @@ public interface FlavorExtraSpecsAsyncApi {
    /**
     * @see FlavorExtraSpecsApi#getMetadata(String)
     */
+   @Named("flavor:getmetadata")
    @GET
    @SelectJson("extra_specs")
    @Path("/flavors/{flavor_id}/os-extra_specs")
@@ -74,6 +76,7 @@ public interface FlavorExtraSpecsAsyncApi {
    /**
     * @see FlavorExtraSpecsApi#updateMetadataEntry(String, String, String)
     */
+   @Named("flavor:updatemetadata")
    @POST
    @Path("/flavors/{flavor_id}/os-extra_specs")
    @Produces(MediaType.APPLICATION_JSON)
@@ -84,6 +87,7 @@ public interface FlavorExtraSpecsAsyncApi {
    /**
     * @see FlavorExtraSpecsApi#getMetadataKey(String, String)
     */
+   @Named("flavor:getmetadata")
    @GET
    @Path("/flavors/{flavor_id}/os-extra_specs/{key}")
    @Unwrap
@@ -93,6 +97,7 @@ public interface FlavorExtraSpecsAsyncApi {
    /**
     * @see FlavorExtraSpecsApi#updateMetadataEntry(String, String, String)
     */
+   @Named("flavor:updatemetadata")
    @PUT
    @Path("/flavors/{flavor_id}/os-extra_specs/{key}")
    @Produces(MediaType.APPLICATION_JSON)
@@ -105,6 +110,7 @@ public interface FlavorExtraSpecsAsyncApi {
    /**
     * @see FlavorExtraSpecsApi#deleteMetadataKey(String, String)
     */
+   @Named("flavor:deletemetadata")
    @DELETE
    @Path("/flavors/{flavor_id}/os-extra_specs/{key}")
    @Fallback(FalseOnNotFoundOr404.class)

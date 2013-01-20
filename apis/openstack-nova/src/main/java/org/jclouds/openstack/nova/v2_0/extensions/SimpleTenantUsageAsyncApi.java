@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v2_0.extensions;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -56,6 +57,7 @@ public interface SimpleTenantUsageAsyncApi {
    /**
     * @see SimpleTenantUsageApi#list()
     */
+   @Named("tenantusage:list")
    @GET
    @Path("/os-simple-tenant-usage")
    @SelectJson("tenant_usages")
@@ -66,6 +68,7 @@ public interface SimpleTenantUsageAsyncApi {
    /**
     * @see SimpleTenantUsageApi#get(String)
     */
+   @Named("tenantusage:get")
    @GET
    @Path("/os-simple-tenant-usage/{id}")
    @SelectJson("tenant_usage")

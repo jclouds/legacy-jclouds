@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v2_0.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -60,6 +61,7 @@ public interface FlavorAsyncApi {
    /**
     * @see FlavorApi#list()
     */
+   @Named("flavor:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/flavors")
@@ -70,6 +72,7 @@ public interface FlavorAsyncApi {
    ListenableFuture<? extends PagedIterable<? extends Resource>> list();
 
    /** @see FlavorApi#list(PaginationOptions) */
+   @Named("flavor:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/flavors")
@@ -81,6 +84,7 @@ public interface FlavorAsyncApi {
    /**
     * @see FlavorApi#listInDetail()
     */
+   @Named("flavor:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/flavors/detail")
@@ -91,6 +95,7 @@ public interface FlavorAsyncApi {
    ListenableFuture<? extends PagedIterable<? extends Flavor>> listInDetail();
 
    /** @see FlavorApi#listInDetail(PaginationOptions) */
+   @Named("flavor:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/flavors/detail")
@@ -102,6 +107,7 @@ public interface FlavorAsyncApi {
    /**
     * @see FlavorApi#get
     */
+   @Named("flavor:get")
    @GET
    @SelectJson("flavor")
    @Consumes(MediaType.APPLICATION_JSON)
