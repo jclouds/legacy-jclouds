@@ -22,8 +22,9 @@ package org.jclouds.abiquo.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.reflect.Reflection2.constructor;
 
-import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
@@ -44,6 +45,7 @@ import com.abiquo.server.core.task.TaskDto;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.reflect.Invokable;
 
 /**
  * This class is used to decorate transport objects with high level
@@ -103,13 +105,12 @@ public abstract class DomainWrapper<T extends SingleResourceTransportDto> {
       }
 
       try {
-         Constructor<W> cons = wrapperClass.getDeclaredConstructor(RestContext.class, target.getClass());
-         if (!cons.isAccessible()) {
-            cons.setAccessible(true);
-         }
-         return cons.newInstance(context, target);
-      } catch (Exception ex) {
-         throw new WrapperException(wrapperClass, target, ex);
+         Invokable<W, W> cons = constructor(wrapperClass, RestContext.class, target.getClass());
+         return cons.invoke(null, context, target);
+      } catch (InvocationTargetException e) {
+         throw new WrapperException(wrapperClass, target, e.getTargetException());
+      } catch (IllegalAccessException e) {
+         throw new WrapperException(wrapperClass, target, e);
       }
    }
 

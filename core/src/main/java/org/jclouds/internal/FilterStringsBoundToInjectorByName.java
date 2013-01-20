@@ -53,8 +53,7 @@ public class FilterStringsBoundToInjectorByName implements Function<Predicate<St
 
    @Override
    public Map<String, String> apply(Predicate<String> filter) {
-      List<Binding<String>> stringBindings = injector.findBindingsByType(new TypeLiteral<String>() {
-      });
+      List<Binding<String>> stringBindings = injector.findBindingsByType(TypeLiteral.get(String.class));
       Iterable<Binding<String>> annotatedWithName = Iterables.filter(stringBindings, new Predicate<Binding<String>>() {
 
          @Override
