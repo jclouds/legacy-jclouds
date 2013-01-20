@@ -21,6 +21,7 @@ package org.jclouds.rackspace.cloudloadbalancers.features;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -76,6 +77,7 @@ public interface NodeAsyncApi {
    /**
     * @see NodeApi#add(Set)
     */
+   @Named("node:add")
    @POST
    @SelectJson("nodes")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -86,6 +88,7 @@ public interface NodeAsyncApi {
    /**
     * @see NodeApi#update(int, NodeAttributes)
     */
+   @Named("node:update")
    @PUT
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/nodes/{id}")
@@ -94,6 +97,7 @@ public interface NodeAsyncApi {
    /**
     * @see NodeApi#list()
     */
+   @Named("node:list")
    @GET
    @ResponseParser(ParseNodes.class)
    @Transform(ParseNodes.ToPagedIterable.class)
@@ -105,6 +109,7 @@ public interface NodeAsyncApi {
    /** 
     * @see NodeApi#list(PaginationOptions) 
     */
+   @Named("node:list")
    @GET
    @ResponseParser(ParseNodes.class)
    @Consumes(MediaType.APPLICATION_JSON)
@@ -115,6 +120,7 @@ public interface NodeAsyncApi {
    /**
     * @see NodeApi#get(int)
     */
+   @Named("node:get")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(ParseNode.class)
@@ -125,6 +131,7 @@ public interface NodeAsyncApi {
    /**
     * @see NodeApi#remove(int)
     */
+   @Named("node:remove")
    @DELETE
    @Path("/nodes/{id}")
    @Fallback(VoidOnNotFoundOr404.class)
@@ -134,6 +141,7 @@ public interface NodeAsyncApi {
    /**
     * @see NodeApi#remove(Set)
     */
+   @Named("node:remove")
    @DELETE
    @Path("/nodes")
    @Fallback(VoidOnNotFoundOr404.class)
@@ -143,6 +151,7 @@ public interface NodeAsyncApi {
    /**
     * @see NodeApi#createMetadata(int, Iterable)
     */
+   @Named("node:createmetadata")
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(ParseMetadata.class)
@@ -155,6 +164,7 @@ public interface NodeAsyncApi {
    /**
     * @see NodeApi#getMetadata(int)
     */
+   @Named("node:getmetadata")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(ParseMetadata.class)
@@ -165,6 +175,7 @@ public interface NodeAsyncApi {
    /**
     * @see NodeApi#updateMetadatum(int, int, String)
     */
+   @Named("node:updatemetadatum")
    @PUT
    @Produces(MediaType.APPLICATION_JSON)
    @Consumes("*/*")
@@ -178,6 +189,7 @@ public interface NodeAsyncApi {
    /**
     * @see NodeApi#removeMetadatum(int, int)
     */
+   @Named("node:removemetadatum")
    @DELETE
    @Fallback(FalseOnNotFoundOr404.class)
    @Consumes("*/*")
@@ -187,6 +199,7 @@ public interface NodeAsyncApi {
    /**
     * @see NodeApi#removeMetadata(int, Iterable)
     */
+   @Named("node:removemetadata")
    @DELETE
    @Fallback(FalseOnNotFoundOr404.class)
    @Consumes("*/*")

@@ -20,6 +20,7 @@ package org.jclouds.rackspace.cloudloadbalancers.features;
 
 import java.util.Map;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -73,6 +74,7 @@ public interface LoadBalancerAsyncApi {
    /**
     * @see LoadBalancerApi#create(LoadBalancerRequest)
     */
+   @Named("lb:create")
    @POST
    @ResponseParser(ParseLoadBalancer.class)
    @Consumes(MediaType.APPLICATION_JSON)
@@ -83,6 +85,7 @@ public interface LoadBalancerAsyncApi {
    /**
     * @see LoadBalancerApi#update(int, LoadBalancerAttributes)
     */
+   @Named("lb:update")
    @PUT
    @ResponseParser(ParseLoadBalancer.class)
    @Consumes(MediaType.APPLICATION_JSON)
@@ -92,6 +95,7 @@ public interface LoadBalancerAsyncApi {
    /**
     * @see LoadBalancerApi#list()
     */
+   @Named("lb:list")
    @GET
    @ResponseParser(ParseLoadBalancers.class)
    @Transform(ParseLoadBalancers.ToPagedIterable.class)
@@ -103,6 +107,7 @@ public interface LoadBalancerAsyncApi {
    /** 
     * @see LoadBalancerApi#list(PaginationOptions) 
     */
+   @Named("lb:list")
    @GET
    @ResponseParser(ParseLoadBalancers.class)
    @Consumes(MediaType.APPLICATION_JSON)
@@ -113,6 +118,7 @@ public interface LoadBalancerAsyncApi {
    /**
     * @see LoadBalancerApi#get(int)
     */
+   @Named("lb:get")
    @GET
    @ResponseParser(ParseLoadBalancer.class)
    @Consumes(MediaType.APPLICATION_JSON)
@@ -123,6 +129,7 @@ public interface LoadBalancerAsyncApi {
    /**
     * @see LoadBalancerApi#remove(int)
     */
+   @Named("lb:remove")
    @DELETE
    @Fallback(VoidOnNotFoundOr404.class)
    @Path("/loadbalancers/{id}")
@@ -132,6 +139,7 @@ public interface LoadBalancerAsyncApi {
    /**
     * @see LoadBalancerApi#createMetadata(int, Iterable)
     */
+   @Named("lb:createmetadata")
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(ParseMetadata.class)
@@ -144,6 +152,7 @@ public interface LoadBalancerAsyncApi {
    /**
     * @see LoadBalancerApi#getMetadata(int)
     */
+   @Named("lb:getmetadata")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(ParseMetadata.class)
@@ -154,6 +163,7 @@ public interface LoadBalancerAsyncApi {
    /**
     * @see LoadBalancerApi#updateMetadatum(int, int, String)
     */
+   @Named("lb:updatemetadatum")
    @PUT
    @Produces(MediaType.APPLICATION_JSON)
    @Consumes("*/*")
@@ -167,6 +177,7 @@ public interface LoadBalancerAsyncApi {
    /**
     * @see LoadBalancerApi#removeMetadatum(int, int)
     */
+   @Named("lb:removemetadatum")
    @DELETE
    @Fallback(FalseOnNotFoundOr404.class)
    @Consumes("*/*")
@@ -176,6 +187,7 @@ public interface LoadBalancerAsyncApi {
    /**
     * @see LoadBalancerApi#removeMetadata(int, Iterable)
     */
+   @Named("lb:removemetadata")
    @DELETE
    @Fallback(FalseOnNotFoundOr404.class)
    @Consumes("*/*")
