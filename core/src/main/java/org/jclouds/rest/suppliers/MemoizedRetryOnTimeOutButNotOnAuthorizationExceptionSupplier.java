@@ -29,59 +29,51 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.jclouds.rest.AuthorizationException;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ForwardingObject;
-import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**
  * This will retry the supplier if it encounters a timeout exception, but not if it encounters an
  * AuthorizationException.
  * <p/>
- * A shared exception reference is used so that anyone who encounters an authorizationexception will
- * be short-circuited. This prevents accounts from being locked out.
+ * A shared exception reference is used so that anyone who encounters an authorizationexception will be short-circuited.
+ * This prevents accounts from being locked out.
  * 
  * <h3>details</h3>
- * http://code.google.com/p/google-guice/issues/detail?id=483 guice doesn't remember when singleton
- * providers throw exceptions. in this case, if the supplier fails with an authorization exception,
- * it is called again for each provider method that depends on it. To short-circuit this, we
- * remember the last exception trusting that guice is single-threaded.
+ * http://code.google.com/p/google-guice/issues/detail?id=483 guice doesn't remember when singleton providers throw
+ * exceptions. in this case, if the supplier fails with an authorization exception, it is called again for each provider
+ * method that depends on it. To short-circuit this, we remember the last exception trusting that guice is
+ * single-threaded.
  * 
- * Note this implementation is folded into the same class, vs being decorated as stacktraces are
- * exceptionally long and difficult to grok otherwise. We use {@link LoadingCache} to deal with
- * concurrency issues related to the supplier.
+ * Note this implementation is folded into the same class, vs being decorated as stacktraces are exceptionally long and
+ * difficult to grok otherwise. We use {@link LoadingCache} to deal with concurrency issues related to the supplier.
  * 
  * @author Adrian Cole
  */
 public class MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<T> extends ForwardingObject implements
-         Supplier<T> {
+      Supplier<T> {
 
-   static class NullValueException extends RuntimeException {
-
-   }
-
-   static class SetAndThrowAuthorizationExceptionSupplierBackedLoader<V> extends CacheLoader<String, V> {
+   static class SetAndThrowAuthorizationExceptionSupplierBackedLoader<V> extends CacheLoader<String, Optional<V>> {
 
       private final Supplier<V> delegate;
       private final AtomicReference<AuthorizationException> authException;
 
       public SetAndThrowAuthorizationExceptionSupplierBackedLoader(Supplier<V> delegate,
-               AtomicReference<AuthorizationException> authException) {
+            AtomicReference<AuthorizationException> authException) {
          this.delegate = checkNotNull(delegate, "delegate");
          this.authException = checkNotNull(authException, "authException");
       }
 
       @Override
-      public V load(String key) {
+      public Optional<V> load(String key) {
          if (authException.get() != null)
             throw authException.get();
          try {
-            V value = delegate.get();
-            if (value == null)
-               throw new NullValueException();
-            return value;
+            return Optional.fromNullable(delegate.get());
          } catch (Exception e) {
             AuthorizationException aex = getFirstThrowableOfType(e, AuthorizationException.class);
             if (aex != null) {
@@ -102,21 +94,21 @@ public class MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<T> ext
    private final Supplier<T> delegate;
    private final long duration;
    private final TimeUnit unit;
-   private final LoadingCache<String, T> cache;
+   private final LoadingCache<String, Optional<T>> cache;
 
    public static <T> MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<T> create(
-            AtomicReference<AuthorizationException> authException, Supplier<T> delegate, long duration, TimeUnit unit) {
+         AtomicReference<AuthorizationException> authException, Supplier<T> delegate, long duration, TimeUnit unit) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<T>(authException, delegate, duration,
-               unit);
+            unit);
    }
 
    MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier(AtomicReference<AuthorizationException> authException,
-            Supplier<T> delegate, long duration, TimeUnit unit) {
+         Supplier<T> delegate, long duration, TimeUnit unit) {
       this.delegate = delegate;
       this.duration = duration;
       this.unit = unit;
       this.cache = CacheBuilder.newBuilder().expireAfterWrite(duration, unit)
-               .build(new SetAndThrowAuthorizationExceptionSupplierBackedLoader<T>(delegate, authException));
+            .build(new SetAndThrowAuthorizationExceptionSupplierBackedLoader<T>(delegate, authException));
    }
 
    @Override
@@ -127,14 +119,7 @@ public class MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<T> ext
    @Override
    public T get() {
       try {
-         T returnVal = cache.get("FOO");
-         return returnVal;
-      } catch (UncheckedExecutionException e) {
-         NullValueException nullV = getFirstThrowableOfType(e, NullValueException.class);
-         if (nullV != null) {
-            return null;
-         }
-         throw propagate(e.getCause());
+         return cache.get("FOO").orNull();
       } catch (ExecutionException e) {
          throw propagate(e.getCause());
       }
@@ -143,7 +128,7 @@ public class MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<T> ext
    @Override
    public String toString() {
       return Objects.toStringHelper(this).add("delegate", delegate).add("duration", duration).add("unit", unit)
-               .toString();
+            .toString();
    }
 
 }
