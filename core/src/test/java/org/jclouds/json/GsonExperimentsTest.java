@@ -85,6 +85,7 @@ public class GsonExperimentsTest {
    }
 
    public class OptionalTypeAdapterFactory implements TypeAdapterFactory {
+      @SuppressWarnings("unchecked")
       public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
          Type type = typeToken.getType();
          if (typeToken.getRawType() != Optional.class || !(type instanceof ParameterizedType)) {

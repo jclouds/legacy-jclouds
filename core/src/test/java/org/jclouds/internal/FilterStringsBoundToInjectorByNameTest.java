@@ -71,7 +71,6 @@ public class FilterStringsBoundToInjectorByNameTest {
 
    public void testReturnsJavaNamedString() {
       FilterStringsBoundToInjectorByName fn = Guice.createInjector(new AbstractModule() {
-         @SuppressWarnings("unused")
          @Named("foo")
          @Provides
          String provideFoo() {
