@@ -67,11 +67,8 @@ public class ProvideIso3166CodesByLocationIdViaPropertiesTest {
                .<String, Set<String>> of("us-east", ImmutableSet.of("US"), "us-easta", ImmutableSet.of("US-CA")));
    }
 
-   //
-
    private LocationIdToIso3166CodesSupplier createWithValue(final ImmutableMap<String, String> value) {
       LocationIdToIso3166CodesSupplier fn = Guice.createInjector(new AbstractModule() {
-         @SuppressWarnings("unused")
          @Provides
          Function<Predicate<String>, Map<String, String>> provide() {
             return new Function<Predicate<String>, Map<String, String>>() {

@@ -64,21 +64,21 @@ public class InputParamValidatorTest {
             String.class, String.class);
       Invokable<?, ?> oneParamValidatedMethod = method(InputParamValidatorForm.class, "oneParamValidated",
             String.class, String.class);
-      restAnnotationProcessor.createRequest(allParamsValidatedMethod, ImmutableList.<Object> of("blah", "blah"));
-      restAnnotationProcessor.createRequest(oneParamValidatedMethod, ImmutableList.<Object> of("blah", "blah"));
+      restAnnotationProcessor.apply(Invocation.create(allParamsValidatedMethod, ImmutableList.<Object> of("blah", "blah")));
+      restAnnotationProcessor.apply(Invocation.create(oneParamValidatedMethod, ImmutableList.<Object> of("blah", "blah")));
 
       try {
-         restAnnotationProcessor.createRequest(allParamsValidatedMethod, ImmutableList.<Object> of("BLAH", "blah"));
+         restAnnotationProcessor.apply(Invocation.create(allParamsValidatedMethod, ImmutableList.<Object> of("BLAH", "blah")));
          throw new TestException(
                   "AllLowerCaseValidator shouldn't have passed 'BLAH' as a parameter because it's uppercase.");
       } catch (IllegalArgumentException e) {
          // supposed to happen - continue
       }
 
-      restAnnotationProcessor.createRequest(oneParamValidatedMethod, ImmutableList.<Object> of("BLAH", "blah"));
+      restAnnotationProcessor.apply(Invocation.create(oneParamValidatedMethod, ImmutableList.<Object> of("BLAH", "blah")));
 
       try {
-         restAnnotationProcessor.createRequest(oneParamValidatedMethod, ImmutableList.<Object> of("blah", "BLAH"));
+         restAnnotationProcessor.apply(Invocation.create(oneParamValidatedMethod, ImmutableList.<Object> of("blah", "BLAH")));
          throw new TestException(
                   "AllLowerCaseValidator shouldn't have passed 'BLAH' as the second parameter because it's uppercase.");
       } catch (IllegalArgumentException e) {

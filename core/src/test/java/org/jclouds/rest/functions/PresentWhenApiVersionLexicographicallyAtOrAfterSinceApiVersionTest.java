@@ -127,10 +127,10 @@ public class PresentWhenApiVersionLexicographicallyAtOrAfterSinceApiVersionTest 
       ImplicitOptionalConverter fn = forApiVersion("2011-07-15");
       Stopwatch watch = new Stopwatch().start();
       fn.apply(keyPairApi);
-      long first = watch.stop().elapsedTime(TimeUnit.MICROSECONDS);
+      long first = watch.stop().elapsed(TimeUnit.MICROSECONDS);
       watch.reset().start();
       fn.apply(keyPairApi);
-      long cached = watch.stop().elapsedTime(TimeUnit.MICROSECONDS);
+      long cached = watch.stop().elapsed(TimeUnit.MICROSECONDS);
       assertTrue(cached < first, String.format("cached [%s] should be less than initial [%s]", cached, first));
       Logger.getAnonymousLogger().info(
             "lookup cache saved " + (first - cached) + " microseconds when no annotation present");
@@ -141,10 +141,10 @@ public class PresentWhenApiVersionLexicographicallyAtOrAfterSinceApiVersionTest 
       ImplicitOptionalConverter fn = forApiVersion("2011-07-15");
       Stopwatch watch = new Stopwatch().start();
       fn.apply(floatingIpApi);
-      long first = watch.stop().elapsedTime(TimeUnit.MICROSECONDS);
+      long first = watch.stop().elapsed(TimeUnit.MICROSECONDS);
       watch.reset().start();
       fn.apply(floatingIpApi);
-      long cached = watch.stop().elapsedTime(TimeUnit.MICROSECONDS);
+      long cached = watch.stop().elapsed(TimeUnit.MICROSECONDS);
       assertTrue(cached < first, String.format("cached [%s] should be less than initial [%s]", cached, first));
       Logger.getAnonymousLogger().info(
             "lookup cache saved " + (first - cached) + " microseconds when annotation present");

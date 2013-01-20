@@ -18,6 +18,7 @@
  */
 package org.jclouds.util;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.fail;
@@ -99,7 +100,7 @@ public class Predicates2Test {
          }
 
       });
-      long duration = stopwatch.elapsedMillis();
+      long duration = stopwatch.elapsed(MILLISECONDS);
       assertOrdered(duration, SLOW_BUILD_SERVER_GRACE);
    }
 
@@ -109,7 +110,7 @@ public class Predicates2Test {
       Predicate<String> predicate = retry(Predicates.<String> alwaysTrue(), 3, 1, SECONDS);
       stopwatch.start();
       predicate.apply("");
-      long duration = stopwatch.elapsedMillis();
+      long duration = stopwatch.elapsed(MILLISECONDS);
       assertOrdered(duration, SLOW_BUILD_SERVER_GRACE);
    }
 
@@ -120,7 +121,7 @@ public class Predicates2Test {
       Predicate<String> predicate = retry(Predicates.<String> alwaysFalse(), 3, 1, SECONDS);
       stopwatch.start();
       predicate.apply("");
-      long duration = stopwatch.elapsedMillis();
+      long duration = stopwatch.elapsed(MILLISECONDS);
       assertOrdered(3000-EARLY_RETURN_GRACE, duration, 3000+SLOW_BUILD_SERVER_GRACE);
    }
 
@@ -133,7 +134,7 @@ public class Predicates2Test {
 
       stopwatch.start();
       predicate.apply("");
-      long duration = stopwatch.elapsedMillis();
+      long duration = stopwatch.elapsed(MILLISECONDS);
       
       assertOrdered(2500-EARLY_RETURN_GRACE, duration, 2500+SLOW_BUILD_SERVER_GRACE);
       assertCallTimes(rawPredicate.callTimes, 0, 1000, 1000+1500);
@@ -148,7 +149,7 @@ public class Predicates2Test {
 
       stopwatch.start();
       predicate.apply("");
-      long duration = stopwatch.elapsedMillis();
+      long duration = stopwatch.elapsed(MILLISECONDS);
       
       assertOrdered(2000-EARLY_RETURN_GRACE, duration, 2000+SLOW_BUILD_SERVER_GRACE);
       assertCallTimes(rawPredicate.callTimes, 0, 1000, 2000);
@@ -167,7 +168,7 @@ public class Predicates2Test {
       }
       @Override
       public boolean apply(String input) {
-         callTimes.add(stopwatch.elapsedMillis());
+         callTimes.add(stopwatch.elapsed(MILLISECONDS));
          return count++ == succeedOnAttempt;
       }
    }
