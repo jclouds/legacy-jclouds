@@ -27,6 +27,7 @@ import org.jclouds.abiquo.AbiquoFallbacks.NullOn303;
 import org.jclouds.abiquo.domain.CloudResources;
 import org.jclouds.abiquo.domain.TemplateResources;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
+import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
@@ -36,6 +37,7 @@ import com.abiquo.server.core.task.TaskDto;
 import com.abiquo.server.core.task.TasksDto;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.Invokable;
+
 /**
  * Tests annotation parsing of {@code TaskAsyncApi}
  * 
@@ -48,16 +50,14 @@ public class TaskAsyncApiTest extends BaseAbiquoAsyncApiTest<TaskAsyncApi> {
 
    public void testGetTaskVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = method(TaskAsyncApi.class, "getTask", RESTLink.class);
-      GeneratedHttpRequest request = processor
-            .createRequest(
-                  method,
-                  ImmutableList.<Object> of(new RESTLink(
-                        "task",
-                        "http://localhost/api/cloud/virtualdatacenters/1/virtualappliances/1/virtualmachines/1/tasks/169f1877-5f17-4f62-9563-974001295c54")));
+      GeneratedHttpRequest request = processor.apply(Invocation.create(method,
+            ImmutableList.<Object> of(new RESTLink("task",
+                  "http://localhost/api/cloud/virtualdatacenters/1/virtualappliances/1/virtualmachines/1"
+                        + "/tasks/169f1877-5f17-4f62-9563-974001295c54"))));
 
-      assertRequestLineEquals(
-            request,
-            "GET http://localhost/api/cloud/virtualdatacenters/1/virtualappliances/1/virtualmachines/1/tasks/169f1877-5f17-4f62-9563-974001295c54 HTTP/1.1");
+      assertRequestLineEquals(request,
+            "GET http://localhost/api/cloud/virtualdatacenters/1/virtualappliances/1/virtualmachines/1/"
+                  + "tasks/169f1877-5f17-4f62-9563-974001295c54 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: " + TaskDto.BASE_MEDIA_TYPE + "\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -70,7 +70,8 @@ public class TaskAsyncApiTest extends BaseAbiquoAsyncApiTest<TaskAsyncApi> {
 
    public void testListTasksVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = method(TaskAsyncApi.class, "listTasks", SingleResourceTransportDto.class);
-      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(CloudResources.virtualMachinePut()));
+      GeneratedHttpRequest request = processor.apply(Invocation.create(method,
+            ImmutableList.<Object> of(CloudResources.virtualMachinePut())));
 
       assertRequestLineEquals(request,
             "GET http://localhost/api/cloud/virtualdatacenters/1/virtualappliances/1/virtualmachines/1/tasks HTTP/1.1");
@@ -86,16 +87,14 @@ public class TaskAsyncApiTest extends BaseAbiquoAsyncApiTest<TaskAsyncApi> {
 
    public void testGetTaskVirtualMachineTemplate() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = method(TaskAsyncApi.class, "getTask", RESTLink.class);
-      GeneratedHttpRequest request = processor
-            .createRequest(
-                  method,
-                  ImmutableList.<Object> of(new RESTLink(
-                        "task",
-                        "http://localhost/api/admin/enterprises/1/datacenterrepositories/1/virtualmachinetemplates/1/tasks/169f1877-5f17-4f62-9563-974001295c54")));
+      GeneratedHttpRequest request = processor.apply(Invocation.create(method,
+            ImmutableList.<Object> of(new RESTLink("task",
+                  "http://localhost/api/admin/enterprises/1/datacenterrepositories/1/virtualmachinetemplates/1/"
+                        + "tasks/169f1877-5f17-4f62-9563-974001295c54"))));
 
-      assertRequestLineEquals(
-            request,
-            "GET http://localhost/api/admin/enterprises/1/datacenterrepositories/1/virtualmachinetemplates/1/tasks/169f1877-5f17-4f62-9563-974001295c54 HTTP/1.1");
+      assertRequestLineEquals(request,
+            "GET http://localhost/api/admin/enterprises/1/datacenterrepositories/1/virtualmachinetemplates/1"
+                  + "/tasks/169f1877-5f17-4f62-9563-974001295c54 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: " + TaskDto.BASE_MEDIA_TYPE + "\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -108,10 +107,11 @@ public class TaskAsyncApiTest extends BaseAbiquoAsyncApiTest<TaskAsyncApi> {
 
    public void testListTasksVirtualMachineTemplate() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = method(TaskAsyncApi.class, "listTasks", SingleResourceTransportDto.class);
-      GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(TemplateResources.virtualMachineTemplatePut()));
+      GeneratedHttpRequest request = processor.apply(Invocation.create(method,
+            ImmutableList.<Object> of(TemplateResources.virtualMachineTemplatePut())));
 
-      assertRequestLineEquals(request,
-            "GET http://localhost/api/admin/enterprises/1/datacenterrepositories/1/virtualmachinetemplates/1/tasks HTTP/1.1");
+      assertRequestLineEquals(request, "GET http://localhost/api/admin/enterprises/1/datacenterrepositories/1/"
+            + "virtualmachinetemplates/1/tasks HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: " + TasksDto.BASE_MEDIA_TYPE + "\n");
       assertPayloadEquals(request, null, null, false);
 
