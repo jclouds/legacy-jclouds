@@ -297,11 +297,17 @@ public class ContextBuilder {
 
       Properties unexpanded = currentStateToUnexpandedProperties();
 
-      ImmutableSet<String> keysToResolve = ImmutableSet.of(PROPERTY_ENDPOINT, PROPERTY_IDENTITY, PROPERTY_CREDENTIAL,
-               PROPERTY_API, PROPERTY_API_VERSION, PROPERTY_BUILD_VERSION);
+      Set<String> keysToResolve = ImmutableSet.of(PROPERTY_IDENTITY, PROPERTY_CREDENTIAL, PROPERTY_ENDPOINT,
+            PROPERTY_API, PROPERTY_API_VERSION, PROPERTY_BUILD_VERSION);
 
-      ImmutableSet<String> optionalKeys = apiMetadata.getCredentialName().isPresent() ? ImmutableSet.<String> of()
-               : ImmutableSet.of(PROPERTY_CREDENTIAL);
+      Set<String> optionalKeys;
+      if (credentialsSupplierOption.isPresent()) {
+         optionalKeys = ImmutableSet.of(PROPERTY_IDENTITY, PROPERTY_CREDENTIAL);
+      } else if (!apiMetadata.getCredentialName().isPresent()) {
+         optionalKeys = ImmutableSet.of(PROPERTY_CREDENTIAL);
+      } else {
+         optionalKeys = ImmutableSet.of();
+      }
 
       Properties resolved = resolveProperties(unexpanded, providerId, keysToResolve, optionalKeys);
 
@@ -401,8 +407,8 @@ public class ContextBuilder {
             String scopedProperty = ImmutableList.copyOf(Splitter.on('.').split(key)).get(1);
             mutable.setProperty(key, searchPropertiesForProviderScopedProperty(mutable, providerId,scopedProperty));
          } catch (NoSuchElementException e){
-    if (!optionalKeys.contains(key))
-       throw e;
+            if (!optionalKeys.contains(key))
+               throw e;
          }
       }
       return mutable;
