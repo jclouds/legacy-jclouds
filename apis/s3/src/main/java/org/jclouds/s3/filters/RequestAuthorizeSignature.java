@@ -39,6 +39,7 @@ import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
+import org.jclouds.aws.domain.TemporaryCredentials;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.TimeStamp;
@@ -116,10 +117,18 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
 
    public HttpRequest filter(HttpRequest request) throws HttpException {
       request = replaceDateHeader(request);
+      Credentials current = creds.get();
+      if (current instanceof TemporaryCredentials) {
+         request = replaceSecurityTokenHeader(request, TemporaryCredentials.class.cast(current));
+      }
       String signature = calculateSignature(createStringToSign(request));
       request = replaceAuthorizationHeader(request, signature);
       utils.logRequest(signatureLog, request, "<<");
       return request;
+   }
+
+   HttpRequest replaceSecurityTokenHeader(HttpRequest request, TemporaryCredentials current) {
+      return request.toBuilder().replaceHeader("x-amz-security-token", current.getSessionToken()).build();
    }
 
    HttpRequest replaceAuthorizationHeader(HttpRequest request, String signature) {
