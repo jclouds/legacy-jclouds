@@ -25,6 +25,7 @@ import java.util.Date;
 import org.jclouds.domain.Credentials;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Supplier;
 
 /**
  * AWS credentials for API authentication.
@@ -173,5 +174,4 @@ public final class TemporaryCredentials extends Credentials {
       return Objects.toStringHelper(this).add("accessKeyId", identity).add("sessionToken", sessionToken)
             .add("expiration", expiration).toString();
    }
-
 }
