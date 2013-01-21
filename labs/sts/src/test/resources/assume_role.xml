@@ -1,0 +1,18 @@
+<AssumeRoleResponse xmlns="https://sts.amazonaws.com/doc/2011-06-15/">
+	<AssumeRoleResult>
+		<Credentials>
+			<SessionToken>AQoEXAMPLEH4aoAH0gNCAPyJxz4BlCFFxWNE1OPTgk5TthT</SessionToken>
+			<SecretAccessKey>wJalrXUtnFEMI/K7MDENG/bPxRfiCYzEXAMPLEKEY</SecretAccessKey>
+			<Expiration>2011-07-11T19:55:29.611Z</Expiration>
+			<AccessKeyId>AKIAIOSFODNN7EXAMPLE</AccessKeyId>
+		</Credentials>
+		<AssumedRoleUser>
+			<Arn>arn:aws:sts::123456789012:assumed-role/demo/Bob</Arn>
+			<AssumedRoleId>ARO123EXAMPLE123:Bob</AssumedRoleId>
+		</AssumedRoleUser>
+		<PackedPolicySize>6</PackedPolicySize>
+	</AssumeRoleResult>
+	<ResponseMetadata>
+		<RequestId>c6104cbe-af31-11e0-8154-cbc7ccf896c7</RequestId>
+	</ResponseMetadata>
+</AssumeRoleResponse>
