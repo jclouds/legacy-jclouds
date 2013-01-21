@@ -40,15 +40,16 @@ import org.jclouds.json.Json;
 import org.jclouds.json.internal.DeserializationConstructorAndReflectiveTypeAdapterFactory;
 import org.jclouds.json.internal.EnumTypeAdapterThatReturnsFromValue;
 import org.jclouds.json.internal.GsonWrapper;
-import org.jclouds.json.internal.IgnoreNullFluentIterableTypeAdapterFactory;
-import org.jclouds.json.internal.IgnoreNullIterableTypeAdapterFactory;
-import org.jclouds.json.internal.IgnoreNullMapTypeAdapterFactory;
-import org.jclouds.json.internal.IgnoreNullMultimapTypeAdapterFactory;
-import org.jclouds.json.internal.IgnoreNullSetTypeAdapterFactory;
 import org.jclouds.json.internal.NamingStrategies.AnnotationConstructorNamingStrategy;
 import org.jclouds.json.internal.NamingStrategies.AnnotationOrNameFieldNamingStrategy;
 import org.jclouds.json.internal.NamingStrategies.ExtractNamed;
 import org.jclouds.json.internal.NamingStrategies.ExtractSerializedName;
+import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.CollectionTypeAdapterFactory;
+import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.FluentIterableTypeAdapterFactory;
+import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.IterableTypeAdapterFactory;
+import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.MapTypeAdapterFactory;
+import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.MultimapTypeAdapterFactory;
+import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.SetTypeAdapterFactory;
 import org.jclouds.json.internal.NullHackJsonLiteralAdapter;
 import org.jclouds.json.internal.OptionalTypeAdapterFactory;
 
@@ -84,14 +85,13 @@ public class GsonModule extends AbstractModule {
    @Provides
    @Singleton
    Gson provideGson(TypeAdapter<JsonBall> jsonAdapter, DateAdapter adapter, ByteListAdapter byteListAdapter,
-            ByteArrayAdapter byteArrayAdapter, PropertiesAdapter propertiesAdapter, JsonAdapterBindings bindings,
-            OptionalTypeAdapterFactory optional, IgnoreNullSetTypeAdapterFactory set,
-            IgnoreNullMapTypeAdapterFactory map, IgnoreNullMultimapTypeAdapterFactory multimap,
-            IgnoreNullIterableTypeAdapterFactory iterable, IgnoreNullFluentIterableTypeAdapterFactory fluentIterable)
-            throws Exception {
+         ByteArrayAdapter byteArrayAdapter, PropertiesAdapter propertiesAdapter, JsonAdapterBindings bindings,
+         OptionalTypeAdapterFactory optional, SetTypeAdapterFactory set, MapTypeAdapterFactory map,
+         MultimapTypeAdapterFactory multimap, IterableTypeAdapterFactory iterable,
+         CollectionTypeAdapterFactory collection, FluentIterableTypeAdapterFactory fluentIterable) throws Exception {
 
-      FieldNamingStrategy serializationPolicy = new AnnotationOrNameFieldNamingStrategy(new ExtractSerializedName(),
-            new ExtractNamed());
+      FieldNamingStrategy serializationPolicy = new AnnotationOrNameFieldNamingStrategy(ImmutableSet.of(
+            new ExtractSerializedName(), new ExtractNamed()));
 
       GsonBuilder builder = new GsonBuilder().setFieldNamingStrategy(serializationPolicy);
 
@@ -104,18 +104,17 @@ public class GsonModule extends AbstractModule {
       builder.registerTypeAdapter(JsonBall.class, jsonAdapter.nullSafe());
       builder.registerTypeAdapterFactory(optional);
       builder.registerTypeAdapterFactory(iterable);
+      builder.registerTypeAdapterFactory(collection);
       builder.registerTypeAdapterFactory(set);
       builder.registerTypeAdapterFactory(map);
       builder.registerTypeAdapterFactory(multimap);
       builder.registerTypeAdapterFactory(fluentIterable);
 
-      AnnotationConstructorNamingStrategy deserializationPolicy =
-            new AnnotationConstructorNamingStrategy(
-                  ImmutableSet.of(ConstructorProperties.class, Inject.class), ImmutableSet.of(new ExtractNamed()));
+      AnnotationConstructorNamingStrategy deserializationPolicy = new AnnotationConstructorNamingStrategy(
+            ImmutableSet.of(ConstructorProperties.class, Inject.class), ImmutableSet.of(new ExtractNamed()));
 
-      builder.registerTypeAdapterFactory(
-            new DeserializationConstructorAndReflectiveTypeAdapterFactory(new ConstructorConstructor(),
-            serializationPolicy, Excluder.DEFAULT, deserializationPolicy));
+      builder.registerTypeAdapterFactory(new DeserializationConstructorAndReflectiveTypeAdapterFactory(
+            new ConstructorConstructor(), serializationPolicy, Excluder.DEFAULT, deserializationPolicy));
 
       // complicated (serializers/deserializers as they need context to operate)
       builder.registerTypeHierarchyAdapter(Enum.class, new EnumTypeAdapterThatReturnsFromValue());

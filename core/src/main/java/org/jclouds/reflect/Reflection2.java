@@ -19,23 +19,33 @@
 package org.jclouds.reflect;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.toArray;
+import static com.google.common.base.Throwables.propagate;
+import static com.google.common.collect.Iterables.tryFind;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.reflect.Invokable;
+import com.google.common.reflect.Parameter;
 import com.google.common.reflect.TypeToken;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**
  * Utilities that allow access to {@link Invokable}s with {@link Invokable#getOwnerType() owner types}.
@@ -43,14 +53,50 @@ import com.google.common.reflect.TypeToken;
  * @since 1.6
  */
 @Beta
-public final class Reflection2 {
+public class Reflection2 {
+
+   /**
+    * gets a {@link TypeToken} for the given type.
+    */
+   @SuppressWarnings("unchecked")
+   public static <T> TypeToken<T> typeToken(Type in) {
+      return (TypeToken<T>) get(typeTokenForType, checkNotNull(in, "class"));
+   }
 
    /**
     * gets a {@link TypeToken} for the given class.
     */
    @SuppressWarnings("unchecked")
    public static <T> TypeToken<T> typeToken(Class<T> in) {
-      return (TypeToken<T>) typeTokenForClass.apply(checkNotNull(in, "class"));
+      return (TypeToken<T>) get(typeTokenForClass, checkNotNull(in, "class"));
+   }
+
+   /**
+    * returns an {@link Invokable} object that reflects a constructor present in the {@link TypeToken} type.
+    * 
+    * @param ownerType
+    *           corresponds to {@link Invokable#getOwnerType()}
+    * @param parameterTypes
+    *           corresponds to {@link Constructor#getParameterTypes()}
+    * 
+    * @throws IllegalArgumentException
+    *            if the constructor doesn't exist or a security exception occurred
+    */
+   @SuppressWarnings("unchecked")
+   public static <T> Invokable<T, T> constructor(Class<T> ownerType, Class<?>... parameterTypes) {
+      return (Invokable<T, T>) get(constructorForParams, new TypeTokenAndParameterTypes(typeToken(ownerType),
+            parameterTypes));
+   }
+
+   /**
+    * return all constructors present in the class as {@link Invokable}s.
+    * 
+    * @param ownerType
+    *           corresponds to {@link Invokable#getOwnerType()}
+    */
+   @SuppressWarnings("unchecked")
+   public static <T> Collection<Invokable<T, T>> constructors(TypeToken<T> ownerType) {
+      return Collection.class.cast(get(constructorsForTypeToken, ownerType));
    }
 
    /**
@@ -63,7 +109,7 @@ public final class Reflection2 {
     */
    @SuppressWarnings("unchecked")
    public static <T, R> Invokable<T, R> method(TypeToken<T> ownerType, Method method) {
-      return (Invokable<T, R>) methods.apply(new TypeTokenAndMethod(ownerType, method));
+      return (Invokable<T, R>) method(ownerType.getRawType(), method.getName(), method.getParameterTypes());
    }
 
    /**
@@ -79,7 +125,7 @@ public final class Reflection2 {
     */
    @SuppressWarnings("unchecked")
    public static <T, R> Invokable<T, R> method(Class<T> ownerType, String name, Class<?>... parameterTypes) {
-      return (Invokable<T, R>) methodForArgs.apply(new TypeTokenNameAndParameterTypes(typeToken(ownerType), name,
+      return (Invokable<T, R>) get(methodForParams, new TypeTokenNameAndParameterTypes(typeToken(ownerType), name,
             parameterTypes));
    }
 
@@ -91,51 +137,65 @@ public final class Reflection2 {
     */
    @SuppressWarnings("unchecked")
    public static <T> Collection<Invokable<T, Object>> methods(Class<T> ownerType) {
-      return Collection.class.cast(methodsForTypeToken.apply(typeToken(ownerType)).values());
+      return Collection.class.cast(get(methodsForTypeToken, typeToken(ownerType)));
    }
 
-   private static final LoadingCache<TypeTokenAndMethod, Invokable<?, ?>> methods = CacheBuilder.newBuilder().build(
-         new CacheLoader<TypeTokenAndMethod, Invokable<?, ?>>() {
-            public Invokable<?, ?> load(TypeTokenAndMethod key) {
-               return key.type.method(key.method);
+   /**
+    * this gets all declared constructors, not just public ones. makes them accessible, as well.
+    */
+   private static LoadingCache<TypeToken<?>, Set<Invokable<?, ?>>> constructorsForTypeToken = CacheBuilder
+         .newBuilder().build(new CacheLoader<TypeToken<?>, Set<Invokable<?, ?>>>() {
+            public Set<Invokable<?, ?>> load(TypeToken<?> key) {
+               ImmutableSet.Builder<Invokable<?, ?>> builder = ImmutableSet.<Invokable<?, ?>> builder();
+               for (Constructor<?> ctor : key.getRawType().getDeclaredConstructors()) {
+                  ctor.setAccessible(true);
+                  builder.add(key.constructor(ctor));
+               }
+               return builder.build();
             }
          });
 
-   private static class TypeTokenAndMethod {
-
-      protected final TypeToken<?> type;
-      protected final Method method;
-
-      public TypeTokenAndMethod(TypeToken<?> type, Method method) {
-         this.type = checkNotNull(type, "type");
-         this.method = checkNotNull(method, "method");
-      }
-
-      public int hashCode() {
-         return Objects.hashCode(type, method);
-      }
-
-      public boolean equals(Object obj) {
-         if (this == obj)
-            return true;
-         if (obj == null || getClass() != obj.getClass())
-            return false;
-         TypeTokenAndMethod that = TypeTokenAndMethod.class.cast(obj);
-         return Objects.equal(this.type, that.type) && Objects.equal(this.method, that.method);
-      }
+   protected static List<Class<?>> toClasses(ImmutableList<Parameter> params) {
+      return Lists.transform(params, new Function<Parameter, Class<?>>() {
+         public Class<?> apply(Parameter input) {
+            return input.getType().getRawType();
+         }
+      });
    }
 
-   private static final LoadingCache<Class<?>, TypeToken<?>> typeTokenForClass = CacheBuilder.newBuilder().build(
-         new CacheLoader<Class<?>, TypeToken<?>>() {
-            public TypeToken<?> load(final Class<?> key) {
+   private static LoadingCache<Type, TypeToken<?>> typeTokenForType = CacheBuilder.newBuilder().build(
+         new CacheLoader<Type, TypeToken<?>>() {
+            public TypeToken<?> load(Type key) {
                return TypeToken.of(key);
+            }
+         });
+
+   private static LoadingCache<Class<?>, TypeToken<?>> typeTokenForClass = CacheBuilder.newBuilder().build(
+         new CacheLoader<Class<?>, TypeToken<?>>() {
+            public TypeToken<?> load(Class<?> key) {
+               return TypeToken.of(key);
+            }
+         });
+
+   private static LoadingCache<TypeTokenAndParameterTypes, Invokable<?, ?>> constructorForParams = CacheBuilder
+         .newBuilder().build(new CacheLoader<TypeTokenAndParameterTypes, Invokable<?, ?>>() {
+            public Invokable<?, ?> load(final TypeTokenAndParameterTypes key) {
+               Set<Invokable<?, ?>> constructors = get(constructorsForTypeToken, key.type);
+               Optional<Invokable<?, ?>> constructor = tryFind(constructors, new Predicate<Invokable<?, ?>>() {
+                  public boolean apply(Invokable<?, ?> input) {
+                     return Objects.equal(toClasses(input.getParameters()), key.parameterTypes);
+                  }
+               });
+               if (constructor.isPresent())
+                  return constructor.get();
+               throw new IllegalArgumentException("no such constructor " + key.toString() + "in: " + constructors);
             }
          });
 
    private static class TypeTokenAndParameterTypes {
 
-      protected final TypeToken<?> type;
-      protected final List<Class<?>> parameterTypes;
+      protected TypeToken<?> type;
+      protected List<Class<?>> parameterTypes;
 
       public TypeTokenAndParameterTypes(TypeToken<?> type, Class<?>... parameterTypes) {
          this.type = checkNotNull(type, "type");
@@ -160,23 +220,25 @@ public final class Reflection2 {
       }
    }
 
-   private static final LoadingCache<TypeTokenNameAndParameterTypes, Invokable<?, ?>> methodForArgs = CacheBuilder
+   private static LoadingCache<TypeTokenNameAndParameterTypes, Invokable<?, ?>> methodForParams = CacheBuilder
          .newBuilder().build(new CacheLoader<TypeTokenNameAndParameterTypes, Invokable<?, ?>>() {
             public Invokable<?, ?> load(final TypeTokenNameAndParameterTypes key) {
-               try {
-                  Method method = key.type.getRawType().getMethod(key.name, toArray(key.parameterTypes, Class.class));
-                  return methods.apply(new TypeTokenAndMethod(key.type, method));
-               } catch (SecurityException e) {
-                  throw new IllegalArgumentException(e.getMessage() + " getting method " + key.toString(), e);
-               } catch (NoSuchMethodException e) {
-                  throw new IllegalArgumentException("no such method " + key.toString(), e);
-               }
+               Set<Invokable<?, ?>> methods = get(methodsForTypeToken, key.type);
+               Optional<Invokable<?, ?>> method = tryFind(methods, new Predicate<Invokable<?, ?>>() {
+                  public boolean apply(Invokable<?, ?> input) {
+                     return Objects.equal(input.getName(), key.name)
+                           && Objects.equal(toClasses(input.getParameters()), key.parameterTypes);
+                  }
+               });
+               if (method.isPresent())
+                  return method.get();
+               throw new IllegalArgumentException("no such method " + key.toString() + "in: " + methods);
             }
          });
 
    private static class TypeTokenNameAndParameterTypes extends TypeTokenAndParameterTypes {
 
-      private final String name;
+      private String name;
 
       public TypeTokenNameAndParameterTypes(TypeToken<?> type, String name, Class<?>... parameterTypes) {
          super(type, parameterTypes);
@@ -201,14 +263,36 @@ public final class Reflection2 {
       }
    }
 
-   private static final LoadingCache<TypeToken<?>, Map<Method, Invokable<?, ?>>> methodsForTypeToken = CacheBuilder
-         .newBuilder().build(new CacheLoader<TypeToken<?>, Map<Method, Invokable<?, ?>>>() {
-            public Map<Method, Invokable<?, ?>> load(final TypeToken<?> key) {
-               Builder<Method, Invokable<?, ?>> builder = ImmutableMap.<Method, Invokable<?, ?>> builder();
-               for (Method method : key.getRawType().getMethods())
-                  builder.put(method, method(key, method));
+   /**
+    * this gets all declared methods, not just public ones. makes them accessible. Does not include Object methods.
+    */
+   private static LoadingCache<TypeToken<?>, Set<Invokable<?, ?>>> methodsForTypeToken = CacheBuilder
+         .newBuilder().build(new CacheLoader<TypeToken<?>, Set<Invokable<?, ?>>>() {
+            public Set<Invokable<?, ?>> load(TypeToken<?> key) {
+               ImmutableSet.Builder<Invokable<?, ?>> builder = ImmutableSet.<Invokable<?, ?>> builder();
+               for (TypeToken<?> token : key.getTypes()) {
+                  Class<?> raw = token.getRawType();
+                  if (raw == Object.class)
+                     continue;
+                  for (Method method : raw.getDeclaredMethods()) {
+                     method.setAccessible(true);
+                     builder.add(key.method(method));
+                  }
+               }
                return builder.build();
             }
          });
 
+   /**
+    * ensures that exceptions are not doubly-wrapped
+    */
+   private static <K, V> V get(LoadingCache<K, V> cache, K key) {
+      try {
+         return cache.get(key);
+      } catch (UncheckedExecutionException e) {
+         throw propagate(e.getCause());
+      } catch (ExecutionException e) {
+         throw propagate(e.getCause());
+      }
+   }
 }

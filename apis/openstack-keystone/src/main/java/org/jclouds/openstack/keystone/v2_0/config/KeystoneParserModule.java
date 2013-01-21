@@ -21,37 +21,30 @@ package org.jclouds.openstack.keystone.v2_0.config;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Set;
 
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.json.config.GsonModule.DateAdapter;
+import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.SetTypeAdapterFactory;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import com.google.gson.Gson;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.gson.TypeAdapter;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
 
 /**
  * @author Adam Lowe
  */
 public class KeystoneParserModule extends AbstractModule {
 
-   
    @Override
    protected void configure() {
       bind(DateAdapter.class).to(GsonModule.Iso8601DateAdapter.class);
-      bind(new TypeLiteral<Set<TypeAdapterFactory>>() {
-      }).toInstance(ImmutableSet.<TypeAdapterFactory>of(new SetTypeAdapterFactory()));
+      bind(SetTypeAdapterFactory.class).to(ValuesSetTypeAdapterFactory.class);
    }
 
    /**
@@ -60,61 +53,49 @@ public class KeystoneParserModule extends AbstractModule {
     * <p/>
     * Treats [A,B,C] and {"values"=[A,B,C], "someotherstuff"=...} as the same Set
     */
-   public static class SetTypeAdapterFactory implements TypeAdapterFactory {
-      @SuppressWarnings("unchecked")
-      public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
-         Type type = typeToken.getType();
-         if (typeToken.getRawType() != Set.class || !(type instanceof ParameterizedType)) {
-            return null;
-         }
+   public static class ValuesSetTypeAdapterFactory extends SetTypeAdapterFactory {
 
-         Type elementType = ((ParameterizedType) type).getActualTypeArguments()[0];
-         TypeAdapter<?> elementAdapter = gson.getAdapter(TypeToken.get(elementType));
-         return TypeAdapter.class.cast(newSetAdapter(elementAdapter));
+      @Override
+      @SuppressWarnings("unchecked")
+      protected <E, I> TypeAdapter<I> newAdapter(TypeAdapter<E> elementAdapter) {
+         return (TypeAdapter<I>) new Adapter<E>(elementAdapter);
       }
 
-      private <E> TypeAdapter<Set<E>> newSetAdapter(final TypeAdapter<E> elementAdapter) {
-         return new TypeAdapter<Set<E>>() {
-            public void write(JsonWriter out, Set<E> value) throws IOException {
-               out.beginArray();
-               for (E element : value) {
-                  elementAdapter.write(out, element);
-               }
-               out.endArray();
-            }
+      public static final class Adapter<E> extends TypeAdapter<Set<E>> {
 
-            public Set<E> read(JsonReader in) throws IOException {
-               Set<E> result = Sets.newLinkedHashSet();
-               if (in.peek() == JsonToken.BEGIN_OBJECT) {
-                  boolean foundValues = false;
-                  in.beginObject();
-                  while (in.hasNext()) {
-                     String name = in.nextName();
-                     if (Objects.equal("values", name)) {
-                        foundValues = true;
-                        readArray(in, result);
-                     } else {
-                        in.skipValue();
-                     }
-                  }
-                  checkState(foundValues, "Expected BEGIN_ARRAY or the object to contain an array called 'values'");
-                  in.endObject();
-               } else {
-                  readArray(in, result);
-               }
+         private final SetTypeAdapterFactory.SetTypeAdapter<E> delegate;
 
-               return result;
-            }
+         public Adapter(TypeAdapter<E> elementAdapter) {
+            this.delegate = new SetTypeAdapterFactory.SetTypeAdapter<E>(elementAdapter);
+            nullSafe();
+         }
 
-            private void readArray(JsonReader in, Set<E> result) throws IOException {
-               in.beginArray();
+         public void write(JsonWriter out, Set<E> value) throws IOException {
+            this.delegate.write(out, value);
+         }
+
+         @Override
+         public Set<E> read(JsonReader in) throws IOException {
+            if (in.peek() == JsonToken.BEGIN_OBJECT) {
+               Builder<E> builder = ImmutableSet.<E>builder();
+               boolean foundValues = false;
+               in.beginObject();
                while (in.hasNext()) {
-                  E element = elementAdapter.read(in);
-                  result.add(element);
+                  String name = in.nextName();
+                  if (Objects.equal("values", name)) {
+                     foundValues = true;
+                     builder.addAll(delegate.read(in));
+                  } else {
+                     in.skipValue();
+                  }
                }
-               in.endArray();
+               checkState(foundValues, "Expected BEGIN_ARRAY or the object to contain an array called 'values'");
+               in.endObject();
+               return builder.build();
+            } else {
+               return delegate.read(in);
             }
-         }.nullSafe();
+         }
       }
    }
 }

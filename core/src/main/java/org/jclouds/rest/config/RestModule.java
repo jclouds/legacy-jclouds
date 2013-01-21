@@ -20,7 +20,6 @@ package org.jclouds.rest.config;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.toArray;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Maps.transformValues;
@@ -32,11 +31,9 @@ import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
 import static org.jclouds.util.Maps2.transformKeys;
 import static org.jclouds.util.Predicates2.startsWith;
 
-import java.lang.reflect.Method;
 import java.net.Proxy;
 import java.net.URI;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Named;
@@ -47,7 +44,6 @@ import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.internal.FilterStringsBoundToInjectorByName;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.location.config.LocationModule;
-import com.google.common.reflect.Invokable;
 import org.jclouds.proxy.ProxyForURI;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.HttpAsyncClient;
@@ -55,13 +51,14 @@ import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.binders.BindToJsonPayloadWrappedWith;
 import org.jclouds.rest.internal.BlockOnFuture;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.Invokable;
 import com.google.common.reflect.Parameter;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -80,8 +77,6 @@ public class RestModule extends AbstractModule {
       this(ImmutableMap.<Class<?>, Class<?>> of());
    }
 
-   private static final Set<Method> objectMethods = ImmutableSet.copyOf(Object.class.getMethods());
-
    public RestModule(Map<Class<?>, Class<?>> sync2Async) {
       this.sync2Async = sync2Async;
    }
@@ -92,6 +87,11 @@ public class RestModule extends AbstractModule {
    @Provides
    @Singleton
    protected Cache<Invokable<?, ?>, Invokable<?, ?>> seedKnownSync2AsyncInvokables() {
+      return seedKnownSync2AsyncInvokables(sync2Async);
+   }
+
+   @VisibleForTesting
+   static Cache<Invokable<?, ?>, Invokable<?, ?>> seedKnownSync2AsyncInvokables(Map<Class<?>, Class<?>> sync2Async) {
       Cache<Invokable<?, ?>, Invokable<?, ?>> sync2AsyncBuilder = CacheBuilder.newBuilder().build();
       putInvokables(HttpClient.class, HttpAsyncClient.class, sync2AsyncBuilder);
       for (Class<?> s : sync2Async.keySet()) {
@@ -103,18 +103,10 @@ public class RestModule extends AbstractModule {
    // accessible for ClientProvider
    public static void putInvokables(Class<?> sync, Class<?> async, Cache<Invokable<?, ?>, Invokable<?, ?>> cache) {
       for (Invokable<?, ?> invoked : methods(sync)) {
-         if (!objectMethods.contains(invoked)) {
-            try {
-               Invokable<?, ?> delegatedMethod = method(async, invoked.getName(), getParameterTypes(invoked));
-               checkArgument(delegatedMethod.getExceptionTypes().equals(invoked.getExceptionTypes()),
-                     "invoked %s has different typed exceptions than delegated invoked %s", invoked, delegatedMethod);
-               invoked.setAccessible(true);
-               delegatedMethod.setAccessible(true);
-               cache.put(invoked, delegatedMethod);
-            } catch (SecurityException e) {
-               throw propagate(e);
-            }
-         }
+         Invokable<?, ?> delegatedMethod = method(async, invoked.getName(), getParameterTypes(invoked));
+         checkArgument(delegatedMethod.getExceptionTypes().equals(invoked.getExceptionTypes()),
+               "invoked %s has different typed exceptions than target %s", invoked, delegatedMethod);
+         cache.put(invoked, delegatedMethod);
       }
    }
 

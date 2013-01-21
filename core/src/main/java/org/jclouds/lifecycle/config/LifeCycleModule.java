@@ -19,19 +19,18 @@
 package org.jclouds.lifecycle.config;
 
 import static com.google.common.base.Throwables.propagate;
-import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Iterables.filter;
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static com.google.inject.matcher.Matchers.any;
-import static java.util.Arrays.asList;
 import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
 import static org.jclouds.Constants.PROPERTY_SCHEDULER_THREADS;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
+import static org.jclouds.reflect.Reflection2.methods;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Set;
+import java.util.Collection;
 import java.util.concurrent.ScheduledExecutorService;
 
 import javax.annotation.PostConstruct;
@@ -40,6 +39,8 @@ import javax.inject.Named;
 
 import org.jclouds.lifecycle.Closer;
 
+import com.google.common.base.Predicate;
+import com.google.common.reflect.Invokable;
 import com.google.common.util.concurrent.ExecutionList;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.AbstractModule;
@@ -51,15 +52,15 @@ import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 
 /**
- * This associates java lifecycle annotations with guice hooks. For example, we invoke
- * {@link PostConstruct} after injection, and Associate {@link PreDestroy} with a global
- * {@link Closer} object.
+ * This associates java lifecycle annotations with guice hooks. For example, we invoke {@link PostConstruct} after
+ * injection, and Associate {@link PreDestroy} with a global {@link Closer} object.
  * 
- * <h3>Important</h3> Make sure you create your injector with {@link Stage#PRODUCTION} and execute
- * the bound {@link ExecutionList} prior to using any other objects.
+ * <h3>Important</h3> Make sure you create your injector with {@link Stage#PRODUCTION} and execute the bound
+ * {@link ExecutionList} prior to using any other objects.
  * 
  * <p/>
  * Ex.
+ * 
  * <pre>
  * 
  * </pre>
@@ -89,7 +90,7 @@ public class LifeCycleModule extends AbstractModule {
             ioExecutor.shutdownNow();
             // ScheduledExecutor is defined in an optional module
             if (scheduledExecutor != null)
-                scheduledExecutor.shutdownNow();
+               scheduledExecutor.shutdownNow();
          }
       };
 
@@ -103,67 +104,57 @@ public class LifeCycleModule extends AbstractModule {
       bind(ExecutionList.class).toInstance(list);
    }
 
+   private static final Predicate<Invokable<?, ?>> isPreDestroy = new Predicate<Invokable<?, ?>>() {
+      public boolean apply(Invokable<?, ?> in) {
+         return in.isAnnotationPresent(PreDestroy.class);
+      }
+   };
+
+   private static final Predicate<Invokable<?, ?>> isPostConstruct = new Predicate<Invokable<?, ?>>() {
+      public boolean apply(Invokable<?, ?> in) {
+         return in.isAnnotationPresent(PostConstruct.class);
+      }
+   };
+
    protected void bindPostInjectionInvoke(final Closer closer, final ExecutionList list) {
       bindListener(any(), new TypeListener() {
          public <I> void hear(TypeLiteral<I> injectableType, TypeEncounter<I> encounter) {
-            Set<Method> methods = newHashSet();
-            Class<? super I> type = injectableType.getRawType();
-            while (type != null) {
-               methods.addAll(asList(type.getDeclaredMethods()));
-               type = type.getSuperclass();
-            }
-            for (final Method method : methods) {
-               invokePostConstructMethodAfterInjection(encounter, method);
-               associatePreDestroyWithCloser(closer, encounter, method);
-            }
-         }
-
-         private <I> void associatePreDestroyWithCloser(final Closer closer, TypeEncounter<I> encounter,
-                  final Method method) {
-            PreDestroy preDestroy = method.getAnnotation(PreDestroy.class);
-            if (preDestroy != null) {
-               encounter.register(new InjectionListener<I>() {
-                  public void afterInjection(final I injectee) {
-                     closer.addToClose(new Closeable() {
-                        public void close() throws IOException {
-                           try {
-                              method.invoke(injectee);
-                           } catch (InvocationTargetException ie) {
-                              Throwable e = ie.getTargetException();
-                              throw new IOException(e.getMessage());
-                           } catch (IllegalAccessException e) {
-                              throw new IOException(e.getMessage());
-                           }
-                        }
-                     });
-
-                  }
-               });
-            }
-         }
-
-         private <I> void invokePostConstructMethodAfterInjection(TypeEncounter<I> encounter, final Method method) {
-            PostConstruct postConstruct = method.getAnnotation(PostConstruct.class);
-            if (postConstruct != null) {
+            Collection<? extends Invokable<? super I, Object>> methods = methods(injectableType.getRawType());
+            for (final Invokable<? super I, Object> method : filter(methods, isPostConstruct)) {
                encounter.register(new InjectionListener<I>() {
                   public void afterInjection(final I injectee) {
                      list.add(new Runnable() {
                         public void run() {
-                           try {
-                              method.invoke(injectee);
-                           } catch (InvocationTargetException ie) {
-                              Throwable e = ie.getTargetException();
-                              throw propagate(e);
-                           } catch (IllegalAccessException e) {
-                              throw propagate(e);
-                           }
+                           invokeOnInjectee(method, injectee);
                         }
+
                      }, sameThreadExecutor());
                   }
                });
             }
+            for (final Invokable<? super I, Object> method : filter(methods, isPreDestroy)) {
+               encounter.register(new InjectionListener<I>() {
+                  public void afterInjection(final I injectee) {
+                     closer.addToClose(new Closeable() {
+                        public void close() throws IOException {
+                           invokeOnInjectee(method, injectee);
+                        }
+                     });
+                  }
+               });
+            }
          }
+
       });
    }
 
+   private static <I> void invokeOnInjectee(Invokable<? super I, Object> method, I injectee) {
+      try {
+         method.invoke(injectee);
+      } catch (InvocationTargetException ie) {
+         throw propagate(ie.getTargetException());
+      } catch (IllegalAccessException e) {
+         throw propagate(e);
+      }
+   }
 }

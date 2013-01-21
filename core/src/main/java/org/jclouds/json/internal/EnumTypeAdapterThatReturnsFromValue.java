@@ -18,13 +18,11 @@
  */
 package org.jclouds.json.internal;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.concurrent.ExecutionException;
+import static org.jclouds.reflect.Reflection2.method;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import java.lang.reflect.Type;
+
+import com.google.common.reflect.Invokable;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -48,32 +46,11 @@ public class EnumTypeAdapterThatReturnsFromValue<T extends Enum<T>> implements J
          return (T) Enum.valueOf((Class<T>) classOfT, json.getAsString());
       } catch (IllegalArgumentException e) {
          try {
-            Method converter = classToConvert.get((Class<?>) classOfT);
+            Invokable<?, Object> converter = method((Class<?>) classOfT, "fromValue", String.class);
             return (T) converter.invoke(null, json.getAsString());
          } catch (Exception e1) {
             throw e;
          }
       }
-   }
-
-   private static final LoadingCache<Class<?>, Method> classToConvert = CacheBuilder.newBuilder()
-         .build(new CacheLoader<Class<?>, Method>() {
-
-            @Override
-            public Method load(Class<?> from) throws ExecutionException {
-               try {
-                  Method method = from.getMethod("fromValue", String.class);
-                  method.setAccessible(true);
-                  return method;
-               } catch (Exception e) {
-                  throw new ExecutionException(e);
-               }
-            }
-
-         });
-
-   @Override
-   public String toString() {
-      return EnumTypeAdapterThatReturnsFromValue.class.getSimpleName();
    }
 }

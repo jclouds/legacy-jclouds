@@ -42,7 +42,7 @@ public class OptionalTypeAdapterFactoryTest {
     * Simple type with an Optional field
     */
    static class SimpleBean {
-      private Optional<String> value;
+      private final Optional<String> value;
       private final String someOtherValue;
 
       public SimpleBean(Optional<String> value, String someOtherValue) {
@@ -51,6 +51,7 @@ public class OptionalTypeAdapterFactoryTest {
       }
 
       // Required to ensure GSON doesn't initialize our Optional to null!
+      @SuppressWarnings("unused")
       private SimpleBean() {
          this.value = Optional.absent();
          this.someOtherValue = null;
@@ -64,22 +65,9 @@ public class OptionalTypeAdapterFactoryTest {
          return someOtherValue;
       }
 
-      @Override
-      public int hashCode() {
-         return Objects.hashCode(value, someOtherValue);
-      }
-
-      @Override
-      public boolean equals(Object that) {
-         if (that == null || that.getClass() != getClass())
-            return false;
-         SimpleBean other = (SimpleBean) that;
-         return Objects.equal(value, other.value) && Objects.equal(someOtherValue, other.someOtherValue);
-      }
-
-      @Override
-      public String toString() {
-         return Objects.toStringHelper("SimpleBean").add("value", value).add("someOtherValue", someOtherValue).toString();
+      public boolean equals(Object other) {
+         SimpleBean that = SimpleBean.class.cast(other);
+         return Objects.equal(value, that.value) && Objects.equal(someOtherValue, that.someOtherValue);
       }
    }
 

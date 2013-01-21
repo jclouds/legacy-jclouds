@@ -19,14 +19,13 @@
 package org.jclouds.rest.config;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.inject.name.Names.named;
 
 import org.jclouds.reflect.Invocation;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import com.google.inject.Provider;
-import com.google.inject.TypeLiteral;
-import com.google.inject.name.Names;
 
 /**
  * Allows the provider to supply a value set in a threadlocal.
@@ -55,8 +54,7 @@ public class SetCaller {
       }
    }
 
-   private static final Key<Invocation> CALLER_INVOCATION = Key.get(new TypeLiteral<Invocation>() {
-   }, Names.named("caller"));
+   private static final Key<Invocation> CALLER_INVOCATION = Key.get(Invocation.class, named("caller"));
 
    class CallerInvocationProvider implements Provider<Invocation> {
       @Override
