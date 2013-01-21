@@ -1,0 +1,8 @@
+{
+    "healthMonitor": {
+        "type": "CONNECT",
+        "delay": 3599,
+        "timeout": 30,
+        "attemptsBeforeDeactivation": 2
+    }
+}

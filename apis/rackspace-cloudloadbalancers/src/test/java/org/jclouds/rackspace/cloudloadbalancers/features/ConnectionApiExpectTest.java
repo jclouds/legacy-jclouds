@@ -20,6 +20,7 @@ package org.jclouds.rackspace.cloudloadbalancers.features;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertNull;
 
 import java.net.URI;
 
@@ -49,6 +50,19 @@ public class ConnectionApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
       assertEquals(connectionThrottle, getConnectionThrottle());
    }
 
+   public void testGetDeletedConnectionThrottle() {
+      URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000/connectionthrottle");
+      ConnectionApi api = requestsSendResponses(
+            rackspaceAuthWithUsernameAndApiKey,
+            responseWithAccess, 
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/connectionthrottle-get-deleted.json")).build()
+      ).getConnectionApiForZoneAndLoadBalancer("DFW", 2000);
+
+      ConnectionThrottle connectionThrottle = api.getConnectionThrottle();
+      assertNull(connectionThrottle);
+   }
+
    public void testCreateConnectionThrottle() {
       URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000/connectionthrottle");
       ConnectionApi api = requestsSendResponses(
@@ -70,7 +84,7 @@ public class ConnectionApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
       ConnectionThrottle.builder().build();      
    }
 
-   public void testRemoveSingleVirtualIP() {
+   public void testRemoveConnectionThrottle() {
       URI endpoint = URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000/connectionthrottle");
       ConnectionApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,

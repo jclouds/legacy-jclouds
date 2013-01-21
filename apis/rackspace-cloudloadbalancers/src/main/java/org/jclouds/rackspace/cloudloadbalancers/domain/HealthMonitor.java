@@ -20,8 +20,13 @@ package org.jclouds.rackspace.cloudloadbalancers.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.beans.ConstructorProperties;
+
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Optional;
 
 /**
  * The load balancing service includes a health monitoring operation which periodically checks your back-end nodes to 
@@ -29,11 +34,11 @@ import com.google.common.base.Objects.ToStringHelper;
  * monitor determines that the node is functional. In addition to being performed periodically, the health check also 
  * is performed against every node that is added to ensure that the node is operating properly before allowing it to 
  * service traffic. Only one health monitor is allowed to be enabled on a load balancer at a time.
- * 
+ * </p>
  * As part of your strategy for monitoring connections, you should consider defining secondary nodes that provide 
  * failover for effectively routing traffic in case the primary node fails. This is an additional feature that will 
  * ensure you remain up in case your primary node fails.
- * 
+ * <p/>
  * @author Everett Toews
  */
 public class HealthMonitor {
@@ -42,21 +47,31 @@ public class HealthMonitor {
    private final int delay;
    private final int timeout;
    private final int attemptsBeforeDeactivation;
-   private final String bodyRegex;
-   private final String statusRegex;
-   private final String path;
-   private final String hostHeader;
+   private final Optional<String> bodyRegex;
+   private final Optional<String> statusRegex;
+   private final Optional<String> path;
+   private final Optional<String> hostHeader;
 
-   protected HealthMonitor(Type type, int delay, int timeout, int attemptsBeforeDeactivation, String bodyRegex,
-         String statusRegex, String path, String hostHeader) {
+   @ConstructorProperties({
+      "type", "delay", "timeout", "attemptsBeforeDeactivation", "bodyRegex", "statusRegex", "path", "hostHeader"
+   })
+   protected HealthMonitor(Type type, int delay, int timeout, int attemptsBeforeDeactivation, 
+         @Nullable String bodyRegex, @Nullable String statusRegex, @Nullable String path, 
+         @Nullable String hostHeader) {
       this.type = checkNotNull(type, "type");
       this.delay = delay;
       this.timeout = timeout;
       this.attemptsBeforeDeactivation = attemptsBeforeDeactivation;
-      this.bodyRegex = bodyRegex;
-      this.statusRegex = statusRegex;
-      this.path = path;
-      this.hostHeader = hostHeader;
+      this.bodyRegex = Optional.fromNullable(bodyRegex);
+      this.statusRegex = Optional.fromNullable(statusRegex);
+      this.path = Optional.fromNullable(path);
+      this.hostHeader = Optional.fromNullable(hostHeader);
+      
+      if (!isValid())
+         if (type.equals(Type.CONNECT))
+            throw new IllegalArgumentException("Only delay, timeout, and attemptsBeforeDeactivation must be set.");
+         else
+            throw new IllegalArgumentException("At least delay, timeout, attemptsBeforeDeactivation, and path must be set.");
    }
 
    public Type getType() {
@@ -75,25 +90,38 @@ public class HealthMonitor {
       return attemptsBeforeDeactivation;
    }
 
-   public String getBodyRegex() {
+   public Optional<String> getBodyRegex() {
       return bodyRegex;
    }
 
-   public String getStatusRegex() {
+   public Optional<String> getStatusRegex() {
       return statusRegex;
    }
 
-   public String getPath() {
+   public Optional<String> getPath() {
       return path;
    }
 
-   public String getHostHeader() {
+   public Optional<String> getHostHeader() {
       return hostHeader;
+   }
+   
+   /**
+    * @return true if this HealthMonitor is valid, false otherwise
+    */
+   public boolean isValid() {
+      boolean required = delay != 0 && timeout != 0 && attemptsBeforeDeactivation != 0;
+      
+      if (type.equals(Type.CONNECT))
+         return required && !path.isPresent() && !statusRegex.isPresent() 
+                && !bodyRegex.isPresent() && !hostHeader.isPresent();
+      else
+         return required && path.isPresent();
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(type, delay, timeout, attemptsBeforeDeactivation, bodyRegex, statusRegex, path,
+      return Objects.hashCode(type, delay, timeout, attemptsBeforeDeactivation, bodyRegex, statusRegex, path, 
             hostHeader);
    }
 
@@ -113,9 +141,10 @@ public class HealthMonitor {
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper(this).add("type", type).add("delay", delay).add("timeout", timeout)
-            .add("attemptsBeforeDeactivation", attemptsBeforeDeactivation).add("bodyRegex", bodyRegex)
-            .add("statusRegex", statusRegex).add("path", path).add("hostHeader", hostHeader);
+      return Objects.toStringHelper(this).omitNullValues().add("type", type).add("delay", delay)
+            .add("timeout", timeout).add("attemptsBeforeDeactivation", attemptsBeforeDeactivation)
+            .add("bodyRegex", bodyRegex).add("statusRegex", statusRegex).add("path", path)
+            .add("hostHeader", hostHeader);
    }
 
    @Override
@@ -225,8 +254,9 @@ public class HealthMonitor {
 
       public Builder from(HealthMonitor in) {
          return this.type(in.getType()).delay(in.getDelay()).timeout(in.getTimeout())
-               .attemptsBeforeDeactivation(in.getAttemptsBeforeDeactivation()).bodyRegex(in.getBodyRegex())
-               .statusRegex(in.getStatusRegex()).path(in.getPath()).hostHeader(in.getHostHeader());
+               .attemptsBeforeDeactivation(in.getAttemptsBeforeDeactivation()).bodyRegex(in.getBodyRegex().orNull())
+               .statusRegex(in.getStatusRegex().orNull()).path(in.getPath().orNull())
+               .hostHeader(in.getHostHeader().orNull());
       }
    }
 

@@ -27,6 +27,7 @@ import org.jclouds.location.Zone;
 import org.jclouds.location.functions.ZoneToEndpoint;
 import org.jclouds.rackspace.cloudloadbalancers.features.AccessRuleApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.ConnectionApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.HealthMonitorApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.NodeApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.VirtualIPApi;
@@ -87,5 +88,13 @@ public interface CloudLoadBalancersApi {
    @Delegate
    @Path("/loadbalancers/{lbId}")
    ConnectionApi getConnectionApiForZoneAndLoadBalancer(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
+
+   /**
+    * Provides synchronous access to Health Monitor features.
+    */
+   @Delegate
+   @Path("/loadbalancers/{lbId}")
+   HealthMonitorApi getHealthMonitorApiForZoneAndLoadBalancer(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 }
