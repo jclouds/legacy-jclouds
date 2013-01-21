@@ -19,6 +19,7 @@
 package org.jclouds;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.in;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.primitives.Ints.asList;
@@ -82,6 +83,18 @@ public final class Fallbacks {
       @Override
       public ListenableFuture<Boolean> create(Throwable t) {
          return valOnNotFoundOr404(false, checkNotNull(t, "throwable"));
+      }
+
+   }
+
+   public static final class FalseOnNotFoundOr422 implements FutureFallback<Boolean> {
+
+      @Override
+      public ListenableFuture<Boolean> create(Throwable t) {
+         if (containsResourceNotFoundException(checkNotNull(t, "throwable")) 
+             || returnValueOnCodeOrNull(t, true, equalTo(422)) != null)
+            return immediateFuture(false);
+         throw propagate(t);
       }
 
    }

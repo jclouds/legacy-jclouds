@@ -18,6 +18,8 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.domain;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
@@ -40,6 +42,8 @@ public class ConnectionThrottle {
       this.minConnections = minConnections;
       this.maxConnectionRate = maxConnectionRate;
       this.rateInterval = rateInterval;
+      checkArgument(isValid(), 
+            "At least one of maxConnections, minConnections, maxConnectionRate, or rateInterval must be set.");
    }
 
    public int getMaxConnections() {
@@ -56,6 +60,10 @@ public class ConnectionThrottle {
 
    public int getRateInterval() {
       return this.rateInterval;
+   }
+   
+   public boolean isValid() {
+      return maxConnections != 0 && minConnections != 0 && maxConnectionRate != 0 && rateInterval != 0;
    }
 
    @Override
