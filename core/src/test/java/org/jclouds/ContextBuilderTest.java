@@ -64,10 +64,7 @@ public class ContextBuilderTest {
 
    @ConfiguresHttpCommandExecutorService
    static class HttpModule extends AbstractModule {
-
-      @Override
       protected void configure() {
-
       }
    }
 
@@ -124,9 +121,6 @@ public class ContextBuilderTest {
 
    @Test
    public void testProviderMetadataWithCredentialsSetSupplier() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_IDENTITY, "foo");
-      overrides.setProperty(Constants.PROPERTY_CREDENTIAL, "BAR");
       ContextBuilder withCredsSupplier = testContextBuilder().credentialsSupplier(
             ofInstance(new Credentials("foo", "BAR")));
       Credentials creds = withCredsSupplier.buildInjector()
@@ -239,14 +233,10 @@ public class ContextBuilderTest {
    public void testBuilder() {
 
       Module module1 = new AbstractModule() {
-
-         @Override
          protected void configure() {
          }
       };
       Module module2 = new AbstractModule() {
-
-         @Override
          protected void configure() {
          }
       };
