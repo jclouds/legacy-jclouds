@@ -1,0 +1,18 @@
+<GetFederationTokenResponse xmlns="https://sts.amazonaws.com/doc/2011-06-15/">
+	<GetFederationTokenResult>
+		<Credentials>
+			<SessionToken>AQoEXAMPLEH4aoAH0gNCAPyJxz4BlCFFxWNE1OPTgk5TthT</SessionToken>
+			<SecretAccessKey>wJalrXUtnFEMI/K7MDENG/bPxRfiCYzEXAMPLEKEY</SecretAccessKey>
+			<Expiration>2011-07-11T19:55:29.611Z</Expiration>
+			<AccessKeyId>AKIAIOSFODNN7EXAMPLE</AccessKeyId>
+		</Credentials>
+		<FederatedUser>
+			<Arn>arn:aws:sts::123456789012:federated-user/Bob</Arn>
+			<FederatedUserId>123456789012:Bob</FederatedUserId>
+		</FederatedUser>
+		<PackedPolicySize>6</PackedPolicySize>
+	</GetFederationTokenResult>
+	<ResponseMetadata>
+		<RequestId>c6104cbe-af31-11e0-8154-cbc7ccf896c7</RequestId>
+	</ResponseMetadata>
+</GetFederationTokenResponse>
