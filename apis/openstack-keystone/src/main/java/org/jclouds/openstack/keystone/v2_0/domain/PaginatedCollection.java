@@ -44,10 +44,6 @@ import com.google.common.collect.Iterables;
  */
 @Beta
 public class PaginatedCollection<T> extends IterableWithMarker<T> {
-
-   @SuppressWarnings({ "rawtypes", "unchecked" })
-   public static final PaginatedCollection EMPTY = new PaginatedCollection(ImmutableSet.of(), ImmutableSet.of());
-
    private Iterable<T> resources;
    private Iterable<Link> links;
 

@@ -48,11 +48,11 @@ import com.google.inject.TypeLiteral;
  */
 @Beta
 @Singleton
-public class ParseFlavors extends ParseJson<Flavors<? extends Resource>> {
-   static class Flavors<T extends Resource> extends PaginatedCollection<T> {
+public class ParseFlavors extends ParseJson<Flavors> {
+   static class Flavors extends PaginatedCollection<Resource> {
 
       @ConstructorProperties({ "flavors", "flavors_links" })
-      protected Flavors(Iterable<T> flavors, Iterable<Link> flavors_links) {
+      protected Flavors(Iterable<Resource> flavors, Iterable<Link> flavors_links) {
          super(flavors, flavors_links);
       }
 
@@ -60,8 +60,7 @@ public class ParseFlavors extends ParseJson<Flavors<? extends Resource>> {
 
    @Inject
    public ParseFlavors(Json json) {
-      super(json, new TypeLiteral<Flavors<? extends Resource>>() {
-      });
+      super(json, TypeLiteral.get(Flavors.class));
    }
 
    public static class ToPagedIterable extends CallerArg0ToPagedIterable<Resource, ToPagedIterable> {

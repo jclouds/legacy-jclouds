@@ -48,11 +48,11 @@ import com.google.inject.TypeLiteral;
  */
 @Beta
 @Singleton
-public class ParseImages extends ParseJson<Images<? extends Resource>> {
-   static class Images<T extends Resource> extends PaginatedCollection<T> {
+public class ParseImages extends ParseJson<Images> {
+   static class Images extends PaginatedCollection<Resource> {
 
       @ConstructorProperties({ "images", "images_links" })
-      protected Images(Iterable<T> images, Iterable<Link> images_links) {
+      protected Images(Iterable<Resource> images, Iterable<Link> images_links) {
          super(images, images_links);
       }
 
@@ -60,8 +60,7 @@ public class ParseImages extends ParseJson<Images<? extends Resource>> {
 
    @Inject
    public ParseImages(Json json) {
-      super(json, new TypeLiteral<Images<? extends Resource>>() {
-      });
+      super(json, TypeLiteral.get(Images.class));
    }
 
    public static class ToPagedIterable extends CallerArg0ToPagedIterable<Resource, ToPagedIterable> {

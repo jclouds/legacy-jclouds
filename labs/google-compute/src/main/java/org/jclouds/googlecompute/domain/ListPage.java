@@ -46,8 +46,8 @@ public class ListPage<T> extends IterableWithMarker<T> {
    private final Iterable<T> items;
 
    protected ListPage(Kind kind, String id, URI selfLink, String nextPageToken, Iterable<T> items) {
-      this.kind = checkNotNull(kind, "kind of %id", id);
       this.id = checkNotNull(id, "id");
+      this.kind = checkNotNull(kind, "kind of %id", id);
       this.selfLink = checkNotNull(selfLink, "selfLink of %id", id);
       this.nextPageToken = nextPageToken;
       this.items = items != null ? ImmutableSet.copyOf(items) : ImmutableSet.<T>of();
@@ -90,7 +90,7 @@ public class ListPage<T> extends IterableWithMarker<T> {
    public boolean equals(Object obj) {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
-      ListPage that = ListPage.class.cast(obj);
+      ListPage<?> that = ListPage.class.cast(obj);
       return equal(this.kind, that.kind)
               && equal(this.id, that.id);
    }
