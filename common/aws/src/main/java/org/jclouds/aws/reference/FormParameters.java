@@ -60,6 +60,10 @@ public interface FormParameters {
     */
    public static final String SIGNATURE = "Signature";
    /**
+    * Temporary access token.
+    */
+   public static final String SECURITY_TOKEN = "SecurityToken";
+   /**
     * The hash algorithm you use to create the request signature. Valid values: HmacSHA256 |
     * HmacSHA1. For more information, go to the Amazon Elastic Compute Cloud Developer Guide.
     * Example: HmacSHA256

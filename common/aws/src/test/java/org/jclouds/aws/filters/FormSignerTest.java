@@ -87,8 +87,7 @@ public class FormSignerTest {
       HttpRequest filtered = filter(new TemporaryCredentialsHandlerTest().expected()).filter(request);
       assertEquals(
             filtered.getPayload().getRawContent(),
-            "Action=DescribeImages&ImageId.1=ami-2bb65342&Signature=waV%2B%2BIdRwHRlnK2126CqgHHd4FZb%2B5wAeRueidjFc/M%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Version=apiVersion&AWSAccessKeyId=AKIAIOSFODNN7EXAMPLE");
-      assertEquals(filtered.getFirstHeaderOrNull("SecurityToken"), "AQoEXAMPLEH4aoAH0gNCAPyJxz4BlCFFxWNE1OPTgk5TthT");
+            "Action=DescribeImages&ImageId.1=ami-2bb65342&SecurityToken=AQoEXAMPLEH4aoAH0gNCAPyJxz4BlCFFxWNE1OPTgk5TthT&Signature=/8ReFVH1tvyNORsJb%2BSBieT9zvdqREQQr/olwmxC7VY%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Version=apiVersion&AWSAccessKeyId=AKIAIOSFODNN7EXAMPLE");
    }
 
    @Test

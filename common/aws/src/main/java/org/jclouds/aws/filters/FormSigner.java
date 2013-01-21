@@ -23,7 +23,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Ordering.natural;
 import static org.jclouds.aws.reference.FormParameters.ACTION;
 import static org.jclouds.aws.reference.FormParameters.AWS_ACCESS_KEY_ID;
-import static org.jclouds.aws.reference.FormParameters.SIGNATURE;
+import static org.jclouds.aws.reference.FormParameters.*;
 import static org.jclouds.aws.reference.FormParameters.SIGNATURE_METHOD;
 import static org.jclouds.aws.reference.FormParameters.SIGNATURE_VERSION;
 import static org.jclouds.aws.reference.FormParameters.TIMESTAMP;
@@ -113,16 +113,8 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
       String signature = sign(stringToSign);
       addSignature(decodedParams, signature);
       request = setPayload(request, decodedParams);
-      Credentials current = creds.get();
-      if (current instanceof TemporaryCredentials) {
-         request = replaceSecurityTokenHeader(request, TemporaryCredentials.class.cast(current));
-      }
       utils.logRequest(signatureLog, request, "<<");
       return request;
-   }
-
-   HttpRequest replaceSecurityTokenHeader(HttpRequest request, TemporaryCredentials current) {
-      return request.toBuilder().replaceHeader("SecurityToken", current.getSessionToken()).build();
    }
    
    HttpRequest setPayload(HttpRequest request, Multimap<String, String> decodedParams) {
@@ -208,11 +200,16 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
 
    @VisibleForTesting
    void addSigningParams(Multimap<String, String> params) {
+      params.removeAll(SIGNATURE);
+      params.removeAll(SECURITY_TOKEN);
+      Credentials current = creds.get();
+      if (current instanceof TemporaryCredentials) {
+         params.put(SECURITY_TOKEN, TemporaryCredentials.class.cast(current).getSessionToken());
+      }
       params.replaceValues(SIGNATURE_METHOD, ImmutableList.of("HmacSHA256"));
       params.replaceValues(SIGNATURE_VERSION, ImmutableList.of("2"));
       params.replaceValues(TIMESTAMP, ImmutableList.of(dateService.get()));
       params.replaceValues(AWS_ACCESS_KEY_ID, ImmutableList.of(creds.get().identity));
-      params.removeAll(SIGNATURE);
    }
 
    public String createStringToSign(HttpRequest input) {
