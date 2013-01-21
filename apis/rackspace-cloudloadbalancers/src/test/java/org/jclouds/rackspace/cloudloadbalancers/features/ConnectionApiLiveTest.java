@@ -21,29 +21,26 @@ package org.jclouds.rackspace.cloudloadbalancers.features;
 import static org.jclouds.rackspace.cloudloadbalancers.predicates.LoadBalancerPredicates.awaitAvailable;
 import static org.jclouds.rackspace.cloudloadbalancers.predicates.LoadBalancerPredicates.awaitDeleted;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-import java.util.List;
-
+import org.jclouds.rackspace.cloudloadbalancers.domain.ConnectionThrottle;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerRequest;
 import org.jclouds.rackspace.cloudloadbalancers.domain.NodeRequest;
-import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP;
 import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP.Type;
-import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIPWithId;
 import org.jclouds.rackspace.cloudloadbalancers.internal.BaseCloudLoadBalancersApiLiveTest;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
 
 /**
  * @author Everett Toews
  */
-@Test(groups = "live", singleThreaded = true, testName = "VirtualIPApiLiveTest")
-public class VirtualIPApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
+@Test(groups = "live", singleThreaded = true, testName = "ConnectionApiLiveTest")
+public class ConnectionApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    private LoadBalancer lb;
    private String zone;
 
@@ -59,45 +56,48 @@ public class VirtualIPApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    }
 
    @Test(dependsOnMethods = "testCreateLoadBalancer")
-   public void testCreateVirtualIPs() throws Exception {
-      clbApi.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).create(VirtualIP.publicIPv6());
+   public void testCreateAndGetConnectionThrottling() throws Exception {
+      clbApi.getConnectionApiForZoneAndLoadBalancer(zone, lb.getId()).createOrUpdateConnectionThrottle(
+            ConnectionApiExpectTest.getConnectionThrottle());
       assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
-      clbApi.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).create(VirtualIP.publicIPv6());
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
-      clbApi.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).create(VirtualIP.publicIPv6());
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
+      
+      ConnectionThrottle connectionThrottle = 
+            clbApi.getConnectionApiForZoneAndLoadBalancer(zone, lb.getId()).getConnectionThrottle();
 
-      Iterable<VirtualIPWithId> actualVirtualIPs = clbApi.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).list();
-
-      assertEquals(Iterators.size(actualVirtualIPs.iterator()), 5);
+      assertEquals(connectionThrottle, ConnectionApiExpectTest.getConnectionThrottle());
    }
    
-   @Test(dependsOnMethods = "testCreateVirtualIPs")
-   public void testRemoveSingleVirtualIP() throws Exception {
-      Iterable<VirtualIPWithId> actualVirtualIPs = clbApi.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).list();
-      VirtualIPWithId removedVirtualIP = Iterables.getFirst(actualVirtualIPs, null);
-      
-      assertTrue(clbApi.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).remove(removedVirtualIP.getId()));
+   @Test(dependsOnMethods = "testCreateAndGetConnectionThrottling")
+   public void testRemoveAndGetConnectionThrottle() throws Exception {
+      assertTrue(clbApi.getConnectionApiForZoneAndLoadBalancer(zone, lb.getId()).removeConnectionThrottle());
       assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
       
-      actualVirtualIPs = clbApi.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).list();
-
-      assertEquals(Iterators.size(actualVirtualIPs.iterator()), 4);
+      ConnectionThrottle connectionThrottle = 
+            clbApi.getConnectionApiForZoneAndLoadBalancer(zone, lb.getId()).getConnectionThrottle();
+      
+      assertNull(connectionThrottle);
    }
    
-   @Test(dependsOnMethods = "testRemoveSingleVirtualIP")
-   public void testRemoveManyVirtualIPs() throws Exception {
-      Iterable<VirtualIPWithId> actualVirtualIPs = clbApi.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).list();
-      VirtualIPWithId removedVirtualIP1 = Iterables.getFirst(actualVirtualIPs, null);
-      VirtualIPWithId removedVirtualIP2 = Iterables.getLast(actualVirtualIPs);
-      List<Integer> removedVirtualIPIds = ImmutableList.<Integer> of(removedVirtualIP1.getId(), removedVirtualIP2.getId());
-      
-      assertTrue(clbApi.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).remove(removedVirtualIPIds));
+   @Test(dependsOnMethods = "testRemoveAndGetConnectionThrottle")
+   public void testEnableAndIsConnectionLogging() throws Exception {
+      clbApi.getConnectionApiForZoneAndLoadBalancer(zone, lb.getId()).enableConnectionLogging();
       assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
       
-      actualVirtualIPs = clbApi.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).list();
-
-      assertEquals(Iterators.size(actualVirtualIPs.iterator()), 2);
+      boolean isConnectionLogging = 
+            clbApi.getConnectionApiForZoneAndLoadBalancer(zone, lb.getId()).isConnectionLogging();
+      
+      assertTrue(isConnectionLogging);
+   }
+   
+   @Test(dependsOnMethods = "testEnableAndIsConnectionLogging")
+   public void testDisableAndIsConnectionLogging() throws Exception {
+      clbApi.getConnectionApiForZoneAndLoadBalancer(zone, lb.getId()).disableConnectionLogging();
+      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
+      
+      boolean isConnectionLogging = 
+            clbApi.getConnectionApiForZoneAndLoadBalancer(zone, lb.getId()).isConnectionLogging();
+      
+      assertFalse(isConnectionLogging);
    }
 
    @Override

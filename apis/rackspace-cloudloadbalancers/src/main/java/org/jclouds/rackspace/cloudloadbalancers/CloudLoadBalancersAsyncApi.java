@@ -27,6 +27,7 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Zone;
 import org.jclouds.location.functions.ZoneToEndpoint;
 import org.jclouds.rackspace.cloudloadbalancers.features.AccessRuleAsyncApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.ConnectionApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.NodeAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.VirtualIPAsyncApi;
@@ -79,5 +80,13 @@ public interface CloudLoadBalancersAsyncApi {
    @Delegate
    @Path("/loadbalancers/{lbId}")
    VirtualIPAsyncApi getVirtualIPApiForZoneAndLoadBalancer(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
+
+   /**
+    * Provides synchronous access to Connection features.
+    */
+   @Delegate
+   @Path("/loadbalancers/{lbId}")
+   ConnectionApi getConnectionApiForZoneAndLoadBalancer(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 }
