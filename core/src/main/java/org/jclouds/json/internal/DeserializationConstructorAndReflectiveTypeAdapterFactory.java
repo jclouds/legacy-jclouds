@@ -20,22 +20,25 @@ package org.jclouds.json.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 
-import org.jclouds.json.internal.NamingStrategies.ConstructorFieldNamingStrategy;
+import org.jclouds.json.internal.NamingStrategies.AnnotationConstructorNamingStrategy;
 
-import com.google.common.collect.Maps;
+import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.reflect.Invokable;
+import com.google.common.reflect.Parameter;
 import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
-import com.google.gson.internal.$Gson$Types;
 import com.google.gson.internal.ConstructorConstructor;
 import com.google.gson.internal.Excluder;
 import com.google.gson.internal.bind.ReflectiveTypeAdapterFactory;
@@ -49,21 +52,20 @@ import com.google.gson.stream.JsonWriter;
  * <p/>
  * <ul>
  * <li>Deserialization</li>
- * If there's an annotation designating a parameterized constructor, invoke that for fields
- * correlating to named parameter annotations. Otherwise, use {@link ConstructorConstructor}, and
- * set fields via reflection.
+ * If there's an annotation designating a parameterized constructor, invoke that for fields correlating to named
+ * parameter annotations. Otherwise, use {@link ConstructorConstructor}, and set fields via reflection.
  * <p/>
- * Notes: primitive constructor params are set to the Java defaults (0 or false) if not present; and
- *  the empty object ({}) is treated as a null if the constructor for the object throws an NPE.
- * <li>Serialization</li>
- * Serialize based on reflective access to fields, delegating to ReflectiveTypeAdaptor.
+ * Notes: primitive constructor params are set to the Java defaults (0 or false) if not present; and the empty object
+ * ({}) is treated as a null if the constructor for the object throws an NPE.
+ * <li>Serialization</li> Serialize based on reflective access to fields, delegating to ReflectiveTypeAdaptor.
  * </ul>
  * <h3>Example: Using javax inject to select a constructor and corresponding named parameters</h3>
  * <p/>
+ * 
  * <pre>
- *    
+ * 
  * import NamingStrategies.*;
- *
+ * 
  * serializationStrategy = new AnnotationOrNameFieldNamingStrategy(
  *    new ExtractSerializedName(), new ExtractNamed());
  * 
@@ -73,19 +75,20 @@ import com.google.gson.stream.JsonWriter;
  *    
  * factory = new DeserializationConstructorAndReflectiveTypeAdapterFactory(new ConstructorConstructor(),
  *      serializationStrategy, Excluder.DEFAULT, deserializationStrategy);
- *
+ * 
  * gson = new GsonBuilder(serializationStrategy).registerTypeAdapterFactory(factory).create();
- *
+ * 
  * </pre>
  * <p/>
  * The above would work fine on the following class, which has no gson-specific annotations:
  * <p/>
+ * 
  * <pre>
  * private static class ImmutableAndVerifiedInCtor {
  *    final int foo;
  *    &#064;Named(&quot;_bar&quot;)
  *    final int bar;
- *
+ * 
  *    &#064;Inject
  *    ImmutableAndVerifiedInCtor(@Named(&quot;foo&quot;) int foo, @Named(&quot;_bar&quot;) int bar) {
  *       if (foo &lt; 0)
@@ -97,54 +100,47 @@ import com.google.gson.stream.JsonWriter;
  * </pre>
  * <p/>
  * <br/>
- *
+ * 
  * @author Adrian Cole
  * @author Adam Lowe
  */
 public final class DeserializationConstructorAndReflectiveTypeAdapterFactory implements TypeAdapterFactory {
-   private final ConstructorFieldNamingStrategy constructorFieldNamingPolicy;
+   private final AnnotationConstructorNamingStrategy constructorFieldNamingPolicy;
    private final ReflectiveTypeAdapterFactory delegateFactory;
 
    /**
-    * @param constructorConstructor         passed through to delegate ReflectiveTypeAdapterFactory for serialization
-    * @param serializationFieldNamingPolicy passed through to delegate ReflectiveTypeAdapterFactory for serialization
-    * @param excluder                       passed through to delegate ReflectiveTypeAdapterFactory for serialization
-    * @param deserializationFieldNamingPolicy
-    *                                       determines which constructor to use and how to determine field names for
-    *                                       deserialization
     * @see ReflectiveTypeAdapterFactory
     */
-   public DeserializationConstructorAndReflectiveTypeAdapterFactory(
-         ConstructorConstructor constructorConstructor,
-         FieldNamingStrategy serializationFieldNamingPolicy,
-         Excluder excluder,
-         ConstructorFieldNamingStrategy deserializationFieldNamingPolicy) {
-      this.constructorFieldNamingPolicy = checkNotNull(deserializationFieldNamingPolicy, "deserializationFieldNamingPolicy");
-      this.delegateFactory = new ReflectiveTypeAdapterFactory(constructorConstructor, checkNotNull(serializationFieldNamingPolicy, "fieldNamingPolicy"), checkNotNull(excluder, "excluder"));
+   public DeserializationConstructorAndReflectiveTypeAdapterFactory(ConstructorConstructor constructorConstructor,
+         FieldNamingStrategy serializationFieldNamingPolicy, Excluder excluder,
+         AnnotationConstructorNamingStrategy deserializationFieldNamingPolicy) {
+      this.constructorFieldNamingPolicy = checkNotNull(deserializationFieldNamingPolicy,
+            "deserializationFieldNamingPolicy");
+      this.delegateFactory = new ReflectiveTypeAdapterFactory(constructorConstructor, checkNotNull(
+            serializationFieldNamingPolicy, "fieldNamingPolicy"), checkNotNull(excluder, "excluder"));
    }
 
-   public <T> TypeAdapter<T> create(Gson gson, final TypeToken<T> type) {
-      Class<? super T> raw = type.getRawType();
-      Constructor<? super T> deserializationCtor = constructorFieldNamingPolicy.getDeserializationConstructor(raw);
+   public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
+      com.google.common.reflect.TypeToken<T> token = typeToken(type.getType());
+      Invokable<T, T> deserializationCtor = constructorFieldNamingPolicy.getDeserializer(token);
 
       if (deserializationCtor == null) {
          return null; // allow GSON to choose the correct Adapter (can't simply return delegateFactory.create())
       } else {
-         deserializationCtor.setAccessible(true);
-         return new DeserializeWithParameterizedConstructorSerializeWithDelegate<T>(delegateFactory.create(gson, type), deserializationCtor,
-               getParameterReaders(gson, type, deserializationCtor));
+         return new DeserializeIntoParameterizedConstructor<T>(delegateFactory.create(gson, type), deserializationCtor,
+               getParameterReaders(gson, deserializationCtor));
       }
    }
 
-   private final class DeserializeWithParameterizedConstructorSerializeWithDelegate<T> extends TypeAdapter<T> {
-      private final Constructor<? super T> parameterizedCtor;
+   private final class DeserializeIntoParameterizedConstructor<T> extends TypeAdapter<T> {
+      private final TypeAdapter<T> serializer;
+      private final Invokable<T, T> parameterizedCtor;
       private final Map<String, ParameterReader<?>> parameterReaders;
-      private final TypeAdapter<T> delegate;
 
-      private DeserializeWithParameterizedConstructorSerializeWithDelegate(TypeAdapter<T> delegate,
-                                                                           Constructor<? super T> parameterizedCtor, Map<String, ParameterReader<?>> parameterReaders) {
-         this.delegate = delegate;
-         this.parameterizedCtor = parameterizedCtor;
+      private DeserializeIntoParameterizedConstructor(TypeAdapter<T> serializer, Invokable<T, T> deserializationCtor,
+            Map<String, ParameterReader<?>> parameterReaders) {
+         this.serializer = serializer;
+         this.parameterizedCtor = deserializationCtor;
          this.parameterReaders = parameterReaders;
       }
 
@@ -155,16 +151,16 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactory imp
             return null;
          }
 
-         Class<?>[] paramTypes = parameterizedCtor.getParameterTypes();
-         Object[] ctorParams = new Object[paramTypes.length];
+         List<Parameter> params = parameterizedCtor.getParameters();
+         Object[] values = new Object[params.size()];
          boolean empty = true;
 
          // Set all primitive constructor params to defaults
-         for (int i = 0; i < paramTypes.length; i++) {
-            if (paramTypes[i] == boolean.class) {
-               ctorParams[i] = Boolean.FALSE;
-            } else if (paramTypes[i].isPrimitive()) {
-               ctorParams[i] = 0;
+         for (Parameter param : params) {
+            if (param.getType().getRawType() == boolean.class) {
+               values[param.hashCode()] = Boolean.FALSE;
+            } else if (param.getType().getRawType().isPrimitive()) {
+               values[param.hashCode()] = 0;
             }
          }
 
@@ -178,26 +174,27 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactory imp
                   in.skipValue();
                } else {
                   Object value = parameter.read(in);
-                  if (value != null) ctorParams[parameter.index] = value;
+                  if (value != null)
+                     values[parameter.position] = value;
                }
             }
          } catch (IllegalStateException e) {
             throw new JsonSyntaxException(e);
          }
 
-         for (int i = 0; i < paramTypes.length; i++) {
-            if (paramTypes[i].isPrimitive()) {
-               checkArgument(ctorParams[i] != null, "Primitive param[" + i + "] in constructor " + parameterizedCtor
-                     + " cannot be absent!");
+         for (Parameter param : params) {
+            if (param.getType().getRawType().isPrimitive()) {
+               checkArgument(values[param.hashCode()] != null, "Primitive param[" + param.hashCode()
+                     + "] in constructor " + parameterizedCtor + " cannot be absent!");
             }
          }
          in.endObject();
 
          try {
-            return newInstance(ctorParams);
+            return newInstance(values);
          } catch (NullPointerException ex) {
             // If {} was found and constructor threw NPE, we treat the field as null
-            if (empty && paramTypes.length > 0) {
+            if (empty && values.length > 0) {
                return null;
             }
             throw ex;
@@ -209,15 +206,12 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactory imp
        */
       @Override
       public void write(JsonWriter out, T value) throws IOException {
-         delegate.write(out, value);
+         serializer.write(out, value);
       }
 
-      @SuppressWarnings("unchecked")
       private T newInstance(Object[] ctorParams) throws AssertionError {
          try {
-            return (T) parameterizedCtor.newInstance(ctorParams);
-         } catch (InstantiationException e) {
-            throw new AssertionError(e);
+            return (T) parameterizedCtor.invoke(null, ctorParams);
          } catch (IllegalAccessException e) {
             throw new AssertionError(e);
          } catch (InvocationTargetException e) {
@@ -226,43 +220,79 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactory imp
             throw new AssertionError(e);
          }
       }
+
+      @Override
+      public int hashCode() {
+         return Objects.hashCode(serializer, parameterizedCtor, parameterReaders);
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null || getClass() != obj.getClass())
+            return false;
+         DeserializeIntoParameterizedConstructor<?> that = DeserializeIntoParameterizedConstructor.class.cast(obj);
+         return Objects.equal(this.serializer, that.serializer)
+               && Objects.equal(this.parameterizedCtor, that.parameterizedCtor)
+               && Objects.equal(this.parameterReaders, that.parameterReaders);
+      }
+
+      @Override
+      public String toString() {
+         return Objects.toStringHelper(this).add("parameterizedCtor", parameterizedCtor)
+               .add("parameterReaders", parameterReaders).add("serializer", serializer).toString();
+      }
+
    }
 
    // logic borrowed from ReflectiveTypeAdapterFactory
    static class ParameterReader<T> {
       final String name;
-      final int index;
+      final int position;
       final TypeAdapter<T> typeAdapter;
 
-      ParameterReader(String name, int index, TypeAdapter<T> typeAdapter) {
+      ParameterReader(int position, String name, TypeAdapter<T> typeAdapter) {
          this.name = name;
-         this.index = index;
+         this.position = position;
          this.typeAdapter = typeAdapter;
       }
 
       public Object read(JsonReader reader) throws IOException {
          return typeAdapter.read(reader);
       }
-   }
 
-   private Map<String, ParameterReader<?>> getParameterReaders(Gson context, TypeToken<?> declaring, Constructor<?> constructor) {
-      Map<String, ParameterReader<?>> result = Maps.newLinkedHashMap();
-
-      for (int index = 0; index < constructor.getGenericParameterTypes().length; index++) {
-         Type parameterType = getTypeOfConstructorParameter(declaring, constructor, index);
-         TypeAdapter<?> adapter = context.getAdapter(TypeToken.get(parameterType));
-         String parameterName = constructorFieldNamingPolicy.translateName(constructor, index);
-         checkArgument(parameterName != null, constructor + " parameter " + 0 + " failed to be named by " + constructorFieldNamingPolicy);
-         @SuppressWarnings({ "rawtypes", "unchecked" })
-         ParameterReader<?> parameterReader = new ParameterReader(parameterName, index, adapter);
-         ParameterReader<?> previous = result.put(parameterReader.name, parameterReader);
-         checkArgument(previous == null, constructor + " declares multiple JSON parameters named " + parameterReader.name);
+      @Override
+      public boolean equals(Object obj) {
+         if (obj instanceof ParameterReader) {
+            ParameterReader<?> that = ParameterReader.class.cast(obj);
+            return position == that.position && name.equals(that.name);
+         }
+         return false;
       }
-      return result;
+
+      @Override
+      public int hashCode() {
+         return Objects.hashCode(position, name);
+      }
+
+      @Override
+      public String toString() {
+         return typeAdapter + " arg" + position;
+      }
    }
 
-   private Type getTypeOfConstructorParameter(TypeToken<?> declaring, Constructor<?> constructor, int index) {
-      Type genericParameter = constructor.getGenericParameterTypes()[index];
-      return $Gson$Types.resolve(declaring.getType(), declaring.getRawType(), genericParameter);
+   private <T> Map<String, ParameterReader<?>> getParameterReaders(Gson context, Invokable<T, T> deserializationCtor) {
+      Builder<String, ParameterReader<?>> result = ImmutableMap.builder();
+      for (Parameter param : deserializationCtor.getParameters()) {
+         TypeAdapter<?> adapter = context.getAdapter(TypeToken.get(param.getType().getType()));
+         String parameterName = constructorFieldNamingPolicy.translateName(deserializationCtor, param.hashCode());
+         checkArgument(parameterName != null, deserializationCtor + " parameter " + 0 + " failed to be named by "
+               + constructorFieldNamingPolicy);
+         @SuppressWarnings({ "rawtypes", "unchecked" })
+         ParameterReader<?> parameterReader = new ParameterReader(param.hashCode(), parameterName, adapter);
+         result.put(parameterReader.name, parameterReader);
+      }
+      return result.build();
    }
 }

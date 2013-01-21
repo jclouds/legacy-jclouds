@@ -18,13 +18,13 @@ package org.jclouds.json.internal;
  * under the License.
  */
 
+import static org.jclouds.reflect.Reflection2.typeToken;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.fail;
 
 import java.beans.ConstructorProperties;
-import java.lang.reflect.Constructor;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -32,13 +32,13 @@ import javax.inject.Named;
 import org.jclouds.json.internal.NamingStrategies.AnnotationConstructorNamingStrategy;
 import org.jclouds.json.internal.NamingStrategies.AnnotationFieldNamingStrategy;
 import org.jclouds.json.internal.NamingStrategies.AnnotationOrNameFieldNamingStrategy;
-import org.jclouds.json.internal.NamingStrategies.ConstructorFieldNamingStrategy;
 import org.jclouds.json.internal.NamingStrategies.ExtractNamed;
 import org.jclouds.json.internal.NamingStrategies.ExtractSerializedName;
 import org.jclouds.json.internal.NamingStrategies.NameExtractor;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.Invokable;
 import com.google.gson.FieldNamingStrategy;
 import com.google.gson.annotations.SerializedName;
 
@@ -51,6 +51,7 @@ public final class NamingStrategiesTest {
    private static class SimpleTest {
       @SerializedName("aardvark")
       private String a;
+      @SuppressWarnings("unused")
       private String b;
       @Named("cat")
       private String c;
@@ -75,7 +76,7 @@ public final class NamingStrategiesTest {
 
 
    public void testExtractSerializedName() throws Exception {
-      NameExtractor extractor = new ExtractSerializedName();
+      NameExtractor<SerializedName> extractor = new ExtractSerializedName();
       assertEquals(extractor.extractName(SimpleTest.class.getDeclaredField("a").getAnnotation(SerializedName.class)),
             "aardvark");
       try {
@@ -96,7 +97,7 @@ public final class NamingStrategiesTest {
    }
 
    public void testExtractNamed() throws Exception {
-      NameExtractor extractor = new ExtractNamed();
+      NameExtractor<Named> extractor = new ExtractNamed();
       try {
          extractor.extractName(SimpleTest.class.getDeclaredField("a").getAnnotation(Named.class));
       } catch (NullPointerException e) {
@@ -131,12 +132,12 @@ public final class NamingStrategiesTest {
    }
 
    public void testAnnotationConstructorFieldNamingStrategyCPAndNamed() throws Exception {
-      ConstructorFieldNamingStrategy strategy = new AnnotationConstructorNamingStrategy(
+      AnnotationConstructorNamingStrategy strategy = new AnnotationConstructorNamingStrategy(
             ImmutableSet.of(ConstructorProperties.class), ImmutableSet.of(new ExtractNamed()));
 
-      Constructor<? super SimpleTest> constructor = strategy.getDeserializationConstructor(SimpleTest.class);
+      Invokable<SimpleTest, SimpleTest> constructor = strategy.getDeserializer(typeToken(SimpleTest.class));
       assertNotNull(constructor);
-      assertEquals(constructor.getParameterTypes().length, 4);
+      assertEquals(constructor.getParameters().size(), 4);
 
       assertEquals(strategy.translateName(constructor, 0), "aardvark");
       assertEquals(strategy.translateName(constructor, 1), "bat");
@@ -144,9 +145,9 @@ public final class NamingStrategiesTest {
       // Note: @Named overrides the ConstructorProperties setting
       assertEquals(strategy.translateName(constructor, 3), "dingo");
 
-      Constructor<? super MixedConstructorTest> mixedCtor = strategy.getDeserializationConstructor(MixedConstructorTest.class);
+      Invokable<MixedConstructorTest, MixedConstructorTest> mixedCtor = strategy.getDeserializer(typeToken(MixedConstructorTest.class));
       assertNotNull(mixedCtor);
-      assertEquals(mixedCtor.getParameterTypes().length, 4);
+      assertEquals(mixedCtor.getParameters().size(), 4);
 
       assertEquals(strategy.translateName(mixedCtor, 0), "aardvark");
       assertEquals(strategy.translateName(mixedCtor, 1), "bat");
@@ -155,21 +156,21 @@ public final class NamingStrategiesTest {
    }
 
    public void testAnnotationConstructorFieldNamingStrategyCP() throws Exception {
-      ConstructorFieldNamingStrategy strategy = new AnnotationConstructorNamingStrategy(
-            ImmutableSet.of(ConstructorProperties.class), ImmutableSet.<NameExtractor>of());
+      AnnotationConstructorNamingStrategy strategy = new AnnotationConstructorNamingStrategy(
+            ImmutableSet.of(ConstructorProperties.class), ImmutableSet.<NameExtractor<?>>of());
 
-      Constructor<? super SimpleTest> constructor = strategy.getDeserializationConstructor(SimpleTest.class);
+      Invokable<SimpleTest, SimpleTest> constructor = strategy.getDeserializer(typeToken(SimpleTest.class));
       assertNotNull(constructor);
-      assertEquals(constructor.getParameterTypes().length, 4);
+      assertEquals(constructor.getParameters().size(), 4);
 
       assertEquals(strategy.translateName(constructor, 0), "aardvark");
       assertEquals(strategy.translateName(constructor, 1), "bat");
       assertEquals(strategy.translateName(constructor, 2), "coyote");
       assertEquals(strategy.translateName(constructor, 3), "dog");
 
-      Constructor<? super MixedConstructorTest> mixedCtor = strategy.getDeserializationConstructor(MixedConstructorTest.class);
+      Invokable<MixedConstructorTest, MixedConstructorTest> mixedCtor = strategy.getDeserializer(typeToken(MixedConstructorTest.class));
       assertNotNull(mixedCtor);
-      assertEquals(mixedCtor.getParameterTypes().length, 4);
+      assertEquals(mixedCtor.getParameters().size(), 4);
 
       assertEquals(strategy.translateName(mixedCtor, 0), "thiscanbeoverriddenbyNamed");
       assertNull(strategy.translateName(mixedCtor, 1));
@@ -178,21 +179,21 @@ public final class NamingStrategiesTest {
    }
    
    public void testAnnotationConstructorFieldNamingStrategyInject() throws Exception {
-      ConstructorFieldNamingStrategy strategy = new AnnotationConstructorNamingStrategy(
+      AnnotationConstructorNamingStrategy strategy = new AnnotationConstructorNamingStrategy(
             ImmutableSet.of(Inject.class), ImmutableSet.of(new ExtractNamed()));
 
-      Constructor<? super SimpleTest> constructor = strategy.getDeserializationConstructor(SimpleTest.class);
+      Invokable<SimpleTest, SimpleTest> constructor = strategy.getDeserializer(typeToken(SimpleTest.class));
       assertNotNull(constructor);
-      assertEquals(constructor.getParameterTypes().length, 5);
+      assertEquals(constructor.getParameters().size(), 5);
 
       assertEquals(strategy.translateName(constructor, 0), "aa");
       assertEquals(strategy.translateName(constructor, 1), "bb");
       assertEquals(strategy.translateName(constructor, 2), "cc");
       assertEquals(strategy.translateName(constructor, 3), "dd");
 
-      Constructor<? super MixedConstructorTest> mixedCtor = strategy.getDeserializationConstructor(MixedConstructorTest.class);
+      Invokable<MixedConstructorTest, MixedConstructorTest> mixedCtor = strategy.getDeserializer(typeToken(MixedConstructorTest.class));
       assertNotNull(mixedCtor);
-      assertEquals(mixedCtor.getParameterTypes().length, 4);
+      assertEquals(mixedCtor.getParameters().size(), 4);
 
       assertEquals(strategy.translateName(mixedCtor, 0), "aardvark");
       assertEquals(strategy.translateName(mixedCtor, 1), "bat");
