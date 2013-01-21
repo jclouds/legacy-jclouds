@@ -1,0 +1,1 @@
+{"connectionThrottle":{"maxConnections":100,"minConnections":10,"maxConnectionRate":100,"rateInterval":100}}
