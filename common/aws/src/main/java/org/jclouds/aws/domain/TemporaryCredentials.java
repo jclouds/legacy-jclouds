@@ -1,0 +1,177 @@
+/**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.jclouds.aws.domain;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Date;
+
+import org.jclouds.domain.Credentials;
+
+import com.google.common.base.Objects;
+
+/**
+ * AWS credentials for API authentication.
+ * 
+ * @see <a href=
+ *      "http://docs.aws.amazon.com/STS/latest/APIReference/API_Credentials.html"
+ *      />
+ * 
+ * @author Adrian Cole
+ */
+public final class TemporaryCredentials extends Credentials {
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public Builder toBuilder() {
+      return builder().from(this);
+   }
+
+   public final static class Builder extends Credentials.Builder<TemporaryCredentials> {
+      private String accessKeyId;
+      private String secretAccessKey;
+      private String sessionToken;
+      private Date expiration;
+
+      @Override
+      public Builder identity(String identity) {
+         return accessKeyId(identity);
+      }
+
+      @Override
+      public Builder credential(String credential) {
+         return secretAccessKey(credential);
+      }
+
+      /**
+       * @see TemporaryCredentials#getAccessKeyId()
+       */
+      public Builder accessKeyId(String accessKeyId) {
+         this.accessKeyId = accessKeyId;
+         return this;
+      }
+
+      /**
+       * @see TemporaryCredentials#getSecretAccessKey()
+       */
+      public Builder secretAccessKey(String secretAccessKey) {
+         this.secretAccessKey = secretAccessKey;
+         return this;
+      }
+
+      /**
+       * @see TemporaryCredentials#getSessionToken()
+       */
+      public Builder sessionToken(String sessionToken) {
+         this.sessionToken = sessionToken;
+         return this;
+      }
+
+      /**
+       * @see TemporaryCredentials#getExpiration()
+       */
+      public Builder expiration(Date expiration) {
+         this.expiration = expiration;
+         return this;
+      }
+
+      public TemporaryCredentials build() {
+         return new TemporaryCredentials(accessKeyId, secretAccessKey, sessionToken, expiration);
+      }
+
+      public Builder from(TemporaryCredentials in) {
+         return this.accessKeyId(in.identity).secretAccessKey(in.credential).sessionToken(in.sessionToken)
+               .expiration(in.expiration);
+      }
+   }
+
+   private final String sessionToken;
+   private final Date expiration;
+
+   private TemporaryCredentials(String accessKeyId, String secretAccessKey, String sessionToken, Date expiration) {
+      super(checkNotNull(accessKeyId, "accessKeyId"), checkNotNull(secretAccessKey, "secretAccessKey for %s",
+            accessKeyId));
+      this.sessionToken = checkNotNull(sessionToken, "sessionToken for %s", accessKeyId);
+      this.expiration = checkNotNull(expiration, "expiration for %s", accessKeyId);
+   }
+
+   /**
+    * AccessKeyId ID that identifies the temporary credentials.
+    */
+   public String getAccessKeyId() {
+      return identity;
+   }
+
+   /**
+    * The Secret Access Key to sign requests.
+    */
+   public String getSecretAccessKey() {
+      return credential;
+   }
+
+   /**
+    * The security token that users must pass to the service API to use the
+    * temporary credentials.
+    */
+   public String getSessionToken() {
+      return sessionToken;
+   }
+
+   /**
+    * The date on which these credentials expire.
+    */
+   public Date getExpiration() {
+      return expiration;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(identity, credential, sessionToken, expiration);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      TemporaryCredentials other = (TemporaryCredentials) obj;
+      return Objects.equal(this.identity, other.identity) && Objects.equal(this.credential, other.credential)
+            && Objects.equal(this.sessionToken, other.sessionToken) && Objects.equal(this.expiration, other.expiration);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).add("accessKeyId", identity).add("sessionToken", sessionToken)
+            .add("expiration", expiration).toString();
+   }
+
+}
