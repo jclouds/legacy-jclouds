@@ -61,7 +61,5 @@
        <module>abiquo</module>
        <module>openstack-quantum</module>
        <module>openstack-glance</module>
-       <module>sts</module>
-       <module>aws-sts</module>
   </modules>
 </project>
