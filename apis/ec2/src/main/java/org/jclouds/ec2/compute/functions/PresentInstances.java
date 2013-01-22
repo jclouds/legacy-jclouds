@@ -27,6 +27,7 @@ import static org.jclouds.ec2.compute.domain.RegionAndName.nameFunction;
 import static org.jclouds.ec2.compute.domain.RegionAndName.regionFunction;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -68,8 +69,9 @@ public class PresentInstances implements Function<Set<RegionAndName>, Set<Runnin
       Builder<RunningInstance> builder = ImmutableSet.<RunningInstance> builder();
       Multimap<String, String> regionToInstanceIds = transformValues(index(regionAndIds, regionFunction()),
             nameFunction());
-      for (String region : regionToInstanceIds.keySet()) {
-         Collection<String> instanceIds = regionToInstanceIds.get(region);
+      for (Map.Entry<String, Collection<String>> entry : regionToInstanceIds.asMap().entrySet()) {
+         String region = entry.getKey();
+         Collection<String> instanceIds = entry.getValue();
          logger.trace("looking for instances %s in region %s", instanceIds, region);
          builder.addAll(concat(client.getInstanceServices().describeInstancesInRegion(region,
                toArray(instanceIds, String.class))));

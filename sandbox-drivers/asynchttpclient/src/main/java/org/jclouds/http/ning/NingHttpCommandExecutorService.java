@@ -156,10 +156,8 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
          }
 
          builder.addHeader(HttpHeaders.USER_AGENT, USER_AGENT);
-         for (String header : request.getHeaders().keySet()) {
-            for (String value : request.getHeaders().get(header)) {
-               builder.addHeader(header, value);
-            }
+         for (Map<String, String> entry : request.getHeaders().entries()) {
+            builder.addHeader(entry.getKey(), entry.getValue());
          }
 
          return builder.build();

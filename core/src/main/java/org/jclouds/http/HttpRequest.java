@@ -25,6 +25,7 @@ import static org.jclouds.http.utils.Queries.queryParser;
 import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -188,8 +189,8 @@ public class HttpRequest extends HttpMessage {
          checkNotNull(endpoint, "endpoint");
          Multimap<String, String> map = payload != null ? queryParser().apply(payload.getRawContent().toString())
                : LinkedHashMultimap.<String, String> create();
-         for (String key : parameters.keySet()) {
-            map.replaceValues(key, parameters.get(key));
+         for (Map.Entry<String, Collection<String>> entry : parameters.asMap().entrySet()) {
+            map.replaceValues(entry.getKey(), entry.getValue());
          }
          payload = newUrlEncodedFormPayload(map);
          return self();

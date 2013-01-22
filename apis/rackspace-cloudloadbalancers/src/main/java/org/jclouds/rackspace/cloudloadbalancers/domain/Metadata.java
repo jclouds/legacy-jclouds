@@ -59,12 +59,6 @@ public class Metadata extends ForwardingMap<String, String> {
    }
 
    public Iterable<Integer> getIds() {
-      Set<Integer> ids = Sets.newHashSet();
-      
-      for (String key: keyToId.keySet()) {
-         ids.add(keyToId.get(key));
-      }
-      
-      return ids;
+      return Sets.newHashSet(keyToId.values());
    }
 }

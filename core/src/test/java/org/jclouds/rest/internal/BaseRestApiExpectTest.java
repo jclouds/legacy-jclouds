@@ -440,10 +440,11 @@ public abstract class BaseRestApiExpectTest<S> {
          public HttpResponse apply(HttpRequest input) {
             HttpRequest matchedRequest = null;
             HttpResponse response = null;
-            for (HttpRequest request : requestToResponse.keySet()) {
+            for (Map.Entry<HttpRequest, HttpResponse> entry : requestToResponse.entrySet()) {
+               HttpRequest request = entry.getKey();
                if (httpRequestsAreEqual(input, request)) {
                   matchedRequest = request;
-                  response = requestToResponse.get(request);
+                  response = entry.getValue();
                }
             }
 
