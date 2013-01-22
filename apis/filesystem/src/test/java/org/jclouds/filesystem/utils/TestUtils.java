@@ -24,6 +24,7 @@ import static org.testng.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
@@ -32,6 +33,7 @@ import org.jclouds.filesystem.util.Utils;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
+import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
 /**
@@ -41,21 +43,19 @@ import com.google.common.io.Files;
  */
 public class TestUtils {
 
-    private static final String TARGET_RESOURCE_DIR = "." + File.separator + "src" + File.separator + "test" + File.separator + "resources" + File.separator;
+    private static final String TARGET_RESOURCE_DIR = "." + File.separator + "target" + File.separator + "resources" + File.separator;
 
     /** All the files available for the tests */
-    private static final Iterator<File> IMAGE_RESOURCES =
-            Iterators.cycle(ImmutableList.of(
+    private static final Iterable<File> IMAGE_RESOURCES = ImmutableList.of(
                     new File(TARGET_RESOURCE_DIR + "image1.jpg"),
                     new File(TARGET_RESOURCE_DIR + "image2.jpg"),
                     new File(TARGET_RESOURCE_DIR + "image3.jpg"),
-                    new File(TARGET_RESOURCE_DIR + "image4.jpg")));
+                    new File(TARGET_RESOURCE_DIR + "image4.jpg"));
 
     public static final String TARGET_BASE_DIR = "." + File.separator + "target" + File.separator + "basedir" + File.separator;
 
-    public static boolean isWindowsOs() {
-        return System.getProperty("os.name", "").toLowerCase().contains("windows");
-    }
+    private static final Iterator<File> IMAGE_RESOURCES_ITERATOR =
+            Iterators.cycle(IMAGE_RESOURCES);
 
     /**
      * Generate a random blob key simple name (with no path in the key)
@@ -201,6 +201,23 @@ public class TestUtils {
      * @return
      */
     public static File getImageForBlobPayload() {
-        return IMAGE_RESOURCES.next();
+        return IMAGE_RESOURCES_ITERATOR.next();
+    }
+
+    /** Create resources used by tests. */
+    public static void createResources() throws IOException {
+        File resourceDir = new File(TestUtils.TARGET_RESOURCE_DIR);
+        if (resourceDir.exists()) {
+            Utils.deleteRecursively(resourceDir);
+        }
+        if (!resourceDir.mkdir()) {
+            throw new IOException("Could not create: " + TARGET_RESOURCE_DIR);
+        }
+        Random random = new Random();
+        for (File file : IMAGE_RESOURCES) {
+            byte[] buffer = new byte[random.nextInt(2 * 1024 * 1024)];
+            random.nextBytes(buffer);
+            Files.copy(ByteStreams.newInputStreamSupplier(buffer), file);
+        }
     }
 }

@@ -99,6 +99,7 @@ public class FilesystemAsyncBlobStoreTest {
         // create a container in the default location
         blobStore = context.getBlobStore();
         new File(TestUtils.TARGET_BASE_DIR).mkdir();
+        TestUtils.createResources();
     }
 
     @AfterMethod
