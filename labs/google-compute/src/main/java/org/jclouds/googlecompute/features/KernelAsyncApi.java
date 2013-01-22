@@ -34,6 +34,7 @@ import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Transform;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -59,6 +60,7 @@ public interface KernelAsyncApi {
    /**
     * @see KernelApi#get(String)
     */
+   @Named("Kernels:get")
    @GET
    @Path("/kernels/{kernel}")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
@@ -68,6 +70,7 @@ public interface KernelAsyncApi {
    /**
     * @see KernelApi#listFirstPage()
     */
+   @Named("Kernels:list")
    @GET
    @Path("/kernels")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
@@ -78,6 +81,7 @@ public interface KernelAsyncApi {
    /**
     * @see KernelApi#listAtMarker(String)
     */
+   @Named("Kernels:list")
    @GET
    @Path("/kernels")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
@@ -88,6 +92,7 @@ public interface KernelAsyncApi {
    /**
     * @see KernelApi#listAtMarker(String, org.jclouds.googlecompute.options.ListOptions)
     */
+   @Named("Kernels:list")
    @GET
    @Path("/kernels")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
@@ -99,6 +104,7 @@ public interface KernelAsyncApi {
    /**
     * @see org.jclouds.googlecompute.features.KernelApi#list()
     */
+   @Named("Kernels:list")
    @GET
    @Path("/kernels")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
@@ -110,6 +116,7 @@ public interface KernelAsyncApi {
    /**
     * @see KernelApi#list(org.jclouds.googlecompute.options.ListOptions)
     */
+   @Named("Kernels:list")
    @GET
    @Path("/kernels")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)

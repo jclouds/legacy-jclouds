@@ -38,6 +38,7 @@ import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -68,6 +69,7 @@ public interface DiskAsyncApi {
    /**
     * @see DiskApi#get(String)
     */
+   @Named("Disks:get")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/disks/{disk}")
@@ -78,6 +80,7 @@ public interface DiskAsyncApi {
    /**
     * @see DiskApi#createInZone(String, int, java.net.URI)
     */
+   @Named("Disks:insert")
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
@@ -91,6 +94,7 @@ public interface DiskAsyncApi {
    /**
     * @see DiskApi#delete(String)
     */
+   @Named("Disks:delete")
    @DELETE
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/disks/{disk}")
@@ -101,6 +105,7 @@ public interface DiskAsyncApi {
    /**
     * @see org.jclouds.googlecompute.features.DiskApi#listFirstPage()
     */
+   @Named("Disks:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/disks")
@@ -112,6 +117,7 @@ public interface DiskAsyncApi {
    /**
     * @see DiskApi#listAtMarker(String)
     */
+   @Named("Disks:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/disks")
@@ -123,6 +129,7 @@ public interface DiskAsyncApi {
    /**
     * @see DiskApi#listAtMarker(String, org.jclouds.googlecompute.options.ListOptions)
     */
+   @Named("Disks:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/disks")
@@ -134,6 +141,7 @@ public interface DiskAsyncApi {
    /**
     * @see DiskApi#list(org.jclouds.googlecompute.options.ListOptions)
     */
+   @Named("Disks:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/disks")
@@ -146,6 +154,7 @@ public interface DiskAsyncApi {
    /**
     * @see DiskApi#list(org.jclouds.googlecompute.options.ListOptions)
     */
+   @Named("Disks:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/disks")

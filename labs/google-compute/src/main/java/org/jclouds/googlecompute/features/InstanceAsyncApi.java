@@ -41,6 +41,7 @@ import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -70,6 +71,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#get(String)
     */
+   @Named("Instances:get")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/instances/{instance}")
@@ -80,6 +82,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#createInZone(String, org.jclouds.googlecompute.domain.InstanceTemplate, String)
     */
+   @Named("Instances:insert")
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
@@ -93,6 +96,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#delete(String)
     */
+   @Named("Instances:delete")
    @DELETE
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/instances/{instance}")
@@ -103,6 +107,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#listFirstPage()
     */
+   @Named("Instances:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/instances")
@@ -114,6 +119,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#listAtMarker(String)
     */
+   @Named("Instances:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/instances")
@@ -125,6 +131,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#listAtMarker(String, org.jclouds.googlecompute.options.ListOptions)
     */
+   @Named("Instances:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/instances")
@@ -136,6 +143,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#list()
     */
+   @Named("Instances:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/instances")
@@ -148,6 +156,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#list(org.jclouds.googlecompute.options.ListOptions)
     */
+   @Named("Instances:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/instances")
@@ -160,6 +169,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#addAccessConfigToNic(String, Instance.NetworkInterface.AccessConfig, String)
     */
+   @Named("Instances:addAccessConfig")
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
@@ -173,6 +183,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#deleteAccessConfigFromNic(String, String, String)
     */
+   @Named("Instances:deleteAccessConfig")
    @DELETE
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/instances/{instance}/deleteAccessConfig")
@@ -185,6 +196,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#getSerialPortOutput(String)
     */
+   @Named("Instances:serialPort")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/instances/{instance}/serialPort")
