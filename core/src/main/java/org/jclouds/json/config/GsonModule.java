@@ -59,6 +59,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Bytes;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -88,12 +90,14 @@ public class GsonModule extends AbstractModule {
          ByteArrayAdapter byteArrayAdapter, PropertiesAdapter propertiesAdapter, JsonAdapterBindings bindings,
          OptionalTypeAdapterFactory optional, SetTypeAdapterFactory set, MapTypeAdapterFactory map,
          MultimapTypeAdapterFactory multimap, IterableTypeAdapterFactory iterable,
-         CollectionTypeAdapterFactory collection, FluentIterableTypeAdapterFactory fluentIterable) throws Exception {
+         CollectionTypeAdapterFactory collection, FluentIterableTypeAdapterFactory fluentIterable,
+         DefaultExclusionStrategy exclusionStrategy) {
 
       FieldNamingStrategy serializationPolicy = new AnnotationOrNameFieldNamingStrategy(ImmutableSet.of(
             new ExtractSerializedName(), new ExtractNamed()));
 
-      GsonBuilder builder = new GsonBuilder().setFieldNamingStrategy(serializationPolicy);
+      GsonBuilder builder = new GsonBuilder().setFieldNamingStrategy(serializationPolicy)
+                                             .setExclusionStrategies(exclusionStrategy);
 
       // simple (type adapters)
       builder.registerTypeAdapter(Properties.class, propertiesAdapter.nullSafe());
@@ -130,6 +134,20 @@ public class GsonModule extends AbstractModule {
       return builder.create();
    }
 
+   @ImplementedBy(NoExclusions.class)
+   public static interface DefaultExclusionStrategy extends ExclusionStrategy {
+   }
+
+   public static class NoExclusions implements DefaultExclusionStrategy {
+      public boolean shouldSkipField(FieldAttributes f) {
+         return false;
+      }
+
+      public boolean shouldSkipClass(Class<?> clazz) {
+         return false;
+      }
+   }
+   
    @ImplementedBy(CDateAdapter.class)
    public abstract static class DateAdapter extends TypeAdapter<Date> {
 
