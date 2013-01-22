@@ -83,6 +83,7 @@ public class FilesystemStorageStrategyImplTest {
 
       }, TestUtils.TARGET_BASE_DIR, new FilesystemContainerNameValidatorImpl(), new FilesystemBlobKeyValidatorImpl());
       TestUtils.cleanDirectoryContent(TestUtils.TARGET_BASE_DIR);
+      TestUtils.createResources();
    }
 
    @AfterMethod
