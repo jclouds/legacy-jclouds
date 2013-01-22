@@ -33,6 +33,7 @@ import static org.testng.Assert.assertNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -41,6 +42,7 @@ import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -128,9 +130,8 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    public void testPutFileParallel() throws InterruptedException, IOException, TimeoutException {
 
       File payloadFile = File.createTempFile("testPutFileParallel", "png");
-      Files.copy(InputSuppliers.of(getClass().getResource("/testimg.png").openStream()), payloadFile);
+      Files.copy(InputSuppliers.of(createTestInput()), payloadFile);
       payloadFile.deleteOnExit();
-      
       
       final Payload testPayload = Payloads.newFilePayload(payloadFile);
       final byte[] md5 = md5Supplier(testPayload);
@@ -606,4 +607,13 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       assertEquals(metadata.getContentMetadata().getContentMD5(), md5().hashString(TEST_STRING, UTF_8).asBytes());
    }
 
+   private InputStream createTestInput() throws IOException {
+      File file = File.createTempFile("testimg", "png");
+      file.deleteOnExit();
+      Random random = new Random();
+      byte[] buffer = new byte[random.nextInt(2 * 1024 * 1024)];
+      random.nextBytes(buffer);
+      Files.copy(ByteStreams.newInputStreamSupplier(buffer), file);
+      return new FileInputStream(file);
+   }
 }
