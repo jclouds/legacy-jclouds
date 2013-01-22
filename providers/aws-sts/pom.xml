@@ -27,7 +27,7 @@
         <version>1.6.0-SNAPSHOT</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
-    <groupId>org.jclouds.labs</groupId>
+    <groupId>org.jclouds.provider</groupId>
     <artifactId>aws-sts</artifactId>
     <name>jclouds Amazon Identity and Access Management (STS) provider</name>
     <description>Identity and Access Management (STS) to Amazon Web Services</description>
@@ -46,13 +46,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jclouds.labs</groupId>
+            <groupId>org.jclouds.api</groupId>
             <artifactId>sts</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.labs</groupId>
+            <groupId>org.jclouds.api</groupId>
             <artifactId>sts</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>

@@ -27,7 +27,7 @@
     <version>1.6.0-SNAPSHOT</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
-  <groupId>org.jclouds.labs</groupId>
+  <groupId>org.jclouds.api</groupId>
   <artifactId>sts</artifactId>
   <name>jcloud sts api</name>
   <description>jclouds components to access an implementation of Security Token Service (STS)</description>
