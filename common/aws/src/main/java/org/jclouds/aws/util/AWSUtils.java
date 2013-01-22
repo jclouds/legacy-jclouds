@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 
+import java.util.Collection;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -169,10 +170,10 @@ public class AWSUtils {
       Multimap<Object, Object> map = (Multimap<Object, Object>) input;
       Builder<String, String> builder = ImmutableMultimap.builder();
       int i = 1;
-      for (Object k : map.keySet()) {
-         builder.put(prefix + "." + i + "." + keySuffix, checkNotNull(k.toString(), keySuffix.toLowerCase() + "s[" + i + "]"));
+      for (Map.Entry<Object, Collection<Object>> entry : map.asMap().entrySet()) {
+         builder.put(prefix + "." + i + "." + keySuffix, checkNotNull(entry.getKey().toString(), keySuffix.toLowerCase() + "s[" + i + "]"));
          int j = 1;
-         for (Object v : map.get(k)) {
+         for (Object v : entry.getValue()) {
             builder.put(prefix + "." + i + "." + valueSuffix + "." + j, v.toString());
             j++;
          }
@@ -187,11 +188,12 @@ public class AWSUtils {
       Map<Object, Iterable<Object>> map = (Map<Object, Iterable<Object>>) input;
       Builder<String, String> builder = ImmutableMultimap.builder();
       int i = 1;
-      for (Object k : map.keySet()) {
-         builder.put(prefix + "." + i + "." + keySuffix, checkNotNull(k.toString(), keySuffix.toLowerCase() + "s[" + i + "]"));
-         if (!Iterables.isEmpty(map.get(k))) {
+      for (Map.Entry<Object, Iterable<Object>> entry : map.entrySet()) {
+         builder.put(prefix + "." + i + "." + keySuffix, checkNotNull(entry.getKey().toString(), keySuffix.toLowerCase() + "s[" + i + "]"));
+         Iterable<Object> iterable = entry.getValue();
+         if (!Iterables.isEmpty(iterable)) {
             int j = 1;
-            for (Object v : map.get(k)) {
+            for (Object v : iterable) {
                builder.put(prefix + "." + i + "." + valueSuffix + "." + j, v.toString());
                j++;
             }

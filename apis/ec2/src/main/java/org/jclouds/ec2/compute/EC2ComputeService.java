@@ -169,7 +169,10 @@ public class EC2ComputeService extends BaseComputeService {
       Map<String, ? extends NodeMetadata> instancesById = Maps.uniqueIndex(input, instanceId);
       ImmutableSet.Builder<NodeMetadata> builder = ImmutableSet.<NodeMetadata> builder();
       if (generateInstanceNames && !common.containsKey("Name")) {
-         for (String id : instancesById.keySet()) {
+         for (Map.Entry<String, ? extends NodeMetadata> entry : instancesById.entrySet()) {
+            String id = entry.getKey();
+            NodeMetadata instance = entry.getValue();
+
             Map<String, String> tags = ImmutableMap.<String, String> builder().putAll(common)
                   .put("Name", id.replaceAll(".*-", group + "-")).build();
             logger.debug(">> applying tags %s to instance %s in region %s", tags, id, region);

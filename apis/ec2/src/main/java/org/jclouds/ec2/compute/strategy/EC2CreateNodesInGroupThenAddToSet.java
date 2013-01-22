@@ -188,14 +188,16 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
    private void blockUntilRunningAndAssignElasticIpsToInstancesOrPutIntoBadMap(Set<RunningInstance> input,
          Map<NodeMetadata, Exception> badNodes) {
       Map<RegionAndName, RunningInstance> instancesById = Maps.uniqueIndex(input, instanceToRegionAndName);
-      for (RegionAndName id : instancesById.keySet()) {
+      for (Map.Entry<RegionAndName, RunningInstance> entry : instancesById.entrySet()) {
+         RegionAndName id = entry.getKey();
+         RunningInstance instance = entry.getValue();
          try {
             logger.debug("<< allocating elastic IP instance(%s)", id);
             String ip = client.getElasticIPAddressServices().allocateAddressInRegion(id.getRegion());
             // block until instance is running
             logger.debug(">> awaiting status running instance(%s)", id);
             AtomicReference<NodeMetadata> node = newReference(runningInstanceToNodeMetadata
-                  .apply(instancesById.get(id)));
+                  .apply(instance));
             nodeRunning.apply(node);
             logger.trace("<< running instance(%s)", id);
             logger.debug(">> associating elastic IP %s to instance %s", ip, id);

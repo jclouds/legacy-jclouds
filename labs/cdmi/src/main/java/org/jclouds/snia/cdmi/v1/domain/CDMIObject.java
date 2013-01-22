@@ -192,10 +192,9 @@ public class CDMIObject {
       userMetaDataIn = Maps.newHashMap();
       systemMetaDataIn = Maps.newHashMap();
       aclMetaDataIn = Lists.newArrayList();
-      Iterator<String> keys = metadata.keySet().iterator();
-      while (keys.hasNext()) {
-         String key = keys.next();
-         JsonBall value = metadata.get(key);
+      for (Map.Entry<String, JsonBall> entry : metadata.entrySet()) {
+         String key = entry.getKey();
+         JsonBall value = entry.getValue();
          if (key.startsWith("cdmi")) {
             if (key.matches("cdmi_acl")) {
                String[] cdmi_acl_array = value.toString().split("[{}]");

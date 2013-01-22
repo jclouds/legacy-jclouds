@@ -66,7 +66,6 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 
       CreateDataObjectOptions pCreateDataObjectOptions;
       DataObject dataObject;
-      Iterator<String> keys;
       Map<String, String> dataObjectMetaDataOut;
       Map<String, String> pContainerMetaDataIn = Maps.newHashMap();
       Map<String, String> pDataObjectMetaDataIn = Maps.newLinkedHashMap();
@@ -101,11 +100,10 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
          assertEquals(dataObject.getValueAsString(), value);
          dataObjectMetaDataOut = dataObject.getUserMetadata();
          assertNotNull(dataObjectMetaDataOut);
-         keys = pDataObjectMetaDataIn.keySet().iterator();
-         while (keys.hasNext()) {
-            String key = keys.next();
+         for (Map.Entry<String, String> entry : pDataObjectMetaDataIn.entrySet()) {
+            String key = entry.getKey();
             assertEquals(dataObjectMetaDataOut.containsKey(key), true);
-            assertEquals(dataObjectMetaDataOut.get(key), pDataObjectMetaDataIn.get(key));
+            assertEquals(dataObjectMetaDataOut.get(key), entry.getValue());
          }
          assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")), value.length());
          assertEquals(dataObject.getObjectName(), dataObjectNameIn);
@@ -130,11 +128,10 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
          assertEquals(dataObject.getValueAsString(), value);
          dataObjectMetaDataOut = dataObject.getUserMetadata();
          assertNotNull(dataObjectMetaDataOut);
-         keys = pDataObjectMetaDataIn.keySet().iterator();
-         while (keys.hasNext()) {
-            String key = keys.next();
+         for (Map.Entry<String, String> entry : pDataObjectMetaDataIn.entrySet()) {
+            String key = entry.getKey();
             assertEquals(dataObjectMetaDataOut.containsKey(key), true);
-            assertEquals(dataObjectMetaDataOut.get(key), pDataObjectMetaDataIn.get(key));
+            assertEquals(dataObjectMetaDataOut.get(key), entry.getValue());
          }
          assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")), value.length());
          assertEquals(dataObject.getObjectName(), dataObjectNameIn);
@@ -484,7 +481,6 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
 
       CreateDataObjectOptions pCreateDataObjectOptions;
       DataObject dataObject;
-      Iterator<String> keys;
       Map<String, String> dataObjectMetaDataOut;
       Map<String, String> pContainerMetaDataIn = Maps.newHashMap();
       Map<String, String> pDataObjectMetaDataIn = Maps.newLinkedHashMap();
@@ -519,11 +515,10 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
          assertEquals(dataObject.getValueAsString(), value);
          dataObjectMetaDataOut = dataObject.getUserMetadata();
          assertNotNull(dataObjectMetaDataOut);
-         keys = pDataObjectMetaDataIn.keySet().iterator();
-         while (keys.hasNext()) {
-            String key = keys.next();
+         for (Map.Entry<String, String> entry : pDataObjectMetaDataIn.entrySet()) {
+            String key = entry.getKey();
             assertEquals(dataObjectMetaDataOut.containsKey(key), true);
-            assertEquals(dataObjectMetaDataOut.get(key), pDataObjectMetaDataIn.get(key));
+            assertEquals(dataObjectMetaDataOut.get(key), entry.getValue());
          }
          assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")), value.length());
          assertEquals(dataObject.getObjectName(), dataObjectNameIn);
@@ -560,11 +555,10 @@ public class DataApiLiveTest extends BaseCDMIApiLiveTest {
          assertEquals(dataObject.getMimetype(), "text/plain");
          dataObjectMetaDataOut = dataObject.getUserMetadata();
          assertNotNull(dataObjectMetaDataOut);
-         keys = pDataObjectMetaDataIn.keySet().iterator();
-         while (keys.hasNext()) {
-            String key = keys.next();
+         for (Map.Entry<String, String> entry : pDataObjectMetaDataIn.entrySet()) {
+            String key = entry.getKey();
             assertEquals(dataObjectMetaDataOut.containsKey(key), true);
-            assertEquals(dataObjectMetaDataOut.get(key), pDataObjectMetaDataIn.get(key));
+            assertEquals(dataObjectMetaDataOut.get(key), entry.getValue());
          }
          assertEquals(Integer.parseInt(dataObject.getSystemMetadata().get("cdmi_size")), value.length());
 

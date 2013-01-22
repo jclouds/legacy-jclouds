@@ -58,10 +58,10 @@ public class BindMetadataToJsonPayload implements Binder {
       Map<String, String> metadata = (Map<String, String>) input;
       List<Map<String, String>> clbMetadata = Lists.newArrayList();
       
-      for (String key: metadata.keySet()) {
+      for (Map.Entry<String, String> entry : metadata.entrySet()) {
          clbMetadata.add(ImmutableMap.<String, String> of(
-               "key", key,
-               "value", metadata.get(key)));
+               "key", entry.getKey(),
+               "value", entry.getValue()));
       }
       
       String json = jsonBinder.toJson(ImmutableMap.of("metadata", clbMetadata));

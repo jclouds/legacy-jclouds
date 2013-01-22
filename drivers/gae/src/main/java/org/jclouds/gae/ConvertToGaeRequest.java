@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -87,11 +88,10 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
 
       HTTPRequest gaeRequest = new HTTPRequest(url, HTTPMethod.valueOf(request.getMethod().toString()), options);
 
-      for (String header : request.getHeaders().keySet()) {
-         for (String value : request.getHeaders().get(header)) {
-            if (!prohibitedHeaders.contains(header))
-               gaeRequest.addHeader(new HTTPHeader(header, value));
-         }
+      for (Entry<String, String> entry : request.getHeaders().entries()) {
+         String header = entry.getKey();
+         if (!prohibitedHeaders.contains(header))
+            gaeRequest.addHeader(new HTTPHeader(header, entry.getValue()));
       }
       gaeRequest.addHeader(new HTTPHeader(HttpHeaders.USER_AGENT, USER_AGENT));
       /**

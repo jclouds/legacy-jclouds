@@ -48,7 +48,6 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
    public void testCreateContainer() throws Exception {
       String pContainerName = "MyContainer" + System.currentTimeMillis() + "/";
       Map<String, String> pContainerMetaDataIn = Maps.newHashMap();
-      Iterator<String> keys;
       pContainerMetaDataIn.put("containerkey1", "value1");
       pContainerMetaDataIn.put("containerkey2", "value2");
       pContainerMetaDataIn.put("containerkey3", "value3");
@@ -76,19 +75,15 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
          System.out.println("Children: " + container.getChildren());
          assertNotNull(container.getMetadata());
          System.out.println("Raw metadata: " + container.getMetadata());
-         keys = container.getMetadata().keySet().iterator();
-         while (keys.hasNext()) {
-            String key = keys.next();
-            JsonBall value = container.getMetadata().get(key);
-            System.out.println(key + ":" + value);
+         for (Map.Entry<String, JsonBall> entry : container.getMetadata().entrySet()) {
+            System.out.println(entry.getKey() + ":" + entry.getValue());
          }
          assertNotNull(container.getUserMetadata());
          Map<String, String> pContainerMetaDataOut = container.getUserMetadata();
-         keys = pContainerMetaDataIn.keySet().iterator();
-         while (keys.hasNext()) {
-            String key = keys.next();
+         for (Map.Entry<String, String> entry : pContainerMetaDataIn.entrySet()) {
+            String key = entry.getKey();
             assertEquals(pContainerMetaDataOut.containsKey(key), true);
-            assertEquals(pContainerMetaDataOut.get(key), pContainerMetaDataIn.get(key));
+            assertEquals(pContainerMetaDataOut.get(key), entry.getValue());
          }
          System.out.println("UserMetaData: " + container.getUserMetadata());
          assertNotNull(container.getSystemMetadata());
@@ -136,7 +131,6 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
    public void testGetContainer() throws Exception {
       String pContainerName = "MyContainer" + System.currentTimeMillis() + "/";
       Map<String, String> pContainerMetaDataIn = Maps.newHashMap();
-      Iterator<String> keys;
       pContainerMetaDataIn.put("containerkey1", "value1");
       pContainerMetaDataIn.put("containerkey2", "value2");
       pContainerMetaDataIn.put("containerkey3", "value3");
@@ -163,19 +157,15 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
          System.out.println("Children: " + container.getChildren());
          assertNotNull(container.getMetadata());
          System.out.println("Raw metadata: " + container.getMetadata());
-         keys = container.getMetadata().keySet().iterator();
-         while (keys.hasNext()) {
-            String key = keys.next();
-            JsonBall value = container.getMetadata().get(key);
-            System.out.println(key + ":" + value);
+         for (Map.Entry<String, JsonBall> entry : container.getMetadata().entrySet()) {
+            System.out.println(entry.getKey() + ":" + entry.getValue());
          }
          assertNotNull(container.getUserMetadata());
          Map<String, String> pContainerMetaDataOut = container.getUserMetadata();
-         keys = pContainerMetaDataIn.keySet().iterator();
-         while (keys.hasNext()) {
-            String key = keys.next();
+         for (Map.Entry<String, String> entry : pContainerMetaDataIn.entrySet()) {
+            String key = entry.getKey();
             assertEquals(pContainerMetaDataOut.containsKey(key), true);
-            assertEquals(pContainerMetaDataOut.get(key), pContainerMetaDataIn.get(key));
+            assertEquals(pContainerMetaDataOut.get(key), entry.getValue());
          }
          System.out.println("UserMetaData: " + container.getUserMetadata());
          assertNotNull(container.getSystemMetadata());
@@ -202,11 +192,10 @@ public class ContainerApiLiveTest extends BaseCDMIApiLiveTest {
          container = api.get(pContainerName, ContainerQueryParams.Builder.metadata());
          assertNotNull(container);
          pContainerMetaDataOut = container.getUserMetadata();
-         keys = pContainerMetaDataIn.keySet().iterator();
-         while (keys.hasNext()) {
-            String key = keys.next();
+         for (Map.Entry<String, String> entry : pContainerMetaDataIn.entrySet()) {
+            String key = entry.getKey();
             assertEquals(pContainerMetaDataOut.containsKey(key), true);
-            assertEquals(pContainerMetaDataOut.get(key), pContainerMetaDataIn.get(key));
+            assertEquals(pContainerMetaDataOut.get(key), entry.getValue());
          }
          System.out.println(container);
 

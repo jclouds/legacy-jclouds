@@ -23,6 +23,7 @@ import static org.jclouds.blobstore.options.ListContainerOptions.Builder.inDirec
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.maxResults;
 import static org.testng.Assert.assertEquals;
 
+import java.io.InputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
@@ -204,10 +205,11 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
       try {
          Map<String, Blob> map = createMap(view, bucketName);
          ImmutableMap.Builder<String, Blob> newMap = ImmutableMap.builder();
-         for (String key : fiveInputs.keySet()) {
+         for (Map.Entry<String, InputStream> entry : fiveInputs.entrySet()) {
+            String key = entry.getKey();
             newMap.put(
                   key,
-                  view.getBlobStore().blobBuilder(key).payload(fiveInputs.get(key))
+                  view.getBlobStore().blobBuilder(key).payload(entry.getValue())
                         .contentLength((long) fiveBytes.get(key).length).build());
          }
          map.putAll(newMap.build());
