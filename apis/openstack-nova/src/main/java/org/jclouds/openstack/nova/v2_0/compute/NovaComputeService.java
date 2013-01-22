@@ -23,6 +23,7 @@ import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_S
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_TERMINATED;
 import static org.jclouds.openstack.nova.v2_0.predicates.KeyPairPredicates.nameMatches;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -124,8 +125,8 @@ public class NovaComputeService extends BaseComputeService {
    @Override
    protected void cleanUpIncidentalResourcesOfDeadNodes(Set<? extends NodeMetadata> deadNodes) {
       Multimap<String, String> zoneToZoneAndGroupNames = orphanedGroupsByZoneId.apply(deadNodes);
-      for (String zoneId : zoneToZoneAndGroupNames.keySet()) {
-         cleanOrphanedGroupsInZone(ImmutableSet.copyOf(zoneToZoneAndGroupNames.get(zoneId)), zoneId);
+      for (Map.Entry<String, Collection<String>> entry : zoneToZoneAndGroupNames.asMap().entrySet()) {
+         cleanOrphanedGroupsInZone(ImmutableSet.copyOf(entry.getValue()), entry.getKey());
       }
    }
 

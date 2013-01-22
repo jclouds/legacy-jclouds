@@ -122,11 +122,11 @@ public class ApacheHCUtils {
          apacheRequest.addHeader(HttpHeaders.CONTENT_LENGTH, "0");
       }
 
-      for (String header : request.getHeaders().keySet()) {
-         for (String value : request.getHeaders().get(header))
-            // apache automatically tries to add content length header
-            if (!header.equals(HttpHeaders.CONTENT_LENGTH))
-               apacheRequest.addHeader(header, value);
+      for (Map.Entry<String, String> entry : request.getHeaders().entries()) {
+         String header = entry.getKey();
+         // apache automatically tries to add content length header
+         if (!header.equals(HttpHeaders.CONTENT_LENGTH))
+            apacheRequest.addHeader(header, entry.getValue());
       }
       apacheRequest.addHeader(HttpHeaders.USER_AGENT, USER_AGENT);
       return apacheRequest;

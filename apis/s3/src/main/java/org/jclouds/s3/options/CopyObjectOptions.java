@@ -260,8 +260,9 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
       }
       if (metadata != null) {
          returnVal.put(METADATA_DIRECTIVE.replace(DEFAULT_AMAZON_HEADERTAG, headerTag), "REPLACE");
-         for (String key : metadata.keySet()) {
-            returnVal.put(key.startsWith(metadataPrefix) ? key : metadataPrefix + key, metadata.get(key));
+         for (Map.Entry<String, String> entry : metadata.entrySet()) {
+            String key = entry.getKey();
+            returnVal.put(key.startsWith(metadataPrefix) ? key : metadataPrefix + key, entry.getValue());
          }
       }
       return returnVal.build();

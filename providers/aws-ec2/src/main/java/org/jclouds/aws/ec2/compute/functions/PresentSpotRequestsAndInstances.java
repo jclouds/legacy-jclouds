@@ -30,6 +30,7 @@ import static org.jclouds.ec2.compute.domain.RegionAndName.nameFunction;
 import static org.jclouds.ec2.compute.domain.RegionAndName.regionFunction;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Singleton;
@@ -79,8 +80,9 @@ public class PresentSpotRequestsAndInstances extends PresentInstances {
    protected Set<RunningInstance> getSpots(Set<RegionAndName> regionAndIds) {
       Builder<RunningInstance> builder = ImmutableSet.<RunningInstance> builder();
       Multimap<String, String> regionToSpotIds = transformValues(index(regionAndIds, regionFunction()), nameFunction());
-      for (String region : regionToSpotIds.keySet()) {
-         Collection<String> spotIds = regionToSpotIds.get(region);
+      for (Map.Entry<String, Collection<String>> entry : regionToSpotIds.asMap().entrySet()) {
+         String region = entry.getKey();
+         Collection<String> spotIds = entry.getValue();
          logger.trace("looking for spots %s in region %s", spotIds, region);
          builder.addAll(transform(
                client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(region,

@@ -51,12 +51,10 @@ public class BindAttributesToIndexedFormParams implements Binder {
 
       Builder<String, String> builder = ImmutableMultimap.builder();
       int amazonOneBasedIndex = 1; // according to docs, counters must start with 1
-      for (String itemName : attributeMap.getAttributes().keySet()) {
+      for (Map.Entry<String, Collection<AttributePair>> entry : attributeMap.getAttributes().entrySet());
+         String itemName = entry.getKey();
 
-         Collection<AttributePair> c = attributeMap.getAttributes().get(itemName);
-         Iterator<AttributePair> it = c.iterator();
-         while (it.hasNext()) {
-            AttributePair attr = it.next();
+         for (AttributePair attr : = entry.getValue()) {
             // not null by contract
 
             String value = attr.getValue();

@@ -72,7 +72,9 @@ public class NodeApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
 
    @Test(dependsOnMethods = "testCreateLoadBalancers")
    public void testAddNodes() throws Exception {
-      for (LoadBalancer lb : nodes.keySet()) {
+      for (Map.Entry<LoadBalancer, Set<Node>> entry : nodes.entrySet()) {
+         LoadBalancer lb = entry.getKey();
+         Set<Node> nodeSet = entry.getValue();
          String region = lb.getRegion();
          Logger.getAnonymousLogger().info("starting node on loadbalancer " + lb.getId() + " in region " + region);
          Set<Node> newNodes = clbApi.getNodeApiForZoneAndLoadBalancer(region, lb.getId()).add(
@@ -80,7 +82,7 @@ public class NodeApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
 
          for (Node n : newNodes) {
             assertEquals(n.getStatus(), Node.Status.ONLINE);
-            nodes.get(lb).add(n);
+            nodeSet.add(n);
             assertEquals(clbApi.getNodeApiForZoneAndLoadBalancer(region, lb.getId()).get(n.getId()).getStatus(),
                      Node.Status.ONLINE);
          }

@@ -94,8 +94,8 @@ public class RestModule extends AbstractModule {
    static Cache<Invokable<?, ?>, Invokable<?, ?>> seedKnownSync2AsyncInvokables(Map<Class<?>, Class<?>> sync2Async) {
       Cache<Invokable<?, ?>, Invokable<?, ?>> sync2AsyncBuilder = CacheBuilder.newBuilder().build();
       putInvokables(HttpClient.class, HttpAsyncClient.class, sync2AsyncBuilder);
-      for (Class<?> s : sync2Async.keySet()) {
-         putInvokables(s, sync2Async.get(s), sync2AsyncBuilder);
+      for (Map.Entry<Class<?>, Class<?>> entry : sync2Async.entrySet()) {
+         putInvokables(entry.getKey(), entry.getValue(), sync2AsyncBuilder);
       }
       return sync2AsyncBuilder;
    }

@@ -125,8 +125,9 @@ public class LocationIdToURIFromAccessForTypeAndVersion implements Supplier<Map<
    @VisibleForTesting
    Map<String, Endpoint> firstEndpointInLocation(Multimap<String, Endpoint> locationToEndpoints) {
       Builder<String, Endpoint> locationToEndpointBuilder = ImmutableMap.<String, Endpoint> builder();
-      for (String locationId : locationToEndpoints.keySet()) {
-         Collection<Endpoint> endpoints = locationToEndpoints.get(locationId);
+      for (Map.Entry<String, Collection<Endpoint>> entry : locationToEndpoints.asMap().entrySet()) {
+         String locationId = entry.getKey();
+         Collection<Endpoint> endpoints = entry.getValue();
          switch (endpoints.size()) {
          case 0:
             logNoEndpointsInLocation(locationId);
@@ -141,8 +142,9 @@ public class LocationIdToURIFromAccessForTypeAndVersion implements Supplier<Map<
    @VisibleForTesting
    Map<String, Endpoint> refineToVersionSpecificEndpoint(Multimap<String, Endpoint> locationToEndpoints) {
       Builder<String, Endpoint> locationToEndpointBuilder = ImmutableMap.<String, Endpoint> builder();
-      for (String locationId : locationToEndpoints.keySet()) {
-         Collection<Endpoint> endpoints = locationToEndpoints.get(locationId);
+      for (Map.Entry<String, Collection<Endpoint>> entry : locationToEndpoints.asMap().entrySet()) {
+         String locationId = entry.getKey();
+         Collection<Endpoint> endpoints = entry.getValue();
          switch (endpoints.size()) {
          case 0:
             logNoEndpointsInLocation(locationId);

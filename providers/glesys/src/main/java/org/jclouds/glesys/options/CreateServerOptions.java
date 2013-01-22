@@ -50,7 +50,8 @@ public class CreateServerOptions implements MapBinder {
             "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
       ImmutableMultimap.Builder<String, String> formParams = ImmutableMultimap.builder();
-      for(String key : postParams.keySet()) formParams.put(key, (String) postParams.get(key));
+      for (Map.Entry<String, Object> entry : postParams.entrySet())
+         formParams.put(entry.getKey(), (String) entry.getValue());
       ServerSpec serverSpec = ServerSpec.class.cast(find(gRequest.getInvocation().getArgs(),
             instanceOf(ServerSpec.class)));
       formParams.put("datacenter", serverSpec.getDatacenter());
