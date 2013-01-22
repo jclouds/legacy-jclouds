@@ -32,6 +32,8 @@ import org.jclouds.rackspace.cloudloadbalancers.features.AccessRuleApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.AccessRuleAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.ConnectionApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.ConnectionAsyncApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.HealthMonitorApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.HealthMonitorAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.NodeAsyncApi;
@@ -61,6 +63,7 @@ public class CloudLoadBalancersRestClientModule extends
             .put(AccessRuleApi.class, AccessRuleAsyncApi.class)
             .put(VirtualIPApi.class, VirtualIPAsyncApi.class)
             .put(ConnectionApi.class, ConnectionAsyncApi.class)
+            .put(HealthMonitorApi.class, HealthMonitorAsyncApi.class)
             .build();
 
    public CloudLoadBalancersRestClientModule() {
