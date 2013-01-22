@@ -54,7 +54,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
 
    public LoadBalancer(String region, int id, String name, String protocol, @Nullable Integer port, Set<Node> nodes,
          @Nullable Integer timeout, @Nullable Boolean halfClosed, @Nullable Algorithm algorithm, Status status,
-         Set<VirtualIPWithId> virtualIPs, @Nullable Map<String, SessionPersistenceType> sessionPersistenceType,
+         Set<VirtualIPWithId> virtualIPs, @Nullable Map<String, SessionPersistence> sessionPersistenceType,
          String clusterName, Date created, Date updated, @Nullable Map<String, Boolean> connectionLogging,
          @Nullable ConnectionThrottle connectionThrottle, boolean contentCaching, int nodeCount,
          @Nullable HealthMonitor healthMonitor, @Nullable SSLTermination sslTermination,
@@ -417,7 +417,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
        * {@inheritDoc}
        */
       @Override
-      public Builder sessionPersistenceType(@Nullable SessionPersistenceType sessionPersistenceType) {
+      public Builder sessionPersistenceType(@Nullable SessionPersistence sessionPersistenceType) {
          return Builder.class.cast(super.sessionPersistenceType(sessionPersistenceType));
       }
 

@@ -28,6 +28,7 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rackspace.cloudloadbalancers.domain.ConnectionThrottle;
 import org.jclouds.rackspace.cloudloadbalancers.domain.HealthMonitor;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
+import org.jclouds.rackspace.cloudloadbalancers.domain.SessionPersistence;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerApi;
 
 import com.google.common.base.Objects;
@@ -56,7 +57,7 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
    protected Algorithm algorithm;
    protected Integer timeout;
    protected Boolean halfClosed;
-   protected Map<String, SessionPersistenceType> sessionPersistence;
+   protected Map<String, SessionPersistence> sessionPersistence;
    protected Map<String, Boolean> connectionLogging;
    protected ConnectionThrottle connectionThrottle;
    protected HealthMonitor healthMonitor;
@@ -67,7 +68,7 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
 
    public BaseLoadBalancer(String name, @Nullable String protocol, @Nullable Integer port, Iterable<N> nodes,
          @Nullable Algorithm algorithm, @Nullable Integer timeout, @Nullable Boolean halfClosed,
-         @Nullable Map<String, SessionPersistenceType> sessionPersistence,
+         @Nullable Map<String, SessionPersistence> sessionPersistence,
          @Nullable Map<String, Boolean> connectionLogging, @Nullable ConnectionThrottle connectionThrottle,
          @Nullable HealthMonitor healthMonitor) {
       this.name = checkNotNull(name, "name");
@@ -140,7 +141,7 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
     * @return sessionPersistenceType, which may be null if sessionPersistenceType has not been set.
     */
    @Nullable
-   public SessionPersistenceType getSessionPersistenceType() {
+   public SessionPersistence getSessionPersistenceType() {
       return sessionPersistence == null ? null : sessionPersistence.get(PERSISTENCE_TYPE);
    }
 
@@ -235,36 +236,6 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
       }
    }
 
-   /**
-    * Session persistence is a feature of the load balancing service that forces multiple requests from clients to be
-    * directed to the same node. This is common with many web applications that do not inherently share application
-    * state between back-end servers.
-    */
-   public static enum SessionPersistenceType {
-      /**
-       * A session persistence mechanism that inserts an HTTP cookie and is used to determine the destination back-end
-       * node. This is supported for HTTP load balancing only.
-       */
-      HTTP_COOKIE,
-      /**
-       * A session persistence mechanism that will keep track of the source IP address that is mapped and is able to
-       * determine the destination back-end node. This is supported for HTTPS pass-through and non-HTTP load balancing
-       * only.
-       */
-      SOURCE_IP,
-
-      UNRECOGNIZED;
-
-      public static SessionPersistenceType fromValue(String sessionPersistenceType) {
-         try {
-            return valueOf(checkNotNull(sessionPersistenceType, "sessionPersistenceType"));
-         }
-         catch (IllegalArgumentException e) {
-            return UNRECOGNIZED;
-         }
-      }
-   }
-
    public static class Builder<N extends BaseNode<N>, T extends BaseLoadBalancer<N, T>> {
       protected String name;
       protected String protocol;
@@ -273,7 +244,7 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
       protected Algorithm algorithm;
       protected Integer timeout;
       protected Boolean halfClosed;
-      protected Map<String, SessionPersistenceType> sessionPersistence;
+      protected Map<String, SessionPersistence> sessionPersistence;
       protected Map<String, Boolean> connectionLogging;
       protected ConnectionThrottle connectionThrottle;
       protected HealthMonitor healthMonitor;
@@ -352,9 +323,9 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
       /**
        * Specifies whether multiple requests from clients are directed to the same node.
        * 
-       * @see SessionPersistenceType
+       * @see SessionPersistence
        */
-      public Builder<N, T> sessionPersistenceType(@Nullable SessionPersistenceType sessionPersistenceType) {
+      public Builder<N, T> sessionPersistenceType(@Nullable SessionPersistence sessionPersistenceType) {
          if (sessionPersistenceType != null) {
             this.sessionPersistence = Maps.newHashMap();
             this.sessionPersistence.put(PERSISTENCE_TYPE, sessionPersistenceType);

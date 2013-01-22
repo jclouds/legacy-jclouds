@@ -31,6 +31,7 @@ import org.jclouds.rackspace.cloudloadbalancers.features.ConnectionAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.HealthMonitorAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.NodeAsyncApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.SessionPersistenceAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.VirtualIPAsyncApi;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
@@ -68,7 +69,7 @@ public interface CloudLoadBalancersAsyncApi {
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 
    /**
-    * Provides synchronous access to Access Rule features.
+    * Provides asynchronous access to Access Rule features.
     */
    @Delegate
    @Path("/loadbalancers/{lbId}")
@@ -76,7 +77,7 @@ public interface CloudLoadBalancersAsyncApi {
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 
    /**
-    * Provides synchronous access to Virtual IP features.
+    * Provides asynchronous access to Virtual IP features.
     */
    @Delegate
    @Path("/loadbalancers/{lbId}")
@@ -84,7 +85,7 @@ public interface CloudLoadBalancersAsyncApi {
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 
    /**
-    * Provides synchronous access to Connection features.
+    * Provides asynchronous access to Connection features.
     */
    @Delegate
    @Path("/loadbalancers/{lbId}")
@@ -92,10 +93,18 @@ public interface CloudLoadBalancersAsyncApi {
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 
    /**
-    * Provides synchronous access to Health Monitor features.
+    * Provides asynchronous access to Health Monitor features.
     */
    @Delegate
    @Path("/loadbalancers/{lbId}")
    HealthMonitorAsyncApi getHealthMonitorApiForZoneAndLoadBalancer(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
+
+   /**
+    * Provides asynchronous access to Session Persistence features.
+    */
+   @Delegate
+   @Path("/loadbalancers/{lbId}")
+   SessionPersistenceAsyncApi getSessionPersistenceApiForZoneAndLoadBalancer(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 }

@@ -38,6 +38,8 @@ import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.NodeAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.NodeApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.SessionPersistenceApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.SessionPersistenceAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.VirtualIPApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.VirtualIPAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.functions.ConvertLB;
@@ -64,6 +66,7 @@ public class CloudLoadBalancersRestClientModule extends
             .put(VirtualIPApi.class, VirtualIPAsyncApi.class)
             .put(ConnectionApi.class, ConnectionAsyncApi.class)
             .put(HealthMonitorApi.class, HealthMonitorAsyncApi.class)
+            .put(SessionPersistenceApi.class, SessionPersistenceAsyncApi.class)
             .build();
 
    public CloudLoadBalancersRestClientModule() {
