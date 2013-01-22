@@ -31,11 +31,11 @@ import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer.Status;
 import org.jclouds.rackspace.cloudloadbalancers.domain.Metadata;
 import org.jclouds.rackspace.cloudloadbalancers.domain.Node;
 import org.jclouds.rackspace.cloudloadbalancers.domain.SSLTermination;
+import org.jclouds.rackspace.cloudloadbalancers.domain.SessionPersistence;
 import org.jclouds.rackspace.cloudloadbalancers.domain.SourceAddresses;
 import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIP;
 import org.jclouds.rackspace.cloudloadbalancers.domain.VirtualIPWithId;
 import org.jclouds.rackspace.cloudloadbalancers.domain.internal.BaseLoadBalancer.Algorithm;
-import org.jclouds.rackspace.cloudloadbalancers.domain.internal.BaseLoadBalancer.SessionPersistenceType;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -90,7 +90,7 @@ public class ParseLoadBalancerTest extends BaseItemParserTest<LoadBalancer> {
             .nodes(ImmutableSet.of(
                   Node.builder().id(1041).address("10.1.1.1").port(80).condition(Node.Condition.ENABLED).status(Node.Status.ONLINE).build(), 
                   Node.builder().id(1411).address("10.1.1.2").port(80).condition(Node.Condition.ENABLED).status(Node.Status.ONLINE).build()))
-            .sessionPersistenceType(SessionPersistenceType.HTTP_COOKIE)
+            .sessionPersistenceType(SessionPersistence.HTTP_COOKIE)
             .clusterName("c1.dfw1")
             .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:42Z"))
             .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:44Z"))

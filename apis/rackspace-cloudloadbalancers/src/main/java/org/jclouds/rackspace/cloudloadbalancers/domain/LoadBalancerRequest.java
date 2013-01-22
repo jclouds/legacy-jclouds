@@ -45,7 +45,7 @@ public class LoadBalancerRequest extends BaseLoadBalancer<NodeRequest, LoadBalan
 
    public LoadBalancerRequest(String name, String protocol, @Nullable Integer port, Set<NodeRequest> nodes,
          @Nullable Algorithm algorithm, @Nullable Integer timeout, @Nullable Boolean halfClosed,
-         @Nullable Map<String, SessionPersistenceType> sessionPersistenceType,
+         @Nullable Map<String, SessionPersistence> sessionPersistenceType,
          @Nullable Map<String, Boolean> connectionLogging, @Nullable ConnectionThrottle connectionThrottle,
          @Nullable HealthMonitor healthMonitor, @Nullable Set<AccessRule> accessRules,
          @Nullable Map<String, String> metadata, VirtualIP.Type virtualIPType, Integer virtualIPId) {
@@ -56,7 +56,7 @@ public class LoadBalancerRequest extends BaseLoadBalancer<NodeRequest, LoadBalan
 
    public LoadBalancerRequest(String name, String protocol, @Nullable Integer port, Set<NodeRequest> nodes,
          @Nullable Algorithm algorithm, @Nullable Integer timeout, @Nullable Boolean halfClosed,
-         @Nullable Map<String, SessionPersistenceType> sessionPersistenceType,
+         @Nullable Map<String, SessionPersistence> sessionPersistenceType,
          @Nullable Map<String, Boolean> connectionLogging, @Nullable ConnectionThrottle connectionThrottle,
          @Nullable HealthMonitor healthMonitor, @Nullable Set<AccessRule> accessRules,
          @Nullable Map<String, String> metadata, Set<Map<String, String>> virtualIPsFromOptions) {

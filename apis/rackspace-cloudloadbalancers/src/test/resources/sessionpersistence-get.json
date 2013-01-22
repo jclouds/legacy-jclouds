@@ -1,0 +1,5 @@
+{
+    "sessionPersistence": {
+        "persistenceType": "HTTP_COOKIE"
+    }
+}

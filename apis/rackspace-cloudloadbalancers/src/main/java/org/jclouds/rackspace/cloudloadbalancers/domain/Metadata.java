@@ -19,7 +19,6 @@
 package org.jclouds.rackspace.cloudloadbalancers.domain;
 
 import java.util.Map;
-import java.util.Set;
 
 import com.google.common.collect.ForwardingMap;
 import com.google.common.collect.Maps;
