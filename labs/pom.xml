@@ -63,8 +63,6 @@
        <module>oauth</module>
        <module>openstack-quantum</module>
        <module>openstack-glance</module>
-       <module>sts</module>
-       <module>aws-sts</module>
        <module>route53</module>
        <module>aws-route53</module>
   </modules>

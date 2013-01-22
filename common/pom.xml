@@ -33,7 +33,6 @@
     <name>jclouds commons project</name>
     <modules>
        <module>azure</module>
-       <module>aws</module>
        <module>openstack</module>
        <module>trmk</module>
     </modules>
