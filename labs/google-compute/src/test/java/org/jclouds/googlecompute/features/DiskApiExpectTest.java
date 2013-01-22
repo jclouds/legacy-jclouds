@@ -20,7 +20,6 @@
 package org.jclouds.googlecompute.features;
 
 import org.jclouds.googlecompute.internal.BaseGoogleComputeApiExpectTest;
-import org.jclouds.googlecompute.options.ListOptions;
 import org.jclouds.googlecompute.parse.ParseDiskListTest;
 import org.jclouds.googlecompute.parse.ParseDiskTest;
 import org.jclouds.googlecompute.parse.ParseOperationTest;
@@ -94,8 +93,8 @@ public class DiskApiExpectTest extends BaseGoogleComputeApiExpectTest {
               TOKEN_RESPONSE, insert,
               insertDiskResponse).getDiskApiForProject("myproject");
 
-      assertEquals(api.insert("testimage1", URI.create("https://www.googleapis" +
-              ".com/compute/v1beta13/projects/myproject/zones/us-central1-a"), 1)
+      assertEquals(api.createInZone("testimage1", 1, URI.create("https://www.googleapis" +
+              ".com/compute/v1beta13/projects/myproject/zones/us-central1-a"))
               , new ParseOperationTest().expected());
    }
 

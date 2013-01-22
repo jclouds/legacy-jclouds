@@ -19,8 +19,7 @@
 
 package org.jclouds.googlecompute.features;
 
-import org.jclouds.googlecompute.GoogleComputeApi;
-import org.jclouds.googlecompute.internal.BaseGoogleComputeExpectTest;
+import org.jclouds.googlecompute.internal.BaseGoogleComputeApiExpectTest;
 import org.jclouds.googlecompute.parse.ParseKernelListTest;
 import org.jclouds.googlecompute.parse.ParseKernelTest;
 import org.jclouds.http.HttpRequest;
@@ -36,7 +35,7 @@ import static org.testng.Assert.assertTrue;
  * @author David Alves
  */
 @Test(groups = "unit")
-public class KernelApiExpectTest extends BaseGoogleComputeExpectTest<GoogleComputeApi> {
+public class KernelApiExpectTest extends BaseGoogleComputeApiExpectTest {
 
    public void testGetKernelResponseIs2xx() throws Exception {
       HttpRequest get = HttpRequest

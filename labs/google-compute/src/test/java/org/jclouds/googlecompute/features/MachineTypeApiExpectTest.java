@@ -19,8 +19,7 @@
 
 package org.jclouds.googlecompute.features;
 
-import org.jclouds.googlecompute.GoogleComputeApi;
-import org.jclouds.googlecompute.internal.BaseGoogleComputeExpectTest;
+import org.jclouds.googlecompute.internal.BaseGoogleComputeApiExpectTest;
 import org.jclouds.googlecompute.parse.ParseMachineTypeListTest;
 import org.jclouds.googlecompute.parse.ParseMachineTypeTest;
 import org.jclouds.http.HttpRequest;
@@ -36,7 +35,7 @@ import static org.testng.Assert.assertTrue;
  * @author David Alves
  */
 @Test(groups = "unit")
-public class MachineTypeApiExpectTest extends BaseGoogleComputeExpectTest<GoogleComputeApi> {
+public class MachineTypeApiExpectTest extends BaseGoogleComputeApiExpectTest {
 
    public void testGetMachineTypeResponseIs2xx() throws Exception {
       HttpRequest get = HttpRequest
