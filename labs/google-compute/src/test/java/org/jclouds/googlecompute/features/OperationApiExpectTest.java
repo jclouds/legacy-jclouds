@@ -19,8 +19,7 @@
 
 package org.jclouds.googlecompute.features;
 
-import org.jclouds.googlecompute.GoogleComputeApi;
-import org.jclouds.googlecompute.internal.BaseGoogleComputeExpectTest;
+import org.jclouds.googlecompute.internal.BaseGoogleComputeApiExpectTest;
 import org.jclouds.googlecompute.options.ListOptions;
 import org.jclouds.googlecompute.parse.ParseOperationListTest;
 import org.jclouds.googlecompute.parse.ParseOperationTest;
@@ -38,7 +37,7 @@ import static org.testng.Assert.assertTrue;
  * @author David Alves
  */
 @Test(groups = "unit")
-public class OperationApiExpectTest extends BaseGoogleComputeExpectTest<GoogleComputeApi> {
+public class OperationApiExpectTest extends BaseGoogleComputeApiExpectTest {
 
    private static final String OPERATIONS_URL_PREFIX = "https://www.googleapis" +
            ".com/compute/v1beta13/projects/myproject/operations";

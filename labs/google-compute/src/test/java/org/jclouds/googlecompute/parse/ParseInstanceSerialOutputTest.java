@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,21 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.googlecompute.internal;
 
-import org.jclouds.googlecompute.GoogleComputeApi;
+package org.jclouds.googlecompute.parse;
 
-import java.util.Properties;
+import org.jclouds.googlecompute.domain.Instance;
+import org.jclouds.googlecompute.internal.BaseGoogleComputeParseTest;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
 
 /**
- * @author Adrian Cole
+ * @author David Alves
  */
-public class BaseGoogleComputeApiExpectTest extends BaseGoogleComputeExpectTest<GoogleComputeApi> {
+public class ParseInstanceSerialOutputTest extends BaseGoogleComputeParseTest<Instance.SerialPortOutput> {
 
    @Override
-   protected Properties setupProperties() {
-      Properties properties = super.setupProperties();
-      properties.put("google-compute.identity", "myproject");
-      return properties;
+   public String resource() {
+      return "/instance_serial_port.json";
+   }
+
+   @Override
+   @Consumes(MediaType.APPLICATION_JSON)
+   public Instance.SerialPortOutput expected() {
+      return Instance.SerialPortOutput.builder()
+              .contents("console output").build();
    }
 }

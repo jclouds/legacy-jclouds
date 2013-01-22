@@ -19,9 +19,8 @@
 
 package org.jclouds.googlecompute.features;
 
-import org.jclouds.googlecompute.GoogleComputeApi;
 import org.jclouds.googlecompute.GoogleComputeConstants;
-import org.jclouds.googlecompute.internal.BaseGoogleComputeExpectTest;
+import org.jclouds.googlecompute.internal.BaseGoogleComputeApiExpectTest;
 import org.jclouds.googlecompute.parse.ParseMetadataTest;
 import org.jclouds.googlecompute.parse.ParseOperationTest;
 import org.jclouds.googlecompute.parse.ParseProjectTest;
@@ -39,7 +38,7 @@ import static org.testng.Assert.assertNull;
  * @author David Alves
  */
 @Test(groups = "unit")
-public class ProjectApiExpectTest extends BaseGoogleComputeExpectTest<GoogleComputeApi> {
+public class ProjectApiExpectTest extends BaseGoogleComputeApiExpectTest {
 
    public static final String PROJECTS_URL_PREFIX = "https://www.googleapis.com/compute/v1beta13/projects";
 

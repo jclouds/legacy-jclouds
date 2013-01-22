@@ -19,8 +19,7 @@
 
 package org.jclouds.googlecompute.features;
 
-import org.jclouds.googlecompute.GoogleComputeApi;
-import org.jclouds.googlecompute.internal.BaseGoogleComputeExpectTest;
+import org.jclouds.googlecompute.internal.BaseGoogleComputeApiExpectTest;
 import org.jclouds.googlecompute.parse.ParseZoneListTest;
 import org.jclouds.googlecompute.parse.ParseZoneTest;
 import org.jclouds.http.HttpRequest;
@@ -36,7 +35,7 @@ import static org.testng.Assert.assertTrue;
  * @author David Alves
  */
 @Test(groups = "unit")
-public class ZoneApiExpectTest extends BaseGoogleComputeExpectTest<GoogleComputeApi> {
+public class ZoneApiExpectTest extends BaseGoogleComputeApiExpectTest {
 
    public static final String ZONES_URL_PREFIX = "https://www.googleapis.com/compute/v1beta13/projects/google/zones";
 

@@ -48,13 +48,14 @@ public interface DiskApi {
    /**
     * Creates a persistent disk resource in the specified project specifying the size of the disk.
     *
+    *
     * @param diskName the name of disk.
-    * @param zone     the URi of the zone where the disk is to be created.
     * @param sizeGb   the size of the disk
+    * @param zone     the URi of the zone where the disk is to be created.
     * @return an Operation resource. To check on the status of an operation, poll the Operations resource returned to
     *         you, and look for the status field.
     */
-   Operation insert(String diskName, URI zone, int sizeGb);
+   Operation createInZone(String diskName, int sizeGb, URI zone);
 
    /**
     * Deletes the specified persistent disk resource.
