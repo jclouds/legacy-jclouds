@@ -1,0 +1,50 @@
+{
+ "kind": "compute#instance",
+ "id": "13051190678907570425",
+ "description": "desc",
+ "creationTimestamp": "2012-11-25T23:48:20.758",
+ "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/myproject/instances/test-instance",
+ "name": "test-instance",
+ "image": "https://www.googleapis.com/compute/v1beta13/projects/google/images/ubuntu-12-04-v20120912",
+ "machineType": "https://www.googleapis.com/compute/v1beta13/projects/myproject/machineTypes/n1-standard-1",
+ "status": "RUNNING",
+ "zone": "https://www.googleapis.com/compute/v1beta13/projects/myproject/zones/us-central1-a",
+ "networkInterfaces": [
+  {
+    "kind": "compute#instanceNetworkInterface",
+    "name": "nic0",
+    "networkIP": "10.240.121.115",
+    "network": "https://www.googleapis.com/compute/v1beta13/projects/myproject/networks/default"
+  }
+ ],
+ "disks": [
+  {
+    "kind": "compute#instanceDisk",
+    "type": "PERSISTENT",
+    "mode": "READ_WRITE",
+    "deviceName": "test",
+    "source": "https://www.googleapis.com/compute/v1beta13/projects/myproject/disks/test",
+    "index": 0
+  }
+ ],
+ "serviceAccounts": [
+  {
+    "kind": "compute#serviceAccount",
+    "email": "default",
+    "scopes": [
+      "myscope"
+    ]
+  }
+ ],
+ "metadata": {
+   "items": [
+     {
+       "key": "aKey",
+       "value": "aValue"
+     }
+   ]
+ },
+ "tags": [
+     "aTag"
+ ]
+}

@@ -60,7 +60,7 @@ public class DiskApiLiveTest extends BaseGoogleComputeApiLiveTest {
    public void testInsertDisk() {
       Project project = context.getApi().getProjectApi().get(getUserProject());
       zoneUrl = getDefaultZoneUrl(project.getName());
-      assertOperationDoneSucessfully(api().insert(DISK_NAME, zoneUrl, sizeGb), TIME_WAIT);
+      assertOperationDoneSucessfully(api().createInZone(DISK_NAME, sizeGb, zoneUrl), TIME_WAIT);
 
    }
 

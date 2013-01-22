@@ -18,15 +18,11 @@
  */
 package org.jclouds.googlecompute.internal;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.jclouds.util.Predicates2.retry;
-import static org.testng.Assert.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.net.URI;
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicReference;
-
+import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.googlecompute.GoogleComputeApi;
 import org.jclouds.googlecompute.GoogleComputeApiMetadata;
@@ -36,11 +32,14 @@ import org.jclouds.googlecompute.domain.Operation;
 import org.jclouds.oauth.v2.OAuthTestUtils;
 import org.jclouds.rest.RestContext;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
-import com.google.common.reflect.TypeToken;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
+import java.net.URI;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.util.Predicates2.retry;
+import static org.testng.Assert.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 
 
 /**
@@ -121,6 +120,10 @@ public class BaseGoogleComputeApiLiveTest extends BaseContextLiveTest<RestContex
 
    protected URI gettMachineTypeUrl(String project, String machineType) {
       return URI.create(API_URL_PREFIX + project + MACHINE_TYPE_API_URL_SUFFIX + machineType);
+   }
+
+   protected URI getDiskUrl(String project, String diskName) {
+      return URI.create(API_URL_PREFIX + project + "/disks/" + diskName);
    }
 
    protected static Operation waitOperationDone(Predicate<AtomicReference<Operation>> operationDonePredicate,

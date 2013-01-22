@@ -18,14 +18,14 @@
  */
 package org.jclouds.googlecompute.config;
 
-import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Suppliers.compose;
-
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
-
-import javax.inject.Singleton;
-
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Splitter;
+import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 import org.jclouds.domain.Credentials;
 import org.jclouds.googlecompute.GoogleComputeApi;
 import org.jclouds.googlecompute.GoogleComputeAsyncApi;
@@ -36,6 +36,8 @@ import org.jclouds.googlecompute.features.FirewallApi;
 import org.jclouds.googlecompute.features.FirewallAsyncApi;
 import org.jclouds.googlecompute.features.ImageApi;
 import org.jclouds.googlecompute.features.ImageAsyncApi;
+import org.jclouds.googlecompute.features.InstanceApi;
+import org.jclouds.googlecompute.features.InstanceAsyncApi;
 import org.jclouds.googlecompute.features.KernelApi;
 import org.jclouds.googlecompute.features.KernelAsyncApi;
 import org.jclouds.googlecompute.features.MachineTypeApi;
@@ -51,22 +53,24 @@ import org.jclouds.googlecompute.features.ZoneAsyncApi;
 import org.jclouds.googlecompute.handlers.GoogleComputeErrorHandler;
 import org.jclouds.googlecompute.predicates.OperationDonePredicate;
 import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.Uris;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
+import org.jclouds.location.Provider;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Splitter;
-import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Suppliers.compose;
 
 /**
  * Configures the GoogleCompute connection.
@@ -79,6 +83,7 @@ public class GoogleComputeRestClientModule extends RestClientModule<GoogleComput
            .put(DiskApi.class, DiskAsyncApi.class)
            .put(FirewallApi.class, FirewallAsyncApi.class)
            .put(ImageApi.class, ImageAsyncApi.class)
+           .put(InstanceApi.class, InstanceAsyncApi.class)
            .put(KernelApi.class, KernelAsyncApi.class)
            .put(MachineTypeApi.class, MachineTypeAsyncApi.class)
            .put(NetworkApi.class, NetworkAsyncApi.class)
@@ -108,13 +113,55 @@ public class GoogleComputeRestClientModule extends RestClientModule<GoogleComput
    @Provides
    @Singleton
    @UserProject
-   public Supplier<String> supplyProject(
-         @org.jclouds.location.Provider final Supplier<Credentials> creds) {
+   public Supplier<String> supplyProject(@org.jclouds.location.Provider final Supplier<Credentials> creds) {
       return compose(new Function<Credentials, String>() {
          public String apply(Credentials in) {
-            checkState(in.identity.indexOf("@") != 1, "identity should be in project_id@developer.gserviceaccount.com format");
+            checkState(in.identity.indexOf("@") != 1, "identity should be in project_id@developer.gserviceaccount.com" +
+                    " format");
             return Iterables.get(Splitter.on("@").split(in.identity), 0);
          }
       }, creds);
+   }
+
+   @Provides
+   @Singleton
+   @Named("machineTypes")
+   public Function<String, URI> provideMachineTypeNameToURIFunction(final @Provider Supplier<URI> endpoint,
+                                                                    final @UserProject Supplier<String> userProject) {
+      return new Function<String, URI>() {
+         @Override
+         public URI apply(String input) {
+            return Uris.uriBuilder(endpoint.get()).appendPath("/projects/").appendPath(userProject.get()).appendPath
+                    ("/machineTypes/").appendPath(input).build();
+         }
+      };
+   }
+
+   @Provides
+   @Singleton
+   @Named("networks")
+   public Function<String, URI> provideNetworkNameToURIFunction(final @Provider Supplier<URI> endpoint,
+                                                                final @UserProject Supplier<String> userProject) {
+      return new Function<String, URI>() {
+         @Override
+         public URI apply(String input) {
+            return Uris.uriBuilder(endpoint.get()).appendPath("/projects/").appendPath(userProject.get()).appendPath
+                    ("/networks/").appendPath(input).build();
+         }
+      };
+   }
+
+   @Provides
+   @Singleton
+   @Named("zones")
+   public Function<String, URI> provideZoneNameToURIFunction(final @Provider Supplier<URI> endpoint,
+                                                             final @UserProject Supplier<String> userProject) {
+      return new Function<String, URI>() {
+         @Override
+         public URI apply(String input) {
+            return Uris.uriBuilder(endpoint.get()).appendPath("/projects/").appendPath(userProject.get()).appendPath
+                    ("/zones/").appendPath(input).build();
+         }
+      };
    }
 }

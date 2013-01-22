@@ -34,6 +34,8 @@ import com.google.gson.JsonSerializer;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import org.jclouds.googlecompute.domain.Firewall;
+import org.jclouds.googlecompute.domain.Instance;
+import org.jclouds.googlecompute.domain.InstanceTemplate;
 import org.jclouds.googlecompute.domain.Operation;
 import org.jclouds.googlecompute.domain.Project;
 import org.jclouds.json.config.GsonModule;
@@ -71,6 +73,8 @@ public class GoogleComputeParserModule extends AbstractModule {
               .put(Header.class, new HeaderTypeAdapter())
               .put(ClaimSet.class, new ClaimSetTypeAdapter())
               .put(Project.class, new ProjectTypeAdapter())
+              .put(Instance.class, new InstanceTypeAdapter())
+              .put(InstanceTemplate.class, new InstanceTemplateTypeAdapter())
               .put(Rule.class, new RuleTypeAdapter())
               .build();
    }
@@ -114,6 +118,96 @@ public class GoogleComputeParserModule extends AbstractModule {
             super(id, creationTimestamp, selfLink, name, description, targetLink, targetId, clientOperationId,
                     status, statusMessage, user, progress, insertTime, startTime, endTime, httpErrorStatusCode,
                     httpErrorMessage, operationType, null);
+         }
+      }
+   }
+
+   @Singleton
+   private static class InstanceTemplateTypeAdapter implements JsonSerializer<InstanceTemplate> {
+
+      @Override
+      public JsonElement serialize(InstanceTemplate src, Type typeOfSrc, JsonSerializationContext context) {
+         InstanceTemplateInternal template = new InstanceTemplateInternal(src);
+         JsonObject instance = (JsonObject) context.serialize(template, InstanceTemplateInternal.class);
+
+         // deal with network
+         JsonArray networkInterfaces = new JsonArray();
+         networkInterfaces.add(context.serialize(src.getNetwork(), InstanceTemplate.Network.class));
+         instance.add("networkInterfaces", networkInterfaces);
+
+         // deal with persistent disks
+         if (src.getDisks() != null && !src.getDisks().isEmpty()) {
+            JsonArray disks = new JsonArray();
+            for (InstanceTemplate.PersistentDisk persistentDisk : src.getDisks()) {
+               JsonObject disk = (JsonObject) context.serialize(persistentDisk, InstanceTemplate.PersistentDisk.class);
+               disk.addProperty("type", "PERSISTENT");
+               disks.add(disk);
+            }
+            instance.add("disks", disks);
+         }
+
+         // deal with metadata
+         if (src.getMetadata() != null && !src.getMetadata().isEmpty()) {
+            JsonObject metadata = (JsonObject) context.serialize(new Metadata(src.getMetadata()));
+            instance.add("metadata", metadata);
+            return instance;
+         }
+
+         return instance;
+      }
+
+      private static class InstanceTemplateInternal extends InstanceTemplate {
+         private InstanceTemplateInternal(InstanceTemplate template) {
+            super(template.getMachineType());
+            name(template.getName());
+            description(template.getDescription());
+            zone(template.getZone());
+            image(template.getImage());
+            tags(template.getTags());
+            serviceAccounts(template.getServiceAccounts());
+         }
+      }
+   }
+
+   @Singleton
+   private static class InstanceTypeAdapter implements JsonDeserializer<Instance> {
+
+      @Override
+      public Instance deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws
+              JsonParseException {
+         Instance.Builder instanceBuilder = ((Instance) context.deserialize(json,
+                 InstanceInternal.class)).toBuilder();
+         JsonObject object = (JsonObject) json;
+         if (object.get("disks") != null) {
+            JsonArray disks = (JsonArray) object.get("disks");
+            for (JsonElement element : disks) {
+               JsonObject disk = (JsonObject) element;
+               if (disk.get("type").getAsString().equals("PERSISTENT")) {
+                  instanceBuilder.addDisk((Instance.PersistentAttachedDisk) context.deserialize(disk,
+                          Instance.PersistentAttachedDisk.class));
+               } else {
+                  instanceBuilder.addDisk((Instance.AttachedDisk) context.deserialize(disk,
+                          Instance.AttachedDisk.class));
+               }
+            }
+
+         }
+
+         return Instance.builder().fromInstance(instanceBuilder.build()).build();
+      }
+
+
+      private static class InstanceInternal extends Instance {
+         @ConstructorProperties({
+                 "id", "creationTimestamp", "selfLink", "name", "description", "tags", "image", "machineType",
+                 "status", "statusMessage", "zone", "networkInterfaces", "metadata", "serviceAccounts"
+         })
+         private InstanceInternal(String id, Date creationTimestamp, URI selfLink, String name, String description,
+                                  Set<String> tags, URI image, URI machineType, Status status, String statusMessage,
+                                  URI zone, Set<NetworkInterface> networkInterfaces, Metadata metadata,
+                                  Set<ServiceAccount> serviceAccounts) {
+            super(id, creationTimestamp, selfLink, name, description, tags, image, machineType,
+                    status, statusMessage, zone, networkInterfaces, null, metadata, serviceAccounts);
          }
       }
    }

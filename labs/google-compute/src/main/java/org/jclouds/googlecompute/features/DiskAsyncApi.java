@@ -76,7 +76,7 @@ public interface DiskAsyncApi {
    ListenableFuture<Disk> get(@PathParam("disk") String diskName);
 
    /**
-    * @see DiskApi#insert(String, java.net.URI, int)
+    * @see DiskApi#createInZone(String, int, java.net.URI)
     */
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
@@ -84,9 +84,9 @@ public interface DiskAsyncApi {
    @Path("/disks")
    @OAuthScopes({COMPUTE_SCOPE})
    @MapBinder(BindToJsonPayload.class)
-   ListenableFuture<Operation> insert(@PayloadParam("name") String diskName,
-                                      @PayloadParam("zone") URI zone,
-                                      @PayloadParam("sizeGb") int sizeGb);
+   ListenableFuture<Operation> createInZone(@PayloadParam("name") String diskName,
+                                            @PayloadParam("sizeGb") int sizeGb,
+                                            @PayloadParam("zone") URI zone);
 
    /**
     * @see DiskApi#delete(String)
