@@ -40,14 +40,14 @@
     <test.sts.identity>${test.aws.identity}</test.sts.identity>
     <test.sts.credential>${test.aws.credential}</test.sts.credential>
 
-    <jclouds.osgi.export>org.jclouds.sts*;version="${project.version}"</jclouds.osgi.export>
+    <jclouds.osgi.export>org.jclouds.aws*;version="${project.version},org.jclouds.sts*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
   </properties>
 
   <dependencies>
     <dependency>
-      <groupId>org.jclouds.common</groupId>
-      <artifactId>aws-common</artifactId>
+      <groupId>org.jclouds</groupId>
+      <artifactId>jclouds-core</artifactId>
       <version>${project.version}</version>
       <type>jar</type>
     </dependency>

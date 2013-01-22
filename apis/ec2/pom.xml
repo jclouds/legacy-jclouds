@@ -54,8 +54,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.jclouds.common</groupId>
-      <artifactId>aws-common</artifactId>
+      <groupId>org.jclouds.api</groupId>
+      <artifactId>sts</artifactId>
       <version>${project.version}</version>
       <type>jar</type>
     </dependency>
