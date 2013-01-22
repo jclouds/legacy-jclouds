@@ -56,8 +56,8 @@ public class SupplyKeyMatchingValueOrNull<K, V> implements Supplier<K> {
       Map<K, V> map = Maps.transformValues(supplier.get(), Suppliers.<V> supplierFunction());
       K region = ImmutableBiMap.copyOf(map).inverse().get(uri);
       if (region == null && map.size() > 0) {
-         logger.warn("failed to find key for value %s in %s; choosing first: %s", uri, map, region);
          region = Iterables.get(map.keySet(), 0);
+         logger.warn("failed to find key for value %s in %s; choosing first: %s", uri, map, region);
       }
       return region;
    }

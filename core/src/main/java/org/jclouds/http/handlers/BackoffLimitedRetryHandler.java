@@ -79,7 +79,7 @@ import com.google.inject.Inject;
 @Singleton
 public class BackoffLimitedRetryHandler implements HttpRetryHandler, IOExceptionRetryHandler {
 
-   public static BackoffLimitedRetryHandler INSTANCE = new BackoffLimitedRetryHandler();
+   public static final BackoffLimitedRetryHandler INSTANCE = new BackoffLimitedRetryHandler();
 
    @Inject(optional = true)
    @Named(Constants.PROPERTY_MAX_RETRIES)
