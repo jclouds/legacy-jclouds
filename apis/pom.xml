@@ -52,5 +52,6 @@
        <module>cloudservers</module>
        <module>rackspace-cloudidentity</module>
        <module>rackspace-cloudloadbalancers</module>
+       <module>sts</module>
     </modules>
 </project>
