@@ -25,6 +25,7 @@ import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 import java.net.URI;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,6 +33,7 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.common.util.concurrent.Uninterruptibles;
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -93,10 +95,9 @@ public class NetworkUtils {
    private final Supplier<NodeMetadata> hostSupplier;
 
    @Inject
-   public NetworkUtils(Supplier<VirtualBoxManager> manager, MachineUtils machineUtils,
-         MachineController machineController, Supplier<NodeMetadata> host, @Provider Supplier<URI> providerSupplier,
-         IpAddressesLoadingCache ipAddressesLoadingCache, Supplier<NodeMetadata> hostSupplier,
-         RunScriptOnNode.Factory scriptRunnerFactory) {
+   public NetworkUtils(Supplier<VirtualBoxManager> manager, MachineUtils machineUtils, Supplier<NodeMetadata> host,
+                       @Provider Supplier<URI> providerSupplier, IpAddressesLoadingCache ipAddressesLoadingCache,
+                       Supplier<NodeMetadata> hostSupplier, RunScriptOnNode.Factory scriptRunnerFactory) {
       this.manager = manager;
       this.machineUtils = machineUtils;
       this.host = checkNotNull(host, "host can't be null");
@@ -131,9 +132,8 @@ public class NetworkUtils {
    }
 
    public boolean enableNetworkInterface(NodeMetadata nodeMetadata, NetworkInterfaceCard networkInterfaceCard) {
-      ListenableFuture<ExecResponse> execEnableNetworkInterface = null;
-      execEnableNetworkInterface = machineUtils.runScriptOnNode(nodeMetadata, new EnableNetworkInterface(
-            networkInterfaceCard), RunScriptOptions.NONE);
+      ListenableFuture<ExecResponse> execEnableNetworkInterface = machineUtils.runScriptOnNode(nodeMetadata,
+              new EnableNetworkInterface(networkInterfaceCard), RunScriptOptions.NONE);
       ExecResponse execEnableNetworkInterfaceResponse = Futures.getUnchecked(execEnableNetworkInterface);
       return execEnableNetworkInterfaceResponse.getExitStatus() == 0;
    }
@@ -208,14 +208,9 @@ public class NetworkUtils {
             null);
    }
 
-   /**
-    * @param availableNetworkInterfaces
-    * @param hostOnlyIfIpAddress
-    * @return
-    */
    private Iterable<IHostNetworkInterface> filterAvailableNetworkInterfaceByHostOnlyAndDHCPenabled(
          Iterable<IHostNetworkInterface> availableNetworkInterfaces) {
-      Iterable<IHostNetworkInterface> filteredNetworkInterfaces = Iterables.filter(availableNetworkInterfaces,
+      return Iterables.filter(availableNetworkInterfaces,
             new Predicate<IHostNetworkInterface>() {
                @Override
                public boolean apply(IHostNetworkInterface iHostNetworkInterface) {
@@ -232,24 +227,28 @@ public class NetworkUtils {
                   return iHostNetworkInterface.getInterfaceType().equals(HostNetworkInterfaceType.HostOnly) && match;
                }
             });
-      return filteredNetworkInterfaces;
    }
 
    public String getValidHostOnlyIpFromVm(String machineNameOrId) {
       long nicSlot = 0;
+      int count = 0;
       String ipAddress = "";
       while (nicSlot < 4 && ipAddress.isEmpty()) {
-         MachineNameOrIdAndNicSlot machineNameOrIdAndNicSlot = MachineNameOrIdAndNicSlot.fromParts(machineNameOrId,
-               nicSlot);
-         ipAddress = getIpAddressFromNicSlot(machineNameOrIdAndNicSlot);
-         if (!isValidIpForHostOnly(machineNameOrIdAndNicSlot, ipAddress)) {
-            ipAddressesLoadingCache.invalidate(machineNameOrIdAndNicSlot);
-            ipAddress = "";
+         MachineNameOrIdAndNicSlot machineNameOrIdAndNicSlot =
+                 MachineNameOrIdAndNicSlot.fromParts(machineNameOrId, nicSlot);
+         while (count < 10 && ipAddress.isEmpty()) {
+            Uninterruptibles.sleepUninterruptibly(3, TimeUnit.SECONDS);
+            ipAddress = getIpAddressFromNicSlot(machineNameOrIdAndNicSlot);
+            if (!isValidIpForHostOnly(ipAddress)) {
+               ipAddressesLoadingCache.invalidate(machineNameOrIdAndNicSlot);
+               ipAddress = "";
+            }
+            count++;
          }
          nicSlot++;
       }
       return checkNotNull(Strings.emptyToNull(ipAddress),
-            String.format("Cannot find a valid IP address for the %s's HostOnly NIC", machineNameOrId));
+              String.format("Cannot find a valid IP address for the %s's HostOnly NIC", machineNameOrId));
    }
 
    public String getIpAddressFromNicSlot(String machineNameOrId, long nicSlot) {
@@ -267,7 +266,7 @@ public class NetworkUtils {
       }
    }
 
-   public boolean isValidIpForHostOnly(MachineNameOrIdAndNicSlot machineNameOrIdAndNicSlot, String ip) {
+   public boolean isValidIpForHostOnly(String ip) {
       return !ip.isEmpty() && isIpv4(ip) && !ipBelongsToNatRange(ip) && !ipEqualsToNatGateway(ip);
    }
 
@@ -287,12 +286,12 @@ public class NetworkUtils {
       return ip.startsWith("10.0.3");
    }
 
-   protected String getIpAddressFromBridgedNIC(INetworkAdapter networkAdapter, String network) {
+   protected String getIpAddressFromBridgedNIC(INetworkAdapter networkAdapter) {
       // RetrieveActiveBridgedInterfaces
       List<BridgedIf> activeBridgedInterfaces = new RetrieveActiveBridgedInterfaces(scriptRunnerFactory)
             .apply(hostSupplier.get());
       BridgedIf activeBridgedIf = checkNotNull(Iterables.get(activeBridgedInterfaces, 0), "activeBridgedInterfaces");
-      network = activeBridgedIf.getIpAddress();
+      String network = activeBridgedIf.getIpAddress();
 
       // scan ip
       RunScriptOnNode ipScanRunScript = scriptRunnerFactory.create(hostSupplier.get(),

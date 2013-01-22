@@ -23,7 +23,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.virtualbox.util.MachineUtils.machineNotFoundException;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -32,6 +34,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
@@ -116,6 +120,10 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
       NetworkSpec networkSpec = machineSpec.getNetworkSpec();
       String vmName = vmSpec.getVmName();
 
+      // Change BootOrder
+      Map<Long, DeviceType> positionAndDeviceType = ImmutableMap.of(1l, DeviceType.HardDisk);
+      ensureMachineHasDesiredBootOrder(vmName, positionAndDeviceType);
+
       // Change RAM
       ensureMachineHasMemory(vmName, vmSpec.getMemory());
 
@@ -169,6 +177,10 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
          IMedium medium = new CreateMediumIfNotAlreadyExists(manager, machineUtils, true).apply(hardDisk);
          ensureMachineDevicesAttached(vmName, medium, hardDisk.getDeviceDetails(), controller.getName());
       }
+   }
+
+   private void ensureMachineHasDesiredBootOrder(String vmName, Map<Long, DeviceType> positionAndDeviceType) {
+      machineUtils.writeLockMachineAndApply(vmName, new ApplyBootOrderToMachine(positionAndDeviceType));
    }
 
    private void ensureMachineHasMemory(String vmName, final long memorySize) {
