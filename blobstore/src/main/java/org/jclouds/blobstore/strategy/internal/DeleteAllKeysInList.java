@@ -179,6 +179,9 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
 
          if (!exceptions.isEmpty()) {
             ++numErrors;
+            if (numErrors == maxErrors) {
+               break;
+            }
             retryHandler.imposeBackoffExponentialDelay(numErrors, message);
             continue;
          }
