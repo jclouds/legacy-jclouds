@@ -27,6 +27,7 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.core.MediaType;
@@ -46,6 +47,7 @@ public interface OAuthAsyncApi {
    /**
     * @see OAuthApi#authenticate(TokenRequest)
     */
+   @Named("authenticate")
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    public ListenableFuture<Token> authenticate(@BinderParam(OAuthTokenBinder.class) TokenRequest tokenRequest)
