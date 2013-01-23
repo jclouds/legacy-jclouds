@@ -32,6 +32,8 @@ import org.jclouds.rackspace.cloudloadbalancers.features.AccessRuleApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.AccessRuleAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.ConnectionApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.ConnectionAsyncApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.ContentCachingApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.ContentCachingAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.HealthMonitorApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.HealthMonitorAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerAsyncApi;
@@ -67,6 +69,7 @@ public class CloudLoadBalancersRestClientModule extends
             .put(ConnectionApi.class, ConnectionAsyncApi.class)
             .put(HealthMonitorApi.class, HealthMonitorAsyncApi.class)
             .put(SessionPersistenceApi.class, SessionPersistenceAsyncApi.class)
+            .put(ContentCachingApi.class, ContentCachingAsyncApi.class)
             .build();
 
    public CloudLoadBalancersRestClientModule() {
