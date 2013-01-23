@@ -33,6 +33,7 @@ import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Transform;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -58,6 +59,7 @@ public interface ZoneAsyncApi {
    /**
     * @see ZoneApi#get(String)
     */
+   @Named("Zones:get")
    @GET
    @Path("/zones/{zone}")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
@@ -67,6 +69,7 @@ public interface ZoneAsyncApi {
    /**
     * @see ZoneApi#listFirstPage()
     */
+   @Named("Zones:list")
    @GET
    @Path("/zones")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
@@ -77,6 +80,7 @@ public interface ZoneAsyncApi {
    /**
     * @see ZoneApi#listAtMarker(String)
     */
+   @Named("Zones:list")
    @GET
    @Path("/zones")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
@@ -87,6 +91,7 @@ public interface ZoneAsyncApi {
    /**
     * @see ZoneApi#listAtMarker(String, org.jclouds.googlecompute.options.ListOptions)
     */
+   @Named("Zones:list")
    @GET
    @Path("/zones")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
@@ -97,6 +102,7 @@ public interface ZoneAsyncApi {
    /**
     * @see ZoneApi#list()
     */
+   @Named("Zones:list")
    @GET
    @Path("/zones")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
@@ -108,6 +114,7 @@ public interface ZoneAsyncApi {
    /**
     * @see ZoneApi#list(org.jclouds.googlecompute.options.ListOptions)
     */
+   @Named("Zones:list")
    @GET
    @Path("/zones")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)

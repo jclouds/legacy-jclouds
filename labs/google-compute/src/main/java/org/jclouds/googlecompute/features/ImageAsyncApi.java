@@ -35,6 +35,7 @@ import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Transform;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -62,6 +63,7 @@ public interface ImageAsyncApi {
    /**
     * @see ImageApi#get(String)
     */
+   @Named("Images:get")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/images/{image}")
@@ -72,6 +74,7 @@ public interface ImageAsyncApi {
    /**
     * @see ImageApi#delete(String)
     */
+   @Named("Images:delete")
    @DELETE
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/images/{image}")
@@ -82,6 +85,7 @@ public interface ImageAsyncApi {
    /**
     * @see ImageApi#listFirstPage()
     */
+   @Named("Images:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/images")
@@ -93,6 +97,7 @@ public interface ImageAsyncApi {
    /**
     * @see ImageApi#listAtMarker(String)
     */
+   @Named("Images:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/images")
@@ -104,6 +109,7 @@ public interface ImageAsyncApi {
    /**
     * @see ImageApi#listAtMarker(String, org.jclouds.googlecompute.options.ListOptions)
     */
+   @Named("Images:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/images")
@@ -116,6 +122,7 @@ public interface ImageAsyncApi {
    /**
     * @see ImageApi#listAtMarker(String)
     */
+   @Named("Images:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/images")
@@ -128,6 +135,7 @@ public interface ImageAsyncApi {
    /**
     * @see ImageApi#listAtMarker(String, org.jclouds.googlecompute.options.ListOptions)
     */
+   @Named("Images:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/images")

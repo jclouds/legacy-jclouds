@@ -34,6 +34,7 @@ import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Transform;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -61,6 +62,7 @@ public interface OperationAsyncApi {
    /**
     * @see OperationApi#get(String)
     */
+   @Named("Operations:get")
    @GET
    @Path("/operations/{operation}")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
@@ -71,6 +73,7 @@ public interface OperationAsyncApi {
    /**
     * @see OperationApi#delete(String)
     */
+   @Named("Operations:delete")
    @DELETE
    @Path("/operations/{operation}")
    @OAuthScopes(COMPUTE_SCOPE)
@@ -80,6 +83,7 @@ public interface OperationAsyncApi {
    /**
     * @see OperationApi#listFirstPage()
     */
+   @Named("Operations:list")
    @GET
    @Path("/operations")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
@@ -91,6 +95,7 @@ public interface OperationAsyncApi {
    /**
     * @see OperationApi#listAtMarker(String)
     */
+   @Named("Operations:list")
    @GET
    @Path("/operations")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
@@ -102,6 +107,7 @@ public interface OperationAsyncApi {
    /**
     * @see OperationApi#listAtMarker(String, org.jclouds.googlecompute.options.ListOptions)
     */
+   @Named("Operations:list")
    @GET
    @Path("/operations")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
@@ -114,6 +120,7 @@ public interface OperationAsyncApi {
    /**
     * @see OperationApi#list()
     */
+   @Named("Operations:list")
    @GET
    @Path("/operations")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
@@ -126,6 +133,7 @@ public interface OperationAsyncApi {
    /**
     * @see OperationApi#list(org.jclouds.googlecompute.options.ListOptions)
     */
+   @Named("Operations:list")
    @GET
    @Path("/operations")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)

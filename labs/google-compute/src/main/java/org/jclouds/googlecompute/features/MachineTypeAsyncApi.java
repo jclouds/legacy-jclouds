@@ -34,6 +34,7 @@ import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Transform;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -60,6 +61,7 @@ public interface MachineTypeAsyncApi {
    /**
     * @see MachineTypeApi#get(String)
     */
+   @Named("MachineTypes:get")
    @GET
    @Path("/machineTypes/{machineType}")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
@@ -69,6 +71,7 @@ public interface MachineTypeAsyncApi {
    /**
     * @see MachineTypeApi#listFirstPage()
     */
+   @Named("MachineTypes:list")
    @GET
    @Path("/machineTypes")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
@@ -79,6 +82,7 @@ public interface MachineTypeAsyncApi {
    /**
     * @see MachineTypeApi#listAtMarker(String)
     */
+   @Named("MachineTypes:list")
    @GET
    @Path("/machineTypes")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
@@ -89,6 +93,7 @@ public interface MachineTypeAsyncApi {
    /**
     * @see MachineTypeApi#listAtMarker(String, org.jclouds.googlecompute.options.ListOptions)
     */
+   @Named("MachineTypes:list")
    @GET
    @Path("/machineTypes")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
@@ -100,6 +105,7 @@ public interface MachineTypeAsyncApi {
    /**
     * @see org.jclouds.googlecompute.features.MachineTypeApi#list()
     */
+   @Named("MachineTypes:list")
    @GET
    @Path("/machineTypes")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
@@ -111,6 +117,7 @@ public interface MachineTypeAsyncApi {
    /**
     * @see MachineTypeApi#list(org.jclouds.googlecompute.options.ListOptions)
     */
+   @Named("MachineTypes:list")
    @GET
    @Path("/machineTypes")
    @OAuthScopes(COMPUTE_READONLY_SCOPE)

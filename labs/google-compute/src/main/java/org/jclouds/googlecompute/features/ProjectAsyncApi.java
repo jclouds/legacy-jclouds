@@ -30,6 +30,7 @@ import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SkipEncoding;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -57,6 +58,7 @@ public interface ProjectAsyncApi {
    /**
     * @see ProjectApi#get(String)
     */
+   @Named("Projects:get")
    @GET
    @OAuthScopes(COMPUTE_READONLY_SCOPE)
    @Consumes(MediaType.APPLICATION_JSON)
@@ -67,6 +69,7 @@ public interface ProjectAsyncApi {
    /**
     * @see ProjectApi#setCommonInstanceMetadata(String, java.util.Map)
     */
+   @Named("Projects:setCommonInstanceMetadata")
    @POST
    @Path("/projects/{project}/setCommonInstanceMetadata")
    @OAuthScopes(COMPUTE_SCOPE)

@@ -38,6 +38,7 @@ import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -67,6 +68,7 @@ public interface NetworkAsyncApi {
    /**
     * @see NetworkApi#get(String)
     */
+   @Named("Networks:get")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/networks/{network}")
@@ -77,6 +79,7 @@ public interface NetworkAsyncApi {
    /**
     * @see NetworkApi#createInIPv4Range(String, String)
     */
+   @Named("Networks:insert")
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
@@ -89,6 +92,7 @@ public interface NetworkAsyncApi {
    /**
     * @see NetworkApi#createInIPv4RangeWithGateway(String, String, String)
     */
+   @Named("Networks:insert")
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
@@ -102,6 +106,7 @@ public interface NetworkAsyncApi {
    /**
     * @see NetworkApi#delete(String)
     */
+   @Named("Networks:delete")
    @DELETE
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/networks/{network}")
@@ -112,6 +117,7 @@ public interface NetworkAsyncApi {
    /**
     * @see NetworkApi#listFirstPage()
     */
+   @Named("Networks:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/networks")
@@ -123,6 +129,7 @@ public interface NetworkAsyncApi {
    /**
     * @see NetworkApi#listAtMarker(String)
     */
+   @Named("Networks:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/networks")
@@ -134,6 +141,7 @@ public interface NetworkAsyncApi {
    /**
     * @see NetworkApi#listAtMarker(String, org.jclouds.googlecompute.options.ListOptions)
     */
+   @Named("Networks:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/networks")
@@ -146,6 +154,7 @@ public interface NetworkAsyncApi {
    /**
     * @see NetworkApi#list()
     */
+   @Named("Networks:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/networks")
@@ -158,6 +167,7 @@ public interface NetworkAsyncApi {
    /**
     * @see NetworkApi#list(org.jclouds.googlecompute.options.ListOptions)
     */
+   @Named("Networks:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/networks")

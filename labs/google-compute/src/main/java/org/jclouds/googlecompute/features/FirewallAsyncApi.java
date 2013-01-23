@@ -38,6 +38,7 @@ import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -70,6 +71,7 @@ public interface FirewallAsyncApi {
    /**
     * @see FirewallApi#get(String)
     */
+   @Named("Firewalls:get")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/firewalls/{firewall}")
@@ -80,6 +82,7 @@ public interface FirewallAsyncApi {
    /**
     * @see FirewallApi#create(org.jclouds.googlecompute.domain.Firewall)
     */
+   @Named("Firewalls:insert")
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
@@ -90,6 +93,7 @@ public interface FirewallAsyncApi {
    /**
     * @see FirewallApi#update(String, org.jclouds.googlecompute.domain.Firewall)
     */
+   @Named("Firewalls:update")
    @PUT
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
@@ -101,6 +105,7 @@ public interface FirewallAsyncApi {
    /**
     * @see FirewallApi#patch(String, org.jclouds.googlecompute.domain.Firewall)
     */
+   @Named("Firewalls:patch")
    @PATCH
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
@@ -112,6 +117,7 @@ public interface FirewallAsyncApi {
    /**
     * @see FirewallApi#delete(String)
     */
+   @Named("Firewalls:delete")
    @DELETE
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/firewalls/{firewall}")
@@ -122,6 +128,7 @@ public interface FirewallAsyncApi {
    /**
     * @see FirewallApi#listFirstPage()
     */
+   @Named("Firewalls:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/firewalls")
@@ -133,6 +140,7 @@ public interface FirewallAsyncApi {
    /**
     * @see FirewallApi#listAtMarker(String)
     */
+   @Named("Firewalls:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/firewalls")
@@ -144,6 +152,7 @@ public interface FirewallAsyncApi {
    /**
     * @see FirewallApi#listAtMarker(String, org.jclouds.googlecompute.options.ListOptions)
     */
+   @Named("Firewalls:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/firewalls")
@@ -156,6 +165,7 @@ public interface FirewallAsyncApi {
    /**
     * @see FirewallApi#list()
     */
+   @Named("Firewalls:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/firewalls")
@@ -169,6 +179,7 @@ public interface FirewallAsyncApi {
    /**
     * @see FirewallApi#list(org.jclouds.googlecompute.options.ListOptions)
     */
+   @Named("Firewalls:list")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/firewalls")
