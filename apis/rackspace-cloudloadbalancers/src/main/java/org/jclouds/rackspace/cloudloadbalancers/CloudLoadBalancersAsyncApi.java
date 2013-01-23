@@ -28,6 +28,7 @@ import org.jclouds.location.Zone;
 import org.jclouds.location.functions.ZoneToEndpoint;
 import org.jclouds.rackspace.cloudloadbalancers.features.AccessRuleAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.ConnectionAsyncApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.ContentCachingAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.HealthMonitorAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.NodeAsyncApi;
@@ -106,5 +107,13 @@ public interface CloudLoadBalancersAsyncApi {
    @Delegate
    @Path("/loadbalancers/{lbId}")
    SessionPersistenceAsyncApi getSessionPersistenceApiForZoneAndLoadBalancer(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
+
+   /**
+    * Provides asynchronous access to Content Caching features.
+    */
+   @Delegate
+   @Path("/loadbalancers/{lbId}")
+   ContentCachingAsyncApi getContentCachingApiForZoneAndLoadBalancer(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 }
