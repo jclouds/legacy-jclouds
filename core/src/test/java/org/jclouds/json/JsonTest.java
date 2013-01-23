@@ -24,11 +24,14 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.jclouds.json.config.GsonModule;
+import org.jclouds.json.config.GsonModule.DefaultExclusionStrategy;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.google.gson.FieldAttributes;
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.TypeLiteral;
 
@@ -80,6 +83,26 @@ public class JsonTest {
       ObjectNoDefaultConstructor obj2 = json.fromJson(json.toJson(obj), ObjectNoDefaultConstructor.class);
       assertEquals(obj2, obj);
       assertEquals(json.toJson(obj2), json.toJson(obj));
+   }
+   
+   static class ExcludeStringValue implements DefaultExclusionStrategy {
+      public boolean shouldSkipClass(Class<?> clazz) {
+        return false;
+      }
+
+      public boolean shouldSkipField(FieldAttributes f) {
+        return f.getName().equals("stringValue");
+      }
+   }
+
+   public void testExcluder() {
+      Json excluder = Guice.createInjector(new GsonModule(), new AbstractModule() {
+         protected void configure() {
+            bind(DefaultExclusionStrategy.class).to(ExcludeStringValue.class);
+         }
+      }).getInstance(Json.class);
+      ObjectNoDefaultConstructor obj = new ObjectNoDefaultConstructor("foo", 1);
+      assertEquals(excluder.toJson(obj), "{\"intValue\":1}");
    }
 
    private static class EnumInside {

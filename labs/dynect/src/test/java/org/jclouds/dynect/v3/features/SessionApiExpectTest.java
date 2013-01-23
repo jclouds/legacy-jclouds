@@ -1,0 +1,97 @@
+/**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unles required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either expres or implied.  See the License for the
+ * specific language governing permisions and limitations
+ * under the License.
+ */
+package org.jclouds.dynect.v3.features;
+
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
+import org.jclouds.dynect.v3.DynECTApi;
+import org.jclouds.dynect.v3.domain.SessionCredentials;
+import org.jclouds.dynect.v3.internal.BaseDynECTApiExpectTest;
+import org.jclouds.dynect.v3.parse.ParseSessionTest;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
+import org.testng.annotations.Test;
+
+/**
+ * @author Adrian Cole
+ */
+@Test(groups = "unit", testName = "SessionApiExpectTest")
+public class SessionApiExpectTest extends BaseDynECTApiExpectTest {
+
+   private String authToken = "FFFFFFFFFF";
+
+   HttpRequest create = HttpRequest.builder().method("POST")
+         .endpoint("https://api2.dynect.net/REST/Session")
+         .addHeader("API-Version", "3.3.7")
+         .payload(payloadFromStringWithContentType("{\"customer_name\":\"jclouds\",\"user_name\":\"joe\",\"password\":\"letmein\"}",APPLICATION_JSON))
+         .build();
+   
+   HttpResponse createResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResourceWithContentType("/create_session.json", APPLICATION_JSON)).build();
+
+   public void testCreateWhenResponseIs2xx() {
+      DynECTApi apiCreatesSession = requestSendsResponse(create, createResponse);
+      assertEquals(apiCreatesSession.getSessionApi().login(SessionCredentials.builder()
+                                                                         .customerName("jclouds")
+                                                                         .userName("joe")
+                                                                         .password("letmein").build()).toString(),
+                   new ParseSessionTest().expected().toString());
+   }
+
+   HttpRequest isValid = HttpRequest.builder().method("GET")
+         .endpoint("https://api2.dynect.net/REST/Session")
+         .addHeader("API-Version", "3.3.7")
+         .addHeader("Auth-Token", authToken)
+         .payload(emptyJsonPayload())
+         .build();   
+
+   HttpResponse validResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResourceWithContentType("/session_valid.json", APPLICATION_JSON)).build();
+
+   HttpResponse invalidResponse = HttpResponse.builder().statusCode(400)
+         .payload(payloadFromResourceWithContentType("/session_invalid.json", APPLICATION_JSON)).build();
+
+   public void testSessionValid() {
+      DynECTApi apiWhenValid = requestSendsResponse(isValid, validResponse);
+      assertTrue(apiWhenValid.getSessionApi().isValid(authToken));
+   }
+
+   public void testSessionInvalid() {
+      DynECTApi apiWhenInvalid = requestSendsResponse(isValid, invalidResponse);
+      assertFalse(apiWhenInvalid.getSessionApi().isValid(authToken));
+   }
+
+   HttpRequest logout = HttpRequest.builder().method("DELETE")
+         .endpoint("https://api2.dynect.net/REST/Session")
+         .addHeader("API-Version", "3.3.7")
+         .addHeader("Auth-Token", authToken)
+         .payload(emptyJsonPayload())
+         .build();   
+
+   HttpResponse logoutResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResourceWithContentType("/logout.json", APPLICATION_JSON)).build();
+
+   public void testLogout() {
+      DynECTApi apiWhenLogoutSuccess = requestSendsResponse(logout, logoutResponse);
+      apiWhenLogoutSuccess.getSessionApi().logout(authToken);
+   }
+}
