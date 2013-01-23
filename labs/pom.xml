@@ -62,6 +62,7 @@
        <module>openstack-quantum</module>
        <module>openstack-glance</module>
        <module>route53</module>
+       <module>dynect</module>
        <module>aws-route53</module>
   </modules>
 </project>
