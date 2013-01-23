@@ -20,6 +20,8 @@ package org.jclouds.rackspace.cloudloadbalancers.domain;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.beans.ConstructorProperties;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
@@ -37,7 +39,10 @@ public class ConnectionThrottle {
    private final int maxConnectionRate;
    private final int rateInterval;
 
-   protected ConnectionThrottle(int maxConnections, int minConnections, int maxConnectionRate, int rateInterval) {
+   @ConstructorProperties({
+      "maxConnections", "minConnections", "maxConnectionRate", "rateInterval"
+   })
+   protected ConnectionThrottle(Integer maxConnections, Integer minConnections, Integer maxConnectionRate, Integer rateInterval) {
       this.maxConnections = maxConnections;
       this.minConnections = minConnections;
       this.maxConnectionRate = maxConnectionRate;
