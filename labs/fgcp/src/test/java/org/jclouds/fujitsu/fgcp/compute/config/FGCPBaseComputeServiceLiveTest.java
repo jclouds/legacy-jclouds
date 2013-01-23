@@ -84,7 +84,7 @@ public abstract class FGCPBaseComputeServiceLiveTest extends
    // before running it, start an SSL/VPN connection to the last updated vsys'
    // DMZ.
    // may also need to configure SNAT and FW rules to allow the VM to
-   // communicate out (53 for DNS, 80 for yum).
+   // communicate out (53/tcp-udp for DNS, 80/tcp for yum).
    public void testAScriptExecutionAfterBootWithBasicTemplate()
          throws Exception {
       super.testAScriptExecutionAfterBootWithBasicTemplate();

@@ -18,6 +18,7 @@
  */
 package org.jclouds.fujitsu.fgcp.services;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -47,12 +48,14 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Consumes(MediaType.TEXT_XML)
 public interface DiskImageAsyncApi {
 
+   @Named("GetDiskImageAttributes")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "GetDiskImageAttributes")
    @Transform(SingleElementResponseToElement.class)
    ListenableFuture<DiskImage> get(@QueryParam("diskImageId") String id);
 
+   @Named("UpdateDiskImageAttribute")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "UpdateDiskImageAttribute")
@@ -62,6 +65,7 @@ public interface DiskImageAsyncApi {
          @QueryParam("attributeName") String name,
          @QueryParam("attributeValue") String value);
 
+   @Named("UnregisterDiskImage")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "UnregisterDiskImage")
