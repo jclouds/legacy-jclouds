@@ -51,6 +51,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.fujitsu.fgcp.reference.RequestParameters;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpRequest.Builder;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
@@ -87,8 +88,10 @@ public class RequestAuthenticator implements HttpRequestFilter, RequestSigner {
    private final static String signatureMethod = "SHA1withRSA";
 
    @Inject
-   public RequestAuthenticator(@TimeStamp Provider<Calendar> calendarProvider, SignatureForCredentials loader,
-         @org.jclouds.location.Provider Supplier<Credentials> creds, HttpUtils utils, SignatureWire signatureWire,
+   public RequestAuthenticator(@TimeStamp Provider<Calendar> calendarProvider,
+         SignatureForCredentials loader,
+         @org.jclouds.location.Provider Supplier<Credentials> creds,
+         HttpUtils utils, SignatureWire signatureWire,
          @ApiVersion String apiVersion) {
       this.calendarProvider = checkNotNull(calendarProvider);
       this.creds = checkNotNull(creds, "creds");
@@ -146,15 +149,8 @@ public class RequestAuthenticator implements HttpRequestFilter, RequestSigner {
             .getLanguage() : Locale.ENGLISH.getLanguage();
 
       if (HttpMethod.GET.equals(request.getMethod())) {
-         Multimap<String, String> decodedParams = queryParser().apply(request.getEndpoint().getRawQuery());
-
-         if (!decodedParams.containsKey(RequestParameters.VERSION)) {
-            decodedParams.put(RequestParameters.VERSION, apiVersion);
-         }
-         decodedParams.put(RequestParameters.LOCALE, lang);
-         decodedParams.put(RequestParameters.ACCESS_KEY_ID, accessKeyId);
-         decodedParams.put(RequestParameters.SIGNATURE, signature);
-         request = request.toBuilder().replaceQueryParams(decodedParams).build();
+         request = addQueryParamsToRequest(request, accessKeyId, signature,
+               lang);
       } else {
 
          String payload = request.getPayload().getRawContent().toString();
@@ -173,8 +169,35 @@ public class RequestAuthenticator implements HttpRequestFilter, RequestSigner {
             .build();
 
       utils.logRequest(signatureLog, filteredRequest, ">>->");
-
       return filteredRequest;
+   }
+
+   @VisibleForTesting
+   HttpRequest addQueryParamsToRequest(HttpRequest request, String accessKeyId,
+         String signature, String lang) {
+      // url encode "+" (which comes from base64 encoding) or else it may be
+      // converted into a %20 (space) which the API endpoint doesn't
+      // expect/accept.
+      accessKeyId = accessKeyId.replace("+", "%2B");
+      signature = signature.replace("+", "%2B");
+
+      Multimap<String, String> decodedParams = queryParser().apply(
+            request.getEndpoint().getRawQuery());
+      Builder<?> builder = request.toBuilder()
+            .endpoint(request.getEndpoint())
+            .method(request.getMethod());
+      if (!decodedParams.containsKey("Version")) {
+         builder.addQueryParam(RequestParameters.VERSION, apiVersion);
+      }
+      builder.addQueryParam(RequestParameters.LOCALE, lang)
+            .addQueryParam(RequestParameters.ACCESS_KEY_ID, accessKeyId)
+            // the addition of another param causes %2B's in prev. params to
+            // convert to %20. Needs to be addressed if there are cases where
+            // accessKeyId contains %2B's.
+            // So signature should be added last:
+            .addQueryParam(RequestParameters.SIGNATURE, signature);
+
+      return builder.build();
    }
 
    String createXmlElementWithValue(String payload, String tag, String value) {
@@ -184,13 +207,12 @@ public class RequestAuthenticator implements HttpRequestFilter, RequestSigner {
       return payload.replace(startTag + endTag, startTag + value + endTag);
    }
 
-   @VisibleForTesting
    public String sign(String stringToSign) {
       String signed;
       try {
          Signature signer = signerCache.get(checkNotNull(creds.get(), "credential supplier returned null"));
          signer.update(stringToSign.getBytes(UTF_8));
-         signed = base64().encode(signer.sign());
+         signed = base64().withSeparator("\n", 61).encode(signer.sign());
       } catch (SignatureException e) {
          throw new HttpException("error signing request", e);
       } catch (ExecutionException e) {
@@ -200,14 +222,16 @@ public class RequestAuthenticator implements HttpRequestFilter, RequestSigner {
    }
 
    @VisibleForTesting
-   public String generateAccessKeyId() {
+   String generateAccessKeyId() {
       Calendar cal = calendarProvider.get();
       String timezone = cal.getTimeZone().getDisplayName(Locale.ENGLISH);
       String expires = String.valueOf(cal.getTime().getTime());
 
       String signatureData = String.format("%s&%s&%s&%s", timezone, expires, signatureVersion, signatureMethod);
-      String accessKeyId = base64().encode(signatureData.getBytes(UTF_8));
-      return accessKeyId.replace("\n", "\r\n");
+      String accessKeyId = base64().withSeparator("\n", 61).encode(
+            signatureData.getBytes(UTF_8));
+
+      return accessKeyId;
    }
 
    @Override
