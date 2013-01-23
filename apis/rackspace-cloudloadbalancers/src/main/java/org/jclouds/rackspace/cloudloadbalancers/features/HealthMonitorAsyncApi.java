@@ -31,10 +31,9 @@ import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.rackspace.cloudloadbalancers.domain.HealthMonitor;
-import org.jclouds.rackspace.cloudloadbalancers.functions.ParseHealthMonitor;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.WrapWith;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -65,7 +64,7 @@ public interface HealthMonitorAsyncApi {
    @Named("healthmonitor:get")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @ResponseParser(ParseHealthMonitor.class)
+   @SelectJson("healthMonitor")
    @Fallback(NullOnNotFoundOr404.class)
    @Path("/healthmonitor")
    ListenableFuture<HealthMonitor> get();

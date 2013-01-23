@@ -33,12 +33,12 @@ import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.rackspace.cloudloadbalancers.domain.ConnectionThrottle;
-import org.jclouds.rackspace.cloudloadbalancers.functions.ParseConnectionThrottle;
 import org.jclouds.rackspace.cloudloadbalancers.functions.ParseNestedBoolean;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.WrapWith;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -70,7 +70,7 @@ public interface ConnectionAsyncApi {
    @Named("connectionthrottle:get")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @ResponseParser(ParseConnectionThrottle.class)
+   @SelectJson("connectionThrottle")
    @Fallback(NullOnNotFoundOr404.class)
    @Path("/connectionthrottle")
    ListenableFuture<ConnectionThrottle> getConnectionThrottle();
