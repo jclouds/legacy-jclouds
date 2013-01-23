@@ -105,7 +105,8 @@ public class RequestAuthenticator implements HttpRequestFilter, RequestSigner {
     * it is relatively expensive to create a new signing key. cache the relationship between current credentials so that
     * the signer is only recalculated once.
     */
-   private static class SignatureForCredentials extends CacheLoader<Credentials, Signature> {
+   @VisibleForTesting
+   static class SignatureForCredentials extends CacheLoader<Credentials, Signature> {
       private final Supplier<KeyStore> keyStore;
 
       @Inject
