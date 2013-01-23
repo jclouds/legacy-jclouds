@@ -30,6 +30,7 @@ import org.jclouds.rackspace.cloudloadbalancers.features.ConnectionApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.HealthMonitorApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.NodeApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.SessionPersistenceApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.VirtualIPApi;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
@@ -96,5 +97,13 @@ public interface CloudLoadBalancersApi {
    @Delegate
    @Path("/loadbalancers/{lbId}")
    HealthMonitorApi getHealthMonitorApiForZoneAndLoadBalancer(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
+
+   /**
+    * Provides synchronous access to Session Persistence features.
+    */
+   @Delegate
+   @Path("/loadbalancers/{lbId}")
+   SessionPersistenceApi getSessionPersistenceApiForZoneAndLoadBalancer(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 }
