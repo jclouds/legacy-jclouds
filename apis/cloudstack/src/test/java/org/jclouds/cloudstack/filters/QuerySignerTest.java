@@ -62,6 +62,18 @@ public class QuerySignerTest {
    }
 
    @Test
+   void testCreateStringToSignWithBrackets() {
+      // This test asserts that key *names* are not URL-encoded - only values
+      // should be encoded, according to "CloudStack API Developer’s Guide".
+      QuerySigner filter = INJECTOR.getInstance(QuerySigner.class);
+
+      assertEquals(
+            filter.createStringToSign(HttpRequest.builder().method("GET")
+                  .endpoint("http://localhost:8080/client/api?command=deployVirtualMachine&iptonetworklist[0].ip=127.0.0.1&iptonetworklist[0].networkid=1").build()),
+            "apikey=apikey&command=deployvirtualmachine&iptonetworklist[0].ip=127.0.0.1&iptonetworklist[0].networkid=1");
+   }
+
+   @Test
    void testFilter() {
       QuerySigner filter = INJECTOR.getInstance(QuerySigner.class);
 
