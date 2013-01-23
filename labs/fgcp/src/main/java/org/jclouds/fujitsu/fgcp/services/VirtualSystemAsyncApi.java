@@ -19,6 +19,8 @@
 package org.jclouds.fujitsu.fgcp.services;
 
 import java.util.Set;
+
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -56,23 +58,27 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Consumes(MediaType.TEXT_XML)
 public interface VirtualSystemAsyncApi {
 
+   @Named("DestroyVSYS")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "DestroyVSYS")
    ListenableFuture<Void> destroy(@QueryParam("vsysId") String id);
 
+   @Named("GetVSYSStatus")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "GetVSYSStatus")
    @Transform(SingleElementResponseToElement.class)
    ListenableFuture<VSystemStatus> getStatus(@QueryParam("vsysId") String id);
 
+   @Named("GetVSYSAttributes")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "GetVSYSAttributes")
    @Transform(SingleElementResponseToElement.class)
    ListenableFuture<VSystem> get(@QueryParam("vsysId") String id);
 
+   @Named("GetVSYSConfiguration")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "GetVSYSConfiguration")
@@ -80,6 +86,7 @@ public interface VirtualSystemAsyncApi {
    ListenableFuture<VSystemWithDetails> getDetails(
          @QueryParam("vsysId") String id);
 
+   @Named("UpdateVSYSAttribute")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "UpdateVSYSAttribute")
@@ -87,6 +94,7 @@ public interface VirtualSystemAsyncApi {
          @QueryParam("attributeName") String name,
          @QueryParam("attributeValue") String value);
 
+   @Named("UpdateVSYSConfiguration")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "UpdateVSYSConfiguration")
@@ -94,6 +102,7 @@ public interface VirtualSystemAsyncApi {
          @QueryParam("configurationName") String name,
          @QueryParam("configurationValue") String value);
 
+   @Named("CreateVServer")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "CreateVServer")
@@ -104,11 +113,13 @@ public interface VirtualSystemAsyncApi {
          @QueryParam("diskImageId") String diskImageId,
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("networkId") String networkId);
 
+   @Named("ListVServer")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "ListVServer")
    ListenableFuture<Set<VServer>> listServers(@QueryParam("vsysId") String id);
 
+   @Named("CreateVDisk")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "CreateVDisk")
@@ -116,11 +127,13 @@ public interface VirtualSystemAsyncApi {
    ListenableFuture<String> createDisk(@QueryParam("vsysId") String id,
          @QueryParam("vdiskName") String name, @QueryParam("size") int size);
 
+   @Named("ListVDisk")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "ListVDisk")
    ListenableFuture<Set<VDisk>> listDisks(@QueryParam("vsysId") String id);
 
+   @Named("AllocatePublicIP")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "AllocatePublicIP")
@@ -131,6 +144,7 @@ public interface VirtualSystemAsyncApi {
     * @return
     * @see VirtualDCAsyncApi#listPublicIPs()
     */
+   @Named("ListPublicIP")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "ListPublicIP")
@@ -138,6 +152,7 @@ public interface VirtualSystemAsyncApi {
    ListenableFuture<Set<PublicIP>> listPublicIPs(
          @QueryParam("vsysId") String id);
 
+   @Named("CreateEFM")
    @GET
    @JAXBResponseParser
    // SLB is the only built-in server that can currently be created so
@@ -148,12 +163,14 @@ public interface VirtualSystemAsyncApi {
          @QueryParam("efmName") String name,
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("networkId") String networkId);
 
+   @Named("ListEFM")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "ListEFM")
    ListenableFuture<Set<BuiltinServer>> listBuiltinServers(
          @QueryParam("vsysId") String id, @QueryParam("efmType") String type);
 
+   @Named("StandByConsole")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "StandByConsole")
@@ -161,6 +178,7 @@ public interface VirtualSystemAsyncApi {
    ListenableFuture<String> standByConsole(@QueryParam("vsysId") String id,
          @QueryParam("networkId") String networkId);
 
+   @Named("RegisterPrivateVSYSDescriptor")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "RegisterPrivateVSYSDescriptor")

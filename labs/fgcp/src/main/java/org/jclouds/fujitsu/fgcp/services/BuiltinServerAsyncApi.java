@@ -19,6 +19,8 @@
 package org.jclouds.fujitsu.fgcp.services;
 
 import java.util.Set;
+
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -54,30 +56,35 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Consumes(MediaType.TEXT_XML)
 public interface BuiltinServerAsyncApi {
 
+   @Named("StartEFM")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "StartEFM")
    ListenableFuture<Void> start(
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id);
 
+   @Named("StopEFM")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "StopEFM")
    ListenableFuture<Void> stop(
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id);
 
+   @Named("DestroyEFM")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "DestroyEFM")
    ListenableFuture<Void> destroy(
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id);
 
+   @Named("BackupEFM")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "BackupEFM")
    ListenableFuture<Void> backup(
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id);
 
+   @Named("RestoreEFM")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "RestoreEFM")
@@ -85,12 +92,14 @@ public interface BuiltinServerAsyncApi {
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id,
          @QueryParam("backupId") String backupId);
 
+   @Named("ListEFMBackup")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "ListEFMBackup")
    ListenableFuture<Set<BuiltinServerBackup>> listBackups(
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id);
 
+   @Named("DestroyEFMBackup")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "DestroyEFMBackup")
@@ -98,6 +107,7 @@ public interface BuiltinServerAsyncApi {
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id,
          @QueryParam("backupId") String backupId);
 
+   @Named("GetEFMAttributes")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "GetEFMAttributes")
@@ -105,6 +115,7 @@ public interface BuiltinServerAsyncApi {
    ListenableFuture<BuiltinServer> get(
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id);
 
+   @Named("UpdateEFMAttribute")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "UpdateEFMAttribute")
@@ -113,6 +124,7 @@ public interface BuiltinServerAsyncApi {
          @QueryParam("attributeName") String name,
          @QueryParam("attributeValue") String value);
 
+   @Named("GetEFMStatus")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "GetEFMStatus")
@@ -120,6 +132,7 @@ public interface BuiltinServerAsyncApi {
    ListenableFuture<BuiltinServerStatus> getStatus(
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id);
 
+   @Named("GetEFMConfiguration")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "GetEFMConfiguration")
@@ -128,6 +141,7 @@ public interface BuiltinServerAsyncApi {
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("efmId") String id,
          @QueryParam("configurationName") BuiltinServerConfiguration configuration);
 
+//  @Named("GetEFMConfiguration")
 //  @POST
 //  @JAXBResponseParser
 //  @QueryParams(keys = "Action", values = "GetEFMConfiguration")
