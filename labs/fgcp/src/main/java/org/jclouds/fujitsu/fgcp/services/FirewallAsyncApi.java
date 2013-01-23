@@ -19,6 +19,8 @@
 package org.jclouds.fujitsu.fgcp.services;
 
 import java.util.Set;
+
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.core.MediaType;
@@ -48,6 +50,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Consumes(MediaType.TEXT_XML)
 public interface FirewallAsyncApi extends BuiltinServerAsyncApi {
 
+   @Named("GetEFMConfiguration")
    @POST
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "GetEFMConfiguration")

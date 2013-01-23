@@ -18,6 +18,7 @@
  */
 package org.jclouds.fujitsu.fgcp.services;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -48,18 +49,21 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Consumes(MediaType.TEXT_XML)
 public interface PublicIPAddressAsyncApi {
 
+   @Named("AttachPublicIP")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "AttachPublicIP")
    ListenableFuture<Void> attach(@QueryParam("vsysId") String systemId,
          @QueryParam("publicIp") String ip);
 
+   @Named("DetachPublicIP")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "DetachPublicIP")
    ListenableFuture<Void> detach(@QueryParam("vsysId") String systemId,
          @QueryParam("publicIp") String ip);
 
+   @Named("GetPublicIPStatus")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "GetPublicIPStatus")
@@ -67,12 +71,14 @@ public interface PublicIPAddressAsyncApi {
    ListenableFuture<PublicIPStatus> getStatus(
          @QueryParam("publicIp") String ip);
 
+   @Named("GetPublicIPAttributes")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "GetPublicIPAttributes")
    @Transform(SingleElementResponseToElement.class)
    ListenableFuture<PublicIP> get(@QueryParam("publicIp") String ip);
 
+   @Named("FreePublicIP")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "FreePublicIP")

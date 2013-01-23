@@ -18,6 +18,7 @@
  */
 package org.jclouds.fujitsu.fgcp.services;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -48,6 +49,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Consumes(MediaType.TEXT_XML)
 public interface SystemTemplateAsyncApi {
 
+   @Named("GetVSYSDescriptorConfiguration")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "GetVSYSDescriptorConfiguration")
@@ -55,6 +57,7 @@ public interface SystemTemplateAsyncApi {
    ListenableFuture<VSystemDescriptor> get(
          @QueryParam("vsysDescriptorId") String id);
 
+   @Named("UpdateVSYSDescriptorAttribute")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "UpdateVSYSDescriptorAttribute")
@@ -63,12 +66,14 @@ public interface SystemTemplateAsyncApi {
          @QueryParam("attributeName") String name,
          @QueryParam("attributeValue") String value);
 
+   @Named("UnregisterVSYSDescriptor")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "UnregisterVSYSDescriptor")
    ListenableFuture<Void> deregister(
          @QueryParam("vsysDescriptorId") String id);
 
+   @Named("UnregisterPrivateVSYSDescriptor")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "UnregisterPrivateVSYSDescriptor")
