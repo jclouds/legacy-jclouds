@@ -48,7 +48,7 @@ public interface HealthMonitorApi {
    /**
     * Remove health monitor.
     * 
-    * @return true on a successful removal, false if the connection throttle was not found
+    * @return true on a successful removal, false if the health monitor was not found
     */
    boolean remove();
 }
