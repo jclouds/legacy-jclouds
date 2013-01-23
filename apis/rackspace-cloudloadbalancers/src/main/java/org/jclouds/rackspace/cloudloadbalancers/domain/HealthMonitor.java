@@ -143,8 +143,8 @@ public class HealthMonitor {
    protected ToStringHelper string() {
       return Objects.toStringHelper(this).omitNullValues().add("type", type).add("delay", delay)
             .add("timeout", timeout).add("attemptsBeforeDeactivation", attemptsBeforeDeactivation)
-            .add("bodyRegex", bodyRegex).add("statusRegex", statusRegex).add("path", path)
-            .add("hostHeader", hostHeader);
+            .add("bodyRegex", bodyRegex.orNull()).add("statusRegex", statusRegex.orNull()).add("path", path.orNull())
+            .add("hostHeader", hostHeader.orNull());
    }
 
    @Override
