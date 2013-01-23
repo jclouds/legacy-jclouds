@@ -19,6 +19,8 @@
 package org.jclouds.fujitsu.fgcp.services;
 
 import java.util.Set;
+
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -54,30 +56,35 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Consumes(MediaType.TEXT_XML)
 public interface VirtualServerAsyncApi {
 
+   @Named("StartVServer")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "StartVServer")
    ListenableFuture<Void> start(
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
 
+   @Named("StopVServer")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "StopVServer")
    ListenableFuture<Void> stop(
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
 
+   @Named("StopVServer")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = { "Action", "force" }, values = { "StopVServer", "true" })
    ListenableFuture<Void> stopForcefully(
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
 
+   @Named("DestroyVServer")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "DestroyVServer")
    ListenableFuture<Void> destroy(
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
 
+   @Named("GetVServerAttributes")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "GetVServerAttributes")
@@ -85,6 +92,7 @@ public interface VirtualServerAsyncApi {
    ListenableFuture<VServer> get(
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
 
+   @Named("GetVServerConfiguration")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "GetVServerConfiguration")
@@ -92,6 +100,7 @@ public interface VirtualServerAsyncApi {
    ListenableFuture<VServerWithDetails> getDetails(
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
 
+   @Named("UpdateVServerAttribute")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "UpdateVServerAttribute")
@@ -100,6 +109,7 @@ public interface VirtualServerAsyncApi {
          @QueryParam("attributeName") String name,
          @QueryParam("attributeValue") String value);
 
+   @Named("GetVServerStatus")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "GetVServerStatus")
@@ -108,6 +118,7 @@ public interface VirtualServerAsyncApi {
    ListenableFuture<VServerStatus> getStatus(
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
 
+   @Named("GetVServerInitialPassword")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "GetVServerInitialPassword")
@@ -115,6 +126,7 @@ public interface VirtualServerAsyncApi {
    ListenableFuture<String> getInitialPassword(
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String id);
 
+   @Named("AttachVDisk")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "AttachVDisk")
@@ -122,6 +134,7 @@ public interface VirtualServerAsyncApi {
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("vserverId") String serverId,
          @QueryParam("vdiskId") String diskId);
 
+   @Named("GetPerformanceInformation")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "GetPerformanceInformation")
@@ -129,6 +142,7 @@ public interface VirtualServerAsyncApi {
          @BinderParam(BindAlsoToSystemId.class) @QueryParam("serverId") String id,
          @QueryParam("interval") String interval);
 
+   @Named("GetPerformanceInformation")
    @GET
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "GetPerformanceInformation")
@@ -137,6 +151,7 @@ public interface VirtualServerAsyncApi {
          @QueryParam("dataType") String dataType,
          @QueryParam("interval") String interval);
 
+   @Named("RegisterPrivateDiskImage")
    @POST
    @JAXBResponseParser
    @QueryParams(keys = "Action", values = "RegisterPrivateDiskImage")
