@@ -32,6 +32,7 @@ import org.jclouds.rackspace.cloudloadbalancers.features.ContentCachingAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.HealthMonitorAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.NodeAsyncApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.SSLTerminationAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.SessionPersistenceAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.VirtualIPAsyncApi;
 import org.jclouds.rest.annotations.Delegate;
@@ -115,5 +116,13 @@ public interface CloudLoadBalancersAsyncApi {
    @Delegate
    @Path("/loadbalancers/{lbId}")
    ContentCachingAsyncApi getContentCachingApiForZoneAndLoadBalancer(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
+
+   /**
+    * Provides asynchronous access to SSL Termination features.
+    */
+   @Delegate
+   @Path("/loadbalancers/{lbId}")
+   SSLTerminationAsyncApi getSSLTerminationApiForZoneAndLoadBalancer(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 }
