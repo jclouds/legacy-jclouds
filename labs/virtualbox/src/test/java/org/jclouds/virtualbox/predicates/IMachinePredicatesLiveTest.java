@@ -20,7 +20,6 @@
 package org.jclouds.virtualbox.predicates;
 
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 import static org.jclouds.virtualbox.predicates.IMachinePredicates.isLinkedClone;
 import static org.testng.Assert.assertTrue;
 
@@ -80,13 +79,10 @@ public class IMachinePredicatesLiveTest extends BaseVirtualBoxClientLiveTest {
                .cleanUpMode(CleanupMode.Full).controller(ideController).forceOverwrite(true).build();
 
       Injector injector = view.utils().injector();
-      Function<String, String> configProperties = injector.getInstance(ValueOfConfigurationKeyOrNull.class);
       IsoSpec isoSpec = IsoSpec
                .builder()
                .sourcePath(operatingSystemIso)
-               .installationScript(
-                        configProperties.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace("HOSTNAME",
-                                 instanceVmSpec.getVmName())).build();
+               .installationScript(keystrokeSequence).build();
 
       NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
                .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();

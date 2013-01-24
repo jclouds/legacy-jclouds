@@ -21,7 +21,6 @@ package org.jclouds.virtualbox.predicates;
 
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 import static org.testng.Assert.assertTrue;
 
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
@@ -86,14 +85,6 @@ public class GuestAdditionsInstallerLiveTest extends BaseVirtualBoxClientLiveTes
       instanceVmSpec = VmSpec.builder().id(instanceName).name(instanceName).osTypeId("").memoryMB(512)
                .cleanUpMode(CleanupMode.Full).controller(ideController).forceOverwrite(true).build();
 
-      Function<String, String> configProperties = injector.getInstance(ValueOfConfigurationKeyOrNull.class);
-      IsoSpec isoSpec = IsoSpec
-               .builder()
-               .sourcePath(operatingSystemIso)
-               .installationScript(
-                        configProperties.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace("HOSTNAME",
-                                 instanceVmSpec.getVmName())).build();
-
       NetworkAdapter networkAdapter = NetworkAdapter.builder()
             .networkAttachmentType(NetworkAttachmentType.HostOnly)
              .build();
@@ -101,7 +92,6 @@ public class GuestAdditionsInstallerLiveTest extends BaseVirtualBoxClientLiveTes
             .addHostInterfaceName("vboxnet0").slot(0L).build();
 
       instanceNetworkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
-      //cloneSpec = MasterSpec.builder().iso(isoSpec).vm(instanceVmSpec).network(networkSpec).build();
    }
 
    @Test

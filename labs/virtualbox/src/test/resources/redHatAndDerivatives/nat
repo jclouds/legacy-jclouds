@@ -1,0 +1,12 @@
+#!/bin/bash
+sudo ip link set eth2 name eth1
+sudo cp /etc/sysconfig/network-scripts/ifcfg-eth0 /tmp/ifcfg-eth1
+sudo chown toor.toor /tmp/ifcfg-eth1
+# configure eth1
+MAC_ETH1=`ifconfig -a | grep eth1 | awk '{ print $5}'`; sed "s/HWADDR.*/HWADDR\=\"$MAC_ETH1\"/g" /tmp/ifcfg-eth1 > /tmp/ifcfg-eth12;
+sed "/UUID/d" /tmp/ifcfg-eth12 > /tmp/ifcfg-eth13;
+sed "s/DEVICE.*/DEVICE\=\"eth1\"/g" /tmp/ifcfg-eth13 > /tmp/ifcfg-eth14; 
+sudo cp /tmp/ifcfg-eth14 /etc/sysconfig/network-scripts/ifcfg-eth1;
+# restart network
+sudo rm /etc/udev/rules.d/70-persistent-net.rules
+sudo /etc/init.d/network restart

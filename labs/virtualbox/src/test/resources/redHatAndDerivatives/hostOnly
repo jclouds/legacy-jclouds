@@ -1,0 +1,8 @@
+#!/bin/bash
+sudo ip link set eth1 name eth0
+# configure eth0
+MAC_ETH0=`ifconfig -a | grep eth0 | awk '{ print $5}'`; sed "s/HWADDR.*/HWADDR\=\"$MAC_ETH0\"/g" /etc/sysconfig/network-scripts/ifcfg-eth0 > /tmp/ifcfg-eth0; 
+sudo cp /tmp/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcfg-eth0;
+# restart network
+sudo rm /etc/udev/rules.d/70-persistent-net.rules
+sudo /etc/init.d/network restart

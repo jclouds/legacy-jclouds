@@ -19,11 +19,10 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.CloneSpec;
 import org.jclouds.virtualbox.domain.HardDisk;
@@ -43,7 +42,6 @@ import org.virtualbox_4_2.NetworkAttachmentType;
 import org.virtualbox_4_2.StorageBus;
 
 import com.google.common.base.CaseFormat;
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
 
@@ -63,35 +61,49 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExistsLiveTest exten
       instanceName = VIRTUALBOX_IMAGE_PREFIX
                + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
 
-      StorageController ideController = StorageController
-               .builder()
-               .name("IDE Controller")
-               .bus(StorageBus.IDE)
-               .attachISO(0, 0, operatingSystemIso)
-               .attachHardDisk(
-                        HardDisk.builder().diskpath(adminDisk(instanceName)).controllerPort(0).deviceSlot(1)
-                                 .autoDelete(true).build()).attachISO(1, 1, guestAdditionsIso).build();
+      StorageController ideController = StorageController.builder()
+                                                         .name("IDE Controller")
+                                                         .bus(StorageBus.IDE)
+                                                         .attachISO(0, 0, operatingSystemIso)
+                                                         .attachHardDisk(HardDisk.builder()
+                                                                                 .diskpath(adminDisk(instanceName))
+                                                                                 .controllerPort(0)
+                                                                                 .deviceSlot(1)
+                                                                                 .autoDelete(true)
+                                                                                 .build())
+                                                         .attachISO(1, 1, guestAdditionsIso)
+                                                         .build();
 
-      VmSpec instanceVmSpec = VmSpec.builder().id(instanceName).name(instanceName).osTypeId("").memoryMB(512)
-               .cleanUpMode(CleanupMode.Full).controller(ideController).forceOverwrite(true).build();
+      VmSpec instanceVmSpec = VmSpec.builder()
+                                    .id(instanceName)
+                                    .name(instanceName)
+                                    .osTypeId("")
+                                    .memoryMB(512)
+                                    .cleanUpMode(CleanupMode.Full)
+                                    .controller(ideController)
+                                    .forceOverwrite(true)
+                                    .build();
 
-      Injector injector = view.utils().injector();
-      Function<String, String> configProperties = injector.getInstance(ValueOfConfigurationKeyOrNull.class);
-      IsoSpec isoSpec = IsoSpec
-               .builder()
-               .sourcePath(operatingSystemIso)
-               .installationScript(
-                        configProperties.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace("HOSTNAME",
-                                 instanceVmSpec.getVmName())).build();
+      IsoSpec isoSpec = IsoSpec.builder()
+                               .sourcePath(operatingSystemIso)
+                               .installationScript(keystrokeSequence)
+                               .build();
 
-      NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
-               .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
-      NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
-               .build();
+      NetworkAdapter networkAdapter = NetworkAdapter.builder()
+                                                    .networkAttachmentType(NetworkAttachmentType.NAT)
+                                                    .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
+      NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder()
+                                                                      .addNetworkAdapter(networkAdapter)
+                                                                      .build();
 
-      NetworkSpec networkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
-      machineSpec = MasterSpec.builder().iso(isoSpec).vm(instanceVmSpec).network(networkSpec).build();
-
+      NetworkSpec networkSpec = NetworkSpec.builder()
+                                           .addNIC(networkInterfaceCard)
+                                           .build();
+      machineSpec = MasterSpec.builder()
+                              .iso(isoSpec)
+                              .vm(instanceVmSpec)
+                              .network(networkSpec)
+                              .build();
    }
    
    @Test
@@ -99,8 +111,9 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExistsLiveTest exten
       IMachine source = getVmWithGuestAdditionsInstalled();
       CloneSpec cloneSpec = CloneSpec.builder().vm(machineSpec.getVmSpec()).network(machineSpec.getNetworkSpec())
                .master(source).linked(true).build();
-      IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, machineUtils)
-               .apply(cloneSpec);
+      IMachine clone = checkNotNull(
+              new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, machineUtils)
+                                .apply(cloneSpec), "clone");
       assertEquals(clone.getName(), cloneSpec.getVmSpec().getVmName());
 
    }

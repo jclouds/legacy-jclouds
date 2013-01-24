@@ -24,6 +24,8 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import java.util.Random;
+
 import javax.inject.Inject;
 
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
@@ -44,21 +46,37 @@ import com.google.common.collect.Iterables;
 @Test(groups = "live", singleThreaded = true, testName = "VirtualBoxComputeServiceAdapterLiveTest")
 public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClientLiveTest {
 
-   private NodeAndInitialCredentials<IMachine> machine;
+   private NodeAndInitialCredentials<IMachine> ubuntu;
+   private NodeAndInitialCredentials<IMachine> centos;
 
    @Inject
    protected VirtualBoxComputeServiceAdapter adapter;
+
 
    @Test
    public void testCreatedNodeHasExpectedNameAndWeCanConnectViaSsh() {
       String group = "foo";
       String name = "foo-ef9";
       Template template = view.getComputeService().templateBuilder().build();
-      machine = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
-      assertTrue(machine.getNode().getName().contains(group));
-      assertTrue(machine.getNode().getName().contains(name));
-      assertTrue(machine.getNode().getName().startsWith(VIRTUALBOX_NODE_PREFIX));
-      doConnectViaSsh(machine.getNode(), prioritizeCredentialsFromTemplate.apply(template, machine.getCredentials()));
+      ubuntu = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
+      assertTrue(ubuntu.getNode().getName().contains(group));
+      assertTrue(ubuntu.getNode().getName().contains(name));
+      assertTrue(ubuntu.getNode().getName().startsWith(VIRTUALBOX_NODE_PREFIX));
+      doConnectViaSsh(ubuntu.getNode(), prioritizeCredentialsFromTemplate.apply(template, ubuntu.getCredentials()));
+   }
+
+   @Test
+   public void testCreatedCentosNodeHasExpectedNameAndWeCanConnectViaSsh() {
+      String group = "foo";
+      String name = "centos6-" + new Random(100).nextInt();
+      Template template = view.getComputeService().templateBuilder()
+            .imageId("centos-6.3-amd64")
+            .build();
+      centos = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
+      assertTrue(centos.getNode().getName().contains(group));
+      assertTrue(centos.getNode().getName().contains(name));
+      assertTrue(centos.getNode().getName().startsWith(VIRTUALBOX_NODE_PREFIX));
+      doConnectViaSsh(centos.getNode(), prioritizeCredentialsFromTemplate.apply(template, centos.getCredentials()));
    }
 
    protected void doConnectViaSsh(IMachine machine, LoginCredentials creds) {
@@ -91,8 +109,10 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
    @AfterGroups(groups = "live")
    @Override
    protected void tearDownContext() {
-      if (machine != null)
-         adapter.destroyNode(machine.getNodeId() + "");
+      if (ubuntu != null)
+         adapter.destroyNode(ubuntu.getNodeId() + "");
+      if (centos != null)
+         adapter.destroyNode(centos.getNodeId() + "");
       super.tearDownContext();
    }
 }

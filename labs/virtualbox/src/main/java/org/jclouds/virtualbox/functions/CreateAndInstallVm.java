@@ -18,6 +18,7 @@
  */
 package org.jclouds.virtualbox.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.scriptbuilder.domain.Statements.call;
@@ -96,14 +97,14 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
       VmSpec vmSpec = masterSpec.getVmSpec();
       IsoSpec isoSpec = masterSpec.getIsoSpec();
       String masterName = vmSpec.getVmName();
-      IMachine masterMachine = createAndRegisterMachineFromIsoIfNotAlreadyExists.apply(masterSpec);
+      IMachine masterMachine =
+              checkNotNull(createAndRegisterMachineFromIsoIfNotAlreadyExists.apply(masterSpec), "master machine");
       // Launch machine and wait for it to come online
       machineController.ensureMachineIsLaunched(masterName);
       String installationKeySequence = isoSpec.getInstallationKeySequence().replace("PRECONFIGURATION_URL",
                preconfigurationUrl);
-      
       configureOsInstallationWithKeyboardSequence(masterName, installationKeySequence);
-      
+
       masterMachine.setExtraData(GUEST_OS_USER, masterSpec.getLoginCredentials().getUser());
       masterMachine.setExtraData(GUEST_OS_PASSWORD, masterSpec.getLoginCredentials().getPassword());
 
@@ -155,7 +156,6 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
    private void configureOsInstallationWithKeyboardSequence(String vmName, String installationKeySequence) {
       Iterable<List<Integer>> scancodelist = transform(Splitter.on(" ").split(installationKeySequence),
                new StringToKeyCode());
-
       for (List<Integer> scancodes : scancodelist) {
          machineUtils.sharedLockMachineAndApplyToSession(vmName, new SendScancodes(scancodes));
       }

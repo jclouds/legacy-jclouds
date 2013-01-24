@@ -19,24 +19,29 @@
 
 package org.jclouds.virtualbox.functions;
 
+import com.google.common.base.Function;
+import org.virtualbox_4_2.DeviceType;
 import org.virtualbox_4_2.IMachine;
 
-import com.google.common.base.Function;
+import java.util.Map;
 
 /**
- * @author Mattias Holmqvist
+ * @author Andrea Turli
  */
-public class ApplyMemoryToMachine implements Function<IMachine, Void> {
+public class ApplyBootOrderToMachine implements Function<IMachine, Void> {
 
-   private long memorySize;
 
-   public ApplyMemoryToMachine(long memorySize) {
-      this.memorySize = memorySize;
+   private Map<Long, DeviceType> positionAndDeviceType;
+
+   public ApplyBootOrderToMachine(Map<Long, DeviceType> positionAndDeviceType) {
+      this.positionAndDeviceType = positionAndDeviceType;
    }
 
    @Override
    public Void apply(IMachine machine) {
-      machine.setMemorySize(memorySize);
+      for(long position : positionAndDeviceType.keySet()) {
+         machine.setBootOrder(position, positionAndDeviceType.get(position));
+      }
       machine.saveSettings();
       return null;
    }

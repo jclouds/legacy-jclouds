@@ -19,54 +19,39 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_PASSWORD;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.GUEST_OS_USER;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_GUEST_MEMORY;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_NAME_SEPARATOR;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
+ import com.google.common.base.*;
+ import com.google.common.collect.ImmutableSet;
+ import com.google.common.collect.Iterables;
+ import com.google.common.io.Files;
+ import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
+ import org.jclouds.compute.domain.NodeMetadata;
+ import org.jclouds.compute.domain.NodeMetadataBuilder;
+ import org.jclouds.compute.options.RunScriptOptions;
+ import org.jclouds.compute.reference.ComputeServiceConstants;
+ import org.jclouds.domain.LoginCredentials;
+ import org.jclouds.logging.Logger;
+ import org.jclouds.util.Strings2;
+ import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
+ import org.jclouds.virtualbox.domain.*;
+ import org.jclouds.virtualbox.statements.DeleteGShadowLock;
+ import org.jclouds.virtualbox.statements.PasswordlessSudo;
+ import org.jclouds.virtualbox.util.MachineController;
+ import org.jclouds.virtualbox.util.MachineUtils;
+ import org.jclouds.virtualbox.util.NetworkUtils;
+ import org.virtualbox_4_2.*;
+ import com.google.common.collect.ImmutableList;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
+ import javax.annotation.Resource;
+ import javax.inject.Inject;
+ import javax.inject.Named;
+ import javax.inject.Singleton;
 
-import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
-import org.jclouds.compute.callables.RunScriptOnNode;
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.options.RunScriptOptions;
-import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.LoginCredentials;
-import org.jclouds.logging.Logger;
-import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
-import org.jclouds.virtualbox.domain.CloneSpec;
-import org.jclouds.virtualbox.domain.Master;
-import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
-import org.jclouds.virtualbox.domain.NetworkSpec;
-import org.jclouds.virtualbox.domain.NodeSpec;
-import org.jclouds.virtualbox.domain.VmSpec;
-import org.jclouds.virtualbox.statements.DeleteGShadowLock;
-import org.jclouds.virtualbox.statements.PasswordlessSudo;
-import org.jclouds.virtualbox.util.MachineController;
-import org.jclouds.virtualbox.util.MachineUtils;
-import org.jclouds.virtualbox.util.NetworkUtils;
-import org.virtualbox_4_2.CleanupMode;
-import org.virtualbox_4_2.IMachine;
-import org.virtualbox_4_2.IProgress;
-import org.virtualbox_4_2.ISession;
-import org.virtualbox_4_2.LockType;
-import org.virtualbox_4_2.NetworkAttachmentType;
-import org.virtualbox_4_2.VirtualBoxManager;
+ import java.io.File;
+ import java.io.IOException;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
+ import static com.google.common.base.Preconditions.checkNotNull;
+ import static com.google.common.base.Preconditions.checkState;
+ import static org.jclouds.virtualbox.config.VirtualBoxConstants.*;
 
 /**
  * Creates nodes, by cloning a master vm and based on the provided {@link NodeSpec}. Must be
@@ -88,26 +73,182 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
    private final MachineController machineController;
    private final NetworkUtils networkUtils;
    private final int ram;
-   
+   private final String workingDir;
    
    @Inject
    public NodeCreator(Supplier<VirtualBoxManager> manager, Function<CloneSpec, IMachine> cloner,
-            MachineUtils machineUtils, RunScriptOnNode.Factory scriptRunnerFactory, MachineController machineController,
+            MachineUtils machineUtils, MachineController machineController,
             NetworkUtils networkUtils,
-            @Named(VIRTUALBOX_GUEST_MEMORY) String ram) {
-      this.manager = manager;
-      this.cloner = cloner;
-      this.networkUtils = networkUtils;
-      this.machineUtils = machineUtils;
-      this.machineController = machineController;
-      this.ram = Integer.valueOf(ram);
+            @Named(VIRTUALBOX_GUEST_MEMORY) String ram,
+            @Named(VIRTUALBOX_WORKINGDIR) String workingDir) {
+      this.manager = checkNotNull(manager, "manager");
+      this.cloner = checkNotNull(cloner, "cloner");
+      this.networkUtils = checkNotNull(networkUtils, "networkUtils");
+      this.machineUtils = checkNotNull(machineUtils, "machineUtils");
+      this.machineController = checkNotNull(machineController, "machineController");
+      this.ram = checkNotNull(Integer.valueOf(ram), "ram");
+      this.workingDir = checkNotNull(workingDir, "workingDir");
    }
 
    @Override
    public synchronized NodeAndInitialCredentials<IMachine> apply(NodeSpec nodeSpec) {
       checkNotNull(nodeSpec, "NodeSpec");
       Master master = checkNotNull(nodeSpec.getMaster(), "Master");
-      
+      IMachine masterMachine = master.getMachine();
+      String guestOsUser = masterMachine.getExtraData(GUEST_OS_USER);
+      String guestOsPassword = masterMachine.getExtraData(GUEST_OS_PASSWORD);
+
+      cleanUpMaster(master);
+      CloneSpec cloneSpec = configureCloneSpec(nodeSpec, guestOsUser, guestOsPassword);
+      IMachine clone = cloner.apply(cloneSpec);
+      String cloneName =  cloneSpec.getVmSpec().getVmName();
+      logger.debug("<< cloned a vm(%s) from master(%s)", cloneName, nodeSpec.getMaster().getMachine().getName());
+      machineController.ensureMachineIsLaunched(cloneName);
+      logger.debug("<< cloned vm(%s) is up and running", cloneName);
+
+      reconfigureNetworkInterfaces(masterMachine, guestOsUser, guestOsPassword, cloneSpec.getNetworkSpec(), clone);
+
+      postConfigurations(clone, guestOsUser, guestOsPassword);
+
+      LoginCredentials credentials = LoginCredentials.builder()
+                                                     .user(guestOsUser)
+                                                     .password(guestOsPassword)
+                                                     .authenticateSudo(true)
+                                                     .build();
+      return new NodeAndInitialCredentials<IMachine>(clone, cloneName, credentials);
+   }
+
+   private void reconfigureNetworkInterfaces(IMachine masterMachine, String guestOsUser, String guestOsPassword, NetworkSpec networkSpec, IMachine clone) {
+      reconfigureHostOnlyInterfaceIfNeeded(guestOsUser, guestOsPassword, clone.getName(), masterMachine.getOSTypeId());
+      logger.debug("<< reconfigured hostOnly interface of node(%s)", clone.getName());
+      reconfigureNatInterfaceIfNeeded(guestOsUser, guestOsPassword, clone.getOSTypeId(), clone, networkSpec);
+      logger.debug("<< reconfigured NAT interface of node(%s)", clone.getName());
+   }
+
+   /**
+    * {@see DeleteGShadowLock} and {@see PasswordlessSudo} for a detailed explanation
+    *
+    * @param clone the target machine
+    * @param guestOsUser the user to access the target machine
+    * @param guestOsPassword the password to access the target machine
+    */
+   private void postConfigurations(IMachine clone, String guestOsUser, String guestOsPassword) {
+      NodeMetadata partialNodeMetadata = buildPartialNodeMetadata(clone, guestOsUser, guestOsPassword);
+      machineUtils.runScriptOnNode(partialNodeMetadata, new DeleteGShadowLock(), RunScriptOptions.NONE);
+      machineUtils.runScriptOnNode(partialNodeMetadata, new PasswordlessSudo(partialNodeMetadata.getCredentials().identity), RunScriptOptions.Builder.runAsRoot(true));
+   }
+
+   private CloneSpec configureCloneSpec(
+           NodeSpec nodeSpec, String guestOsUser, String guestOsPassword) {
+
+      String cloneName = generateCloneName(nodeSpec);
+
+      VmSpec cloneVmSpec = VmSpec.builder()
+              .id(cloneName)
+              .name(cloneName)
+              .memoryMB(ram)
+              .osTypeId(nodeSpec.getMaster().getMachine().getOSTypeId())
+              .guestUser(guestOsUser)
+              .guestPassword(guestOsPassword)
+              .cleanUpMode(CleanupMode.Full)
+              .forceOverwrite(true)
+              .build();
+
+      // case 'vbox host is localhost': NAT + HOST-ONLY
+      NetworkSpec networkSpec = networkUtils.createNetworkSpecWhenVboxIsLocalhost();
+
+      return CloneSpec.builder()
+              .linked(true)
+              .master(nodeSpec.getMaster().getMachine())
+              .network(networkSpec)
+              .vm(cloneVmSpec).build();
+   }
+
+   private void cleanUpMaster(Master master) {
+      deleteExistingSnapshot(master);
+   }
+
+   private void reconfigureHostOnlyInterfaceIfNeeded(final String username, final String password,
+                                                         String vmName, String osTypeId) {
+      final String scriptName = "hostOnly";
+      if (osTypeId.contains("RedHat")) {
+         File scriptFile = copyScriptToWorkingDir("redHatAndDerivatives", scriptName);
+         copyToNodeAndExecScript(username, password, vmName, scriptFile);
+      }
+   }
+
+   private void reconfigureNatInterfaceIfNeeded(final String guestOsUser, final String guestOsPassword,
+                                                String osTypeId, IMachine clone, NetworkSpec networkSpec) {
+
+      final String scriptName = "nat";
+      final String folder = "redHatAndDerivatives";
+      if (osTypeId.contains("RedHat")) {
+         File scriptFile = copyScriptToWorkingDir(folder, scriptName);
+         copyToNodeAndExecScript(guestOsUser, guestOsPassword, clone.getName(), scriptFile);
+      } else if (osTypeId.contains("Ubuntu") || osTypeId.contains("Debian")) {
+         NodeMetadata partialNodeMetadata = buildPartialNodeMetadata(clone, guestOsUser, guestOsPassword);
+
+         Optional<NetworkInterfaceCard> optionalNatIfaceCard = Iterables.tryFind(
+                 networkSpec.getNetworkInterfaceCards(),
+                 new Predicate<NetworkInterfaceCard>() {
+
+                    @Override
+                    public boolean apply(NetworkInterfaceCard nic) {
+                       return nic.getNetworkAdapter().getNetworkAttachmentType()
+                               .equals(NetworkAttachmentType.NAT);
+                    }
+                 });
+
+         checkState(networkUtils.enableNetworkInterface(partialNodeMetadata, optionalNatIfaceCard.get()),
+                 "cannot enable NAT Interface on vm(%s)", clone.getName());
+      }
+   }
+
+   private File copyScriptToWorkingDir(String folder, String scriptName) {
+      File scriptFile = new File(workingDir + "/conf/" + "/" + folder + "/" + scriptName);
+      scriptFile.getParentFile().mkdirs();
+      if (!scriptFile.exists()) {
+         try {
+            Files.write(Strings2.toStringAndClose(getClass().getResourceAsStream("/" + folder + "/" + scriptName)), scriptFile, Charsets.UTF_8);
+         } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+         }
+      }
+      return scriptFile;
+   }
+
+   private void copyToNodeAndExecScript(final String username, final String password,
+                                        String vmName, final File scriptFile) {
+      machineUtils.sharedLockMachineAndApplyToSession(vmName, new Function<ISession, Void>() {
+
+         @Override
+         public Void apply(ISession session) {
+            String scriptName = scriptFile.getName();
+
+            manager.get().getSessionObject().getConsole().getGuest()
+                    .createSession(username, password, null, null)
+                    .copyTo(scriptFile.getAbsolutePath(), "/tmp/" + scriptName, null);
+
+            manager.get().getSessionObject().getConsole().getGuest()
+                    .createSession(username, password, null, null)
+                    .processCreate("/bin/chmod", ImmutableList.of("777", "/tmp/" + scriptName), null, null, 5 * 1000l);
+
+            manager.get().getSessionObject().getConsole().getGuest()
+                    .createSession(username, password, null, null)
+                    .processCreate("/bin/sh", ImmutableList.of("/tmp/" + scriptName), null, null, 5 * 1000l);
+            return null;
+         }
+      });
+   }
+
+   private String generateCloneName(NodeSpec nodeSpec) {
+      String masterNameWithoutPrefix = nodeSpec.getMaster().getMachine().getName().replace(VIRTUALBOX_IMAGE_PREFIX, "");
+      return VIRTUALBOX_NODE_PREFIX + masterNameWithoutPrefix + VIRTUALBOX_NODE_NAME_SEPARATOR
+               + nodeSpec.getTag() + VIRTUALBOX_NODE_NAME_SEPARATOR + nodeSpec.getName();
+   }
+
+   private void deleteExistingSnapshot(Master master) {
       if (master.getMachine().getCurrentSnapshot() != null) {
          ISession session;
          try {
@@ -121,86 +262,18 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
          }
          logger.debug("<< deleted an existing snapshot of vm(%s)", master.getMachine().getName());
       }
-      String masterNameWithoutPrefix = master.getMachine().getName().replace(VIRTUALBOX_IMAGE_PREFIX, "");
-      String cloneName = VIRTUALBOX_NODE_PREFIX + masterNameWithoutPrefix + VIRTUALBOX_NODE_NAME_SEPARATOR
-               + nodeSpec.getTag() + VIRTUALBOX_NODE_NAME_SEPARATOR + nodeSpec.getName();
-      
-      IMachine masterMachine = master.getMachine();
-      String username = masterMachine.getExtraData(GUEST_OS_USER);
-      String password = masterMachine.getExtraData(GUEST_OS_PASSWORD);
-      
-      VmSpec cloneVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(ram)
-            .guestUser(username).guestPassword(password)
-            .cleanUpMode(CleanupMode.Full)
-            .forceOverwrite(true).build();
-      
-      // case 'vbox host is localhost': NAT + HOST-ONLY
-      NetworkSpec networkSpec = networkUtils.createNetworkSpecWhenVboxIsLocalhost();
-      Optional<NetworkInterfaceCard> optionalNatIfaceCard = Iterables.tryFind(
-            networkSpec.getNetworkInterfaceCards(),
-            new Predicate<NetworkInterfaceCard>() {
-
-               @Override
-               public boolean apply(NetworkInterfaceCard nic) {
-                  return nic.getNetworkAdapter().getNetworkAttachmentType()
-                        .equals(NetworkAttachmentType.NAT);
-               }
-            });
-      CloneSpec cloneSpec = CloneSpec.builder().linked(true).master(master.getMachine()).network(networkSpec)
-               .vm(cloneVmSpec).build();
-
-      IMachine cloned = cloner.apply(cloneSpec);
-      logger.debug("<< cloned a vm(%s) from master(%s)", cloneName, master.getMachine().getName());
-      machineController.ensureMachineIsLaunched(cloneVmSpec.getVmName());
-      
-      // IMachineToNodeMetadata produces the final ip's but these need to be set before so we build a
-      // NodeMetadata just for the sake of running the gshadow and setip scripts 
-      NodeMetadata partialNodeMetadata = buildPartialNodeMetadata(cloned);
-
-      // see DeleteGShadowLock for a detailed explanation
-      machineUtils.runScriptOnNode(partialNodeMetadata, new DeleteGShadowLock(), RunScriptOptions.NONE);
-
-      
-      if(optionalNatIfaceCard.isPresent())
-         checkState(networkUtils.enableNetworkInterface(partialNodeMetadata, optionalNatIfaceCard.get()),
-         "cannot enable NAT Interface on vm(%s)", cloneName);
-      
-      // apply passwordless ssh script to each clone
-      machineUtils.runScriptOnNode(partialNodeMetadata, new PasswordlessSudo(partialNodeMetadata.getCredentials().identity), RunScriptOptions.Builder.runAsRoot(true));
-      
-      LoginCredentials credentials = partialNodeMetadata.getCredentials();
-      return new NodeAndInitialCredentials<IMachine>(cloned, cloneName, credentials);
-      
    }
 
-   private NodeMetadata buildPartialNodeMetadata(IMachine clone) {
+   private NodeMetadata buildPartialNodeMetadata(IMachine clone, String guestOsUser, String guestOsPassword) {
       NodeMetadataBuilder nodeMetadataBuilder = new NodeMetadataBuilder();
       nodeMetadataBuilder.id(clone.getName());
       nodeMetadataBuilder.status(VirtualBoxComputeServiceContextModule.toPortableNodeStatus.get(clone.getState()));
-      long slot = findSlotForNetworkAttachment(clone, NetworkAttachmentType.HostOnly);
-      nodeMetadataBuilder.publicAddresses(ImmutableSet.of(networkUtils.getIpAddressFromNicSlot(clone.getName(), slot)));
-      String guestOsUser = clone.getExtraData(GUEST_OS_USER);
-      String guestOsPassword = clone.getExtraData(GUEST_OS_PASSWORD);
+      nodeMetadataBuilder.publicAddresses(ImmutableSet.of(networkUtils.getValidHostOnlyIpFromVm(clone.getName())));
       nodeMetadataBuilder.credentials(LoginCredentials.builder()
                                                       .user(guestOsUser)
                                                       .password(guestOsPassword)
-                                                      .authenticateSudo(true).build());    
+                                                      .authenticateSudo(true).build());
       return nodeMetadataBuilder.build();
    }
-   
-   private long findSlotForNetworkAttachment(IMachine clone, NetworkAttachmentType networkAttachmentType) {
-      long slot = -1;
-      long i = 0;
-      while (slot == -1 && i < 4) {
-         if(clone.getNetworkAdapter(i).getAttachmentType().equals(networkAttachmentType)) {
-            slot = i;
-            break;
-         }
-         i++;
-      }
-      checkState(slot!=-1);
-      return slot;
-   }
-
 
 }

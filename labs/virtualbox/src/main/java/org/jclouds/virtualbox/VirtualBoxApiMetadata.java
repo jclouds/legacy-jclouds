@@ -22,7 +22,6 @@ import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_DEFAULT_DIR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_GUEST_MEMORY;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGES_DESCRIPTOR;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WORKINGDIR;
 
@@ -61,14 +60,6 @@ public class VirtualBoxApiMetadata extends BaseApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseApiMetadata.defaultProperties();
-      
-      properties.put(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE, "<Esc><Esc><Enter> "
-               + "/install/vmlinuz noapic preseed/url=PRECONFIGURATION_URL "
-               + "debian-installer=en_US auto locale=en_US kbd-chooser/method=us " 
-               + "hostname=" + "HOSTNAME "
-               + "fb=false debconf/frontend=noninteractive "
-               + "console-setup/ask_detect=false keyboard-configuration/layoutcode=us "
-               + "initrd=/install/initrd.gz -- <Enter>");
 
       String workingDir = System.getProperty("test.virtualbox.workingDir", VIRTUALBOX_DEFAULT_DIR);
       properties.put(VIRTUALBOX_WORKINGDIR, workingDir);
@@ -80,7 +71,7 @@ public class VirtualBoxApiMetadata extends BaseApiMetadata {
                + File.separator + "images.yaml");
 
       properties.put(VIRTUALBOX_IMAGES_DESCRIPTOR, yamlDescriptor);
-      properties.put(VIRTUALBOX_PRECONFIGURATION_URL, "http://10.0.2.2:23232/preseed.cfg");
+      properties.put(VIRTUALBOX_PRECONFIGURATION_URL, "http://10.0.2.2:23232");
       properties.setProperty(TEMPLATE, "osFamily=UBUNTU,osVersionMatches=12.04.1,os64Bit=true,osArchMatches=amd64");
       return properties;
    }
@@ -97,8 +88,8 @@ public class VirtualBoxApiMetadata extends BaseApiMetadata {
          .defaultCredential("CHANGE_ME")
          .defaultEndpoint("http://localhost:18083/")
          .documentation(URI.create("https://github.com/jclouds/jclouds/tree/master/labs/virtualbox"))
-         .version("4.2.4")
-         .buildVersion("4.2.4")
+         .version("4.2.6")
+         .buildVersion("4.2.6")
          .defaultProperties(VirtualBoxApiMetadata.defaultProperties())
          .view(ComputeServiceContext.class)
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(HardcodeLocalhostAsNodeMetadataSupplier.class, VirtualBoxComputeServiceContextModule.class));
