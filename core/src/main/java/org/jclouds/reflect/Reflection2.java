@@ -18,6 +18,7 @@
  */
 package org.jclouds.reflect;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.tryFind;
@@ -114,9 +115,13 @@ public class Reflection2 {
 
    /**
     * returns an {@link Invokable} object that reflects a method present in the {@link TypeToken} type.
+    * If there are multiple methods of the same name and parameter list, returns the method in the nearest
+    * ancestor with the most specific return type (see {@link Class#getDeclaredMethod}).
     * 
     * @param ownerType
     *           corresponds to {@link Invokable#getOwnerType()}
+    * @param name
+    *           name of the method to be returned
     * @param parameterTypes
     *           corresponds to {@link Method#getParameterTypes()}
     * 
@@ -224,15 +229,22 @@ public class Reflection2 {
          .newBuilder().build(new CacheLoader<TypeTokenNameAndParameterTypes, Invokable<?, ?>>() {
             public Invokable<?, ?> load(final TypeTokenNameAndParameterTypes key) {
                Set<Invokable<?, ?>> methods = get(methodsForTypeToken, key.type);
+               /*
+                * There may be multiple methods, even on the most immediate ancestor,
+                * of a method with the required name and parameter set. This will occur 
+                * if the method overrides one declared in a parent class with a less specific
+                * return type. These bridge methods inserted by the compiler will be marked
+                * as "synthetic".
+                */
                Optional<Invokable<?, ?>> method = tryFind(methods, new Predicate<Invokable<?, ?>>() {
                   public boolean apply(Invokable<?, ?> input) {
-                     return Objects.equal(input.getName(), key.name)
+                     // Invokable doesn't expose Method#isBridge
+                     return !input.isSynthetic() && Objects.equal(input.getName(), key.name)
                            && Objects.equal(toClasses(input.getParameters()), key.parameterTypes);
                   }
                });
-               if (method.isPresent())
-                  return method.get();
-               throw new IllegalArgumentException("no such method " + key.toString() + "in: " + methods);
+               checkArgument(method.isPresent(), "no such method %s in: %s", key.toString(), methods);
+               return method.get();
             }
          });
 
@@ -265,6 +277,8 @@ public class Reflection2 {
 
    /**
     * this gets all declared methods, not just public ones. makes them accessible. Does not include Object methods.
+    * Invokables for a type are ordered so all invokables on a subtype are always listed before invokables on a
+    * supertype (see {@link TypeToken#getTypes()}).
     */
    private static LoadingCache<TypeToken<?>, Set<Invokable<?, ?>>> methodsForTypeToken = CacheBuilder
          .newBuilder().build(new CacheLoader<TypeToken<?>, Set<Invokable<?, ?>>>() {
