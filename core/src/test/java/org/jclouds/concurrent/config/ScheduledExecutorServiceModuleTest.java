@@ -19,6 +19,7 @@
 package org.jclouds.concurrent.config;
 import static com.google.common.base.Throwables.getStackTraceAsString;
 import static com.google.inject.name.Names.named;
+import static java.lang.String.format;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -50,6 +51,7 @@ import com.google.inject.Key;
  */
 @Test
 public class ScheduledExecutorServiceModuleTest {
+   private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
    private Injector injector;
 
@@ -99,7 +101,7 @@ public class ScheduledExecutorServiceModuleTest {
          // this is sensitive to formatting as we are looking for the stack traces to match. if you wrap the below
          // line again, you'll need to change incrementInitialElement to 3 line numbers instead of 2.
          submission = getStackTraceAsString(incrementInitialElement(new RuntimeException(), 2))
-               .replaceFirst(".*\n", "");
+               .replaceFirst(format(".*%s", LINE_SEPARATOR), "");
          sched.submit(runnableThrowsRTE()).get();
       } catch (ExecutionException e) {
          assertTraceHasSubmission(getStackTraceAsString(e), submission);
@@ -116,7 +118,7 @@ public class ScheduledExecutorServiceModuleTest {
          // this is sensitive to formatting as we are looking for the stack traces to match. if you wrap the below
          // line again, you'll need to change incrementInitialElement to 3 line numbers instead of 2.
          submission = getStackTraceAsString(incrementInitialElement(new RuntimeException(), 2))
-               .replaceFirst(".*\n", "");
+               .replaceFirst(format(".*%s", LINE_SEPARATOR), "");
          sched.scheduleWithFixedDelay(runnableThrowsRTE(), 0, 1, TimeUnit.MICROSECONDS).get();
       } catch (ExecutionException e) {
          assertTraceHasSubmission(getStackTraceAsString(e), submission);
