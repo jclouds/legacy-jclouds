@@ -18,8 +18,13 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.domain;
 
+import java.beans.ConstructorProperties;
+
+import javax.inject.Named;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Optional;
 
 /**
  * The SSL Termination feature allows a load balancer user to terminate SSL traffic at the load balancer layer versus 
@@ -53,15 +58,24 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author Everett Toews
  */
 public class SSLTermination {
-
    private final boolean enabled;
    private final boolean secureTrafficOnly;
    private final int securePort;
+   private final Optional<String> certificate;
+   @Named("privatekey")
+   private final Optional<String> privateKey;
+   private final Optional<String> intermediateCertificate;
 
-   protected SSLTermination(boolean enabled, boolean secureTrafficOnly, int securePort) {
+   @ConstructorProperties({ "enabled", "secureTrafficOnly", "securePort", "certificate", "privatekey",
+         "intermediateCertificate" })
+   protected SSLTermination(boolean enabled, boolean secureTrafficOnly, int securePort, String certificate,
+         String privateKey, String intermediateCertificate) {
       this.enabled = enabled;
       this.secureTrafficOnly = secureTrafficOnly;
       this.securePort = securePort;
+      this.certificate = Optional.fromNullable(certificate);
+      this.privateKey = Optional.fromNullable(privateKey);
+      this.intermediateCertificate = Optional.fromNullable(intermediateCertificate);
    }
 
    public boolean getEnabled() {
@@ -76,9 +90,21 @@ public class SSLTermination {
       return this.securePort;
    }
 
+   public Optional<String> getCertificate() {
+      return this.certificate;
+   }
+
+   public Optional<String> getPrivateKey() {
+      return this.privateKey;
+   }
+
+   public Optional<String> getIntermediateCertificate() {
+      return this.intermediateCertificate;
+   }
+
    @Override
    public int hashCode() {
-      return Objects.hashCode(enabled, secureTrafficOnly, securePort);
+      return Objects.hashCode(enabled, secureTrafficOnly, securePort, certificate, privateKey, intermediateCertificate);
    }
 
    @Override
@@ -90,12 +116,16 @@ public class SSLTermination {
       SSLTermination that = SSLTermination.class.cast(obj);
 
       return Objects.equal(this.enabled, that.enabled) && Objects.equal(this.secureTrafficOnly, that.secureTrafficOnly)
-            && Objects.equal(this.securePort, that.securePort);
+            && Objects.equal(this.securePort, that.securePort) && Objects.equal(this.certificate, that.certificate)
+            && Objects.equal(this.privateKey, that.privateKey)
+            && Objects.equal(this.intermediateCertificate, that.intermediateCertificate);
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper(this).add("enabled", enabled).add("secureTrafficOnly", secureTrafficOnly)
-            .add("securePort", securePort);
+      return Objects.toStringHelper(this).omitNullValues().add("enabled", enabled)
+            .add("secureTrafficOnly", secureTrafficOnly).add("securePort", securePort)
+            .add("certificate", certificate.orNull()).add("privateKey", privateKey.orNull())
+            .add("intermediateCertificate", intermediateCertificate.orNull());
    }
 
    @Override
@@ -107,38 +137,92 @@ public class SSLTermination {
       private boolean enabled;
       private boolean secureTrafficOnly;
       private int securePort;
+      private String certificate;
+      private String privateKey;
+      private String intermediateCertificate;
 
-      /** 
-       * @see SSLTermination#getEnabled()
+      /**
+       * Required. Determines if the load balancer is enabled to terminate SSL traffic.
+       * </p>
+       * If enabled = false, the load balancer will retain its specified SSL attributes, but will not terminate SSL traffic.
        */
       public Builder enabled(boolean enabled) {
          this.enabled = enabled;
          return this;
       }
 
-      /** 
-       * @see SSLTermination#getSecureTrafficOnly()
+      /**
+       * Required. Determines if the load balancer may accept only secure traffic.
+       * </p>
+       * If secureTrafficOnly = true, the load balancer will not accept non-secure traffic.
        */
       public Builder secureTrafficOnly(boolean secureTrafficOnly) {
          this.secureTrafficOnly = secureTrafficOnly;
          return this;
       }
 
-      /** 
-       * @see SSLTermination#getSecurePort()
+      /**
+       * Required. The port on which the SSL termination load balancer will listen for secure traffic.
+       * </p>
+       * The securePort must be unique to the existing LB protocol/port combination. For example, port 443.
        */
       public Builder securePort(int securePort) {
          this.securePort = securePort;
          return this;
       }
 
+      /**
+       * Required. The certificate used for SSL termination.
+       * </p>
+       * The certificate is validated and verified against the key and intermediate certificate if provided.
+       * </p>
+       * All requests to SSL termination require the key/certificates to be in "proper" format, meaning that all raw 
+       * line feed characters should be wrapped in a newline character. So if the user pastes in the key from a 
+       * mykey.key file, it will not properly handle the field. For example, use string.replaceAll("\n", "\\n").
+       */
+      public Builder certificate(String certificate) {
+         this.certificate = certificate;
+         return this;
+      }
+
+      /**
+       * Required. The private key for the SSL certificate.
+       * </p>
+       * The private key is validated and verified against the provided certificate(s).
+       * 
+       * @see SSLTermination#certificate(String)
+       */
+      public Builder privatekey(String privateKey) {
+         this.privateKey = privateKey;
+         return this;
+      }
+
+      /**
+       * Optional only when configuring Intermediate SSL Termination. The user's intermediate certificate used for SSL
+       * termination.
+       * </p>
+       * The intermediate certificate is validated and verified against the key and certificate credentials provided.
+       * </p>
+       * A user may only provide an intermediateCertificate when accompanied by a certificate, private key, and 
+       * securePort. It may not be added to an existing SSL configuration as a single attribute in a future request.
+       * 
+       * @see SSLTermination#certificate(String)
+       */
+      public Builder intermediateCertificate(String intermediateCertificate) {
+         this.intermediateCertificate = intermediateCertificate;
+         return this;
+      }
+
       public SSLTermination build() {
-         return new SSLTermination(enabled, secureTrafficOnly, securePort);
+         return new SSLTermination(enabled, secureTrafficOnly, securePort, certificate, privateKey,
+               intermediateCertificate);
       }
 
       public Builder from(SSLTermination in) {
          return this.enabled(in.getEnabled()).secureTrafficOnly(in.getSecureTrafficOnly())
-               .securePort(in.getSecurePort());
+               .securePort(in.getSecurePort()).certificate(in.getCertificate().orNull())
+               .privatekey(in.getPrivateKey().orNull())
+               .intermediateCertificate(in.getIntermediateCertificate().orNull());
       }
    }
 

@@ -31,6 +31,7 @@ import org.jclouds.rackspace.cloudloadbalancers.features.ContentCachingApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.HealthMonitorApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.NodeApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.SSLTerminationApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.SessionPersistenceApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.VirtualIPApi;
 import org.jclouds.rest.annotations.Delegate;
@@ -114,5 +115,13 @@ public interface CloudLoadBalancersApi {
    @Delegate
    @Path("/loadbalancers/{lbId}")
    ContentCachingApi getContentCachingApiForZoneAndLoadBalancer(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
+
+   /**
+    * Provides synchronous access to SSL Termination features.
+    */
+   @Delegate
+   @Path("/loadbalancers/{lbId}")
+   SSLTerminationApi getSSLTerminationApiForZoneAndLoadBalancer(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 }

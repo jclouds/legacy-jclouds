@@ -24,7 +24,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
-import org.jclouds.rackspace.cloudloadbalancers.domain.HealthMonitor;
+import org.jclouds.rackspace.cloudloadbalancers.domain.SSLTermination;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerRequest;
 import org.jclouds.rackspace.cloudloadbalancers.domain.NodeRequest;
@@ -38,8 +38,8 @@ import com.google.common.collect.Iterables;
 /**
  * @author Everett Toews
  */
-@Test(groups = "live", singleThreaded = true, testName = "HealthMonitorApiLiveTest")
-public class HealthMonitorApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
+@Test(groups = "live", singleThreaded = true, testName = "SSLTerminationApiLiveTest")
+public class SSLTerminationApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    private LoadBalancer lb;
    private String zone;
 
@@ -55,26 +55,26 @@ public class HealthMonitorApiLiveTest extends BaseCloudLoadBalancersApiLiveTest 
    }
 
    @Test(dependsOnMethods = "testCreateLoadBalancer")
-   public void testCreateAndGetHealthMonitor() throws Exception {
-      clbApi.getHealthMonitorApiForZoneAndLoadBalancer(zone, lb.getId()).createOrUpdate(
-            HealthMonitorApiExpectTest.getConnectHealthMonitor());
+   public void testCreateAndGetSSLTermination() throws Exception {
+      clbApi.getSSLTerminationApiForZoneAndLoadBalancer(zone, lb.getId()).createOrUpdate(
+            SSLTerminationApiExpectTest.getSSLTermination());
       assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
       
-      HealthMonitor healthMonitor = 
-            clbApi.getHealthMonitorApiForZoneAndLoadBalancer(zone, lb.getId()).get();
+      SSLTermination sslTermination = 
+            clbApi.getSSLTerminationApiForZoneAndLoadBalancer(zone, lb.getId()).get();
 
-      assertEquals(healthMonitor, HealthMonitorApiExpectTest.getConnectHealthMonitor());
+      assertEquals(sslTermination, SSLTerminationApiExpectTest.getSSLTermination());
    }
    
-   @Test(dependsOnMethods = "testCreateAndGetHealthMonitor")
-   public void testRemoveAndGetHealthMonitor() throws Exception {
-      assertTrue(clbApi.getHealthMonitorApiForZoneAndLoadBalancer(zone, lb.getId()).remove());
+   @Test(dependsOnMethods = "testCreateAndGetSSLTermination")
+   public void testRemoveAndGetSSLTermination() throws Exception {
+      assertTrue(clbApi.getSSLTerminationApiForZoneAndLoadBalancer(zone, lb.getId()).remove());
       assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
       
-      HealthMonitor healthMonitor = 
-            clbApi.getHealthMonitorApiForZoneAndLoadBalancer(zone, lb.getId()).get();
+      SSLTermination sslTermination = 
+            clbApi.getSSLTerminationApiForZoneAndLoadBalancer(zone, lb.getId()).get();
       
-      assertNull(healthMonitor);
+      assertNull(sslTermination);
    }
 
    @Override
