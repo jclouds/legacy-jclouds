@@ -21,7 +21,6 @@ package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
@@ -105,13 +104,10 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
                .cleanUpMode(CleanupMode.Full).controller(ideController).forceOverwrite(true).build();
 
       injector = view.utils().injector();
-      Function<String, String> configProperties = injector.getInstance(ValueOfConfigurationKeyOrNull.class);
       IsoSpec isoSpec = IsoSpec
                .builder()
                .sourcePath(operatingSystemIso)
-               .installationScript(
-                        configProperties.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace("HOSTNAME",
-                                 instanceVmSpec.getVmName())).build();
+               .installationScript(keystrokeSequence).build();
 
       NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.HostOnly)
                .build();

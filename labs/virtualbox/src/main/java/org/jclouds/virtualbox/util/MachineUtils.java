@@ -73,8 +73,7 @@ public class MachineUtils {
    
 
    @Inject
-   public MachineUtils(Supplier<VirtualBoxManager> manager, RunScriptOnNode.Factory scriptRunner,
-         IpAddressesLoadingCache ipAddressesLoadingCache) {
+   public MachineUtils(Supplier<VirtualBoxManager> manager, RunScriptOnNode.Factory scriptRunner) {
       this.manager = manager;
       this.scriptRunner = scriptRunner;
    }
@@ -217,7 +216,7 @@ public class MachineUtils {
    private ISession lockSession(String machineId, LockType type, int retries) {
       int count = 0;
       IMachine immutableMachine = manager.get().getVBox().findMachine(machineId);
-      ISession session = null;      
+      ISession session;
       while (true) {
          try {
             session = manager.get().getSessionObject();

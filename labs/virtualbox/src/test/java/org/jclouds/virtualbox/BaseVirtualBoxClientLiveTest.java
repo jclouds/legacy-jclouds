@@ -22,9 +22,9 @@ package org.jclouds.virtualbox;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -40,6 +40,7 @@ import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.rest.annotations.BuildVersion;
 import org.jclouds.sshj.config.SshjSshClientModule;
+import org.jclouds.util.Strings2;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.IsoSpec;
@@ -118,6 +119,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
    @Named(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR)
    protected String workingDir;
    protected String isosDir;
+   protected String keystrokeSequence;
    @Inject protected Supplier<NodeMetadata> host;
    @Inject protected Factory runScriptOnNodeFactory;
    @Inject protected RetryIfSocketNotYetOpen socketTester;
@@ -151,6 +153,12 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
       hostVersion = Iterables.get(Splitter.on('-').split(view.utils().injector().getInstance(Key.get(String.class, BuildVersion.class))), 0);
       operatingSystemIso = String.format("%s/%s.iso", isosDir, template.getImage().getName());
       guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", isosDir, hostVersion);
+      keystrokeSequence = "";
+      try {
+         keystrokeSequence = Strings2.toStringAndClose(getClass().getResourceAsStream("/default-keystroke-sequence"));
+      } catch (IOException e) {
+         throw new RuntimeException("error reading default-keystroke-sequence file");
+      }
    }
 
    protected void undoVm(String vmNameOrId) {
@@ -188,14 +196,10 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
       VmSpec sourceVmSpec = VmSpec.builder().id(masterName).name(masterName).osTypeId("").memoryMB(512)
                .cleanUpMode(CleanupMode.Full).controller(ideController).forceOverwrite(true).build();
 
-      Injector injector = view.utils().injector();
-      Function<String, String> configProperties = injector.getInstance(ValueOfConfigurationKeyOrNull.class);
       IsoSpec isoSpec = IsoSpec
                .builder()
                .sourcePath(operatingSystemIso)
-               .installationScript(
-                        configProperties.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace("HOSTNAME",
-                                 sourceVmSpec.getVmName())).build();
+               .installationScript(keystrokeSequence).build();
 
       NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
                .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();

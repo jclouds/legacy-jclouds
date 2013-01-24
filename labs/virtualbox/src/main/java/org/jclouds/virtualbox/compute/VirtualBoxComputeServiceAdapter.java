@@ -65,7 +65,7 @@ import com.google.common.collect.Sets;
 import com.google.inject.Singleton;
 
 /**
- * Defines the connection between the {@link org.virtualbox_4_1.VirtualBoxManager} implementation
+ * Defines the connection between the {@link org.virtualbox_4_2.VirtualBoxManager} implementation
  * and the jclouds {@link org.jclouds.compute.ComputeService}
  * 
  * @author Mattias Holmqvist, Andrea Turli, David Alves

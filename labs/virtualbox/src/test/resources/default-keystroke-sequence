@@ -1,0 +1,1 @@
+<Esc><Esc><Enter> /install/vmlinuz noapic preseed/url=PRECONFIGURATION_URL debian-installer=en_US auto locale=en_US kbd-chooser/method=us hostname=hostname fb=false debconf/frontend=noninteractive console-setup/ask_detect=false keyboard-configuration/layoutcode=us " initrd=/install/initrd.gz -- <Enter>

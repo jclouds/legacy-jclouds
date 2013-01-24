@@ -25,7 +25,6 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_DEFAULT_DIR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_NAME_SEPARATOR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WORKINGDIR;
@@ -112,7 +111,6 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
    private final Function<MasterSpec, IMachine> masterCreatorAndInstaller;
    private final Map<String, YamlImage> imageMapping;
    private final String workingDir;
-   private final String installationKeySequence;
    private final String isosDir;
    private final Supplier<VirtualBoxManager> manager;
    private final String version;
@@ -126,7 +124,6 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
 
    @Inject
    public MastersLoadingCache(@BuildVersion String version,
-         @Named(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE) String installationKeySequence,
          @Named(VIRTUALBOX_PRECONFIGURATION_URL) String preconfigurationUrl,
          @Named(VIRTUALBOX_WORKINGDIR) String workingDir, Function<MasterSpec, IMachine> masterLoader,
          Supplier<Map<Image, YamlImage>> yamlMapper, Supplier<VirtualBoxManager> manager,
@@ -134,7 +131,6 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
          @Provider Supplier<URI> providerSupplier, HardcodedHostToHostNodeMetadata hardcodedHostToHostNodeMetadata) {
       this.manager = checkNotNull(manager, "vboxmanager can't be null");
       this.masterCreatorAndInstaller = masterLoader;
-      this.installationKeySequence = checkNotNull(installationKeySequence, "installationKeySequence can't be null");
       this.workingDir = workingDir == null ? VIRTUALBOX_DEFAULT_DIR : workingDir;
       this.isosDir = workingDir + File.separator + "isos";
       this.imageMapping = Maps.newLinkedHashMap();
@@ -235,16 +231,20 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
 
       NetworkSpec networkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
 
-      return MasterSpec
-            .builder()
-            .vm(vmSpecification)
-            .iso(IsoSpec.builder().sourcePath(localIsoUrl)
-                  .installationScript(installationKeySequence.replace("HOSTNAME", vmSpecification.getVmName())).build())
-            .network(networkSpec)
-            .credentials(LoginCredentials.builder()
-                                         .user(currentImage.username)
-                                         .password(currentImage.credential)
-                                         .authenticateSudo(true).build()).build();
+      String installationSequence = currentImage.keystroke_sequence.replace("HOSTNAME", vmSpecification.getVmName());
+      return MasterSpec.builder()
+                       .vm(vmSpecification)
+                       .iso(IsoSpec.builder()
+                                   .sourcePath(localIsoUrl)
+                                   .installationScript(installationSequence)
+                                   .build())
+                       .network(networkSpec)
+                       .credentials(LoginCredentials.builder()
+                                                    .user(currentImage.username)
+                                                    .password(currentImage.credential)
+                                                    .authenticateSudo(true)
+                                                    .build())
+                       .build();
    }
 
    @Override
@@ -267,18 +267,18 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
       List<Statement> statements = new ImmutableList.Builder<Statement>().add(
             Statements.saveHttpResponseTo(URI.create(httpUrl), isosDir, fileName)).build();
       StatementList statementList = new StatementList(statements);
-      NodeMetadata hostNodeMetadata = hardcodedHostToHostNodeMetadata.apply(host.get());
-      ListenableFuture<ExecResponse> future = runScriptOnNodeFactory.submit(hostNodeMetadata, statementList,
+      NodeMetadata hostNode = checkNotNull(hardcodedHostToHostNodeMetadata.apply(host.get()), "hostNode");
+      ListenableFuture<ExecResponse> future = runScriptOnNodeFactory.submit(hostNode, statementList,
             runAsRoot(false));
       Futures.getUnchecked(future);
 
       if (expectedMd5 != null) {
          String filePath = isosDir + File.separator + fileName;
-         ListenableFuture<ExecResponse> md5future = runScriptOnNodeFactory.submit(hostNodeMetadata, new Md5(filePath),
+         ListenableFuture<ExecResponse> md5future = runScriptOnNodeFactory.submit(hostNode, new Md5(filePath),
                runAsRoot(false));
 
          ExecResponse responseMd5 = Futures.getUnchecked(md5future);
-         assert responseMd5.getExitStatus() == 0 : hostNodeMetadata.getId() + ": " + responseMd5;
+         assert responseMd5.getExitStatus() == 0 : hostNode.getId() + ": " + responseMd5;
          checkNotNull(responseMd5.getOutput(), "iso_md5 missing");
          String actualMd5 = responseMd5.getOutput().trim();
          checkState(actualMd5.equals(expectedMd5), "md5 of %s is %s but expected %s", filePath, actualMd5, expectedMd5);
