@@ -271,7 +271,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
       checkState(retry(new Predicate<String>() {
          public boolean apply(String in) {
             try {
-               clearContainer(in, recursive());
+               blobUtils.clearContainer(in, recursive());
                return deleteAndVerifyContainerGone(in);
             } catch (ContainerNotFoundException e) {
                return true;
