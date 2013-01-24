@@ -271,7 +271,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
          if (!Assertions.eventuallyTrue(new Supplier<Boolean>() {
             public Boolean get() {
                try {
-                  clearContainer(container, recursive());
+                  blobUtils.clearContainer(container, recursive());
                   return deleteAndVerifyContainerGone(container);
                } catch (ContainerNotFoundException e) {
                   return true;
