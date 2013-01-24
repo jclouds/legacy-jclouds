@@ -18,6 +18,7 @@
  */
 package org.jclouds.reflect;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.tryFind;
@@ -242,9 +243,8 @@ public class Reflection2 {
                            && Objects.equal(toClasses(input.getParameters()), key.parameterTypes);
                   }
                });
-               if (method.isPresent())
-                  return method.get();
-               throw new IllegalArgumentException("no such method " + key.toString() + "in: " + methods);
+               checkArgument(method.isPresent(), "no such method %s in: %s", key.toString(), methods);
+               return method.get();
             }
          });
 
