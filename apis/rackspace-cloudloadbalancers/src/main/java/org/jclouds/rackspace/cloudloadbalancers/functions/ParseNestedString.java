@@ -36,18 +36,18 @@ import com.google.common.collect.Iterables;
 /**
  * @author Everett Toews
  */
-public class ParseNestedBoolean implements Function<HttpResponse, Boolean>, InvocationContext<ParseNestedBoolean> {
+public class ParseNestedString implements Function<HttpResponse, String>, InvocationContext<ParseNestedString> {
 
-   private final ParseJson<Map<String, Map<String, Boolean>>> json;
+   private final ParseJson<Map<String, Map<String, String>>> json;
 
    @Inject
-   ParseNestedBoolean(ParseJson<Map<String, Map<String, Boolean>>> json) {
+   ParseNestedString(ParseJson<Map<String, Map<String, String>>> json) {
       this.json = checkNotNull(json, "json");
    }
 
    @Override
-   public Boolean apply(HttpResponse response) {
-      Map<String, Map<String, Boolean>> map = json.apply(response);
+   public String apply(HttpResponse response) {
+      Map<String, Map<String, String>> map = json.apply(response);
       
       if (map == null || map.size() == 0)
          throw new HttpResponseException("Unexpected JSON format returned.", null, response);
@@ -56,7 +56,7 @@ public class ParseNestedBoolean implements Function<HttpResponse, Boolean>, Invo
    }
 
    @Override
-   public ParseNestedBoolean setContext(HttpRequest request) {
+   public ParseNestedString setContext(HttpRequest request) {
       return this;
    }
 }

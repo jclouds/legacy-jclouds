@@ -55,6 +55,75 @@ import com.google.common.base.Optional;
  * decrypted traffic will be sent in clear text over the public internet to the external node(s) and will no longer 
  * be secure.</li>
  * </ol>
+ * 
+ * <table border="1">
+ *   <caption>
+ *     Optional SSL Attributes
+ *   </caption>
+ *   <thead>
+ *     <tr align="center">
+ *       <td>Optional SSL Attributes</td>
+ *       <td>Non-SSL Traffic</td>
+ *       <td>SSL Traffic</td>
+ *     </tr>
+ *   </thead>
+ *   <tbody>
+ *     <tr align="left">
+ *       <td><code class="code">enabled</code> = <code class="code">true</code> (default)</td>
+ *       <td>Yes</td>
+ *       <td>Yes</td>
+ *     </tr>
+ *     <tr align="left">
+ *       <td><code class="code">enabled</code> = <code class="code">false</code></td>
+ *       <td>Yes</td>
+ *       <td>No</td>
+ *     </tr>
+ *     <tr align="left">
+ *       <td><code class="code">secureTrafficOnly</code> = <code class="code">true</code></td>
+ *       <td>No</td>
+ *       <td>Yes</td>
+ *     </tr>
+ *     <tr align="left">
+ *       <td><code class="code">secureTrafficOnly</code> = <code class="code">false</code> (default)</td>
+ *       <td>Yes</td>
+ *       <td>Yes</td>
+ *     </tr>
+ *     <tr align="left">
+ *       <td>
+ *         <p><code class="code">enabled</code> = <code class="code">true</code></p>
+ *         <p><code class="code">secureTrafficOnly</code> = <code class="code">true</code></p>
+ *     </td>
+ *       <td>No</td>
+ *       <td>Yes</td>
+ *     </tr>
+ *     <tr align="left">
+ *       <td>
+ *         <p><code class="code">enabled</code> = <code class="code">true</code></p>
+ *         <p><code class="code">secureTrafficOnly</code> = <code class="code">false</code></p>
+ *       </td>
+ *       <td>Yes</td>
+ *       <td>Yes</td>
+ *     </tr>
+ *     <tr align="left">
+ *       <td>
+ *         <p><code class="code">enabled</code> = <code class="code">false</code></p>
+ *         <p><code class="code">secureTrafficOnly</code> = <code class="code">false</code></p>
+ *       </td>
+ *       <td>Yes</td>
+ *       <td>No</td>
+ *     </tr>
+ *     <tr align="left">
+ *       <td>
+ *         <p><code class="code">enabled</code> = <code class="code">false</code></p>
+ *         <p><code class="code">secureTrafficOnly</code> = <code class="code">true</code></p>
+ *       </td>
+ *       <td>Yes</td>
+ *       <td>No</td>
+ *     </tr>
+ *   </tbody>
+ * </table>
+ * 
+ *  
  * @author Everett Toews
  */
 public class SSLTermination {
