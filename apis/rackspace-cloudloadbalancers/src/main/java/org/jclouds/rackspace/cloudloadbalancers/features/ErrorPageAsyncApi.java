@@ -20,6 +20,7 @@ package org.jclouds.rackspace.cloudloadbalancers.features;
 
 import javax.inject.Named;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -29,9 +30,10 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.Fallbacks.FalseOnNotFoundOr404;
 import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
-import org.jclouds.rackspace.cloudloadbalancers.functions.ParseNestedBoolean;
+import org.jclouds.rackspace.cloudloadbalancers.functions.ParseNestedString;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.Payload;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 
@@ -41,44 +43,42 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides asynchronous access to Rackspace Cloud Load Balancers via their REST API.
  * <p/>
  * 
- * @see ContentCachingApi
+ * @see ErrorPageApi
  * @author Everett Toews
  */
 @RequestFilters(AuthenticateRequest.class)
-public interface ContentCachingAsyncApi {
+public interface ErrorPageAsyncApi {
 
    /**
-    * @see ContentCachingApi#isContentCaching()
+    * @see ErrorPageApi#create(String)
     */
-   @Named("contentcaching:state")
+   @Named("errorpage:create")
+   @PUT
+   @Consumes(MediaType.WILDCARD)
+   @Produces(MediaType.APPLICATION_JSON)
+   @Fallback(VoidOnNotFoundOr404.class)
+   @Payload("%7B\"errorpage\":%7B\"content\":\"{content}\"%7D%7D")
+   @Path("/errorpage")
+   ListenableFuture<Void> create(@PayloadParam("content") String content);
+
+   /**
+    * @see ErrorPageApi#get()
+    */
+   @Named("errorpage:get")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
-   @ResponseParser(ParseNestedBoolean.class)
+   @ResponseParser(ParseNestedString.class)
+   @Fallback(VoidOnNotFoundOr404.class)
+   @Path("/errorpage")
+   ListenableFuture<String> get();
+
+   /**
+    * @see ErrorPageApi#remove()
+    */
+   @Named("errorpage:remove")
+   @DELETE
+   @Consumes(MediaType.WILDCARD)
    @Fallback(FalseOnNotFoundOr404.class)
-   @Path("/contentcaching")
-   ListenableFuture<Boolean> isContentCaching();
-
-   /**
-    * @see ContentCachingApi#enable()
-    */
-   @Named("contentcaching:state")
-   @PUT
-   @Produces(MediaType.APPLICATION_JSON)
-   @Consumes(MediaType.APPLICATION_JSON)
-   @Fallback(VoidOnNotFoundOr404.class)
-   @Payload("{\"contentCaching\":{\"enabled\":true}}")
-   @Path("/contentcaching")
-   ListenableFuture<Void> enable();
-
-   /**
-    * @see ContentCachingApi#disableConnectionLogging()
-    */
-   @Named("contentcaching:state")
-   @PUT
-   @Produces(MediaType.APPLICATION_JSON)
-   @Consumes(MediaType.APPLICATION_JSON)
-   @Fallback(VoidOnNotFoundOr404.class)
-   @Payload("{\"contentCaching\":{\"enabled\":false}}")
-   @Path("/contentcaching")
-   ListenableFuture<Void> disable();
+   @Path("/errorpage")
+   ListenableFuture<Boolean> remove();
 }
