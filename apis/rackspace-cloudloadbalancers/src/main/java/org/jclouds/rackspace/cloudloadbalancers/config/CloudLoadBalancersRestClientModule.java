@@ -34,6 +34,8 @@ import org.jclouds.rackspace.cloudloadbalancers.features.ConnectionApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.ConnectionAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.ContentCachingApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.ContentCachingAsyncApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.ErrorPageApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.ErrorPageAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.HealthMonitorApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.HealthMonitorAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerAsyncApi;
@@ -55,7 +57,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
- * Configures theRackspace Cloud Load Balancers connection.
+ * Configures the Rackspace Cloud Load Balancers connection.
  * 
  * @author Adrian Cole
  */
@@ -73,6 +75,7 @@ public class CloudLoadBalancersRestClientModule extends
             .put(SessionPersistenceApi.class, SessionPersistenceAsyncApi.class)
             .put(ContentCachingApi.class, ContentCachingAsyncApi.class)
             .put(SSLTerminationApi.class, SSLTerminationAsyncApi.class)
+            .put(ErrorPageApi.class, ErrorPageAsyncApi.class)
             .build();
 
    public CloudLoadBalancersRestClientModule() {

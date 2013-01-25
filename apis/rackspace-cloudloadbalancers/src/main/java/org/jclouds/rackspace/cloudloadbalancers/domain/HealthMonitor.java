@@ -71,7 +71,8 @@ public class HealthMonitor {
          if (type.equals(Type.CONNECT))
             throw new IllegalArgumentException("Only delay, timeout, and attemptsBeforeDeactivation must be set.");
          else
-            throw new IllegalArgumentException("At least delay, timeout, attemptsBeforeDeactivation, and path must be set.");
+            throw new IllegalArgumentException("At least delay, timeout, attemptsBeforeDeactivation, path and " +
+            		"one or both of bodyRegex and statusRegex must be set.");
    }
 
    public Type getType() {
@@ -116,7 +117,7 @@ public class HealthMonitor {
          return required && !path.isPresent() && !statusRegex.isPresent() 
                 && !bodyRegex.isPresent() && !hostHeader.isPresent();
       else
-         return required && path.isPresent();
+         return required && path.isPresent() && (statusRegex.isPresent() || bodyRegex.isPresent());
    }
 
    @Override

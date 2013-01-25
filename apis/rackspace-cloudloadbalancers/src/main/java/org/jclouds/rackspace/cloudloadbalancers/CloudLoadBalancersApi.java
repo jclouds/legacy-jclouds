@@ -28,6 +28,7 @@ import org.jclouds.location.functions.ZoneToEndpoint;
 import org.jclouds.rackspace.cloudloadbalancers.features.AccessRuleApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.ConnectionApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.ContentCachingApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.ErrorPageApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.HealthMonitorApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.NodeApi;
@@ -123,5 +124,13 @@ public interface CloudLoadBalancersApi {
    @Delegate
    @Path("/loadbalancers/{lbId}")
    SSLTerminationApi getSSLTerminationApiForZoneAndLoadBalancer(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
+
+   /**
+    * Provides synchronous access to Error Page features.
+    */
+   @Delegate
+   @Path("/loadbalancers/{lbId}")
+   ErrorPageApi getErrorPageApiForZoneAndLoadBalancer(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 }

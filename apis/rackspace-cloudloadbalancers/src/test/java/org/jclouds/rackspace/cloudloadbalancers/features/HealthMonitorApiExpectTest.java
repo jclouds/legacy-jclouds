@@ -117,12 +117,23 @@ public class HealthMonitorApiExpectTest extends BaseCloudLoadBalancerApiExpectTe
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testInvalidHTTPHealthMonitorWithUnrequired() {
+   public void testInvalidHTTPHealthMonitorWithoutUnrequired() {
       HealthMonitor.builder()
             .type(HealthMonitor.Type.HTTP)
             .delay(3599)
             .path("/foobar")
             .build();
+   }
+
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testInvalidHTTPHealthMonitorWithoutRegex() {
+      HealthMonitor.builder()
+      .type(HealthMonitor.Type.HTTP)
+      .delay(3599)
+      .timeout(30)
+      .attemptsBeforeDeactivation(2)
+      .path("/foobar")
+      .build();
    }
 
    public static HealthMonitor getConnectHealthMonitor() {
@@ -143,6 +154,7 @@ public class HealthMonitorApiExpectTest extends BaseCloudLoadBalancerApiExpectTe
             .timeout(30)
             .attemptsBeforeDeactivation(2)
             .path("/foobar")
+            .bodyRegex("foo.*bar")
             .build();
 
       return healthMonitor;
