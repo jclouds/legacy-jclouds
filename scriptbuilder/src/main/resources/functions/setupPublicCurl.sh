@@ -31,7 +31,7 @@ function ensure_netutils_yum() {
 # the /etc/hosts file, or they won't operate
 function ensure_hostname_in_hosts() {
   [ -n "$SSH_CONNECTION" ] && {
-    local ipaddr=`echo $SSH_CONNECTION | cut -d ' ' -f 3`
+    local ipaddr=`echo $SSH_CONNECTION | awk '{print $3}'`
   } || {
     local ipaddr=`hostname -i`
   }
