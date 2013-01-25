@@ -115,10 +115,13 @@ function ensure_netutils_yum() {
 # most network services require that the hostname is in
 # the /etc/hosts file, or they won't operate
 function ensure_hostname_in_hosts() {
-  # NOTE: 
-  # 1. We blindly trust existing hostname settings in /etc/hosts
-  # 2. We assume hostname supports the -i option to return the default NICs IP address
-  egrep -q `hostname` /etc/hosts || echo "`hostname -i` `hostname`" >> /etc/hosts
+  [ -n "$SSH_CONNECTION" ] && {
+    local ipaddr=`echo $SSH_CONNECTION | awk '{print $3}'`
+  } || {
+    local ipaddr=`hostname -i`
+  }
+  # NOTE: we blindly trust existing hostname settings in /etc/hosts
+  egrep -q `hostname` /etc/hosts || echo "$ipaddr `hostname`" >> /etc/hosts
 }
 
 # download locations for many services are at public dns
