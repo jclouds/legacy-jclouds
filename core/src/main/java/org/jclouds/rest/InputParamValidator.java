@@ -109,11 +109,7 @@ public class InputParamValidator {
     *           arguments that correspond to the array of annotations
     */
    private void performParameterValidation(Invocation invocation) {
-      for (Parameter param : filter(invocation.getInvokable().getParameters(), new Predicate<Parameter>() {
-         public boolean apply(Parameter in) {
-            return in.isAnnotationPresent(ParamValidators.class);
-         }
-      })) {
+      for (Parameter param : invocation.getInvokable().getParameters()) {
          ParamValidators annotation = param.getAnnotation(ParamValidators.class);
          if (annotation == null)
             continue;
