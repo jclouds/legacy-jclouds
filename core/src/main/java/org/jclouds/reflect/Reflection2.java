@@ -230,7 +230,7 @@ public class Reflection2 {
             public Invokable<?, ?> load(final TypeTokenNameAndParameterTypes key) {
                Set<Invokable<?, ?>> methods = get(methodsForTypeToken, key.type);
                /*
-                * There may be multiple methods, even on the most immediate ancestor,
+                * There may be multiple instances, even on the most immediate ancestor,
                 * of a method with the required name and parameter set. This will occur 
                 * if the method overrides one declared in a parent class with a less specific
                 * return type. These bridge methods inserted by the compiler will be marked
