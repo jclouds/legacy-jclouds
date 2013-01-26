@@ -64,5 +64,6 @@
        <module>route53</module>
        <module>dynect</module>
        <module>aws-route53</module>
+       <module>ultradns-ws</module>
   </modules>
 </project>
