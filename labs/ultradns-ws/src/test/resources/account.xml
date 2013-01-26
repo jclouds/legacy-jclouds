@@ -1,0 +1,11 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Body>
+		<ns1:getAccountsListOfUserResponse
+			xmlns:ns1="http://webservice.api.ultra.neustar.com/v01/">
+			<AccountsList xmlns:ns2="http://schema.ultraservice.neustar.com/v01/">
+				<ns2:AccountDetailsData accountID="01233CB945FAC523"
+					accountName="jclouds" />
+			</AccountsList>
+		</ns1:getAccountsListOfUserResponse>
+	</soap:Body>
+</soap:Envelope>
