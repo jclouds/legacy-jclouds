@@ -32,6 +32,7 @@ import org.jclouds.rackspace.cloudloadbalancers.features.ErrorPageApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.HealthMonitorApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.NodeApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.ReportApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.SSLTerminationApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.SessionPersistenceApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.VirtualIPApi;
@@ -56,7 +57,7 @@ public interface CloudLoadBalancersApi {
    Set<String> getConfiguredZones();
 
    /**
-    * Provides synchronous access to LoadBalancer features.
+    * Provides synchronous access to Load Balancer features.
     */
    @Delegate
    LoadBalancerApi getLoadBalancerApiForZone(
@@ -133,4 +134,11 @@ public interface CloudLoadBalancersApi {
    @Path("/loadbalancers/{lbId}")
    ErrorPageApi getErrorPageApiForZoneAndLoadBalancer(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
+
+   /**
+    * Provides synchronous access to Report features.
+    */
+   @Delegate
+   ReportApi getReportApiForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 }
