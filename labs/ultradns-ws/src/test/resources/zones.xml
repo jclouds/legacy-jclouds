@@ -1,0 +1,10 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns1:getZonesOfAccountResponse xmlns:ns1="http://webservice.api.ultra.neustar.com/v01/">
+         <ZoneList xmlns:ns2="http://schema.ultraservice.neustar.com/v01/">
+            <ns2:UltraZone zoneName="jclouds.org." zoneType="1" accountId="AAAAAAAAAAAAAAAA" owner="EEEEEEEEEEEEEEEE" zoneId="0000000000000001" dnssecStatus="UNSIGNED"/>
+            <ns2:UltraZone zoneName="0.1.2.3.4.5.6.7.ip6.arpa." zoneType="1" accountId="AAAAAAAAAAAAAAAA" owner="EEEEEEEEEEEEEEEE" zoneId="0000000000000002" dnssecStatus="UNSIGNED"/>
+         </ZoneList>
+      </ns1:getZonesOfAccountResponse>
+   </soap:Body>
+</soap:Envelope>

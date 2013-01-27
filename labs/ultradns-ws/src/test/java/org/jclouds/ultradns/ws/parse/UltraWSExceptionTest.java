@@ -23,29 +23,29 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.ultradns.ws.domain.Account;
-import org.jclouds.ultradns.ws.xml.AccountHandler;
+import org.jclouds.ultradns.ws.UltraDNSWSError;
+import org.jclouds.ultradns.ws.xml.UltraWSExceptionHandler;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
-@Test(testName = "GetAccountsListOfUserResponseTest")
-public class GetAccountsListOfUserResponseTest extends BaseHandlerTest {
+@Test(testName = "UltraWSExceptionTest")
+public class UltraWSExceptionTest extends BaseHandlerTest {
 
    public void test() {
-      InputStream is = getClass().getResourceAsStream("/account.xml");
+      InputStream is = getClass().getResourceAsStream("/zone_doesnt_exist.xml");
 
-      Account expected = expected();
+      UltraDNSWSError expected = expected();
 
-      AccountHandler handler = injector.getInstance(AccountHandler.class);
-      Account result = factory.create(handler).parse(is);
+      UltraWSExceptionHandler handler = injector.getInstance(UltraWSExceptionHandler.class);
+      UltraDNSWSError result = factory.create(handler).parse(is);
 
       assertEquals(result, expected);
    }
 
-   public Account expected() {
-      return Account.fromIdAndName("AAAAAAAAAAAAAAAA", "jclouds");
+   public UltraDNSWSError expected() {
+      return UltraDNSWSError.fromCodeAndDescription(1801, "Zone does not exist in the system.");
    }
 
 }
