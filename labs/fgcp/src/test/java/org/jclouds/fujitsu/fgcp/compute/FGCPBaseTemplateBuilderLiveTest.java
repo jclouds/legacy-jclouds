@@ -15,8 +15,7 @@ import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
-public abstract class FGCPBaseTemplateBuilderLiveTest extends
-      BaseTemplateBuilderLiveTest {
+public abstract class FGCPBaseTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    @Override
    protected Properties setupProperties() {
@@ -27,16 +26,12 @@ public abstract class FGCPBaseTemplateBuilderLiveTest extends
 
          String[] parts = proxy.split("http://|:|@");
 
-         overrides.setProperty(Constants.PROPERTY_PROXY_HOST,
-               parts[parts.length - 2]);
-         overrides.setProperty(Constants.PROPERTY_PROXY_PORT,
-               parts[parts.length - 1]);
+         overrides.setProperty(Constants.PROPERTY_PROXY_HOST, parts[parts.length - 2]);
+         overrides.setProperty(Constants.PROPERTY_PROXY_PORT, parts[parts.length - 1]);
 
          if (parts.length >= 4) {
-            overrides.setProperty(Constants.PROPERTY_PROXY_USER,
-                  parts[parts.length - 4]);
-            overrides.setProperty(Constants.PROPERTY_PROXY_PASSWORD,
-                  parts[parts.length - 3]);
+            overrides.setProperty(Constants.PROPERTY_PROXY_USER, parts[parts.length - 4]);
+            overrides.setProperty(Constants.PROPERTY_PROXY_PASSWORD, parts[parts.length - 3]);
          }
       }
 
@@ -55,11 +50,11 @@ public abstract class FGCPBaseTemplateBuilderLiveTest extends
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
             case CENTOS:
-               return input.version.matches("5.[46]")
+               return ("".equals(input.version) && input.is64Bit) || (input.version.matches("5.[46]") && input.is64Bit)
                      || input.version.equals("6.[2]");
             case WINDOWS:
-               return (input.version.equals("2008 R2 SE") || input.version
-                     .equals("2008 R2 EE")) && input.is64Bit;
+               return ("".equals(input.version) && input.is64Bit)
+                     || (input.version.equals("2008 R2 SE") || input.version.equals("2008 R2 EE")) && input.is64Bit;
             default:
                return false;
             }
@@ -69,15 +64,11 @@ public abstract class FGCPBaseTemplateBuilderLiveTest extends
    }
 
    public void testDefaultTemplateBuilder() throws IOException {
-      Template defaultTemplate = view.getComputeService().templateBuilder()
-            .build();
-      assert defaultTemplate.getImage().getOperatingSystem().getVersion()
-            .matches("6.2") : defaultTemplate.getImage()
+      Template defaultTemplate = view.getComputeService().templateBuilder().build();
+      assert defaultTemplate.getImage().getOperatingSystem().getVersion().matches("6.2") : defaultTemplate.getImage()
             .getOperatingSystem().getVersion();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(),
-            true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem()
-            .getFamily(), OsFamily.CENTOS);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 
