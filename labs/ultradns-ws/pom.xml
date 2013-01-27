@@ -34,7 +34,7 @@
   <packaging>bundle</packaging>
 
   <properties>
-    <test.ultradns-ws.endpoint>http://ultra-api.ultradns.com:8008/UltraDNS_WS/v01</test.ultradns-ws.endpoint>
+    <test.ultradns-ws.endpoint>https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01</test.ultradns-ws.endpoint>
     <test.ultradns-ws.api-version>v01</test.ultradns-ws.api-version>
     <test.ultradns-ws.build-version></test.ultradns-ws.build-version>
     <test.ultradns-ws.identity></test.ultradns-ws.identity>

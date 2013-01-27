@@ -18,23 +18,27 @@
  */
 package org.jclouds.ultradns.ws;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.ultradns.ws.domain.Account;
+import org.jclouds.http.HttpCommand;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpResponseException;
 
 /**
- * Provides access to Neustar UltraDNS via the SOAP API
- * <p/>
- * 
- * @see UltraDNSWSAsyncApi
- * @see <a href="https://www.ultradns.net/api/NUS_API_XML_SOAP.pdf" />
+ * @see UltraDNSWSError
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface UltraDNSWSApi {
-   /**
-    * Returns the account of the current user.
-    */
-   Account getCurrentAccount();
+public class UltraDNSWSResponseException extends HttpResponseException {
+
+   private static final long serialVersionUID = 5493782874839736777L;
+
+   private final UltraDNSWSError error;
+
+   public UltraDNSWSResponseException(HttpCommand command, HttpResponse response, UltraDNSWSError error) {
+      super(error.toString(), command, response);
+      this.error = error;
+   }
+
+   public UltraDNSWSError getError() {
+      return error;
+   }
+
 }
