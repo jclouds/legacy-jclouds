@@ -33,8 +33,8 @@ import org.testng.annotations.Test;
 public class UltraDNSWSApiExpectTest extends BaseUltraDNSWSApiExpectTest {
 
    HttpRequest getCurrentAccount = HttpRequest.builder().method("POST")
-         .endpoint("http://ultra-api.ultradns.com:8008/UltraDNS_WS/v01/")
-         .addHeader("Host", "ultra-api.ultradns.com:8008")
+         .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+         .addHeader("Host", "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/get_current_account.xml", "application/xml")).build();
 
    HttpResponse getCurrentAccountResponse = HttpResponse.builder().statusCode(200)
@@ -42,10 +42,10 @@ public class UltraDNSWSApiExpectTest extends BaseUltraDNSWSApiExpectTest {
 
    public void testGetCurrentAccountWhenResponseIs2xx() {
 
-      UltraDNSWSApi apiWhenWithOptionsExist = requestSendsResponse(getCurrentAccount, getCurrentAccountResponse);
+      UltraDNSWSApi success = requestSendsResponse(getCurrentAccount, getCurrentAccountResponse);
 
       assertEquals(
-            apiWhenWithOptionsExist.getCurrentAccount().toString(),
+            success.getCurrentAccount().toString(),
             new GetAccountsListOfUserResponseTest().expected().toString());
    }
 }

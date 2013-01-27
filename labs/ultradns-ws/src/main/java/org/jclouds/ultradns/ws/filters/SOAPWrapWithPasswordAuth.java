@@ -39,7 +39,7 @@ public class SOAPWrapWithPasswordAuth implements HttpRequestFilter {
    static final String WSSE_NS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
    static final String SOAP_PREFIX = new StringBuilder()
          .append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" ")
-         .append("xmlns=\"http://webservice.api.ultra.neustar.com/v01/\"><soapenv:Header>")
+         .append("xmlns:v01=\"http://webservice.api.ultra.neustar.com/v01/\"><soapenv:Header>")
          .append("<wsse:Security xmlns:wsse=\"").append(WSSE_NS).append("\"><wsse:UsernameToken>")
          .append("<wsse:Username>%s</wsse:Username><wsse:Password>%s</wsse:Password>")
          .append("</wsse:UsernameToken></wsse:Security></soapenv:Header><soapenv:Body>").toString();

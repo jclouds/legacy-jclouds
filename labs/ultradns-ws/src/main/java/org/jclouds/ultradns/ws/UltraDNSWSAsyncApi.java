@@ -20,7 +20,6 @@ package org.jclouds.ultradns.ws;
 
 import javax.inject.Named;
 import javax.ws.rs.POST;
-import javax.ws.rs.Path;
 
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -36,6 +35,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides access to Neustar UltraDNS via the SOAP API
  * <p/>
  * 
+ * @see <a href="https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01?wsdl" />
  * @see <a href="https://www.ultradns.net/api/NUS_API_XML_SOAP.pdf" />
  * @author Adrian Cole
  */
@@ -48,9 +48,7 @@ public interface UltraDNSWSAsyncApi {
     */
    @Named("getAccountsListOfUser")
    @POST
-   @Path("/")
    @XMLResponseParser(AccountHandler.class)
-   @Payload("<getAccountsListOfUser/>")
+   @Payload("<v01:getAccountsListOfUser/>")
    ListenableFuture<Account> getCurrentAccount();
-
 }

@@ -33,5 +33,4 @@ public interface UltraDNSWSApi {
     * Returns the account of the current user.
     */
    Account getCurrentAccount();
-
 }

@@ -20,10 +20,16 @@ package org.jclouds.ultradns.ws.config;
 
 import java.util.Map;
 
+import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.HttpRetryHandler;
+import org.jclouds.http.annotation.ClientError;
+import org.jclouds.http.annotation.Redirection;
+import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.ultradns.ws.UltraDNSWSApi;
 import org.jclouds.ultradns.ws.UltraDNSWSAsyncApi;
+import org.jclouds.ultradns.ws.handlers.UltraDNSWSErrorHandler;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -34,11 +40,23 @@ import com.google.common.collect.ImmutableMap;
  */
 @ConfiguresRestClient
 public class UltraDNSWSRestClientModule extends RestClientModule<UltraDNSWSApi, UltraDNSWSAsyncApi> {
-   
-   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>>builder()
+
+   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
          .build();
-   
+
    public UltraDNSWSRestClientModule() {
       super(DELEGATE_MAP);
+   }
+
+   @Override
+   protected void bindErrorHandlers() {
+      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(UltraDNSWSErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(UltraDNSWSErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(UltraDNSWSErrorHandler.class);
+   }
+
+   @Override
+   protected void bindRetryHandlers() {
+      bind(HttpRetryHandler.class).annotatedWith(ServerError.class).toInstance(HttpRetryHandler.NEVER_RETRY);
    }
 }

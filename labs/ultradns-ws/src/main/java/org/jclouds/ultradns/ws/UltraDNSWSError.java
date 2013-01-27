@@ -16,56 +16,53 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.ultradns.ws.domain;
+package org.jclouds.ultradns.ws;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-
-import com.google.common.base.Objects;
 
 /**
  * @author Adrian Cole
  */
-public final class Account {
-   public static Account fromIdAndName(String id, String name) {
-      return new Account(id, name);
+public final class UltraDNSWSError {
+   public static UltraDNSWSError fromCodeAndDescription(int code, String description) {
+      return new UltraDNSWSError(code, description);
    }
 
-   private final String id;
-   private final String name;
+   private final int code;
+   private final String description;
 
-   private Account(String id, String name) {
-      this.id = checkNotNull(id, "id");
-      this.name = checkNotNull(name, "name for %s", id);
-   }
-
-   /**
-    * The id of the account. ex {@code AAAAAAAAAAAAAAAA}
-    */
-   public String getId() {
-      return id;
+   private UltraDNSWSError(int code, String description) {
+      this.code = code;
+      this.description = checkNotNull(description, "description for code %s", code);
    }
 
    /**
-    * The name of the account. ex {@code jclouds}
+    * The error code. ex {@code 1801}
     */
-   public String getName() {
-      return name;
+   public int getCode() {
+      return code;
+   }
+
+   /**
+    * The description of the error. ex {@code Zone does not exist in the system.}
+    */
+   public String getDescription() {
+      return description;
    }
 
    @Override
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (obj == null)
+      if (obj == null || getClass() != obj.getClass())
          return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Account that = Account.class.cast(obj);
-      return Objects.equal(this.id, that.id) && Objects.equal(this.name, that.name);
+      UltraDNSWSError that = UltraDNSWSError.class.cast(obj);
+      return equal(this.code, that.code) && equal(this.description, that.description);
    }
 
    @Override
    public String toString() {
-      return Objects.toStringHelper(this).add("id", id).add("name", name).toString();
+      return String.format("Error %s: %s", code, description);
    }
 }
