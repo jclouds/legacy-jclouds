@@ -25,8 +25,7 @@ import java.util.Properties;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
- * Base implementation of {@link org.jclouds.providers.ProviderMetadata} for
- * FGCP.
+ * Base implementation of {@link org.jclouds.providers.ProviderMetadata} for FGCP.
  * 
  * @author Dies Koper
  */
@@ -46,10 +45,7 @@ public class FGCPProviderMetadata extends BaseProviderMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = new Properties();
-
-      properties.setProperty(TEMPLATE,
-            "osFamily=CENTOS,osVersionMatches=6.2,os64Bit=true");
-
+      properties.setProperty(TEMPLATE, "osFamily=CENTOS,osVersionMatches=6.2,os64Bit=true");
       return properties;
    }
 }
