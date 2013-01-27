@@ -1,0 +1,7 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Body>
+      <ns1:getGeneralPropertiesForZoneResponse xmlns:ns1="http://webservice.api.ultra.neustar.com/v01/">
+         <GeneralZoneProperties resourceRecordCount="17" name="jclouds.org." zoneType="primary" modified="2010-09-05 04:04:17.0" xmlns:ns2="http://schema.ultraservice.neustar.com/v01/"/>
+      </ns1:getGeneralPropertiesForZoneResponse>
+   </soap:Body>
+</soap:Envelope>
