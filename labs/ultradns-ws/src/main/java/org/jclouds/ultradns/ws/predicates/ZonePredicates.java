@@ -16,36 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.ultradns.ws.parse;
+package org.jclouds.ultradns.ws.predicates;
 
-import static org.testng.Assert.assertEquals;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.InputStream;
+import org.jclouds.ultradns.ws.domain.Zone;
+import org.jclouds.ultradns.ws.domain.Zone.Type;
 
-import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.ultradns.ws.domain.Account;
-import org.jclouds.ultradns.ws.xml.AccountHandler;
-import org.testng.annotations.Test;
+import com.google.common.base.Predicate;
 
 /**
+ * Predicates handy when working with Zone Types
+ * 
  * @author Adrian Cole
  */
-@Test(testName = "GetAccountsListOfUserResponseTest")
-public class GetAccountsListOfUserResponseTest extends BaseHandlerTest {
+public class ZonePredicates {
 
-   public void test() {
-      InputStream is = getClass().getResourceAsStream("/account.xml");
+   /**
+    * matches zones of the given type
+    */
+   public static Predicate<Zone> typeEquals(final Type type) {
+      checkNotNull(type, "type must be defined");
 
-      Account expected = expected();
+      return new Predicate<Zone>() {
+         @Override
+         public boolean apply(Zone zone) {
+            return type.equals(zone.getType());
+         }
 
-      AccountHandler handler = injector.getInstance(AccountHandler.class);
-      Account result = factory.create(handler).parse(is);
-
-      assertEquals(result, expected);
+         @Override
+         public String toString() {
+            return "typeEquals(" + type + ")";
+         }
+      };
    }
-
-   public Account expected() {
-      return Account.fromIdAndName("AAAAAAAAAAAAAAAA", "jclouds");
-   }
-
 }

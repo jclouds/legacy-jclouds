@@ -22,30 +22,35 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
+import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.ultradns.ws.domain.Account;
-import org.jclouds.ultradns.ws.xml.AccountHandler;
+import org.jclouds.ultradns.ws.domain.ZoneProperties;
+import org.jclouds.ultradns.ws.xml.ZonePropertiesHandler;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
-@Test(testName = "GetAccountsListOfUserResponseTest")
-public class GetAccountsListOfUserResponseTest extends BaseHandlerTest {
+@Test(testName = "GetGeneralPropertiesForZoneResponseTest")
+public class GetGeneralPropertiesForZoneResponseTest extends BaseHandlerTest {
 
    public void test() {
-      InputStream is = getClass().getResourceAsStream("/account.xml");
+      InputStream is = getClass().getResourceAsStream("/zoneproperties.xml");
 
-      Account expected = expected();
+      ZoneProperties expected = expected();
 
-      AccountHandler handler = injector.getInstance(AccountHandler.class);
-      Account result = factory.create(handler).parse(is);
+      ZonePropertiesHandler handler = injector.getInstance(ZonePropertiesHandler.class);
+      ZoneProperties result = factory.create(handler).parse(is);
 
-      assertEquals(result, expected);
+      assertEquals(result.toString(), expected.toString());
    }
 
-   public Account expected() {
-      return Account.fromIdAndName("AAAAAAAAAAAAAAAA", "jclouds");
+   public ZoneProperties expected() {
+      return ZoneProperties.builder()
+                           .name("jclouds.org.")
+                           .typeCode(1)
+                           .resourceRecordCount(17)
+                           .modified(new SimpleDateFormatDateService().iso8601DateParse("2010-09-05 04:04:17.0"))
+                           .build();
    }
-
 }

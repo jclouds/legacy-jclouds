@@ -18,7 +18,9 @@
  */
 package org.jclouds.ultradns.ws;
 
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.ultradns.ws.domain.Account;
+import org.jclouds.ultradns.ws.features.ZoneApi;
 
 /**
  * Provides access to Neustar UltraDNS via the SOAP API
@@ -34,4 +36,9 @@ public interface UltraDNSWSApi {
     */
    Account getCurrentAccount();
 
+   /**
+    * Provides synchronous access to Zone features.
+    */
+   @Delegate
+   ZoneApi getZoneApi();
 }

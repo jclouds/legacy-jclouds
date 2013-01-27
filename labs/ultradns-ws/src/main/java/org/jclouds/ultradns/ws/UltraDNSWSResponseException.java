@@ -16,36 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.ultradns.ws.parse;
+package org.jclouds.ultradns.ws;
 
-import static org.testng.Assert.assertEquals;
-
-import java.io.InputStream;
-
-import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.ultradns.ws.domain.Account;
-import org.jclouds.ultradns.ws.xml.AccountHandler;
-import org.testng.annotations.Test;
+import org.jclouds.http.HttpCommand;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpResponseException;
 
 /**
+ * @see UltraDNSWSError
  * @author Adrian Cole
  */
-@Test(testName = "GetAccountsListOfUserResponseTest")
-public class GetAccountsListOfUserResponseTest extends BaseHandlerTest {
+public class UltraDNSWSResponseException extends HttpResponseException {
 
-   public void test() {
-      InputStream is = getClass().getResourceAsStream("/account.xml");
+   private static final long serialVersionUID = 5493782874839736777L;
 
-      Account expected = expected();
+   private final UltraDNSWSError error;
 
-      AccountHandler handler = injector.getInstance(AccountHandler.class);
-      Account result = factory.create(handler).parse(is);
-
-      assertEquals(result, expected);
+   public UltraDNSWSResponseException(HttpCommand command, HttpResponse response, UltraDNSWSError error) {
+      super(error.toString(), command, response);
+      this.error = error;
    }
 
-   public Account expected() {
-      return Account.fromIdAndName("AAAAAAAAAAAAAAAA", "jclouds");
+   public UltraDNSWSError getError() {
+      return error;
    }
 
 }
