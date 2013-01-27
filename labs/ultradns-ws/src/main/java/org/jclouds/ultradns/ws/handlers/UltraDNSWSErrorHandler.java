@@ -75,6 +75,7 @@ public class UltraDNSWSErrorHandler implements HttpErrorHandler {
 
    private Exception refineException(UltraDNSWSResponseException exception) {
       switch (exception.getError().getCode()) {
+      case 1801:
       case 2401:
          return new ResourceNotFoundException(exception.getError().getDescription(), exception);
       }

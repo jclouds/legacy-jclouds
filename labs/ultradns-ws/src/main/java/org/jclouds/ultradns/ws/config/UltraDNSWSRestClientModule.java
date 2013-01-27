@@ -29,6 +29,8 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.ultradns.ws.UltraDNSWSApi;
 import org.jclouds.ultradns.ws.UltraDNSWSAsyncApi;
+import org.jclouds.ultradns.ws.features.ZoneApi;
+import org.jclouds.ultradns.ws.features.ZoneAsyncApi;
 import org.jclouds.ultradns.ws.handlers.UltraDNSWSErrorHandler;
 
 import com.google.common.collect.ImmutableMap;
@@ -42,7 +44,7 @@ import com.google.common.collect.ImmutableMap;
 public class UltraDNSWSRestClientModule extends RestClientModule<UltraDNSWSApi, UltraDNSWSAsyncApi> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
-         .build();
+         .put(ZoneApi.class, ZoneAsyncApi.class).build();
 
    public UltraDNSWSRestClientModule() {
       super(DELEGATE_MAP);

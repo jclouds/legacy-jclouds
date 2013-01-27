@@ -21,11 +21,13 @@ package org.jclouds.ultradns.ws;
 import javax.inject.Named;
 import javax.ws.rs.POST;
 
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.ultradns.ws.domain.Account;
+import org.jclouds.ultradns.ws.features.ZoneAsyncApi;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
 import org.jclouds.ultradns.ws.xml.AccountHandler;
 
@@ -51,4 +53,10 @@ public interface UltraDNSWSAsyncApi {
    @XMLResponseParser(AccountHandler.class)
    @Payload("<v01:getAccountsListOfUser/>")
    ListenableFuture<Account> getCurrentAccount();
+
+   /**
+    * Provides asynchronous access to Zone features.
+    */
+   @Delegate
+   ZoneAsyncApi getZoneApi();
 }

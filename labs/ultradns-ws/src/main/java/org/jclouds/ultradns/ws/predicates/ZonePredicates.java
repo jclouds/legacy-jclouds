@@ -16,29 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.ultradns.ws;
+package org.jclouds.ultradns.ws.predicates;
 
-import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.ultradns.ws.domain.Account;
-import org.jclouds.ultradns.ws.features.ZoneApi;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.jclouds.ultradns.ws.domain.Zone;
+import org.jclouds.ultradns.ws.domain.Zone.Type;
+
+import com.google.common.base.Predicate;
 
 /**
- * Provides access to Neustar UltraDNS via the SOAP API
- * <p/>
+ * Predicates handy when working with Zone Types
  * 
- * @see UltraDNSWSAsyncApi
- * @see <a href="https://www.ultradns.net/api/NUS_API_XML_SOAP.pdf" />
  * @author Adrian Cole
  */
-public interface UltraDNSWSApi {
-   /**
-    * Returns the account of the current user.
-    */
-   Account getCurrentAccount();
+public class ZonePredicates {
 
    /**
-    * Provides synchronous access to Zone features.
+    * matches zones of the given type
     */
-   @Delegate
-   ZoneApi getZoneApi();
+   public static Predicate<Zone> typeEquals(final Type type) {
+      checkNotNull(type, "type must be defined");
+
+      return new Predicate<Zone>() {
+         @Override
+         public boolean apply(Zone zone) {
+            return type.equals(zone.getType());
+         }
+
+         @Override
+         public String toString() {
+            return "typeEquals(" + type + ")";
+         }
+      };
+   }
 }

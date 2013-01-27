@@ -65,7 +65,28 @@ public class UltraDNSWSErrorHandlerTest {
       assertEquals(exception.getMessage(), "Error 2401: Account not found in the system. ID: AAAAAAAAAAAAAAAA");
       assertEquals(exception.getError().getDescription(), "Account not found in the system. ID: AAAAAAAAAAAAAAAA");
       assertEquals(exception.getError().getCode(), 2401);
+   }
 
+   @Test
+   public void testCode1801SetsResourceNotFoundException() throws IOException {
+      HttpRequest request = HttpRequest.builder().method("POST")
+                                       .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+                                       .addHeader("Host", "ultra-api.ultradns.com:8443")
+                                       .payload(payloadFromResource("/get_zone.xml")).build();
+      HttpCommand command = new HttpCommand(request);
+      HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
+                                          .payload(payloadFromResource("/zone_doesnt_exist.xml")).build();
+
+      function.handleError(command, response);
+
+      assertEquals(command.getException().getClass(), ResourceNotFoundException.class);
+      assertEquals(command.getException().getMessage(), "Zone does not exist in the system.");
+
+      UltraDNSWSResponseException exception = UltraDNSWSResponseException.class.cast(command.getException().getCause());
+
+      assertEquals(exception.getMessage(), "Error 1801: Zone does not exist in the system.");
+      assertEquals(exception.getError().getDescription(), "Zone does not exist in the system.");
+      assertEquals(exception.getError().getCode(), 1801);
    }
 
    private Payload payloadFromResource(String resource) {
