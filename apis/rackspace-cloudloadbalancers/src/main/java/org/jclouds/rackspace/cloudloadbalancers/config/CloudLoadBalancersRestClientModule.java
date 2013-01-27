@@ -42,6 +42,8 @@ import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.NodeAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.NodeApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.ReportApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.ReportAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.SSLTerminationApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.SSLTerminationAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.SessionPersistenceApi;
@@ -76,6 +78,7 @@ public class CloudLoadBalancersRestClientModule extends
             .put(ContentCachingApi.class, ContentCachingAsyncApi.class)
             .put(SSLTerminationApi.class, SSLTerminationAsyncApi.class)
             .put(ErrorPageApi.class, ErrorPageAsyncApi.class)
+            .put(ReportApi.class, ReportAsyncApi.class)
             .build();
 
    public CloudLoadBalancersRestClientModule() {

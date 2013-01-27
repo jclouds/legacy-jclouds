@@ -33,6 +33,7 @@ import org.jclouds.rackspace.cloudloadbalancers.features.ErrorPageAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.HealthMonitorAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.LoadBalancerAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.NodeAsyncApi;
+import org.jclouds.rackspace.cloudloadbalancers.features.ReportAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.SSLTerminationAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.SessionPersistenceAsyncApi;
 import org.jclouds.rackspace.cloudloadbalancers.features.VirtualIPAsyncApi;
@@ -134,4 +135,11 @@ public interface CloudLoadBalancersAsyncApi {
    @Path("/loadbalancers/{lbId}")
    ErrorPageAsyncApi getErrorPageApiForZoneAndLoadBalancer(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
+
+   /**
+    * Provides asynchronous access to Report features.
+    */
+   @Delegate
+   ReportAsyncApi getReportApiForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 }
