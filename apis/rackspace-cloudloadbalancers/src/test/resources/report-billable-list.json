@@ -1,0 +1,64 @@
+{
+  "loadBalancers": [
+    {
+      "name": "jclouds-app",
+      "id": 85901,
+      "protocol": "HTTP",
+      "port": 80,
+      "algorithm": "WEIGHTED_LEAST_CONNECTIONS",
+      "status": "ACTIVE",
+      "timeout": 30,
+      "created": {
+        "time": "2012-12-24T18:13:44Z"
+      },
+      "virtualIps": [
+        {
+          "address": "166.78.34.87",
+          "id": 5557,
+          "type": "PUBLIC",
+          "ipVersion": "IPV4"
+        },
+        {
+          "address": "2001:4800:7901:0000:9a32:3c2a:0000:0001",
+          "id": 9080119,
+          "type": "PUBLIC",
+          "ipVersion": "IPV6"
+        }
+      ],
+      "updated": {
+        "time": "2013-01-24T17:35:56Z"
+      },
+      "nodeCount": 1
+    },
+    {
+      "name": "jclouds-app",
+      "id": 90903,
+      "protocol": "HTTP",
+      "port": 80,
+      "algorithm": "WEIGHTED_LEAST_CONNECTIONS",
+      "status": "ACTIVE",
+      "timeout": 30,
+      "created": {
+        "time": "2013-01-20T20:53:29Z"
+      },
+      "virtualIps": [
+        {
+          "address": "166.78.34.184",
+          "id": 5751,
+          "type": "PUBLIC",
+          "ipVersion": "IPV4"
+        },
+        {
+          "address": "2001:4800:7901:0000:9a32:3c2a:0000:0002",
+          "id": 9080915,
+          "type": "PUBLIC",
+          "ipVersion": "IPV6"
+        }
+      ],
+      "updated": {
+        "time": "2013-01-24T21:32:42Z"
+      },
+      "nodeCount": 2
+    }
+  ]
+}

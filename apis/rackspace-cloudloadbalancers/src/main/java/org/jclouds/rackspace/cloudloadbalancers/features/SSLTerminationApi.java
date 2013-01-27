@@ -71,7 +71,7 @@ public interface SSLTerminationApi {
     * If a user wants to replace the existing SSL configuration, a new certificate, privatekey, and securePort 
     * combination must be provided instead of, or in addition to, the optional/editable attributes.
     */
-   void createOrUpdate(SSLTermination healthMonitor);
+   void createOrUpdate(SSLTermination sslTermination);
 
    /**
     * Get SSL termination info.
