@@ -19,14 +19,28 @@
 package org.jclouds.route53.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.route53.domain.Change.Status.INSYNC;
+import static org.jclouds.route53.domain.Change.Status.PENDING;
+import static org.jclouds.util.Predicates2.retry;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
+import java.util.Date;
+import java.util.logging.Logger;
+
+import org.jclouds.JcloudsVersion;
 import org.jclouds.collect.IterableWithMarker;
+import org.jclouds.route53.domain.Change;
+import org.jclouds.route53.domain.NewZone;
 import org.jclouds.route53.domain.Zone;
 import org.jclouds.route53.internal.BaseRoute53ApiLiveTest;
 import org.jclouds.route53.options.ListZonesOptions;
-import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 /**
@@ -34,31 +48,75 @@ import com.google.common.collect.Iterables;
  */
 @Test(groups = "live", testName = "ZoneApiLiveTest")
 public class ZoneApiLiveTest extends BaseRoute53ApiLiveTest {
+   private Predicate<Change> inSync;
+
+   @BeforeClass(groups = "live")
+   @Override
+   public void setupContext() {
+      super.setupContext();
+      inSync = retry(new Predicate<Change>() {
+         public boolean apply(Change input) {
+            return context.getApi().getChange(input.getId()).getStatus() == INSYNC;
+         }
+      }, 600, 1, 5, SECONDS);
+   }
 
    private void checkZone(Zone zone) {
-      checkNotNull(zone.getId(), "Id cannot be null for a Zone.");
-      checkNotNull(zone.getName(),  "Id cannot be null for a Zone.");
-      checkNotNull(zone.getCallerReference(),  "CallerReference cannot be null for a Zone.");
-      checkNotNull(zone.getComment(), "While Comment can be null for a Zone, its Optional wrapper cannot.");
+      checkNotNull(zone.getId(), "Id cannot be null for a Zone %s", zone);
+      checkNotNull(zone.getName(), "Id cannot be null for a Zone %s", zone);
+      checkNotNull(zone.getCallerReference(), "CallerReference cannot be null for a Zone %s", zone);
+      checkNotNull(zone.getComment(), "While Comment can be null for a Zone, its Optional wrapper cannot %s", zone);
    }
 
    @Test
    protected void testListZones() {
       IterableWithMarker<Zone> response = api().list().get(0);
-      
+
       for (Zone zone : response) {
          checkZone(zone);
       }
-      
+
       if (Iterables.size(response) > 0) {
          Zone zone = response.iterator().next();
-         Assert.assertEquals(api().get(zone.getId()).getZone(), zone);
+         assertEquals(api().get(zone.getId()).getZone(), zone);
       }
 
       // Test with a Marker, even if it's null
       response = api().list(ListZonesOptions.Builder.afterMarker(response.nextMarker().orNull()));
       for (Zone zone : response) {
          checkZone(zone);
+      }
+   }
+
+   @Test
+   public void testGetZoneWhenNotFound() {
+      assertNull(api().get("AAAAAAAAAAAAAAAA"));
+   }
+
+   @Test
+   public void testDeleteZoneWhenNotFound() {
+      assertNull(api().delete("AAAAAAAAAAAAAAAA"));
+   }
+
+   @Test
+   public void testCreateAndDeleteZone() {
+      String name = System.getProperty("user.name").replace('.', '-') + ".zone.route53test.jclouds.org.";
+      String nonce = name + " @ " + new Date();
+      String comment = name + " for " + JcloudsVersion.get();
+      NewZone newZone = api().createWithReferenceAndComment(name, nonce, comment);
+      Logger.getAnonymousLogger().info("created zone: " + newZone);
+      try {
+         checkZone(newZone.getZone());
+         assertEquals(newZone.getChange().getStatus(), PENDING, "invalid status on zone " + newZone);
+         assertTrue(newZone.getNameServers().size() > 0, "no name servers for zone " + newZone);
+         assertEquals(newZone.getZone().getName(), name);
+         assertEquals(newZone.getZone().getCallerReference(), nonce);
+         assertEquals(newZone.getZone().getComment().get(), comment);
+         
+         assertTrue(inSync.apply(newZone.getChange()), "zone didn't sync " + newZone);
+      } finally {
+         Change delete = api().delete(newZone.getZone().getId());
+         assertTrue(inSync.apply(delete), "delete didn't sync " + delete);
       }
    }
 
