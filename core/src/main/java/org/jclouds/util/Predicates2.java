@@ -71,7 +71,13 @@ public class Predicates2 {
       return retry(findOrBreak, timeout, period, maxPeriod, MILLISECONDS);
    }
 
+   /**
+    * @see org.jclouds.compute.config.ComputeServiceProperties#POLL_INITIAL_PERIOD
+    */
    public static final long DEFAULT_PERIOD = 50l;
+   /**
+    * @see org.jclouds.compute.config.ComputeServiceProperties#POLL_MAX_PERIOD
+    */
    public static final long DEFAULT_MAX_PERIOD = 1000l;
 
    /**
@@ -132,9 +138,17 @@ public class Predicates2 {
          return false;
       }
 
+      /**
+       * Calculates the time interval to a retry attempt.<p>
+       * The interval increases exponentially with each attempt, at a rate of nextInterval *= 1.5
+       * (where 1.5 is the backoff factor), to the maximum interval or specified timeout.
+       * 
+       * @param attempt number of this attempt (starting at 1 for the first retry)
+       * @param end timeout
+       * @return time in milliseconds from now until the next attempt, or if negative, time lapsed
+       * since the specified timeout
+       */
       protected long nextMaxInterval(long attempt, Date end) {
-         // Interval increases exponentially, at a rate of nextInterval *= 1.5
-         // Note that attempt starts counting at 1
          long interval = (long) (period * Math.pow(1.5, attempt - 1));
          interval = interval > maxPeriod ? maxPeriod : interval;
          long max = end.getTime() - System.currentTimeMillis();
