@@ -88,7 +88,7 @@ public interface LoadBalancerApi {
    IterableWithMarker<LoadBalancer> list(PaginationOptions options);
 
    /**
-    * 
+    * Get a load balancer.
     * 
     * @param id
     *           id of the loadbalancer to retrieve
@@ -97,16 +97,15 @@ public interface LoadBalancerApi {
    LoadBalancer get(int id);
 
    /**
-    * Remove a load balancer from the account.
+    * Delete a load balancer.
     * <p/>
-    * The remove load balancer function removes the specified load balancer and its associated
-    * configuration from the account. Any and all configuration data is immediately purged and is
-    * not recoverable.
+    * Delete the specified load balancer and its associated configuration from the account. Any and all configuration 
+    * data is immediately purged and isnot recoverable.
     * 
     * @param id
     *           to remove
     */
-   void remove(int id);
+   void delete(int id);
    
    /**
     * When a metadata item is added, it is assigned a unique identifier that can be used for mutating operations such
@@ -128,13 +127,13 @@ public interface LoadBalancerApi {
    boolean updateMetadatum(int id, int metadatumId, String value);
 
    /**
-    * Remove metadatum.
+    * Delete metadatum.
     * 
-    * @see LoadBalancerApi#remove(int, Iterable)
+    * @see LoadBalancerApi#deleteMetadata(int, Iterable)
     * 
     * @return true on a successful removal, false if the metadatum was not found
     */
-   boolean removeMetadatum(int id, int metadatumId);
+   boolean deleteMetadatum(int id, int metadatumId);
    
    /**
     * Batch delete metadata given the specified ids.
@@ -145,5 +144,5 @@ public interface LoadBalancerApi {
     * 
     * @return true on a successful removal, false if the metadata was not found
     */
-   boolean removeMetadata(int id, Iterable<Integer> metadataIds);
+   boolean deleteMetadata(int id, Iterable<Integer> metadataIds);
 }

@@ -146,7 +146,7 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
             HttpResponse.builder().statusCode(202).payload("").build()
       ).getLoadBalancerApiForZone("DFW");
       
-      api.remove(2000);
+      api.delete(2000);
    }
 
    public void testListMetadata() {
@@ -187,7 +187,7 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
             HttpResponse.builder().statusCode(200).build()
       ).getLoadBalancerApiForZone("DFW");
 
-      assertTrue(api.removeMetadatum(2000, 23));
+      assertTrue(api.deleteMetadatum(2000, 23));
    }
 
    public void testRemoveManyMetadata() {
@@ -201,7 +201,7 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
       
       
       
-      assertTrue(api.removeMetadata(2000, ImmutableList.<Integer> of(23, 24)));
+      assertTrue(api.deleteMetadata(2000, ImmutableList.<Integer> of(23, 24)));
    }
 
    private Object getExpectedLoadBalancer() {

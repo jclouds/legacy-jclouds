@@ -68,7 +68,7 @@ public class SSLTerminationApiLiveTest extends BaseCloudLoadBalancersApiLiveTest
    
    @Test(dependsOnMethods = "testCreateAndGetSSLTermination")
    public void testRemoveAndGetSSLTermination() throws Exception {
-      assertTrue(clbApi.getSSLTerminationApiForZoneAndLoadBalancer(zone, lb.getId()).remove());
+      assertTrue(clbApi.getSSLTerminationApiForZoneAndLoadBalancer(zone, lb.getId()).delete());
       assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
       
       SSLTermination sslTermination = 
@@ -81,7 +81,7 @@ public class SSLTerminationApiLiveTest extends BaseCloudLoadBalancersApiLiveTest
    @AfterGroups(groups = "live")
    protected void tearDownContext() {
       assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
-      clbApi.getLoadBalancerApiForZone(zone).remove(lb.getId());
+      clbApi.getLoadBalancerApiForZone(zone).delete(lb.getId());
       assertTrue(awaitDeleted(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
       super.tearDownContext();
    }

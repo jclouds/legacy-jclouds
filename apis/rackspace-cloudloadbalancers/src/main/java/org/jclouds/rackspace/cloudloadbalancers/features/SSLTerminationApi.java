@@ -79,9 +79,9 @@ public interface SSLTerminationApi {
    SSLTermination get();
    
    /**
-    * Remove SSL termination.
+    * Delete SSL termination.
     * 
-    * @return true on a successful removal, false if the SSL termination was not found
+    * @return true on a successful delete, false if the SSL termination was not found
     */
-   boolean remove();
+   boolean delete();
 }

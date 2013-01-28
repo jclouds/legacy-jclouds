@@ -73,7 +73,7 @@ public class VirtualIPApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<C
             HttpResponse.builder().statusCode(200).build()
       ).getVirtualIPApiForZoneAndLoadBalancer("DFW", 2000);
 
-      api.remove(23);
+      api.delete(23);
    }
 
    public void testRemoveManyVirtualIPs() {
@@ -86,7 +86,7 @@ public class VirtualIPApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<C
       ).getVirtualIPApiForZoneAndLoadBalancer("DFW", 2000);
 
       List<Integer> virtualIPIds = ImmutableList.<Integer> of(23, 24);
-      api.remove(virtualIPIds);
+      api.delete(virtualIPIds);
    }
 
    private Iterable<VirtualIPWithId> getVirtualIPs() {

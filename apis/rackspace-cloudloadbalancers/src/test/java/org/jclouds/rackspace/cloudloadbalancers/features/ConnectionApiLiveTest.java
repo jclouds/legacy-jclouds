@@ -69,7 +69,7 @@ public class ConnectionApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    
    @Test(dependsOnMethods = "testCreateAndGetConnectionThrottling")
    public void testRemoveAndGetConnectionThrottle() throws Exception {
-      assertTrue(clbApi.getConnectionApiForZoneAndLoadBalancer(zone, lb.getId()).removeConnectionThrottle());
+      assertTrue(clbApi.getConnectionApiForZoneAndLoadBalancer(zone, lb.getId()).deleteConnectionThrottle());
       assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
       
       ConnectionThrottle connectionThrottle = 
@@ -104,7 +104,7 @@ public class ConnectionApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    @AfterGroups(groups = "live")
    protected void tearDownContext() {
       assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
-      clbApi.getLoadBalancerApiForZone(zone).remove(lb.getId());
+      clbApi.getLoadBalancerApiForZone(zone).delete(lb.getId());
       assertTrue(awaitDeleted(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
       super.tearDownContext();
    }

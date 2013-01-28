@@ -134,13 +134,13 @@ public interface NodeApi {
    boolean updateMetadatum(int id, int metadatumId, String value);
 
    /**
-    * Remove metadatum.
+    * Delete metadatum.
     * 
-    * @see NodeApi#remove(int, Iterable)
+    * @see NodeApi#deleteMetadata(int, Iterable)
     * 
     * @return true on a successful removal, false if the metadatum was not found
     */
-   boolean removeMetadatum(int id, int metadatumId);
+   boolean deleteMetadatum(int id, int metadatumId);
    
    /**
     * Batch delete metadata given the specified ids.
@@ -151,5 +151,5 @@ public interface NodeApi {
     * 
     * @return true on a successful removal, false if the metadata was not found
     */
-   boolean removeMetadata(int id, Iterable<Integer> metadataIds);
+   boolean deleteMetadata(int id, Iterable<Integer> metadataIds);
 }

@@ -89,7 +89,7 @@ public class ErrorPageApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<C
             HttpResponse.builder().statusCode(200).build()
       ).getErrorPageApiForZoneAndLoadBalancer("DFW", 2000);
 
-      assertTrue(api.remove());
+      assertTrue(api.delete());
    }
    
    public static String getContentExpected() {

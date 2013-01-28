@@ -163,12 +163,12 @@ public class NodeApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
          metadata = clbApi.getNodeApiForZoneAndLoadBalancer(lb.getRegion(), lb.getId()).getMetadata(node.getId());
          assertEquals(metadata.get("key1"), "key1-updated");
 
-         assertTrue(clbApi.getNodeApiForZoneAndLoadBalancer(lb.getRegion(), lb.getId()).removeMetadatum(node.getId(), metadata.getId("key1")));
+         assertTrue(clbApi.getNodeApiForZoneAndLoadBalancer(lb.getRegion(), lb.getId()).deleteMetadatum(node.getId(), metadata.getId("key1")));
          assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(lb.getRegion())).apply(lb));
          metadata = clbApi.getNodeApiForZoneAndLoadBalancer(lb.getRegion(), lb.getId()).getMetadata(node.getId());
          assertNull(metadata.get("key1"));
 
-         assertTrue(clbApi.getNodeApiForZoneAndLoadBalancer(lb.getRegion(), lb.getId()).removeMetadata(node.getId(), 
+         assertTrue(clbApi.getNodeApiForZoneAndLoadBalancer(lb.getRegion(), lb.getId()).deleteMetadata(node.getId(), 
                ImmutableList.<Integer> of(metadata.getId("key2"), metadata.getId("key3"))));
          assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(lb.getRegion())).apply(lb));
          metadata = clbApi.getNodeApiForZoneAndLoadBalancer(lb.getRegion(), lb.getId()).getMetadata(node.getId());
@@ -185,7 +185,7 @@ public class NodeApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
 
          if (lbClient.get(lb.getId()).getStatus() != Status.DELETED) {
             assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(lb.getRegion())).apply(lb));
-            lbClient.remove(lb.getId());
+            lbClient.delete(lb.getId());
          }
          assertTrue(awaitDeleted(clbApi.getLoadBalancerApiForZone(lb.getRegion())).apply(lb));
       }

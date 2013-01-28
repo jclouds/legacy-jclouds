@@ -79,7 +79,7 @@ public class AccessRuleApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
             HttpResponse.builder().statusCode(200).build()
       ).getAccessRuleApiForZoneAndLoadBalancer("DFW", 2000);
 
-      assertTrue(api.remove(23));
+      assertTrue(api.delete(23));
    }
 
    public void testRemoveManyAccessRules() {
@@ -92,7 +92,7 @@ public class AccessRuleApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
       ).getAccessRuleApiForZoneAndLoadBalancer("DFW", 2000);
 
       List<Integer> accessRuleIds = ImmutableList.<Integer> of(23, 24);
-      assertTrue(api.remove(accessRuleIds));
+      assertTrue(api.delete(accessRuleIds));
    }
 
    public void testRemoveAllAccessRules() {
@@ -104,7 +104,7 @@ public class AccessRuleApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
             HttpResponse.builder().statusCode(200).build()
       ).getAccessRuleApiForZoneAndLoadBalancer("DFW", 2000);
 
-      assertTrue(api.removeAll());
+      assertTrue(api.deleteAll());
    }
 
    private Iterable<AccessRuleWithId> getAccessRules() {
