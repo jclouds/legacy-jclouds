@@ -42,13 +42,13 @@ public interface VirtualIPApi {
    Iterable<VirtualIPWithId> list();
    
    /**
-    * Remove a virtual IP.
+    * Delete a virtual IP.
     * 
-    * @see VirtualIPApi#remove(Iterable)
+    * @see VirtualIPApi#delete(Iterable)
     * 
-    * @return true on a successful removal, false if the virtual IP was not found
+    * @return true on a successful delete, false if the virtual IP was not found
     */
-   boolean remove(int id);
+   boolean delete(int id);
    
    /**
     * Batch delete virtual IPs given the specified ids.
@@ -59,7 +59,7 @@ public interface VirtualIPApi {
     * cannot be removed due to its current status, an exception is thrown along with the ids of the ones the 
     * system identified as potential failures for this request.
     * 
-    * @return true on a successful removal, false if the virtual IP was not found
+    * @return true on a successful delete, false if the virtual IP was not found
     */
-   boolean remove(Iterable<Integer> ids);
+   boolean delete(Iterable<Integer> ids);
 }

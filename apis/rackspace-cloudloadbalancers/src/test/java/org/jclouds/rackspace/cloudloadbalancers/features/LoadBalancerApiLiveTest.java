@@ -56,7 +56,7 @@ public class LoadBalancerApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    protected void tearDownContext() {
       for (LoadBalancer lb: lbs) {
          assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(lb.getRegion())).apply(lb));
-         clbApi.getLoadBalancerApiForZone(lb.getRegion()).remove(lb.getId());
+         clbApi.getLoadBalancerApiForZone(lb.getRegion()).delete(lb.getId());
          assertTrue(awaitDeleted(clbApi.getLoadBalancerApiForZone(lb.getRegion())).apply(lb));
       }
       super.tearDownContext();
@@ -172,12 +172,12 @@ public class LoadBalancerApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
          metadata = clbApi.getLoadBalancerApiForZone(lb.getRegion()).getMetadata(lb.getId());
          assertEquals(metadata.get("key1"), "key1-updated");
 
-         assertTrue(clbApi.getLoadBalancerApiForZone(lb.getRegion()).removeMetadatum(lb.getId(), metadata.getId("key1")));
+         assertTrue(clbApi.getLoadBalancerApiForZone(lb.getRegion()).deleteMetadatum(lb.getId(), metadata.getId("key1")));
          assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(lb.getRegion())).apply(lb));
          metadata = clbApi.getLoadBalancerApiForZone(lb.getRegion()).getMetadata(lb.getId());
          assertNull(metadata.get("key1"));
 
-         assertTrue(clbApi.getLoadBalancerApiForZone(lb.getRegion()).removeMetadata(lb.getId(), 
+         assertTrue(clbApi.getLoadBalancerApiForZone(lb.getRegion()).deleteMetadata(lb.getId(), 
                ImmutableList.<Integer> of(metadata.getId("key2"), metadata.getId("key3"))));
          assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(lb.getRegion())).apply(lb));
          metadata = clbApi.getLoadBalancerApiForZone(lb.getRegion()).getMetadata(lb.getId());

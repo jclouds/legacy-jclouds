@@ -73,12 +73,12 @@ public interface ErrorPageAsyncApi {
    ListenableFuture<String> get();
 
    /**
-    * @see ErrorPageApi#remove()
+    * @see ErrorPageApi#delete()
     */
-   @Named("errorpage:remove")
+   @Named("errorpage:delete")
    @DELETE
    @Consumes(MediaType.WILDCARD)
    @Fallback(FalseOnNotFoundOr404.class)
    @Path("/errorpage")
-   ListenableFuture<Boolean> remove();
+   ListenableFuture<Boolean> delete();
 }

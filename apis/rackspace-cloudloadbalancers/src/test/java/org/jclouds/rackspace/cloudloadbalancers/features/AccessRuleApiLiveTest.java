@@ -96,7 +96,7 @@ public class AccessRuleApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
       AccessRuleWithId removedAccessRule = Iterables.getFirst(actualAccessList, null);
       accessRules.remove(removedAccessRule.getAddress());
       
-      assertTrue(clbApi.getAccessRuleApiForZoneAndLoadBalancer(zone, lb.getId()).remove(removedAccessRule.getId()));
+      assertTrue(clbApi.getAccessRuleApiForZoneAndLoadBalancer(zone, lb.getId()).delete(removedAccessRule.getId()));
       assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
       
       assertExpectedAccessRules(accessRules);
@@ -111,7 +111,7 @@ public class AccessRuleApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
       accessRules.remove(removedAccessRule1.getAddress());
       accessRules.remove(removedAccessRule2.getAddress());
       
-      assertTrue(clbApi.getAccessRuleApiForZoneAndLoadBalancer(zone, lb.getId()).remove(removedAccessRuleIds));
+      assertTrue(clbApi.getAccessRuleApiForZoneAndLoadBalancer(zone, lb.getId()).delete(removedAccessRuleIds));
       assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
       
       assertExpectedAccessRules(accessRules);
@@ -119,7 +119,7 @@ public class AccessRuleApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    
    @Test(dependsOnMethods = "testRemoveManyAccessRules")
    public void testRemoveAllAccessRules() throws Exception {
-      assertTrue(clbApi.getAccessRuleApiForZoneAndLoadBalancer(zone, lb.getId()).removeAll());
+      assertTrue(clbApi.getAccessRuleApiForZoneAndLoadBalancer(zone, lb.getId()).deleteAll());
       assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
       
       assertExpectedAccessRules(new HashMap<String, AccessRule>());
@@ -138,7 +138,7 @@ public class AccessRuleApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    @AfterGroups(groups = "live")
    protected void tearDownContext() {
       assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
-      clbApi.getLoadBalancerApiForZone(zone).remove(lb.getId());
+      clbApi.getLoadBalancerApiForZone(zone).delete(lb.getId());
       assertTrue(awaitDeleted(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
       super.tearDownContext();
    }

@@ -81,6 +81,6 @@ public class SessionPersistenceApiExpectTest extends BaseCloudLoadBalancerApiExp
             HttpResponse.builder().statusCode(200).build()
       ).getSessionPersistenceApiForZoneAndLoadBalancer("DFW", 2000);
       
-      api.remove();
+      api.delete();
    }   
 }

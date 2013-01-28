@@ -76,14 +76,14 @@ public interface ConnectionAsyncApi {
    ListenableFuture<ConnectionThrottle> getConnectionThrottle();
 
    /**
-    * @see ConnectionApi#removeConnectionThrottle()
+    * @see ConnectionApi#deleteConnectionThrottle()
     */
-   @Named("connectionthrottle:remove")
+   @Named("connectionthrottle:delete")
    @DELETE
    @Fallback(FalseOnNotFoundOr422.class)
    @Path("/connectionthrottle")
    @Consumes("*/*")
-   ListenableFuture<Boolean> removeConnectionThrottle();
+   ListenableFuture<Boolean> deleteConnectionThrottle();
 
    /**
     * @see ConnectionApi#isConnectionLogging()

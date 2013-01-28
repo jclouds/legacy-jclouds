@@ -41,11 +41,11 @@ public interface ConnectionApi {
    ConnectionThrottle getConnectionThrottle();
    
    /**
-    * Remove connection throttle.
+    * Delete connection throttle.
     * 
-    * @return true on a successful removal, false if the connection throttle was not found
+    * @return true on a successful delete, false if the connection throttle was not found
     */
-   boolean removeConnectionThrottle();
+   boolean deleteConnectionThrottle();
    
    /**
     * Determine if the load balancer is logging connections.

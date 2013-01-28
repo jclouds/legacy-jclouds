@@ -70,12 +70,12 @@ public interface SSLTerminationAsyncApi {
    ListenableFuture<SSLTermination> get();
 
    /**
-    * @see SSLTerminationApi#remove()
+    * @see SSLTerminationApi#delete()
     */
-   @Named("ssltermination:remove")
+   @Named("ssltermination:delete")
    @DELETE
    @Fallback(FalseOnNotFoundOr422.class)
    @Path("/ssltermination")
    @Consumes("*/*")
-   ListenableFuture<Boolean> remove();
+   ListenableFuture<Boolean> delete();
 }

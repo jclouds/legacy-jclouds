@@ -187,23 +187,23 @@ public interface NodeAsyncApi {
                                              @PayloadParam("value") String value);
 
    /**
-    * @see NodeApi#removeMetadatum(int, int)
+    * @see NodeApi#deleteMetadatum(int, int)
     */
-   @Named("node:removemetadatum")
+   @Named("node:deletemetadatum")
    @DELETE
    @Fallback(FalseOnNotFoundOr404.class)
    @Consumes("*/*")
    @Path("/nodes/{id}/metadata/{metadatumId}")
-   ListenableFuture<Boolean> removeMetadatum(@PathParam("id") int id, @PathParam("metadatumId") int metadatumId);
+   ListenableFuture<Boolean> deleteMetadatum(@PathParam("id") int id, @PathParam("metadatumId") int metadatumId);
 
    /**
-    * @see NodeApi#removeMetadata(int, Iterable)
+    * @see NodeApi#deleteMetadata(int, Iterable)
     */
-   @Named("node:removemetadata")
+   @Named("node:deletemetadata")
    @DELETE
    @Fallback(FalseOnNotFoundOr404.class)
    @Consumes("*/*")
    @Path("/nodes/{id}/metadata")
-   ListenableFuture<Boolean> removeMetadata(@PathParam("id") int id, 
+   ListenableFuture<Boolean> deleteMetadata(@PathParam("id") int id, 
                                             @QueryParam("id") Iterable<Integer> metadataIds);
 }
