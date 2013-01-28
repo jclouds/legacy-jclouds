@@ -36,10 +36,18 @@ public interface ComputeServiceProperties {
    public static final String INIT_STATUS_INITIAL_PERIOD = "jclouds.compute.init-status.initial-period";
    public static final String INIT_STATUS_MAX_PERIOD = "jclouds.compute.init-status.max-period";
 
-   // The period in milliseconds between node updates when using the ComputeService
+   /**
+    * Initial period between the ComputeService's node polls. Subsequent periods increase exponentially
+    * (based on the backoff factor) and become constant when the maximum period is reached.
+    * The unit is milliseconds.
+    */
    public static final String POLL_INITIAL_PERIOD = "jclouds.compute.poll-status.initial-period";
 
-   // The max period in milliseconds between node updates when using the ComputeService
+   /**
+    * Once the exponentially increasing period between ComputeService's node
+    * polls has reached this maximum period, it remains at this value.
+    * The unit is milliseconds.
+    */
    public static final String POLL_MAX_PERIOD = "jclouds.compute.poll-status.max-period";
 
    /**
