@@ -18,13 +18,14 @@
  */
 package org.jclouds.route53.xml;
 
+import static org.jclouds.util.SaxUtils.currentOrNull;
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
+
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.IterableWithMarkers;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.route53.domain.Zone;
-import org.jclouds.util.SaxUtils;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
@@ -52,9 +53,6 @@ public class ListHostedZonesResponseHandler extends
       this.zoneHandler = zoneHandler;
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public IterableWithMarker<Zone> getResult() {
       try {
@@ -64,12 +62,9 @@ public class ListHostedZonesResponseHandler extends
       }
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public void startElement(String url, String name, String qName, Attributes attributes) throws SAXException {
-      if (SaxUtils.equalsOrSuffix(qName, "HostedZones")) {
+   public void startElement(String url, String name, String qName, Attributes attributes) {
+      if (equalsOrSuffix(qName, "HostedZones")) {
          inZones = true;
       }
       if (inZones) {
@@ -77,11 +72,8 @@ public class ListHostedZonesResponseHandler extends
       }
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public void endElement(String uri, String name, String qName) throws SAXException {
+   public void endElement(String uri, String name, String qName) {
       if (inZones) {
          if (qName.equals("HostedZones")) {
             inZones = false;
@@ -91,15 +83,12 @@ public class ListHostedZonesResponseHandler extends
             zoneHandler.endElement(uri, name, qName);
          }
       } else if (qName.equals("NextMarker")) {
-         afterMarker = SaxUtils.currentOrNull(currentText);
+         afterMarker = currentOrNull(currentText);
       }
 
       currentText = new StringBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public void characters(char ch[], int start, int length) {
       if (inZones) {
@@ -108,5 +97,4 @@ public class ListHostedZonesResponseHandler extends
          currentText.append(ch, start, length);
       }
    }
-
 }

@@ -18,24 +18,35 @@
  */
 package org.jclouds.route53.features;
 
+import static javax.ws.rs.core.MediaType.APPLICATION_XML;
+
 import javax.inject.Named;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
 import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.Payload;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.route53.domain.Change;
+import org.jclouds.route53.domain.NewZone;
 import org.jclouds.route53.domain.Zone;
 import org.jclouds.route53.domain.ZoneAndNameServers;
 import org.jclouds.route53.filters.RestAuthentication;
 import org.jclouds.route53.functions.ZonesToPagedIterable;
 import org.jclouds.route53.options.ListZonesOptions;
+import org.jclouds.route53.xml.ChangeHandler;
+import org.jclouds.route53.xml.CreateHostedZoneResponseHandler;
 import org.jclouds.route53.xml.GetHostedZoneResponseHandler;
 import org.jclouds.route53.xml.ListHostedZonesResponseHandler;
 
@@ -52,16 +63,29 @@ import com.google.common.util.concurrent.ListenableFuture;
 @VirtualHost
 @Path("/{jclouds.api-version}")
 public interface ZoneAsyncApi {
+   /**
+    * @see ZoneApi#createWithReference
+    */
+   @Named("CreateHostedZone")
+   @POST
+   @Produces(APPLICATION_XML)
+   @Path("/hostedzone")
+   @Payload("<CreateHostedZoneRequest xmlns=\"https://route53.amazonaws.com/doc/2012-02-29/\"><Name>{name}</Name><CallerReference>{callerReference}</CallerReference></CreateHostedZoneRequest>")
+   @XMLResponseParser(CreateHostedZoneResponseHandler.class)
+   ListenableFuture<NewZone> createWithReference(@PayloadParam("name") String name,
+         @PayloadParam("callerReference") String callerReference);
 
    /**
-    * @see ZoneApi#get()
+    * @see ZoneApi#createWithReferenceAndComment
     */
-   @Named("GetHostedZone")
-   @GET
-   @Path("{zoneId}")
-   @XMLResponseParser(GetHostedZoneResponseHandler.class)
-   @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<ZoneAndNameServers> get(@PathParam("zoneId") String zoneId);
+   @Named("CreateHostedZone")
+   @POST
+   @Produces(APPLICATION_XML)
+   @Path("/hostedzone")
+   @Payload("<CreateHostedZoneRequest xmlns=\"https://route53.amazonaws.com/doc/2012-02-29/\"><Name>{name}</Name><CallerReference>{callerReference}</CallerReference><HostedZoneConfig><Comment>{comment}</Comment></HostedZoneConfig></CreateHostedZoneRequest>")
+   @XMLResponseParser(CreateHostedZoneResponseHandler.class)
+   ListenableFuture<NewZone> createWithReferenceAndComment(@PayloadParam("name") String name,
+         @PayloadParam("callerReference") String callerReference, @PayloadParam("comment") String comment);
 
    /**
     * @see ZoneApi#list()
@@ -82,4 +106,23 @@ public interface ZoneAsyncApi {
    @XMLResponseParser(ListHostedZonesResponseHandler.class)
    ListenableFuture<IterableWithMarker<Zone>> list(ListZonesOptions options);
 
+   /**
+    * @see ZoneApi#get()
+    */
+   @Named("GetHostedZone")
+   @GET
+   @Path("/hostedzone/{zoneId}")
+   @XMLResponseParser(GetHostedZoneResponseHandler.class)
+   @Fallback(NullOnNotFoundOr404.class)
+   ListenableFuture<ZoneAndNameServers> get(@PathParam("zoneId") String zoneId);
+
+   /**
+    * @see ZoneApi#delete()
+    */
+   @Named("DeleteHostedZone")
+   @DELETE
+   @Path("/hostedzone/{zoneId}")
+   @XMLResponseParser(ChangeHandler.class)
+   @Fallback(NullOnNotFoundOr404.class)
+   ListenableFuture<Change> delete(@PathParam("zoneId") String zoneId);
 }
