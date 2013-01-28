@@ -22,6 +22,7 @@ import static org.jclouds.util.SaxUtils.currentOrNull;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.route53.domain.Zone;
+import org.xml.sax.Attributes;
 
 /**
  * 
@@ -32,9 +33,6 @@ public class ZoneHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Z
    private StringBuilder currentText = new StringBuilder();
    private Zone.Builder builder = Zone.builder();
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public Zone getResult() {
       try {
@@ -45,9 +43,13 @@ public class ZoneHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Z
    }
 
    @Override
+   public void startElement(String url, String name, String qName, Attributes attributes) {
+   }
+
+   @Override
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("Id")) {
-         builder.id(currentOrNull(currentText));
+         builder.id(currentOrNull(currentText).replace("/hostedzone/", ""));
       } else if (qName.equals("Name")) {
          builder.name(currentOrNull(currentText));
       } else if (qName.equals("CallerReference")) {
@@ -64,5 +66,4 @@ public class ZoneHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Z
    public void characters(char ch[], int start, int length) {
       currentText.append(ch, start, length);
    }
-
 }

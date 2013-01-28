@@ -24,31 +24,49 @@ import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.route53.domain.Change;
+import org.jclouds.route53.domain.Change.Status;
+import org.jclouds.route53.domain.NewZone;
 import org.jclouds.route53.domain.Zone;
 import org.jclouds.route53.domain.ZoneAndNameServers;
 import org.jclouds.route53.options.ListZonesOptions;
 
 /**
  * @see ZoneAsyncApi
- * @see <a href="http://docs.aws.amazon.com/Route53/latest/APIReference/ActionsOnHostedZones.html" />
+ * @see <a href=
+ *      "http://docs.aws.amazon.com/Route53/latest/APIReference/ActionsOnHostedZones.html"
+ *      />
  * @author Adrian Cole
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface ZoneApi {
 
    /**
-    * Retrieves information about the specified zone, including its nameserver configuration
+    * This action creates a new hosted zone.
+    * 
+    * <h4>Note</h4>
+    * 
+    * You cannot create a hosted zone for a top-level domain (TLD).
     * 
     * @param name
-    *           Name of the zone to get information about.
-    * @return null if not found
+    *           The name of the domain. ex. {@code  www.example.com.} The
+    *           trailing dot is optional.
+    * @param callerReference
+    *           A unique string that identifies the request and allows safe
+    *           retries. ex. {@code MyDNSMigration_01}
+    * @return the new zone in progress, in {@link Status#PENDING}.
     */
-   @Nullable
-   ZoneAndNameServers get(String name);
+   NewZone createWithReference(String name, String callerReference);
 
    /**
-    * Lists the zones that have the specified path prefix. If there are none, the action returns an
-    * empty list.
+    * like {@link #createWithReference(String, String)}, except you can specify
+    * a comment.
+    */
+   NewZone createWithReferenceAndComment(String name, String callerReference, String comment);
+
+   /**
+    * Lists the zones that have the specified path prefix. If there are none,
+    * the action returns an empty list.
     * 
     * <br/>
     * You can paginate the results using the {@link ListZonesOptions parameter}
@@ -61,11 +79,32 @@ public interface ZoneApi {
    IterableWithMarker<Zone> list(ListZonesOptions options);
 
    /**
-    * Lists the zones that have the specified path prefix. If there are none, the action returns an
-    * empty list.
+    * Lists the zones that have the specified path prefix. If there are none,
+    * the action returns an empty list.
     * 
     * @return the response object
     */
    PagedIterable<Zone> list();
 
+   /**
+    * Retrieves information about the specified zone, including its nameserver
+    * configuration
+    * 
+    * @param id
+    *           id of the zone to get information about. ex
+    *           {@code Z1PA6795UKMFR9}
+    * @return null if not found
+    */
+   @Nullable
+   ZoneAndNameServers get(String id);
+
+   /**
+    * This action deletes a hosted zone.
+    * 
+    * @param id
+    *           id of the zone to delete. ex {@code Z1PA6795UKMFR9}
+    * @return null if not found or the change in progress
+    */
+   @Nullable
+   Change delete(String id);
 }

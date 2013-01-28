@@ -18,84 +18,72 @@
  */
 package org.jclouds.route53.xml;
 
-import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.route53.domain.Zone;
+import org.jclouds.route53.domain.NewZone;
 import org.jclouds.route53.domain.ZoneAndNameServers;
 import org.xml.sax.Attributes;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import com.google.inject.Inject;
 
 /**
  * @see <a href=
- *      "http://docs.aws.amazon.com/Route53/latest/APIReference/API_GetHostedZone.html"
+ *      "http://docs.aws.amazon.com/Route53/latest/APIReference/API_CreateHostedZone.html"
  *      />
  * 
  * @author Adrian Cole
  */
-public class GetHostedZoneResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<ZoneAndNameServers> {
+public class CreateHostedZoneResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<NewZone> {
 
-   private final ZoneHandler zoneHandler;
+   private final GetHostedZoneResponseHandler zoneHandler;
+   private final ChangeHandler changeHandler;
 
-   private StringBuilder currentText = new StringBuilder();
-   
-   private boolean inZone;
-
-   private Zone zone;
-   private Builder<String> nameServers = ImmutableList.<String> builder();
+   private boolean inChange;
 
    @Inject
-   public GetHostedZoneResponseHandler(ZoneHandler zoneHandler) {
+   public CreateHostedZoneResponseHandler(GetHostedZoneResponseHandler zoneHandler, ChangeHandler changeHandler) {
       this.zoneHandler = zoneHandler;
+      this.changeHandler = changeHandler;
    }
 
    @Override
-   public ZoneAndNameServers getResult() {
-      try {
-         return ZoneAndNameServers.create(zone, nameServers.build());
-      } finally {
-         zone = null;
-         nameServers = ImmutableList.<String> builder();
-      }
+   public NewZone getResult() {
+      ZoneAndNameServers zone = zoneHandler.getResult();
+      return NewZone.create(zone, changeHandler.getResult());
    }
 
    @Override
    public void startElement(String url, String name, String qName, Attributes attributes) {
-      if (equalsOrSuffix(qName, "HostedZone")) {
-         inZone = true;
+      if (equalsOrSuffix(qName, "ChangeInfo")) {
+         inChange = true;
       }
-      if (inZone) {
+      if (inChange) {
+         changeHandler.startElement(url, name, qName, attributes);
+      } else {
          zoneHandler.startElement(url, name, qName, attributes);
       }
    }
 
    @Override
    public void endElement(String uri, String name, String qName) {
-      if (inZone) {
-         if (qName.equals("HostedZone")) {
-            inZone = false;
-            zone = zoneHandler.getResult();
+      if (inChange) {
+         if (qName.equals("ChangeInfo")) {
+            inChange = false;
          } else {
-            zoneHandler.endElement(uri, name, qName);
+            changeHandler.endElement(uri, name, qName);
          }
-      } else if (qName.equals("NameServer")) {
-         nameServers.add(currentOrNull(currentText));
+      } else {
+         zoneHandler.endElement(uri, name, qName);
       }
-
-      currentText = new StringBuilder();
    }
 
    @Override
    public void characters(char ch[], int start, int length) {
-      if (inZone) {
-         zoneHandler.characters(ch, start, length);
+      if (inChange) {
+         changeHandler.characters(ch, start, length);
       } else {
-         currentText.append(ch, start, length);
+         zoneHandler.characters(ch, start, length);
       }
    }
-
 }

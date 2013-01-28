@@ -21,38 +21,31 @@ package org.jclouds.route53.parse;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.util.Date;
 
-import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.route53.domain.Change;
-import org.jclouds.route53.domain.Change.Status;
-import org.jclouds.route53.xml.ChangeHandler;
+import org.jclouds.route53.domain.NewZone;
+import org.jclouds.route53.xml.CreateHostedZoneResponseHandler;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "unit", testName = "GetChangeResponseTest")
-public class GetChangeResponseTest extends BaseHandlerTest {
+@Test(groups = "unit", testName = "CreateHostedZoneResponseTest")
+public class CreateHostedZoneResponseTest extends BaseHandlerTest {
 
    public void test() {
-      InputStream is = getClass().getResourceAsStream("/change.xml");
+      InputStream is = getClass().getResourceAsStream("/new_zone.xml");
 
-      Change expected = expected();
+      NewZone expected = expected();
 
-      ChangeHandler handler = injector.getInstance(ChangeHandler.class);
-      Change result = factory.create(handler).parse(is);
+      CreateHostedZoneResponseHandler handler = injector.getInstance(CreateHostedZoneResponseHandler.class);
+      NewZone result = factory.create(handler).parse(is);
 
       assertEquals(result, expected);
-      assertEquals(result.getStatus(), expected.getStatus());
-      assertEquals(result.getSubmittedAt(), expected.getSubmittedAt());
    }
 
-   public Change expected() {
-      Date submittedAt = new SimpleDateFormatDateService().iso8601DateParse("2011-09-10T01:36:41.958Z");
-      return Change.create("C2682N5HXP0BZ4", Status.INSYNC, submittedAt);
+   public NewZone expected() {
+      return NewZone.create(new GetHostedZoneResponseTest().expected(), new GetChangeResponseTest().expected());
    }
-
 }

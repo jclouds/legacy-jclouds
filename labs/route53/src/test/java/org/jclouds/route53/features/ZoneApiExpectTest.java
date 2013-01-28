@@ -27,6 +27,8 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.route53.Route53Api;
 import org.jclouds.route53.internal.BaseRoute53ApiExpectTest;
+import org.jclouds.route53.parse.CreateHostedZoneResponseTest;
+import org.jclouds.route53.parse.GetChangeResponseTest;
 import org.jclouds.route53.parse.GetHostedZoneResponseTest;
 import org.jclouds.route53.parse.ListHostedZonesResponseTest;
 import org.testng.annotations.Test;
@@ -38,9 +40,45 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", testName = "ZoneApiExpectTest")
 public class ZoneApiExpectTest extends BaseRoute53ApiExpectTest {
+   HttpRequest createWithReference = HttpRequest.builder().method("POST")
+         .endpoint("https://route53.amazonaws.com/2012-02-29/hostedzone")
+         .addHeader("Host", "route53.amazonaws.com")
+         .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
+         .addHeader("X-Amzn-Authorization",
+               "AWS3-HTTPS AWSAccessKeyId=identity,Algorithm=HmacSHA256,Signature=pylxNiLcrsjNRZOsxyT161JCwytVPHyc2rFfmNCuZKI=")
+         .payload(
+               payloadFromStringWithContentType(
+                     "<CreateHostedZoneRequest xmlns=\"https://route53.amazonaws.com/doc/2012-02-29/\"><Name>jclouds.org.</Name><CallerReference>expect</CallerReference></CreateHostedZoneRequest>",
+                     "application/xml")).build();
+   
+   HttpResponse createResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResourceWithContentType("/new_zone.xml", "text/xml")).build();
+
+   public void testCreateWithReferenceWhenResponseIs2xx() {
+      Route53Api success = requestSendsResponse(createWithReference, createResponse);
+      assertEquals(success.getZoneApi().createWithReference("jclouds.org.", "expect").toString(),
+            new CreateHostedZoneResponseTest().expected().toString());
+   }
+
+   HttpRequest createWithReferenceAndComment = HttpRequest.builder().method("POST")
+         .endpoint("https://route53.amazonaws.com/2012-02-29/hostedzone")
+         .addHeader("Host", "route53.amazonaws.com")
+         .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
+         .addHeader("X-Amzn-Authorization",
+               "AWS3-HTTPS AWSAccessKeyId=identity,Algorithm=HmacSHA256,Signature=pylxNiLcrsjNRZOsxyT161JCwytVPHyc2rFfmNCuZKI=")
+         .payload(
+               payloadFromStringWithContentType(
+                     "<CreateHostedZoneRequest xmlns=\"https://route53.amazonaws.com/doc/2012-02-29/\"><Name>jclouds.org.</Name><CallerReference>expect</CallerReference><HostedZoneConfig><Comment>comment</Comment></HostedZoneConfig></CreateHostedZoneRequest>",
+                     "application/xml")).build();
+
+   public void testCreateWithReferenceAndCommentWhenResponseIs2xx() {
+      Route53Api success = requestSendsResponse(createWithReferenceAndComment, createResponse);
+      assertEquals(success.getZoneApi().createWithReferenceAndComment("jclouds.org.", "expect", "comment").toString(),
+            new CreateHostedZoneResponseTest().expected().toString());
+   }
 
    HttpRequest get = HttpRequest.builder().method("GET")
-         .endpoint("https://route53.amazonaws.com/2012-02-29//hostedzone/Z1XTHCPEFRWV1X")
+         .endpoint("https://route53.amazonaws.com/2012-02-29/hostedzone/Z1XTHCPEFRWV1X")
          .addHeader("Host", "route53.amazonaws.com")
          .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization",
@@ -51,16 +89,16 @@ public class ZoneApiExpectTest extends BaseRoute53ApiExpectTest {
          .payload(payloadFromResourceWithContentType("/hosted_zone.xml", "text/xml")).build();
 
    public void testGetWhenResponseIs2xx() {
-      Route53Api apiWhenExist = requestSendsResponse(get, getResponse);
-      assertEquals(apiWhenExist.getZoneApi().get("/hostedzone/Z1XTHCPEFRWV1X").toString(), new GetHostedZoneResponseTest().expected()
+      Route53Api success = requestSendsResponse(get, getResponse);
+      assertEquals(success.getZoneApi().get("Z1XTHCPEFRWV1X").toString(), new GetHostedZoneResponseTest().expected()
             .toString());
    }
    
    HttpResponse notFound = HttpResponse.builder().statusCode(404).build();
 
    public void testGetWhenResponseIs404() {
-      Route53Api apiWhenDontExist = requestSendsResponse(get, notFound);
-      assertNull(apiWhenDontExist.getZoneApi().get("/hostedzone/Z1XTHCPEFRWV1X"));
+      Route53Api fail = requestSendsResponse(get, notFound);
+      assertNull(fail.getZoneApi().get("Z1XTHCPEFRWV1X"));
    }
 
    HttpRequest list = HttpRequest.builder().method("GET")
@@ -75,16 +113,16 @@ public class ZoneApiExpectTest extends BaseRoute53ApiExpectTest {
          .payload(payloadFromResourceWithContentType("/hosted_zones.xml", "text/xml")).build();
    
    public void testListWhenResponseIs2xx() {
-      Route53Api apiWhenExist = requestSendsResponse(list, listResponse);
-      assertEquals(apiWhenExist.getZoneApi().list().get(0).toString(), new ListHostedZonesResponseTest().expected()
+      Route53Api success = requestSendsResponse(list, listResponse);
+      assertEquals(success.getZoneApi().list().get(0).toString(), new ListHostedZonesResponseTest().expected()
             .toString());
    }
 
    // TODO: this should really be an empty set
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testListWhenResponseIs404() {
-      Route53Api apiWhenDontExist = requestSendsResponse(list, notFound);
-      assertEquals(apiWhenDontExist.getZoneApi().list().get(0).toImmutableSet(), ImmutableSet.of());
+      Route53Api fail = requestSendsResponse(list, notFound);
+      assertEquals(fail.getZoneApi().list().get(0).toImmutableSet(), ImmutableSet.of());
    }
    
    HttpRequest listWithOptions = HttpRequest.builder().method("GET")
@@ -100,14 +138,34 @@ public class ZoneApiExpectTest extends BaseRoute53ApiExpectTest {
       assertEquals(apiWhenWithOptionsExist.getZoneApi().list(afterMarker("Z333333YYYYYYY")).toString(),
             new ListHostedZonesResponseTest().expected().toString());
    }
-
    
    public void testList2PagesWhenResponseIs2xx() {
       HttpResponse noMore = HttpResponse.builder().statusCode(200)
             .payload(payloadFromStringWithContentType("<ListHostedZonesResponse />", "text/xml")).build();
 
-      Route53Api apiWhenExist = requestsSendResponses(list, listResponse, listWithOptions, noMore);
-      assertEquals(apiWhenExist.getZoneApi().list().concat().toString(), new ListHostedZonesResponseTest().expected()
+      Route53Api success = requestsSendResponses(list, listResponse, listWithOptions, noMore);
+      assertEquals(success.getZoneApi().list().concat().toString(), new ListHostedZonesResponseTest().expected()
             .toString());
+   }
+
+   HttpRequest delete = HttpRequest.builder().method("DELETE")
+         .endpoint("https://route53.amazonaws.com/2012-02-29/hostedzone/Z1XTHCPEFRWV1X")
+         .addHeader("Host", "route53.amazonaws.com")
+         .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
+         .addHeader("X-Amzn-Authorization",
+               "AWS3-HTTPS AWSAccessKeyId=identity,Algorithm=HmacSHA256,Signature=pylxNiLcrsjNRZOsxyT161JCwytVPHyc2rFfmNCuZKI=")
+         .build();
+   
+   HttpResponse deleteResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResourceWithContentType("/change.xml", "text/xml")).build();
+
+   public void testDeleteWhenResponseIs2xx() {
+      Route53Api success = requestSendsResponse(delete, deleteResponse);
+      assertEquals(success.getZoneApi().delete("Z1XTHCPEFRWV1X").toString(), new GetChangeResponseTest().expected().toString());
+   }
+
+   public void testDeleteWhenResponseIs404() {
+      Route53Api fail = requestSendsResponse(delete, notFound);
+      assertNull(fail.getZoneApi().delete("Z1XTHCPEFRWV1X"));
    }
 }

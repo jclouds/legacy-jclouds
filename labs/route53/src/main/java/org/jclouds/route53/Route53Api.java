@@ -42,7 +42,7 @@ public interface Route53Api {
     * 
     * @param changeID
     *           The ID of the change batch request.
-    * @return nulll, if not found
+    * @return null, if not found
     */
    Change getChange(String changeID);
 

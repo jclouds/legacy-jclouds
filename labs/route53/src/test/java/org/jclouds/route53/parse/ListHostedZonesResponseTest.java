@@ -54,13 +54,13 @@ public class ListHostedZonesResponseTest extends BaseHandlerTest {
       return IterableWithMarkers.from(
             ImmutableSet.of(
                   Zone.builder()
-                      .id("/hostedzone/Z21DW1QVGID6NG")
+                      .id("Z21DW1QVGID6NG")
                       .name("example.com.")
                       .callerReference("a_unique_reference")
                       .resourceRecordSetCount(17)
                       .comment("Migrate an existing domain to Route 53").build(),
                   Zone.builder()
-                      .id("/hostedzone/Z2682N5HXP0BZ4")
+                      .id("Z2682N5HXP0BZ4")
                       .name("example2.com.")
                       .callerReference("a_unique_reference2")
                       .resourceRecordSetCount(117)
