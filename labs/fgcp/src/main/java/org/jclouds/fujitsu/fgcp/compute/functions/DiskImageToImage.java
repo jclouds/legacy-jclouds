@@ -30,10 +30,8 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.fujitsu.fgcp.domain.DiskImage;
-import org.jclouds.location.suppliers.all.RegionToProviderOrJustProvider;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 
 /**
  * Created by IntelliJ IDEA.
@@ -44,15 +42,10 @@ import com.google.common.collect.Iterables;
 public class DiskImageToImage implements Function<DiskImage, Image> {
 
    private final DiskImageToOperatingSystem diskImageToOperatingSystem;
-   private final RegionToProviderOrJustProvider regionSupplier;
 
    @Inject
-   public DiskImageToImage(
-         DiskImageToOperatingSystem diskImageToOperatingSystem,
-         RegionToProviderOrJustProvider locationSupplier) {
-      this.diskImageToOperatingSystem = checkNotNull(
-            diskImageToOperatingSystem, "diskImageToOperatingSystem");
-      this.regionSupplier = checkNotNull(locationSupplier, "locationProvider");
+   public DiskImageToImage(DiskImageToOperatingSystem diskImageToOperatingSystem) {
+      this.diskImageToOperatingSystem = checkNotNull(diskImageToOperatingSystem, "diskImageToOperatingSystem");
    }
 
    @Override
@@ -64,17 +57,12 @@ public class DiskImageToImage implements Function<DiskImage, Image> {
       builder.ids(from.getId());
       builder.name(from.getName());
       builder.description(from.getDescription());
-      builder.location(Iterables.getOnlyElement(regionSupplier.get()));
       // in fgcp, if the image is listed it is available
       builder.status(Status.AVAILABLE);
-
       OperatingSystem os = diskImageToOperatingSystem.apply(from);
       builder.operatingSystem(os);
-      String user = os.getFamily() == OsFamily.WINDOWS ? "Administrator"
-            : "root";
-      builder.defaultCredentials(LoginCredentials.builder().identity(user)
-            .noPassword().build());
-
+      String user = os.getFamily() == OsFamily.WINDOWS ? "Administrator" : "root";
+      builder.defaultCredentials(LoginCredentials.builder().identity(user).noPassword().build());
       return builder.build();
    }
 }
