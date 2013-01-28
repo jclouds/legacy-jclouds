@@ -39,9 +39,9 @@ public class SOAPWrapWithPasswordAuth implements HttpRequestFilter {
    static final String WSSE_NS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
    static final String PASSWORD_TEXT = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText";
    static final String SOAP_PREFIX = new StringBuilder()
-         .append("<soapenv:Envelope soapenv:mustUnderstand=\"1\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" ")
+         .append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" ")
          .append("xmlns:v01=\"http://webservice.api.ultra.neustar.com/v01/\"><soapenv:Header>")
-         .append("<wsse:Security xmlns:wsse=\"").append(WSSE_NS).append("\"><wsse:UsernameToken>")
+         .append("<wsse:Security soapenv:mustUnderstand=\"1\" xmlns:wsse=\"").append(WSSE_NS).append("\"><wsse:UsernameToken>")
          .append("<wsse:Username>%s</wsse:Username>")
          .append("<wsse:Password Type=\"").append(PASSWORD_TEXT).append("\">%s</wsse:Password>")
          .append("</wsse:UsernameToken></wsse:Security></soapenv:Header><soapenv:Body>").toString();

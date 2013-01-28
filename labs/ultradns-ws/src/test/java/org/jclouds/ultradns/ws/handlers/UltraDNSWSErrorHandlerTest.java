@@ -46,6 +46,28 @@ public class UltraDNSWSErrorHandlerTest {
          UltraDNSWSErrorHandler.class);
 
    @Test
+   public void testCode0SetsResourceNotFoundException() throws IOException {
+      HttpRequest request = HttpRequest.builder().method("POST")
+                                       .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+                                       .addHeader("Host", "ultra-api.ultradns.com:8443")
+                                       .payload(payloadFromResource("/list_tasks.xml")).build();
+      HttpCommand command = new HttpCommand(request);
+      HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
+                                          .payload(payloadFromResource("/task_doesnt_exist.xml")).build();
+
+      function.handleError(command, response);
+
+      assertEquals(command.getException().getClass(), ResourceNotFoundException.class);
+      assertEquals(command.getException().getMessage(), "Cannot find task with guid AAAAAAAAAAAAAAAA");
+
+      UltraDNSWSResponseException exception = UltraDNSWSResponseException.class.cast(command.getException().getCause());
+
+      assertEquals(exception.getMessage(), "Error 0: Cannot find task with guid AAAAAAAAAAAAAAAA");
+      assertEquals(exception.getError().getDescription(), "Cannot find task with guid AAAAAAAAAAAAAAAA");
+      assertEquals(exception.getError().getCode(), 0);
+   }
+
+   @Test
    public void testCode2401SetsResourceNotFoundException() throws IOException {
       HttpRequest request = HttpRequest.builder().method("POST")
                                        .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")

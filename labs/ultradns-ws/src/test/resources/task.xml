@@ -1,0 +1,13 @@
+<soap:Body>
+	<ns1:getStatusForTaskResponse
+		xmlns:ns1="http://webservice.api.ultra.neustar.com/v01/">
+		<TaskStatus xmlns:ns2="http://schema.ultraservice.neustar.com/v01/">
+			<ns2:id>
+				<ns2:guid>0b40c7dd-748d-4c49-8506-26f0c7d2ea9c</ns2:guid>
+			</ns2:id>
+			<ns2:code>COMPLETE</ns2:code>
+			<ns2:message>Processing complete</ns2:message>
+			<ns2:resultUrl>http://localhost:8008/users/node01/tasks/0b40c7dd-748d-4c49-8506-26f0c7d2ea9c/result</ns2:resultUrl>
+		</TaskStatus>
+	</ns1:getStatusForTaskResponse>
+</soap:Body>

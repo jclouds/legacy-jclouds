@@ -22,34 +22,33 @@ import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.ultradns.ws.UltraDNSWSError;
+import org.xml.sax.Attributes;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class UltraWSExceptionHandler extends ParseSax.HandlerForGeneratedRequestWithResult<UltraDNSWSError> {
-
+public class GuidHandler extends ParseSax.HandlerForGeneratedRequestWithResult<String> {
    private StringBuilder currentText = new StringBuilder();
-   private int code = -1;
-   private String description;
+   private String guid = null;
 
    @Override
-   public UltraDNSWSError getResult() {
+   public String getResult() {
       try {
-         return code != -1 ? UltraDNSWSError.fromCodeAndDescription(code, description) : null;
+         return guid;
       } finally {
-         code = -1;
-         description = null;
+         guid = null;
       }
    }
 
    @Override
+   public void startElement(String url, String name, String qName, Attributes attributes) {
+   }
+
+   @Override
    public void endElement(String uri, String name, String qName) {
-      if (equalsOrSuffix(qName, "errorCode")) {
-         code = Integer.parseInt(currentOrNull(currentText));
-      } else if (equalsOrSuffix(qName, "errorDescription")) {
-         description = currentOrNull(currentText);
+      if (equalsOrSuffix(qName, "guid")) {
+         guid = currentOrNull(currentText);
       }
       currentText = new StringBuilder();
    }
@@ -58,5 +57,4 @@ public class UltraWSExceptionHandler extends ParseSax.HandlerForGeneratedRequest
    public void characters(char ch[], int start, int length) {
       currentText.append(ch, start, length);
    }
-
 }
