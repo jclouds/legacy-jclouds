@@ -16,36 +16,45 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.ultradns.ws;
+package org.jclouds.ultradns.ws.features;
 
-import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.ultradns.ws.domain.Account;
-import org.jclouds.ultradns.ws.features.TaskApi;
-import org.jclouds.ultradns.ws.features.ZoneApi;
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.ultradns.ws.domain.Task;
+
+import com.google.common.collect.FluentIterable;
 
 /**
- * Provides access to Neustar UltraDNS via the SOAP API
- * <p/>
- * 
- * @see UltraDNSWSAsyncApi
- * @see <a href="https://www.ultradns.net/api/NUS_API_XML_SOAP.pdf" />
+ * @see TaskAsyncApi
  * @author Adrian Cole
  */
-public interface UltraDNSWSApi {
+public interface TaskApi {
    /**
-    * Returns the account of the current user.
+    * Runs a test task
+    * 
+    * @return guid of the task created
     */
-   Account getCurrentAccount();
+   String runTest(String value);
 
    /**
-    * Provides synchronous access to Zone features.
+    * Retrieves information about the specified task
+    * 
+    * @param guid
+    *           guid of the task to get information about.
+    * @return null if not found
     */
-   @Delegate
-   ZoneApi getZoneApi();
+   @Nullable
+   Task get(String guid);
 
    /**
-    * Provides synchronous access to Task features.
+    * Lists all tasks.
     */
-   @Delegate
-   TaskApi getTaskApi();
+   FluentIterable<Task> list();
+   
+   /**
+    * clears a background task in either a COMPLETE or ERROR state. 
+    * 
+    * @param guid
+    *           guid of the task to clear.
+    */
+   void clear(String guid);
 }

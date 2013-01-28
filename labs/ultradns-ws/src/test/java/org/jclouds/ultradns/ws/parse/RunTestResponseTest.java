@@ -16,36 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.ultradns.ws;
+package org.jclouds.ultradns.ws.parse;
 
-import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.ultradns.ws.domain.Account;
-import org.jclouds.ultradns.ws.features.TaskApi;
-import org.jclouds.ultradns.ws.features.ZoneApi;
+import static org.testng.Assert.assertEquals;
+
+import java.io.InputStream;
+
+import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.ultradns.ws.xml.GuidHandler;
+import org.testng.annotations.Test;
 
 /**
- * Provides access to Neustar UltraDNS via the SOAP API
- * <p/>
- * 
- * @see UltraDNSWSAsyncApi
- * @see <a href="https://www.ultradns.net/api/NUS_API_XML_SOAP.pdf" />
  * @author Adrian Cole
  */
-public interface UltraDNSWSApi {
-   /**
-    * Returns the account of the current user.
-    */
-   Account getCurrentAccount();
+@Test(testName = "RunTestResponseTest")
+public class RunTestResponseTest extends BaseHandlerTest {
 
-   /**
-    * Provides synchronous access to Zone features.
-    */
-   @Delegate
-   ZoneApi getZoneApi();
+   public void test() {
+      InputStream is = getClass().getResourceAsStream("/taskid.xml");
 
-   /**
-    * Provides synchronous access to Task features.
-    */
-   @Delegate
-   TaskApi getTaskApi();
+      GuidHandler handler = injector.getInstance(GuidHandler.class);
+      assertEquals(factory.create(handler).parse(is), "8d7a1725-4f4a-4b70-affa-f01dcce1526e");
+   }
 }
