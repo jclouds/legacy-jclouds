@@ -21,35 +21,44 @@ package org.jclouds.ultradns.ws.xml;
 import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
+import java.net.URI;
+
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.ultradns.ws.UltraDNSWSError;
+import org.jclouds.ultradns.ws.domain.Task;
+import org.jclouds.ultradns.ws.domain.Task.StatusCode;
+import org.xml.sax.Attributes;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class UltraWSExceptionHandler extends ParseSax.HandlerForGeneratedRequestWithResult<UltraDNSWSError> {
-
+public class TaskHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Task> {
    private StringBuilder currentText = new StringBuilder();
-   private int code = -1;
-   private String description;
+   private Task.Builder builder = Task.builder();
 
    @Override
-   public UltraDNSWSError getResult() {
+   public Task getResult() {
       try {
-         return code != -1 ? UltraDNSWSError.fromCodeAndDescription(code, description) : null;
+         return builder.build();
       } finally {
-         code = -1;
-         description = null;
+         builder = Task.builder();
       }
    }
 
    @Override
+   public void startElement(String url, String name, String qName, Attributes attributes) {
+   }
+
+   @Override
    public void endElement(String uri, String name, String qName) {
-      if (equalsOrSuffix(qName, "errorCode")) {
-         code = Integer.parseInt(currentOrNull(currentText));
-      } else if (equalsOrSuffix(qName, "errorDescription")) {
-         description = currentOrNull(currentText);
+      if (equalsOrSuffix(qName, "guid")) {
+         builder.guid(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "code")) {
+         builder.statusCode(StatusCode.valueOf(currentOrNull(currentText)));
+      } else if (equalsOrSuffix(qName, "message")) {
+         builder.message(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "resultUrl")) {
+         builder.resultUrl(URI.create(currentOrNull(currentText)));
       }
       currentText = new StringBuilder();
    }
@@ -58,5 +67,4 @@ public class UltraWSExceptionHandler extends ParseSax.HandlerForGeneratedRequest
    public void characters(char ch[], int start, int length) {
       currentText.append(ch, start, length);
    }
-
 }
