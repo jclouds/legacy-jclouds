@@ -27,6 +27,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.ultradns.ws.domain.Account;
+import org.jclouds.ultradns.ws.features.TaskAsyncApi;
 import org.jclouds.ultradns.ws.features.ZoneAsyncApi;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
 import org.jclouds.ultradns.ws.xml.AccountHandler;
@@ -59,4 +60,10 @@ public interface UltraDNSWSAsyncApi {
     */
    @Delegate
    ZoneAsyncApi getZoneApi();
+
+   /**
+    * Provides asynchronous access to Task features.
+    */
+   @Delegate
+   TaskAsyncApi getTaskApi();
 }
