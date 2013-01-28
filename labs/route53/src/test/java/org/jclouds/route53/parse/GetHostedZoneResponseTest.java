@@ -28,6 +28,8 @@ import org.jclouds.route53.domain.ZoneAndNameServers;
 import org.jclouds.route53.xml.GetHostedZoneResponseHandler;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * @author Adrian Cole
  */
@@ -47,15 +49,15 @@ public class GetHostedZoneResponseTest extends BaseHandlerTest {
    }
 
    public ZoneAndNameServers expected() {
-      return ZoneAndNameServers.builder()
-                               .addNameServer("ns-1638.awsdns-12.co.uk")
-                               .addNameServer("ns-144.awsdns-18.com")
-                               .addNameServer("ns-781.awsdns-33.net")
-                               .addNameServer("ns-1478.awsdns-56.org")
-                               .zone(Zone.builder()
-                                         .id("/hostedzone/Z21DW1QVGID6NG")
-                                         .name("example.com.")
-                                         .callerReference("a_unique_reference")
-                                         .comment("Migrate an existing domain to Route 53").build()).build();
+      return ZoneAndNameServers.create(Zone.builder()
+                                           .id("Z21DW1QVGID6NG")
+                                           .name("example.com.")
+                                           .callerReference("a_unique_reference")
+                                           .comment("Migrate an existing domain to Route 53").build(),
+                                       ImmutableList.<String> builder()
+                                                    .add("ns-1638.awsdns-12.co.uk")
+                                                    .add("ns-144.awsdns-18.com")
+                                                    .add("ns-781.awsdns-33.net")
+                                                    .add("ns-1478.awsdns-56.org").build());
    }
 }

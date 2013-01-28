@@ -18,13 +18,17 @@
  */
 package org.jclouds.route53.xml;
 
+import static org.jclouds.util.SaxUtils.currentOrNull;
+
+import java.util.Date;
+
 import javax.inject.Inject;
 
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.route53.domain.Change;
 import org.jclouds.route53.domain.Change.Status;
-import org.jclouds.util.SaxUtils;
+import org.xml.sax.Attributes;
 
 /**
  * @see <a href=
@@ -42,25 +46,34 @@ public class ChangeHandler extends ParseSax.HandlerForGeneratedRequestWithResult
    }
 
    private StringBuilder currentText = new StringBuilder();
-   private Change.Builder builder = Change.builder();
+
+   private String id;
+   private Status status;
+   private Date submittedAt;
 
    @Override
    public Change getResult() {
       try {
-         return builder.build();
+         return Change.create(id, status, submittedAt);
       } finally {
-         builder = Change.builder();
+         id = null;
+         status = null;
+         submittedAt = null;
       }
+   }
+
+   @Override
+   public void startElement(String url, String name, String qName, Attributes attributes) {
    }
 
    @Override
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("Id")) {
-         builder.id(SaxUtils.currentOrNull(currentText));
+         id = currentOrNull(currentText).replace("/change/", "");
       } else if (qName.equals("Status")) {
-         builder.status(Status.fromValue(SaxUtils.currentOrNull(currentText)));
+         status = Status.fromValue(currentOrNull(currentText));
       } else if (qName.equals("SubmittedAt")) {
-         builder.submittedAt(dateService.iso8601DateParse(SaxUtils.currentOrNull(currentText)));
+         submittedAt = dateService.iso8601DateParse(currentOrNull(currentText));
       }
       currentText = new StringBuilder();
    }

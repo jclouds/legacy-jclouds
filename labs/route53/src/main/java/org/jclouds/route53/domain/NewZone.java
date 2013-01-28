@@ -29,33 +29,40 @@ import com.google.common.collect.ImmutableList;
  * 
  * @author Adrian Cole
  */
-public final class ZoneAndNameServers {
+public final class NewZone {
 
-   private final Zone zone;
-   private final ImmutableList<String> nameServers;
+   private final ZoneAndNameServers zone;
+   private final Change change;
 
-   private ZoneAndNameServers(Zone zone, ImmutableList<String> nameServers) {
+   private NewZone(ZoneAndNameServers zone, Change change) {
       this.zone = checkNotNull(zone, "zone");
-      this.nameServers = checkNotNull(nameServers, "nameServers for %s", zone);
+      this.change = checkNotNull(change, "change of %s", zone);
    }
 
    /**
-    * the hosted zone
+    * @see ZoneAndNameServers#getZone()
     */
    public Zone getZone() {
-      return zone;
+      return zone.getZone();
    }
 
    /**
-    * the authoritative name servers for the hosted zone
+    * @see ZoneAndNameServers#getNameServers()
     */
    public ImmutableList<String> getNameServers() {
-      return nameServers;
+      return zone.getNameServers();
+   }
+
+   /**
+    * the zone creation event
+    */
+   public Change getChange() {
+      return change;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(zone, nameServers);
+      return Objects.hashCode(zone);
    }
 
    @Override
@@ -64,16 +71,17 @@ public final class ZoneAndNameServers {
          return true;
       if (obj == null || getClass() != obj.getClass())
          return false;
-      ZoneAndNameServers that = ZoneAndNameServers.class.cast(obj);
-      return equal(this.zone, that.zone) && equal(this.nameServers, that.nameServers);
+      NewZone that = NewZone.class.cast(obj);
+      return equal(this.zone, that.zone);
    }
 
    @Override
    public String toString() {
-      return toStringHelper("").add("zone", zone).add("nameServers", nameServers).toString();
+      return toStringHelper("").add("zone", zone.getZone()).add("nameServers", zone.getNameServers())
+            .add("change", change).toString();
    }
 
-   public static ZoneAndNameServers create(Zone zone, Iterable<String> nameServers) {
-      return new ZoneAndNameServers(zone, ImmutableList.<String> copyOf(checkNotNull(nameServers, "nameServers")));
+   public static NewZone create(ZoneAndNameServers zone, Change change) {
+      return new NewZone(zone, change);
    }
 }

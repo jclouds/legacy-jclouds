@@ -18,6 +18,8 @@
  */
 package org.jclouds.route53.domain;
 
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
@@ -28,51 +30,6 @@ import com.google.common.base.Objects;
  * @author Adrian Cole
  */
 public final class Change {
-   public static Builder builder() {
-      return new Builder();
-   }
-
-   public Builder toBuilder() {
-      return builder().from(this);
-   }
-
-   public final static class Builder {
-      private String id;
-      private Status status;
-      private Date submittedAt;
-
-      /**
-       * @see Change#getId()
-       */
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-
-      /**
-       * @see Change#getStatus()
-       */
-      public Builder status(Status status) {
-         this.status = status;
-         return this;
-      }
-
-      /**
-       * @see Change#getSubmittedAt()
-       */
-      public Builder submittedAt(Date submittedAt) {
-         this.submittedAt = submittedAt;
-         return this;
-      }
-
-      public Change build() {
-         return new Change(id, status, submittedAt);
-      }
-
-      public Builder from(Change in) {
-         return this.id(in.id).status(in.status).submittedAt(in.submittedAt);
-      }
-   }
 
    private final String id;
    private final Status status;
@@ -135,17 +92,18 @@ public final class Change {
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (obj == null)
+      if (obj == null || getClass() != obj.getClass())
          return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Change other = (Change) obj;
-      return Objects.equal(this.id, other.id);
+      Change other = Change.class.cast(obj);
+      return equal(this.id, other.id);
    }
 
    @Override
    public String toString() {
-      return Objects.toStringHelper(this).add("id", id).add("status", status).add("submittedAt", submittedAt)
-            .toString();
+      return toStringHelper(this).add("id", id).add("status", status).add("submittedAt", submittedAt).toString();
+   }
+
+   public static Change create(String id, Status status, Date submittedAt) {
+      return new Change(id, status, submittedAt);
    }
 }

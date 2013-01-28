@@ -18,6 +18,8 @@
  */
 package org.jclouds.route53.domain;
 
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Objects;
@@ -28,6 +30,76 @@ import com.google.common.base.Optional;
  * @author Adrian Cole
  */
 public final class Zone {
+
+   private final String id;
+   private final String name;
+   private final String callerReference;
+   private final int resourceRecordSetCount;
+   private final Optional<String> comment;
+
+   private Zone(String id, String name, String callerReference, int resourceRecordSetCount, Optional<String> comment) {
+      this.id = checkNotNull(id, "id");
+      this.name = checkNotNull(name, "name");
+      this.callerReference = checkNotNull(callerReference, "callerReference for %s", name);
+      this.resourceRecordSetCount = checkNotNull(resourceRecordSetCount, "resourceRecordSetCount for %s", name);
+      this.comment = checkNotNull(comment, "comment for %s", comment);
+   }
+
+   /**
+    * The ID of the hosted zone.
+    */
+   public String getId() {
+      return id;
+   }
+
+   /**
+    * The name of the domain.
+    */
+   public String getName() {
+      return name;
+   }
+
+   /**
+    * A unique string that identifies the request to create the hosted zone.
+    */
+   public String getCallerReference() {
+      return callerReference;
+   }
+
+   /**
+    * A percentage value that indicates the size of the policy in packed form.
+    */
+   public int getResourceRecordSetCount() {
+      return resourceRecordSetCount;
+   }
+
+   public Optional<String> getComment() {
+      return comment;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(id, name, callerReference);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null || getClass() != obj.getClass())
+         return false;
+      Zone other = Zone.class.cast(obj);
+      return equal(this.id, other.id) && equal(this.name, other.name)
+            && equal(this.callerReference, other.callerReference);
+   }
+
+   @Override
+   public String toString() {
+      return toStringHelper(this).omitNullValues().add("id", id).add("name", name)
+            .add("callerReference", callerReference).add("resourceRecordSetCount", resourceRecordSetCount)
+            .add("comment", comment.orNull()).toString();
+   }
+
    public static Builder builder() {
       return new Builder();
    }
@@ -91,77 +163,5 @@ public final class Zone {
          return this.id(in.id).name(in.name).callerReference(in.callerReference)
                .resourceRecordSetCount(in.resourceRecordSetCount).comment(in.comment.orNull());
       }
-   }
-
-   private final String id;
-   private final String name;
-   private final String callerReference;
-   private final int resourceRecordSetCount;
-   private final Optional<String> comment;
-
-   private Zone(String id, String name, String callerReference, int resourceRecordSetCount,
-         Optional<String> comment) {
-      this.id = checkNotNull(id, "id");
-      this.name = checkNotNull(name, "name");
-      this.callerReference = checkNotNull(callerReference, "callerReference for %s", name);
-      this.resourceRecordSetCount = checkNotNull(resourceRecordSetCount, "resourceRecordSetCount for %s", name);
-      this.comment = checkNotNull(comment, "comment for %s", comment);
-   }
-
-   /**
-    * The ID of the hosted zone.
-    */
-   public String getId() {
-      return id;
-   }
-
-   /**
-    * The name of the domain.
-    */
-   public String getName() {
-      return name;
-   }
-
-   /**
-    * A unique string that identifies the request to create the hosted zone.
-    */
-   public String getCallerReference() {
-      return callerReference;
-   }
-
-   /**
-    * A percentage value that indicates the size of the policy in packed form.
-    */
-   public int getResourceRecordSetCount() {
-      return resourceRecordSetCount;
-   }
-
-   public Optional<String> getComment() {
-      return comment;
-   }
-
-   @Override
-   public int hashCode() {
-      return Objects.hashCode(id, name, callerReference);
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Zone other = (Zone) obj;
-      return Objects.equal(this.id, other.id) && Objects.equal(this.name, other.name)
-            && Objects.equal(this.callerReference, other.callerReference);
-   }
-
-   @Override
-   public String toString() {
-      return Objects.toStringHelper(this).omitNullValues().add("id", id).add("name", name)
-            .add("callerReference", callerReference).add("resourceRecordSetCount", resourceRecordSetCount)
-            .add("comment", comment.orNull()).toString();
    }
 }

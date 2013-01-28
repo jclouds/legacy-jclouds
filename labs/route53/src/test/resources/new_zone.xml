@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CreateHostedZoneResponse
+	xmlns="https://route53.amazonaws.com/doc/2012-02-29/">
+	<HostedZone>
+		<Id>/hostedzone/Z21DW1QVGID6NG</Id>
+		<Name>example.com.</Name>
+		<CallerReference>a_unique_reference</CallerReference>
+		<Config>
+			<Comment>Migrate an existing domain to Route 53</Comment>
+		</Config>
+	</HostedZone>
+	<ChangeInfo>
+		<Id>C2682N5HXP0BZ4</Id>
+		<Status>INSYNC</Status>
+		<SubmittedAt>2011-09-10T01:36:41.958Z</SubmittedAt>
+	</ChangeInfo>
+	<DelegationSet>
+		<NameServers>
+			<NameServer>ns-1638.awsdns-12.co.uk</NameServer>
+			<NameServer>ns-144.awsdns-18.com</NameServer>
+			<NameServer>ns-781.awsdns-33.net</NameServer>
+			<NameServer>ns-1478.awsdns-56.org</NameServer>
+		</NameServers>
+	</DelegationSet>
+</CreateHostedZoneResponse>
