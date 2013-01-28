@@ -43,6 +43,10 @@ public enum OsFamily {
     * Scientific Linux
     */
    SCIENTIFIC,
+   /**
+    * Google Compute Engine Linux
+    */
+   GCEL,
    SIGAR, 
    SLACKWARE,
    SOLARIS, SUSE, TURBOLINUX, CLOUD_LINUX, UBUNTU, WINDOWS;
