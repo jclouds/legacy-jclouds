@@ -41,7 +41,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
@@ -63,7 +62,7 @@ public class ZoneApiLiveTest extends BaseRoute53ApiLiveTest {
 
    private void checkZone(Zone zone) {
       checkNotNull(zone.getId(), "Id cannot be null for a Zone %s", zone);
-      checkNotNull(zone.getName(), "Id cannot be null for a Zone %s", zone);
+      checkNotNull(zone.getName(), "Name cannot be null for a Zone %s", zone);
       checkNotNull(zone.getCallerReference(), "CallerReference cannot be null for a Zone %s", zone);
       checkNotNull(zone.getComment(), "While Comment can be null for a Zone, its Optional wrapper cannot %s", zone);
    }
@@ -76,7 +75,7 @@ public class ZoneApiLiveTest extends BaseRoute53ApiLiveTest {
          checkZone(zone);
       }
 
-      if (Iterables.size(response) > 0) {
+      if (response.size() > 0) {
          Zone zone = response.iterator().next();
          assertEquals(api().get(zone.getId()).getZone(), zone);
       }

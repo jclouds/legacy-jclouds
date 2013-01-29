@@ -16,48 +16,39 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.route53;
+package org.jclouds.route53.features;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.PathParam;
-
+import org.jclouds.collect.PagedIterable;
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.route53.domain.Change;
-import org.jclouds.route53.features.ResourceRecordSetApi;
-import org.jclouds.route53.features.ZoneApi;
+import org.jclouds.route53.domain.ResourceRecordSet;
+import org.jclouds.route53.domain.ResourceRecordSetIterable;
+import org.jclouds.route53.domain.ResourceRecordSetIterable.NextRecord;
 
 /**
- * Provides access to Amazon Route53 via the Query API
- * <p/>
- * 
- * @see Route53AsyncApi
- * @see <a href="http://docs.amazonwebservices.com/Route53/latest/APIReference"
+ * @see ResourceRecordSetAsyncApi
+ * @see <a href=
+ *      "http://docs.aws.amazon.com/Route53/latest/APIReference/ActionsOnRRS.html"
  *      />
  * @author Adrian Cole
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface Route53Api {
+public interface ResourceRecordSetApi {
 
    /**
-    * returns the current status of a change batch request.
-    * 
-    * @param changeID
-    *           The ID of the change batch request.
-    * @return null, if not found
+    * returns all resource record sets in order.
     */
-   Change getChange(String changeID);
+   PagedIterable<ResourceRecordSet> list();
 
    /**
-    * Provides synchronous access to Zone features.
+    * retrieves up to 100 resource record sets in order.
     */
-   @Delegate
-   ZoneApi getZoneApi();
-   
+   ResourceRecordSetIterable listFirstPage();
+
    /**
-    * Provides synchronous access to ResourceRecordSet features.
+    * retrieves up to 100 resource record sets in order, starting at {@code nextRecord}
     */
-   @Delegate
-   ResourceRecordSetApi getResourceRecordSetApiForZone(@PathParam("zoneId") String zoneId);
+   ResourceRecordSetIterable listAt(NextRecord nextRecord);
+
 }

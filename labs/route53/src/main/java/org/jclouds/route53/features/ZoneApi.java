@@ -65,24 +65,19 @@ public interface ZoneApi {
    NewZone createWithReferenceAndComment(String name, String callerReference, String comment);
 
    /**
-    * Lists the zones that have the specified path prefix. If there are none,
-    * the action returns an empty list.
+    * The action retrieves a specified number of zones in order.
     * 
     * <br/>
-    * You can paginate the results using the {@link ListZonesOptions parameter}
+    * You can paginate the results using the
+    * {@link ListZonesOptions parameter}
     * 
     * @param options
     *           the options describing the zones query
-    * 
-    * @return the response object
     */
    IterableWithMarker<Zone> list(ListZonesOptions options);
 
    /**
-    * Lists the zones that have the specified path prefix. If there are none,
-    * the action returns an empty list.
-    * 
-    * @return the response object
+    * returns all zones in order.
     */
    PagedIterable<Zone> list();
 

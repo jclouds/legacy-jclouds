@@ -16,15 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.route53.internal;
+package org.jclouds.route53.binders;
 
-import org.jclouds.http.HttpResponse;
-import org.jclouds.route53.Route53Api;
+import javax.inject.Singleton;
+
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpRequest.Builder;
+import org.jclouds.rest.Binder;
+import org.jclouds.route53.domain.ResourceRecordSetIterable.NextRecord;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class BaseRoute53ApiExpectTest extends BaseRoute53ExpectTest<Route53Api> {
-   protected HttpResponse notFound = HttpResponse.builder().statusCode(404).build();
+@Singleton
+public class BindNextRecord implements Binder {
+   @SuppressWarnings("unchecked")
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
+      NextRecord from = NextRecord.class.cast(payload);
+      Builder<?> builder = request.toBuilder();
+      builder.addQueryParam("name", from.getName());
+      builder.addQueryParam("type", from.getType().toString());
+      if (from.getIdentifier().isPresent())
+         builder.addQueryParam("identifier", from.getIdentifier().get());
+      return (R) builder.build();
+   }
 }
