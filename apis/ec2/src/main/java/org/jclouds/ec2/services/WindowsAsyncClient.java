@@ -62,7 +62,7 @@ public interface WindowsAsyncClient {
    /**
     * @see WindowsClient#bundleInstanceInRegion
     */
-   @Named("ec2:BundleInstance")
+   @Named("BundleInstance")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "BundleInstance")
@@ -77,7 +77,7 @@ public interface WindowsAsyncClient {
    /**
     * @see WindowsClient#cancelBundleTaskInRegion
     */
-   @Named("ec2:CancelBundleTask")
+   @Named("CancelBundleTask")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CancelBundleTask")
@@ -89,7 +89,7 @@ public interface WindowsAsyncClient {
    /**
     * @see BundleTaskClient#describeBundleTasksInRegion
     */
-   @Named("ec2:DescribeBundleTasks")
+   @Named("DescribeBundleTasks")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeBundleTasks")
@@ -102,7 +102,7 @@ public interface WindowsAsyncClient {
    /**
     * @see WindowsClient#getPasswordDataInRegion
     */
-   @Named("ec2:GetPasswordData")
+   @Named("GetPasswordData")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "GetPasswordData")

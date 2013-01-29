@@ -58,7 +58,7 @@ public interface ElasticIPAddressAsyncClient {
    /**
     * @see BaseEC2Client#allocateAddressInRegion
     */
-   @Named("ec2:AllocateAddress")
+   @Named("AllocateAddress")
    @POST
    @Path("/")
    @XMLResponseParser(AllocateAddressResponseHandler.class)
@@ -69,7 +69,7 @@ public interface ElasticIPAddressAsyncClient {
    /**
     * @see BaseEC2Client#associateAddressInRegion
     */
-   @Named("ec2:AssociateAddress")
+   @Named("AssociateAddress")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "AssociateAddress")
@@ -80,7 +80,7 @@ public interface ElasticIPAddressAsyncClient {
    /**
     * @see BaseEC2Client#disassociateAddressInRegion
     */
-   @Named("ec2:DisassociateAddress")
+   @Named("DisassociateAddress")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DisassociateAddress")
@@ -91,7 +91,7 @@ public interface ElasticIPAddressAsyncClient {
    /**
     * @see BaseEC2Client#releaseAddressInRegion
     */
-   @Named("ec2:ReleaseAddress")
+   @Named("ReleaseAddress")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "ReleaseAddress")
@@ -102,7 +102,7 @@ public interface ElasticIPAddressAsyncClient {
    /**
     * @see BaseEC2Client#describeAddressesInRegion
     */
-   @Named("ec2:DescribeAddresses")
+   @Named("DescribeAddresses")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeAddresses")

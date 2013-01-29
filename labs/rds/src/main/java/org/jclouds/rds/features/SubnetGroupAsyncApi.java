@@ -60,7 +60,7 @@ public interface SubnetGroupAsyncApi {
    /**
     * @see SubnetGroupApi#get()
     */
-   @Named("rds:DescribeDBSubnetGroups")
+   @Named("DescribeDBSubnetGroups")
    @POST
    @Path("/")
    @XMLResponseParser(SubnetGroupHandler.class)
@@ -71,7 +71,7 @@ public interface SubnetGroupAsyncApi {
    /**
     * @see SubnetGroupApi#list()
     */
-   @Named("rds:DescribeDBSubnetGroups")
+   @Named("DescribeDBSubnetGroups")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeDBSubnetGroupsResultHandler.class)
@@ -82,7 +82,7 @@ public interface SubnetGroupAsyncApi {
    /**
     * @see SubnetGroupApi#list(ListSubnetGroupsOptions)
     */
-   @Named("rds:DescribeDBSubnetGroups")
+   @Named("DescribeDBSubnetGroups")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeDBSubnetGroupsResultHandler.class)
@@ -92,7 +92,7 @@ public interface SubnetGroupAsyncApi {
    /**
     * @see SubnetGroupApi#delete()
     */
-   @Named("rds:DeleteDBSubnetGroup")
+   @Named("DeleteDBSubnetGroup")
    @POST
    @Path("/")
    @Fallback(VoidOnNotFoundOr404.class)

@@ -51,7 +51,7 @@ public interface AWSKeyPairAsyncClient extends KeyPairAsyncClient {
    /**
     * @see AWSKeyPairClient#importKeyPairInRegion
     */
-   @Named("ec2:ImportKeyPair")
+   @Named("ImportKeyPair")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "ImportKeyPair")

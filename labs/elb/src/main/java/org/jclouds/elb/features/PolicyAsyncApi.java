@@ -60,7 +60,7 @@ public interface PolicyAsyncApi {
    /**
     * @see PolicyApi#get()
     */
-   @Named("elasticloadbalancing:DescribeLoadBalancerPolicies")
+   @Named("DescribeLoadBalancerPolicies")
    @POST
    @Path("/")
    @XMLResponseParser(PolicyHandler.class)
@@ -71,7 +71,7 @@ public interface PolicyAsyncApi {
    /**
     * @see PolicyApi#list()
     */
-   @Named("elasticloadbalancing:DescribeLoadBalancerPolicies")
+   @Named("DescribeLoadBalancerPolicies")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeLoadBalancerPoliciesResultHandler.class)
@@ -82,7 +82,7 @@ public interface PolicyAsyncApi {
    /**
     * @see PolicyApi#list(ListPoliciesOptions)
     */
-   @Named("elasticloadbalancing:DescribeLoadBalancerPolicies")
+   @Named("DescribeLoadBalancerPolicies")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeLoadBalancerPoliciesResultHandler.class)
@@ -94,7 +94,7 @@ public interface PolicyAsyncApi {
    /**
     * @see PolicyApi#getType()
     */
-   @Named("elasticloadbalancing:DescribeLoadBalancerPolicyTypes")
+   @Named("DescribeLoadBalancerPolicyTypes")
    @POST
    @Path("/")
    @XMLResponseParser(PolicyTypeHandler.class)
@@ -105,7 +105,7 @@ public interface PolicyAsyncApi {
    /**
     * @see PolicyApi#listTypes()
     */
-   @Named("elasticloadbalancing:DescribeLoadBalancerPolicyTypes")
+   @Named("DescribeLoadBalancerPolicyTypes")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeLoadBalancerPolicyTypesResultHandler.class)
@@ -116,7 +116,7 @@ public interface PolicyAsyncApi {
    /**
     * @see PolicyApi#listTypes(Iterable<String>)
     */
-   @Named("elasticloadbalancing:DescribeLoadBalancerPolicyTypes")
+   @Named("DescribeLoadBalancerPolicyTypes")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeLoadBalancerPolicyTypesResultHandler.class)
