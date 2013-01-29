@@ -192,7 +192,7 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
             HttpResponse.builder().statusCode(200).build()
       ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
 
-      assertTrue(api.removeMetadatum(410, 23));
+      assertTrue(api.deleteMetadatum(410, 23));
    }
 
    public void testRemoveManyMetadata() {
@@ -206,7 +206,7 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
       
       
       
-      assertTrue(api.removeMetadata(410, ImmutableList.<Integer> of(23, 24)));
+      assertTrue(api.deleteMetadata(410, ImmutableList.<Integer> of(23, 24)));
    }
 
    private Metadata getExpectedMetadata() {

@@ -84,7 +84,7 @@ public class HealthMonitorApiExpectTest extends BaseCloudLoadBalancerApiExpectTe
             HttpResponse.builder().statusCode(200).build()
       ).getHealthMonitorApiForZoneAndLoadBalancer("DFW", 2000);
 
-      assertTrue(api.remove());
+      assertTrue(api.delete());
    }
 
    public void testValidConnectHealthMonitor() {

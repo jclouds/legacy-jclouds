@@ -93,7 +93,7 @@ public class ConnectionApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
             HttpResponse.builder().statusCode(200).build()
       ).getConnectionApiForZoneAndLoadBalancer("DFW", 2000);
 
-      assertTrue(api.removeConnectionThrottle());
+      assertTrue(api.deleteConnectionThrottle());
    }
    
    public void testIsConnectionLogging() {

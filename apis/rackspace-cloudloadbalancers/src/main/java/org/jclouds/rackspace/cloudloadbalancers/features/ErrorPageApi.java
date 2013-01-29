@@ -43,5 +43,5 @@ public interface ErrorPageApi {
     * If a custom error page is deleted, or the load balancer is changed to a non-HTTP protocol, the default error 
     * page will be restored.
     */
-   boolean remove();
+   boolean delete();
 }

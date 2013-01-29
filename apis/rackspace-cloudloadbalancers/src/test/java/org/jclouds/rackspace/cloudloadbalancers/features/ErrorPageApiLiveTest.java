@@ -76,7 +76,7 @@ public class ErrorPageApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    
    @Test(dependsOnMethods = "testCreateAndGetErrorPage")
    public void testRemoveAndGetErrorPage() throws Exception {
-      assertTrue(clbApi.getErrorPageApiForZoneAndLoadBalancer(zone, lb.getId()).remove());
+      assertTrue(clbApi.getErrorPageApiForZoneAndLoadBalancer(zone, lb.getId()).delete());
       assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
       
       String content = clbApi.getErrorPageApiForZoneAndLoadBalancer(zone, lb.getId()).get();
@@ -88,7 +88,7 @@ public class ErrorPageApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    @AfterGroups(groups = "live")
    protected void tearDownContext() {
       assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
-      clbApi.getLoadBalancerApiForZone(zone).remove(lb.getId());
+      clbApi.getLoadBalancerApiForZone(zone).delete(lb.getId());
       assertTrue(awaitDeleted(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
       super.tearDownContext();
    }

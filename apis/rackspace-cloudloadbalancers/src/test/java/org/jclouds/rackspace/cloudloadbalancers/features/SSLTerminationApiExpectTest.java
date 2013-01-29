@@ -91,7 +91,7 @@ public class SSLTerminationApiExpectTest extends BaseCloudLoadBalancerApiExpectT
             HttpResponse.builder().statusCode(200).build()
       ).getSSLTerminationApiForZoneAndLoadBalancer("DFW", 2000);
 
-      assertTrue(api.remove());
+      assertTrue(api.delete());
    }
 
    public static SSLTermination getSSLTermination() throws IOException {

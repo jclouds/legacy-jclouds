@@ -45,9 +45,9 @@ public interface SessionPersistenceApi {
    void create(SessionPersistence sessionPersistence);
    
    /**
-    * Remove session persistence.
+    * Delete session persistence.
     * 
     * @see SessionPersistence
     */
-   void remove();
+   void delete();
 }

@@ -46,23 +46,23 @@ public interface AccessRuleApi {
    Iterable<AccessRuleWithId> list();
    
    /**
-    * Remove an access rule from the access list.
+    * Delete an access rule from the access list.
     * 
-    * @return true on a successful removal, false if the access rule was not found
+    * @return true on a successful delete, false if the access rule was not found
     */
-   boolean remove(int id);
+   boolean delete(int id);
    
    /**
     * Batch delete the access rules given the specified ids.
     * 
-    * @return true on a successful removal, false if the access rule was not found
+    * @return true on a successful delete, false if the access rule was not found
     */
-   boolean remove(Iterable<Integer> ids);
+   boolean delete(Iterable<Integer> ids);
    
    /**
-    * Remove the entire access list.
+    * Delete the entire access list.
     * 
-    * @return true on a successful removal, false if the access rule was not found
+    * @return true on a successful delete, false if the access rule was not found
     */
-   boolean removeAll();
+   boolean deleteAll();
 }

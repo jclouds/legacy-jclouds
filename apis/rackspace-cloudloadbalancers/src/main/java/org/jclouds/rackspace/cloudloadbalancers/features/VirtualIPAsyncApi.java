@@ -74,22 +74,22 @@ public interface VirtualIPAsyncApi {
    ListenableFuture<Iterable<VirtualIPWithId>> list();
 
    /**
-    * @see VirtualIPApi#remove(int)
+    * @see VirtualIPApi#delete(int)
     */
-   @Named("virtualip:remove")
+   @Named("virtualip:delete")
    @DELETE
    @Fallback(FalseOnNotFoundOr404.class)
    @Path("/virtualips/{id}")
    @Consumes("*/*")
-   ListenableFuture<Boolean> remove(@PathParam("id") int id);
+   ListenableFuture<Boolean> delete(@PathParam("id") int id);
 
    /**
-    * @see VirtualIPApi#remove(Iterable)
+    * @see VirtualIPApi#delete(Iterable)
     */
-   @Named("virtualip:remove")
+   @Named("virtualip:delete")
    @DELETE
    @Fallback(FalseOnNotFoundOr404.class)
    @Path("/virtualips")
    @Consumes("*/*")
-   ListenableFuture<Boolean> remove(@QueryParam("id") Iterable<Integer> ids);
+   ListenableFuture<Boolean> delete(@QueryParam("id") Iterable<Integer> ids);
 }

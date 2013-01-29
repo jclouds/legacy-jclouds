@@ -53,7 +53,7 @@ public interface SessionPersistenceAsyncApi {
    /**
     * @see SessionPersistenceApi#get()
     */
-   @Named("sessionpersistence:state")
+   @Named("sessionpersistence:get")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(ParseSessionPersistence.class)
@@ -64,7 +64,7 @@ public interface SessionPersistenceAsyncApi {
    /**
     * @see SessionPersistenceApi#create(SessionPersistence)
     */
-   @Named("sessionpersistence:state")
+   @Named("sessionpersistence:create")
    @PUT
    @Produces(MediaType.APPLICATION_JSON)
    @Consumes(MediaType.APPLICATION_JSON)
@@ -74,12 +74,12 @@ public interface SessionPersistenceAsyncApi {
    ListenableFuture<Void> create(@PayloadParam("sessionPersistence") SessionPersistence sessionPersistence);
 
    /**
-    * @see SessionPersistenceApi#remove()
+    * @see SessionPersistenceApi#delete()
     */
-   @Named("sessionpersistence:state")
+   @Named("sessionpersistence:delete")
    @DELETE
    @Consumes(MediaType.APPLICATION_JSON)
    @Fallback(VoidOnNotFoundOr404.class)
    @Path("/sessionpersistence")
-   ListenableFuture<Void> remove();
+   ListenableFuture<Void> delete();
 }

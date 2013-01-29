@@ -70,12 +70,12 @@ public interface HealthMonitorAsyncApi {
    ListenableFuture<HealthMonitor> get();
 
    /**
-    * @see HealthMonitorApi#remove()
+    * @see HealthMonitorApi#delete()
     */
-   @Named("healthmonitor:remove")
+   @Named("healthmonitor:delete")
    @DELETE
    @Fallback(FalseOnNotFoundOr422.class)
    @Path("/healthmonitor")
    @Consumes("*/*")
-   ListenableFuture<Boolean> remove();
+   ListenableFuture<Boolean> delete();
 }

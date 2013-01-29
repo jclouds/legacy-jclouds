@@ -73,32 +73,32 @@ public interface AccessRuleAsyncApi {
    ListenableFuture<Iterable<AccessRuleWithId>> list();
 
    /**
-    * @see AccessRuleApi#remove(int)
+    * @see AccessRuleApi#delete(int)
     */
-   @Named("accessrule:remove")
+   @Named("accessrule:delete")
    @DELETE
    @Fallback(FalseOnNotFoundOr404.class)
    @Path("/accesslist/{id}")
    @Consumes("*/*")
-   ListenableFuture<Boolean> remove(@PathParam("id") int id);
+   ListenableFuture<Boolean> delete(@PathParam("id") int id);
 
    /**
-    * @see AccessRuleApi#remove(Iterable)
+    * @see AccessRuleApi#delete(Iterable)
     */
-   @Named("accessrule:remove")
+   @Named("accessrule:delete")
    @DELETE
    @Fallback(FalseOnNotFoundOr404.class)
    @Path("/accesslist")
    @Consumes("*/*")
-   ListenableFuture<Boolean> remove(@QueryParam("id") Iterable<Integer> ids);
+   ListenableFuture<Boolean> delete(@QueryParam("id") Iterable<Integer> ids);
 
    /**
-    * @see AccessRuleApi#removeAll()
+    * @see AccessRuleApi#deleteAll()
     */
-   @Named("accessrule:remove")
+   @Named("accessrule:delete")
    @DELETE
    @Fallback(FalseOnNotFoundOr404.class)
    @Path("/accesslist")
    @Consumes("*/*")
-   ListenableFuture<Boolean> removeAll();
+   ListenableFuture<Boolean> deleteAll();
 }

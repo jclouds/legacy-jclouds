@@ -46,9 +46,9 @@ public interface HealthMonitorApi {
    HealthMonitor get();
    
    /**
-    * Remove health monitor.
+    * Delete health monitor.
     * 
-    * @return true on a successful removal, false if the health monitor was not found
+    * @return true on a successful delete, false if the health monitor was not found
     */
-   boolean remove();
+   boolean delete();
 }

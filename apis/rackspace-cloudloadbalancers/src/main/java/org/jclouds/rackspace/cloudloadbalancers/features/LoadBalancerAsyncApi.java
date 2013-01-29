@@ -127,14 +127,14 @@ public interface LoadBalancerAsyncApi {
    ListenableFuture<LoadBalancer> get(@PathParam("id") int id);
 
    /**
-    * @see LoadBalancerApi#remove(int)
+    * @see LoadBalancerApi#delete(int)
     */
-   @Named("lb:remove")
+   @Named("lb:delete")
    @DELETE
    @Fallback(VoidOnNotFoundOr404.class)
    @Path("/loadbalancers/{id}")
    @Consumes("*/*")
-   ListenableFuture<Void> remove(@PathParam("id") int id);
+   ListenableFuture<Void> delete(@PathParam("id") int id);
 
    /**
     * @see LoadBalancerApi#createMetadata(int, Iterable)
@@ -175,23 +175,23 @@ public interface LoadBalancerAsyncApi {
                                              @PayloadParam("value") String value);
 
    /**
-    * @see LoadBalancerApi#removeMetadatum(int, int)
+    * @see LoadBalancerApi#deleteMetadatum(int, int)
     */
-   @Named("lb:removemetadatum")
+   @Named("lb:deletemetadatum")
    @DELETE
    @Fallback(FalseOnNotFoundOr404.class)
    @Consumes("*/*")
    @Path("/loadbalancers/{id}/metadata/{metadatumId}")
-   ListenableFuture<Boolean> removeMetadatum(@PathParam("id") int id, @PathParam("metadatumId") int metadatumId);
+   ListenableFuture<Boolean> deleteMetadatum(@PathParam("id") int id, @PathParam("metadatumId") int metadatumId);
 
    /**
-    * @see LoadBalancerApi#removeMetadata(int, Iterable)
+    * @see LoadBalancerApi#deleteMetadata(int, Iterable)
     */
-   @Named("lb:removemetadata")
+   @Named("lb:deletemetadata")
    @DELETE
    @Fallback(FalseOnNotFoundOr404.class)
    @Consumes("*/*")
    @Path("/loadbalancers/{id}/metadata")
-   ListenableFuture<Boolean> removeMetadata(@PathParam("id") int id, 
+   ListenableFuture<Boolean> deleteMetadata(@PathParam("id") int id, 
                                             @QueryParam("id") Iterable<Integer> metadataIds);
 }
