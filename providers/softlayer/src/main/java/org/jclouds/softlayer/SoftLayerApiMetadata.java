@@ -18,9 +18,6 @@
  */
 package org.jclouds.softlayer;
 
-import static java.util.concurrent.TimeUnit.MINUTES;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.net.URI;
@@ -63,8 +60,6 @@ public class SoftLayerApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", SECONDS.toMillis(90) + "");
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "ProductPackageClient", MINUTES.toMillis(3) + "");
       properties.setProperty("jclouds.ssh.max-retries", "5");
       properties.setProperty("jclouds.ssh.retry-auth", "true");
       return properties;

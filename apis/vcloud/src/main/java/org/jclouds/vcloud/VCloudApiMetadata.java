@@ -17,9 +17,7 @@
  * under the License.
  */
 package org.jclouds.vcloud;
-import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
-import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 import static org.jclouds.reflect.Reflection2.typeToken;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_FENCEMODE;
@@ -69,9 +67,6 @@ public class VCloudApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", MINUTES.toMillis(5) + "");
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "VCloudLoginClient.login", MINUTES.toMillis(3) + "");
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "VCloudVersionsClient.getSupportedVersions", MINUTES.toMillis(3) + "");
       properties.setProperty(PROPERTY_VCLOUD_VERSION_SCHEMA, "1");
       properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE,
             String.format("http://www.vmware.com/vcloud/v${%s}", PROPERTY_VCLOUD_VERSION_SCHEMA));

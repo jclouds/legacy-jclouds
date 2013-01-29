@@ -17,8 +17,6 @@
  * under the License.
  */
 package org.jclouds.joyent.cloudapi.v6_5;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.net.URI;
@@ -63,7 +61,6 @@ public class JoyentCloudApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", SECONDS.toMillis(30) + "");
       // auth fail sometimes happens, as the rc.local script that injects the
       // authorized key executes after ssh has started.  
       properties.setProperty("jclouds.ssh.max-retries", "7");

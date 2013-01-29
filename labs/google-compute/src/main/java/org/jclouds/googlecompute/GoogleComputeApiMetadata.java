@@ -18,9 +18,13 @@
  */
 package org.jclouds.googlecompute;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.TypeToken;
-import com.google.inject.Module;
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+import static org.jclouds.oauth.v2.config.OAuthProperties.AUDIENCE;
+import static org.jclouds.oauth.v2.config.OAuthProperties.SIGNATURE_OR_MAC_ALGORITHM;
+
+import java.net.URI;
+import java.util.Properties;
+
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.googlecompute.config.GoogleComputeParserModule;
 import org.jclouds.googlecompute.config.GoogleComputeRestClientModule;
@@ -29,14 +33,9 @@ import org.jclouds.oauth.v2.config.OAuthAuthenticationModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
-import java.net.URI;
-import java.util.Properties;
-
-import static java.util.concurrent.TimeUnit.MINUTES;
-import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
-import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
-import static org.jclouds.oauth.v2.config.OAuthProperties.AUDIENCE;
-import static org.jclouds.oauth.v2.config.OAuthProperties.SIGNATURE_OR_MAC_ALGORITHM;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for GoogleCompute v1beta13 API
@@ -64,7 +63,6 @@ public class GoogleComputeApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", MINUTES.toMillis(1) + "");
       properties.put("oauth.endpoint", "https://accounts.google.com/o/oauth2/token");
       properties.put(AUDIENCE, "https://accounts.google.com/o/oauth2/token");
       properties.put(SIGNATURE_OR_MAC_ALGORITHM, "RS256");

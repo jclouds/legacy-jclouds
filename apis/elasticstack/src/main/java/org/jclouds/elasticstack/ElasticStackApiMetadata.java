@@ -18,8 +18,6 @@
  */
 package org.jclouds.elasticstack;
 
-import static java.util.concurrent.TimeUnit.MINUTES;
-import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.elasticstack.reference.ElasticStackConstants.PROPERTY_VNC_PASSWORD;
 import static org.jclouds.reflect.Reflection2.typeToken;
 
@@ -63,10 +61,6 @@ public class ElasticStackApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", MINUTES.toMillis(1) + "");
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "ElasticStackClient.startServer", MINUTES.toMillis(2) + "");
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "ElasticStackClient.createDrive", MINUTES.toMillis(2) + "");
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "ElasticStackClient.createAndStartServer", MINUTES.toMillis(2) + "");
       properties.setProperty(PROPERTY_VNC_PASSWORD, "IL9vs34d");
       // passwords are set post-boot, so auth failures are possible
       // from a race condition applying the password set script
