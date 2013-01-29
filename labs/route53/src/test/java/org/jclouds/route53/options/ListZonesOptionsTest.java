@@ -31,7 +31,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "maxItems", testName = "ListZonesOptionsTest")
+@Test(groups = "unit", testName = "ListZonesOptionsTest")
 public class ListZonesOptionsTest {
 
    public void testMarker() {
