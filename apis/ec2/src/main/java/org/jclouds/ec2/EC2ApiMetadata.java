@@ -18,8 +18,6 @@
  */
 package org.jclouds.ec2;
 
-import static java.util.concurrent.TimeUnit.MINUTES;
-import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 import static org.jclouds.compute.config.ComputeServiceProperties.RESOURCENAME_DELIMITER;
@@ -81,8 +79,6 @@ public class EC2ApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", MINUTES.toMillis(3) + "");
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "ec2:DescribeImages", MINUTES.toMillis(5) + "");
       properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
       properties.setProperty(PROPERTY_HEADER_TAG, "amz");
       properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "*");

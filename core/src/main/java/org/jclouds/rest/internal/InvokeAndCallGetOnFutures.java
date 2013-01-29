@@ -18,7 +18,6 @@
  */
 package org.jclouds.rest.internal;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.util.concurrent.Futures.getUnchecked;
 
@@ -32,7 +31,6 @@ import org.jclouds.reflect.Invocation;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.cache.Cache;
 import com.google.common.reflect.Invokable;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -45,7 +43,7 @@ public final class InvokeAndCallGetOnFutures<R> implements Function<Invocation, 
    @Resource
    private Logger logger = Logger.NULL;
 
-   private final Cache<Invokable<?, ?>, Invokable<?, ?>> sync2AsyncInvokables;
+   private final Function<Invocation, Invocation> sync2async;
    private final R receiver;
 
    /**
@@ -55,8 +53,8 @@ public final class InvokeAndCallGetOnFutures<R> implements Function<Invocation, 
     */
    @Inject
    @VisibleForTesting
-   InvokeAndCallGetOnFutures(Cache<Invokable<?, ?>, Invokable<?, ?>> sync2AsyncInvokables, R receiver) {
-      this.sync2AsyncInvokables = sync2AsyncInvokables;
+   InvokeAndCallGetOnFutures(Function<Invocation, Invocation> sync2async, R receiver) {
+      this.sync2async = sync2async;
       this.receiver = receiver;
    }
 
@@ -64,8 +62,7 @@ public final class InvokeAndCallGetOnFutures<R> implements Function<Invocation, 
    @Override
    public Object apply(Invocation in) {
       @SuppressWarnings("rawtypes")
-      Invokable target = checkNotNull(sync2AsyncInvokables.getIfPresent(in.getInvokable()), "invokable %s not in %s",
-            in.getInvokable(), sync2AsyncInvokables);
+      Invokable target = sync2async.apply(in).getInvokable();
       Object returnVal;
       try {
          returnVal = target.invoke(receiver, in.getArgs().toArray());

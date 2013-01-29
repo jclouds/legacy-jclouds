@@ -17,8 +17,6 @@
  * under the License.
  */
 package org.jclouds.azure.management;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.azure.management.config.AzureManagementProperties.SUBSCRIPTION_ID;
 import static org.jclouds.reflect.Reflection2.typeToken;
 
@@ -66,7 +64,6 @@ public class AzureManagementApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", SECONDS.toMillis(30) + "");
       return properties;
    }
 

@@ -16,23 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.rest.annotations;
+package org.jclouds;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import com.google.common.annotations.Beta;
+import com.google.common.util.concurrent.FutureFallback;
 
 /**
- * Annotates the appropriate {@link org.jclouds.Fallback} which propagates
- * the exception or returns a valid fallback value.
+ * Provides a backup value to replace an earlier exception.
  * 
- * @since 1.6
+ * @param <V>
+ *           the result type of the backup value
+ * 
  * @author Adrian Cole
+ * @see FutureFallback
+ * @since 1.6
  */
-@Target(METHOD)
-@Retention(RUNTIME)
-public @interface Fallback {
-   Class<? extends org.jclouds.Fallback<?>> value();
+@Beta
+public interface Fallback<V> extends FutureFallback<V> {
+   /**
+    * The exception is provided so that the {@code Fallback} implementation can
+    * conditionally determine whether to propagate the exception or to attempt
+    * to recover.
+    * 
+    * @param t
+    *           the exception that made the call fail.
+    */
+   V createOrPropagate(Throwable t) throws Exception;
 }

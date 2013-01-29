@@ -249,9 +249,14 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
          @Override
          public ListenableFuture<HttpResponse> submit(HttpCommand command) {
+            return Futures.immediateFuture(invoke(command));
+         }
+
+         @Override
+         public HttpResponse invoke(HttpCommand command) {
             assertEquals(command.getCurrentRequest().getRequestLine(),
                   "GET http://localhost:9999/client/1/foo HTTP/1.1");
-            return Futures.immediateFuture(HttpResponse.builder().build());
+            return HttpResponse.builder().build();
          }
 
       });
@@ -274,6 +279,11 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
          @Override
          public ListenableFuture<HttpResponse> submit(HttpCommand command) {
+            return Futures.immediateFuture(invoke(command));
+         }
+
+         @Override
+         public HttpResponse invoke(HttpCommand command) {
             if (callCounter == 1)
                assertEquals(command.getCurrentRequest().getRequestLine(),
                      "GET http://localhost:1111/client/1/bar/2 HTTP/1.1");
@@ -281,7 +291,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
                assertEquals(command.getCurrentRequest().getRequestLine(),
                      "GET http://localhost:1111/client/1/foo HTTP/1.1");
             callCounter++;
-            return Futures.immediateFuture(HttpResponse.builder().build());
+            return HttpResponse.builder().build();
          }
       });
 
@@ -304,8 +314,13 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
          @Override
          public ListenableFuture<HttpResponse> submit(HttpCommand command) {
+            return Futures.immediateFuture(invoke(command));
+         }
+
+         @Override
+         public HttpResponse invoke(HttpCommand command) {
             assertEquals(command.getCurrentRequest().getRequestLine(), "GET http://howdyboys/client/1/foo HTTP/1.1");
-            return Futures.immediateFuture(HttpResponse.builder().build());
+            return HttpResponse.builder().build();
          }
 
       });
@@ -329,9 +344,14 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
          @Override
          public ListenableFuture<HttpResponse> submit(HttpCommand command) {
+            return Futures.immediateFuture(invoke(command));
+         }
+
+         @Override
+         public HttpResponse invoke(HttpCommand command) {
             assertEquals(command.getCurrentRequest().getRequestLine(),
                   "GET http://howdyboys/testing/testing/thepathparam/client/1/foo HTTP/1.1");
-            return Futures.immediateFuture(HttpResponse.builder().build());
+            return HttpResponse.builder().build();
          }
 
       });
@@ -355,8 +375,13 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
          @Override
          public ListenableFuture<HttpResponse> submit(HttpCommand command) {
+            return Futures.immediateFuture(invoke(command));
+         }
+
+         @Override
+         public HttpResponse invoke(HttpCommand command) {
             assertEquals(command.getCurrentRequest().getRequestLine(), "GET http://howdyboys/client/1/foo HTTP/1.1");
-            return Futures.immediateFuture(HttpResponse.builder().build());
+            return HttpResponse.builder().build();
          }
 
       });
@@ -380,8 +405,13 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
          @Override
          public ListenableFuture<HttpResponse> submit(HttpCommand command) {
+            return Futures.immediateFuture(invoke(command));
+         }
+
+         @Override
+         public HttpResponse invoke(HttpCommand command) {
             assertEquals(command.getCurrentRequest().getRequestLine(), "GET http://howdyboys/client/1/foo HTTP/1.1");
-            return Futures.immediateFuture(HttpResponse.builder().build());
+            return HttpResponse.builder().build();
          }
 
       }, new AbstractModule() {
@@ -419,8 +449,13 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
 
          @Override
          public ListenableFuture<HttpResponse> submit(HttpCommand command) {
+            return Futures.immediateFuture(invoke(command));
+         }
+
+         @Override
+         public HttpResponse invoke(HttpCommand command) {
             assertEquals(command.getCurrentRequest().getRequestLine(), "GET http://howdyboys/client/1/foo HTTP/1.1");
-            return Futures.immediateFuture(HttpResponse.builder().build());
+            return HttpResponse.builder().build();
          }
 
       });

@@ -33,6 +33,9 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Map.Entry;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.http.HttpCommandExecutorService;
@@ -51,8 +54,11 @@ import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
 import com.google.common.reflect.Invokable;
 import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.SimpleTimeLimiter;
+import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
+import com.google.inject.Provides;
 
 /**
  * 
@@ -82,6 +88,12 @@ public abstract class BaseRestApiTest {
          bind(ListeningExecutorService.class).annotatedWith(named(PROPERTY_USER_THREADS)).toInstance(sameThreadExecutor());
          bind(ListeningExecutorService.class).annotatedWith(named(PROPERTY_IO_WORKER_THREADS)).toInstance(sameThreadExecutor());
          bind(HttpCommandExecutorService.class).toInstance(mock);
+      }
+
+      @Provides
+      @Singleton
+      TimeLimiter timeLimiter(@Named(PROPERTY_USER_THREADS) ListeningExecutorService userExecutor){
+         return new SimpleTimeLimiter(userExecutor);
       }
    }
 

@@ -27,6 +27,7 @@ import java.util.Properties;
 
 import org.jclouds.http.BaseJettyTest;
 import org.jclouds.http.HttpCommand;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.io.Payloads;
@@ -34,6 +35,7 @@ import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.Invokable;
 
@@ -122,7 +124,7 @@ public class BackoffLimitedRetryHandlerTest {
       assertEquals(response.getPayload().getInput().read(), -1);
    }
 
-   private final RestAnnotationProcessor processor = BaseJettyTest.newBuilder(8100, new Properties()).buildInjector()
+   private final Function<Invocation, HttpRequest> processor = BaseJettyTest.newBuilder(8100, new Properties()).buildInjector()
          .getInstance(RestAnnotationProcessor.class);
 
    private HttpCommand createCommand() throws SecurityException, NoSuchMethodException {

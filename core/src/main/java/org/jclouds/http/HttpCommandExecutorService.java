@@ -27,15 +27,21 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Adrian Cole
  */
-public interface HttpCommandExecutorService {
+public interface HttpCommandExecutorService { 
 
    /**
-    * Asks the command to build a request relevant for an endpoint that produces responses of
-    * generic type {@code HttpResponse}. and invokes it on the endpoint, returning a future
+    * Returns a potentially deferred {@code HttpResponse} from a server responding to the
+    * {@code command}. The output {@code ListenableFuture} need not be
+    * {@linkplain Future#isDone done}, making {@code HttpCommandExecutorService}
+    * suitable for asynchronous derivations.
     * 
-    * @param command
-    *           that generates requests
-    * @return {@link Future} containing the response from the {@code endpoint}
     */
    ListenableFuture<HttpResponse> submit(HttpCommand command);
+   
+   /**
+    * Returns a {@code HttpResponse} from the server which responded to the
+    * {@code command}.
+    */
+   HttpResponse invoke(HttpCommand command);
+
 }

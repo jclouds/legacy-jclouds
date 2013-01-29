@@ -19,7 +19,6 @@
 package org.jclouds.rest;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Collections2.filter;
 
 import java.util.List;
 
@@ -29,7 +28,6 @@ import org.jclouds.predicates.Validator;
 import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.annotations.ParamValidators;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.Parameter;

@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.Response.Status;
 
+import org.jclouds.Fallback;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
@@ -37,7 +38,6 @@ import com.abiquo.server.core.infrastructure.storage.MovedVolumeDto;
 import com.abiquo.server.core.infrastructure.storage.VolumeManagementDto;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
-import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.TypeLiteral;
 
@@ -47,7 +47,7 @@ import com.google.inject.TypeLiteral;
  * @author Ignasi Barrera
  */
 @Singleton
-public class MovedVolume implements FutureFallback<VolumeManagementDto> {
+public class MovedVolume implements Fallback<VolumeManagementDto> {
 
    @Singleton
    @VisibleForTesting
@@ -67,14 +67,19 @@ public class MovedVolume implements FutureFallback<VolumeManagementDto> {
    }
 
    @Override
-   public ListenableFuture<VolumeManagementDto> create(final Throwable from) {
+   public ListenableFuture<VolumeManagementDto> create(Throwable from) throws Exception {
+      return immediateFuture(createOrPropagate(from));
+   }
+
+   @Override
+   public VolumeManagementDto createOrPropagate(Throwable from) throws Exception {
       Throwable exception = find(getCausalChain(from), isMovedException(from), null);
 
       if (exception != null) {
          HttpResponseException responseException = (HttpResponseException) exception;
          HttpResponse response = responseException.getResponse();
 
-         return immediateFuture(parser.apply(response).getVolume());
+         return parser.apply(response).getVolume();
       }
 
       throw propagate(from);

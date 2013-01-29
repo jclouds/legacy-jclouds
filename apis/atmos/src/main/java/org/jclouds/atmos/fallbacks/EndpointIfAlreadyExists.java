@@ -24,27 +24,32 @@ import static com.google.common.util.concurrent.Futures.immediateFuture;
 
 import java.net.URI;
 
+import org.jclouds.Fallback;
 import org.jclouds.blobstore.KeyAlreadyExistsException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.InvocationContext;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class EndpointIfAlreadyExists implements FutureFallback<URI>, InvocationContext<EndpointIfAlreadyExists> {
+public class EndpointIfAlreadyExists implements Fallback<URI>, InvocationContext<EndpointIfAlreadyExists> {
 
    private URI endpoint;
 
    @Override
-   public ListenableFuture<URI> create(Throwable t) {
+   public ListenableFuture<URI> create(Throwable t) throws Exception {
+      return immediateFuture(createOrPropagate(t));
+   }
+
+   @Override
+   public URI createOrPropagate(Throwable t) throws Exception {
       if (checkNotNull(t, "throwable") instanceof KeyAlreadyExistsException) {
-         return immediateFuture(endpoint);
+         return endpoint;
       }
       throw propagate(t);
    }

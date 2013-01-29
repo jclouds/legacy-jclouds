@@ -18,9 +18,7 @@
  */
 
 package org.jclouds.abiquo;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.Constants.PROPERTY_MAX_REDIRECTS;
-import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.abiquo.config.AbiquoProperties.ASYNC_TASK_MONITOR_DELAY;
 import static org.jclouds.abiquo.config.AbiquoProperties.CREDENTIAL_IS_TOKEN;
 import static org.jclouds.reflect.Reflection2.typeToken;
@@ -67,7 +65,6 @@ public class AbiquoApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", SECONDS.toMillis(90) + "");
       // By default redirects will be handled in the domain objects
       properties.setProperty(PROPERTY_MAX_REDIRECTS, "0");
       // The default polling delay between AsyncTask monitor requests

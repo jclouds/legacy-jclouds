@@ -18,9 +18,6 @@
  */
 package org.jclouds.openstack.keystone.v2_0;
 
-import static java.util.concurrent.TimeUnit.MINUTES;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERVICE_TYPE;
 
@@ -66,8 +63,6 @@ public class KeystoneApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", SECONDS.toMillis(30) + "");
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "ExtensionApi", MINUTES.toMillis(3) + "");
       properties.setProperty(CREDENTIAL_TYPE, CredentialTypes.PASSWORD_CREDENTIALS);
       properties.setProperty(SERVICE_TYPE, ServiceType.IDENTITY);
       return properties;

@@ -35,24 +35,24 @@ import org.testng.annotations.Test;
 public class EndpointIfAlreadyExistsTest {
 
    @Test
-   public void testFoundIsNullWhenEndpointNotSet() {
+   public void testFoundIsNullWhenEndpointNotSet() throws Exception {
       assertNull(getUnchecked(new EndpointIfAlreadyExists().create(new KeyAlreadyExistsException())));
    }
 
    @Test
-   public void testFoundIsEndpointWhenSet() {
+   public void testFoundIsEndpointWhenSet() throws Exception {
       assertEquals(
             getUnchecked(new EndpointIfAlreadyExists().setEndpoint(URI.create("foo")).create(
                   new KeyAlreadyExistsException())), URI.create("foo"));
    }
 
    @Test(expectedExceptions = RuntimeException.class)
-   public void testNotFoundPropagates() {
+   public void testNotFoundPropagates() throws Exception {
       new EndpointIfAlreadyExists().create(new RuntimeException());
    }
 
    @Test(expectedExceptions = NullPointerException.class)
-   public void testNullIsBad() {
+   public void testNullIsBad() throws Exception {
       new EndpointIfAlreadyExists().create(null);
    }
 }
