@@ -58,7 +58,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#getHealthOfInstancesOfLoadBalancer(String)
     */
-   @Named("elasticloadbalancing:DescribeInstanceHealth")
+   @Named("DescribeInstanceHealth")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeInstanceHealthResultHandler.class)
@@ -70,7 +70,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#getHealthOfInstancesOfLoadBalancer(Iterable, String)
     */
-   @Named("elasticloadbalancing:DescribeInstanceHealth")
+   @Named("DescribeInstanceHealth")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeInstanceHealthResultHandler.class)
@@ -84,7 +84,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#registerInstancesWithLoadBalancer
     */
-   @Named("elasticloadbalancing:RegisterInstancesWithLoadBalancer")
+   @Named("RegisterInstancesWithLoadBalancer")
    @POST
    @Path("/")
    @XMLResponseParser(InstancesResultHandler.class)
@@ -97,7 +97,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#registerInstanceWithLoadBalancer
     */
-   @Named("elasticloadbalancing:RegisterInstancesWithLoadBalancer")
+   @Named("RegisterInstancesWithLoadBalancer")
    @POST
    @Path("/")
    @XMLResponseParser(InstancesResultHandler.class)
@@ -109,7 +109,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#deregisterInstancesFromLoadBalancer
     */
-   @Named("elasticloadbalancing:DeregisterInstancesFromLoadBalancer")
+   @Named("DeregisterInstancesFromLoadBalancer")
    @POST
    @Path("/")
    @XMLResponseParser(InstancesResultHandler.class)
@@ -121,7 +121,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#deregisterInstanceFromLoadBalancer
     */
-   @Named("elasticloadbalancing:DeregisterInstancesFromLoadBalancer")
+   @Named("DeregisterInstancesFromLoadBalancer")
    @POST
    @Path("/")
    @XMLResponseParser(InstancesResultHandler.class)

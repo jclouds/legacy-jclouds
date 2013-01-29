@@ -69,7 +69,7 @@ public interface QueueAsyncApi {
    /**
     * @see QueueApi#list
     */
-   @Named("sqs:ListQueues")
+   @Named("ListQueues")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "ListQueues")
@@ -79,7 +79,7 @@ public interface QueueAsyncApi {
    /**
     * @see QueueApi#list(ListQueuesOptions)
     */
-   @Named("sqs:ListQueues")
+   @Named("ListQueues")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "ListQueues")
@@ -89,7 +89,7 @@ public interface QueueAsyncApi {
    /**
     * @see QueueApi#get(String)
     */
-   @Named("sqs:GetQueueUrl")
+   @Named("GetQueueUrl")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "GetQueueUrl")
@@ -100,7 +100,7 @@ public interface QueueAsyncApi {
    /**
     * @see QueueApi#getInAccount
     */
-   @Named("sqs:GetQueueUrl")
+   @Named("GetQueueUrl")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "GetQueueUrl")
@@ -112,7 +112,7 @@ public interface QueueAsyncApi {
    /**
     * @see QueueApi#create
     */
-   @Named("sqs:CreateQueue")
+   @Named("CreateQueue")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateQueue")
@@ -122,7 +122,7 @@ public interface QueueAsyncApi {
    /**
     * @see QueueApi#create
     */
-   @Named("sqs:CreateQueue")
+   @Named("CreateQueue")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateQueue")
@@ -132,7 +132,7 @@ public interface QueueAsyncApi {
    /**
     * @see QueueApi#delete
     */
-   @Named("sqs:DeleteQueue")
+   @Named("DeleteQueue")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteQueue")
@@ -142,7 +142,7 @@ public interface QueueAsyncApi {
    /**
     * @see QueueApi#getAttributes(URI)
     */
-   @Named("sqs:GetQueueAttributes")
+   @Named("GetQueueAttributes")
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "AttributeName.1" }, values = { "GetQueueAttributes", "All" })
@@ -154,7 +154,7 @@ public interface QueueAsyncApi {
    /**
     * @see QueueApi#getAttributes(URI, Iterable)
     */
-   @Named("sqs:GetQueueAttributes")
+   @Named("GetQueueAttributes")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "GetQueueAttributes")
@@ -165,7 +165,7 @@ public interface QueueAsyncApi {
    /**
     * @see QueueApi#getAttribute
     */
-   @Named("sqs:GetQueueAttributes")
+   @Named("GetQueueAttributes")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "GetQueueAttributes")
@@ -175,7 +175,7 @@ public interface QueueAsyncApi {
    /**
     * @see QueueApi#setAttribute
     */
-   @Named("sqs:SetQueueAttributes")
+   @Named("SetQueueAttributes")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "SetQueueAttributes")

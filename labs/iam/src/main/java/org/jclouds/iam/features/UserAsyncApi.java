@@ -55,7 +55,7 @@ public interface UserAsyncApi {
    /**
     * @see UserApi#getCurrent()
     */
-   @Named("iam:GetUser")
+   @Named("GetUser")
    @POST
    @Path("/")
    @XMLResponseParser(UserHandler.class)
@@ -65,7 +65,7 @@ public interface UserAsyncApi {
    /**
     * @see UserApi#get()
     */
-   @Named("iam:GetUser")
+   @Named("GetUser")
    @POST
    @Path("/")
    @XMLResponseParser(UserHandler.class)
@@ -76,7 +76,7 @@ public interface UserAsyncApi {
    /**
     * @see UserApi#list()
     */
-   @Named("iam:ListUsers")
+   @Named("ListUsers")
    @POST
    @Path("/")
    @XMLResponseParser(ListUsersResultHandler.class)
@@ -87,7 +87,7 @@ public interface UserAsyncApi {
    /**
     * @see UserApi#list(ListUsersOptions)
     */
-   @Named("iam:ListUsers")
+   @Named("ListUsers")
    @POST
    @Path("/")
    @XMLResponseParser(ListUsersResultHandler.class)

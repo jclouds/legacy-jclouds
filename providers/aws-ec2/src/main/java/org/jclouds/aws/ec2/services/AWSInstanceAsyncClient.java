@@ -62,7 +62,7 @@ public interface AWSInstanceAsyncClient extends InstanceAsyncClient {
    /**
     * @see AWSInstanceClient#describeInstancesInRegion
     */
-   @Named("ec2:DescribeInstances")
+   @Named("DescribeInstances")
    @Override
    @POST
    @Path("/")
@@ -76,7 +76,7 @@ public interface AWSInstanceAsyncClient extends InstanceAsyncClient {
    /**
     * @see AWSInstanceClient#runInstancesInRegion
     */
-   @Named("ec2:RunInstances")
+   @Named("RunInstances")
    @Override
    @POST
    @Path("/")

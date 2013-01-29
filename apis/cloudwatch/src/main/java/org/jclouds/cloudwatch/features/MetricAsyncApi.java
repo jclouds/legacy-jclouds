@@ -63,7 +63,7 @@ public interface MetricAsyncApi {
    /**
     * @see MetricApi#list()
     */
-   @Named("cloudwatch:ListMetrics")
+   @Named("ListMetrics")
    @POST
    @Path("/")
    @XMLResponseParser(ListMetricsResponseHandler.class)
@@ -75,7 +75,7 @@ public interface MetricAsyncApi {
    /**
     * @see MetricApi#list(ListMetricsOptions)
     */
-   @Named("cloudwatch:ListMetrics")
+   @Named("ListMetrics")
    @POST
    @Path("/")
    @XMLResponseParser(ListMetricsResponseHandler.class)
@@ -86,7 +86,7 @@ public interface MetricAsyncApi {
    /**
     * @see MetricApi#getMetricStatistics(GetMetricStatistics)
     */
-   @Named("cloudwatch:GetMetricStatistics")
+   @Named("GetMetricStatistics")
    @POST
    @Path("/")
    @XMLResponseParser(GetMetricStatisticsResponseHandlerV2.class)
@@ -97,7 +97,7 @@ public interface MetricAsyncApi {
    /**
     * @see MetricApi#getMetricStatistics(GetMetricStatistics, GetMetricStatisticsOptions)
     */
-   @Named("cloudwatch:GetMetricStatistics")
+   @Named("GetMetricStatistics")
    @POST
    @Path("/")
    @XMLResponseParser(GetMetricStatisticsResponseHandlerV2.class)
@@ -109,7 +109,7 @@ public interface MetricAsyncApi {
    /**
     * @see MetricApi#putMetricsInNamespace(Iterable, String)
     */
-   @Named("cloudwatch:PutMetricData")
+   @Named("PutMetricData")
    @POST
    @Path("/")
    @FormParams(keys = "Action", values = "PutMetricData")

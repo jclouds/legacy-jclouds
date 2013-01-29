@@ -65,7 +65,7 @@ public interface TagAsyncApi {
     * @see <a
     *      href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateTags.html">docs</a>
     */
-   @Named("ec2:CreateTags")
+   @Named("CreateTags")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateTags")
@@ -77,7 +77,7 @@ public interface TagAsyncApi {
     * @see <a
     *      href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateTags.html">docs</a>
     */
-   @Named("ec2:CreateTags")
+   @Named("CreateTags")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateTags")
@@ -89,7 +89,7 @@ public interface TagAsyncApi {
     * @see <a
     *      href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeTags.html">docs</a>
     */
-   @Named("ec2:DescribeTags")
+   @Named("DescribeTags")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeTags")
@@ -102,7 +102,7 @@ public interface TagAsyncApi {
     * @see <a
     *      href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeTags.html">docs</a>
     */
-   @Named("ec2:DescribeTags")
+   @Named("DescribeTags")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeTags")
@@ -116,7 +116,7 @@ public interface TagAsyncApi {
     * @see <a
     *      href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteTags.html">docs</a>
     */
-   @Named("ec2:DeleteTags")
+   @Named("DeleteTags")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteTags")
@@ -129,7 +129,7 @@ public interface TagAsyncApi {
     * @see <a
     *      href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteTags.html">docs</a>
     */
-   @Named("ec2:DeleteTags")
+   @Named("DeleteTags")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteTags")

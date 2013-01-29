@@ -61,7 +61,7 @@ public interface SecurityGroupAsyncClient {
    /**
     * @see SecurityGroupClient#createSecurityGroupInRegion
     */
-   @Named("ec2:CreateSecurityGroup")
+   @Named("CreateSecurityGroup")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateSecurityGroup")
@@ -72,7 +72,7 @@ public interface SecurityGroupAsyncClient {
    /**
     * @see SecurityGroupClient#deleteSecurityGroupInRegion
     */
-   @Named("ec2:DeleteSecurityGroup")
+   @Named("DeleteSecurityGroup")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteSecurityGroup")
@@ -83,7 +83,7 @@ public interface SecurityGroupAsyncClient {
    /**
     * @see SecurityGroupClient#describeSecurityGroupsInRegion
     */
-   @Named("ec2:DescribeSecurityGroups")
+   @Named("DescribeSecurityGroups")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeSecurityGroups")
@@ -97,7 +97,7 @@ public interface SecurityGroupAsyncClient {
     * @see SecurityGroupClient#authorizeSecurityGroupIngressInRegion(@ org.jclouds.javax.annotation.Nullable Region,
     *      String,UserIdGroupPair)
     */
-   @Named("ec2:AuthorizeSecurityGroupIngress")
+   @Named("AuthorizeSecurityGroupIngress")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "AuthorizeSecurityGroupIngress")
@@ -110,7 +110,7 @@ public interface SecurityGroupAsyncClient {
     * @see SecurityGroupClient#authorizeSecurityGroupIngressInRegion(@ org.jclouds.javax.annotation.Nullable Region,
     *      String,IpProtocol,int,int,String)
     */
-   @Named("ec2:AuthorizeSecurityGroupIngress")
+   @Named("AuthorizeSecurityGroupIngress")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "AuthorizeSecurityGroupIngress")
@@ -123,7 +123,7 @@ public interface SecurityGroupAsyncClient {
     * @see SecurityGroupClient#revokeSecurityGroupIngressInRegion(@Nullable Region,
     *      String,UserIdGroupPair)
     */
-   @Named("ec2:RevokeSecurityGroupIngress")
+   @Named("RevokeSecurityGroupIngress")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "RevokeSecurityGroupIngress")
@@ -136,7 +136,7 @@ public interface SecurityGroupAsyncClient {
     * @see SecurityGroupClient#revokeSecurityGroupIngressInRegion(@ org.jclouds.javax.annotation.Nullable Region,
     *      String,IpProtocol,int,int,String)
     */
-   @Named("ec2:RevokeSecurityGroupIngress")
+   @Named("RevokeSecurityGroupIngress")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "RevokeSecurityGroupIngress")

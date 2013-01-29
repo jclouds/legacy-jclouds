@@ -49,7 +49,7 @@ public interface PermissionAsyncApi {
    /**
     * @see PermissionApi#addPermissionToAccount
     */
-   @Named("sqs:AddPermission")
+   @Named("AddPermission")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "AddPermission")
@@ -59,7 +59,7 @@ public interface PermissionAsyncApi {
    /**
     * @see PermissionApi#remove
     */
-   @Named("sqs:RemovePermission")
+   @Named("RemovePermission")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "RemovePermission")

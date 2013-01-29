@@ -65,7 +65,7 @@ public interface SpotInstanceAsyncClient {
    /**
     * @see SpotInstanceClient#describeSpotInstanceRequestsInRegion
     */
-   @Named("ec2:DescribeSpotInstanceRequests")
+   @Named("DescribeSpotInstanceRequests")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeSpotInstanceRequests")
@@ -78,7 +78,7 @@ public interface SpotInstanceAsyncClient {
    /**
     * @see SpotInstanceClient#requestSpotInstanceInRegion
     */
-   @Named("ec2:RequestSpotInstances")
+   @Named("RequestSpotInstances")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "RequestSpotInstances")
@@ -91,7 +91,7 @@ public interface SpotInstanceAsyncClient {
    /**
     * @see SpotInstanceClient#requestSpotInstancesInRegion
     */
-   @Named("ec2:RequestSpotInstances")
+   @Named("RequestSpotInstances")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "RequestSpotInstances")
@@ -105,7 +105,7 @@ public interface SpotInstanceAsyncClient {
    /**
     * @see SpotInstanceClient#describeSpotPriceHistoryInRegion
     */
-   @Named("ec2:DescribeSpotPriceHistory")
+   @Named("DescribeSpotPriceHistory")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeSpotPriceHistory")
@@ -118,7 +118,7 @@ public interface SpotInstanceAsyncClient {
    /**
     * @see SpotInstanceClient#cancelSpotInstanceRequestsInRegion
     */
-   @Named("ec2:CancelSpotInstanceRequests")
+   @Named("CancelSpotInstanceRequests")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CancelSpotInstanceRequests")
