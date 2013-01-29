@@ -35,6 +35,7 @@ import javax.lang.model.type.NullType;
 
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.functions.OnlyElementOrNull;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ParseJson;
@@ -69,7 +70,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
-public class TransformerForRequest implements Function<GeneratedHttpRequest, Function<HttpResponse, ?>> {
+public class TransformerForRequest implements Function<HttpRequest, Function<HttpResponse, ?>> {
    private final ParseSax.Factory parserFactory;
    private final Injector injector;
    private final GetAcceptHeaders getAcceptHeaders;
@@ -83,7 +84,8 @@ public class TransformerForRequest implements Function<GeneratedHttpRequest, Fun
 
    @SuppressWarnings("unchecked")
    @Override
-   public Function<HttpResponse, ?> apply(GeneratedHttpRequest request) {
+   public Function<HttpResponse, ?> apply(HttpRequest in) {
+      GeneratedHttpRequest request = GeneratedHttpRequest.class.cast(in);
       Function<HttpResponse, ?> transformer;
       Class<? extends HandlerWithResult<?>> handler = getSaxResponseParserClassOrNull(request.getInvocation()
             .getInvokable());
@@ -93,7 +95,7 @@ public class TransformerForRequest implements Function<GeneratedHttpRequest, Fun
          transformer = getTransformerForMethod(request.getInvocation(), injector);
       }
       if (transformer instanceof InvocationContext<?>) {
-         ((InvocationContext<?>) transformer).setContext(request);
+         InvocationContext.class.cast(transformer).setContext(request);
       }
       if (request.getInvocation().getInvokable().isAnnotationPresent(Transform.class)) {
          Function<?, ?> wrappingTransformer = injector.getInstance(request.getInvocation().getInvokable()

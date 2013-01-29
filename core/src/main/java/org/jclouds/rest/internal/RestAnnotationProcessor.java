@@ -131,7 +131,7 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class RestAnnotationProcessor implements Function<Invocation, GeneratedHttpRequest> {
+public class RestAnnotationProcessor implements Function<Invocation, HttpRequest> {
 
    @Resource
    protected Logger logger = Logger.NULL;

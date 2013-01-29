@@ -20,15 +20,16 @@ package org.jclouds.fallbacks;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagate;
+import static com.google.common.util.concurrent.Futures.immediateFuture;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.Fallback;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
 
-import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -36,7 +37,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @Singleton
-public final class MapHttp4xxCodesToExceptions implements FutureFallback<Object> {
+public final class MapHttp4xxCodesToExceptions implements Fallback<Object> {
 
    private final PropagateIfRetryAfter propagateIfRetryAfter;
 
@@ -46,7 +47,12 @@ public final class MapHttp4xxCodesToExceptions implements FutureFallback<Object>
    }
 
    @Override
-   public ListenableFuture<Object> create(Throwable t) { // NO_UCD
+   public ListenableFuture<Object> create(Throwable t) throws Exception { // NO_UCD
+      return immediateFuture(createOrPropagate(t));
+   }
+
+   @Override
+   public Object createOrPropagate(Throwable t) throws Exception {
       propagateIfRetryAfter.create(t); // if we pass here, we aren't a retry-after exception
       if (t instanceof HttpResponseException) {
          HttpResponseException responseException = HttpResponseException.class.cast(t);

@@ -19,10 +19,12 @@
 package org.jclouds.http.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Throwables.propagate;
 import static com.google.common.io.ByteStreams.copy;
 import static com.google.common.io.ByteStreams.nullOutputStream;
 import static org.jclouds.http.HttpUtils.checkRequestHasContentLengthOrChunkedEncoding;
 import static org.jclouds.http.HttpUtils.wirePayloadIfEnabled;
+import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
 
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -46,7 +48,6 @@ import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Throwables2;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
@@ -58,11 +59,11 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandExecutorService {
    protected final HttpUtils utils;
    protected final ContentMetadataCodec contentMetadataCodec;
-   
-   private final DelegatingRetryHandler retryHandler;
-   private final IOExceptionRetryHandler ioRetryHandler;
-   private final DelegatingErrorHandler errorHandler;
-   private final ListeningExecutorService ioExecutor;
+
+   protected final DelegatingRetryHandler retryHandler;
+   protected final IOExceptionRetryHandler ioRetryHandler;
+   protected final DelegatingErrorHandler errorHandler;
+   protected final ListeningExecutorService ioExecutor;
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -74,9 +75,9 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
 
    @Inject
    protected BaseHttpCommandExecutorService(HttpUtils utils, ContentMetadataCodec contentMetadataCodec,
-            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ListeningExecutorService ioExecutor,
-            DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
-            DelegatingErrorHandler errorHandler, HttpWire wire) {
+         @Named(Constants.PROPERTY_IO_WORKER_THREADS) ListeningExecutorService ioExecutor,
+         DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
+         DelegatingErrorHandler errorHandler, HttpWire wire) {
       this.utils = checkNotNull(utils, "utils");
       this.contentMetadataCodec = checkNotNull(contentMetadataCodec, "contentMetadataCodec");
       this.retryHandler = checkNotNull(retryHandler, "retryHandler");
@@ -124,11 +125,70 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
    }
 
    @Override
+   public HttpResponse invoke(HttpCommand command) {
+      HttpResponse response = null;
+      for (;;) {
+         HttpRequest request = command.getCurrentRequest();
+         Q nativeRequest = null;
+         try {
+            for (HttpRequestFilter filter : request.getFilters()) {
+               request = filter.filter(request);
+            }
+            checkRequestHasContentLengthOrChunkedEncoding(request,
+                  "After filtering, the request has neither chunked encoding nor content length: " + request);
+            logger.debug("Sending request %s: %s", request.hashCode(), request.getRequestLine());
+            wirePayloadIfEnabled(wire, request);
+            utils.logRequest(headerLog, request, ">>");
+            nativeRequest = convert(request);
+            response = invoke(nativeRequest);
+
+            logger.debug("Receiving response %s: %s", request.hashCode(), response.getStatusLine());
+            utils.logResponse(headerLog, response, "<<");
+            if (response.getPayload() != null && wire.enabled())
+               wire.input(response);
+            nativeRequest = null; // response took ownership of streams
+            int statusCode = response.getStatusCode();
+            if (statusCode >= 300) {
+               if (shouldContinue(command, response))
+                  continue;
+               else
+                  break;
+            } else {
+               break;
+            }
+         } catch (Exception e) {
+            IOException ioe = getFirstThrowableOfType(e, IOException.class);
+            if (ioe != null && ioRetryHandler.shouldRetryRequest(command, ioe)) {
+               continue;
+            }
+            command.setException(new HttpResponseException(e.getMessage() + " connecting to "
+                  + command.getCurrentRequest().getRequestLine(), command, null, e));
+            break;
+
+         } finally {
+            cleanup(nativeRequest);
+         }
+      }
+      if (command.getException() != null)
+         throw propagate(command.getException());
+      return response;
+   }
+
+   private boolean shouldContinue(HttpCommand command, HttpResponse response) {
+      boolean shouldContinue = false;
+      if (retryHandler.shouldRetryRequest(command, response)) {
+         shouldContinue = true;
+      } else {
+         errorHandler.handleError(command, response);
+      }
+      return shouldContinue;
+   }
+
+   @Override
    public ListenableFuture<HttpResponse> submit(HttpCommand command) {
       HttpRequest request = command.getCurrentRequest();
       checkRequestHasContentLengthOrChunkedEncoding(request,
-               "if the request has a payload, it must be set to chunked encoding or specify a content length: "
-                        + request);
+            "if the request has a payload, it must be set to chunked encoding or specify a content length: " + request);
       return ioExecutor.submit(new HttpResponseCallable(command));
    }
 
@@ -140,63 +200,12 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
       }
 
       public HttpResponse call() throws Exception {
-
-         HttpResponse response = null;
-         for (;;) {
-            HttpRequest request = command.getCurrentRequest();
-            Q nativeRequest = null;
-            try {
-               for (HttpRequestFilter filter : request.getFilters()) {
-                  request = filter.filter(request);
-               }
-               checkRequestHasContentLengthOrChunkedEncoding(request,
-                        "After filtering, the request has neither chunked encoding nor content length: " + request);
-               logger.debug("Sending request %s: %s", request.hashCode(), request.getRequestLine());
-               wirePayloadIfEnabled(wire, request);
-               utils.logRequest(headerLog, request, ">>");
-               nativeRequest = convert(request);
-               response = invoke(nativeRequest);
-
-               logger.debug("Receiving response %s: %s", request.hashCode(), response.getStatusLine());
-               utils.logResponse(headerLog, response, "<<");
-               if (response.getPayload() != null && wire.enabled())
-                  wire.input(response);
-               nativeRequest = null;  // response took ownership of streams
-               int statusCode = response.getStatusCode();
-               if (statusCode >= 300) {
-                  if (shouldContinue(response))
-                     continue;
-                  else
-                     break;
-               } else {
-                  break;
-               }
-            } catch (Exception e) {
-               IOException ioe = Throwables2.getFirstThrowableOfType(e, IOException.class);
-               if (ioe != null && ioRetryHandler.shouldRetryRequest(command, ioe)) {
-                  continue;
-               }
-               command.setException(new HttpResponseException(e.getMessage() + " connecting to "
-                  + command.getCurrentRequest().getRequestLine(), command, null, e));
-               break;
-
-            } finally {
-               cleanup(nativeRequest);
-            }
+         try {
+            return invoke(command);
+         } finally {
+            if (command.getException() != null)
+               throw command.getException();
          }
-         if (command.getException() != null)
-            throw command.getException();
-         return response;
-      }
-
-      private boolean shouldContinue(HttpResponse response) {
-         boolean shouldContinue = false;
-         if (retryHandler.shouldRetryRequest(command, response)) {
-            shouldContinue = true;
-         } else {
-            errorHandler.handleError(command, response);
-         }
-         return shouldContinue;
       }
 
       @Override

@@ -84,12 +84,15 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.InputSupplier;
 import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.SimpleTimeLimiter;
+import com.google.common.util.concurrent.TimeLimiter;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -235,6 +238,12 @@ public abstract class BaseRestApiExpectTest<S> {
          bind(new TypeLiteral<Function<HttpRequest, HttpResponse>>() {
          }).toInstance(fn);
          bind(HttpCommandExecutorService.class).to(ExpectHttpCommandExecutorService.class);
+      }
+
+      @Provides
+      @Singleton
+      TimeLimiter timeLimiter(@Named(PROPERTY_USER_THREADS) ListeningExecutorService userExecutor){
+         return new SimpleTimeLimiter(userExecutor);
       }
    }
 

@@ -24,6 +24,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.ContextBuilder;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.predicates.validators.AllLowerCaseValidator;
@@ -35,6 +36,7 @@ import org.testng.TestException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.Invokable;
 import com.google.inject.Injector;
@@ -105,7 +107,7 @@ public class InputParamValidatorTest {
    }
 
    Injector injector;
-   RestAnnotationProcessor restAnnotationProcessor;
+   Function<Invocation, HttpRequest> restAnnotationProcessor;
 
    @BeforeClass
    void setupFactory() {
