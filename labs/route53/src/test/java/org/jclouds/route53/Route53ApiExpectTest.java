@@ -49,8 +49,6 @@ public class Route53ApiExpectTest extends BaseRoute53ApiExpectTest {
       assertEquals(api.getChange("C2682N5HXP0BZ4").toString(), new GetChangeResponseTest().expected().toString());
    }
 
-   HttpResponse notFound = HttpResponse.builder().statusCode(404).build();
-   
    public void testGetChangeNullWhenResponseIs404() {
       Route53Api api = requestSendsResponse(getChange, notFound);
       assertNull(api.getChange("C2682N5HXP0BZ4"));

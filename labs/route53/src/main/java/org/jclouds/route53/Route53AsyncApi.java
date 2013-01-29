@@ -30,6 +30,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.route53.domain.Change;
+import org.jclouds.route53.features.ResourceRecordSetAsyncApi;
 import org.jclouds.route53.features.ZoneAsyncApi;
 import org.jclouds.route53.filters.RestAuthentication;
 import org.jclouds.route53.xml.ChangeHandler;
@@ -64,4 +65,10 @@ public interface Route53AsyncApi {
     */
    @Delegate
    ZoneAsyncApi getZoneApi();
+
+   /**
+    * Provides asynchronous access to ResourceRecordSet features.
+    */
+   @Delegate
+   ResourceRecordSetAsyncApi getResourceRecordSetApiForZone(@PathParam("zoneId") String zoneId);
 }

@@ -16,15 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.route53.internal;
+package org.jclouds.aws.route53.features;
 
-import org.jclouds.http.HttpResponse;
-import org.jclouds.route53.Route53Api;
+import org.jclouds.route53.features.ResourceRecordSetApiLiveTest;
+import org.testng.annotations.Test;
 
 /**
- * 
  * @author Adrian Cole
  */
-public class BaseRoute53ApiExpectTest extends BaseRoute53ExpectTest<Route53Api> {
-   protected HttpResponse notFound = HttpResponse.builder().statusCode(404).build();
+@Test(groups = "live", testName = "AWSResourceRecordSetApiLiveTest")
+public class AWSResourceRecordSetApiLiveTest extends ResourceRecordSetApiLiveTest {
+   public AWSResourceRecordSetApiLiveTest() {
+      provider = "aws-route53";
+   }
 }

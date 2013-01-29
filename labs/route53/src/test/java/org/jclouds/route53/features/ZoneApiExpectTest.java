@@ -93,8 +93,6 @@ public class ZoneApiExpectTest extends BaseRoute53ApiExpectTest {
       assertEquals(success.getZoneApi().get("Z1XTHCPEFRWV1X").toString(), new GetHostedZoneResponseTest().expected()
             .toString());
    }
-   
-   HttpResponse notFound = HttpResponse.builder().statusCode(404).build();
 
    public void testGetWhenResponseIs404() {
       Route53Api fail = requestSendsResponse(get, notFound);

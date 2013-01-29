@@ -18,8 +18,11 @@
  */
 package org.jclouds.route53;
 
+import javax.ws.rs.PathParam;
+
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.route53.domain.Change;
+import org.jclouds.route53.features.ResourceRecordSetApi;
 import org.jclouds.route53.features.ZoneApi;
 
 /**
@@ -47,4 +50,10 @@ public interface Route53Api {
     */
    @Delegate
    ZoneApi getZoneApi();
+   
+   /**
+    * Provides synchronous access to ResourceRecordSet features.
+    */
+   @Delegate
+   ResourceRecordSetApi getResourceRecordSetApiForZone(@PathParam("zoneId") String zoneId);
 }
