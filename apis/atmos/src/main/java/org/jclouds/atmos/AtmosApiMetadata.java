@@ -17,8 +17,6 @@
  * under the License.
  */
 package org.jclouds.atmos;
-import static java.util.concurrent.TimeUnit.MINUTES;
-import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 import static org.jclouds.reflect.Reflection2.typeToken;
@@ -69,10 +67,6 @@ public class AtmosApiMetadata extends BaseRestApiMetadata {
       Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_REGIONS, "DEFAULT");
       properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "X-Object-Meta-");
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", MINUTES.toMillis(5) + "");
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "AtmosClient.createFile", MINUTES.toMillis(10) + "");
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "AtmosClient.updateFile", MINUTES.toMillis(10) + "");
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "AtmosClient.readFile", MINUTES.toMillis(10) + "");
       return properties;
    }
 

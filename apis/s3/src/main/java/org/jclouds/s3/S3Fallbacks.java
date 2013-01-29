@@ -25,24 +25,29 @@ import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static org.jclouds.http.HttpUtils.returnValueOnCodeOrNull;
 import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
 
+import org.jclouds.Fallback;
 import org.jclouds.blobstore.ContainerNotFoundException;
 
-import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.ListenableFuture;
 
 public final class S3Fallbacks {
    private S3Fallbacks() {
    }
 
-   public static final class TrueOn404OrNotFoundFalseOnIllegalState implements FutureFallback<Boolean> {
+   public static final class TrueOn404OrNotFoundFalseOnIllegalState implements Fallback<Boolean> {
       @Override
-      public ListenableFuture<Boolean> create(final Throwable t) {
+      public ListenableFuture<Boolean> create(Throwable t) throws Exception {
+         return immediateFuture(createOrPropagate(t));
+      }
+
+      @Override
+      public Boolean createOrPropagate(Throwable t) throws Exception {
          if (getFirstThrowableOfType(checkNotNull(t, "throwable"), IllegalStateException.class) != null)
-            return immediateFuture(false);
+            return false;
          if (getFirstThrowableOfType(t, ContainerNotFoundException.class) != null)
-            return immediateFuture(true);
+            return true;
          if (returnValueOnCodeOrNull(t, true, equalTo(404)) != null)
-            return immediateFuture(true);
+            return true;
          throw propagate(t);
       }
    }

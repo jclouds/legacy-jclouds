@@ -26,20 +26,20 @@ import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
 
 import javax.inject.Inject;
 
+import org.jclouds.Fallback;
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.s3.S3Client;
 
-import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class FalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExists implements FutureFallback<Boolean>,
+public class FalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExists implements Fallback<Boolean>,
       InvocationContext<FalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExists> {
 
    private final S3Client client;
@@ -51,14 +51,19 @@ public class FalseIfBucketAlreadyOwnedByYouOrOperationAbortedWhenBucketExists im
    }
 
    @Override
-   public ListenableFuture<Boolean> create(final Throwable t) {
+   public ListenableFuture<Boolean> create(Throwable t) throws Exception {
+      return immediateFuture(createOrPropagate(t));
+   }
+
+   @Override
+   public Boolean createOrPropagate(Throwable t) throws Exception {
       AWSResponseException exception = getFirstThrowableOfType(checkNotNull(t, "throwable"), AWSResponseException.class);
       if (exception != null && exception.getError() != null && exception.getError().getCode() != null) {
          String code = exception.getError().getCode();
          if (code.equals("BucketAlreadyOwnedByYou"))
-            return immediateFuture(false);
+            return false;
          else if (code.equals("OperationAborted") && bucket != null && client.bucketExists(bucket))
-            return immediateFuture(false);
+            return false;
       }
       throw propagate(t);
    }

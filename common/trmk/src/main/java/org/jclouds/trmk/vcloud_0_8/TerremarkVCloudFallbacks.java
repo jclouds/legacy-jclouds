@@ -24,10 +24,10 @@ import static com.google.common.util.concurrent.Futures.immediateFuture;
 
 import java.util.regex.Pattern;
 
+import org.jclouds.Fallback;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
 
-import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.ListenableFuture;
 
 public final class TerremarkVCloudFallbacks {
@@ -40,19 +40,24 @@ public final class TerremarkVCloudFallbacks {
     * 
     * @author Adrian Cole
     */
-   public static final class VoidOnDeleteDefaultIp implements FutureFallback<Void> {
+   public static final class VoidOnDeleteDefaultIp implements Fallback<Void> {
       public static final Pattern MESSAGE_PATTERN = Pattern
             .compile(".*Cannot release this Public IP as it is default oubound IP.*");
 
       @Override
-      public ListenableFuture<Void> create(final Throwable t) {
+      public ListenableFuture<Void> create(Throwable t) throws Exception {
+         return immediateFuture(createOrPropagate(t));
+      }
+
+      @Override
+      public Void createOrPropagate(Throwable t) throws Exception {
          if (checkNotNull(t, "throwable") instanceof HttpResponseException) {
             HttpResponseException hre = HttpResponseException.class.cast(t);
             if (hre.getResponse().getStatusCode() == 503 || hre.getResponse().getStatusCode() == 401
                   || MESSAGE_PATTERN.matcher(hre.getMessage()).matches())
-               return immediateFuture(null);
+               return null;
          } else if (t instanceof AuthorizationException) {
-            return immediateFuture(null);
+            return null;
          }
          throw propagate(t);
       }

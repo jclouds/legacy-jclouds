@@ -53,7 +53,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 @Singleton
 public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorService<HTTPRequest> {
    //TODO: look up gae version
-   public static final String USER_AGENT = String.format("jclouds/%s urlfetch/%s", JcloudsVersion.get(), "1.4.3");
+   public static final String USER_AGENT = String.format("jclouds/%s urlfetch/%s", JcloudsVersion.get(), "1.6.5");
    
    private final URLFetchService urlFetchService;
    private final ConvertToGaeRequest convertToGaeRequest;

@@ -19,7 +19,6 @@
 
 package org.jclouds.abiquo.fallbacks;
 
-import static com.google.common.util.concurrent.Futures.getUnchecked;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
@@ -45,13 +44,13 @@ public class FalseIfNotAvailableTest {
       RuntimeException exception = new RuntimeException();
 
       try {
-         function.create(exception);
+         function.createOrPropagate(exception);
       } catch (Exception ex) {
          assertEquals(ex, exception);
       }
    }
 
-   public void testFalseIf5xx() {
+   public void testFalseIf5xx() throws Exception {
       FalseIfNotAvailable function = new FalseIfNotAvailable();
       HttpResponse response = EasyMock.createMock(HttpResponse.class);
       HttpResponseException exception = EasyMock.createMock(HttpResponseException.class);
@@ -68,7 +67,7 @@ public class FalseIfNotAvailableTest {
       replay(response);
       replay(exception);
 
-      assertFalse(getUnchecked(function.create(exception)));
+      assertFalse(function.createOrPropagate(exception));
 
       verify(response);
       verify(exception);
@@ -92,7 +91,7 @@ public class FalseIfNotAvailableTest {
       replay(exception);
 
       try {
-         function.create(exception);
+         function.createOrPropagate(exception);
       } catch (Exception ex) {
          assertEquals(ex, exception);
       }
@@ -101,11 +100,11 @@ public class FalseIfNotAvailableTest {
       verify(exception);
    }
 
-   public void testFalseIfResourceNotFound() {
+   public void testFalseIfResourceNotFound() throws Exception {
       FalseIfNotAvailable function = new FalseIfNotAvailable();
       ResourceNotFoundException exception = new ResourceNotFoundException();
 
-      assertFalse(getUnchecked(function.create(exception)));
+      assertFalse(function.createOrPropagate(exception));
    }
 
 }

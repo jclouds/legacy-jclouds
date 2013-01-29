@@ -24,8 +24,6 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 
-import java.io.IOException;
-
 import javax.ws.rs.core.Response.Status;
 
 import org.easymock.EasyMock;
@@ -61,7 +59,7 @@ public class MovedVolumeTest {
       }
    }
 
-   public void testReturnVolume() throws IOException {
+   public void testReturnVolume() throws Exception {
       JAXBParser xmlParser = new JAXBParser("false");
       MovedVolume function = new MovedVolume(new ReturnMoveVolumeReference(
             new JAXBParser("false"), TypeLiteral.get(MovedVolumeDto.class)));

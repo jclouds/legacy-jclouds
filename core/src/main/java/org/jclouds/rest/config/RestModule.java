@@ -22,34 +22,34 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.toArray;
 import static com.google.common.collect.Iterables.transform;
-import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.util.concurrent.Atomics.newReference;
-import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.reflect.Reflection2.method;
 import static org.jclouds.reflect.Reflection2.methods;
 import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
-import static org.jclouds.util.Maps2.transformKeys;
-import static org.jclouds.util.Predicates2.startsWith;
 
 import java.net.Proxy;
 import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.functions.IdentityFunction;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.internal.FilterStringsBoundToInjectorByName;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.location.config.LocationModule;
 import org.jclouds.proxy.ProxyForURI;
+import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.binders.BindToJsonPayloadWrappedWith;
-import org.jclouds.rest.internal.BlockOnFuture;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.rest.internal.TransformerForRequest;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -88,6 +88,21 @@ public class RestModule extends AbstractModule {
    @Singleton
    protected Cache<Invokable<?, ?>, Invokable<?, ?>> seedKnownSync2AsyncInvokables() {
       return seedKnownSync2AsyncInvokables(sync2Async);
+   }
+
+   /**
+    * function view of above
+    */
+   @Provides
+   @Singleton
+   protected Function<Invocation, Invocation> sync2async(final Cache<Invokable<?, ?>, Invokable<?, ?>> cache) {
+      return new Function<Invocation, Invocation>() {
+         public Invocation apply(Invocation in) {
+            return Invocation.create(
+                  checkNotNull(cache.getIfPresent(in.getInvokable()), "invokable %s not in %s", in.getInvokable(),
+                        cache), in.getArgs());
+         }
+      };
    }
 
    @VisibleForTesting
@@ -133,7 +148,12 @@ public class RestModule extends AbstractModule {
       install(new GsonModule());
       install(new SetCaller.Module());
       install(new FactoryModuleBuilder().build(BindToJsonPayloadWrappedWith.Factory.class));
-      install(new FactoryModuleBuilder().build(BlockOnFuture.Factory.class));
+      bind(new TypeLiteral<Function<HttpRequest, Function<HttpResponse, ?>>>() {
+      }).to(TransformerForRequest.class);
+      bind(new TypeLiteral<org.jclouds.Fallback<Object>>() {
+      }).to(MapHttp4xxCodesToExceptions.class);
+      bind(new TypeLiteral<Function<Invocation, HttpRequest>>() {
+      }).to(RestAnnotationProcessor.class);
       bind(IdentityFunction.class).toInstance(IdentityFunction.INSTANCE);
       bindHttpApi(binder(), HttpClient.class, HttpAsyncClient.class);
       // this will help short circuit scenarios that can otherwise lock out users
@@ -144,24 +164,5 @@ public class RestModule extends AbstractModule {
       bind(new TypeLiteral<Function<URI, Proxy>>() {
       }).to(ProxyForURI.class);
       installLocations();
-   }
-
-   @Provides
-   @Singleton
-   @Named("TIMEOUTS")
-   protected Map<String, Long> timeouts(Function<Predicate<String>, Map<String, String>> filterStringsBoundByName) {
-      Map<String, String> stringBoundWithTimeoutPrefix = filterStringsBoundByName
-            .apply(startsWith(PROPERTY_TIMEOUTS_PREFIX));
-      Map<String, Long> longsByName = transformValues(stringBoundWithTimeoutPrefix, new Function<String, Long>() {
-         public Long apply(String input) {
-            return Long.valueOf(String.valueOf(input));
-         }
-      });
-      return transformKeys(longsByName, new Function<String, String>() {
-         public String apply(String input) {
-            return input.replaceFirst(PROPERTY_TIMEOUTS_PREFIX, "");
-         }
-      });
-
    }
 }

@@ -18,8 +18,6 @@
  */
 package org.jclouds.sts;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 
@@ -27,9 +25,9 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.sts.config.STSRestClientModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
+import org.jclouds.sts.config.STSRestClientModule;
 
 import com.google.common.reflect.TypeToken;
 
@@ -59,7 +57,6 @@ public class STSApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
-      properties.setProperty(PROPERTY_TIMEOUTS_PREFIX + "default", SECONDS.toMillis(30) + "");
       properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
       properties.setProperty(PROPERTY_HEADER_TAG, "amz");
       return properties;

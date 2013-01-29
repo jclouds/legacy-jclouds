@@ -23,20 +23,20 @@ import static com.google.common.base.Throwables.propagate;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static org.jclouds.http.HttpUtils.contains404;
 
-import org.jclouds.blobstore.ContainerNotFoundException;
-import org.jclouds.blobstore.KeyNotFoundException;
+import org.jclouds.Fallback;
 
-import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.ListenableFuture;
 
 public final class BlobStoreFallbacks {
    private BlobStoreFallbacks() {
    }
    
-   public static final class ThrowContainerNotFoundOn404 implements FutureFallback<Object> {
+   public static final class ThrowContainerNotFoundOn404 implements Fallback<Object> {
+      public ListenableFuture<Object> create(Throwable t) throws Exception {
+         return immediateFuture(createOrPropagate(t));
+      }
 
-      @Override
-      public ListenableFuture<Object> create(Throwable t) {
+      public Object createOrPropagate(Throwable t) throws Exception {
          if (contains404(checkNotNull(t, "throwable")))
             throw new ContainerNotFoundException(t);
          throw propagate(t);
@@ -44,10 +44,12 @@ public final class BlobStoreFallbacks {
 
    }
 
-   public static final class ThrowKeyNotFoundOn404 implements FutureFallback<Object> {
+   public static final class ThrowKeyNotFoundOn404 implements Fallback<Object> {
+      public ListenableFuture<Object> create(Throwable t) throws Exception {
+         return immediateFuture(createOrPropagate(t));
+      }
 
-      @Override
-      public ListenableFuture<Object> create(Throwable t) {
+      public Object createOrPropagate(Throwable t) throws Exception {
          if (contains404(checkNotNull(t, "throwable")))
             throw new KeyNotFoundException(t);
          throw propagate(t);
@@ -55,45 +57,53 @@ public final class BlobStoreFallbacks {
 
    }
 
-   public static final class FalseOnContainerNotFound implements FutureFallback<Boolean> {
+   public static final class FalseOnContainerNotFound implements Fallback<Boolean> {
+      public ListenableFuture<Boolean> create(Throwable t) throws Exception {
+         return immediateFuture(createOrPropagate(t));
+      }
 
-      @Override
-      public ListenableFuture<Boolean> create(Throwable t) {
+      public Boolean createOrPropagate(Throwable t) throws Exception {
          if (checkNotNull(t, "throwable") instanceof ContainerNotFoundException) {
-            return immediateFuture(false);
+            return false;
          }
          throw propagate(t);
       }
    }
 
-   public static final class FalseOnKeyNotFound implements FutureFallback<Boolean> {
+   public static final class FalseOnKeyNotFound implements Fallback<Boolean> {
+      public ListenableFuture<Boolean> create(Throwable t) throws Exception {
+         return immediateFuture(createOrPropagate(t));
+      }
 
-      @Override
-      public ListenableFuture<Boolean> create(Throwable t) {
+      public Boolean createOrPropagate(Throwable t) throws Exception {
          if (checkNotNull(t, "throwable") instanceof KeyNotFoundException) {
-            return immediateFuture(false);
+            return false;
          }
          throw propagate(t);
       }
    }
 
-   public static final class NullOnContainerNotFound implements FutureFallback<Object> {
+   public static final class NullOnContainerNotFound implements Fallback<Object> {
+      public ListenableFuture<Object> create(Throwable t) throws Exception {
+         return immediateFuture(createOrPropagate(t));
+      }
 
-      @Override
-      public ListenableFuture<Object> create(Throwable t) {
+      public Object createOrPropagate(Throwable t) throws Exception {
          if (checkNotNull(t, "throwable") instanceof ContainerNotFoundException) {
-            return immediateFuture(null);
+            return null;
          }
          throw propagate(t);
       }
    }
 
-   public static final class NullOnKeyNotFound implements FutureFallback<Object> {
+   public static final class NullOnKeyNotFound implements Fallback<Object> {
+      public ListenableFuture<Object> create(Throwable t) throws Exception {
+         return immediateFuture(createOrPropagate(t));
+      }
 
-      @Override
-      public ListenableFuture<Object> create(Throwable t) {
+      public Object createOrPropagate(Throwable t) throws Exception {
          if (checkNotNull(t, "throwable") instanceof KeyNotFoundException) {
-            return immediateFuture(null);
+            return null;
          }
          throw propagate(t);
       }

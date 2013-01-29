@@ -38,7 +38,9 @@ import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
 
 import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -96,6 +98,12 @@ public class ExecutorServiceModule extends AbstractModule {
 
    @Override
    protected void configure() { // NO_UCD
+   }
+
+   @Provides
+   @Singleton
+   TimeLimiter timeLimiter(@Named(PROPERTY_USER_THREADS) ListeningExecutorService userExecutor){
+      return new SimpleTimeLimiter(userExecutor);
    }
 
    @Provides

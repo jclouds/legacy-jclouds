@@ -35,8 +35,9 @@ import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.reflect.Invocation;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.Invokable;
 
@@ -46,7 +47,7 @@ import com.google.common.reflect.Invokable;
  */
 @Singleton
 public class AtmosBlobRequestSigner implements BlobRequestSigner {
-   private final RestAnnotationProcessor processor;
+   private final Function<Invocation, HttpRequest> processor;
    private final BlobToObject blobToObject;
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
 
@@ -55,7 +56,7 @@ public class AtmosBlobRequestSigner implements BlobRequestSigner {
    private final Invokable<?, ?> createMethod;
 
    @Inject
-   public AtmosBlobRequestSigner(RestAnnotationProcessor processor, BlobToObject blobToObject,
+   public AtmosBlobRequestSigner(Function<Invocation, HttpRequest> processor, BlobToObject blobToObject,
          BlobToHttpGetOptions blob2ObjectGetOptions) throws SecurityException, NoSuchMethodException {
       this.processor = checkNotNull(processor, "processor");
       this.blobToObject = checkNotNull(blobToObject, "blobToObject");

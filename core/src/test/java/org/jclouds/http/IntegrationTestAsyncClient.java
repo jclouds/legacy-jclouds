@@ -52,7 +52,6 @@ import org.jclouds.util.Strings2;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
-import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Provides;
 
@@ -92,13 +91,14 @@ public interface IntegrationTestAsyncClient {
    @Fallback(FooOnException.class)
    ListenableFuture<String> downloadException(@PathParam("id") String id, HttpRequestOptions options);
 
-   static class FooOnException implements FutureFallback<String> {
-
-      @Override
+   static class FooOnException implements org.jclouds.Fallback<String> {
       public ListenableFuture<String> create(Throwable t) throws Exception {
          return immediateFuture("foo");
       }
 
+      public String createOrPropagate(Throwable t) throws Exception {
+         return "foo";
+      }
    }
 
    @GET

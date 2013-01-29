@@ -36,27 +36,27 @@ import com.google.common.net.HttpHeaders;
 public class MapHttp4xxCodesToExceptionsTest {
 
    @Test(expectedExceptions = AuthorizationException.class)
-   public void test401ToAuthorizationException() {
+   public void test401ToAuthorizationException() throws Exception {
       fn.create(new HttpResponseException(command, HttpResponse.builder().statusCode(401).build()));
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
-   public void test403ToAuthorizationException() {
+   public void test403ToAuthorizationException() throws Exception {
       fn.create(new HttpResponseException(command, HttpResponse.builder().statusCode(403).build()));
    }
    
    @Test(expectedExceptions = ResourceNotFoundException.class)
-   public void test404ToResourceNotFoundException() {
+   public void test404ToResourceNotFoundException() throws Exception {
       fn.create(new HttpResponseException(command, HttpResponse.builder().statusCode(404).build()));
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
-   public void test409ToIllegalStateException() {
+   public void test409ToIllegalStateException() throws Exception {
       fn.create(new HttpResponseException(command, HttpResponse.builder().statusCode(409).build()));
    }
    
    @Test(expectedExceptions = RetryAfterException.class, expectedExceptionsMessageRegExp = "retry now")
-   public void testHttpResponseExceptionWithRetryAfterDate() {
+   public void testHttpResponseExceptionWithRetryAfterDate() throws Exception {
       fn.create(new HttpResponseException(command, 
             HttpResponse.builder()
                         .statusCode(503)
@@ -64,7 +64,7 @@ public class MapHttp4xxCodesToExceptionsTest {
    }
    
    @Test(expectedExceptions = RetryAfterException.class, expectedExceptionsMessageRegExp = "retry in 700 seconds")
-   public void testHttpResponseExceptionWithRetryAfterOffset(){
+   public void testHttpResponseExceptionWithRetryAfterOffset() throws Exception {
       fn.create(new HttpResponseException(command, 
             HttpResponse.builder()
                         .statusCode(503)
@@ -72,7 +72,7 @@ public class MapHttp4xxCodesToExceptionsTest {
    }
    
    @Test(expectedExceptions = RetryAfterException.class, expectedExceptionsMessageRegExp = "retry in 86400 seconds")
-   public void testHttpResponseExceptionWithRetryAfterPastIsZero(){
+   public void testHttpResponseExceptionWithRetryAfterPastIsZero() throws Exception {
       fn.create(new HttpResponseException(command, 
             HttpResponse.builder()
                         .statusCode(503)

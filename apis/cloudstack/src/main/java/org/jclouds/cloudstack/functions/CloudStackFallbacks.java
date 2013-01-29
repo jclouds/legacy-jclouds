@@ -20,11 +20,11 @@ package org.jclouds.cloudstack.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
+import static org.jclouds.Fallbacks.valOnNotFoundOr404;
 import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
 
-import org.jclouds.Fallbacks;
+import org.jclouds.Fallback;
 
-import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.ListenableFuture;
 
 public final class CloudStackFallbacks {
@@ -35,14 +35,19 @@ public final class CloudStackFallbacks {
     * CloudStack is currently sending 431 errors with the text "Unable to find account owner for ip ". In this case, we
     * have to ignore as there's no means for us to avoid the problem, or action to take.
     */
-   public static final class VoidOnNotFoundOr404OrUnableToFindAccountOwner implements FutureFallback<Void> {
+   public static final class VoidOnNotFoundOr404OrUnableToFindAccountOwner implements Fallback<Void> {
       @Override
-      public ListenableFuture<Void> create(final Throwable t) {
+      public ListenableFuture<Void> create(Throwable t) throws Exception {
+         return immediateFuture(createOrPropagate(t));
+      }
+
+      @Override
+      public Void createOrPropagate(Throwable t) throws Exception {
          IllegalStateException e = getFirstThrowableOfType(checkNotNull(t, "throwable"), IllegalStateException.class);
          if (e != null && e.getMessage().indexOf("Unable to find account owner for") != -1) {
-            return immediateFuture(null);
+            return null;
          } else {
-            return Fallbacks.valOnNotFoundOr404(null, t);
+            return valOnNotFoundOr404(null, t);
          }
       }
    }
