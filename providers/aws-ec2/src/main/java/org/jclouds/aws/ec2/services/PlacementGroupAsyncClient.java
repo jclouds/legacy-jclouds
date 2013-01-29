@@ -58,7 +58,7 @@ public interface PlacementGroupAsyncClient {
    /**
     * @see PlacementGroupClient#createPlacementGroupInRegion(String,String,String)
     */
-   @Named("ec2:CreatePlacementGroup")
+   @Named("CreatePlacementGroup")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CreatePlacementGroup")
@@ -69,7 +69,7 @@ public interface PlacementGroupAsyncClient {
    /**
     * @see PlacementGroupClient#createPlacementGroupInRegion(String,String)
     */
-   @Named("ec2:CreatePlacementGroup")
+   @Named("CreatePlacementGroup")
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "Strategy" }, values = { "CreatePlacementGroup", "cluster" })
@@ -79,7 +79,7 @@ public interface PlacementGroupAsyncClient {
    /**
     * @see PlacementGroupClient#deletePlacementGroupInRegion
     */
-   @Named("ec2:DeletePlacementGroup")
+   @Named("DeletePlacementGroup")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeletePlacementGroup")
@@ -90,7 +90,7 @@ public interface PlacementGroupAsyncClient {
    /**
     * @see PlacementGroupClient#describePlacementGroupsInRegion
     */
-   @Named("ec2:DescribePlacementGroups")
+   @Named("DescribePlacementGroups")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribePlacementGroups")

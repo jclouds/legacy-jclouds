@@ -54,7 +54,7 @@ public interface AvailabilityZoneAsyncApi {
    /**
     * @see AvailabilityZoneApi#addAvailabilityZonesToLoadBalancer
     */
-   @Named("elasticloadbalancing:EnableAvailabilityZonesForLoadBalancer")
+   @Named("EnableAvailabilityZonesForLoadBalancer")
    @POST
    @Path("/")
    @XMLResponseParser(AvailabilityZonesResultHandler.class)
@@ -67,7 +67,7 @@ public interface AvailabilityZoneAsyncApi {
    /**
     * @see AvailabilityZoneApi#addAvailabilityZoneToLoadBalancer
     */
-   @Named("elasticloadbalancing:EnableAvailabilityZonesForLoadBalancer")
+   @Named("EnableAvailabilityZonesForLoadBalancer")
    @POST
    @Path("/")
    @XMLResponseParser(AvailabilityZonesResultHandler.class)
@@ -79,7 +79,7 @@ public interface AvailabilityZoneAsyncApi {
    /**
     * @see AvailabilityZoneApi#removeAvailabilityZonesFromLoadBalancer
     */
-   @Named("elasticloadbalancing:DisableAvailabilityZonesForLoadBalancer")
+   @Named("DisableAvailabilityZonesForLoadBalancer")
    @POST
    @Path("/")
    @XMLResponseParser(AvailabilityZonesResultHandler.class)
@@ -91,7 +91,7 @@ public interface AvailabilityZoneAsyncApi {
    /**
     * @see AvailabilityZoneApi#removeAvailabilityZoneFromLoadBalancer
     */
-   @Named("elasticloadbalancing:DisableAvailabilityZonesForLoadBalancer")
+   @Named("DisableAvailabilityZonesForLoadBalancer")
    @POST
    @Path("/")
    @XMLResponseParser(AvailabilityZonesResultHandler.class)

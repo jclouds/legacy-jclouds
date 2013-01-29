@@ -61,7 +61,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#create
     */
-   @Named("rds:CreateDBInstance")
+   @Named("CreateDBInstance")
    @POST
    @Path("/")
    @XMLResponseParser(InstanceHandler.class)
@@ -72,7 +72,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#createInAvailabilityZone
     */
-   @Named("rds:CreateDBInstance")
+   @Named("CreateDBInstance")
    @POST
    @Path("/")
    @XMLResponseParser(InstanceHandler.class)
@@ -84,7 +84,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#createMultiAZ
     */
-   @Named("rds:CreateDBInstance")
+   @Named("CreateDBInstance")
    @POST
    @Path("/")
    @XMLResponseParser(InstanceHandler.class)
@@ -95,7 +95,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#get()
     */
-   @Named("rds:DescribeDBInstances")
+   @Named("DescribeDBInstances")
    @POST
    @Path("/")
    @XMLResponseParser(InstanceHandler.class)
@@ -106,7 +106,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#list()
     */
-   @Named("rds:DescribeDBInstances")
+   @Named("DescribeDBInstances")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeDBInstancesResultHandler.class)
@@ -117,7 +117,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#list(ListInstancesOptions)
     */
-   @Named("rds:DescribeDBInstances")
+   @Named("DescribeDBInstances")
    @POST
    @Path("/")
    @XMLResponseParser(DescribeDBInstancesResultHandler.class)
@@ -127,7 +127,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#delete()
     */
-   @Named("rds:DeleteDBInstance")
+   @Named("DeleteDBInstance")
    @POST
    @Path("/")
    @XMLResponseParser(InstanceHandler.class)
@@ -138,7 +138,7 @@ public interface InstanceAsyncApi {
    /**
     * @see InstanceApi#deleteAndSaveSnapshot
     */
-   @Named("rds:DeleteDBInstance")
+   @Named("DeleteDBInstance")
    @POST
    @Path("/")
    @XMLResponseParser(InstanceHandler.class)

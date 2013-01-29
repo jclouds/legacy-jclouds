@@ -59,7 +59,7 @@ public interface AvailabilityZoneAndRegionAsyncClient {
    /**
     * @see AvailabilityZoneAndRegionClient#describeAvailabilityZonesInRegion
     */
-   @Named("ec2:DescribeAvailabilityZones")
+   @Named("DescribeAvailabilityZones")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeAvailabilityZones")
@@ -72,7 +72,7 @@ public interface AvailabilityZoneAndRegionAsyncClient {
    /**
     * @see AvailabilityZoneAndRegionClient#describeRegions
     */
-   @Named("ec2:DescribeRegions")
+   @Named("DescribeRegions")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeRegions")

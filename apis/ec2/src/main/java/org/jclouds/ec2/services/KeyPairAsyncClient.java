@@ -58,7 +58,7 @@ public interface KeyPairAsyncClient {
    /**
     * @see KeyPairClient#createKeyPairInRegion
     */
-   @Named("ec2:CreateKeyPair")
+   @Named("CreateKeyPair")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateKeyPair")
@@ -70,7 +70,7 @@ public interface KeyPairAsyncClient {
    /**
     * @see KeyPairClient#describeKeyPairsInRegion
     */
-   @Named("ec2:DescribeKeyPairs")
+   @Named("DescribeKeyPairs")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeKeyPairs")
@@ -83,7 +83,7 @@ public interface KeyPairAsyncClient {
    /**
     * @see KeyPairClient#deleteKeyPairInRegion
     */
-   @Named("ec2:DeleteKeyPair")
+   @Named("DeleteKeyPair")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteKeyPair")

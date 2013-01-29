@@ -56,7 +56,7 @@ public interface WindowsAsyncApi {
    /**
     * @see WindowsApi#getPasswordDataForInstance
     */
-   @Named("ec2:GetPasswordData")
+   @Named("GetPasswordData")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "GetPasswordData")

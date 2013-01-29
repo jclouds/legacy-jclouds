@@ -55,7 +55,7 @@ public interface MonitoringAsyncClient {
    /**
     * @see Monitoring#monitorInstancesInRegion
     */
-   @Named("ec2:MonitorInstances")
+   @Named("MonitorInstances")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "MonitorInstances")
@@ -68,7 +68,7 @@ public interface MonitoringAsyncClient {
    /**
     * @see Monitoring#monitorInstancesInRegion
     */
-   @Named("ec2:UnmonitorInstances")
+   @Named("UnmonitorInstances")
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "UnmonitorInstances")

@@ -50,7 +50,7 @@ public interface IAMAsyncApi {
    /**
     * @see IAMApi#getCurrentUser()
     */
-   @Named("iam:GetUser")
+   @Named("GetUser")
    @POST
    @Path("/")
    @XMLResponseParser(UserHandler.class)

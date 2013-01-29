@@ -74,7 +74,7 @@ public interface AWSS3AsyncClient extends S3AsyncClient {
    /**
     * @see AWSS3Client#initiateMultipartUpload
     */
-   @Named("s3:PutObject")
+   @Named("PutObject")
    @POST
    @QueryParams(keys = "uploads")
    @Path("/{key}")
@@ -87,7 +87,7 @@ public interface AWSS3AsyncClient extends S3AsyncClient {
    /**
     * @see AWSS3Client#abortMultipartUpload
     */
-   @Named("s3:AbortMultipartUpload")
+   @Named("AbortMultipartUpload")
    @DELETE
    @Path("/{key}")
    @Fallback(VoidOnNotFoundOr404.class)
@@ -98,7 +98,7 @@ public interface AWSS3AsyncClient extends S3AsyncClient {
    /**
     * @see AWSS3Client#uploadPart
     */
-   @Named("s3:PutObject")
+   @Named("PutObject")
    @PUT
    @Path("/{key}")
    @ResponseParser(ParseETagHeader.class)
@@ -110,7 +110,7 @@ public interface AWSS3AsyncClient extends S3AsyncClient {
    /**
     * @see AWSS3Client#completeMultipartUpload
     */
-   @Named("s3:PutObject")
+   @Named("PutObject")
    @POST
    @Path("/{key}")
    @ResponseParser(ETagFromHttpResponseViaRegex.class)
@@ -122,7 +122,7 @@ public interface AWSS3AsyncClient extends S3AsyncClient {
    /**
     * @see AWSS3Client#deleteObjects
     */
-   @Named("s3:DeleteObject")
+   @Named("DeleteObject")
    @POST                              
    @Path("/")
    @QueryParams(keys = "delete")
