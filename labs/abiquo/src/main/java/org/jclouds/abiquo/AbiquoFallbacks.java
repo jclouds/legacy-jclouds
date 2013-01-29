@@ -26,13 +26,13 @@ import static com.google.common.util.concurrent.Futures.immediateFuture;
 
 import javax.ws.rs.core.Response.Status;
 
+import org.jclouds.Fallback;
 import org.jclouds.abiquo.domain.exception.AbiquoException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.base.Predicate;
-import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -47,22 +47,30 @@ public final class AbiquoFallbacks {
    /**
     * Return an Abiquo Exception on not found errors.
     */
-   public static final class PropagateAbiquoExceptionOnNotFoundOr4xx implements FutureFallback<Object> {
+   public static final class PropagateAbiquoExceptionOnNotFoundOr4xx implements Fallback<Object> {
       @Override
-      public ListenableFuture<Object> create(final Throwable from) {
-         Throwable exception = find(getCausalChain(from), isNotFoundAndHasAbiquoException(from), null);
-
-         throw propagate(exception == null ? from : exception.getCause());
+      public ListenableFuture<Object> create(Throwable from) throws Exception {
+         return immediateFuture(createOrPropagate(from));
       }
 
+      @Override
+      public Object createOrPropagate(Throwable from) throws Exception {
+         Throwable exception = find(getCausalChain(from), isNotFoundAndHasAbiquoException(from), null);
+         throw propagate(exception == null ? from : exception.getCause());
+      }
    }
 
    /**
     * Return <code>null</code> on 303 response codes when requesting a task.
     */
-   public static final class NullOn303 implements FutureFallback<Object> {
+   public static final class NullOn303 implements Fallback<Object> {
       @Override
-      public ListenableFuture<Object> create(final Throwable from) {
+      public ListenableFuture<Object> create(Throwable from) throws Exception {
+         return immediateFuture(createOrPropagate(from));
+      }
+
+      @Override
+      public Object createOrPropagate(Throwable from) throws Exception {
          Throwable exception = find(getCausalChain(from), hasResponse(from), null);
 
          if (exception != null) {
@@ -70,7 +78,7 @@ public final class AbiquoFallbacks {
             HttpResponse response = responseException.getResponse();
 
             if (response != null && response.getStatusCode() == Status.SEE_OTHER.getStatusCode()) {
-               return immediateFuture(null);
+               return null;
             }
          }
 
@@ -82,9 +90,14 @@ public final class AbiquoFallbacks {
    /**
     * Return false on service error exceptions.
     */
-   public static final class FalseOn5xx implements FutureFallback<Boolean> {
+   public static final class FalseOn5xx implements Fallback<Boolean> {
       @Override
-      public ListenableFuture<Boolean> create(final Throwable from) {
+      public ListenableFuture<Boolean> create(Throwable from) throws Exception {
+         return immediateFuture(createOrPropagate(from));
+      }
+
+      @Override
+      public Boolean createOrPropagate(Throwable from) throws Exception {
          Throwable exception = find(getCausalChain(from), hasResponse(from), null);
 
          if (exception != null) {
@@ -92,7 +105,7 @@ public final class AbiquoFallbacks {
             HttpResponse response = responseException.getResponse();
 
             if (response != null && response.getStatusCode() >= 500 && response.getStatusCode() < 600) {
-               return immediateFuture(false);
+               return false;
             }
          }
 
@@ -104,9 +117,14 @@ public final class AbiquoFallbacks {
    /**
     * Return false on service error exceptions.
     */
-   public static final class FalseIfNotAvailable implements FutureFallback<Boolean> {
+   public static final class FalseIfNotAvailable implements Fallback<Boolean> {
       @Override
-      public ListenableFuture<Boolean> create(final Throwable from) {
+      public ListenableFuture<Boolean> create(Throwable from) throws Exception {
+         return immediateFuture(createOrPropagate(from));
+      }
+
+      @Override
+      public Boolean createOrPropagate(Throwable from) throws Exception {
          Throwable exception = find(getCausalChain(from), isNotAvailableException(from), null);
 
          if (exception != null) {
@@ -115,11 +133,11 @@ public final class AbiquoFallbacks {
                HttpResponse response = responseException.getResponse();
 
                if (response != null && response.getStatusCode() >= 500 && response.getStatusCode() < 600) {
-                  return immediateFuture(false);
+                  return false;
                }
             } else {
                // Will enter here when exception is a ResourceNotFoundException
-               return immediateFuture(false);
+               return false;
             }
          }
 

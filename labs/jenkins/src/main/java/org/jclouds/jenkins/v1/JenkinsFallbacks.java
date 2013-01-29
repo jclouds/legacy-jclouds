@@ -24,8 +24,9 @@ import static com.google.common.base.Throwables.propagate;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static org.jclouds.http.HttpUtils.returnValueOnCodeOrNull;
 
+import org.jclouds.Fallback;
+
 import com.google.common.base.Predicates;
-import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -36,13 +37,18 @@ public final class JenkinsFallbacks {
    private JenkinsFallbacks() {
    }
 
-   public static final class VoidOn302Or404 implements FutureFallback<Void> {
+   public static final class VoidOn302Or404 implements Fallback<Void> {
       @Override
-      public ListenableFuture<Void> create(final Throwable t) {
+      public ListenableFuture<Void> create(Throwable t) throws Exception {
+         return immediateFuture(createOrPropagate(t));
+      }
+
+      @Override
+      public Void createOrPropagate(Throwable t) throws Exception {
          Boolean returnVal = returnValueOnCodeOrNull(checkNotNull(t, "throwable"), true,
                Predicates.<Integer> or(equalTo(302), equalTo(404)));
          if (returnVal != null && returnVal)
-            return immediateFuture(null);
+            return null;
          throw propagate(t);
       }
 

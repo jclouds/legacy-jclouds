@@ -51,9 +51,8 @@ import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.swift.blobstore.functions.BlobToObject;
 import org.jclouds.openstack.swift.domain.SwiftObject;
 import org.jclouds.reflect.Invocation;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.rest.internal.RestAnnotationProcessor;
 
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
@@ -69,7 +68,7 @@ import com.google.inject.Provider;
 @Singleton
 public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner {
 
-   private final RestAnnotationProcessor processor;
+   private final Function<Invocation, HttpRequest> processor;
    private final Crypto crypto;
 
    private final Provider<Long> unixEpochTimestampProvider;
@@ -84,7 +83,7 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
    private final Invokable<?, ?> createMethod;
 
    @Inject
-   public HPCloudObjectStorageBlobRequestSigner(RestAnnotationProcessor processor,
+   public HPCloudObjectStorageBlobRequestSigner(Function<Invocation, HttpRequest> processor,
          BlobToObject blobToObject, BlobToHttpGetOptions blob2HttpGetOptions, Crypto crypto,
          @TimeStamp Provider<Long> unixEpochTimestampProvider, Supplier<Access> access,
          @org.jclouds.location.Provider final Supplier<Credentials> creds) throws SecurityException,
@@ -115,8 +114,7 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
    public HttpRequest signGetBlob(String container, String name, long timeInSeconds) {
       checkNotNull(container, "container");
       checkNotNull(name, "name");
-      GeneratedHttpRequest request = processor.apply(Invocation.create(getMethod,
-            ImmutableList.<Object> of(container, name)));
+      HttpRequest request = processor.apply(Invocation.create(getMethod, ImmutableList.<Object> of(container, name)));
       return cleanRequest(signForTemporaryAccess(request, timeInSeconds));
    }
 
@@ -140,7 +138,7 @@ public class HPCloudObjectStorageBlobRequestSigner implements BlobRequestSigner 
    public HttpRequest signPutBlob(String container, Blob blob, long timeInSeconds) {
       checkNotNull(container, "container");
       checkNotNull(blob, "blob");
-      GeneratedHttpRequest request = processor.apply(Invocation.create(createMethod,
+      HttpRequest request = processor.apply(Invocation.create(createMethod,
             ImmutableList.<Object> of(container, blobToObject.apply(blob))));
       return cleanRequest(signForTemporaryAccess(request, timeInSeconds));
    }

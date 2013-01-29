@@ -22,23 +22,28 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static org.jclouds.Fallbacks.valOnNotFoundOr404;
 
+import org.jclouds.Fallback;
 import org.jclouds.aws.AWSResponseException;
 
-import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.ListenableFuture;
 
 public final class RDSFallbacks {
    private RDSFallbacks() {
    }
 
-   public static final class NullOnStateDeletingNotFoundOr404 implements FutureFallback<Object> {
+   public static final class NullOnStateDeletingNotFoundOr404 implements Fallback<Object> {
       @Override
-      public ListenableFuture<Object> create(final Throwable t) {
+      public ListenableFuture<Object> create(Throwable t) throws Exception {
+         return immediateFuture(createOrPropagate(t));
+      }
+
+      @Override
+      public Object createOrPropagate(Throwable t) throws Exception {
          if (checkNotNull(t, "throwable") instanceof AWSResponseException) {
             AWSResponseException e = AWSResponseException.class.cast(t);
             if ("InvalidDBInstanceState".equals(e.getError().getCode())
                   && e.getError().getMessage().contains("has state: deleting"))
-               return immediateFuture(null);
+               return null;
          }
          return valOnNotFoundOr404(null, t);
       }

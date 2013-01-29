@@ -25,20 +25,26 @@ import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static org.jclouds.http.HttpUtils.contains404;
 import static org.jclouds.http.HttpUtils.returnValueOnCodeOrNull;
 
-import com.google.common.util.concurrent.FutureFallback;
+import org.jclouds.Fallback;
+
 import com.google.common.util.concurrent.ListenableFuture;
 
 public final class SwiftFallbacks {
    private SwiftFallbacks() {
    }
 
-   public static final class TrueOn404FalseOn409 implements FutureFallback<Boolean> {
+   public static final class TrueOn404FalseOn409 implements Fallback<Boolean> {
       @Override
-      public ListenableFuture<Boolean> create(final Throwable t) {
+      public ListenableFuture<Boolean> create(Throwable t) throws Exception {
+         return immediateFuture(createOrPropagate(t));
+      }
+
+      @Override
+      public Boolean createOrPropagate(Throwable t) throws Exception {
          if (contains404(checkNotNull(t, "throwable")))
-            return immediateFuture(true);
+            return true;
          if (returnValueOnCodeOrNull(t, false, equalTo(409)) != null)
-            return immediateFuture(false);
+            return false;
          throw propagate(t);
       }
    }

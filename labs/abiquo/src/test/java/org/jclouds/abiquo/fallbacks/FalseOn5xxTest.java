@@ -19,7 +19,6 @@
 
 package org.jclouds.abiquo.fallbacks;
 
-import static com.google.common.util.concurrent.Futures.getUnchecked;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
@@ -44,13 +43,13 @@ public class FalseOn5xxTest {
       RuntimeException exception = new RuntimeException();
 
       try {
-         function.create(exception);
+         function.createOrPropagate(exception);
       } catch (Exception ex) {
          assertEquals(ex, exception);
       }
    }
 
-   public void testFalseIf5xx() {
+   public void testFalseIf5xx() throws Exception {
       FalseOn5xx function = new FalseOn5xx();
       HttpResponse response = EasyMock.createMock(HttpResponse.class);
       HttpResponseException exception = EasyMock.createMock(HttpResponseException.class);
@@ -67,7 +66,7 @@ public class FalseOn5xxTest {
       replay(response);
       replay(exception);
 
-      assertFalse(getUnchecked(function.create(exception)));
+      assertFalse(function.createOrPropagate(exception));
 
       verify(response);
       verify(exception);
@@ -91,7 +90,7 @@ public class FalseOn5xxTest {
       replay(exception);
 
       try {
-         function.create(exception);
+         function.createOrPropagate(exception);
       } catch (Exception ex) {
          assertEquals(ex, exception);
       }
