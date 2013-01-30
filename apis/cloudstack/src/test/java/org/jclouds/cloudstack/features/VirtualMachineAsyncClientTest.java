@@ -26,13 +26,10 @@ import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.AssignVirtualMachineOptions;
-import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
 import org.jclouds.cloudstack.options.ListVirtualMachinesOptions;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.functions.IdentityFunction;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
@@ -99,31 +96,6 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
             Functions.compose(IdentityFunction.INSTANCE, IdentityFunction.INSTANCE).getClass());
       assertSaxResponseParserClassEquals(method, null);
       assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
-
-      checkFilters(httpRequest);
-
-   }
-
-   HttpRequest deployVirtualMachine = HttpRequest.builder().method("GET")
-                                                 .endpoint("http://localhost:8080/client/api")
-                                                 .addQueryParam("response", "json")
-                                                 .addQueryParam("command", "deployVirtualMachine")
-                                                 .addQueryParam("zoneid", "6")
-                                                 .addQueryParam("serviceofferingid", "4")
-                                                 .addQueryParam("templateid", "5").build();
-
-   public void testDeployVirtualMachineInZone() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = method(VirtualMachineAsyncClient.class, "deployVirtualMachineInZone", String.class, String.class,
-            String.class, DeployVirtualMachineOptions[].class);
-      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(6, 4, 5));
-
-      assertRequestLineEquals(httpRequest, deployVirtualMachine.getRequestLine());
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null, null, false);
-
-      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
-      assertSaxResponseParserClassEquals(method, null);
-      assertFallbackClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
       checkFilters(httpRequest);
 
