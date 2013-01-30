@@ -16,28 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.rest.annotations;
+package org.jclouds.cloudstack.parse;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import org.jclouds.cloudstack.domain.AsyncCreateResponse;
+import org.jclouds.json.BaseItemParserTest;
+import org.jclouds.rest.annotations.SelectJson;
+import org.testng.annotations.Test;
 
 /**
- * Selects a name in a json structure as opposed to parsing from root.
- * 
- * ex. for "foo" { "foo" :"bar" } becomes "bar"
  * 
  * @author Adrian Cole
  */
-@Target(METHOD)
-@Retention(RUNTIME)
-public @interface SelectJson {
+@Test(groups = "unit", testName = "DeployVirtualMachineResponse3xTest")
+public class DeployVirtualMachineResponse4xTest extends BaseItemParserTest<AsyncCreateResponse> {
 
-   /**
-    * Each of the keys are tried in order. This helps in the case the server renamed a field in json.
-    */
-   String[] value();
+   @Override
+   public String resource() {
+      return "/deployvirtualmachineresponse4x.json";
+   }
 
+   @Override
+   @SelectJson({ "deployvirtualmachine", "deployvirtualmachineresponse" })
+   public AsyncCreateResponse expected() {
+      return AsyncCreateResponse.builder().id("1cce6cb7-2268-47ff-9696-d9e610f6619a")
+            .jobId("13330fc9-8b3e-4582-aa3e-90883c041ff0").build();
+   }
 }
