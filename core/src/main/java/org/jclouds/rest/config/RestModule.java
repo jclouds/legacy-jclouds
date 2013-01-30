@@ -48,6 +48,7 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.binders.BindToJsonPayloadWrappedWith;
+import org.jclouds.rest.internal.InvokeHttpMethod;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.rest.internal.TransformerForRequest;
 
@@ -150,6 +151,8 @@ public class RestModule extends AbstractModule {
       install(new FactoryModuleBuilder().build(BindToJsonPayloadWrappedWith.Factory.class));
       bind(new TypeLiteral<Function<HttpRequest, Function<HttpResponse, ?>>>() {
       }).to(TransformerForRequest.class);
+      bind(new TypeLiteral<Function<Invocation, Object>>() {
+      }).to(InvokeHttpMethod.class);
       bind(new TypeLiteral<org.jclouds.Fallback<Object>>() {
       }).to(MapHttp4xxCodesToExceptions.class);
       bind(new TypeLiteral<Function<Invocation, HttpRequest>>() {
