@@ -24,9 +24,10 @@ import java.lang.reflect.Proxy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.internal.DelegatesToInvocationFunction;
-import org.jclouds.rest.internal.InvokeHttpMethod;
 
+import com.google.common.base.Function;
 import com.google.common.cache.Cache;
 import com.google.common.reflect.Invokable;
 import com.google.inject.Provider;
@@ -38,11 +39,11 @@ import com.google.inject.Provider;
 @Singleton
 public class HttpApiProvider<S, A> implements Provider<S> {
    private final Class<? super S> apiType;
-   private final DelegatesToInvocationFunction<S, InvokeHttpMethod> httpInvoker;
+   private final DelegatesToInvocationFunction<S, Function<Invocation, Object>> httpInvoker;
 
    @Inject
    private HttpApiProvider(Cache<Invokable<?, ?>, Invokable<?, ?>> invokables,
-         DelegatesToInvocationFunction<S, InvokeHttpMethod> httpInvoker, Class<S> apiType, Class<A> asyncApiType) {
+         DelegatesToInvocationFunction<S, Function<Invocation, Object>> httpInvoker, Class<S> apiType, Class<A> asyncApiType) {
       this.httpInvoker = httpInvoker;
       this.apiType = apiType;
       RestModule.putInvokables(apiType, asyncApiType, invokables);
