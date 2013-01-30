@@ -23,9 +23,10 @@ import java.lang.reflect.Proxy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.internal.DelegatesToInvocationFunction;
-import org.jclouds.rest.internal.InvokeHttpMethod;
 
+import com.google.common.base.Function;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 
@@ -36,10 +37,10 @@ import com.google.inject.TypeLiteral;
 @Singleton
 public class AsyncHttpApiProvider<A> implements Provider<A> {
    private final Class<? super A> asyncApiType;
-   private final DelegatesToInvocationFunction<A, InvokeHttpMethod> httpInvoker;
+   private final DelegatesToInvocationFunction<A, Function<Invocation, Object>> httpInvoker;
 
    @Inject
-   private AsyncHttpApiProvider(DelegatesToInvocationFunction<A, InvokeHttpMethod> httpInvoker,
+   private AsyncHttpApiProvider(DelegatesToInvocationFunction<A, Function<Invocation, Object>> httpInvoker,
          TypeLiteral<A> asyncApiType) {
       this.httpInvoker = httpInvoker;
       this.asyncApiType = asyncApiType.getRawType();
