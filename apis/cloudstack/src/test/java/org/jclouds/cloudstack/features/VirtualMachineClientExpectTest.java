@@ -25,6 +25,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
 import org.jclouds.cloudstack.CloudStackContext;
+import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.EncryptedPasswordAndPrivateKey;
 import org.jclouds.cloudstack.functions.WindowsLoginCredentialsFromEncryptedData;
 import org.jclouds.cloudstack.internal.BaseCloudStackExpectTest;
@@ -59,11 +60,8 @@ public class VirtualMachineClientExpectTest extends BaseCloudStackExpectTest<Vir
          "-----END RSA PRIVATE KEY-----";
 
       VirtualMachineClient client = requestSendsResponse(
-         HttpRequest.builder()
-            .method("GET")
-            .endpoint(
-               URI.create("http://localhost:8080/client/api?response=json&" +
-                  "command=getVMPassword&id=1&apiKey=identity&signature=SVA2r1KRj4yG03rATMLPZWS%2BKnw%3D"))
+         HttpRequest.builder().method("GET")
+            .endpoint("http://localhost:8080/client/api?response=json&command=getVMPassword&id=1&apiKey=identity&signature=SVA2r1KRj4yG03rATMLPZWS%2BKnw%3D")
             .addHeader("Accept", "application/json")
             .build(),
          HttpResponse.builder()
@@ -82,6 +80,41 @@ public class VirtualMachineClientExpectTest extends BaseCloudStackExpectTest<Vir
 
       assertEquals(passwordDecrypt.apply(
          EncryptedPasswordAndPrivateKey.builder().encryptedPassword(actual).privateKey(privateKey).build()).getPassword(), "bX7vvptvw");
+   }
+   
+   HttpRequest deployVirtualMachineInZone =  HttpRequest.builder().method("GET")
+      .endpoint("http://localhost:8080/client/api")
+      .addQueryParam("response", "json")
+      .addQueryParam("command", "deployVirtualMachine")
+      .addQueryParam("zoneid", "zone1")
+      .addQueryParam("templateid", "template1")
+      .addQueryParam("serviceofferingid", "serviceOffering1")
+      .addQueryParam("apiKey", "identity")
+      .addQueryParam("signature", "pBjjnTq7/ezN94Uj0gpy2T//cJQ%3D")
+      .addHeader("Accept", "application/json")
+      .build();
+
+   public void testDeployVirtualMachineIs2xxVersion3x() {
+      HttpResponse deployVirtualMachineInZoneResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/deployvirtualmachineresponse.json")).build();
+      VirtualMachineClient client = requestSendsResponse(deployVirtualMachineInZone, deployVirtualMachineInZoneResponse);
+
+      AsyncCreateResponse async = client.deployVirtualMachineInZone("zone1", "serviceOffering1", "template1");
+
+      assertEquals(async, AsyncCreateResponse.builder().id("1234").jobId("50006").build());
+   }
+
+   public void testDeployVirtualMachineIs2xxVersion4x() {
+      HttpResponse deployVirtualMachineInZoneResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/deployvirtualmachineresponse4x.json")).build();
+      VirtualMachineClient client = requestSendsResponse(deployVirtualMachineInZone, deployVirtualMachineInZoneResponse);
+
+      AsyncCreateResponse async = client.deployVirtualMachineInZone("zone1", "serviceOffering1", "template1");
+
+      assertEquals(
+            async,
+            AsyncCreateResponse.builder().id("1cce6cb7-2268-47ff-9696-d9e610f6619a")
+                  .jobId("13330fc9-8b3e-4582-aa3e-90883c041ff0").build());
    }
 
    @Override

@@ -80,7 +80,7 @@ public interface VirtualMachineAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "deployVirtualMachine")
-   @Unwrap
+   @SelectJson({ "deployvirtualmachine", "deployvirtualmachineresponse" })
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<AsyncCreateResponse> deployVirtualMachineInZone(@QueryParam("zoneid") String zoneId,
          @QueryParam("serviceofferingid") String serviceOfferingId, @QueryParam("templateid") String templateId,

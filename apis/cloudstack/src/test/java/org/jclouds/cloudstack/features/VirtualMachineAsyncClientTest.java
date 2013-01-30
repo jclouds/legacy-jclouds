@@ -23,7 +23,6 @@ import java.lang.reflect.Method;
 
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.AssignVirtualMachineOptions;
-import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
 import org.jclouds.cloudstack.options.ListVirtualMachinesOptions;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.HttpRequest;
@@ -98,25 +97,6 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
             Functions.compose(IdentityFunction.INSTANCE, IdentityFunction.INSTANCE).getClass());
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
-
-      checkFilters(httpRequest);
-
-   }
-
-   public void testDeployVirtualMachineInZone() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VirtualMachineAsyncClient.class.getMethod("deployVirtualMachineInZone", String.class, String.class,
-            String.class, DeployVirtualMachineOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, 6, 4, 5);
-
-      assertRequestLineEquals(
-            httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=deployVirtualMachine&zoneid=6&templateid=5&serviceofferingid=4 HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null, null, false);
-
-      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
-      assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
       checkFilters(httpRequest);
 
