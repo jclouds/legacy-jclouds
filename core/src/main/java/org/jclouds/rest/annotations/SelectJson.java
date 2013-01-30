@@ -36,9 +36,8 @@ import java.lang.annotation.Target;
 public @interface SelectJson {
 
    /**
-    * 
-    * @return
+    * Each of the keys are tried in order. This helps in the case the server renamed a field in json.
     */
-   String value();
+   String[] value();
 
 }

@@ -70,6 +70,19 @@ public class ParseFirstJsonValueNamedTest {
       }, "event").apply(response);
       assertEquals(val.toString(), "[(name=GREETINGS, source=guest)]");
    }
+   
+   /**
+    * scenario: server renames field from event to _event
+    */
+   public void testParseRenamedField() throws IOException {
+      String nested = "{ \"count\":1 ,\"_event\" : [  {name:'GREETINGS',source:'guest'} ] }";
+      HttpResponse response = HttpResponse.builder().statusCode(200).message("goodie")
+            .payload(Payloads.newPayload(nested)).build();
+
+      List<Event> val = new ParseFirstJsonValueNamed<List<Event>>(json, new TypeLiteral<List<Event>>() {
+      }, "event", "_event").apply(response);
+      assertEquals(val.toString(), "[(name=GREETINGS, source=guest)]");
+   }
 
    public void testParseNestedElementsWhenNotFoundIsEmpty() throws IOException {
       String nested = "{ \"count\":1 ,\"evant\" : [  {name:'GREETINGS',source:'guest'} ] }";

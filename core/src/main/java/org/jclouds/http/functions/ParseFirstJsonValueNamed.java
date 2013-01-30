@@ -53,12 +53,16 @@ public class ParseFirstJsonValueNamed<T> implements Function<HttpResponse, T> {
 
    private final GsonWrapper json;
    private final TypeLiteral<T> type;
-   private final String name;
+   private final ImmutableSet<String> nameChoices;
 
-   public ParseFirstJsonValueNamed(GsonWrapper json, TypeLiteral<T> type, String name) {
+   /**
+    * @param nameChoices
+    *           tried in order, first match wins
+    */
+   public ParseFirstJsonValueNamed(GsonWrapper json, TypeLiteral<T> type, String... nameChoices) {
       this.json = checkNotNull(json, "json");
       this.type = checkNotNull(type, "type");
-      this.name = checkNotNull(name, "name");
+      this.nameChoices = ImmutableSet.copyOf(checkNotNull(nameChoices, "nameChoices"));
    }
 
    @Override
@@ -72,20 +76,19 @@ public class ParseFirstJsonValueNamed<T> implements Function<HttpResponse, T> {
          reader.setLenient(true);
          AtomicReference<String> name = Atomics.newReference();
          JsonToken token = reader.peek();
-         for (; token != JsonToken.END_DOCUMENT && nnn(this.name, reader, token, name); token = skipAndPeek(token,
-               reader)) {
+         for (; token != JsonToken.END_DOCUMENT && nnn(reader, token, name); token = skipAndPeek(token, reader)) {
          }
          if (name.get() == null) {
-            logger.trace("did not object named %s in json from response %s", this.name, arg0);
+            logger.trace("did not object named %s in json from response %s", nameChoices, arg0);
             return nothing();
-         } else if (name.get().equals(this.name)) {
+         } else if (nameChoices.contains(name.get())) {
             return json.delegate().<T> fromJson(reader, type.getType());
          } else {
             return nothing();
          }
       } catch (IOException e) {
          throw new RuntimeException(String.format(
-               "error reading from stream, parsing object named %s from http response %s", this.name, arg0), e);
+               "error reading from stream, parsing object named %s from http response %s", nameChoices, arg0), e);
       } finally {
          Closeables.closeQuietly(reader);
          arg0.getPayload().release();
@@ -93,7 +96,7 @@ public class ParseFirstJsonValueNamed<T> implements Function<HttpResponse, T> {
    }
 
    @SuppressWarnings("unchecked")
-   protected T nothing() {
+   private T nothing() {
       if (type.getRawType().isAssignableFrom(Set.class))
          return (T) ImmutableSet.of();
       else if (type.getRawType().isAssignableFrom(List.class))
@@ -103,11 +106,10 @@ public class ParseFirstJsonValueNamed<T> implements Function<HttpResponse, T> {
       return null;
    }
 
-   protected boolean nnn(String toFind, JsonReader reader, JsonToken token, AtomicReference<String> name)
-         throws IOException {
+   private boolean nnn(JsonReader reader, JsonToken token, AtomicReference<String> name) throws IOException {
       if (token == JsonToken.NAME) {
          String name2 = reader.nextName();
-         if (toFind.equals(name2)) {
+         if (nameChoices.contains(name2)) {
             name.set(name2);
             return false;
          }
@@ -116,7 +118,7 @@ public class ParseFirstJsonValueNamed<T> implements Function<HttpResponse, T> {
 
    }
 
-   public JsonToken skipAndPeek(JsonToken token, JsonReader reader) throws IOException {
+   private JsonToken skipAndPeek(JsonToken token, JsonReader reader) throws IOException {
       switch (token) {
       case BEGIN_ARRAY:
          reader.beginArray();
