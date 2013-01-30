@@ -38,7 +38,6 @@ import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.annotations.Unwrap;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -80,7 +79,7 @@ public interface VirtualMachineAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "deployVirtualMachine")
-   @Unwrap
+   @SelectJson({ "deployvirtualmachine", "deployvirtualmachineresponse" })
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<AsyncCreateResponse> deployVirtualMachineInZone(@QueryParam("zoneid") String zoneId,
          @QueryParam("serviceofferingid") String serviceOfferingId, @QueryParam("templateid") String templateId,
