@@ -18,39 +18,30 @@
  */
 package org.jclouds.joyent.cloudapi.v6_5.compute.functions;
 
+import static org.jclouds.compute.domain.OsFamily.UNRECOGNIZED;
+import static org.jclouds.compute.domain.OsFamily.fromValue;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseVersionOrReturnEmptyString;
+
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OperatingSystem.Builder;
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.compute.util.ComputeServiceUtils;
 import org.jclouds.joyent.cloudapi.v6_5.domain.Dataset;
-import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 
 /**
- * A function for transforming a cloudApi specific Dataset into a generic
- * OperatingSystem object.
+ * A function for transforming a cloudApi specific Dataset into a generic OperatingSystem object.
  * 
  * @author Adrian Cole
  */
 public class DatasetToOperatingSystem implements Function<Dataset, OperatingSystem> {
-   public static final Pattern DEFAULT_PATTERN = Pattern.compile("(([^ ]*) ([0-9.]+) ?.*)");
-   // Windows Machine 2008 R2 x64
-   public static final Pattern WINDOWS_PATTERN = Pattern.compile("Windows (.*) (x[86][64])");
-
-   @javax.annotation.Resource
-   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-   protected Logger logger = Logger.NULL;
 
    private final Map<OsFamily, Map<String, String>> osVersionMap;
 
@@ -63,20 +54,24 @@ public class DatasetToOperatingSystem implements Function<Dataset, OperatingSyst
       Builder builder = OperatingSystem.builder();
       builder.name(from.getName());
       builder.description(from.getUrn());
-      builder.is64Bit(true);//TODO: verify
-
+      builder.is64Bit(true);// TODO: verify
+      OsFamily family = UNRECOGNIZED;
+      String version = "";
       List<String> pieces = ImmutableList.copyOf(Splitter.on(':').split(from.getUrn()));
       if (pieces.get(2).indexOf('-') != -1) {
          List<String> osFamVersion = ImmutableList.copyOf(Splitter.on('-').split(pieces.get(2)));
-         OsFamily family = OsFamily.fromValue(osFamVersion.get(0));
-         builder.family(family);
-         if (family != OsFamily.UNRECOGNIZED)
-            builder.version(ComputeServiceUtils.parseVersionOrReturnEmptyString(family, osFamVersion.get(1),
-                  osVersionMap));
+         family = fromValue(osFamVersion.get(0));
+         if (family != UNRECOGNIZED)
+            version = osFamVersion.get(1);
       } else {
-         builder.family(OsFamily.fromValue(pieces.get(2)));
+         family = fromValue(pieces.get(2));
       }
+      builder.family(family);
+      if (family != UNRECOGNIZED)
+         version = parseVersionOrReturnEmptyString(family, version, osVersionMap);
+      if ("".equals(version))
+         version = from.getVersion();
+      builder.version(version);
       return builder.build();
    }
-
 }
