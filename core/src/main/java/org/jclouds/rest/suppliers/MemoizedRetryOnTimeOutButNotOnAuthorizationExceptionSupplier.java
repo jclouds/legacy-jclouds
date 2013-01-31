@@ -35,6 +35,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ForwardingObject;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**
  * This will retry the supplier if it encounters a timeout exception, but not if it encounters an
@@ -120,6 +121,8 @@ public class MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<T> ext
    public T get() {
       try {
          return cache.get("FOO").orNull();
+      } catch (UncheckedExecutionException e) {
+         throw propagate(e.getCause());
       } catch (ExecutionException e) {
          throw propagate(e.getCause());
       }

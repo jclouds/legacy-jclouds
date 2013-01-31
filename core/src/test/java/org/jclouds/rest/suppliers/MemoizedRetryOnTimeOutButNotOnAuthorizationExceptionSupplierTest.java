@@ -30,6 +30,7 @@ import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExc
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**
  * 
@@ -66,6 +67,20 @@ public class MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplierTest {
          new SetAndThrowAuthorizationExceptionSupplierBackedLoader<String>(new Supplier<String>() {
             public String get() {
                throw new RuntimeException(new ExecutionException(new AuthorizationException()));
+            }
+         }, authException).load("KEY");
+      } finally {
+         assertEquals(authException.get().getClass(), AuthorizationException.class);
+      }
+   }
+
+   @Test(expectedExceptions = AuthorizationException.class)
+   public void testLoaderThrowsAuthorizationExceptionAndAlsoSetsExceptionTypeWhenInUncheckedExecutionException() {
+      AtomicReference<AuthorizationException> authException = newReference();
+      try {
+         new SetAndThrowAuthorizationExceptionSupplierBackedLoader<String>(new Supplier<String>() {
+            public String get() {
+               throw new UncheckedExecutionException(new AuthorizationException());
             }
          }, authException).load("KEY");
       } finally {
