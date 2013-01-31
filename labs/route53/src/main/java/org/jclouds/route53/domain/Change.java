@@ -94,8 +94,8 @@ public final class Change {
          return true;
       if (obj == null || getClass() != obj.getClass())
          return false;
-      Change other = Change.class.cast(obj);
-      return equal(this.id, other.id);
+      Change that = Change.class.cast(obj);
+      return equal(this.id, that.id);
    }
 
    @Override

@@ -23,9 +23,9 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.route53.domain.ResourceRecordSet;
-import org.jclouds.route53.domain.ResourceRecordSet.Type;
-import org.jclouds.route53.domain.ResourceRecordSetIterable;
+import org.jclouds.route53.domain.RecordSet;
+import org.jclouds.route53.domain.RecordSet.Type;
+import org.jclouds.route53.domain.RecordSetIterable;
 import org.jclouds.route53.xml.ListResourceRecordSetsResponseHandler;
 import org.testng.annotations.Test;
 
@@ -40,24 +40,24 @@ public class ListResourceRecordSetsResponseTest extends BaseHandlerTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/rrsets.xml");
 
-      ResourceRecordSetIterable expected = expected();
+      RecordSetIterable expected = expected();
 
       ListResourceRecordSetsResponseHandler handler = injector.getInstance(ListResourceRecordSetsResponseHandler.class);
-      ResourceRecordSetIterable result = factory.create(handler).parse(is);
+      RecordSetIterable result = factory.create(handler).parse(is);
 
       assertEquals(result.toString(), expected.toString());
 
    }
 
-   public ResourceRecordSetIterable expected() {
-      return ResourceRecordSetIterable.builder()
-            .add(ResourceRecordSet.builder()
+   public RecordSetIterable expected() {
+      return RecordSetIterable.builder()
+            .add(RecordSet.builder()
                                   .name("example.com.")
                                   .type(Type.SOA)
                                   .ttl(900)
                                   .add("ns-2048.awsdns-64.net. hostmaster.awsdns.com. 1 7200 900 1209600 86400")
                                   .build())
-            .add(ResourceRecordSet.builder()
+            .add(RecordSet.builder()
                                   .name("example.com.")
                                   .type(Type.NS)
                                   .ttl(172800)

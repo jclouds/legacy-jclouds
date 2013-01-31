@@ -19,32 +19,55 @@
 package org.jclouds.route53.features;
 
 import org.jclouds.collect.PagedIterable;
-import org.jclouds.route53.domain.ResourceRecordSet;
-import org.jclouds.route53.domain.ResourceRecordSetIterable;
-import org.jclouds.route53.domain.ResourceRecordSetIterable.NextRecord;
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.route53.domain.Change;
+import org.jclouds.route53.domain.ChangeBatch;
+import org.jclouds.route53.domain.RecordSet;
+import org.jclouds.route53.domain.RecordSetIterable;
+import org.jclouds.route53.domain.RecordSetIterable.NextRecord;
 
 /**
- * @see ResourceRecordSetAsyncApi
+ * @see RecordSetAsyncApi
  * @see <a href=
  *      "http://docs.aws.amazon.com/Route53/latest/APIReference/ActionsOnRRS.html"
  *      />
  * @author Adrian Cole
  */
-public interface ResourceRecordSetApi {
+public interface RecordSetApi {
+
+   /**
+    * schedules creation of the resource record set.
+    */
+   Change create(RecordSet rrs);
+
+   /**
+    * applies a batch of changes atomically.
+    */
+   Change apply(ChangeBatch changes);
 
    /**
     * returns all resource record sets in order.
     */
-   PagedIterable<ResourceRecordSet> list();
+   PagedIterable<RecordSet> list();
 
    /**
     * retrieves up to 100 resource record sets in order.
     */
-   ResourceRecordSetIterable listFirstPage();
+   RecordSetIterable listFirstPage();
 
    /**
-    * retrieves up to 100 resource record sets in order, starting at {@code nextRecord}
+    * retrieves up to 100 resource record sets in order, starting at
+    * {@code nextRecord}
     */
-   ResourceRecordSetIterable listAt(NextRecord nextRecord);
+   RecordSetIterable listAt(NextRecord nextRecord);
 
+   /**
+    * This action deletes a resource record set.
+    * 
+    * @param rrs
+    *           the resource record set to delete
+    * @return null if not found or the change in progress
+    */
+   @Nullable
+   Change delete(RecordSet rrs);
 }
