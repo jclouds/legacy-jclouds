@@ -27,6 +27,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
@@ -44,7 +45,6 @@ import org.jclouds.route53.domain.Zone;
 import org.jclouds.route53.domain.ZoneAndNameServers;
 import org.jclouds.route53.filters.RestAuthentication;
 import org.jclouds.route53.functions.ZonesToPagedIterable;
-import org.jclouds.route53.options.ListZonesOptions;
 import org.jclouds.route53.xml.ChangeHandler;
 import org.jclouds.route53.xml.CreateHostedZoneResponseHandler;
 import org.jclouds.route53.xml.GetHostedZoneResponseHandler;
@@ -98,13 +98,22 @@ public interface ZoneAsyncApi {
    ListenableFuture<PagedIterable<Zone>> list();
 
    /**
-    * @see ZoneApi#list(ListZonesOptions)
+    * @see ZoneApi#listFirstPage
     */
    @Named("ListHostedZones")
    @GET
    @Path("/hostedzone")
    @XMLResponseParser(ListHostedZonesResponseHandler.class)
-   ListenableFuture<IterableWithMarker<Zone>> list(ListZonesOptions options);
+   ListenableFuture<IterableWithMarker<Zone>> listFirstPage();
+
+   /**
+    * @see ZoneApi#listAt(String)
+    */
+   @Named("ListHostedZones")
+   @GET
+   @Path("/hostedzone")
+   @XMLResponseParser(ListHostedZonesResponseHandler.class)
+   ListenableFuture<IterableWithMarker<Zone>> listAt(@QueryParam("marker") String nextMarker);
 
    /**
     * @see ZoneApi#get()

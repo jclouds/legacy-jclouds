@@ -16,30 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.route53.binders;
+package org.jclouds.route53.predicates;
 
-import javax.inject.Singleton;
+import static org.jclouds.route53.domain.RecordSet.Type.AAAA;
+import static org.jclouds.route53.domain.RecordSet.Type.NS;
+import static org.jclouds.route53.predicates.RecordSetPredicates.typeEquals;
 
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpRequest.Builder;
-import org.jclouds.rest.Binder;
-import org.jclouds.route53.domain.RecordSetIterable.NextRecord;
+import org.jclouds.route53.domain.RecordSet;
+import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Singleton
-public class BindNextRecord implements Binder {
-   @SuppressWarnings("unchecked")
-   @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
-      NextRecord from = NextRecord.class.cast(payload);
-      Builder<?> builder = request.toBuilder();
-      builder.addQueryParam("name", from.getName());
-      builder.addQueryParam("type", from.getType().toString());
-      if (from.getIdentifier().isPresent())
-         builder.addQueryParam("identifier", from.getIdentifier().get());
-      return (R) builder.build();
+@Test(groups = "unit", testName = "ResourceRecordSetPredicatesTest")
+public class RecordSetPredicatesTest {
+   RecordSet rrs = RecordSet.builder().name("jclouds.org.").type(NS).add("ns-119.awsdns-14.com.")
+         .build();
+
+   @Test
+   public void testTypeEqualsWhenEqual() {
+      assert typeEquals(NS).apply(rrs);
+   }
+
+   @Test
+   public void testTypeEqualsWhenNotEqual() {
+      assert !typeEquals(AAAA).apply(rrs);
    }
 }

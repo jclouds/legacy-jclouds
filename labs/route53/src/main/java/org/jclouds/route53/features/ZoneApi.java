@@ -29,7 +29,6 @@ import org.jclouds.route53.domain.Change.Status;
 import org.jclouds.route53.domain.NewZone;
 import org.jclouds.route53.domain.Zone;
 import org.jclouds.route53.domain.ZoneAndNameServers;
-import org.jclouds.route53.options.ListZonesOptions;
 
 /**
  * @see ZoneAsyncApi
@@ -65,21 +64,19 @@ public interface ZoneApi {
    NewZone createWithReferenceAndComment(String name, String callerReference, String comment);
 
    /**
-    * The action retrieves a specified number of zones in order.
-    * 
-    * <br/>
-    * You can paginate the results using the
-    * {@link ListZonesOptions parameter}
-    * 
-    * @param options
-    *           the options describing the zones query
-    */
-   IterableWithMarker<Zone> list(ListZonesOptions options);
-
-   /**
     * returns all zones in order.
     */
    PagedIterable<Zone> list();
+
+   /**
+    * retrieves up to 100 zones in order.
+    */
+   IterableWithMarker<Zone> listFirstPage();
+
+   /**
+    * retrieves up to 100 zones in order, starting at {@code nextMarker}
+    */
+   IterableWithMarker<Zone> listAt(String nextMarker);
 
    /**
     * Retrieves information about the specified zone, including its nameserver

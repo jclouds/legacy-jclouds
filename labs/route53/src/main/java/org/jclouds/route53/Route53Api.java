@@ -25,7 +25,7 @@ import javax.ws.rs.PathParam;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.route53.domain.Change;
-import org.jclouds.route53.features.ResourceRecordSetApi;
+import org.jclouds.route53.features.RecordSetApi;
 import org.jclouds.route53.features.ZoneApi;
 
 /**
@@ -56,8 +56,8 @@ public interface Route53Api {
    ZoneApi getZoneApi();
    
    /**
-    * Provides synchronous access to ResourceRecordSet features.
+    * Provides synchronous access to record set features.
     */
    @Delegate
-   ResourceRecordSetApi getResourceRecordSetApiForZone(@PathParam("zoneId") String zoneId);
+   RecordSetApi getRecordSetApiForZone(@PathParam("zoneId") String zoneId);
 }

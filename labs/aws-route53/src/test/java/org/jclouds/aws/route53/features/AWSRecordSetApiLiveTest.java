@@ -16,30 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.route53.binders;
+package org.jclouds.aws.route53.features;
 
-import javax.inject.Singleton;
-
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpRequest.Builder;
-import org.jclouds.rest.Binder;
-import org.jclouds.route53.domain.RecordSetIterable.NextRecord;
+import org.jclouds.route53.features.RecordSetApiLiveTest;
+import org.testng.annotations.Test;
 
 /**
- * 
  * @author Adrian Cole
  */
-@Singleton
-public class BindNextRecord implements Binder {
-   @SuppressWarnings("unchecked")
-   @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
-      NextRecord from = NextRecord.class.cast(payload);
-      Builder<?> builder = request.toBuilder();
-      builder.addQueryParam("name", from.getName());
-      builder.addQueryParam("type", from.getType().toString());
-      if (from.getIdentifier().isPresent())
-         builder.addQueryParam("identifier", from.getIdentifier().get());
-      return (R) builder.build();
+@Test(groups = "live", testName = "AWSResourceRecordSetApiLiveTest")
+public class AWSRecordSetApiLiveTest extends RecordSetApiLiveTest {
+   public AWSRecordSetApiLiveTest() {
+      provider = "aws-route53";
    }
 }

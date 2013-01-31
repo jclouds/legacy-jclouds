@@ -17,73 +17,48 @@
  * under the License.
  */
 package org.jclouds.route53.features;
-
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.jclouds.route53.domain.Change.Status.INSYNC;
+import static java.lang.String.format;
+import static java.util.logging.Logger.getAnonymousLogger;
 import static org.jclouds.route53.domain.Change.Status.PENDING;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Date;
-import java.util.logging.Logger;
 
 import org.jclouds.JcloudsVersion;
-import org.jclouds.collect.IterableWithMarker;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.route53.domain.Change;
 import org.jclouds.route53.domain.NewZone;
 import org.jclouds.route53.domain.Zone;
 import org.jclouds.route53.internal.BaseRoute53ApiLiveTest;
-import org.jclouds.route53.options.ListZonesOptions;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "live", testName = "ZoneApiLiveTest")
 public class ZoneApiLiveTest extends BaseRoute53ApiLiveTest {
-   private Predicate<Change> inSync;
-
-   @BeforeClass(groups = "live")
-   @Override
-   public void setupContext() {
-      super.setupContext();
-      inSync = new RetryablePredicate<Change>(new Predicate<Change>() {
-         public boolean apply(Change input) {
-            return context.getApi().getChange(input.getId()).getStatus() == INSYNC;
-         }
-      }, 600, 1, 5, SECONDS);
-   }
 
    private void checkZone(Zone zone) {
-      checkNotNull(zone.getId(), "Id cannot be null for a Zone %s", zone);
-      checkNotNull(zone.getName(), "Name cannot be null for a Zone %s", zone);
-      checkNotNull(zone.getCallerReference(), "CallerReference cannot be null for a Zone %s", zone);
+      getAnonymousLogger().info(format("zone %s rrs: %s", zone.getName(), zone.getResourceRecordSetCount()));
+
+      checkNotNull(zone.getId(), "Id: Zone %s", zone);
+      checkNotNull(zone.getName(), "Name: Zone %s", zone);
+      checkNotNull(zone.getCallerReference(), "CallerReference: Zone %s", zone);
       checkNotNull(zone.getComment(), "While Comment can be null for a Zone, its Optional wrapper cannot %s", zone);
    }
 
    @Test
    protected void testListZones() {
-      IterableWithMarker<Zone> response = api().list().get(0);
+      ImmutableList<Zone> zones = api().list().concat().toImmutableList();
+      getAnonymousLogger().info("zones: " + zones.size());
 
-      for (Zone zone : response) {
+      for (Zone zone : zones) {
          checkZone(zone);
-      }
-
-      if (response.size() > 0) {
-         Zone zone = response.iterator().next();
          assertEquals(api().get(zone.getId()).getZone(), zone);
-      }
-
-      // Test with a Marker, even if it's null
-      response = api().list(ListZonesOptions.Builder.afterMarker(response.nextMarker().orNull()));
-      for (Zone zone : response) {
-         checkZone(zone);
       }
    }
 
@@ -103,7 +78,7 @@ public class ZoneApiLiveTest extends BaseRoute53ApiLiveTest {
       String nonce = name + " @ " + new Date();
       String comment = name + " for " + JcloudsVersion.get();
       NewZone newZone = api().createWithReferenceAndComment(name, nonce, comment);
-      Logger.getAnonymousLogger().info("created zone: " + newZone);
+      getAnonymousLogger().info("created zone: " + newZone);
       try {
          checkZone(newZone.getZone());
          assertEquals(newZone.getChange().getStatus(), PENDING, "invalid status on zone " + newZone);

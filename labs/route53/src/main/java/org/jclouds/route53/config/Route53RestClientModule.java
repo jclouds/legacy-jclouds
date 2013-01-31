@@ -26,15 +26,20 @@ import javax.inject.Singleton;
 import org.jclouds.aws.config.AWSRestClientModule;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
+import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.annotation.ClientError;
+import org.jclouds.http.annotation.Redirection;
+import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.route53.Route53Api;
 import org.jclouds.route53.Route53AsyncApi;
-import org.jclouds.route53.features.ResourceRecordSetApi;
-import org.jclouds.route53.features.ResourceRecordSetAsyncApi;
+import org.jclouds.route53.features.RecordSetApi;
+import org.jclouds.route53.features.RecordSetAsyncApi;
 import org.jclouds.route53.features.ZoneApi;
 import org.jclouds.route53.features.ZoneAsyncApi;
 import org.jclouds.route53.filters.RestAuthentication;
+import org.jclouds.route53.handlers.Route53ErrorHandler;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.reflect.TypeToken;
@@ -49,7 +54,7 @@ import com.google.inject.Provides;
 public class Route53RestClientModule extends AWSRestClientModule<Route53Api, Route53AsyncApi> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
          .put(ZoneApi.class, ZoneAsyncApi.class)
-         .put(ResourceRecordSetApi.class, ResourceRecordSetAsyncApi.class).build();
+         .put(RecordSetApi.class, RecordSetAsyncApi.class).build();
 
    public Route53RestClientModule() {
       super(TypeToken.of(Route53Api.class), TypeToken.of(Route53AsyncApi.class), DELEGATE_MAP);
@@ -65,5 +70,12 @@ public class Route53RestClientModule extends AWSRestClientModule<Route53Api, Rou
    @Singleton
    RequestSigner provideRequestSigner(RestAuthentication in) {
       return in;
+   }
+
+   @Override
+   protected void bindErrorHandlers() {
+      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(Route53ErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(Route53ErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(Route53ErrorHandler.class);
    }
 }

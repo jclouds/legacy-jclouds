@@ -18,13 +18,7 @@
  */
 package org.jclouds.route53.internal;
 
-import org.jclouds.http.HttpResponse;
 import org.jclouds.route53.Route53Api;
 
-/**
- * 
- * @author Adrian Cole
- */
 public class BaseRoute53ApiExpectTest extends BaseRoute53ExpectTest<Route53Api> {
-   protected HttpResponse notFound = HttpResponse.builder().statusCode(404).build();
 }

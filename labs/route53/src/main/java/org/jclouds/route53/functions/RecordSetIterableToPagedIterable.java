@@ -25,9 +25,9 @@ import javax.inject.Inject;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.internal.CallerArg0ToPagedIterable;
 import org.jclouds.route53.Route53Api;
-import org.jclouds.route53.domain.ResourceRecordSet;
-import org.jclouds.route53.domain.ResourceRecordSetIterable.NextRecord;
-import org.jclouds.route53.features.ResourceRecordSetApi;
+import org.jclouds.route53.domain.RecordSet;
+import org.jclouds.route53.domain.RecordSetIterable.NextRecord;
+import org.jclouds.route53.features.RecordSetApi;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
@@ -36,23 +36,23 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Beta
-public class ResourceRecordSetsToPagedIterable extends
-      CallerArg0ToPagedIterable<ResourceRecordSet, ResourceRecordSetsToPagedIterable> {
+public class RecordSetIterableToPagedIterable extends
+      CallerArg0ToPagedIterable<RecordSet, RecordSetIterableToPagedIterable> {
 
    private final Route53Api api;
 
    @Inject
-   protected ResourceRecordSetsToPagedIterable(Route53Api api) {
+   protected RecordSetIterableToPagedIterable(Route53Api api) {
       this.api = checkNotNull(api, "api");
    }
 
    @Override
-   protected Function<Object, IterableWithMarker<ResourceRecordSet>> markerToNextForCallingArg0(String zoneId) {
-      final ResourceRecordSetApi resourceRecordSetApi = api.getResourceRecordSetApiForZone(zoneId);
-      return new Function<Object, IterableWithMarker<ResourceRecordSet>>() {
+   protected Function<Object, IterableWithMarker<RecordSet>> markerToNextForCallingArg0(String zoneId) {
+      final RecordSetApi resourceRecordSetApi = api.getRecordSetApiForZone(zoneId);
+      return new Function<Object, IterableWithMarker<RecordSet>>() {
 
          @Override
-         public IterableWithMarker<ResourceRecordSet> apply(Object input) {
+         public IterableWithMarker<RecordSet> apply(Object input) {
             return resourceRecordSetApi.listAt(NextRecord.class.cast(input));
          }
 
