@@ -74,5 +74,6 @@
         <module>rackspace-cloudblockstorage-uk</module>
         <module>glesys</module>
         <module>aws-sts</module>
+        <module>aws-route53</module>
     </modules>
 </project>
