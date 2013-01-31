@@ -20,7 +20,7 @@ package org.jclouds.compute.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.base.CaseFormat;
+import static com.google.common.base.CaseFormat.*;
 
 /**
  * Running Operating system
@@ -29,7 +29,11 @@ import com.google.common.base.CaseFormat;
  * @author Adrian Cole
  */
 public enum OsFamily {
-   UNRECOGNIZED, AIX, ARCH, CENTOS, DARWIN, DEBIAN, ESX, FEDORA, FREEBSD, GENTOO, HPUX, LINUX,
+   UNRECOGNIZED, AIX, ARCH, CENTOS, DARWIN, DEBIAN, ESX, FEDORA, FREEBSD, GENTOO, HPUX, LINUX, 
+   /**
+    * @see <a href="http://smartos.org">SmartOS</a>
+    */
+   SMARTOS,
    /**
     * @see <a href="http://aws.amazon.com/amazon-linux-ami/">amazon linux ami</a>
     */
@@ -46,12 +50,10 @@ public enum OsFamily {
    /**
     * Google Compute Engine Linux
     */
-   GCEL,
-   SIGAR, 
-   SLACKWARE,
-   SOLARIS, SUSE, TURBOLINUX, CLOUD_LINUX, UBUNTU, WINDOWS;
+   GCEL, SIGAR, SLACKWARE, SOLARIS, SUSE, TURBOLINUX, CLOUD_LINUX, UBUNTU, WINDOWS;
+
    public String value() {
-      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
+      return UPPER_UNDERSCORE.to(LOWER_HYPHEN, name());
    }
 
    @Override
@@ -61,7 +63,7 @@ public enum OsFamily {
 
    public static OsFamily fromValue(String osFamily) {
       try {
-         return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(osFamily, "osFamily")));
+         return valueOf(LOWER_HYPHEN.to(UPPER_UNDERSCORE, checkNotNull(osFamily, "osFamily")));
       } catch (IllegalArgumentException e) {
          return UNRECOGNIZED;
       }
