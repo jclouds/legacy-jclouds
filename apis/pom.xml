@@ -53,5 +53,6 @@
        <module>rackspace-cloudidentity</module>
        <module>rackspace-cloudloadbalancers</module>
        <module>sts</module>
+       <module>route53</module>
     </modules>
 </project>
