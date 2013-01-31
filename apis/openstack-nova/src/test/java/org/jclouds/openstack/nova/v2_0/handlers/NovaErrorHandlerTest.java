@@ -45,7 +45,7 @@ import com.google.gson.Gson;
  * 
  * @author Adrian Cole, Steve Loughran
  */
-@Test(groups = { "unit" })
+@Test(groups = "unit", singleThreaded = true)
 public class NovaErrorHandlerTest {
    
    private HttpCommand command;
