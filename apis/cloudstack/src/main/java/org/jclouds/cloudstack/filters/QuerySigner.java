@@ -25,18 +25,19 @@ import static com.google.common.io.ByteStreams.readBytes;
 import static org.jclouds.Constants.LOGGER_SIGNATURE;
 import static org.jclouds.crypto.Macs.asByteProcessor;
 import static org.jclouds.http.Uris.uriBuilder;
-import static org.jclouds.http.utils.Queries.encodeQueryLine;
 import static org.jclouds.http.utils.Queries.queryParser;
 import static org.jclouds.util.Strings2.toInputStream;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.common.base.Joiner;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpException;
@@ -46,12 +47,13 @@ import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
+import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.TreeMultimap;
 import com.google.common.io.ByteProcessor;
 
 /**
@@ -116,10 +118,12 @@ public class QuerySigner implements AuthenticationFilter, RequestSigner {
    @VisibleForTesting
    public String createStringToSign(HttpRequest request, Multimap<String, String> decodedParams) {
       utils.logRequest(signatureLog, request, ">>");
-      // like aws, percent encode the canonicalized string without skipping '/' and '?'
-      String queryLine = encodeQueryLine(TreeMultimap.create(decodedParams), ImmutableList.<Character> of());
+      // encode each parameter value first,
+      ImmutableSortedSet.Builder<String> builder = ImmutableSortedSet.naturalOrder();
+      for (Map.Entry<String, String> entry : decodedParams.entries())
+         builder.add(entry.getKey() + "=" + Strings2.urlEncode(entry.getValue()));
       // then, lower case the entire query string
-      String stringToSign = queryLine.toLowerCase();
+      String stringToSign = Joiner.on('&').join(builder.build()).toLowerCase();
       if (signatureWire.enabled())
          signatureWire.output(stringToSign);
 
