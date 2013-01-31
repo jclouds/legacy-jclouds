@@ -18,18 +18,20 @@
  */
 package org.jclouds.joyent.joyentcloud;
 
+import static com.google.common.base.Predicates.not;
+import static org.jclouds.compute.domain.OsFamily.SMARTOS;
+import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
 import java.util.Set;
 
-import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -45,13 +47,14 @@ public class JoyentCloudTemplateBuilderLiveTest extends BaseTemplateBuilderLiveT
 
    @Override
    protected Predicate<OsFamilyVersion64Bit> defineUnsupportedOperatingSystems() {
-      return Predicates.not(new Predicate<OsFamilyVersion64Bit>() {
+      return not(new Predicate<OsFamilyVersion64Bit>() {
 
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
             case UBUNTU:
-               return (input.version.equals("") || input.version.equals("10.04")) && input.is64Bit;
+               return (input.version.equals("") || input.version.equals("10.04") || input.version.equals("12.04"))
+                     && input.is64Bit;
             case DEBIAN:
                return input.is64Bit && !input.version.equals("5.0");
             case CENTOS:
@@ -66,12 +69,26 @@ public class JoyentCloudTemplateBuilderLiveTest extends BaseTemplateBuilderLiveT
    }
 
    @Test
-   public void testTemplateBuilder() {
+   public void testTemplateBuilderSmartOS() throws IOException {
+      Template smartTemplate = view.getComputeService().templateBuilder().osFamily(SMARTOS).build();
+      assertEquals(smartTemplate.getImage().getOperatingSystem().is64Bit(), true);
+      assertEquals(smartTemplate.getImage().getOperatingSystem().getVersion(), "1.6.3");
+      assertEquals(smartTemplate.getImage().getOperatingSystem().getFamily(), SMARTOS);
+      assertEquals(smartTemplate.getImage().getName(), "smartos");
+      assertEquals(smartTemplate.getImage().getDefaultCredentials().getUser(), "root");
+      assertEquals(smartTemplate.getLocation().getId(), "us-east-1");
+      assertEquals(smartTemplate.getImage().getLocation().getId(), "us-east-1");
+      assertEquals(smartTemplate.getHardware().getLocation().getId(), "us-east-1");
+   }
+
+   @Test
+   @Override
+   public void testDefaultTemplateBuilder() {
       Template defaultTemplate = this.view.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getImage().getName(), "ubuntu-10.04");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "12.04");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), UBUNTU);
+      assertEquals(defaultTemplate.getImage().getName(), "ubuntu-12.04");
       assertEquals(defaultTemplate.getImage().getDefaultCredentials().getUser(), "root");
       assertEquals(defaultTemplate.getLocation().getId(), "us-east-1");
       assertEquals(defaultTemplate.getImage().getLocation().getId(), "us-east-1");
