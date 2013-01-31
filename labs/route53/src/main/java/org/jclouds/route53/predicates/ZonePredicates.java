@@ -16,30 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.route53.binders;
+package org.jclouds.route53.predicates;
 
-import javax.inject.Singleton;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpRequest.Builder;
-import org.jclouds.rest.Binder;
-import org.jclouds.route53.domain.RecordSetIterable.NextRecord;
+import org.jclouds.route53.domain.Zone;
+
+import com.google.common.base.Predicate;
 
 /**
+ * Predicates handy when working with Zones
  * 
  * @author Adrian Cole
  */
-@Singleton
-public class BindNextRecord implements Binder {
-   @SuppressWarnings("unchecked")
-   @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
-      NextRecord from = NextRecord.class.cast(payload);
-      Builder<?> builder = request.toBuilder();
-      builder.addQueryParam("name", from.getName());
-      builder.addQueryParam("type", from.getType().toString());
-      if (from.getIdentifier().isPresent())
-         builder.addQueryParam("identifier", from.getIdentifier().get());
-      return (R) builder.build();
+public class ZonePredicates {
+
+   /**
+    * matches zones of the given name
+    */
+   public static Predicate<Zone> nameEquals(final String name) {
+      checkNotNull(name, "name must be defined");
+
+      return new Predicate<Zone>() {
+         @Override
+         public boolean apply(Zone zone) {
+            return name.equals(zone.getName());
+         }
+
+         @Override
+         public String toString() {
+            return "nameEquals(" + name + ")";
+         }
+      };
    }
 }

@@ -38,7 +38,7 @@ public class Route53ApiExpectTest extends BaseRoute53ApiExpectTest {
          .addHeader("Host", "route53.amazonaws.com")
          .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization",
-               "AWS3-HTTPS AWSAccessKeyId=identity,Algorithm=HmacSHA256,Signature=pylxNiLcrsjNRZOsxyT161JCwytVPHyc2rFfmNCuZKI=")
+               authForDate)
          .build();
 
    HttpResponse getChangeResponse = HttpResponse.builder().statusCode(200)

@@ -27,7 +27,6 @@ import org.jclouds.collect.internal.CallerArg0ToPagedIterable;
 import org.jclouds.route53.Route53Api;
 import org.jclouds.route53.domain.Zone;
 import org.jclouds.route53.features.ZoneApi;
-import org.jclouds.route53.options.ListZonesOptions;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
@@ -52,7 +51,7 @@ public class ZonesToPagedIterable extends CallerArg0ToPagedIterable<Zone, ZonesT
 
          @Override
          public IterableWithMarker<Zone> apply(Object input) {
-            return zoneApi.list(ListZonesOptions.Builder.afterMarker(input.toString()));
+            return zoneApi.listAt(input.toString());
          }
 
          @Override

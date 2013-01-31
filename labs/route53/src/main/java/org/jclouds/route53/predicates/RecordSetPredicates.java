@@ -16,30 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.route53.binders;
+package org.jclouds.route53.predicates;
 
-import javax.inject.Singleton;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpRequest.Builder;
-import org.jclouds.rest.Binder;
-import org.jclouds.route53.domain.RecordSetIterable.NextRecord;
+import org.jclouds.route53.domain.RecordSet;
+import org.jclouds.route53.domain.RecordSet.Type;
+
+import com.google.common.base.Predicate;
 
 /**
+ * Predicates handy when working with ResourceRecordSet Types
  * 
  * @author Adrian Cole
  */
-@Singleton
-public class BindNextRecord implements Binder {
-   @SuppressWarnings("unchecked")
-   @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
-      NextRecord from = NextRecord.class.cast(payload);
-      Builder<?> builder = request.toBuilder();
-      builder.addQueryParam("name", from.getName());
-      builder.addQueryParam("type", from.getType().toString());
-      if (from.getIdentifier().isPresent())
-         builder.addQueryParam("identifier", from.getIdentifier().get());
-      return (R) builder.build();
+public class RecordSetPredicates {
+
+   /**
+    * matches zones of the given type
+    */
+   public static Predicate<RecordSet> typeEquals(final Type type) {
+      checkNotNull(type, "type must be defined");
+
+      return new Predicate<RecordSet>() {
+         @Override
+         public boolean apply(RecordSet zone) {
+            return type.equals(zone.getType());
+         }
+
+         @Override
+         public String toString() {
+            return "typeEquals(" + type + ")";
+         }
+      };
    }
 }
