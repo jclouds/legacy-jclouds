@@ -27,7 +27,7 @@
     <version>1.5.6-SNAPSHOT</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
-  <groupId>org.jclouds.labs</groupId>
+  <groupId>org.jclouds.api</groupId>
   <artifactId>route53</artifactId>
   <name>jcloud route53 api</name>
   <description>jclouds components to access an implementation of Route 53</description>
