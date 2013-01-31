@@ -131,8 +131,8 @@ public class NovaComputeServiceAdapter implements
       logger.trace("<< server(%s)", server.getId());
 
       ServerInZone serverInZone = new ServerInZone(server, zoneId);
-      if (!privateKey.isPresent())
-         credentialsBuilder.password(lightweightServer.getAdminPass());
+      if (!privateKey.isPresent() && lightweightServer.getAdminPass().isPresent())
+         credentialsBuilder.password(lightweightServer.getAdminPass().get());
       return new NodeAndInitialCredentials<ServerInZone>(serverInZone, serverInZone.slashEncode(), credentialsBuilder
                .build());
    }
