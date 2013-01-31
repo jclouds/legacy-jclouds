@@ -18,7 +18,6 @@
  */
 package org.jclouds.route53.features;
 
-import static org.jclouds.route53.options.ListZonesOptions.Builder.afterMarker;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
@@ -45,7 +44,7 @@ public class ZoneApiExpectTest extends BaseRoute53ApiExpectTest {
          .addHeader("Host", "route53.amazonaws.com")
          .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization",
-               "AWS3-HTTPS AWSAccessKeyId=identity,Algorithm=HmacSHA256,Signature=pylxNiLcrsjNRZOsxyT161JCwytVPHyc2rFfmNCuZKI=")
+               authForDate)
          .payload(
                payloadFromStringWithContentType(
                      "<CreateHostedZoneRequest xmlns=\"https://route53.amazonaws.com/doc/2012-02-29/\"><Name>jclouds.org.</Name><CallerReference>expect</CallerReference></CreateHostedZoneRequest>",
@@ -65,7 +64,7 @@ public class ZoneApiExpectTest extends BaseRoute53ApiExpectTest {
          .addHeader("Host", "route53.amazonaws.com")
          .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization",
-               "AWS3-HTTPS AWSAccessKeyId=identity,Algorithm=HmacSHA256,Signature=pylxNiLcrsjNRZOsxyT161JCwytVPHyc2rFfmNCuZKI=")
+               authForDate)
          .payload(
                payloadFromStringWithContentType(
                      "<CreateHostedZoneRequest xmlns=\"https://route53.amazonaws.com/doc/2012-02-29/\"><Name>jclouds.org.</Name><CallerReference>expect</CallerReference><HostedZoneConfig><Comment>comment</Comment></HostedZoneConfig></CreateHostedZoneRequest>",
@@ -82,7 +81,7 @@ public class ZoneApiExpectTest extends BaseRoute53ApiExpectTest {
          .addHeader("Host", "route53.amazonaws.com")
          .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization",
-               "AWS3-HTTPS AWSAccessKeyId=identity,Algorithm=HmacSHA256,Signature=pylxNiLcrsjNRZOsxyT161JCwytVPHyc2rFfmNCuZKI=")
+               authForDate)
          .build();
    
    HttpResponse getResponse = HttpResponse.builder().statusCode(200)
@@ -104,7 +103,7 @@ public class ZoneApiExpectTest extends BaseRoute53ApiExpectTest {
          .addHeader("Host", "route53.amazonaws.com")
          .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization",
-               "AWS3-HTTPS AWSAccessKeyId=identity,Algorithm=HmacSHA256,Signature=pylxNiLcrsjNRZOsxyT161JCwytVPHyc2rFfmNCuZKI=")
+               authForDate)
          .build();
 
    HttpResponse listResponse = HttpResponse.builder().statusCode(200)
@@ -123,17 +122,17 @@ public class ZoneApiExpectTest extends BaseRoute53ApiExpectTest {
       assertEquals(fail.getZoneApi().list().get(0).toSet(), ImmutableSet.of());
    }
    
-   HttpRequest listWithOptions = HttpRequest.builder().method("GET")
+   HttpRequest listAt = HttpRequest.builder().method("GET")
          .endpoint("https://route53.amazonaws.com/2012-02-29/hostedzone?marker=Z333333YYYYYYY")
          .addHeader("Host", "route53.amazonaws.com")
          .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization",
-               "AWS3-HTTPS AWSAccessKeyId=identity,Algorithm=HmacSHA256,Signature=pylxNiLcrsjNRZOsxyT161JCwytVPHyc2rFfmNCuZKI=")
+               authForDate)
          .build();
    
-   public void testListWithOptionsWhenResponseIs2xx() {
-      Route53Api apiWhenWithOptionsExist = requestSendsResponse(listWithOptions, listResponse);
-      assertEquals(apiWhenWithOptionsExist.getZoneApi().list(afterMarker("Z333333YYYYYYY")).toString(),
+   public void testListAtWhenResponseIs2xx() {
+      Route53Api apiWhenAtExist = requestSendsResponse(listAt, listResponse);
+      assertEquals(apiWhenAtExist.getZoneApi().listAt("Z333333YYYYYYY").toString(),
             new ListHostedZonesResponseTest().expected().toString());
    }
    
@@ -141,7 +140,7 @@ public class ZoneApiExpectTest extends BaseRoute53ApiExpectTest {
       HttpResponse noMore = HttpResponse.builder().statusCode(200)
             .payload(payloadFromStringWithContentType("<ListHostedZonesResponse />", "text/xml")).build();
 
-      Route53Api success = requestsSendResponses(list, listResponse, listWithOptions, noMore);
+      Route53Api success = requestsSendResponses(list, listResponse, listAt, noMore);
       assertEquals(success.getZoneApi().list().concat().toString(), new ListHostedZonesResponseTest().expected()
             .toString());
    }
@@ -151,7 +150,7 @@ public class ZoneApiExpectTest extends BaseRoute53ApiExpectTest {
          .addHeader("Host", "route53.amazonaws.com")
          .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization",
-               "AWS3-HTTPS AWSAccessKeyId=identity,Algorithm=HmacSHA256,Signature=pylxNiLcrsjNRZOsxyT161JCwytVPHyc2rFfmNCuZKI=")
+               authForDate)
          .build();
    
    HttpResponse deleteResponse = HttpResponse.builder().statusCode(200)

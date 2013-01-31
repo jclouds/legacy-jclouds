@@ -16,17 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.aws.route53.features;
+package org.jclouds.route53;
 
-import org.jclouds.route53.features.ResourceRecordSetApiLiveTest;
-import org.testng.annotations.Test;
+import org.jclouds.http.HttpResponseException;
+
+import com.google.common.collect.ImmutableList;
 
 /**
+ * @see <a href=
+ *      "http://docs.aws.amazon.com/Route53/latest/APIReference/API_ChangeResourceRecordSets.html"
+ *      />
+ * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "AWSResourceRecordSetApiLiveTest")
-public class AWSResourceRecordSetApiLiveTest extends ResourceRecordSetApiLiveTest {
-   public AWSResourceRecordSetApiLiveTest() {
-      provider = "aws-route53";
+public class InvalidChangeBatchException extends IllegalArgumentException {
+   private static final long serialVersionUID = 1L;
+
+   private final ImmutableList<String> messages;
+
+   public InvalidChangeBatchException(ImmutableList<String> messages, HttpResponseException cause) {
+      super(messages.toString(), cause);
+      this.messages = messages;
+   }
+
+   public ImmutableList<String> getMessages() {
+      return messages;
    }
 }

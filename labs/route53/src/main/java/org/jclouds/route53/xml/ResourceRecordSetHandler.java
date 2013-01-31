@@ -21,25 +21,25 @@ package org.jclouds.route53.xml;
 import static org.jclouds.util.SaxUtils.currentOrNull;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.route53.domain.ResourceRecordSet;
-import org.jclouds.route53.domain.ResourceRecordSet.Type;
+import org.jclouds.route53.domain.RecordSet;
+import org.jclouds.route53.domain.RecordSet.Type;
 import org.xml.sax.Attributes;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class ResourceRecordSetHandler extends ParseSax.HandlerForGeneratedRequestWithResult<ResourceRecordSet> {
+public class ResourceRecordSetHandler extends ParseSax.HandlerForGeneratedRequestWithResult<RecordSet> {
 
    private StringBuilder currentText = new StringBuilder();
-   private ResourceRecordSet.Builder builder = ResourceRecordSet.builder();
+   private RecordSet.Builder builder = RecordSet.builder();
 
    @Override
-   public ResourceRecordSet getResult() {
+   public RecordSet getResult() {
       try {
          return builder.build();
       } finally {
-         builder = ResourceRecordSet.builder();
+         builder = RecordSet.builder();
       }
    }
 
@@ -57,6 +57,16 @@ public class ResourceRecordSetHandler extends ParseSax.HandlerForGeneratedReques
          builder.ttl(Integer.parseInt(currentOrNull(currentText)));
       } else if (qName.equals("Value")) {
          builder.add(currentOrNull(currentText));
+      } else if (qName.equals("HostedZoneId")) {
+         builder.zoneId(currentOrNull(currentText));
+      } else if (qName.equals("SetIdentifier")) {
+         builder.id(currentOrNull(currentText));
+      } else if (qName.equals("DNSName")) {
+         builder.dnsName(currentOrNull(currentText));
+      } else if (qName.equals("Weight")) {
+         builder.weight(Integer.parseInt(currentOrNull(currentText)));
+      } else if (qName.equals("Region")) {
+         builder.region(currentOrNull(currentText));
       }
       currentText = new StringBuilder();
    }

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<InvalidChangeBatch xmlns="https://route53.amazonaws.com/doc/2012-02-29/">
+	<Messages>
+		<Message>Tried to create resource record set duplicate.example.com. type A, but it already exists</Message>
+		<Message>Tried to delete resource record set noexist.example.com. type A, but it was not found</Message>
+	</Messages>
+</InvalidChangeBatch>

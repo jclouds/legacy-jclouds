@@ -27,7 +27,7 @@ import java.util.Iterator;
 
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.route53.domain.ResourceRecordSet.Type;
+import org.jclouds.route53.domain.RecordSet.Type;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
@@ -37,12 +37,12 @@ import com.google.common.collect.ImmutableList;
  * 
  * @author Adrian Cole
  */
-public class ResourceRecordSetIterable extends IterableWithMarker<ResourceRecordSet> {
+public class RecordSetIterable extends IterableWithMarker<RecordSet> {
 
-   private final Iterable<ResourceRecordSet> items;
+   private final Iterable<RecordSet> items;
    private final Optional<NextRecord> nextRecord;
 
-   private ResourceRecordSetIterable(Iterable<ResourceRecordSet> items, @Nullable NextRecord nextRecord) {
+   private RecordSetIterable(Iterable<RecordSet> items, @Nullable NextRecord nextRecord) {
       this.items = checkNotNull(items, "items");
       this.nextRecord = Optional.fromNullable(nextRecord);
    }
@@ -61,7 +61,7 @@ public class ResourceRecordSetIterable extends IterableWithMarker<ResourceRecord
    }
 
    @Override
-   public Iterator<ResourceRecordSet> iterator() {
+   public Iterator<RecordSet> iterator() {
       return items.iterator();
    }
 
@@ -76,7 +76,7 @@ public class ResourceRecordSetIterable extends IterableWithMarker<ResourceRecord
          return true;
       if (obj == null || getClass() != obj.getClass())
          return false;
-      ResourceRecordSetIterable that = ResourceRecordSetIterable.class.cast(obj);
+      RecordSetIterable that = RecordSetIterable.class.cast(obj);
       return equal(this.items, that.items) && equal(this.nextRecord, that.nextRecord);
    }
 
@@ -139,9 +139,9 @@ public class ResourceRecordSetIterable extends IterableWithMarker<ResourceRecord
             return true;
          if (obj == null || getClass() != obj.getClass())
             return false;
-         NextRecord other = NextRecord.class.cast(obj);
-         return equal(this.name, other.name) && equal(this.type, other.type)
-               && equal(this.identifier, other.identifier);
+         NextRecord that = NextRecord.class.cast(obj);
+         return equal(this.name, that.name) && equal(this.type, that.type)
+               && equal(this.identifier, that.identifier);
       }
 
       @Override
@@ -157,17 +157,17 @@ public class ResourceRecordSetIterable extends IterableWithMarker<ResourceRecord
 
    public static final class Builder {
 
-      private ImmutableList.Builder<ResourceRecordSet> items = ImmutableList.<ResourceRecordSet> builder();
+      private ImmutableList.Builder<RecordSet> items = ImmutableList.<RecordSet> builder();
       private String nextRecordName;
       private Type nextRecordType;
       private String nextRecordIdentifier;
 
-      public Builder add(ResourceRecordSet item) {
+      public Builder add(RecordSet item) {
          this.items.add(item);
          return this;
       }
 
-      public Builder addAll(Iterable<ResourceRecordSet> items) {
+      public Builder addAll(Iterable<RecordSet> items) {
          this.items.addAll(items);
          return this;
       }
@@ -187,10 +187,10 @@ public class ResourceRecordSetIterable extends IterableWithMarker<ResourceRecord
          return this;
       }
 
-      public ResourceRecordSetIterable build() {
+      public RecordSetIterable build() {
          NextRecord nextRecord = nextRecordName != null ? new NextRecord(nextRecordName, nextRecordType,
                nextRecordIdentifier) : null;
-         return new ResourceRecordSetIterable(items.build(), nextRecord);
+         return new RecordSetIterable(items.build(), nextRecord);
       }
    }
 }

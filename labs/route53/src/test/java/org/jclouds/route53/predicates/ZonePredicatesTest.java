@@ -16,30 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.route53.binders;
+package org.jclouds.route53.predicates;
 
-import javax.inject.Singleton;
+import static org.jclouds.route53.predicates.ZonePredicates.nameEquals;
 
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpRequest.Builder;
-import org.jclouds.rest.Binder;
-import org.jclouds.route53.domain.RecordSetIterable.NextRecord;
+import org.jclouds.route53.domain.Zone;
+import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Singleton
-public class BindNextRecord implements Binder {
-   @SuppressWarnings("unchecked")
-   @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
-      NextRecord from = NextRecord.class.cast(payload);
-      Builder<?> builder = request.toBuilder();
-      builder.addQueryParam("name", from.getName());
-      builder.addQueryParam("type", from.getType().toString());
-      if (from.getIdentifier().isPresent())
-         builder.addQueryParam("identifier", from.getIdentifier().get());
-      return (R) builder.build();
+@Test(groups = "unit", testName = "ZonePredicatesTest")
+public class ZonePredicatesTest {
+   Zone zone = Zone.builder().id("EEEFFFEEE").callerReference("goog").name("jclouds.org.").build();
+
+   @Test
+   public void testNameEqualsWhenEqual() {
+      assert nameEquals("jclouds.org.").apply(zone);
+   }
+
+   @Test
+   public void testNameEqualsWhenNotEqual() {
+      assert !nameEquals("kclouds.org.").apply(zone);
    }
 }

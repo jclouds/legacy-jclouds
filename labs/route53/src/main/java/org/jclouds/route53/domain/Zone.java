@@ -88,9 +88,9 @@ public final class Zone {
          return true;
       if (obj == null || getClass() != obj.getClass())
          return false;
-      Zone other = Zone.class.cast(obj);
-      return equal(this.id, other.id) && equal(this.name, other.name)
-            && equal(this.callerReference, other.callerReference);
+      Zone that = Zone.class.cast(obj);
+      return equal(this.id, that.id) && equal(this.name, that.name)
+            && equal(this.callerReference, that.callerReference);
    }
 
    @Override

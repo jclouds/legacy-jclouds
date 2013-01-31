@@ -19,9 +19,10 @@
 package org.jclouds.route53.internal;
 
 import org.jclouds.date.DateService;
-import org.jclouds.route53.config.Route53RestClientModule;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.BaseRestApiExpectTest;
+import org.jclouds.route53.config.Route53RestClientModule;
 
 import com.google.inject.Module;
 
@@ -43,6 +44,9 @@ public class BaseRoute53ExpectTest<T> extends BaseRestApiExpectTest<T> {
          return "Mon, 21 Jan 02013 19:29:03 -0800";
       }
    }
+
+   protected final HttpResponse notFound = HttpResponse.builder().statusCode(404).build();
+   protected final String authForDate = "AWS3-HTTPS AWSAccessKeyId=identity,Algorithm=HmacSHA256,Signature=pylxNiLcrsjNRZOsxyT161JCwytVPHyc2rFfmNCuZKI=";
 
    @Override
    protected Module createModule() {
