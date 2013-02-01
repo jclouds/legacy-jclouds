@@ -3,7 +3,7 @@
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
+ * to you under the Apache License, String 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
@@ -16,36 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.dynect.v3;
+package org.jclouds.dynect.v3.functions;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.dynect.v3.features.SessionApi;
-import org.jclouds.dynect.v3.features.ZoneApi;
-import org.jclouds.rest.annotations.Delegate;
+import com.google.common.base.Function;
+import com.google.common.collect.FluentIterable;
 
 /**
- * Provides access to DynECT Managed DNS through the API2 api
- * <p/>
+ * Zones come back encoded in REST paths, such as
+ * {@code /REST/Zone/jclouds.org/}
  * 
- * @see DynECTAsyncApi
- * @see <a href="https://manage.dynect.net/help/docs/api2/rest/"
- *      />
  * @author Adrian Cole
+ * 
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface DynECTApi {
+public final class ExtractNames implements Function<FluentIterable<String>, FluentIterable<String>> {
+   public FluentIterable<String> apply(FluentIterable<String> in) {
+      return in.transform(ExtractNameInPath.INSTANCE);
+   }
 
-   /**
-    * Provides synchronous access to Session features.
-    */
-   @Delegate
-   SessionApi getSessionApi();
+   static enum ExtractNameInPath implements Function<String, String> {
+      INSTANCE;
 
-   /**
-    * Provides synchronous access to Zone features.
-    */
-   @Delegate
-   ZoneApi getZoneApi();
+      final int position = "/REST/Zone/".length();
+
+      public String apply(String in) {
+         return in.substring(position, in.length() - 1);
+      }
+   }
 }

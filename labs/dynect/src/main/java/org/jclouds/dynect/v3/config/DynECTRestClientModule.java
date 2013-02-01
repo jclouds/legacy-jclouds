@@ -18,12 +18,19 @@
  */
 package org.jclouds.dynect.v3.config;
 
+import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
+
 import java.util.Map;
 
 import org.jclouds.dynect.v3.DynECTApi;
 import org.jclouds.dynect.v3.DynECTAsyncApi;
 import org.jclouds.dynect.v3.features.SessionApi;
 import org.jclouds.dynect.v3.features.SessionAsyncApi;
+import org.jclouds.dynect.v3.features.ZoneApi;
+import org.jclouds.dynect.v3.features.ZoneAsyncApi;
+import org.jclouds.dynect.v3.filters.SessionManager;
+import org.jclouds.http.HttpRetryHandler;
+import org.jclouds.http.annotation.ClientError;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
@@ -39,9 +46,24 @@ public class DynECTRestClientModule extends RestClientModule<DynECTApi, DynECTAs
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
          .put(SessionApi.class, SessionAsyncApi.class)
-         .build();
+         .put(ZoneApi.class, ZoneAsyncApi.class).build();
 
    public DynECTRestClientModule() {
       super(DELEGATE_MAP);
    }
+
+   @Override
+   protected void bindRetryHandlers() {
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(SessionManager.class);
+   }
+
+   @Override
+   protected void configure() {
+      // binding explicitly ensures singleton despite multiple linked bindings
+      bind(SessionManager.class);
+      super.configure();
+      // Bind apis that are used directly vs via DynECTApi
+      bindClientAndAsyncClient(binder(), SessionApi.class, SessionAsyncApi.class);
+   }
+
 }

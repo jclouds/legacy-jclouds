@@ -1,0 +1,1 @@
+{"status": "success", "data": ["/REST/Zone/0.0.0.0.d.6.e.0.0.a.2.ip6.arpa/", "/REST/Zone/126.12.44.in-addr.arpa/", "/REST/Zone/jclouds.org/"], "job_id": 260657587, "msgs": [{"INFO": "get: Your 3 zones", "SOURCE": "BLL", "ERR_CD": null, "LVL": "INFO"}]}

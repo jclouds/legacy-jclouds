@@ -16,36 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.dynect.v3;
 
-import java.util.concurrent.TimeUnit;
+package org.jclouds.dynect.v3.parse;
 
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.dynect.v3.features.SessionApi;
-import org.jclouds.dynect.v3.features.ZoneApi;
-import org.jclouds.rest.annotations.Delegate;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.dynect.v3.domain.Session;
+import org.jclouds.dynect.v3.internal.BaseDynECTParseTest;
+import org.jclouds.rest.annotations.SelectJson;
+import org.testng.annotations.Test;
 
 /**
- * Provides access to DynECT Managed DNS through the API2 api
- * <p/>
- * 
- * @see DynECTAsyncApi
- * @see <a href="https://manage.dynect.net/help/docs/api2/rest/"
- *      />
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface DynECTApi {
+@Test(groups = "unit")
+public class CreateSessionResponseTest extends BaseDynECTParseTest<Session> {
 
-   /**
-    * Provides synchronous access to Session features.
-    */
-   @Delegate
-   SessionApi getSessionApi();
+   @Override
+   public String resource() {
+      return "/create_session.json";
+   }
 
-   /**
-    * Provides synchronous access to Zone features.
-    */
-   @Delegate
-   ZoneApi getZoneApi();
+   @Override
+   @SelectJson("data")
+   @Consumes(MediaType.APPLICATION_JSON)
+   public Session expected() {
+      return Session.forTokenAndVersion("FFFFFFFFFF", "3.3.7");
+   }
 }

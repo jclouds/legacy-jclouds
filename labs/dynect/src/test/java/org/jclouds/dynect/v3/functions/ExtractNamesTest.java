@@ -16,36 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.dynect.v3;
 
-import java.util.concurrent.TimeUnit;
+package org.jclouds.dynect.v3.functions;
 
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.dynect.v3.features.SessionApi;
-import org.jclouds.dynect.v3.features.ZoneApi;
-import org.jclouds.rest.annotations.Delegate;
+import static org.testng.Assert.assertEquals;
+
+import org.jclouds.dynect.v3.functions.ExtractNames.ExtractNameInPath;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableSet;
 
 /**
- * Provides access to DynECT Managed DNS through the API2 api
- * <p/>
- * 
- * @see DynECTAsyncApi
- * @see <a href="https://manage.dynect.net/help/docs/api2/rest/"
- *      />
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface DynECTApi {
+@Test(groups = "unit")
+public class ExtractNamesTest {
+   ExtractNames fn = new ExtractNames();
 
-   /**
-    * Provides synchronous access to Session features.
-    */
-   @Delegate
-   SessionApi getSessionApi();
+   public void testExtractNameInPath() {
+      assertEquals(ExtractNameInPath.INSTANCE.apply("/REST/Zone/jclouds.org/"), "jclouds.org");
+   }
 
-   /**
-    * Provides synchronous access to Zone features.
-    */
-   @Delegate
-   ZoneApi getZoneApi();
+   public void testExtractNames() {
+      assertEquals(fn.apply(FluentIterable.from(ImmutableSet.of("/REST/Zone/jclouds.org/"))).toImmutableSet(),
+            ImmutableSet.of("jclouds.org"));
+   }
 }

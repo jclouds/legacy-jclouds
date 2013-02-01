@@ -18,12 +18,7 @@
  */
 package org.jclouds.dynect.v3.internal;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-
 import org.jclouds.dynect.v3.DynECTApi;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.io.Payload;
-import org.jclouds.io.Payloads;
 
 /**
  * Base class for writing DynECT Expect tests
@@ -32,14 +27,4 @@ import org.jclouds.io.Payloads;
  */
 public class BaseDynECTApiExpectTest extends BaseDynECTExpectTest<DynECTApi> {
 
-   public static Payload emptyJsonPayload() {
-      Payload p = Payloads.newByteArrayPayload(new byte[] {});
-      p.getContentMetadata().setContentType(APPLICATION_JSON);
-      return p;
-   }
-
-   @Override
-   protected HttpRequestComparisonType compareHttpRequestAsType(HttpRequest input) {
-      return HttpRequestComparisonType.JSON;
-   }
 }

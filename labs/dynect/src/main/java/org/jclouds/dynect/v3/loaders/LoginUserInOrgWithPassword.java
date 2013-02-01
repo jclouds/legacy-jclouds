@@ -16,36 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.dynect.v3;
+package org.jclouds.dynect.v3.loaders;
 
-import java.util.concurrent.TimeUnit;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-import org.jclouds.concurrent.Timeout;
+import org.jclouds.dynect.v3.domain.Session;
+import org.jclouds.dynect.v3.domain.SessionCredentials;
 import org.jclouds.dynect.v3.features.SessionApi;
-import org.jclouds.dynect.v3.features.ZoneApi;
-import org.jclouds.rest.annotations.Delegate;
 
-/**
- * Provides access to DynECT Managed DNS through the API2 api
- * <p/>
- * 
- * @see DynECTAsyncApi
- * @see <a href="https://manage.dynect.net/help/docs/api2/rest/"
- *      />
- * @author Adrian Cole
- */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface DynECTApi {
+import com.google.common.cache.CacheLoader;
 
-   /**
-    * Provides synchronous access to Session features.
-    */
-   @Delegate
-   SessionApi getSessionApi();
+@Singleton
+public class LoginUserInOrgWithPassword extends CacheLoader<SessionCredentials, Session> {
+   private final SessionApi api;
 
-   /**
-    * Provides synchronous access to Zone features.
-    */
-   @Delegate
-   ZoneApi getZoneApi();
+   @Inject
+   LoginUserInOrgWithPassword(SessionApi api) {
+      this.api = api;
+   }
+
+   @Override
+   public Session load(SessionCredentials input) {
+      return api.login(input);
+   }
+
+   @Override
+   public String toString() {
+      return "loginUserInOrgWithPassword()";
+   }
 }
