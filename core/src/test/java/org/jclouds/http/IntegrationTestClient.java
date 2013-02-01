@@ -64,6 +64,8 @@ public interface IntegrationTestClient {
 
    String downloadAndParse(String id);
 
+   void putNothing(String id);
+
    @Provides
    StringBuilder newStringBuilder();
 }

@@ -56,6 +56,7 @@ import com.google.inject.Provides;
 /**
  * Sample test for the behaviour of our Integration Test jetty server.
  * 
+ * @see IntegrationTestClient
  * @author Adrian Cole
  */
 public interface IntegrationTestAsyncClient {
@@ -191,6 +192,10 @@ public interface IntegrationTestAsyncClient {
       }
 
    }
+
+   @PUT
+   @Path("/objects/{id}")
+   ListenableFuture<Void> putNothing(@PathParam("id") String id);
 
    @Provides
    StringBuilder newStringBuilder();
