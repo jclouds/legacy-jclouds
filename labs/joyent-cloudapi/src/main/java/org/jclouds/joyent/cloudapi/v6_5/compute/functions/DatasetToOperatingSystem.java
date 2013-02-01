@@ -55,16 +55,23 @@ public class DatasetToOperatingSystem implements Function<Dataset, OperatingSyst
       builder.name(from.getName());
       builder.description(from.getUrn());
       builder.is64Bit(true);// TODO: verify
+      String os = from.getOs();
       OsFamily family = UNRECOGNIZED;
       String version = "";
-      List<String> pieces = ImmutableList.copyOf(Splitter.on(':').split(from.getUrn()));
-      if (pieces.get(2).indexOf('-') != -1) {
-         List<String> osFamVersion = ImmutableList.copyOf(Splitter.on('-').split(pieces.get(2)));
-         family = fromValue(osFamVersion.get(0));
-         if (family != UNRECOGNIZED)
-            version = osFamVersion.get(1);
-      } else {
-         family = fromValue(pieces.get(2));
+      if (os.compareTo("smartos") == 0) {
+          family = fromValue(os);
+          version = from.getVersion();
+      }
+      else {
+          List<String> pieces = ImmutableList.copyOf(Splitter.on(':').split(from.getUrn()));
+          if (pieces.get(2).indexOf('-') != -1) {
+             List<String> osFamVersion = ImmutableList.copyOf(Splitter.on('-').split(pieces.get(2)));
+             family = fromValue(osFamVersion.get(0));
+             if (family != UNRECOGNIZED)
+                version = osFamVersion.get(1);
+          } else {
+             family = fromValue(pieces.get(2));
+          }
       }
       builder.family(family);
       if (family != UNRECOGNIZED)
