@@ -127,7 +127,7 @@ public abstract class BaseJettyTest {
                   response.setStatus(SC_OK);
                   response.getWriter().println(toStringAndClose(request.getInputStream()) + "PUT");
                } else {
-                  response.sendError(500, "no content");
+                  response.setStatus(SC_OK);
                }
             } else if (request.getMethod().equals("POST")) {
                // don't redirect large objects

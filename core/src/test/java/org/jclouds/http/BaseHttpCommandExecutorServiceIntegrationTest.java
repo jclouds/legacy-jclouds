@@ -262,4 +262,9 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
    public void testGetAndParseSax() {
       assertEquals(client.downloadAndParse(""), "whoppers");
    }
+
+   @Test(invocationCount = 5, timeOut = 5000)
+   public void testZeroLengthPut() {
+     client.putNothing("");
+   }
 }
