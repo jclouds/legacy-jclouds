@@ -63,6 +63,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableMultimap.Builder;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.io.CountingOutputStream;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Inject;
@@ -85,7 +86,6 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
    @Inject(optional = true)
    Supplier<SSLContext> sslContextSupplier;
 
-
    @Inject
    public JavaUrlHttpCommandExecutorService(HttpUtils utils, ContentMetadataCodec contentMetadataCodec,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ListeningExecutorService ioExecutor,
@@ -100,7 +100,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
       this.verifier = checkNotNull(verifier, "verifier");
       this.proxyForURI = checkNotNull(proxyForURI, "proxyForURI");
       this.methodField = HttpURLConnection.class.getDeclaredField("method");
-      methodField.setAccessible(true);
+      this.methodField.setAccessible(true);
    }
 
    @Override
@@ -173,7 +173,6 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
       }
       connection.setConnectTimeout(utils.getConnectionTimeout());
       connection.setReadTimeout(utils.getSocketOpenTimeout());
-      connection.setDoOutput(true);
       connection.setAllowUserInteraction(false);
       // do not follow redirects since https redirects don't work properly
       // ex. Caused by: java.io.IOException: HTTPS hostname wrong: should be
@@ -184,7 +183,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
       } catch (ProtocolException e) {
          try {
             methodField.set(connection, request.getMethod());
-         } catch (Exception e1) {
+         } catch (IllegalAccessException e1) {
             logger.error(e, "could not set request method: ", request.getMethod());
             propagate(e1);
          }
@@ -202,40 +201,45 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
       if (connection.getRequestProperty(USER_AGENT) == null) {
           connection.setRequestProperty(USER_AGENT, DEFAULT_USER_AGENT);
       }
-
-      if (request.getPayload() != null) {
-         MutableContentMetadata md = request.getPayload().getContentMetadata();
+      Payload payload = request.getPayload();
+      if (payload != null) {
+         MutableContentMetadata md = payload.getContentMetadata();
          for (Map.Entry<String,String> entry : contentMetadataCodec.toHeaders(md).entries()) {
             connection.setRequestProperty(entry.getKey(), entry.getValue());
          }
          if (chunked) {
             connection.setChunkedStreamingMode(8196);
          } else {
-            Long length = checkNotNull(md.getContentLength(), "payload.getContentLength");
-            connection.setRequestProperty(CONTENT_LENGTH, length.toString());
+            long length = checkNotNull(md.getContentLength(), "payload.getContentLength");
             // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6755625
             checkArgument(length < Integer.MAX_VALUE,
-                     "JDK 1.6 does not support >2GB chunks. Use chunked encoding, if possible.");
-            connection.setFixedLengthStreamingMode(length.intValue());
-            if (length.intValue() > 0) {
-               connection.setRequestProperty("Expect", "100-continue");
+                  "JDK 1.6 does not support >2GB chunks. Use chunked encoding, if possible.");
+            connection.setRequestProperty(CONTENT_LENGTH, length + "");
+            if (length > 0) {
+               writePayloadToConnection(payload, connection);
             }
-         }
-         CountingOutputStream out = new CountingOutputStream(connection.getOutputStream());
-         try {
-            request.getPayload().writeTo(out);
-         } catch (IOException e) {
-            throw new RuntimeException(String.format("error after writing %d/%s bytes to %s", out.getCount(), md
-                     .getContentLength(), request.getRequestLine()), e);
          }
       } else {
          connection.setRequestProperty(CONTENT_LENGTH, "0");
          // for some reason POST/PUT undoes the content length header above.
-         if (connection.getRequestMethod().equals("POST") || connection.getRequestMethod().equals("PUT"))
+         if (ImmutableSet.of("POST", "PUT").contains(connection.getRequestMethod()))
             connection.setFixedLengthStreamingMode(0);
       }
       return connection;
+   }
 
+   void writePayloadToConnection(Payload payload, HttpURLConnection connection) throws IOException {
+      Long length = payload.getContentMetadata().getContentLength();
+      connection.setFixedLengthStreamingMode(length.intValue());
+      connection.setDoOutput(true);
+      connection.setRequestProperty("Expect", "100-continue");
+      CountingOutputStream out = new CountingOutputStream(connection.getOutputStream());
+      try {
+         payload.writeTo(out);
+      } catch (IOException e) {
+         logger.error(e, "error after writing %d/%s bytes to %s", out.getCount(), length, connection.getURL());
+         throw e;
+      }
    }
 
    @Override
@@ -243,5 +247,4 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
       if (connection != null)
          connection.disconnect();
    }
-
 }
