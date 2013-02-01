@@ -16,15 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.dynect.v3.internal;
+package org.jclouds.dynect.v3.parse;
 
-import org.jclouds.dynect.v3.DynECTApi;
+import static org.jclouds.dynect.v3.domain.Zone.SerialStyle.INCREMENT;
+import static org.jclouds.dynect.v3.domain.Zone.Type.PRIMARY;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.dynect.v3.domain.Zone;
+import org.jclouds.dynect.v3.internal.BaseDynECTParseTest;
+import org.jclouds.rest.annotations.SelectJson;
+import org.testng.annotations.Test;
 
 /**
- * Base class for writing DynECT Expect tests
- * 
  * @author Adrian Cole
  */
-public class BaseDynECTApiExpectTest extends BaseDynECTExpectTest<DynECTApi> {
+@Test(groups = "unit")
+public class GetZoneResponseTest extends BaseDynECTParseTest<Zone> {
 
+   @Override
+   public String resource() {
+      return "/get_zone.json";
+   }
+
+   @Override
+   @SelectJson("data")
+   @Consumes(MediaType.APPLICATION_JSON)
+   public Zone expected() {
+      return Zone.builder().type(PRIMARY).serialStyle(INCREMENT).serial(5).name("jclouds.org").build();
+   }
 }
