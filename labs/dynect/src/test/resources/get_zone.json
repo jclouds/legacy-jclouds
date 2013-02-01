@@ -1,0 +1,1 @@
+{"status": "success", "data": {"zone_type": "Primary", "serial_style": "increment", "serial": 5, "zone": "jclouds.org"}, "job_id": 260737493, "msgs": [{"INFO": "get: Your zone, jclouds.org", "SOURCE": "BLL", "ERR_CD": null, "LVL": "INFO"}]}

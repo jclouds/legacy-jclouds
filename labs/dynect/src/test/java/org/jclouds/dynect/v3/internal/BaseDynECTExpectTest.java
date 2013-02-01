@@ -18,6 +18,12 @@
  */
 package org.jclouds.dynect.v3.internal;
 
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.io.Payload;
+import org.jclouds.io.Payloads;
 import org.jclouds.rest.internal.BaseRestApiExpectTest;
 
 /**
@@ -28,5 +34,31 @@ import org.jclouds.rest.internal.BaseRestApiExpectTest;
 public class BaseDynECTExpectTest<T> extends BaseRestApiExpectTest<T> {
     public BaseDynECTExpectTest() {
       provider = "dynect";
+      identity = "jclouds:joe";
+      credential = "letmein";
    }
+
+   public static Payload emptyJsonPayload() {
+      Payload p = Payloads.newByteArrayPayload(new byte[] {});
+      p.getContentMetadata().setContentType(APPLICATION_JSON);
+      return p;
+   }
+
+   @Override
+   protected HttpRequestComparisonType compareHttpRequestAsType(HttpRequest input) {
+      return HttpRequestComparisonType.JSON;
+   }
+
+   protected String authToken = "FFFFFFFFFF";
+
+   protected HttpRequest createSession = HttpRequest.builder().method("POST")
+         .endpoint("https://api2.dynect.net/REST/Session")
+         .addHeader("API-Version", "3.3.7")
+         .payload(payloadFromStringWithContentType("{\"customer_name\":\"jclouds\",\"user_name\":\"joe\",\"password\":\"letmein\"}",APPLICATION_JSON))
+         .build();
+   
+   protected HttpResponse createSessionResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResourceWithContentType("/create_session.json", APPLICATION_JSON)).build();
+
+   protected HttpResponse notFound = HttpResponse.builder().statusCode(404).build();
 }

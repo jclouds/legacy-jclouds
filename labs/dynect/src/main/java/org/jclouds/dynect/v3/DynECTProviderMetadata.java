@@ -18,6 +18,8 @@
  */
 package org.jclouds.dynect.v3;
 
+import static org.jclouds.Constants.PROPERTY_MAX_REDIRECTS;
+
 import java.net.URI;
 import java.util.Properties;
 
@@ -49,6 +51,8 @@ public class DynECTProviderMetadata extends BaseProviderMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = new Properties();
+      // job polling occurs via redirect loop
+      properties.setProperty(PROPERTY_MAX_REDIRECTS, "20");
       return properties;
    }
 

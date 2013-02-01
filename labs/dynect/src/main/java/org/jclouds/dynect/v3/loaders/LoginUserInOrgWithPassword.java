@@ -16,15 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.dynect.v3.internal;
+package org.jclouds.dynect.v3.loaders;
 
-import org.jclouds.dynect.v3.DynECTApi;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-/**
- * Base class for writing DynECT Expect tests
- * 
- * @author Adrian Cole
- */
-public class BaseDynECTApiExpectTest extends BaseDynECTExpectTest<DynECTApi> {
+import org.jclouds.dynect.v3.domain.Session;
+import org.jclouds.dynect.v3.domain.SessionCredentials;
+import org.jclouds.dynect.v3.features.SessionApi;
 
+import com.google.common.cache.CacheLoader;
+
+@Singleton
+public class LoginUserInOrgWithPassword extends CacheLoader<SessionCredentials, Session> {
+   private final SessionApi api;
+
+   @Inject
+   LoginUserInOrgWithPassword(SessionApi api) {
+      this.api = api;
+   }
+
+   @Override
+   public Session load(SessionCredentials input) {
+      return api.login(input);
+   }
+
+   @Override
+   public String toString() {
+      return "loginUserInOrgWithPassword()";
+   }
 }

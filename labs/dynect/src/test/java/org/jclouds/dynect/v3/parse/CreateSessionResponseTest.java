@@ -16,15 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.dynect.v3.internal;
 
-import org.jclouds.dynect.v3.DynECTApi;
+package org.jclouds.dynect.v3.parse;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.dynect.v3.domain.Session;
+import org.jclouds.dynect.v3.internal.BaseDynECTParseTest;
+import org.jclouds.rest.annotations.SelectJson;
+import org.testng.annotations.Test;
 
 /**
- * Base class for writing DynECT Expect tests
- * 
  * @author Adrian Cole
  */
-public class BaseDynECTApiExpectTest extends BaseDynECTExpectTest<DynECTApi> {
+@Test(groups = "unit")
+public class CreateSessionResponseTest extends BaseDynECTParseTest<Session> {
 
+   @Override
+   public String resource() {
+      return "/create_session.json";
+   }
+
+   @Override
+   @SelectJson("data")
+   @Consumes(MediaType.APPLICATION_JSON)
+   public Session expected() {
+      return Session.forTokenAndVersion("FFFFFFFFFF", "3.3.7");
+   }
 }
