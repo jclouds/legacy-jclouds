@@ -26,7 +26,7 @@ import static org.testng.Assert.assertTrue;
 import org.jclouds.dynect.v3.DynECTApi;
 import org.jclouds.dynect.v3.domain.SessionCredentials;
 import org.jclouds.dynect.v3.internal.BaseDynECTApiExpectTest;
-import org.jclouds.dynect.v3.parse.ParseSessionTest;
+import org.jclouds.dynect.v3.parse.CreateSessionResponseTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
@@ -37,24 +37,13 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "SessionApiExpectTest")
 public class SessionApiExpectTest extends BaseDynECTApiExpectTest {
 
-   private String authToken = "FFFFFFFFFF";
-
-   HttpRequest create = HttpRequest.builder().method("POST")
-         .endpoint("https://api2.dynect.net/REST/Session")
-         .addHeader("API-Version", "3.3.7")
-         .payload(payloadFromStringWithContentType("{\"customer_name\":\"jclouds\",\"user_name\":\"joe\",\"password\":\"letmein\"}",APPLICATION_JSON))
-         .build();
-   
-   HttpResponse createResponse = HttpResponse.builder().statusCode(200)
-         .payload(payloadFromResourceWithContentType("/create_session.json", APPLICATION_JSON)).build();
-
    public void testCreateWhenResponseIs2xx() {
-      DynECTApi apiCreatesSession = requestSendsResponse(create, createResponse);
+      DynECTApi apiCreatesSession = requestSendsResponse(createSession, createSessionResponse);
       assertEquals(apiCreatesSession.getSessionApi().login(SessionCredentials.builder()
                                                                          .customerName("jclouds")
                                                                          .userName("joe")
                                                                          .password("letmein").build()).toString(),
-                   new ParseSessionTest().expected().toString());
+                   new CreateSessionResponseTest().expected().toString());
    }
 
    HttpRequest isValid = HttpRequest.builder().method("GET")

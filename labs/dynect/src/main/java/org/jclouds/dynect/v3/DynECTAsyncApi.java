@@ -23,6 +23,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import javax.ws.rs.Produces;
 
 import org.jclouds.dynect.v3.features.SessionAsyncApi;
+import org.jclouds.dynect.v3.features.ZoneAsyncApi;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.Headers;
 
@@ -44,4 +45,10 @@ public interface DynECTAsyncApi {
     */
    @Delegate
    SessionAsyncApi getSessionApi();
+
+   /**
+    * Provides asynchronous access to Zone features.
+    */
+   @Delegate
+   ZoneAsyncApi getZoneApi();
 }

@@ -16,15 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.dynect.v3.internal;
 
-import org.jclouds.dynect.v3.DynECTApi;
+package org.jclouds.dynect.v3.functions;
+
+import static org.testng.Assert.assertEquals;
+
+import org.jclouds.dynect.v3.functions.ExtractNames.ExtractNameInPath;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableSet;
 
 /**
- * Base class for writing DynECT Expect tests
- * 
  * @author Adrian Cole
  */
-public class BaseDynECTApiExpectTest extends BaseDynECTExpectTest<DynECTApi> {
+@Test(groups = "unit")
+public class ExtractNamesTest {
+   ExtractNames fn = new ExtractNames();
 
+   public void testExtractNameInPath() {
+      assertEquals(ExtractNameInPath.INSTANCE.apply("/REST/Zone/jclouds.org/"), "jclouds.org");
+   }
+
+   public void testExtractNames() {
+      assertEquals(fn.apply(FluentIterable.from(ImmutableSet.of("/REST/Zone/jclouds.org/"))).toSet(),
+            ImmutableSet.of("jclouds.org"));
+   }
 }

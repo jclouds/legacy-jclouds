@@ -19,6 +19,7 @@
 package org.jclouds.dynect.v3;
 
 import org.jclouds.dynect.v3.features.SessionApi;
+import org.jclouds.dynect.v3.features.ZoneApi;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
@@ -37,4 +38,10 @@ public interface DynECTApi {
     */
    @Delegate
    SessionApi getSessionApi();
+
+   /**
+    * Provides synchronous access to Zone features.
+    */
+   @Delegate
+   ZoneApi getZoneApi();
 }

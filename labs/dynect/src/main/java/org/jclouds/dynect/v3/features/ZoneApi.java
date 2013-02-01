@@ -3,7 +3,7 @@
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
+ * to you under the Apache License, String 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
@@ -16,15 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.dynect.v3.internal;
+package org.jclouds.dynect.v3.features;
 
-import org.jclouds.dynect.v3.DynECTApi;
+import org.jclouds.dynect.v3.domain.Zone;
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.collect.FluentIterable;
 
 /**
- * Base class for writing DynECT Expect tests
- * 
+ * @see ZoneAsyncApi
  * @author Adrian Cole
  */
-public class BaseDynECTApiExpectTest extends BaseDynECTExpectTest<DynECTApi> {
+public interface ZoneApi {
+   /**
+    * Lists all zone ids.
+    */
+   FluentIterable<String> list();
 
+   /**
+    * Retrieves information about the specified zone, including its nameserver
+    * configuration
+    * 
+    * @param name
+    *           name of the zone to get information about. ex
+    *           {@code Z1PA6795UKMFR9}
+    * @return null if not found
+    */
+   @Nullable
+   Zone get(String name);
 }
