@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.5.6-SNAPSHOT</version>
+        <version>1.5.6</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -36,7 +36,7 @@
     <properties>
         <test.aws-route53.endpoint>https://route53.amazonaws.com</test.aws-route53.endpoint>
         <test.aws-route53.api-version>2012-02-29</test.aws-route53.api-version>
-        <test.aws-route53.build-version></test.aws-route53.build-version>
+        <test.aws-route53.build-version />
         <test.aws-route53.identity>${test.aws.identity}</test.aws-route53.identity>
         <test.aws-route53.credential>${test.aws.credential}</test.aws-route53.credential>
 

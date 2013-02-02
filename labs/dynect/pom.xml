@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.5.6-SNAPSHOT</version>
+    <version>1.5.6</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.labs</groupId>
@@ -36,9 +36,9 @@
   <properties>
     <test.dynect.endpoint>https://api2.dynect.net/REST</test.dynect.endpoint>
     <test.dynect.api-version>3.3.7</test.dynect.api-version>
-    <test.dynect.build-version></test.dynect.build-version>
-    <test.dynect.identity></test.dynect.identity>
-    <test.dynect.credential></test.dynect.credential>
+    <test.dynect.build-version />
+    <test.dynect.identity />
+    <test.dynect.credential />
 
     <jclouds.osgi.export>org.jclouds.dynect.v3*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>

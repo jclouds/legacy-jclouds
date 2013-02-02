@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.5.6-SNAPSHOT</version>
+    <version>1.5.6</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.api</groupId>
@@ -36,7 +36,7 @@
   <properties>
     <test.sts.endpoint>https://sts.amazonaws.com</test.sts.endpoint>
     <test.sts.api-version>2011-06-15</test.sts.api-version>
-    <test.sts.build-version></test.sts.build-version>
+    <test.sts.build-version />
     <test.sts.identity>${test.aws.identity}</test.sts.identity>
     <test.sts.credential>${test.aws.credential}</test.sts.credential>
 

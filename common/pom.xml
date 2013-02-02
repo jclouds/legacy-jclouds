@@ -24,7 +24,7 @@
     <parent>
         <artifactId>jclouds-project</artifactId>
         <groupId>org.jclouds</groupId>
-        <version>1.5.6-SNAPSHOT</version>
+        <version>1.5.6</version>
         <relativePath>../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.common</groupId>
