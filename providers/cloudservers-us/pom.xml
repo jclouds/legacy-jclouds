@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.provider</groupId>
@@ -36,10 +36,10 @@
   <properties>
     <test.cloudservers-us.endpoint>https://auth.api.rackspacecloud.com</test.cloudservers-us.endpoint>
     <test.cloudservers-us.api-version>1.0</test.cloudservers-us.api-version>
-    <test.cloudservers-us.build-version></test.cloudservers-us.build-version>
+    <test.cloudservers-us.build-version />
     <test.cloudservers-us.identity>${test.rackspace-us.identity}</test.cloudservers-us.identity>
     <test.cloudservers-us.credential>${test.rackspace-us.credential}</test.cloudservers-us.credential>
-    <test.cloudservers-us.template></test.cloudservers-us.template>
+    <test.cloudservers-us.template />
     <jclouds.osgi.export>org.jclouds.rackspace.cloudservers*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",

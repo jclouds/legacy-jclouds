@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -39,7 +39,7 @@
         <test.savvis-symphonyvpdc.build-version>2.3</test.savvis-symphonyvpdc.build-version>
         <test.savvis-symphonyvpdc.identity>FIXME</test.savvis-symphonyvpdc.identity>
         <test.savvis-symphonyvpdc.credential>FIXME</test.savvis-symphonyvpdc.credential>
-        <test.savvis-symphonyvpdc.template></test.savvis-symphonyvpdc.template>
+        <test.savvis-symphonyvpdc.template />
         <test.savvis-symphonyvpdc.vdc-email>FIXME</test.savvis-symphonyvpdc.vdc-email>
         <test.savvis-symphonyvpdc.loginUser>FIXME</test.savvis-symphonyvpdc.loginUser>
         <test.savvis-symphonyvpdc.loginPassword>FIXME</test.savvis-symphonyvpdc.loginPassword>

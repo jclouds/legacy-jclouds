@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.provider</groupId>
@@ -36,10 +36,10 @@
   <properties>
     <test.rackspace-cloudservers-uk.endpoint>https://lon.identity.api.rackspacecloud.com/v2.0/</test.rackspace-cloudservers-uk.endpoint>
     <test.rackspace-cloudservers-uk.api-version>2</test.rackspace-cloudservers-uk.api-version>
-    <test.rackspace-cloudservers-uk.build-version></test.rackspace-cloudservers-uk.build-version>
+    <test.rackspace-cloudservers-uk.build-version />
     <test.rackspace-cloudservers-uk.identity>${test.rackspace-uk.identity}</test.rackspace-cloudservers-uk.identity>
     <test.rackspace-cloudservers-uk.credential>${test.rackspace-uk.credential}</test.rackspace-cloudservers-uk.credential>
-    <test.rackspace-cloudservers-uk.template></test.rackspace-cloudservers-uk.template>
+    <test.rackspace-cloudservers-uk.template />
     <jclouds.osgi.export>org.jclouds.rackspace.cloudservers.us*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",

@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.provider</groupId>
@@ -36,10 +36,10 @@
   <properties>
     <test.ninefold-compute.endpoint>https://api.ninefold.com/compute/v1.0/</test.ninefold-compute.endpoint>
     <test.ninefold-compute.api-version>2.2.12</test.ninefold-compute.api-version>
-    <test.ninefold-compute.build-version></test.ninefold-compute.build-version>
+    <test.ninefold-compute.build-version />
     <test.ninefold-compute.identity>FIXME_IDENTITY</test.ninefold-compute.identity>
     <test.ninefold-compute.credential>FIXME_CREDENTIAL</test.ninefold-compute.credential>
-    <test.ninefold-compute.template></test.ninefold-compute.template>
+    <test.ninefold-compute.template />
     <jclouds.osgi.export>org.jclouds.ninefold.compute*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",

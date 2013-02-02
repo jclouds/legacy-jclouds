@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.labs</groupId>
@@ -38,7 +38,7 @@
     <!-- note that there's no prefix of "test." in the url.  This is to ensure that jclouds inteprets the value, as opposed to maven -->
     <test.azure-management.endpoint>https://management.core.windows.net/${jclouds.azure.management.subscription-id}</test.azure-management.endpoint>
     <test.azure-management.api-version>2012-03-01</test.azure-management.api-version>
-    <test.azure-management.build-version></test.azure-management.build-version>
+    <test.azure-management.build-version />
     <test.azure-management.identity>/path/to/cert.p12</test.azure-management.identity>
     <test.azure-management.credential>password to cert</test.azure-management.credential>
     <jclouds.osgi.export>org.jclouds.azure.management*;version="${project.version}"</jclouds.osgi.export>

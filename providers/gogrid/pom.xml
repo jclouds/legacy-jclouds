@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -36,10 +36,10 @@
     <properties>
         <test.gogrid.endpoint>https://api.gogrid.com/api</test.gogrid.endpoint>
         <test.gogrid.api-version>1.5</test.gogrid.api-version>
-        <test.gogrid.build-version></test.gogrid.build-version>
+        <test.gogrid.build-version />
         <test.gogrid.identity>FIXME</test.gogrid.identity>
         <test.gogrid.credential>FIXME</test.gogrid.credential>
-        <test.gogrid.template></test.gogrid.template>
+        <test.gogrid.template />
 
         <jclouds.osgi.export>org.jclouds.gogrid*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>

@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.provider</groupId>
@@ -36,10 +36,10 @@
   <properties>
     <test.cloudsigma-zrh.endpoint>https://api.zrh.cloudsigma.com</test.cloudsigma-zrh.endpoint>
     <test.cloudsigma-zrh.api-version>1.0</test.cloudsigma-zrh.api-version>
-    <test.cloudsigma-zrh.build-version></test.cloudsigma-zrh.build-version>
+    <test.cloudsigma-zrh.build-version />
     <test.cloudsigma-zrh.identity>FIXME</test.cloudsigma-zrh.identity>
     <test.cloudsigma-zrh.credential>FIXME</test.cloudsigma-zrh.credential>
-    <test.cloudsigma-zrh.template></test.cloudsigma-zrh.template>
+    <test.cloudsigma-zrh.template />
     <jclouds.osgi.export>org.jclouds.cloudsigma*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",

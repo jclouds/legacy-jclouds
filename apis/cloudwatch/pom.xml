@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.api</groupId>
@@ -36,7 +36,7 @@
   <properties>
     <test.cloudwatch.endpoint>https://monitoring.us-east-1.amazonaws.com</test.cloudwatch.endpoint>
     <test.cloudwatch.api-version>2010-08-01</test.cloudwatch.api-version>
-    <test.cloudwatch.build-version></test.cloudwatch.build-version>
+    <test.cloudwatch.build-version />
     <test.cloudwatch.identity>${test.aws.identity}</test.cloudwatch.identity>
     <test.cloudwatch.credential>${test.aws.credential}</test.cloudwatch.credential>
 

@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.labs</groupId>
@@ -36,8 +36,8 @@
     <jclouds.nodepool.backend-provider>byon</jclouds.nodepool.backend-provider>
     <jclouds.nodepool.backend-modules>org.jclouds.logging.slf4j.config.SLF4JLoggingModule,org.jclouds.sshj.config.SshjSshClientModule</jclouds.nodepool.backend-modules>
     <test.nodepool.endpoint>FIXME_ENDPOINT</test.nodepool.endpoint>
-    <test.nodepool.api-version></test.nodepool.api-version>
-    <test.nodepool.build-version></test.nodepool.build-version>
+    <test.nodepool.api-version />
+    <test.nodepool.build-version />
     <test.nodepool.identity>FIXME_IDENTITY</test.nodepool.identity>
     <test.nodepool.credential>FIXME_CREDENTIALS</test.nodepool.credential>
     <jclouds.osgi.export>org.jclouds.nodepool*;version="${project.version}"</jclouds.osgi.export>

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -36,10 +36,10 @@
     <properties>
         <test.openhosting-east1.endpoint>https://api.east1.openhosting.com</test.openhosting-east1.endpoint>
         <test.openhosting-east1.api-version>2.0</test.openhosting-east1.api-version>
-        <test.openhosting-east1.build-version></test.openhosting-east1.build-version>
+        <test.openhosting-east1.build-version />
         <test.openhosting-east1.identity>FIXME_IDENTITY</test.openhosting-east1.identity>
         <test.openhosting-east1.credential>FIXME_CREDENTIAL</test.openhosting-east1.credential>
-        <test.openhosting-east1.template></test.openhosting-east1.template>
+        <test.openhosting-east1.template />
 
         <jclouds.osgi.export>org.jclouds.openhosting*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>

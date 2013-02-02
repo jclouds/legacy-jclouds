@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.labs</groupId>
@@ -36,7 +36,7 @@
     <properties>
         <test.greenqloud-storage.endpoint>https://s.greenqloud.com</test.greenqloud-storage.endpoint>
         <test.greenqloud-storage.api-version>2006-03-01</test.greenqloud-storage.api-version>
-        <test.greenqloud-storage.build-version></test.greenqloud-storage.build-version>
+        <test.greenqloud-storage.build-version />
         <test.greenqloud-storage.identity>${test.greenqloud.identity}</test.greenqloud-storage.identity>
         <test.greenqloud-storage.credential>${test.greenqloud.credential}</test.greenqloud-storage.credential>
         <jclouds.osgi.export>org.jclouds.greenqloud.storage*;version="${project.version}"</jclouds.osgi.export>

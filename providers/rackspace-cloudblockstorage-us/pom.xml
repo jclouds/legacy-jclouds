@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.provider</groupId>
@@ -36,10 +36,10 @@
   <properties>
     <test.rackspace-cloudblockstorage-us.endpoint>https://identity.api.rackspacecloud.com/v2.0/</test.rackspace-cloudblockstorage-us.endpoint>
     <test.rackspace-cloudblockstorage-us.api-version>1</test.rackspace-cloudblockstorage-us.api-version>
-    <test.rackspace-cloudblockstorage-us.build-version></test.rackspace-cloudblockstorage-us.build-version>
+    <test.rackspace-cloudblockstorage-us.build-version />
     <test.rackspace-cloudblockstorage-us.identity>${test.rackspace-us.identity}</test.rackspace-cloudblockstorage-us.identity>
     <test.rackspace-cloudblockstorage-us.credential>${test.rackspace-us.credential}</test.rackspace-cloudblockstorage-us.credential>
-    <test.rackspace-cloudblockstorage-us.template></test.rackspace-cloudblockstorage-us.template>
+    <test.rackspace-cloudblockstorage-us.template />
     <jclouds.osgi.export>org.jclouds.rackspace.cloudblockstorage.us*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -36,10 +36,10 @@
     <properties>
         <test.go2cloud-jhb1.endpoint>http://api.jhb1.go2cloud.co.za</test.go2cloud-jhb1.endpoint>
         <test.go2cloud-jhb1.api-version>2.0</test.go2cloud-jhb1.api-version>
-        <test.go2cloud-jhb1.build-version></test.go2cloud-jhb1.build-version>
+        <test.go2cloud-jhb1.build-version />
         <test.go2cloud-jhb1.identity>FIXME_IDENTITY</test.go2cloud-jhb1.identity>
         <test.go2cloud-jhb1.credential>FIXME_CREDENTIAL</test.go2cloud-jhb1.credential>
-        <test.go2cloud-jhb1.template></test.go2cloud-jhb1.template>
+        <test.go2cloud-jhb1.template />
 
         <jclouds.osgi.export>org.jclouds.go2cloud*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>

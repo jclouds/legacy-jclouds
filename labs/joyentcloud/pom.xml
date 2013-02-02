@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.labs</groupId>
@@ -36,7 +36,7 @@
   <properties>
     <test.joyentcloud.endpoint>https://api.joyentcloud.com</test.joyentcloud.endpoint>
     <test.joyentcloud.api-version>~6.5</test.joyentcloud.api-version>
-    <test.joyentcloud.build-version></test.joyentcloud.build-version>
+    <test.joyentcloud.build-version />
     <test.joyentcloud.identity>FIXME_IDENTITY</test.joyentcloud.identity>
     <test.joyentcloud.credential>FIXME_CREDENTIALS</test.joyentcloud.credential>
     <jclouds.osgi.export>org.jclouds.joyent.joyentcloud*;version="${project.version}"</jclouds.osgi.export>

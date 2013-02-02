@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -36,10 +36,10 @@
     <properties>
         <test.elastichosts-tor-p.endpoint>https://api-tor-p.elastichosts.com</test.elastichosts-tor-p.endpoint>
         <test.elastichosts-tor-p.api-version>2.0</test.elastichosts-tor-p.api-version>
-        <test.elastichosts-tor-p.build-version></test.elastichosts-tor-p.build-version>
+        <test.elastichosts-tor-p.build-version />
         <test.elastichosts-tor-p.identity>FIXME_IDENTITY</test.elastichosts-tor-p.identity>
         <test.elastichosts-tor-p.credential>FIXME_CREDENTIAL</test.elastichosts-tor-p.credential>
-        <test.elastichosts-tor-p.template></test.elastichosts-tor-p.template>
+        <test.elastichosts-tor-p.template />
 
         <jclouds.osgi.export>org.jclouds.elastichosts*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -36,10 +36,10 @@
     <properties>
         <test.skalicloud-sdg-my.endpoint>https://api.sdg-my.skalicloud.com</test.skalicloud-sdg-my.endpoint>
         <test.skalicloud-sdg-my.api-version>1.0</test.skalicloud-sdg-my.api-version>
-        <test.skalicloud-sdg-my.build-version></test.skalicloud-sdg-my.build-version>
+        <test.skalicloud-sdg-my.build-version />
         <test.skalicloud-sdg-my.identity>FIXME_IDENTITY</test.skalicloud-sdg-my.identity>
         <test.skalicloud-sdg-my.credential>FIXME_CREDENTIAL</test.skalicloud-sdg-my.credential>
-        <test.skalicloud-sdg-my.template></test.skalicloud-sdg-my.template>
+        <test.skalicloud-sdg-my.template />
 
         <jclouds.osgi.export>org.jclouds.skalicloud*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>

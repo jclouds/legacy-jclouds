@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.labs</groupId>
@@ -36,16 +36,16 @@
     <properties>
         <test.elb.endpoint>https://elasticloadbalancing.us-east-1.amazonaws.com</test.elb.endpoint>
         <test.elb.api-version>2012-06-01</test.elb.api-version>
-        <test.elb.build-version></test.elb.build-version>
+        <test.elb.build-version />
         <test.elb.identity>${test.aws.identity}</test.elb.identity>
         <test.elb.credential>${test.aws.credential}</test.elb.credential>
         <test.elb.compute.provider>aws-ec2</test.elb.compute.provider>
-        <test.elb.compute.endpoint></test.elb.compute.endpoint>
-        <test.elb.compute.api-version></test.elb.compute.api-version>
-        <test.elb.compute.build-version></test.elb.compute.build-version>
+        <test.elb.compute.endpoint />
+        <test.elb.compute.api-version />
+        <test.elb.compute.build-version />
         <test.elb.compute.identity>${test.aws.identity}</test.elb.compute.identity>
         <test.elb.compute.credential>${test.aws.credential}</test.elb.compute.credential>
-        <test.elb.compute.template></test.elb.compute.template>
+        <test.elb.compute.template />
 
       <jclouds.osgi.export>org.jclouds.elb*;version="${project.version}"</jclouds.osgi.export>
       <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>

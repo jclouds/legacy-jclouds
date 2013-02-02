@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.labs</groupId>
@@ -36,9 +36,9 @@
   <properties>
     <test.ultradns-ws.endpoint>https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01</test.ultradns-ws.endpoint>
     <test.ultradns-ws.api-version>v01</test.ultradns-ws.api-version>
-    <test.ultradns-ws.build-version></test.ultradns-ws.build-version>
-    <test.ultradns-ws.identity></test.ultradns-ws.identity>
-    <test.ultradns-ws.credential></test.ultradns-ws.credential>
+    <test.ultradns-ws.build-version />
+    <test.ultradns-ws.identity />
+    <test.ultradns-ws.credential />
 
     <jclouds.osgi.export>org.jclouds.ultradns.ws*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>

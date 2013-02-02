@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.provider</groupId>
@@ -39,7 +39,7 @@
     <test.bluelock-vcloud-zone01.build-version>1.5.0.464915</test.bluelock-vcloud-zone01.build-version>
     <test.bluelock-vcloud-zone01.identity>FIXME_IDENTITY</test.bluelock-vcloud-zone01.identity>
     <test.bluelock-vcloud-zone01.credential>FIXME_CREDENTIAL</test.bluelock-vcloud-zone01.credential>
-    <test.bluelock-vcloud-zone01.template></test.bluelock-vcloud-zone01.template>
+    <test.bluelock-vcloud-zone01.template />
     <jclouds.osgi.export>org.jclouds.bluelock.vcloud.zone01*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",

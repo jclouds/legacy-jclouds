@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.api</groupId>
@@ -36,7 +36,7 @@
    <properties>
     <test.rackspace-cloudloadbalancers.endpoint>https://identity.api.rackspacecloud.com/v2.0/</test.rackspace-cloudloadbalancers.endpoint>
     <test.rackspace-cloudloadbalancers.api-version>1</test.rackspace-cloudloadbalancers.api-version>
-    <test.rackspace-cloudloadbalancers.build-version></test.rackspace-cloudloadbalancers.build-version>
+    <test.rackspace-cloudloadbalancers.build-version />
     <test.rackspace-cloudloadbalancers.identity>${test.rackspace.identity}</test.rackspace-cloudloadbalancers.identity>
     <test.rackspace-cloudloadbalancers.credential>${test.rackspace.credential}</test.rackspace-cloudloadbalancers.credential>
 

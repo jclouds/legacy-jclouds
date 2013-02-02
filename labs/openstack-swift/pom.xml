@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.labs</groupId>
@@ -37,7 +37,7 @@
     <!-- keystone endpoint -->
     <test.openstack-swift.endpoint>http://localhost:5000/v2.0/</test.openstack-swift.endpoint>
     <test.openstack-swift.api-version>1.0</test.openstack-swift.api-version>
-    <test.openstack-swift.build-version></test.openstack-swift.build-version>
+    <test.openstack-swift.build-version />
     <test.openstack-swift.identity>FIXME_IDENTITY</test.openstack-swift.identity>
     <test.openstack-swift.credential>FIXME_CREDENTIALS</test.openstack-swift.credential>
     <test.jclouds.keystone.credential-type>passwordCredentials</test.jclouds.keystone.credential-type>

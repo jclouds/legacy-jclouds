@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -36,10 +36,10 @@
     <properties>
         <test.elastichosts-lon-p.endpoint>https://api-lon-p.elastichosts.com</test.elastichosts-lon-p.endpoint>
         <test.elastichosts-lon-p.api-version>2.0</test.elastichosts-lon-p.api-version>
-        <test.elastichosts-lon-p.build-version></test.elastichosts-lon-p.build-version>
+        <test.elastichosts-lon-p.build-version />
         <test.elastichosts-lon-p.identity>FIXME_IDENTITY</test.elastichosts-lon-p.identity>
         <test.elastichosts-lon-p.credential>FIXME_CREDENTIAL</test.elastichosts-lon-p.credential>
-        <test.elastichosts-lon-p.template></test.elastichosts-lon-p.template>
+        <test.elastichosts-lon-p.template />
 
         <jclouds.osgi.export>org.jclouds.elastichosts*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>

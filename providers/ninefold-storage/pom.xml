@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -36,7 +36,7 @@
     <properties>
         <test.ninefold-storage.endpoint>http://onlinestorage.ninefold.com</test.ninefold-storage.endpoint>
         <test.ninefold-storage.api-version>1.4.0</test.ninefold-storage.api-version>
-        <test.ninefold-storage.build-version></test.ninefold-storage.build-version>
+        <test.ninefold-storage.build-version />
         <test.ninefold-storage.identity>FIXME_IDENTITY</test.ninefold-storage.identity>
         <test.ninefold-storage.credential>FIXME_CREDENTIAL</test.ninefold-storage.credential>
 

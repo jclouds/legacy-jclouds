@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.api</groupId>
@@ -36,7 +36,7 @@
   <properties>
     <test.elasticstack.endpoint>https://api-lon-p.elastichosts.com</test.elasticstack.endpoint>
     <test.elasticstack.api-version>2.0</test.elasticstack.api-version>
-    <test.elasticstack.build-version></test.elasticstack.build-version>
+    <test.elasticstack.build-version />
     <test.elasticstack.identity>FIXME</test.elasticstack.identity>
     <test.elasticstack.credential>FIXME</test.elasticstack.credential>
     <test.elasticstack.template>imageId=38df0986-4d85-4b76-b502-3878ffc80161,loginUser=toor</test.elasticstack.template>

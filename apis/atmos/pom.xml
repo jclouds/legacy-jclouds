@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
 
@@ -36,7 +36,7 @@
   <properties>
     <test.atmos.endpoint>https://accesspoint.atmosonline.com</test.atmos.endpoint>
     <test.atmos.api-version>1.3.0</test.atmos.api-version>
-    <test.atmos.build-version></test.atmos.build-version>
+    <test.atmos.build-version />
     <test.atmos.identity>FIXME</test.atmos.identity>
     <test.atmos.credential>FIXME</test.atmos.credential>
 

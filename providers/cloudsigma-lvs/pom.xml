@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.provider</groupId>
@@ -36,10 +36,10 @@
   <properties>
     <test.cloudsigma-lvs.endpoint>https://api.lvs.cloudsigma.com</test.cloudsigma-lvs.endpoint>
     <test.cloudsigma-lvs.api-version>1.0</test.cloudsigma-lvs.api-version>
-    <test.cloudsigma-lvs.build-version></test.cloudsigma-lvs.build-version>
+    <test.cloudsigma-lvs.build-version />
     <test.cloudsigma-lvs.identity>FIXME</test.cloudsigma-lvs.identity>
     <test.cloudsigma-lvs.credential>FIXME</test.cloudsigma-lvs.credential>
-    <test.cloudsigma-lvs.template></test.cloudsigma-lvs.template>
+    <test.cloudsigma-lvs.template />
     <jclouds.osgi.export>org.jclouds.cloudsigma*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",

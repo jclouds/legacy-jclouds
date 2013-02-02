@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -36,10 +36,10 @@
     <properties>
         <test.serverlove-z1-man.endpoint>https://api.z1-man.serverlove.com</test.serverlove-z1-man.endpoint>
         <test.serverlove-z1-man.api-version>1.0</test.serverlove-z1-man.api-version>
-        <test.serverlove-z1-man.build-version></test.serverlove-z1-man.build-version>
+        <test.serverlove-z1-man.build-version />
         <test.serverlove-z1-man.identity>FIXME_IDENTITY</test.serverlove-z1-man.identity>
         <test.serverlove-z1-man.credential>FIXME_CREDENTIAL</test.serverlove-z1-man.credential>
-        <test.serverlove-z1-man.template></test.serverlove-z1-man.template>
+        <test.serverlove-z1-man.template />
         <jclouds.osgi.export>org.jclouds.serverlove*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>
           org.jclouds.compute.internal;version="${project.version}",

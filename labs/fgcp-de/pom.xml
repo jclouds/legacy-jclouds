@@ -19,13 +19,12 @@
   under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.labs</groupId>
@@ -53,7 +52,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <test.fgcp-de.endpoint>https://api.globalcloud.de.fujitsu.com/ovissapi/endpoint</test.fgcp-de.endpoint>
         <test.fgcp-de.apiversion>2011-01-31</test.fgcp-de.apiversion>
-        <test.fgcp-de.build-version></test.fgcp-de.build-version>
+        <test.fgcp-de.build-version />
         <test.fgcp-de.identity>fgcp-id</test.fgcp-de.identity>
         <test.fgcp-de.credential>fgcp-cred</test.fgcp-de.credential>
         <test.fgcp-de.image-id />

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -37,7 +37,7 @@
         <test.blobstore.container-count>15</test.blobstore.container-count>
         <test.cloudfiles-uk.endpoint>https://lon.auth.api.rackspacecloud.com</test.cloudfiles-uk.endpoint>
         <test.cloudfiles-uk.api-version>1.0</test.cloudfiles-uk.api-version>
-        <test.cloudfiles-uk.build-version></test.cloudfiles-uk.build-version>
+        <test.cloudfiles-uk.build-version />
         <test.cloudfiles-uk.identity>${test.rackspace-uk.identity}</test.cloudfiles-uk.identity>
         <test.cloudfiles-uk.credential>${test.rackspace-uk.credential}</test.cloudfiles-uk.credential>
 

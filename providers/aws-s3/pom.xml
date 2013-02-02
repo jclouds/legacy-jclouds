@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -37,7 +37,7 @@
         <test.initializer>org.jclouds.aws.s3.blobstore.integration.AWSS3TestInitializer</test.initializer>
         <test.aws-s3.endpoint>https://s3.amazonaws.com</test.aws-s3.endpoint>
         <test.aws-s3.api-version>2006-03-01</test.aws-s3.api-version>
-        <test.aws-s3.build-version></test.aws-s3.build-version>
+        <test.aws-s3.build-version />
         <test.aws-s3.identity>${test.aws.identity}</test.aws-s3.identity>
         <test.aws-s3.credential>${test.aws.credential}</test.aws-s3.credential>
         <test.blobstore.container-count>25</test.blobstore.container-count>

@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.api</groupId>
@@ -38,10 +38,10 @@
     <test.openstack-nova.endpoint>http://localhost:5000/v2.0/</test.openstack-nova.endpoint>
     <!-- keystone version -->
     <test.openstack-nova.api-version>1.1</test.openstack-nova.api-version>
-    <test.openstack-nova.build-version></test.openstack-nova.build-version>
+    <test.openstack-nova.build-version />
     <test.openstack-nova.identity>FIXME_IDENTITY</test.openstack-nova.identity>
     <test.openstack-nova.credential>FIXME_CREDENTIALS</test.openstack-nova.credential>
-    <test.openstack-nova.template></test.openstack-nova.template>
+    <test.openstack-nova.template />
     <test.jclouds.openstack-nova.auto-allocate-floating-ips>false</test.jclouds.openstack-nova.auto-allocate-floating-ips>
     <test.jclouds.keystone.credential-type>passwordCredentials</test.jclouds.keystone.credential-type>
 

@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.api</groupId>
@@ -50,14 +50,14 @@
   <properties>
     <test.cloudstack.endpoint>http://localhost:8080/client/api</test.cloudstack.endpoint>
     <test.cloudstack.api-version>3.0.3</test.cloudstack.api-version>
-    <test.cloudstack.build-version></test.cloudstack.build-version>
+    <test.cloudstack.build-version />
     <test.cloudstack.identity>FIXME_apiKey</test.cloudstack.identity>
     <test.cloudstack.credential>FIXME_secretKey</test.cloudstack.credential>
-    <test.cloudstack.domainAdminIdentity></test.cloudstack.domainAdminIdentity>
-    <test.cloudstack.domainAdminCredential></test.cloudstack.domainAdminCredential>
-    <test.cloudstack.globalAdminIdentity></test.cloudstack.globalAdminIdentity>
-    <test.cloudstack.globalAdminCredential></test.cloudstack.globalAdminCredential>
-    <test.cloudstack.template></test.cloudstack.template>
+    <test.cloudstack.domainAdminIdentity />
+    <test.cloudstack.domainAdminCredential />
+    <test.cloudstack.globalAdminIdentity />
+    <test.cloudstack.globalAdminCredential />
+    <test.cloudstack.template />
     <jclouds.osgi.export>org.jclouds.cloudstack*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",

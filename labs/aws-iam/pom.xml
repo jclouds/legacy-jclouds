@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.labs</groupId>
@@ -36,7 +36,7 @@
     <properties>
         <test.aws-iam.endpoint>https://iam.amazonaws.com</test.aws-iam.endpoint>
         <test.aws-iam.api-version>2010-05-08</test.aws-iam.api-version>
-        <test.aws-iam.build-version></test.aws-iam.build-version>
+        <test.aws-iam.build-version />
         <test.aws-iam.identity>${test.aws.identity}</test.aws-iam.identity>
         <test.aws-iam.credential>${test.aws.credential}</test.aws-iam.credential>
 

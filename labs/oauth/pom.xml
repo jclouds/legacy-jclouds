@@ -19,13 +19,12 @@
   under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.labs</groupId>
@@ -34,7 +33,7 @@
     <description>jclouds components to access OAuth</description>
 
     <properties>
-        <jclouds.version>1.6.0-SNAPSHOT</jclouds.version>
+        <jclouds.version>1.6.0-alpha.1</jclouds.version>
         <test.oauth.identity>FIX_ME</test.oauth.identity>
         <test.oauth.credential>FIX_ME</test.oauth.credential>
         <test.oauth.endpoint>FIX_ME</test.oauth.endpoint>
@@ -42,7 +41,7 @@
         <test.jclouds.oauth.audience>FIX_ME</test.jclouds.oauth.audience>
         <test.jclouds.oauth.scopes>FIX_ME</test.jclouds.oauth.scopes>
         <test.oauth.api-version>2</test.oauth.api-version>
-        <test.oauth.build-version></test.oauth.build-version>
+        <test.oauth.build-version />
     </properties>
 
     <dependencies>
@@ -108,7 +107,7 @@
                                         <test.oauth.endpoint>${test.oauth.endpoint}</test.oauth.endpoint>
                                         <test.oauth.api-version>${test.oauth.api-version}</test.oauth.api-version>
                                         <test.oauth.build-version>${test.oauth.build-version}</test.oauth.build-version>
-                                        <test.jclouds.oauth.signature-or-mac-algorithm>${test.jclouds.oauth.signature-or-mac-algorithm>}</test.jclouds.oauth.signature-or-mac-algorithm>
+                                        <test.jclouds.oauth.signature-or-mac-algorithm>${test.jclouds.oauth.signature-or-mac-algorithm&gt;}</test.jclouds.oauth.signature-or-mac-algorithm>
                                         <test.jclouds.oauth.audience>${test.jclouds.oauth.audience}</test.jclouds.oauth.audience>
                                         <test.jclouds.oauth.scopes>${test.jclouds.oauth.scopes}</test.jclouds.oauth.scopes>
                                     </systemPropertyVariables>

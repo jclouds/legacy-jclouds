@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.labs</groupId>
@@ -39,13 +39,13 @@
         <test.carrenza-vcloud-director.build-version>464915</test.carrenza-vcloud-director.build-version>
         <test.carrenza-vcloud-director.identity>FIXME_IDENTITY</test.carrenza-vcloud-director.identity>
         <test.carrenza-vcloud-director.credential>FIXME_CREDENTIAL</test.carrenza-vcloud-director.credential>
-        <test.carrenza-vcloud-director.template></test.carrenza-vcloud-director.template>
-        <test.carrenza-vcloud-director.catalog-id></test.carrenza-vcloud-director.catalog-id>
-        <test.carrenza-vcloud-director.media-id></test.carrenza-vcloud-director.media-id>
-        <test.carrenza-vcloud-director.vapptemplate-id></test.carrenza-vcloud-director.vapptemplate-id>
-        <test.carrenza-vcloud-director.network-name></test.carrenza-vcloud-director.network-name>
-        <test.carrenza-vcloud-director.network-id></test.carrenza-vcloud-director.network-id>
-        <test.carrenza-vcloud-director.vdc-id></test.carrenza-vcloud-director.vdc-id>
+        <test.carrenza-vcloud-director.template />
+        <test.carrenza-vcloud-director.catalog-id />
+        <test.carrenza-vcloud-director.media-id />
+        <test.carrenza-vcloud-director.vapptemplate-id />
+        <test.carrenza-vcloud-director.network-name />
+        <test.carrenza-vcloud-director.network-id />
+        <test.carrenza-vcloud-director.vdc-id />
 
       <jclouds.osgi.export>org.jclouds.carrenza.vcloud.director*;version="${project.version}"</jclouds.osgi.export>
       <jclouds.osgi.import>

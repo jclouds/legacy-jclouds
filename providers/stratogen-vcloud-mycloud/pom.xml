@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -39,7 +39,7 @@
         <test.stratogen-vcloud-mycloud.build-version>1.5.0.464915</test.stratogen-vcloud-mycloud.build-version>
         <test.stratogen-vcloud-mycloud.identity>FIXME_IDENTITY</test.stratogen-vcloud-mycloud.identity>
         <test.stratogen-vcloud-mycloud.credential>FIXME_CREDENTIAL</test.stratogen-vcloud-mycloud.credential>
-        <test.stratogen-vcloud-mycloud.template></test.stratogen-vcloud-mycloud.template>
+        <test.stratogen-vcloud-mycloud.template />
         <jclouds.osgi.export>org.jclouds.stratogen.vcloud.mycloud*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>
           org.jclouds.compute.internal;version="${project.version}",

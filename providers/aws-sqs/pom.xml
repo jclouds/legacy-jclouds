@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -36,7 +36,7 @@
     <properties>
         <test.aws-sqs.endpoint>https://sqs.us-east-1.amazonaws.com</test.aws-sqs.endpoint>
         <test.aws-sqs.api-version>2011-10-01</test.aws-sqs.api-version>
-        <test.aws-sqs.build-version></test.aws-sqs.build-version>
+        <test.aws-sqs.build-version />
         <test.aws-sqs.identity>${test.aws.identity}</test.aws-sqs.identity>
         <test.aws-sqs.credential>${test.aws.credential}</test.aws-sqs.credential>
 

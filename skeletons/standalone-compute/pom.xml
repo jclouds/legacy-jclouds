@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.api</groupId>
@@ -38,7 +38,7 @@
         <test.servermanager.identity>FIXME</test.servermanager.identity>
         <test.servermanager.endpoint>https://servermanager.com</test.servermanager.endpoint>
         <test.servermanager.api-version>1.0</test.servermanager.api-version>
-        <test.servermanager.build-version></test.servermanager.build-version>
+        <test.servermanager.build-version />
         <test.servermanager.identity>FIXME</test.servermanager.identity>
 
       <jclouds.osgi.export>org.jclouds.servermanager*;version="${project.version}"</jclouds.osgi.export>

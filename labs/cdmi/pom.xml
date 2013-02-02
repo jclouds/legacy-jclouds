@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.labs</groupId>
@@ -36,7 +36,7 @@
   <properties>
     <test.cdmi.endpoint>http://localhost:8080</test.cdmi.endpoint>
     <test.cdmi.api-version>1.0.1</test.cdmi.api-version>
-    <test.cdmi.build-version></test.cdmi.build-version>
+    <test.cdmi.build-version />
     <test.cdmi.identity>tenantId:IDENTITY</test.cdmi.identity>
     <test.cdmi.credential>FIXME_CREDENTIALS</test.cdmi.credential>
     <jclouds.blobstore.httpstream.url>FIXME_HTTPURL</jclouds.blobstore.httpstream.url>

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.labs</groupId>
@@ -36,7 +36,7 @@
     <properties>
         <test.smartos-ssh.endpoint>https://api.joyentcloud.com</test.smartos-ssh.endpoint>
         <test.smartos-ssh.api-version>~6.5</test.smartos-ssh.api-version>
-        <test.smartos-ssh.build-version></test.smartos-ssh.build-version>
+        <test.smartos-ssh.build-version />
         <test.smartos-ssh.identity>FIXME_IDENTITY</test.smartos-ssh.identity>
         <test.smartos-ssh.credential>FIXME_CREDENTIALS</test.smartos-ssh.credential>
         <jclouds.osgi.export>org.jclouds.joyent.cloudapi.v6_5*;version="${project.version}"</jclouds.osgi.export>

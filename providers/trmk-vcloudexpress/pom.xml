@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -36,10 +36,10 @@
     <properties>
         <test.trmk-vcloudexpress.endpoint>https://services.vcloudexpress.terremark.com/api</test.trmk-vcloudexpress.endpoint>
         <test.trmk-vcloudexpress.api-version>0.8a-ext1.6</test.trmk-vcloudexpress.api-version>
-        <test.trmk-vcloudexpress.build-version></test.trmk-vcloudexpress.build-version>
+        <test.trmk-vcloudexpress.build-version />
         <test.trmk-vcloudexpress.identity>FIXME</test.trmk-vcloudexpress.identity>
         <test.trmk-vcloudexpress.credential>FIXME</test.trmk-vcloudexpress.credential>
-        <test.trmk-vcloudexpress.template></test.trmk-vcloudexpress.template>
+        <test.trmk-vcloudexpress.template />
 
         <jclouds.osgi.export>org.jclouds.trmk.ecloud*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>

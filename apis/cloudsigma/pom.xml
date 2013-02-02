@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.api</groupId>
@@ -36,7 +36,7 @@
   <properties>
     <test.cloudsigma.endpoint>https://api.cloudsigma.com</test.cloudsigma.endpoint>
     <test.cloudsigma.api-version>1.0</test.cloudsigma.api-version>
-    <test.cloudsigma.build-version></test.cloudsigma.build-version>
+    <test.cloudsigma.build-version />
     <test.cloudsigma.identity>FIXME</test.cloudsigma.identity>
     <test.cloudsigma.credential>FIXME</test.cloudsigma.credential>
     <test.cloudsigma.template>imageId=f3c7c665-cd54-4a78-8fd2-7ec2f028cf29</test.cloudsigma.template>

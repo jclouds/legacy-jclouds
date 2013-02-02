@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.labs</groupId>
@@ -38,7 +38,7 @@
     <test.openstack-quantum.endpoint>http://localhost:5000/v2.0/</test.openstack-quantum.endpoint>
     <!-- keystone version -->
     <test.openstack-quantum.api-version>1.0</test.openstack-quantum.api-version>
-    <test.openstack-quantum.build-version></test.openstack-quantum.build-version>
+    <test.openstack-quantum.build-version />
     <test.openstack-quantum.identity>FIXME_IDENTITY</test.openstack-quantum.identity>
     <test.openstack-quantum.credential>FIXME_CREDENTIALS</test.openstack-quantum.credential>
     <test.jclouds.keystone.credential-type>passwordCredentials</test.jclouds.keystone.credential-type>

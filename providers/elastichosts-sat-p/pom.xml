@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -36,10 +36,10 @@
     <properties>
         <test.elastichosts-sat-p.endpoint>https://api-sat-p.elastichosts.com</test.elastichosts-sat-p.endpoint>
         <test.elastichosts-sat-p.api-version>2.0</test.elastichosts-sat-p.api-version>
-        <test.elastichosts-sat-p.build-version></test.elastichosts-sat-p.build-version>
+        <test.elastichosts-sat-p.build-version />
         <test.elastichosts-sat-p.identity>FIXME_IDENTITY</test.elastichosts-sat-p.identity>
         <test.elastichosts-sat-p.credential>FIXME_CREDENTIAL</test.elastichosts-sat-p.credential>
-        <test.elastichosts-sat-p.template></test.elastichosts-sat-p.template>
+        <test.elastichosts-sat-p.template />
 
         <jclouds.osgi.export>org.jclouds.elastichosts*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>

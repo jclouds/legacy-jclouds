@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -36,7 +36,7 @@
     <properties>
         <test.cloudonestorage.endpoint>https://cloudonestorage.peer1.com</test.cloudonestorage.endpoint>
         <test.cloudonestorage.api-version>1.3.0</test.cloudonestorage.api-version>
-        <test.cloudonestorage.build-version></test.cloudonestorage.build-version>
+        <test.cloudonestorage.build-version />
         <test.cloudonestorage.identity>FIXME_IDENTITY</test.cloudonestorage.identity>
         <test.cloudonestorage.credential>FIXME_CREDENTIAL</test.cloudonestorage.credential>
 

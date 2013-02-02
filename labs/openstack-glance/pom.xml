@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.labs</groupId>
@@ -38,7 +38,7 @@
     <test.openstack-glance.endpoint>http://localhost:5000/v2.0/</test.openstack-glance.endpoint>
     <!-- keystone version -->
     <test.openstack-glance.api-version>1.0</test.openstack-glance.api-version>
-    <test.openstack-glance.build-version></test.openstack-glance.build-version>
+    <test.openstack-glance.build-version />
     <test.openstack-glance.identity>FIXME_IDENTITY</test.openstack-glance.identity>
     <test.openstack-glance.credential>FIXME_CREDENTIALS</test.openstack-glance.credential>
     <test.jclouds.keystone.credential-type>passwordCredentials</test.jclouds.keystone.credential-type>

@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.provider</groupId>
@@ -36,10 +36,10 @@
   <properties>
     <test.aws-ec2.endpoint>https://ec2.us-east-1.amazonaws.com</test.aws-ec2.endpoint>
     <test.aws-ec2.api-version>2011-05-15</test.aws-ec2.api-version>
-    <test.aws-ec2.build-version></test.aws-ec2.build-version>
+    <test.aws-ec2.build-version />
     <test.aws-ec2.identity>${test.aws.identity}</test.aws-ec2.identity>
     <test.aws-ec2.credential>${test.aws.credential}</test.aws-ec2.credential>
-    <test.aws-ec2.template></test.aws-ec2.template>
+    <test.aws-ec2.template />
     <!-- https://aws.amazon.com/amazon-linux-ami/ EBS-Backed 32-bit Oregon -->
     <test.aws-ec2.ebs-template>hardwareId=m1.small,imageId=us-west-2/ami-2231bf12</test.aws-ec2.ebs-template>
     <!-- Windows_Server-2008-R2 with WinRM enabled (setup instructions at http://www.frontiertown.co.uk/2011/12/overthere-control-windows-from-java/) -->

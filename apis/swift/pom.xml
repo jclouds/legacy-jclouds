@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.api</groupId>
@@ -39,14 +39,14 @@
 
     <test.swift.endpoint>http://localhost:11000</test.swift.endpoint>
     <test.swift.api-version>1.0</test.swift.api-version>
-    <test.swift.build-version></test.swift.build-version>
+    <test.swift.build-version />
     <test.swift.identity>test:tester</test.swift.identity>
     <test.swift.credential>testing</test.swift.credential>
 
     <!-- keystone endpoint -->
     <test.swift-keystone.endpoint>http://localhost:5000</test.swift-keystone.endpoint>
     <test.swift-keystone.api-version>1.0</test.swift-keystone.api-version>
-    <test.swift-keystone.build-version></test.swift-keystone.build-version>
+    <test.swift-keystone.build-version />
     <test.swift-keystone.identity>FIXME_IDENTITY</test.swift-keystone.identity>
     <test.swift-keystone.credential>FIXME_CREDENTIALS</test.swift-keystone.credential>
     <test.jclouds.keystone.credential-type>passwordCredentials</test.jclouds.keystone.credential-type>
