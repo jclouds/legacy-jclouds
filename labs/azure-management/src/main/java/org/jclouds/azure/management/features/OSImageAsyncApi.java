@@ -20,6 +20,7 @@ package org.jclouds.azure.management.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -58,6 +59,7 @@ public interface OSImageAsyncApi {
    /**
     * @see OSImageApi#list()
     */
+   @Named("ListOsImages")
    @GET
    @Path("/services/images")
    @XMLResponseParser(ListOSImagesHandler.class)
@@ -68,6 +70,7 @@ public interface OSImageAsyncApi {
    /**
     * @see OSImageApi#add(String)
     */
+   @Named("AddOsImage")
    @POST
    @Path("/services/images")
    @Produces(MediaType.APPLICATION_XML)
@@ -76,6 +79,7 @@ public interface OSImageAsyncApi {
    /**
     * @see OSImageApi#update(String)
     */
+   @Named("UpdateOsImage")
    @PUT
    @Path("/services/images/{imageName}")
    @Produces(MediaType.APPLICATION_XML)
@@ -85,6 +89,7 @@ public interface OSImageAsyncApi {
    /**
     * @see OSImageApi#delete(String)
     */
+   @Named("DeleteOsImage")
    @DELETE
    @Path("/services/images/{imageName}")
    @Fallback(VoidOnNotFoundOr404.class)

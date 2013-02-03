@@ -20,6 +20,7 @@ package org.jclouds.azure.management.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -49,6 +50,7 @@ public interface LocationAsyncApi {
    /**
     * @see LocationApi#list()
     */
+   @Named("ListLocations")
    @GET
    @Path("/locations")
    @XMLResponseParser(ListLocationsHandler.class)
