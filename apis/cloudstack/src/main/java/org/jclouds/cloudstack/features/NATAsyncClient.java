@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -58,6 +59,7 @@ public interface NATAsyncClient {
    /**
     * @see NATClient#listIPForwardingRules
     */
+   @Named("listIpForwardingRules")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listIpForwardingRules", "true" })
    @SelectJson("ipforwardingrule")
@@ -68,6 +70,7 @@ public interface NATAsyncClient {
    /**
     * @see NATClient#getIPForwardingRule
     */
+   @Named("listIpForwardingRules")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listIpForwardingRules", "true" })
    @SelectJson("ipforwardingrule")
@@ -79,6 +82,7 @@ public interface NATAsyncClient {
    /**
     * @see NATClient#getIPForwardingRulesForIPAddress
     */
+   @Named("listIpForwardingRules")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listIpForwardingRules", "true" })
    @SelectJson("ipforwardingrule")
@@ -88,6 +92,7 @@ public interface NATAsyncClient {
    /**
     * @see NATClient#getIPForwardingRulesForVirtualMachine
     */
+   @Named("listIpForwardingRules")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listIpForwardingRules", "true" })
    @SelectJson("ipforwardingrule")
@@ -97,6 +102,7 @@ public interface NATAsyncClient {
    /**
     * @see NATClient#createIPForwardingRule
     */
+   @Named("createIpForwardingRule")
    @GET
    @QueryParams(keys = "command", values = "createIpForwardingRule")
    @Unwrap
@@ -108,6 +114,7 @@ public interface NATAsyncClient {
    /**
     * @see NATClient#enableStaticNATForVirtualMachine
     */
+   @Named("enableStaticNat")
    @GET
    @QueryParams(keys = "command", values = "enableStaticNat")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -117,6 +124,7 @@ public interface NATAsyncClient {
    /**
     * @see NATClient#deleteIPForwardingRule
     */
+   @Named("deleteIpForwardingRule")
    @GET
    @QueryParams(keys = "command", values = "deleteIpForwardingRule")
    @SelectJson("jobid")
@@ -127,6 +135,7 @@ public interface NATAsyncClient {
    /**
     * @see NATClient#disableStaticNATOnPublicIP
     */
+   @Named("disableStaticNat")
    @GET
    @QueryParams(keys = "command", values = "disableStaticNat")
    @SelectJson("jobid")

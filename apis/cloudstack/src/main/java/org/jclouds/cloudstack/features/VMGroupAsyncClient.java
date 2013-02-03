@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -58,6 +59,7 @@ public interface VMGroupAsyncClient {
     * @param options if present, how to constrain the list.
     * @return VM groups matching query, or empty set, if no zones are found
     */
+   @Named("listInstanceGroups")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listInstanceGroups", "true" })
    @SelectJson("instancegroup")
@@ -68,6 +70,7 @@ public interface VMGroupAsyncClient {
    /**
     * @see VMGroupClient#getInstanceGroup
     */
+   @Named("listInstanceGroups")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listInstanceGroups", "true" })
    @SelectJson("instancegroup")
@@ -83,6 +86,7 @@ public interface VMGroupAsyncClient {
     * @param options optional parameters
     * @return the new VMGroup
     */
+   @Named("createInstanceGroup")
    @GET
    @QueryParams(keys = "command", values = "createInstanceGroup")
    @SelectJson("instancegroup")
@@ -95,6 +99,7 @@ public interface VMGroupAsyncClient {
     * @param name the new name of the group
     * @return the modified VMGroup
     */
+   @Named("updateInstanceGroup")
    @GET
    @QueryParams(keys = "command", values = "updateInstanceGroup")
    @SelectJson("instancegroup")
@@ -107,6 +112,7 @@ public interface VMGroupAsyncClient {
     * @param id the ID of the VM group
     * @return a future with a void data type
     */
+   @Named("deleteInstanceGroup")
    @GET
    @QueryParams(keys = "command", values = "deleteInstanceGroup")
    @Fallback(VoidOnNotFoundOr404.class)

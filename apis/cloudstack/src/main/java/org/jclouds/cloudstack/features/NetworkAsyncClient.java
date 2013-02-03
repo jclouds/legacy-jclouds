@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -54,6 +55,7 @@ public interface NetworkAsyncClient {
    /**
     * @see NetworkClient#listNetworks
     */
+   @Named("listNetworks")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listNetworks", "true" })
    @SelectJson("network")
@@ -64,6 +66,7 @@ public interface NetworkAsyncClient {
    /**
     * @see NetworkClient#getNetwork
     */
+   @Named("listNetworks")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listNetworks", "true" })
    @SelectJson("network")
@@ -75,6 +78,7 @@ public interface NetworkAsyncClient {
    /**
     * @see NetworkClient#createNetworkInZone
     */
+   @Named("createNetwork")
    @GET
    @QueryParams(keys = "command", values = "createNetwork")
    @SelectJson("network")
@@ -86,6 +90,7 @@ public interface NetworkAsyncClient {
    /**
     * @see NetworkClient#deleteNetwork
     */
+   @Named("deleteNetwork")
    @GET
    @QueryParams(keys = "command", values = "deleteNetwork")
    @SelectJson("jobid")

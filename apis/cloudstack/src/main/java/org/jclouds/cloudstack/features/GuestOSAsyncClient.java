@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.features;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -57,6 +58,7 @@ public interface GuestOSAsyncClient {
    /**
     * @see GuestOSClient#listOSTypes
     */
+   @Named("listOsTypes")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listOsTypes", "true" })
    @SelectJson("ostype")
@@ -67,6 +69,7 @@ public interface GuestOSAsyncClient {
    /**
     * @see OSTypeClient#getOSType
     */
+   @Named("listOsTypes")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listOsTypes", "true" })
    @SelectJson("ostype")
@@ -78,6 +81,7 @@ public interface GuestOSAsyncClient {
    /**
     * @see GuestOSClient#listOSCategories
     */
+   @Named("listOsCategories")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listOsCategories", "true" })
    @ResponseParser(ParseIdToNameFromHttpResponse.class)
@@ -87,6 +91,7 @@ public interface GuestOSAsyncClient {
    /**
     * @see GuestOSClient#getOSCategory
     */
+   @Named("listOsCategories")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listOsCategories", "true" })
    @ResponseParser(ParseIdToNameEntryFromHttpResponse.class)

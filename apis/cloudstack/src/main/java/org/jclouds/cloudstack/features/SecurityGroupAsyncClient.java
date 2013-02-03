@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -59,6 +60,7 @@ public interface SecurityGroupAsyncClient {
    /**
     * @see SecurityGroupClient#listSecurityGroups
     */
+   @Named("listSecurityGroups")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listSecurityGroups", "true" })
    @SelectJson("securitygroup")
@@ -69,6 +71,7 @@ public interface SecurityGroupAsyncClient {
    /**
     * @see SecurityGroupClient#getSecurityGroup
     */
+   @Named("listSecurityGroups")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listSecurityGroups", "true" })
    @SelectJson("securitygroup")
@@ -80,6 +83,7 @@ public interface SecurityGroupAsyncClient {
    /**
     * @see SecurityGroupClient#createSecurityGroup
     */
+   @Named("createSecurityGroup")
    @GET
    @QueryParams(keys = "command", values = "createSecurityGroup")
    @SelectJson("securitygroup")
@@ -89,6 +93,7 @@ public interface SecurityGroupAsyncClient {
    /**
     * @see SecurityGroupClient#authorizeIngressPortsToCIDRs
     */
+   @Named("authorizeSecurityGroupIngress")
    @GET
    @QueryParams(keys = "command", values = "authorizeSecurityGroupIngress")
    @SelectJson("jobid")
@@ -102,6 +107,7 @@ public interface SecurityGroupAsyncClient {
    /**
     * @see SecurityGroupClient#authorizeIngressPortsToSecurityGroups
     */
+   @Named("authorizeSecurityGroupIngress")
    @GET
    @QueryParams(keys = "command", values = "authorizeSecurityGroupIngress")
    @SelectJson("jobid")
@@ -115,6 +121,7 @@ public interface SecurityGroupAsyncClient {
    /**
     * @see SecurityGroupClient#authorizeIngressICMPToCIDRs
     */
+   @Named("authorizeSecurityGroupIngress")
    @GET
    @QueryParams(keys = { "command", "protocol" }, values = { "authorizeSecurityGroupIngress", "ICMP" })
    @SelectJson("jobid")
@@ -127,6 +134,7 @@ public interface SecurityGroupAsyncClient {
    /**
     * @see SecurityGroupClient#authorizeIngressICMPToSecurityGroups
     */
+   @Named("authorizeSecurityGroupIngress")
    @GET
    @QueryParams(keys = { "command", "protocol" }, values = { "authorizeSecurityGroupIngress", "ICMP" })
    @SelectJson("jobid")
@@ -139,6 +147,7 @@ public interface SecurityGroupAsyncClient {
    /**
     * @see SecurityGroupClient#revokeIngressRule
     */
+   @Named("revokeSecurityGroupIngress")
    @GET
    @QueryParams(keys = "command", values = "revokeSecurityGroupIngress")
    @Fallback(VoidOnNotFoundOr404.class)
@@ -149,6 +158,7 @@ public interface SecurityGroupAsyncClient {
    /**
     * @see SecurityGroupClient#deleteSecurityGroup
     */
+   @Named("deleteSecurityGroup")
    @GET
    @QueryParams(keys = "command", values = "deleteSecurityGroup")
    @Fallback(VoidOnNotFoundOr404.class)

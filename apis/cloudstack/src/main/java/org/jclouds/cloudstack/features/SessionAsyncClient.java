@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -47,6 +48,7 @@ public interface SessionAsyncClient {
    /**
     * @see SessionClient#loginUserInDomainWithHashOfPassword
     */
+   @Named("login")
    @GET
    @QueryParams(keys = "command", values = "login")
    @ResponseParser(ParseLoginResponseFromHttpResponse.class)
@@ -58,6 +60,7 @@ public interface SessionAsyncClient {
    /**
     * @see SessionClient#logoutUser
     */
+   @Named("logout")
    @GET
    @QueryParams(keys = "command", values = "logout")
    @Fallback(VoidOnNotFoundOr404.class)

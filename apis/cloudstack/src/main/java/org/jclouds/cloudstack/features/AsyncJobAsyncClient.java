@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -54,6 +55,7 @@ public interface AsyncJobAsyncClient {
    /**
     * @see AsyncJobClient#listAsyncJobs
     */
+   @Named("listAsyncJobs")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listAsyncJobs", "true" })
    @ResponseParser(ParseAsyncJobsFromHttpResponse.class)
@@ -63,6 +65,7 @@ public interface AsyncJobAsyncClient {
    /**
     * @see AsyncJobClient#getAsyncJob
     */
+   @Named("queryAsyncJobResult")
    @GET
    @QueryParams(keys = "command", values = "queryAsyncJobResult")
    @Consumes(MediaType.APPLICATION_JSON)

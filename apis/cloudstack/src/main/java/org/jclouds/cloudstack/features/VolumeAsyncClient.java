@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -55,6 +56,7 @@ public interface VolumeAsyncClient {
    /**
     * @see VolumeClient#listVolumes(org.jclouds.cloudstack.options.ListVolumesOptions...)
     */
+   @Named("listVolumes")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listVolumes", "true" })
    @SelectJson("volume")
@@ -65,6 +67,7 @@ public interface VolumeAsyncClient {
    /**
     * @see VolumeClient#getVolume(String)
     */
+   @Named("listVolumes")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = { "command", "listAll" }, values = { "listVolumes", "true" })
@@ -77,6 +80,7 @@ public interface VolumeAsyncClient {
    /**
     * @see VolumeClient#createVolumeFromDiskOfferingInZone(String, String, String)
     */
+   @Named("createVolume")
    @GET
    @QueryParams(keys = "command", values = "createVolume")
    @Unwrap
@@ -88,6 +92,7 @@ public interface VolumeAsyncClient {
    /**
     * @see VolumeClient#createVolumeFromSnapshotInZone(String, String, String)
     */
+   @Named("createVolume")
    @GET
    @QueryParams(keys = "command", values = "createVolume")
    @Unwrap
@@ -99,6 +104,7 @@ public interface VolumeAsyncClient {
    /**
     * @see VolumeClient#attachVolume(String, String)
     */
+   @Named("attachVolume")
    @GET
    @QueryParams(keys = "command", values = "attachVolume")
    @Unwrap
@@ -109,6 +115,7 @@ public interface VolumeAsyncClient {
    /**
     * @see VolumeClient#detachVolume(String)
     */
+   @Named("detachVolume")
    @GET
    @QueryParams(keys = "command", values = "detachVolume")
    @Unwrap
@@ -118,6 +125,7 @@ public interface VolumeAsyncClient {
    /**
     * @see VolumeClient#deleteVolume(String)
     */
+   @Named("deleteVolume")
    @GET
    @QueryParams(keys = "command", values = "deleteVolume")
    @Fallback(VoidOnNotFoundOr404.class)

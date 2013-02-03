@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.features;
 import java.util.Date;
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -51,12 +52,14 @@ import com.google.common.util.concurrent.ListenableFuture;
 @QueryParams(keys = "response", values = "json")
 public interface GlobalUsageAsyncClient {
 
+   @Named("generateUsageRecords")
    @GET
    @QueryParams(keys = "command", values = "generateUsageRecords")
    @SelectJson("generateusagerecordsresponse")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<JobResult> generateUsageRecords(@QueryParam("startdate") @ParamParser(DateToYyyyMmDd.class) Date start, @QueryParam("enddate") @ParamParser(DateToYyyyMmDd.class) Date end, GenerateUsageRecordsOptions... options);
 
+   @Named("listUsageRecords")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listUsageRecords", "true" })
    @SelectJson("usagerecord")

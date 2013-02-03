@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -57,6 +58,7 @@ public interface GlobalVlanAsyncClient {
     * @param id the required IP range.
     * @return the requested IP range.
     */
+   @Named("listVlanIpRanges")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listVlanIpRanges", "true" })
    @SelectJson("vlaniprange")
@@ -71,6 +73,7 @@ public interface GlobalVlanAsyncClient {
     * @param options optional arguments.
     * @return the list of IP ranges that match the criteria.
     */
+   @Named("listVlanIpRanges")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listVlanIpRanges", "true" })
    @SelectJson("vlaniprange")
@@ -86,6 +89,7 @@ public interface GlobalVlanAsyncClient {
     * @param options optional arguments
     * @return the newly-create IP range.
     */
+   @Named("createVlanIpRange")
    @GET
    @QueryParams(keys = "command", values = "createVlanIpRange")
    @SelectJson("vlaniprange")
@@ -98,6 +102,7 @@ public interface GlobalVlanAsyncClient {
     * @param rangeId the id of the VLAN IP range
     * @return void
     */
+   @Named("deleteVlanIpRange")
    @GET
    @QueryParams(keys = "command", values = "deleteVlanIpRange")
    @Consumes(MediaType.APPLICATION_JSON)

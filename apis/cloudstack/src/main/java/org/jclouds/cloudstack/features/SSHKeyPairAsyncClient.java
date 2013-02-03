@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -53,6 +54,7 @@ public interface SSHKeyPairAsyncClient {
    /**
     * @see SSHKeyPairClient#listSSHKeyPairs
     */
+   @Named("listSSHKeyPairs")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listSSHKeyPairs", "true" })
    @SelectJson("sshkeypair")
@@ -63,6 +65,7 @@ public interface SSHKeyPairAsyncClient {
   /**
     * @see SSHKeyPairClient#registerSSHKeyPair
     */
+   @Named("registerSSHKeyPair")
    @GET
    @QueryParams(keys = "command", values = "registerSSHKeyPair")
    @SelectJson("keypair")
@@ -72,6 +75,7 @@ public interface SSHKeyPairAsyncClient {
    /**
     * @see SSHKeyPairClient#createSSHKeyPair
     */
+   @Named("createSSHKeyPair")
    @GET
    @QueryParams(keys = "command", values = "createSSHKeyPair")
    @SelectJson("keypair")
@@ -81,6 +85,7 @@ public interface SSHKeyPairAsyncClient {
    /**
     * @see SSHKeyPairClient#getSSHKeyPair
     */
+   @Named("listSSHKeyPairs")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listSSHKeyPairs", "true" })
    @SelectJson("sshkeypair")
@@ -92,6 +97,7 @@ public interface SSHKeyPairAsyncClient {
    /**
     * @see SSHKeyPairClient#deleteSSHKeyPair
     */
+   @Named("deleteSSHKeyPair")
    @GET
    @QueryParams(keys = "command", values = "deleteSSHKeyPair")
    @Fallback(VoidOnNotFoundOr404.class)

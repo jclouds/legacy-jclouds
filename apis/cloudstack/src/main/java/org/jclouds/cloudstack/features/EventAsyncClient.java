@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.core.MediaType;
@@ -51,6 +52,7 @@ public interface EventAsyncClient {
    /**
     * @see EventClient#listEventTypes()
     */
+   @Named("listEventTypes")
    @GET
    @QueryParams(keys = "command", values = "listEventTypes")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -61,6 +63,7 @@ public interface EventAsyncClient {
    /**
     * @see EventClient#listEventTypes()
     */
+   @Named("listEventTypes")
    @GET
    @QueryParams(keys = "command", values = "listEvents")
    @SelectJson("event")

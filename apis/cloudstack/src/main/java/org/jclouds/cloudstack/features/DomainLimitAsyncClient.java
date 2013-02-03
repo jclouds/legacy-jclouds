@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.core.MediaType;
@@ -47,6 +48,7 @@ public interface DomainLimitAsyncClient extends LimitAsyncClient {
    /**
     * @see DomainLimitClient#updateResourceLimit
     */
+   @Named("updateResourceLimit")
    @GET
    @QueryParams(keys = "command", values = "updateResourceLimit")
    @SelectJson("resourcelimit")
