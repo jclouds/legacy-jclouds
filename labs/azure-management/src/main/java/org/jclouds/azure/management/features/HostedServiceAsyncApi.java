@@ -20,6 +20,7 @@ package org.jclouds.azure.management.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -66,6 +67,7 @@ public interface HostedServiceAsyncApi {
    /**
     * @see HostedServiceApi#list()
     */
+   @Named("ListHostedServices")
    @GET
    @Path("/services/hostedservices")
    @XMLResponseParser(ListHostedServicesHandler.class)
@@ -76,6 +78,7 @@ public interface HostedServiceAsyncApi {
    /**
     * @see HostedServiceApi#createServiceWithLabelInLocation(String, String, String)
     */
+   @Named("CreateHostedService")
    @POST
    @Path("/services/hostedservices")
    @MapBinder(BindCreateHostedServiceToXmlPayload.class)
@@ -88,6 +91,7 @@ public interface HostedServiceAsyncApi {
     * @see HostedServiceApi#createServiceWithLabelInLocation(String, String, String,
     *      CreateHostedServiceOptions)
     */
+   @Named("CreateHostedService")
    @POST
    @Path("/services/hostedservices")
    @MapBinder(BindCreateHostedServiceToXmlPayload.class)
@@ -100,6 +104,7 @@ public interface HostedServiceAsyncApi {
    /**
     * @see HostedServiceApi#get(String)
     */
+   @Named("GetHostedServiceProperties")
    @GET
    @Path("/services/hostedservices/{serviceName}")
    @XMLResponseParser(HostedServiceHandler.class)
@@ -110,6 +115,7 @@ public interface HostedServiceAsyncApi {
    /**
     * @see HostedServiceApi#getDetails(String)
     */
+   @Named("GetHostedServiceProperties")
    @GET
    @Path("/services/hostedservices/{serviceName}")
    @QueryParams(keys = "embed-detail", values = "true")
@@ -121,33 +127,28 @@ public interface HostedServiceAsyncApi {
    /**
     * @see HostedServiceApi#delete(String)
     */
+   @Named("DeleteHostedService")
    @DELETE
    @Path("/services/hostedservices/{serviceName}")
    @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(ParseRequestIdHeader.class)
    ListenableFuture<String> delete(@PathParam("serviceName") String serviceName);
 
- // This is a PaaS REST service !
-//   @POST
-//   @Path("/services/hostedservices/{serviceName}/deploymentslots/{deploymentSlotName}")
-//   @Produces(MediaType.APPLICATION_ATOM_XML)
-//   @Consumes(MediaType.TEXT_PLAIN)
-//   @Fallback(NullOnNotFoundOr404.class)
-//   ListenableFuture<Void> createDeployment(@PathParam("serviceName") String serviceName,
-//            @PathParam("deploymentSlotName") String deploymentSlotName,
-//            @BinderParam(BindToXMLPayload.class) CreateDeployment createDeployment);
-
+   /**
+    * @see HostedServiceApi#deleteDeployment(String, String)
+    */
+   @Named("DeleteDeployment")
    @DELETE
    @Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}")
    @Fallback(VoidOnNotFoundOr404.class)
    @ResponseParser(ParseRequestIdHeader.class)
    ListenableFuture<String> deleteDeployment(@PathParam("serviceName") String serviceName,
             @PathParam("deploymentName") String deploymentName);
-   
-   
+
    /**
     * @see HostedServiceApi#get(String,String)
     */
+   @Named("GetDeployment")
    @GET
    @Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}")
    @XMLResponseParser(DeploymentHandler.class)

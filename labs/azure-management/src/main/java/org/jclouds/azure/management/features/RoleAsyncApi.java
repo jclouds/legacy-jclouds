@@ -18,6 +18,7 @@
  */
 package org.jclouds.azure.management.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -52,16 +53,22 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Headers(keys = "x-ms-version", values = "2012-03-01")
 public interface RoleAsyncApi {
 
+   /**
+    * @see RoleApi#getRole(String, String, String)
+    */
+   @Named("GetRole")
    @GET
    @Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roles/{roleName}")
    @Consumes(MediaType.APPLICATION_ATOM_XML)
    @JAXBResponseParser
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<PersistentVMRole> getRole(@PathParam("serviceName")
-   String serviceName,
-   @PathParam("deploymentName") String deploymentName,
-   @PathParam("roleName") String roleName);
+   ListenableFuture<PersistentVMRole> getRole(@PathParam("serviceName") String serviceName,
+         @PathParam("deploymentName") String deploymentName, @PathParam("roleName") String roleName);
 
+   /**
+    * @see RoleApi#restartRole(String, String, String)
+    */
+   @Named("RestartRole")
    @POST
    // Warning : the url in the documentation is WRONG ! @see
    // http://social.msdn.microsoft.com/Forums/pl-PL/WAVirtualMachinesforWindows/thread/7ba2367b-e450-49e0-89e4-46c240e9d213
@@ -71,21 +78,26 @@ public interface RoleAsyncApi {
    @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(ParseRequestIdHeader.class)
    @Payload(value = "<RestartRoleOperation xmlns=\"http://schemas.microsoft.com/windowsazure\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><OperationType>RestartRoleOperation</OperationType></RestartRoleOperation>")
-   ListenableFuture<String> restartRole(
-         @PathParam("serviceName") String serviceName,
-         @PathParam("deploymentName") String deploymentName,
-         @PathParam("roleName") String roleName);
+   ListenableFuture<String> restartRole(@PathParam("serviceName") String serviceName,
+         @PathParam("deploymentName") String deploymentName, @PathParam("roleName") String roleName);
 
+   /**
+    * @see RoleApi#createDeployment(String, DeploymentParams)
+    */
+   @Named("CreateVirtualMachineDeployment")
    @POST
    @Path("/services/hostedservices/{serviceName}/deployments")
    @Produces(MediaType.APPLICATION_ATOM_XML)
    @Consumes(MediaType.APPLICATION_ATOM_XML)
    @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(ParseRequestIdHeader.class)
-   ListenableFuture<String> createDeployment(
-         @PathParam("serviceName") String serviceName,
+   ListenableFuture<String> createDeployment(@PathParam("serviceName") String serviceName,
          @BinderParam(BindDeploymentParamsToXmlPayload.class) DeploymentParams deploymentParams);
 
+   /**
+    * @see RoleApi#captureRole(String, String, String, String, String)
+    */
+   @Named("CaptureRole")
    @POST
    @Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roleInstances/{roleName}/Operations")
    @Consumes(MediaType.APPLICATION_ATOM_XML)
@@ -93,13 +105,14 @@ public interface RoleAsyncApi {
    @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(ParseRequestIdHeader.class)
    @Payload(value = "<CaptureRoleOperation xmlns=\"http://schemas.microsoft.com/windowsazure\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><OperationType>CaptureRoleOperation</OperationType><PostCaptureAction>Delete</PostCaptureAction><TargetImageLabel>{imageLabel}</TargetImageLabel><TargetImageName>{imageName}</TargetImageName></CaptureRoleOperation>")
-   ListenableFuture<String> captureRole(
-         @PathParam("serviceName") String serviceName,
-         @PathParam("deploymentName") String deploymentName,
-         @PathParam("roleName") String roleName,
-         @PayloadParam("imageName") String imageName,
-         @PayloadParam("imageLabel") String imageLabel);
-   
+   ListenableFuture<String> captureRole(@PathParam("serviceName") String serviceName,
+         @PathParam("deploymentName") String deploymentName, @PathParam("roleName") String roleName,
+         @PayloadParam("imageName") String imageName, @PayloadParam("imageLabel") String imageLabel);
+
+   /**
+    * @see RoleApi#shutdownRole(String, String, String)
+    */
+   @Named("ShutdownRole")
    @POST
    @Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roleInstances/{roleName}/Operations")
    @Consumes(MediaType.APPLICATION_ATOM_XML)
@@ -107,11 +120,13 @@ public interface RoleAsyncApi {
    @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(ParseRequestIdHeader.class)
    @Payload(value = "<ShutdownRoleOperation xmlns=\"http://schemas.microsoft.com/windowsazure\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><OperationType>ShutdownRoleOperation</OperationType></ShutdownRoleOperation>")
-   ListenableFuture<String> shutdownRole(
-         @PathParam("serviceName") String serviceName,
-         @PathParam("deploymentName") String deploymentName,
-         @PathParam("roleName") String roleName);
-   
+   ListenableFuture<String> shutdownRole(@PathParam("serviceName") String serviceName,
+         @PathParam("deploymentName") String deploymentName, @PathParam("roleName") String roleName);
+
+   /**
+    * @see RoleApi#startRole(String, String, String)
+    */
+   @Named("StartRole")
    @POST
    @Path("/services/hostedservices/{serviceName}/deployments/{deploymentName}/roleInstances/{roleName}/Operations")
    @Consumes(MediaType.APPLICATION_ATOM_XML)
@@ -119,9 +134,7 @@ public interface RoleAsyncApi {
    @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(ParseRequestIdHeader.class)
    @Payload(value = "<StartRoleOperation xmlns=\"http://schemas.microsoft.com/windowsazure\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><OperationType>StartRoleOperation</OperationType></StartRoleOperation>")
-   ListenableFuture<String> startRole(
-         @PathParam("serviceName") String serviceName,
-         @PathParam("deploymentName") String deploymentName,
-         @PathParam("roleName") String roleName);
+   ListenableFuture<String> startRole(@PathParam("serviceName") String serviceName,
+         @PathParam("deploymentName") String deploymentName, @PathParam("roleName") String roleName);
 
 }

@@ -20,6 +20,7 @@ package org.jclouds.azure.management.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -50,6 +51,10 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Headers(keys = "x-ms-version", values = "2012-03-01")
 public interface DiskAsyncApi {
 
+   /**
+    * @see DiskApi#list()
+    */
+   @Named("ListDisks")
    @GET
    @Path("/services/disks")
    @XMLResponseParser(ListDisksHandler.class)
@@ -57,6 +62,10 @@ public interface DiskAsyncApi {
    @Consumes(MediaType.APPLICATION_XML)
    ListenableFuture<Set<Disk>> list();
 
+   /**
+    * @see DiskApi#delete
+    */
+   @Named("DeleteDisk")
    @DELETE
    @Path("/services/disks/{diskName}")
    @Fallback(NullOnNotFoundOr404.class)

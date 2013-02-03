@@ -18,6 +18,7 @@
  */
 package org.jclouds.azure.management.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -34,7 +35,8 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * The Service Management API includes one operation for tracking the progress of asynchronous requests.
+ * The Service Management API includes one operation for tracking the progress
+ * of asynchronous requests.
  * 
  * @see <a href="http://msdn.microsoft.com/en-us/library/ee460796">docs</a>
  * @see OperationApi
@@ -43,11 +45,14 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Headers(keys = "x-ms-version", values = "2012-03-01")
 public interface OperationAsyncApi {
 
+   /**
+    * @see OperationApi#get(String)
+    */
+   @Named("GetOperation")
    @GET
    @Path("/operations/{request-id}")
    @XMLResponseParser(OperationHandler.class)
    @Fallback(NullOnNotFoundOr404.class)
    @Consumes(MediaType.APPLICATION_XML)
    ListenableFuture<Operation> get(@PathParam("request-id") String requestId);
-
 }
