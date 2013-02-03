@@ -20,6 +20,7 @@ package org.jclouds.atmos;
 
 import java.net.URI;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -83,6 +84,7 @@ public interface AtmosAsyncClient {
    /**
     * @see AtmosClient#listDirectories
     */
+   @Named("ListDirectory")
    @GET
    @ResponseParser(ParseDirectoryListFromContentAndHeaders.class)
    @Consumes(MediaType.TEXT_XML)
@@ -91,6 +93,7 @@ public interface AtmosAsyncClient {
    /**
     * @see AtmosClient#listDirectory
     */
+   @Named("ListDirectory")
    @GET
    @Path("/{directoryName}/")
    @ResponseParser(ParseDirectoryListFromContentAndHeaders.class)
@@ -102,6 +105,7 @@ public interface AtmosAsyncClient {
    /**
     * @see AtmosClient#createDirectory
     */
+   @Named("CreateDirectory")
    @POST
    @Path("/{directoryName}/")
    @Fallback(EndpointIfAlreadyExists.class)
@@ -112,6 +116,7 @@ public interface AtmosAsyncClient {
    /**
     * @see AtmosClient#createFile
     */
+   @Named("CreateObject")
    @POST
    @Path("/{parent}/{name}")
    @Consumes(MediaType.WILDCARD)
@@ -123,6 +128,7 @@ public interface AtmosAsyncClient {
    /**
     * @see AtmosClient#updateFile
     */
+   @Named("UpdateObject")
    @PUT
    @Path("/{parent}/{name}")
    @Fallback(ThrowKeyNotFoundOn404.class)
@@ -135,6 +141,7 @@ public interface AtmosAsyncClient {
    /**
     * @see AtmosClient#readFile
     */
+   @Named("ReadObject")
    @GET
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
    @Fallback(NullOnNotFoundOr404.class)
@@ -145,6 +152,7 @@ public interface AtmosAsyncClient {
    /**
     * @see AtmosClient#headFile
     */
+   @Named("GetObjectMetadata")
    @HEAD
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
    @Fallback(NullOnNotFoundOr404.class)
@@ -155,6 +163,7 @@ public interface AtmosAsyncClient {
    /**
     * @see AtmosClient#getSystemMetadata
     */
+   @Named("GetSystemMetadata")
    @HEAD
    @ResponseParser(ParseSystemMetadataFromHeaders.class)
    @Fallback(NullOnNotFoundOr404.class)
@@ -166,6 +175,7 @@ public interface AtmosAsyncClient {
    /**
     * @see AtmosClient#getUserMetadata
     */
+   @Named("GetUserMetadata")
    @HEAD
    @ResponseParser(ParseUserMetadataFromHeaders.class)
    @Fallback(NullOnNotFoundOr404.class)
@@ -177,6 +187,7 @@ public interface AtmosAsyncClient {
    /**
     * @see AtmosClient#deletePath
     */
+   @Named("DeleteObject")
    @DELETE
    @Fallback(VoidOnNotFoundOr404.class)
    @Path("/{path}")
@@ -186,6 +197,7 @@ public interface AtmosAsyncClient {
    /**
     * @see AtmosClient#pathExists
     */
+   @Named("GetObjectMetadata")
    @HEAD
    @Fallback(FalseOnNotFoundOr404.class)
    @Path("/{path}")
@@ -195,6 +207,7 @@ public interface AtmosAsyncClient {
    /**
     * @see AtmosClient#isPublic
     */
+   @Named("GetObjectMetadata")
    @HEAD
    @ResponseParser(ReturnTrueIfGroupACLIsOtherRead.class)
    @Path("/{path}")
