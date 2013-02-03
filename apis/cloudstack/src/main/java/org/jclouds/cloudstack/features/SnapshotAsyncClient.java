@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -67,6 +68,7 @@ public interface SnapshotAsyncClient {
     * @param options optional arguments
     * @return an asynchronous job structure
     */
+   @Named("createSnapshot")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "createSnapshot")
@@ -79,6 +81,7 @@ public interface SnapshotAsyncClient {
     * @param options optional arguments
     * @return the snapshots matching the query
     */
+   @Named("listSnapshots")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = { "command", "listAll" }, values = { "listSnapshots", "true" })
@@ -93,6 +96,7 @@ public interface SnapshotAsyncClient {
     * @param id the snapshot ID
     * @return the snapshot with the requested ID
     */
+   @Named("listSnapshots")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = { "command", "listAll" }, values = { "listSnapshots", "true" })
@@ -107,6 +111,7 @@ public interface SnapshotAsyncClient {
     * @param id The ID of the snapshot
     * @return an asynchronous job structure
     */
+   @Named("deleteSnapshot")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "deleteSnapshot")
@@ -122,6 +127,7 @@ public interface SnapshotAsyncClient {
     * @param volumeId the ID of the disk volume
     * @return the newly-created snapshot policy
     */
+   @Named("createSnapshotPolicy")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @Unwrap
@@ -134,6 +140,7 @@ public interface SnapshotAsyncClient {
     * @param id The ID of the snapshot policy
     * @return
     */
+   @Named("deleteSnapshotPolicies")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "deleteSnapshotPolicies")
@@ -146,6 +153,7 @@ public interface SnapshotAsyncClient {
     * @param id IDs of snapshot policies
     * @return
     */
+   @Named("deleteSnapshotPolicies")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "deleteSnapshotPolicies")
@@ -159,6 +167,7 @@ public interface SnapshotAsyncClient {
     * @param options optional arguments
     * @return the snapshot policies matching the query
     */
+   @Named("listSnapshotPolicies")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = { "command", "listAll" }, values = { "listSnapshotPolicies", "true" })

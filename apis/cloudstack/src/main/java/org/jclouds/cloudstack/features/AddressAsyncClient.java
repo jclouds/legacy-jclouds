@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -57,6 +58,7 @@ public interface AddressAsyncClient {
    /**
     * @see AddressClient#listPublicIPAddresses
     */
+   @Named("listPublicIpAddresses")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listPublicIpAddresses", "true" })
    @SelectJson("publicipaddress")
@@ -67,6 +69,7 @@ public interface AddressAsyncClient {
    /**
     * @see AddressClient#getPublicIPAddress
     */
+   @Named("listPublicIpAddresses")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listPublicIpAddresses", "true" })
    @SelectJson("publicipaddress")
@@ -78,6 +81,7 @@ public interface AddressAsyncClient {
    /**
     * @see AddressClient#associateIPAddressInZone
     */
+   @Named("associateIpAddress")
    @GET
    @QueryParams(keys = "command", values = "associateIpAddress")
    @Unwrap
@@ -88,6 +92,7 @@ public interface AddressAsyncClient {
    /**
     * @see AddressClient#disassociateIPAddress
     */
+   @Named("disassociateIpAddress")
    @GET
    @QueryParams(keys = "command", values = "disassociateIpAddress")
    @Fallback(VoidOnNotFoundOr404OrUnableToFindAccountOwner.class)

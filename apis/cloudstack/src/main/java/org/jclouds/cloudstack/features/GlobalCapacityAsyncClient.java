@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.core.MediaType;
@@ -51,6 +52,7 @@ public interface GlobalCapacityAsyncClient {
    /**
     * @see GlobalCapacityClient#listCapacity(org.jclouds.cloudstack.options.ListCapacityOptions...)
     */
+   @Named("listCapacity")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listCapacity", "true" })
    @SelectJson("capacity")

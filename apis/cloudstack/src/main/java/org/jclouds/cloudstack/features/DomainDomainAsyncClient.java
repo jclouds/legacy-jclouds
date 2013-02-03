@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -55,6 +56,7 @@ public interface DomainDomainAsyncClient {
    /**
     * @see DomainDomainClient#listDomains
     */
+   @Named("listDomains")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listDomains", "true" })
    @SelectJson("domain")
@@ -65,6 +67,7 @@ public interface DomainDomainAsyncClient {
    /**
     * @see DomainDomainClient#getDomainById
     */
+   @Named("listDomains")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listDomains", "true" })
    @SelectJson("domain")
@@ -76,6 +79,7 @@ public interface DomainDomainAsyncClient {
    /**
     * @see DomainDomainClient#listDomainChildren
     */
+   @Named("listDomainChildren")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listDomainChildren", "true" })
    @SelectJson("domain")

@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
 
@@ -48,6 +49,7 @@ public interface HypervisorAsyncClient {
    /**
     * @see HypervisorClient#listHypervisors
     */
+   @Named("listHypervisors")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listHypervisors", "true" })
    @ResponseParser(ParseNamesFromHttpResponse.class)
@@ -57,6 +59,7 @@ public interface HypervisorAsyncClient {
    /**
     * @see HypervisorClient#listHypervisorsInZone
     */
+   @Named("listHypervisors")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listHypervisors", "true" })
    @ResponseParser(ParseNamesFromHttpResponse.class)

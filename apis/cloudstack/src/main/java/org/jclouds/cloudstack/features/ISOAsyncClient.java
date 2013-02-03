@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -67,6 +68,7 @@ public interface ISOAsyncClient {
     * @param vmId the ID of the virtual machine
     * @return an asynchronous job response.
     */
+   @Named("attachIso")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "attachIso")
@@ -79,6 +81,7 @@ public interface ISOAsyncClient {
     * @param vmId The ID of the virtual machine
     * @return an asynchronous job response.
     */
+   @Named("detachIso")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "detachIso")
@@ -91,6 +94,7 @@ public interface ISOAsyncClient {
     * @param id the ID of the ISO file
     * @return the ISO object matching the ID
     */
+   @Named("listIsos")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = { "command", "listAll" }, values = { "listIsos", "true" })
@@ -105,6 +109,7 @@ public interface ISOAsyncClient {
     * @param options optional arguments
     * @return a set of ISO objects the match the filter
     */
+   @Named("listIsos")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = { "command", "listAll" }, values = { "listIsos", "true" })
@@ -122,6 +127,7 @@ public interface ISOAsyncClient {
     * @param options optional arguments
     * @return the newly-added ISO
     */
+   @Named("registerIso")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "registerIso")
@@ -136,6 +142,7 @@ public interface ISOAsyncClient {
     * @param options optional arguments
     * @return the ISO object matching the ID
     */
+   @Named("updateIso")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "updateIso")
@@ -149,6 +156,7 @@ public interface ISOAsyncClient {
     * @param options optional arguments
     * @return an asynchronous job response.
     */
+   @Named("deleteIso")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "deleteIso")
@@ -163,6 +171,7 @@ public interface ISOAsyncClient {
     * @param destZoneId ID of the zone the template is being copied to.
     * @return an asynchronous job response.
     */
+   @Named("copyIso")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "copyIso")
@@ -176,6 +185,7 @@ public interface ISOAsyncClient {
     * @param options optional arguments
     * @return 
     */
+   @Named("updateIsoPermissions")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "updateIsoPermissions")
@@ -189,6 +199,7 @@ public interface ISOAsyncClient {
     * @param options optional arguments
     * @return A set of the permissions on this ISO
     */
+   @Named("listIsoPermissions")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = { "command", "listAll" }, values = { "listIsoPermissions", "true" })
@@ -204,6 +215,7 @@ public interface ISOAsyncClient {
     * @param options optional arguments
     * @return an asynchronous job response.
     */
+   @Named("extractIso")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "extractIso")

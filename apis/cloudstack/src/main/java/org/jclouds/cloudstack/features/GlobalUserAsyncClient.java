@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -52,6 +53,7 @@ public interface GlobalUserAsyncClient extends DomainUserAsyncClient {
    /**
     * @see GlobalUserClient#createUser
     */
+   @Named("createUser")
    @GET
    @QueryParams(keys = "command", values = "createUser")
    @SelectJson("user")
@@ -64,6 +66,7 @@ public interface GlobalUserAsyncClient extends DomainUserAsyncClient {
    /**
     * @see GlobalUserClient#registerUserKeys
     */
+   @Named("registerUserKeys")
    @GET
    @QueryParams(keys = "command", values = "registerUserKeys")
    @SelectJson("userkeys")
@@ -74,6 +77,7 @@ public interface GlobalUserAsyncClient extends DomainUserAsyncClient {
    /**
     * @see GlobalUserClient#updateUser
     */
+   @Named("updateUser")
    @GET
    @QueryParams(keys = "command", values = "updateUser")
    @SelectJson("user")
@@ -84,6 +88,7 @@ public interface GlobalUserAsyncClient extends DomainUserAsyncClient {
    /**
     * @see GlobalUserClient#deleteUser
     */
+   @Named("deleteUser")
    @GET
    @QueryParams(keys = "command", values = "deleteUser")
    @Consumes(MediaType.APPLICATION_JSON)

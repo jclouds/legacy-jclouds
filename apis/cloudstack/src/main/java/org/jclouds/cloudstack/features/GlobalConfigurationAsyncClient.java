@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -53,6 +54,7 @@ public interface GlobalConfigurationAsyncClient extends ConfigurationAsyncClient
    /**
     * @see GlobalConfigurationClient#listConfigurationEntries
     */
+   @Named("listConfigurations")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listConfigurations", "true" })
    @SelectJson("configuration")
@@ -63,6 +65,7 @@ public interface GlobalConfigurationAsyncClient extends ConfigurationAsyncClient
    /**
     * @see GlobalConfigurationClient#updateConfigurationEntry
     */
+   @Named("updateConfiguration")
    @GET
    @QueryParams(keys = "command", values = "updateConfiguration")
    @SelectJson("configuration")

@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -57,6 +58,7 @@ public interface GlobalPodAsyncClient {
    /**
     * @see PodClient#listPods
     */
+   @Named("listPods")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listPods", "true" })
    @SelectJson("pod")
@@ -67,6 +69,7 @@ public interface GlobalPodAsyncClient {
    /**
     * @see PodClient#getPod
     */
+   @Named("listPods")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listPods", "true" })
    @SelectJson("pod")
@@ -87,6 +90,7 @@ public interface GlobalPodAsyncClient {
     * @param createPodOptions optional arguments
     * @return the new Pod
     */
+   @Named("createPod")
    @GET
    @QueryParams(keys = "command", values = "createPod")
    @SelectJson("pod")
@@ -105,6 +109,7 @@ public interface GlobalPodAsyncClient {
     * @param createPodOptions optional arguments
     * @return the new Pod
     */
+   @Named("createPod")
    @GET
    @QueryParams(keys = "command", values = "createPod")
    @SelectJson("pod")
@@ -116,6 +121,7 @@ public interface GlobalPodAsyncClient {
     * Deletes a Pod.
     * @param id the ID of the Pod
     */
+   @Named("deletePod")
    @GET
    @QueryParams(keys = "command", values = "deletePod")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -128,6 +134,7 @@ public interface GlobalPodAsyncClient {
     * @param updatePodOptions optional arguments
     * @return the updated pod
     */
+   @Named("updatePod")
    @GET
    @QueryParams(keys = "command", values = "updatePod")
    @SelectJson("pod")

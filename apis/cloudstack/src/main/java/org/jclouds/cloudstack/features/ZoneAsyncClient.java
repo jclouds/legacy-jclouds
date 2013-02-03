@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -53,6 +54,7 @@ public interface ZoneAsyncClient {
    /**
     * @see ZoneClient#listZones
     */
+   @Named("listZones")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listZones", "true" })
    @SelectJson("zone")
@@ -63,6 +65,7 @@ public interface ZoneAsyncClient {
    /**
     * @see ZoneClient#getZone
     */
+   @Named("listZones")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listZones", "true" })
    @SelectJson("zone")
