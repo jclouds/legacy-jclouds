@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -57,6 +58,7 @@ public interface OfferingAsyncClient {
    /**
     * @see OfferingClient#listServiceOfferings
     */
+   @Named("listServiceOfferings")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listServiceOfferings", "true" })
    @SelectJson("serviceoffering")
@@ -67,6 +69,7 @@ public interface OfferingAsyncClient {
    /**
     * @see OfferingClient#getServiceOffering
     */
+   @Named("listServiceOfferings")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listServiceOfferings", "true" })
    @SelectJson("serviceoffering")
@@ -78,6 +81,7 @@ public interface OfferingAsyncClient {
    /**
     * @see OfferingClient#listDiskOfferings
     */
+   @Named("listDiskOfferings")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listDiskOfferings", "true" })
    @SelectJson("diskoffering")
@@ -88,6 +92,7 @@ public interface OfferingAsyncClient {
    /**
     * @see OfferingClient#getDiskOffering
     */
+   @Named("listDiskOfferings")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listDiskOfferings", "true" })
    @SelectJson("diskoffering")
@@ -99,6 +104,7 @@ public interface OfferingAsyncClient {
    /**
     * @see NetworkOfferingClient#listNetworkOfferings
     */
+   @Named("listNetworkOfferings")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listNetworkOfferings", "true" })
    @SelectJson("networkoffering")
@@ -109,6 +115,7 @@ public interface OfferingAsyncClient {
    /**
     * @see NetworkOfferingClient#getNetworkOffering
     */
+   @Named("listNetworkOfferings")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listNetworkOfferings", "true" })
    @SelectJson("networkoffering")

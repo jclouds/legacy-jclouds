@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -55,6 +56,7 @@ public interface DomainUserAsyncClient {
    /**
     * @see DomainUserClient#listUsers
     */
+   @Named("listUsers")
    @GET
    @QueryParams(keys = "command", values = "listUsers")
    @SelectJson("user")
@@ -65,6 +67,7 @@ public interface DomainUserAsyncClient {
    /**
     * @see DomainUserClient#enableUser
     */
+   @Named("enableUser")
    @GET
    @QueryParams(keys = "command", values = "enableUser")
    @SelectJson("user")
@@ -75,6 +78,7 @@ public interface DomainUserAsyncClient {
    /**
     * @see DomainUserClient#disableUser
     */
+   @Named("disableUser")
    @GET
    @QueryParams(keys = "command", values = "disableUser")
    @Unwrap

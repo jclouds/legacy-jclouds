@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -52,6 +53,7 @@ public interface AccountAsyncClient {
    /**
     * @see AccountClient#listAccounts
     */
+   @Named("listAccounts")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listAccounts", "true" })
    @SelectJson("account")
@@ -62,6 +64,7 @@ public interface AccountAsyncClient {
    /**
     * @see AccountClient#getAccount
     */
+   @Named("listAccounts")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listAccounts", "true" })
    @SelectJson("account")

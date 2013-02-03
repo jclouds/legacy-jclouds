@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.core.MediaType;
@@ -49,6 +50,7 @@ public interface LimitAsyncClient {
    /**
     * @see org.jclouds.cloudstack.features.LimitClient#listResourceLimits
     */
+   @Named("listResourceLimits")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listResourceLimits", "true" })
    @SelectJson("resourcelimit")

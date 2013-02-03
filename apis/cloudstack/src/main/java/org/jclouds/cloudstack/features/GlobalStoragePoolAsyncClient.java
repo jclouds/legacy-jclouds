@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.core.MediaType;
@@ -45,6 +46,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 @QueryParams(keys = "response", values = "json")
 public interface GlobalStoragePoolAsyncClient {
 
+   @Named("listStoragePools")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listStoragePools", "true" })
    @SelectJson("storagepool")

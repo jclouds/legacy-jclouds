@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -55,6 +56,7 @@ public interface GlobalOfferingAsyncClient extends OfferingAsyncClient {
    /**
     * @see GlobalOfferingClient#createServiceOffering
     */
+   @Named("createServiceOffering")
    @GET
    @QueryParams(keys = "command", values = "createServiceOffering")
    @SelectJson("serviceoffering")
@@ -67,6 +69,7 @@ public interface GlobalOfferingAsyncClient extends OfferingAsyncClient {
    /**
     * @see GlobalOfferingClient#updateServiceOffering
     */
+   @Named("updateServiceOffering")
    @GET
    @QueryParams(keys = "command", values = "updateServiceOffering")
    @SelectJson("serviceoffering")
@@ -77,6 +80,7 @@ public interface GlobalOfferingAsyncClient extends OfferingAsyncClient {
    /**
     * @see GlobalOfferingClient#deleteServiceOffering
     */
+   @Named("deleteServiceOffering")
    @GET
    @QueryParams(keys = "command", values = "deleteServiceOffering")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -86,6 +90,7 @@ public interface GlobalOfferingAsyncClient extends OfferingAsyncClient {
    /**
     * @see GlobalOfferingClient#createDiskOffering
     */
+   @Named("createDiskOffering")
    @GET
    @QueryParams(keys = "command", values = "createDiskOffering")
    @SelectJson("diskoffering")
@@ -97,6 +102,7 @@ public interface GlobalOfferingAsyncClient extends OfferingAsyncClient {
    /**
     * @see GlobalOfferingClient#updateDiskOffering
     */
+   @Named("updateDiskOffering")
    @GET
    @QueryParams(keys = "command", values = "updateDiskOffering")
    @SelectJson("diskoffering")
@@ -107,6 +113,7 @@ public interface GlobalOfferingAsyncClient extends OfferingAsyncClient {
    /**
     * @see GlobalOfferingClient#deleteDiskOffering
     */
+   @Named("deleteDiskOffering")
    @GET
    @QueryParams(keys = "command", values = "deleteDiskOffering")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -116,6 +123,7 @@ public interface GlobalOfferingAsyncClient extends OfferingAsyncClient {
    /**
     * @see GlobalOfferingClient#updateNetworkOffering
     */
+   @Named("updateNetworkOffering")
    @GET
    @QueryParams(keys = "command", values ="updateNetworkOffering")
    @SelectJson("networkoffering")

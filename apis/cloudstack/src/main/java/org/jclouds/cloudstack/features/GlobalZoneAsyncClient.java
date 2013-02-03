@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -53,6 +54,7 @@ public interface GlobalZoneAsyncClient extends ZoneAsyncClient {
    /**
     * @see GlobalZoneClient#createZone
     */
+   @Named("createZone")
    @GET
    @QueryParams(keys = "command", values = "createZone")
    @SelectJson("zone")
@@ -64,6 +66,7 @@ public interface GlobalZoneAsyncClient extends ZoneAsyncClient {
    /**
     * @see GlobalZoneClient#updateZone
     */
+   @Named("updateZone")
    @GET
    @QueryParams(keys = "command", values = "updateZone")
    @SelectJson("zone")
@@ -74,6 +77,7 @@ public interface GlobalZoneAsyncClient extends ZoneAsyncClient {
    /**
     * @see GlobalZoneClient#deleteZone
     */
+   @Named("deleteZone")
    @GET
    @QueryParams(keys = "command", values = "deleteZone")
    @Consumes(MediaType.APPLICATION_JSON)

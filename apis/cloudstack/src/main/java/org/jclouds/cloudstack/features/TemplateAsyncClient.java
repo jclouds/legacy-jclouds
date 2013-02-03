@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
@@ -69,6 +70,7 @@ public interface TemplateAsyncClient {
    /**
     * @see TemplateClient#createTemplate
     */
+   @Named("createTemplate")
    @GET
    @QueryParams(keys = "command", values = "createTemplate")
    @Unwrap
@@ -80,6 +82,7 @@ public interface TemplateAsyncClient {
    /**
     * @see TemplateClient#registerTemplate
     */
+   @Named("registerTemplate")
    @GET
    @QueryParams(keys = "command", values = "registerTemplate")
    @SelectJson("template")
@@ -92,6 +95,7 @@ public interface TemplateAsyncClient {
    /**
     * @see TemplateClient#updateTemplate
     */
+   @Named("updateTemplate")
    @GET
    @QueryParams(keys = "command", values = "updateTemplate")
    @SelectJson("template")
@@ -101,6 +105,7 @@ public interface TemplateAsyncClient {
    /**
     * @see TemplateClient#copyTemplate
     */
+   @Named("copyTemplate")
    @GET
    @QueryParams(keys = "command", values = "copyTemplate")
    @Unwrap
@@ -111,6 +116,7 @@ public interface TemplateAsyncClient {
    /**
     * @see TemplateClient#deleteTemplate
     */
+   @Named("deleteTemplate")
    @GET
    @QueryParams(keys = "command", values = "deleteTemplate")
    @Unwrap
@@ -120,6 +126,7 @@ public interface TemplateAsyncClient {
    /**
     * @see TemplateClient#listTemplates
     */
+   @Named("listTemplates")
    @GET
    @QueryParams(keys = { "command", "listAll", "templatefilter" }, values = { "listTemplates", "true", "executable" })
    @SelectJson("template")
@@ -130,6 +137,7 @@ public interface TemplateAsyncClient {
    /**
     * @see TemplateClient#listTemplates(ListTemplatesOptions)
     */
+   @Named("listTemplates")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listTemplates", "true" })
    @SelectJson("template")
@@ -140,6 +148,7 @@ public interface TemplateAsyncClient {
    /**
     * @see TemplateClient#getTemplate
     */
+   @Named("listTemplates")
    @GET
    // templatefilter required in at least 2.2.8 version
    @QueryParams(keys = { "command", "listAll", "templatefilter" }, values = { "listTemplates", "true", "executable" })
@@ -152,6 +161,7 @@ public interface TemplateAsyncClient {
    /**
     * @see TemplateClient#updateTemplatePermissions
     */
+   @Named("updateTemplatePermissions")
    @GET
    @QueryParams(keys = "command", values = "updateTemplatePermissions")
    ListenableFuture<Void> updateTemplatePermissions(@QueryParam("id") String id,
@@ -160,6 +170,7 @@ public interface TemplateAsyncClient {
    /**
     * @see TemplateClient#listTemplatePermissions
     */
+   @Named("listTemplatePermissions")
    @GET
    @QueryParams(keys = { "command", "listAll" }, values = { "listTemplatePermissions", "true" })
    @Unwrap
@@ -170,6 +181,7 @@ public interface TemplateAsyncClient {
    /**
     * @see TemplateClient#extractTemplate
     */
+   @Named("extractTemplate")
    @GET
    @QueryParams(keys = "command", values = "extractTemplate")
    @Unwrap
