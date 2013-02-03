@@ -20,6 +20,7 @@ package org.jclouds.hpcloud.objectstorage;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -49,13 +50,15 @@ import com.google.inject.Provides;
  * Provides asynchronous access to HP Cloud Object Storage via the REST API.
  * 
  * <p/>
- * All commands return a ListenableFuture of the result. Any exceptions incurred during processing
- * will be backend in an {@link java.util.concurrent.ExecutionException} as documented in
+ * All commands return a ListenableFuture of the result. Any exceptions incurred
+ * during processing will be backend in an
+ * {@link java.util.concurrent.ExecutionException} as documented in
  * {@link ListenableFuture#get()}.
  * 
  * @see HPCloudObjectStorageApi
- * @see <a href="https://manage.hpcloud.com/pages/build/docs/objectstorage-lvs/api">HP Cloud Object
- *      Storage API</a>
+ * @see <a
+ *      href="https://api-docs.hpcloud.com/hpcloud-object-storage/1.0/content/ch_object-storage-dev-overview.html">HP
+ *      Cloud Object Storage API</a>
  * @author Jeremy Daggett
  */
 @RequestFilters(AuthenticateRequest.class)
@@ -72,6 +75,7 @@ public interface HPCloudObjectStorageAsyncApi extends CommonSwiftAsyncClient {
    /**
     * @see org.jclouds.openstack.swift.CommonSwiftClient#listContainers
     */
+   @Named("ListContainers")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
@@ -81,6 +85,7 @@ public interface HPCloudObjectStorageAsyncApi extends CommonSwiftAsyncClient {
    /**
     * @see org.jclouds.openstack.swift.CommonSwiftClient#deleteContainerIfEmpty
     */
+   @Named("DeleteContainer")
    @DELETE
    @Fallback(TrueOn404FalseOn409.class)
    @Path("/{container}")

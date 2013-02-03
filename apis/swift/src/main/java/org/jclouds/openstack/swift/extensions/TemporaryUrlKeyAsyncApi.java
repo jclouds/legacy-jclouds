@@ -38,6 +38,7 @@ import javax.ws.rs.core.MediaType;
 /**
  * @author Andrei Savu
  * @see TemporaryUrlKeyApi
+ * @see <a href="http://docs.openstack.org/trunk/openstack-object-storage/admin/content/swift-tempurl.html">docs</a>
  */
 @RequestFilters(AuthenticateRequest.class)
 @Endpoint(Storage.class)
@@ -46,7 +47,7 @@ public interface TemporaryUrlKeyAsyncApi {
    /**
     * @see TemporaryUrlKeyApi#getTemporaryUrlKey
     */
-   @Named("tempurlkey:get")
+   @Named("GetAccountMetadata")
    @HEAD
    @Path("/")
    @Consumes(MediaType.WILDCARD)
@@ -56,7 +57,7 @@ public interface TemporaryUrlKeyAsyncApi {
    /**
     * @see TemporaryUrlKeyApi#setTemporaryUrlKey
     */
-   @Named("tempurlkey:set")
+   @Named("UpdateAccountMetadata")
    @POST
    @Path("/")
    ListenableFuture<Void> setTemporaryUrlKey(@HeaderParam(SwiftHeaders.ACCOUNT_TEMPORARY_URL_KEY) String key);

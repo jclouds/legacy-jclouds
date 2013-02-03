@@ -84,7 +84,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#getAccountStatistics
     */
-   @Named("swift:getaccountstats")
+   @Named("GetAccountMetadata")
    @HEAD
    @Path("/")
    @Consumes(MediaType.WILDCARD)
@@ -94,7 +94,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#listContainers
     */
-   @Named("swift:listcontainers")
+   @Named("ListContainers")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
@@ -104,7 +104,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#getContainerMetadata
     */
-   @Named("swift:getcontainermetadata")
+   @Named("GetContainerMetadata")
    @Beta
    @HEAD
    @Path("/{container}")
@@ -116,7 +116,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#setContainerMetadata
     */
-   @Named("swift:setcontainermetadata")
+   @Named("UpdateContainerMetadata")
    @POST
    @Path("/{container}")
    @Fallback(FalseOnContainerNotFound.class)
@@ -126,7 +126,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#deleteContainerMetadata
     */
-   @Named("swift:deletecontainermetadata")
+   @Named("UpdateContainerMetadata")
    @POST
    @Path("/{container}")
    @Fallback(FalseOnContainerNotFound.class)
@@ -136,7 +136,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#createContainer
     */
-   @Named("swift:createcontainer")
+   @Named("CreateContainer")
    @PUT
    @Path("/{container}")
    ListenableFuture<Boolean> createContainer(@PathParam("container") String container,
@@ -145,7 +145,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#setObjectInfo
     */
-   @Named("swift:setobjectinfo")
+   @Named("UpdateObjectMetadata")
    @POST
    @Path("/{container}/{name}")
    ListenableFuture<Boolean> setObjectInfo(@PathParam("container") String container, 
@@ -155,7 +155,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#createContainer
     */
-   @Named("swift:createcontainer")
+   @Named("CreateContainer")
    @PUT
    @Path("/{container}")
    ListenableFuture<Boolean> createContainer(@PathParam("container") String container);
@@ -163,7 +163,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#deleteContainerIfEmpty
     */
-   @Named("swift:deletecontainerifempty")
+   @Named("DeleteContainer")
    @DELETE
    @Fallback(TrueOn404FalseOn409.class)
    @Path("/{container}")
@@ -172,7 +172,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#listObjects
     */
-   @Named("swift:listobjects")
+   @Named("ListObjects")
    @GET
    @QueryParams(keys = "format", values = "json")
    @ResponseParser(ParseObjectInfoListFromJsonResponse.class)
@@ -183,7 +183,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#containerExists
     */
-   @Named("swift:containerexists")
+   @Named("GetContainerMetadata")
    @HEAD
    @Path("/{container}")
    @Consumes(MediaType.WILDCARD)
@@ -193,7 +193,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#putObject
     */
-   @Named("swift:putobject")
+   @Named("PutObject")
    @PUT
    @Path("/{container}/{name}")
    @ResponseParser(ParseETagHeader.class)
@@ -203,7 +203,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#copyObject
     */
-   @Named("swift:copyobject")
+   @Named("CopyObject")
    @PUT
    @Path("/{destinationContainer}/{destinationObject}")
    @Headers(keys = SwiftHeaders.OBJECT_COPY_FROM, values = "/{sourceContainer}/{sourceObject}")
@@ -216,7 +216,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#getObject
     */
-   @Named("swift:getobject")
+   @Named("GetObject")
    @GET
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
    @Fallback(NullOnKeyNotFound.class)
@@ -228,7 +228,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#getObjectInfo
     */
-   @Named("swift:getobjectinfo")
+   @Named("GetObjectMetadata")
    @HEAD
    @ResponseParser(ParseObjectInfoFromHeaders.class)
    @Fallback(NullOnKeyNotFound.class)
@@ -240,7 +240,7 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#objectExists
     */
-   @Named("swift:objectexists")
+   @Named("GetObjectMetadata")
    @HEAD
    @Fallback(FalseOnKeyNotFound.class)
    @Path("/{container}/{name}")
@@ -251,14 +251,14 @@ public interface CommonSwiftAsyncClient {
    /**
     * @see CommonSwiftClient#removeObject
     */
-   @Named("swift:removeobject")
+   @Named("RemoveObject")
    @DELETE
    @Fallback(VoidOnNotFoundOr404.class)
    @Path("/{container}/{name}")
    ListenableFuture<Void> removeObject(@PathParam("container") String container, 
                                        @PathParam("name") String name);
 
-   @Named("swift:putobjectmanifest")
+   @Named("PutObjectManifest")
    @PUT
    @Path("/{container}/{name}")
    @ResponseParser(ParseETagHeader.class)
