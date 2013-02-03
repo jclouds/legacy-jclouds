@@ -20,6 +20,7 @@ package org.jclouds.hpcloud.objectstorage.extensions;
 
 import java.net.URI;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
@@ -55,13 +56,15 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides asynchronous access to HP Cloud Object Storage via the REST API.
  * 
  * <p/>
- * All commands return a ListenableFuture of the result. Any exceptions incurred during processing
- * will be backend in an {@link java.util.concurrent.ExecutionException} as documented in
+ * All commands return a ListenableFuture of the result. Any exceptions incurred
+ * during processing will be backend in an
+ * {@link java.util.concurrent.ExecutionException} as documented in
  * {@link ListenableFuture#get()}.
  * 
  * @see HPCloudObjectStorageApi
- * @see <a href="https://manage.hpcloud.com/pages/build/docs/objectstorage-lvs/api">HP Cloud Object
- *      Storage API</a>
+ * @see <a
+ *      href="https://api-docs.hpcloud.com/hpcloud-cdn-storage/1.0/content/ch_cdn-dev-overview.html">HP
+ *      Cloud Object Storage API</a>
  * @author Jeremy Daggett
  */
 @RequestFilters(AuthenticateRequest.class)
@@ -71,6 +74,7 @@ public interface CDNContainerAsyncApi {
     * @see HPCloudObjectStorageApi#list()
     */
    @Beta
+   @Named("ListCDNEnabledContainers")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
@@ -82,6 +86,7 @@ public interface CDNContainerAsyncApi {
     * @see HPCloudObjectStorageApi#list(ListCDNContainerOptions)
     */
    @Beta
+   @Named("ListCDNEnabledContainers")
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
@@ -93,6 +98,7 @@ public interface CDNContainerAsyncApi {
     * @see HPCloudObjectStorageApi#get(String)
     */
    @Beta
+   @Named("ListCDNEnabledContainerMetadata")
    @HEAD
    @ResponseParser(ParseCDNContainerFromHeaders.class)
    @Fallback(NullOnContainerNotFound.class)
@@ -103,6 +109,7 @@ public interface CDNContainerAsyncApi {
     * @see HPCloudObjectStorageApi#enable(String, long)
     */
    @Beta
+   @Named("CDNEnableContainer")
    @PUT
    @Path("/{container}")
    @Headers(keys = HPCloudObjectStorageHeaders.CDN_ENABLED, values = "True")
@@ -114,6 +121,7 @@ public interface CDNContainerAsyncApi {
     * @see HPCloudObjectStorageApi#enable(String)
     */
    @Beta
+   @Named("CDNEnableContainer")
    @PUT
    @Path("/{container}")
    @Headers(keys = HPCloudObjectStorageHeaders.CDN_ENABLED, values = "True")
@@ -124,6 +132,7 @@ public interface CDNContainerAsyncApi {
     * @see HPCloudObjectStorageApi#update(String, long)
     */
    @Beta
+   @Named("UpdateCDNEnabledContainerMetadata")
    @POST
    @Path("/{container}")
    @ResponseParser(ParseCDNUriFromHeaders.class)
@@ -134,6 +143,7 @@ public interface CDNContainerAsyncApi {
     * @see HPCloudObjectStorageApi#disable(String)
     */
    @Beta
+   @Named("DisableCDNEnabledContainer")
    @PUT
    @Path("/{container}")
    @Headers(keys = HPCloudObjectStorageHeaders.CDN_ENABLED, values = "False")
