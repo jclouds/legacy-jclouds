@@ -239,27 +239,33 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
             // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6755625
             checkArgument(length < Integer.MAX_VALUE,
                   "JDK 1.6 does not support >2GB chunks. Use chunked encoding, if possible.");
-            connection.setRequestProperty(CONTENT_LENGTH, length + "");
             if (length > 0) {
                writePayloadToConnection(payload, connection);
+            } else {
+               writeNothing(connection);
             }
          }
       } else {
-         connection.setRequestProperty(CONTENT_LENGTH, "0");
-         // for some reason POST/PUT undoes the content length header above.
-         if (ImmutableSet.of("POST", "PUT").contains(connection.getRequestMethod())) {
-            connection.setFixedLengthStreamingMode(0);
-            connection.setDoOutput(true);
-         }
+         writeNothing(connection);
       }
       return connection;
    }
 
+   protected void writeNothing(HttpURLConnection connection) {
+      connection.setRequestProperty(CONTENT_LENGTH, "0");
+      // for some reason POST/PUT undoes the content length header above.
+      if (ImmutableSet.of("POST", "PUT").contains(connection.getRequestMethod())) {
+         connection.setFixedLengthStreamingMode(0);
+         connection.setDoOutput(true);
+      }
+   }
+
    void writePayloadToConnection(Payload payload, HttpURLConnection connection) throws IOException {
       Long length = payload.getContentMetadata().getContentLength();
+      connection.setRequestProperty(CONTENT_LENGTH, length.toString());
+      connection.setRequestProperty("Expect", "100-continue");
       connection.setFixedLengthStreamingMode(length.intValue());
       connection.setDoOutput(true);
-      connection.setRequestProperty("Expect", "100-continue");
       CountingOutputStream out = new CountingOutputStream(connection.getOutputStream());
       try {
          payload.writeTo(out);
