@@ -2,6 +2,7 @@ package org.jclouds.joyent.cloudapi.v6_5.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -32,6 +33,7 @@ public interface DatasetAsyncApi {
    /**
     * @see DatasetApi#list
     */
+   @Named("ListDatasets")
    @GET
    @Path("/my/datasets")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -41,6 +43,7 @@ public interface DatasetAsyncApi {
    /**
     * @see DatasetApi#get
     */
+   @Named("GetDataset")
    @GET
    @Path("/my/datasets/{id}")
    @Consumes(MediaType.APPLICATION_JSON)

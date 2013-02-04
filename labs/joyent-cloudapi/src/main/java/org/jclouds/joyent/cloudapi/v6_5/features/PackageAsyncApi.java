@@ -2,6 +2,7 @@ package org.jclouds.joyent.cloudapi.v6_5.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -31,6 +32,7 @@ public interface PackageAsyncApi {
    /**
     * @see PackageApi#list
     */
+   @Named("ListPackages")
    @GET
    @Path("/my/packages")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -40,6 +42,7 @@ public interface PackageAsyncApi {
    /**
     * @see PackageApi#get
     */
+   @Named("GetPackage")
    @GET
    @Path("/my/packages/{name}")
    @Consumes(MediaType.APPLICATION_JSON)
