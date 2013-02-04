@@ -18,6 +18,7 @@
  */
 package org.jclouds.jenkins.v1;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -48,6 +49,7 @@ public interface JenkinsAsyncApi {
    /**
     * @see JenkinsApi#getMaster
     */
+   @Named("GetMaster")
    @GET
    @Path("/api/json")
    @Consumes(MediaType.APPLICATION_JSON)
