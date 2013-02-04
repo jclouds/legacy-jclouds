@@ -20,6 +20,7 @@ package org.jclouds.jenkins.v1.features;
 
 import java.util.Map;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -55,6 +56,7 @@ public interface JobAsyncApi {
    /**
     * @see JobApi#createFromXML
     */
+   @Named("CreateItem")
    @POST
    @Path("/createItem")
    @Produces(MediaType.TEXT_XML)
@@ -63,6 +65,7 @@ public interface JobAsyncApi {
    /**
     * @see JobApi#get
     */
+   @Named("GetJob")
    @GET
    @Path("/job/{displayName}/api/json")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -72,6 +75,7 @@ public interface JobAsyncApi {
    /**
     * @see JobApi#delete
     */
+   @Named("DeleteJob")
    @POST
    @Path("/job/{displayName}/doDelete")
    @Fallback(VoidOn302Or404.class)
@@ -80,6 +84,7 @@ public interface JobAsyncApi {
    /**
     * @see JobApi#buildJob
     */
+   @Named("Build")
    @POST
    @Path("/job/{displayName}/build")
    @Fallback(NullOnNotFoundOr404.class)
@@ -88,6 +93,7 @@ public interface JobAsyncApi {
    /**
     * @see JobApi#buildJobWithParameters
     */
+   @Named("BuildWithParameters")
    @POST
    @Path("/job/{displayName}/buildWithParameters")
    @Fallback(NullOnNotFoundOr404.class)
@@ -97,6 +103,7 @@ public interface JobAsyncApi {
    /**
     * @see JobApi#fetchConfigXML
     */
+   @Named("GetConfigXML")
    @GET
    @Path("/job/{displayName}/config.xml")
    @Fallback(NullOnNotFoundOr404.class)
@@ -105,6 +112,7 @@ public interface JobAsyncApi {
    /**
     * @see JobApi#lastBuild
     */
+   @Named("GetLastBuild")
    @GET
    @Path("/job/{displayName}/lastBuild/api/json")
    @Consumes(MediaType.APPLICATION_JSON)

@@ -18,6 +18,7 @@
  */
 package org.jclouds.jenkins.v1.features;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -48,6 +49,7 @@ public interface ComputerAsyncApi {
    /**
     * @see ComputerApi#getView
     */
+   @Named("ListComputers")
    @GET
    @Path("/computer/api/json")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -56,6 +58,7 @@ public interface ComputerAsyncApi {
    /**
     * @see ComputerApi#get
     */
+   @Named("GetComputer")
    @GET
    @Path("/computer/{displayName}/api/json")
    @Consumes(MediaType.APPLICATION_JSON)
