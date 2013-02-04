@@ -21,6 +21,7 @@ package org.jclouds.joyent.cloudapi.v6_5.features;
 import java.net.URI;
 import java.util.Map;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -48,6 +49,7 @@ public interface DatacenterAsyncApi {
    /**
     * @see DatacenterApi#getDatacenters
     */
+   @Named("ListDataCenters")
    @GET
    @Path("/my/datacenters")
    @Consumes(MediaType.APPLICATION_JSON)
