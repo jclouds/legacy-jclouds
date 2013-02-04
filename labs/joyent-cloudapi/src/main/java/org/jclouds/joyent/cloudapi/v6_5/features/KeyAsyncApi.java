@@ -2,6 +2,7 @@ package org.jclouds.joyent.cloudapi.v6_5.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -34,6 +35,7 @@ public interface KeyAsyncApi {
    /**
     * @see KeyApi#list
     */
+   @Named("ListKeys")
    @GET
    @Path("/my/keys")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -43,6 +45,7 @@ public interface KeyAsyncApi {
    /**
     * @see KeyApi#get
     */
+   @Named("GetKey")
    @GET
    @Path("/my/keys/{name}")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -52,6 +55,7 @@ public interface KeyAsyncApi {
    /**
     * @see KeyApi#create
     */
+   @Named("CreateKey")
    @POST
    @Path("/my/keys")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -60,6 +64,7 @@ public interface KeyAsyncApi {
    /**
     * @see KeyApi#delete
     */
+   @Named("DeleteKey")
    @DELETE
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/my/keys/{name}")

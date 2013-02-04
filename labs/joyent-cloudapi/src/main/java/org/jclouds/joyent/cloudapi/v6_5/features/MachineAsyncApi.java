@@ -20,6 +20,7 @@ package org.jclouds.joyent.cloudapi.v6_5.features;
 
 import java.util.Set;
 
+import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -59,6 +60,7 @@ public interface MachineAsyncApi {
    /**
     * @see MachineApi#list
     */
+   @Named("ListMachines")
    @GET
    @Path("/my/machines")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -68,6 +70,7 @@ public interface MachineAsyncApi {
    /**
     * @see MachineApi#get
     */
+   @Named("GetMachine")
    @GET
    @Path("/my/machines/{id}")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -77,6 +80,7 @@ public interface MachineAsyncApi {
    /**
     * @see MachineApi#createWithDataset(String)
     */
+   @Named("CreateMachine")
    @POST
    @Path("/my/machines")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -85,6 +89,7 @@ public interface MachineAsyncApi {
    /**
     * @see MachineApi#createWithDataset(String, CreateMachineOptions)
     */
+   @Named("CreateMachine")
    @POST
    @Path("/my/machines")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -93,6 +98,7 @@ public interface MachineAsyncApi {
    /**
     * @see MachineApi#stop
     */
+   @Named("StopMachine")
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_FORM_URLENCODED)
@@ -103,6 +109,7 @@ public interface MachineAsyncApi {
    /**
     * @see MachineApi#start
     */
+   @Named("StartMachine")
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_FORM_URLENCODED)
@@ -113,6 +120,7 @@ public interface MachineAsyncApi {
    /**
     * @see MachineApi#reboot
     */
+   @Named("RestartMachine")
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_FORM_URLENCODED)
@@ -123,6 +131,7 @@ public interface MachineAsyncApi {
    /**
     * @see MachineApi#resize
     */
+   @Named("ResizeMachine")
    @POST
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_FORM_URLENCODED)
@@ -133,6 +142,7 @@ public interface MachineAsyncApi {
    /**
     * @see MachineApi#delete
     */
+   @Named("DeleteMachine")
    @DELETE
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/my/machines/{id}")
