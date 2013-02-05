@@ -29,8 +29,10 @@ import org.jclouds.dynect.v3.features.SessionAsyncApi;
 import org.jclouds.dynect.v3.features.ZoneApi;
 import org.jclouds.dynect.v3.features.ZoneAsyncApi;
 import org.jclouds.dynect.v3.filters.SessionManager;
+import org.jclouds.dynect.v3.handlers.GetJobRedirectionRetryHandler;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.annotation.ClientError;
+import org.jclouds.http.handlers.RedirectionRetryHandler;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
@@ -61,6 +63,7 @@ public class DynECTRestClientModule extends RestClientModule<DynECTApi, DynECTAs
    protected void configure() {
       // binding explicitly ensures singleton despite multiple linked bindings
       bind(SessionManager.class);
+      bind(RedirectionRetryHandler.class).to(GetJobRedirectionRetryHandler.class);
       super.configure();
       // Bind apis that are used directly vs via DynECTApi
       bindClientAndAsyncClient(binder(), SessionApi.class, SessionAsyncApi.class);

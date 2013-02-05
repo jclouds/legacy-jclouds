@@ -21,7 +21,10 @@ package org.jclouds.dynect.v3.features;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.dynect.v3.domain.CreatePrimaryZone;
+import org.jclouds.dynect.v3.domain.Job;
 import org.jclouds.dynect.v3.domain.Zone;
+import org.jclouds.dynect.v3.domain.Zone.SerialStyle;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.collect.FluentIterable;
@@ -38,14 +41,69 @@ public interface ZoneApi {
    FluentIterable<String> list();
 
    /**
-    * Retrieves information about the specified zone, including its nameserver
-    * configuration
+    * Creates a new primary zone.
     * 
-    * @param name
-    *           name of the zone to get information about. ex
-    *           {@code Z1PA6795UKMFR9}
+    * @param zone
+    *           required parameters to create the zone.
+    * @return unpublished zone
+    */
+   Zone create(CreatePrimaryZone zone);
+
+   /**
+    * Creates a new primary zone with one hour default TTL and
+    * {@link SerialStyle#INCREMENT}
+    * 
+    * @param fqdn
+    *           fqdn of the zone to create {@ex. jclouds.org}
+    * @param contact
+    *           email address of the contact
+    * @return unpublished zone
+    */
+   Zone createWithContact(String fqdn, String contact);
+
+   /**
+    * Retrieves information about the specified zone.
+    * 
+    * @param fqdn
+    *           fqdn of the zone to get information about. ex
+    *           {@code jclouds.org}
     * @return null if not found
     */
    @Nullable
-   Zone get(String name);
+   Zone get(String fqdn);
+
+   /**
+    * deletes the specified zone.
+    * 
+    * @param fqdn
+    *           fqdn of the zone to delete ex {@code jclouds.org}
+    * @return null if not found
+    */
+   @Nullable
+   Job delete(String fqdn);
+
+   /**
+    * Publishes the current zone
+    * 
+    * @param fqdn
+    *           fqdn of the zone to publish. ex
+    *           {@code jclouds.org}
+    */
+   Zone publish(String fqdn);
+
+   /**
+    * freezes the specified zone.
+    * 
+    * @param fqdn
+    *           fqdn of the zone to freeze ex {@code jclouds.org}
+    */
+   Job freeze(String fqdn);
+   
+   /**
+    * thaws the specified zone.
+    * 
+    * @param fqdn
+    *           fqdn of the zone to thaw ex {@code jclouds.org}
+    */
+   Job thaw(String fqdn);
 }
