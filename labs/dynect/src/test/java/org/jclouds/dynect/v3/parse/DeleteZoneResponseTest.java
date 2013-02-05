@@ -16,34 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.dynect.v3.parse;
 
-import static org.jclouds.dynect.v3.domain.Zone.SerialStyle.INCREMENT;
-import static org.jclouds.dynect.v3.domain.Zone.Type.PRIMARY;
+package org.jclouds.dynect.v3.parse;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.dynect.v3.domain.Zone;
+import org.jclouds.dynect.v3.domain.Job;
 import org.jclouds.dynect.v3.internal.BaseDynECTParseTest;
-import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class GetZoneResponseTest extends BaseDynECTParseTest<Zone> {
+public class DeleteZoneResponseTest extends BaseDynECTParseTest<Job> {
 
    @Override
    public String resource() {
-      return "/get_zone.json";
+      return "/delete_zone.json";
    }
 
    @Override
-   @SelectJson("data")
    @Consumes(MediaType.APPLICATION_JSON)
-   public Zone expected() {
-      return Zone.builder().type(PRIMARY).serialStyle(INCREMENT).serial(5).fqdn("jclouds.org").build();
+   public Job expected() {
+      return Job.success(262989027l);
    }
 }

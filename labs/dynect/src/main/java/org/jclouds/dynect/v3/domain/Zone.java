@@ -34,7 +34,7 @@ import com.google.common.base.Objects;
  */
 public final class Zone {
 
-   private final String name;
+   private final String fqdn;
    @Named("zone_type")
    private final Type type;
    private final int serial;
@@ -92,18 +92,18 @@ public final class Zone {
    }
 
    @ConstructorProperties({ "zone", "zone_type", "serial", "serial_style" })
-   private Zone(String name, Type type, int serial, SerialStyle serialStyle) {
-      this.name = checkNotNull(name, "name");
-      this.type = checkNotNull(type, "type for %s", name);
-      this.serial = checkNotNull(serial, "serial for %s", name);
+   private Zone(String fqdn, Type type, int serial, SerialStyle serialStyle) {
+      this.fqdn = checkNotNull(fqdn, "fqdn");
+      this.type = checkNotNull(type, "type for %s", fqdn);
+      this.serial = checkNotNull(serial, "serial for %s", fqdn);
       this.serialStyle = checkNotNull(serialStyle, "serialStyle for %s", serialStyle);
    }
 
    /**
-    * The name of the requested zone
+    * The fqdn of the requested zone
     */
-   public String getName() {
-      return name;
+   public String getFQDN() {
+      return fqdn;
    }
 
    /**
@@ -129,7 +129,7 @@ public final class Zone {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(name, type);
+      return Objects.hashCode(fqdn, type);
    }
 
    @Override
@@ -139,12 +139,12 @@ public final class Zone {
       if (obj == null || getClass() != obj.getClass())
          return false;
       Zone that = Zone.class.cast(obj);
-      return equal(this.name, that.name) && equal(this.type, that.type);
+      return equal(this.fqdn, that.fqdn) && equal(this.type, that.type);
    }
 
    @Override
    public String toString() {
-      return toStringHelper(this).omitNullValues().add("name", name).add("type", type).add("serial", serial)
+      return toStringHelper(this).omitNullValues().add("fqdn", fqdn).add("type", type).add("serial", serial)
             .add("serialStyle", serialStyle).toString();
    }
 
@@ -157,16 +157,16 @@ public final class Zone {
    }
 
    public final static class Builder {
-      private String name;
+      private String fqdn;
       private Type type;
       private int serial;
       private SerialStyle serialStyle;
 
       /**
-       * @see Zone#getName()
+       * @see Zone#getFQDN()
        */
-      public Builder name(String name) {
-         this.name = name;
+      public Builder fqdn(String fqdn) {
+         this.fqdn = fqdn;
          return this;
       }
 
@@ -195,11 +195,11 @@ public final class Zone {
       }
 
       public Zone build() {
-         return new Zone(name, type, serial, serialStyle);
+         return new Zone(fqdn, type, serial, serialStyle);
       }
 
       public Builder from(Zone in) {
-         return this.name(in.name).type(in.type).serial(in.serial).serialStyle(in.serialStyle);
+         return this.fqdn(in.fqdn).type(in.type).serial(in.serial).serialStyle(in.serialStyle);
       }
    }
 }
