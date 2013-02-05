@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.2</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.labs</groupId>
@@ -32,7 +32,7 @@
     <description>jclouds components to access GoogleCompute</description>
 
     <properties>
-        <jclouds.version>1.6.0-SNAPSHOT</jclouds.version>
+        <jclouds.version>1.6.0-alpha.2</jclouds.version>
         <test.google-compute.identity>Email associated with the Google API client_id</test.google-compute.identity>
         <test.google-compute.credential>Private key (PKCS12 file) associated with the Google API client_id</test.google-compute.credential>
         <test.google-compute.api-version>v1beta13</test.google-compute.api-version>
