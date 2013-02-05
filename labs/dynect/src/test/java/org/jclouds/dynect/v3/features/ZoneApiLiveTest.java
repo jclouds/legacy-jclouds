@@ -20,10 +20,15 @@ package org.jclouds.dynect.v3.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.logging.Logger.getAnonymousLogger;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
+import org.jclouds.JcloudsVersion;
+import org.jclouds.dynect.v3.domain.Job;
+import org.jclouds.dynect.v3.domain.Job.Status;
 import org.jclouds.dynect.v3.domain.Zone;
 import org.jclouds.dynect.v3.internal.BaseDynECTApiLiveTest;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -35,7 +40,7 @@ import com.google.common.collect.ImmutableList;
 public class ZoneApiLiveTest extends BaseDynECTApiLiveTest {
 
    private void checkZone(Zone zone) {
-      checkNotNull(zone.getName(), "Name cannot be null for a Zone: %s", zone);
+      checkNotNull(zone.getFQDN(), "FQDN cannot be null for a Zone: %s", zone);
       checkNotNull(zone.getSerial(), "Serial cannot be null for a Zone: %s", zone);
    }
 
@@ -44,19 +49,74 @@ public class ZoneApiLiveTest extends BaseDynECTApiLiveTest {
       ImmutableList<String> zones = api().list().toList();
       getAnonymousLogger().info("zones: " + zones.size());
 
-      for (String zoneName : zones) {
-         Zone zone = api().get(zoneName);
-         checkNotNull(zone, "zone was null for Zone: %s", zoneName);
+      for (String fqdn : zones) {
+         Zone zone = api().get(fqdn);
+         checkNotNull(zone, "zone was null for Zone: %s", fqdn);
          checkZone(zone);
       }
    }
 
    @Test
    public void testGetZoneWhenNotFound() {
-      assertNull(api().get("AAAAAAAAAAAAAAAA"));
+      assertNull(api().get("AAAAAAAAAAAAAAAA.foo.com"));
+   }
+
+   @Test
+   public void testDeleteZoneWhenNotFound() {
+      assertNull(api().delete("AAAAAAAAAAAAAAAA.foo.com"));
+   }
+
+   String fqdn = System.getProperty("user.name").replace('.', '-') + ".zone.dynecttest.jclouds.org";
+   String contact = JcloudsVersion.get() + "@jclouds.org";
+
+   @Test
+   public void testCreateZone() {
+      Zone zone = api().createWithContact(fqdn, contact);
+      checkNotNull(zone, "unable to create zone %s", fqdn);
+      getAnonymousLogger().info("created zone: " + zone);
+      checkZone(zone);
+   }
+
+   @Test(dependsOnMethods = "testCreateZone")
+   public void testPublishZone() {
+      Zone zone = api().publish(fqdn);
+      checkNotNull(zone, "unable to publish zone %s", fqdn);
+      getAnonymousLogger().info("published zone: " + zone);
+      checkZone(zone);
+   }
+
+   @Test(dependsOnMethods = "testPublishZone")
+   public void testFreezeZone() {
+      Job job = api().freeze(fqdn);
+      assertEquals(job.getStatus(), Status.SUCCESS);
+      assertEquals(context.getApi().getJob(job.getId()), job);
+      // TODO: determine how to prove it is frozen
+   }
+
+   @Test(dependsOnMethods = "testFreezeZone")
+   public void testThawZone() {
+      Job job = api().thaw(fqdn);
+      assertEquals(job.getStatus(), Status.SUCCESS);
+      assertEquals(context.getApi().getJob(job.getId()), job);
+      // TODO: determine how to prove it is thawed
+   }
+
+   @Test(dependsOnMethods = "testThawZone")
+   public void testDeleteZone() {
+      Job job = api().delete(fqdn);
+      assertEquals(job.getStatus(), Status.SUCCESS);
+      assertEquals(context.getApi().getJob(job.getId()), job);
+      assertNull(api().get(fqdn), "job " + job + " didn't delete zone" + fqdn);
    }
 
    protected ZoneApi api() {
       return context.getApi().getZoneApi();
+   }
+
+   @Override
+   @AfterClass(groups = "live")
+   protected void tearDownContext() {
+      api().delete(fqdn);
+      super.tearDownContext();
    }
 }
