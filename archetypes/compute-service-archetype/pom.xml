@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.5.7</version>
+        <version>1.5.8-SNAPSHOT</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <artifactId>jclouds-compute-service-archetype</artifactId>

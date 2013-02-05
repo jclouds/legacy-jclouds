@@ -28,7 +28,7 @@
     </parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.5.7</version>
+    <version>1.5.8-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>jclouds Project</name>
     <url>http://www.jclouds.org</url>
@@ -74,7 +74,7 @@
         <connection>scm:git:git://github.com/jclouds/jclouds.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/jclouds/jclouds.git</developerConnection>
         <url>http://github.com/jclouds/jclouds</url>
-      <tag>jclouds-1.5.7</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <repositories>
