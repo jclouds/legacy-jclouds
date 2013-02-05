@@ -191,15 +191,12 @@ public class LocalAsyncBlobStore extends BaseAsyncBlobStore {
 
             contents = newTreeSet(filter(contents, new DelimiterFilter(prefix, delimiter)));
 
-            Iterables.<StorageMetadata> addAll(contents, transform(commonPrefixes,
-                  new Function<String, StorageMetadata>() {
-                     public StorageMetadata apply(String o) {
-                        MutableStorageMetadata md = new MutableStorageMetadataImpl();
-                        md.setType(StorageType.RELATIVE_PATH);
-                        md.setName(o);
-                        return md;
-                     }
-                  }));
+            for (String o : commonPrefixes) {
+               MutableStorageMetadata md = new MutableStorageMetadataImpl();
+               md.setType(StorageType.RELATIVE_PATH);
+               md.setName(o);
+               contents.add(md);
+            }
          }
 
          // trim metadata, if the response isn't supposed to be detailed.
