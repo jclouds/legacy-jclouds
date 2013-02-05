@@ -24,7 +24,7 @@
     <parent>
         <artifactId>jclouds-project</artifactId>
         <groupId>org.jclouds</groupId>
-        <version>1.5.7-SNAPSHOT</version>
+        <version>1.5.7</version>
         <relativePath>../project/pom.xml</relativePath>
     </parent>
     <artifactId>jclouds-drivers-project</artifactId>
