@@ -20,12 +20,24 @@ package org.jclouds.dynect.v3;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
+import javax.inject.Named;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.dynect.v3.domain.Job;
 import org.jclouds.dynect.v3.features.SessionAsyncApi;
 import org.jclouds.dynect.v3.features.ZoneAsyncApi;
+import org.jclouds.dynect.v3.filters.SessionManager;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.Headers;
+import org.jclouds.rest.annotations.RequestFilters;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides access to DynECT Managed DNS through the API2 api
@@ -35,10 +47,19 @@ import org.jclouds.rest.annotations.Headers;
  * @see <a href="https://manage.dynect.net/help/docs/api2/rest/" />
  * @author Adrian Cole
  */
-// required for all calls
-@Produces(APPLICATION_JSON)
-@Headers(keys = "API-Version", values = "{jclouds.api-version}")
 public interface DynECTAsyncApi {
+   /**
+    * @see DynECTApi#getJob
+    */
+   @Named("GetJob")
+   @GET
+   @Path("/Job/{jobId}")
+   @Produces(APPLICATION_JSON)
+   @RequestFilters(SessionManager.class)
+   @Headers(keys = "API-Version", values = "{jclouds.api-version}")
+   @Fallback(NullOnNotFoundOr404.class)
+   @Consumes(APPLICATION_JSON)
+   ListenableFuture<Job> getJob(@PathParam("jobId") long jobId);
 
    /**
     * Provides asynchronous access to Session features.

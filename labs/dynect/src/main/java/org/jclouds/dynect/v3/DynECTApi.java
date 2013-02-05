@@ -18,8 +18,10 @@
  */
 package org.jclouds.dynect.v3;
 
+import org.jclouds.dynect.v3.domain.Job;
 import org.jclouds.dynect.v3.features.SessionApi;
 import org.jclouds.dynect.v3.features.ZoneApi;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
@@ -32,6 +34,15 @@ import org.jclouds.rest.annotations.Delegate;
  * @author Adrian Cole
  */
 public interface DynECTApi {
+   /**
+    * returns the current status of a job.
+    * 
+    * @param jobId
+    *           The ID of the job
+    * @return null, if not found
+    */
+   @Nullable
+   Job getJob(long jobId);
 
    /**
     * Provides synchronous access to Session features.

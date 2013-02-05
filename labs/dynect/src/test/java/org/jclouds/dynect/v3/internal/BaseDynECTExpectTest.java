@@ -44,6 +44,12 @@ public class BaseDynECTExpectTest<T> extends BaseRestApiExpectTest<T> {
       return p;
    }
 
+   public static Payload stringPayload(String json) {
+      Payload p = Payloads.newPayload(json);
+      p.getContentMetadata().setContentType(APPLICATION_JSON);
+      return p;
+   }
+
    @Override
    protected HttpRequestComparisonType compareHttpRequestAsType(HttpRequest input) {
       return HttpRequestComparisonType.JSON;
