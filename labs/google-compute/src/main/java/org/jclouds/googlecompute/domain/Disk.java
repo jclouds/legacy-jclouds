@@ -26,7 +26,6 @@ import java.beans.ConstructorProperties;
 import java.net.URI;
 import java.util.Date;
 
-import static com.google.common.base.Optional.fromNullable;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -48,8 +47,7 @@ public final class Disk extends Resource {
    })
    private Disk(String id, Date creationTimestamp, URI selfLink, String name, String description,
                 Integer sizeGb, URI zone, String status) {
-      super(Kind.DISK, checkNotNull(id, "id of %s", name), fromNullable(creationTimestamp), checkNotNull(selfLink,
-              "selfLink of %s", name), checkNotNull(name, "name"), fromNullable(description));
+      super(Kind.DISK, id, creationTimestamp, selfLink, name, description);
       this.sizeGb = checkNotNull(sizeGb, "sizeGb of %s", name);
       this.zone = checkNotNull(zone, "zone of %s", name);
       this.status = checkNotNull(status, "status of %s", name);

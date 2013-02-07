@@ -50,10 +50,10 @@ public class BaseGoogleComputeApiLiveTest extends BaseContextLiveTest<RestContex
 
    protected static final String API_URL_PREFIX = "https://www.googleapis.com/compute/v1beta13/projects/";
    protected static final String ZONE_API_URL_SUFFIX = "/zones/";
-   protected static final String DEFAULT_ZONE_NAME = "us-east1-a";
+   protected static final String DEFAULT_ZONE_NAME = "us-central1-a";
 
    protected static final String NETWORK_API_URL_SUFFIX = "/networks/";
-   protected static final String DEFAULT_NETWORK_NAME = "default";
+   protected static final String DEFAULT_NETWORK_NAME = "live-test-network";
 
    protected static final String MACHINE_TYPE_API_URL_SUFFIX = "/machineTypes/";
    protected static final String DEFAULT_MACHINE_TYPE_NAME = "n1-standard-1";

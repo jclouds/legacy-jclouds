@@ -26,12 +26,16 @@ import org.jclouds.googlecompute.domain.ListPage;
 import org.jclouds.googlecompute.domain.Operation;
 import org.jclouds.googlecompute.functions.internal.PATCH;
 import org.jclouds.googlecompute.functions.internal.ParseFirewalls;
+import org.jclouds.googlecompute.handlers.FirewallBinder;
+import org.jclouds.googlecompute.options.FirewallOptions;
 import org.jclouds.googlecompute.options.ListOptions;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.oauth.v2.config.OAuthScopes;
 import org.jclouds.oauth.v2.filters.OAuthAuthenticator;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.MapBinder;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
@@ -49,6 +53,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import java.net.URI;
 
 import static org.jclouds.Fallbacks.EmptyIterableWithMarkerOnNotFoundOr404;
 import static org.jclouds.Fallbacks.EmptyPagedIterableOnNotFoundOr404;
@@ -80,7 +85,7 @@ public interface FirewallAsyncApi {
    ListenableFuture<Firewall> get(@PathParam("firewall") String firewallName);
 
    /**
-    * @see FirewallApi#create(org.jclouds.googlecompute.domain.Firewall)
+    * @see FirewallApi#createInNetwork(String, java.net.URI, org.jclouds.googlecompute.options.FirewallOptions)
     */
    @Named("Firewalls:insert")
    @POST
@@ -88,10 +93,13 @@ public interface FirewallAsyncApi {
    @Produces(MediaType.APPLICATION_JSON)
    @Path("/firewalls")
    @OAuthScopes({COMPUTE_SCOPE})
-   ListenableFuture<Operation> create(@BinderParam(BindToJsonPayload.class) Firewall firewall);
+   @MapBinder(FirewallBinder.class)
+   ListenableFuture<Operation> createInNetwork(@PayloadParam("name") String name,
+                                               @PayloadParam("network") URI network,
+                                               @PayloadParam("options") FirewallOptions firewallOptions);
 
    /**
-    * @see FirewallApi#update(String, org.jclouds.googlecompute.domain.Firewall)
+    * @see FirewallApi#update(String, org.jclouds.googlecompute.options.FirewallOptions)
     */
    @Named("Firewalls:update")
    @PUT
@@ -100,10 +108,10 @@ public interface FirewallAsyncApi {
    @Path("/firewalls/{firewall}")
    @OAuthScopes({COMPUTE_SCOPE})
    ListenableFuture<Operation> update(@PathParam("firewall") String firewallName,
-                                      @BinderParam(BindToJsonPayload.class) Firewall firewall);
+                                      @BinderParam(BindToJsonPayload.class) FirewallOptions firewallOptions);
 
    /**
-    * @see FirewallApi#patch(String, org.jclouds.googlecompute.domain.Firewall)
+    * @see FirewallApi#patch(String, org.jclouds.googlecompute.options.FirewallOptions)
     */
    @Named("Firewalls:patch")
    @PATCH
@@ -112,7 +120,7 @@ public interface FirewallAsyncApi {
    @Path("/firewalls/{firewall}")
    @OAuthScopes({COMPUTE_SCOPE})
    ListenableFuture<Operation> patch(@PathParam("firewall") String firewallName,
-                                     @BinderParam(BindToJsonPayload.class) Firewall firewall);
+                                     @BinderParam(BindToJsonPayload.class) FirewallOptions firewallOptions);
 
    /**
     * @see FirewallApi#delete(String)

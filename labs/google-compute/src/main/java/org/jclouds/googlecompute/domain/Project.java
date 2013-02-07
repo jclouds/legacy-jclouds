@@ -33,7 +33,6 @@ import java.util.Set;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;
-import static com.google.common.base.Optional.fromNullable;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -51,8 +50,7 @@ public class Project extends Resource {
 
    protected Project(String id, Date creationTimestamp, URI selfLink, String name, String description,
                      Map<String, String> commonInstanceMetadata, Set<Quota> quotas, Set<String> externalIpAddresses) {
-      super(Kind.PROJECT, checkNotNull(id, "id of %s", name), fromNullable(creationTimestamp), checkNotNull(selfLink,
-              "selfLink of %s", name), checkNotNull(name, "name"), fromNullable(description));
+      super(Kind.PROJECT, id, creationTimestamp, selfLink, name, description);
       this.commonInstanceMetadata = commonInstanceMetadata == null ? ImmutableMap.<String,
               String>of() : ImmutableMap.copyOf(commonInstanceMetadata);
       this.quotas = quotas == null ? ImmutableSet.<Quota>of() : ImmutableSet.copyOf(quotas);

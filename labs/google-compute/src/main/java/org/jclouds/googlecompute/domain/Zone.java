@@ -59,8 +59,7 @@ public final class Zone extends Resource {
    })
    private Zone(String id, Date creationTimestamp, URI selfLink, String name, String description,
                 Status status, Set<MaintenanceWindow> maintenanceWindows, Set<String> availableMachineTypes) {
-      super(Kind.ZONE, checkNotNull(id, "id of %name", name), fromNullable(creationTimestamp),
-              checkNotNull(selfLink, "selfLink of %name", name), checkNotNull(name, "name"), fromNullable(description));
+      super(Kind.ZONE, id, creationTimestamp, selfLink, name, description);
       this.status = checkNotNull(status, "status of %name", name);
       this.maintenanceWindows = maintenanceWindows == null ? ImmutableSet.<MaintenanceWindow>of() : ImmutableSet
               .copyOf(maintenanceWindows);

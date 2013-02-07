@@ -45,8 +45,8 @@ public class ParseOperationTest extends BaseGoogleComputeParseTest<Operation> {
       SimpleDateFormatDateService dateService = new SimpleDateFormatDateService();
       return Operation.builder().id("13053095055850848306")
               .selfLink(URI.create("https://www.googleapis" +
-                      ".com/compute/v1beta13/projects/myproject/operations/operation" +
-                      "-1354084865060-4cf88735faeb8-bbbb12cb"))
+                      ".com/compute/v1beta13/projects/myproject/operations/operation-1354084865060-4cf88735faeb8" +
+                      "-bbbb12cb"))
               .name("operation-1354084865060-4cf88735faeb8-bbbb12cb")
               .targetLink(URI.create("https://www.googleapis" +
                       ".com/compute/v1beta13/projects/myproject/instances/instance-api-live" +
@@ -57,15 +57,8 @@ public class ParseOperationTest extends BaseGoogleComputeParseTest<Operation> {
               .progress(100)
               .insertTime(dateService.iso8601DateParse("2012-11-28T06:41:05.060"))
               .startTime(dateService.iso8601DateParse("2012-11-28T06:41:05.142"))
+              .endTime(dateService.iso8601DateParse("2012-11-28T06:41:06.142"))
               .operationType("insert")
-              .httpErrorStatusCode(400)
-              .httpErrorMessage("BAD REQUEST")
-              .addError(Operation.Error.builder()
-                      .code("RESOURCE_ALREADY_EXISTS")
-                      .message("The resource " +
-                              "'projects/myproject/instances/instance-api-live-test-instance' already" +
-                              " exists")
-                      .build())
               .build();
    }
 }

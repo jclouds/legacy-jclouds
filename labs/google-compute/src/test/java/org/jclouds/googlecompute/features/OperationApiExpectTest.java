@@ -42,38 +42,33 @@ public class OperationApiExpectTest extends BaseGoogleComputeApiExpectTest {
    private static final String OPERATIONS_URL_PREFIX = "https://www.googleapis" +
            ".com/compute/v1beta13/projects/myproject/operations";
 
-   public void testGetOperationResponseIs2xx() throws Exception {
-      HttpRequest get = HttpRequest
-              .builder()
-              .method("GET")
-              .endpoint(OPERATIONS_URL_PREFIX + "/operation-1352178598164-4cdcc9d031510-4aa46279")
-              .addHeader("Accept", "application/json")
-              .addHeader("Authorization", "Bearer " + TOKEN).build();
+   public static final HttpRequest GET_OPERATION_REQUEST = HttpRequest
+           .builder()
+           .method("GET")
+           .endpoint(OPERATIONS_URL_PREFIX + "/operation-1354084865060-4cf88735faeb8-bbbb12cb")
+           .addHeader("Accept", "application/json")
+           .addHeader("Authorization", "Bearer " + TOKEN).build();
 
-      HttpResponse operationResponse = HttpResponse.builder().statusCode(200)
-              .payload(payloadFromResource("/operation.json")).build();
+   public static final HttpResponse GET_OPERATION_RESPONSE = HttpResponse.builder().statusCode(200)
+           .payload(staticPayloadFromResource("/operation.json")).build();
+
+   public void testGetOperationResponseIs2xx() throws Exception {
 
       OperationApi operationApi = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
-              TOKEN_RESPONSE, get, operationResponse).getOperationApiForProject("myproject");
+              TOKEN_RESPONSE, GET_OPERATION_REQUEST, GET_OPERATION_RESPONSE).getOperationApiForProject("myproject");
 
-      assertEquals(operationApi.get("operation-1352178598164-4cdcc9d031510-4aa46279"),
+      assertEquals(operationApi.get("operation-1354084865060-4cf88735faeb8-bbbb12cb"),
               new ParseOperationTest().expected());
    }
 
    public void testGetOperationResponseIs4xx() throws Exception {
-      HttpRequest get = HttpRequest
-              .builder()
-              .method("GET")
-              .endpoint(OPERATIONS_URL_PREFIX + "/operation-1352178598164-4cdcc9d031510-4aa46279")
-              .addHeader("Accept", "application/json")
-              .addHeader("Authorization", "Bearer " + TOKEN).build();
 
       HttpResponse operationResponse = HttpResponse.builder().statusCode(404).build();
 
       OperationApi operationApi = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
-              TOKEN_RESPONSE, get, operationResponse).getOperationApiForProject("myproject");
+              TOKEN_RESPONSE, GET_OPERATION_REQUEST, operationResponse).getOperationApiForProject("myproject");
 
-      assertNull(operationApi.get("operation-1352178598164-4cdcc9d031510-4aa46279"));
+      assertNull(operationApi.get("operation-1354084865060-4cf88735faeb8-bbbb12cb"));
    }
 
    public void testDeleteOperationResponseIs2xx() throws Exception {

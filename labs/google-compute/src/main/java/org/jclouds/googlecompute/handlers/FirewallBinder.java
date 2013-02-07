@@ -19,52 +19,36 @@
 
 package org.jclouds.googlecompute.handlers;
 
-import com.google.common.base.Function;
-import org.jclouds.googlecompute.domain.InstanceTemplate;
+import org.jclouds.googlecompute.options.FirewallOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.net.URI;
 import java.util.Map;
-import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.googlecompute.domain.InstanceTemplate.NetworkInterface;
 
 /**
  * @author David Alves
  */
-public class InstanceBinder implements MapBinder {
+public class FirewallBinder implements MapBinder {
 
    @Inject
    private BindToJsonPayload jsonBinder;
-
-   @Inject
-   @Named("machineTypes")
-   Function<String, URI> machineTypesToURI;
-
-   @Inject
-   @Named("zones")
-   Function<String, URI> zonesToURI;
 
    /**
     * {@inheritDoc}
     */
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
-      InstanceTemplate template = (InstanceTemplate) checkNotNull(postParams.get("template"), "template");
-      template.name(checkNotNull(postParams.get("name"), "name").toString());
-      template.zone(zonesToURI.apply((String) checkNotNull(postParams.get("zone"), "zone")));
-
-      if (template.getMachineTypeName() != null) {
-         template.machineType(machineTypesToURI.apply(template.getMachineTypeName()));
-      }
-      template.zone((String) null);
-      template.machineType((String) null);
-      return bindToRequest(request, template);
+      FirewallOptions options = (FirewallOptions) checkNotNull(postParams.get("options"), "firewallOptions");
+      String name = (String) checkNotNull(postParams.get("name"), "name");
+      URI network = (URI) checkNotNull(postParams.get("network"), "network");
+      options.name(name);
+      options.network(network);
+      return bindToRequest(request, options);
    }
 
    /**
