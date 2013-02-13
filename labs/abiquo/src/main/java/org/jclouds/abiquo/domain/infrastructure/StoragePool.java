@@ -112,6 +112,7 @@ public class StoragePool extends DomainWrapper<StoragePoolDto> {
       target = context.getApi().getInfrastructureApi().updateStoragePool(target);
    }
 
+   @Override
    public void refresh() {
       target = context.getApi().getInfrastructureApi()
             .refreshStoragePool(target, StoragePoolOptions.builder().sync(true).build());
@@ -187,7 +188,6 @@ public class StoragePool extends DomainWrapper<StoragePoolDto> {
       private String name;
       private Long totalSizeInMb;
 
-
       public Builder(final RestContext<AbiquoApi, AbiquoAsyncApi> context, final StorageDevice storageDevice) {
          super();
          checkNotNull(storageDevice, ValidationErrors.NULL_RESOURCE + StorageDevice.class);
@@ -206,12 +206,10 @@ public class StoragePool extends DomainWrapper<StoragePoolDto> {
          return this;
       }
 
-
       public Builder totalSizeInMb(final long totalSizeInMb) {
          this.totalSizeInMb = totalSizeInMb;
          return this;
       }
-
 
       public StoragePool build() {
          StoragePoolDto dto = new StoragePoolDto();
@@ -223,8 +221,7 @@ public class StoragePool extends DomainWrapper<StoragePoolDto> {
       }
 
       public static Builder fromStoragePool(final StoragePool in) {
-         Builder builder = StoragePool.builder(in.context, in.getStorageDevice())
-               .totalSizeInMb(in.getTotalSizeInMb());
+         Builder builder = StoragePool.builder(in.context, in.getStorageDevice()).totalSizeInMb(in.getTotalSizeInMb());
 
          return builder;
       }
