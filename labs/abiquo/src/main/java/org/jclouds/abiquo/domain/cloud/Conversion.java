@@ -58,20 +58,6 @@ public class Conversion extends DomainWithTasksWrapper<ConversionDto> {
       super(context, target);
    }
 
-   // Domain methods
-
-   public void refresh() {
-      RESTLink link = checkNotNull(target.searchLink("edit"), ValidationErrors.MISSING_REQUIRED_LINK + "edit");
-
-      ExtendedUtils utils = (ExtendedUtils) context.getUtils();
-      HttpResponse response = checkNotNull(utils.getAbiquoHttpClient().get(link), "conversion");
-
-      ParseXMLWithJAXB<ConversionDto> parser = new ParseXMLWithJAXB<ConversionDto>(utils.getXml(),
-            TypeLiteral.get(ConversionDto.class));
-
-      target = parser.apply(response);
-   }
-
    // Parent access
 
    /**

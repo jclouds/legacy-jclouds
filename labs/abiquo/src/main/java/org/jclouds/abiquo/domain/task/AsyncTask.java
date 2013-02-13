@@ -23,8 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 
-import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.AbiquoApi;
+import org.jclouds.abiquo.AbiquoAsyncApi;
 import org.jclouds.abiquo.domain.DomainWrapper;
 import org.jclouds.abiquo.reference.ValidationErrors;
 import org.jclouds.rest.RestContext;
@@ -52,6 +52,7 @@ public class AsyncTask extends DomainWrapper<TaskDto> {
    /**
     * Refresh the state of the task.
     */
+   @Override
    public void refresh() {
       RESTLink self = checkNotNull(target.searchLink("self"), ValidationErrors.MISSING_REQUIRED_LINK + "self");
 
