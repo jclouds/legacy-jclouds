@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
-import org.jclouds.http.HttpResponseException;
 import org.jclouds.openstack.v2_0.options.PaginationOptions;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerAttributes;
@@ -40,70 +39,38 @@ public interface LoadBalancerApi {
    /**
     * Create a new load balancer with the configuration defined by the request.
     * 
-    * <p/>
-    * This operation asynchronously provisions a new load balancer based on the configuration
-    * defined in the request object. Once the request is validated and progress has started on the
-    * provisioning process, a response object will be returned.
-    * 
-    * 
-    * @param lb
-    *           configuration to create
     * @return The object will contain a unique identifier and status of the request. Using the
     *         identifier, the caller can check on the progress of the operation by performing a
-    *         {@link LoadBalancerApi#getLoadBalancer}.
-    * @throws HttpResponseException
-    *            If the corresponding request cannot be fulfilled due to insufficient or invalid
-    *            data
-    * 
+    *         {@link LoadBalancerApi#get}.
     */
    LoadBalancer create(LoadBalancerRequest lb);
 
    /**
-    * 
     * Update the properties of a load balancer.
     * 
-    * <p/>
-    * This operation asynchronously updates the attributes of the specified load balancer. Upon
-    * successful validation of the request, the service will return a 202 (Accepted) response code.
-    * A caller can poll the load balancer with its ID to wait for the changes to be applied and the
-    * load balancer to return to an ACTIVE status.
-    * 
-    * @param id
-    *           id of the loadbalancer to change
-    * @param attrs
-    *           what to change
     * @return The object will contain a unique identifier and status of the request. Using the
     *         identifier, the caller can check on the progress of the operation by performing a
-    *         {@link LoadBalancerApi#getLoadBalancer}.
-    * @see LoadBalancerAttributes#fromLoadBalancer
+    *         {@link LoadBalancerApi#get}.
     */
    void update(int id, LoadBalancerAttributes attrs);
 
    /**
-    * 
-    * @return all load balancers configured for the account, or empty set if none available
+    * List the load balancers.
     */
    PagedIterable<LoadBalancer> list();
    
+   /**
+    * List the load balancers with full control of pagination.
+    */
    IterableWithMarker<LoadBalancer> list(PaginationOptions options);
 
    /**
     * Get a load balancer.
-    * 
-    * @param id
-    *           id of the loadbalancer to retrieve
-    * @return details of the specified load balancer, or null if not found
     */
    LoadBalancer get(int id);
 
    /**
     * Delete a load balancer.
-    * <p/>
-    * Delete the specified load balancer and its associated configuration from the account. Any and all configuration 
-    * data is immediately purged and isnot recoverable.
-    * 
-    * @param id
-    *           to remove
     */
    void delete(int id);
    

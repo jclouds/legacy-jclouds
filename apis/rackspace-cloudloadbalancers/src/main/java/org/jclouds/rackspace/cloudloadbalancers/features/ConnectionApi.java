@@ -30,8 +30,7 @@ import org.jclouds.rackspace.cloudloadbalancers.domain.ConnectionThrottle;
 public interface ConnectionApi {
    /**
     * The connection throttling feature imposes limits on the number of connections per IP address to help mitigate 
-    * malicious or abusive traffic to your applications. The attributes in the table that follows can be configured 
-    * based on the traffic patterns for your sites.
+    * malicious or abusive traffic to your applications.
     */
    void createOrUpdateConnectionThrottle(ConnectionThrottle connectionThrottle);
 
@@ -43,7 +42,7 @@ public interface ConnectionApi {
    /**
     * Delete connection throttle.
     * 
-    * @return true on a successful delete, false if the connection throttle was not found
+    * @return true on a successful delete, false if the connection throttle was not found.
     */
    boolean deleteConnectionThrottle();
    

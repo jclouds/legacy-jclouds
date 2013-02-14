@@ -30,7 +30,7 @@ import org.jclouds.rackspace.cloudloadbalancers.domain.LoadBalancerUsage;
 import org.jclouds.rackspace.cloudloadbalancers.domain.Protocol;
 
 /**
- * 
+ * Reporting for load balancers.
  * <p/>
  * @see ReportAsyncApi
  * @author Everett Toews
@@ -44,7 +44,7 @@ public interface ReportApi {
    IterableWithMarker<LoadBalancer> listBillableLoadBalancers(PaginationOptions options);
 
    /**
-    * View of all transfer activity, average number of connections, and number of virtual IPs associated with the load
+    * View all transfer activity, average number of connections, and number of virtual IPs associated with the load
     * balancing service. Historical usage data is available for up to 90 days of service activity.
     */
    HistoricalUsage getHistoricalUsage(Date startTime, Date endTime);

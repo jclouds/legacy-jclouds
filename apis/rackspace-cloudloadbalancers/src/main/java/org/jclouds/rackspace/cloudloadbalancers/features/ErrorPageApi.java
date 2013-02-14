@@ -21,8 +21,8 @@ package org.jclouds.rackspace.cloudloadbalancers.features;
 /**
  * An error page is the html file that is shown to an end user who is attempting to access a load balancer node that 
  * is offline/unavailable. During provisioning, every load balancer is configured with a default error page that gets 
- * displayed when traffic is requested for an offline node. A single custom error page may be added per account load 
- * balancer with an HTTP protocol. Page updates will override existing content.
+ * displayed when traffic is requested for an offline node. A single custom error page may be added to a load 
+ * balancer with an HTTP-based protocol. Page updates will override existing content.
  * <p/>
  * 
  * @see ErrorPageAsyncApi

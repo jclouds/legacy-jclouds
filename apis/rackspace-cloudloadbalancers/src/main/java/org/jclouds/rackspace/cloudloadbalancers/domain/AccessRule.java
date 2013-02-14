@@ -27,7 +27,7 @@ import com.google.common.base.Objects.ToStringHelper;
  * The access rule management feature allows fine-grained network access controls to be applied to the load balancer's 
  * virtual IP address. A single IP address, multiple IP addresses, or entire network subnets can be added as an access
  * rule. Rules that are configured with the ALLOW type will always take precedence over rules with the DENY type. To 
- * reject traffic from all rules except for those with the ALLOW type, add an access rules with an address of 
+ * reject traffic from all rules except for those with the ALLOW type, add an access rule with an address of 
  * "0.0.0.0/0" and a DENY type.
  * 
  * @author Everett Toews
