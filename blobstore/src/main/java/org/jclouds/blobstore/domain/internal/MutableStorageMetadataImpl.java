@@ -34,6 +34,7 @@ public class MutableStorageMetadataImpl extends MutableResourceMetadataImpl<Stor
          MutableStorageMetadata {
 
    private String eTag;
+   private Date creationDate;
    private Date lastModified;
 
    public MutableStorageMetadataImpl() {
@@ -52,6 +53,16 @@ public class MutableStorageMetadataImpl extends MutableResourceMetadataImpl<Stor
    @Override
    public String getETag() {
       return eTag;
+   }
+
+   @Override
+   public Date getCreationDate() {
+      return creationDate;
+   }
+
+   @Override
+   public void setCreationDate(Date creationDate) {
+      this.creationDate = creationDate;
    }
 
    /**
