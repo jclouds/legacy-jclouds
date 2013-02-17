@@ -38,6 +38,7 @@ public class MutableStorageMetadataImpl extends MutableResourceMetadataImpl<Stor
    private static final long serialVersionUID = -280558162576368264L;
 
    private String eTag;
+   private Date creationDate;
    private Date lastModified;
 
    public MutableStorageMetadataImpl() {
@@ -56,6 +57,16 @@ public class MutableStorageMetadataImpl extends MutableResourceMetadataImpl<Stor
    @Override
    public String getETag() {
       return eTag;
+   }
+
+   @Override
+   public Date getCreationDate() {
+      return creationDate;
+   }
+
+   @Override
+   public void setCreationDate(Date creationDate) {
+      this.creationDate = creationDate;
    }
 
    /**

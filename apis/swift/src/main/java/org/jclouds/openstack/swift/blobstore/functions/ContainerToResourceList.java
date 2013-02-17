@@ -50,8 +50,8 @@ public class ContainerToResourceList implements Function<PageSet<ObjectInfo>, Pa
                   public StorageMetadata apply(BlobMetadata input) {
                      if (input.getContentMetadata().getContentType().equals("application/directory")) {
                         return new StorageMetadataImpl(StorageType.RELATIVE_PATH, input.getProviderId(), input
-                                 .getName(), input.getLocation(), input.getUri(), input.getETag(), input
-                                 .getLastModified(), input.getUserMetadata());
+                                 .getName(), input.getLocation(), input.getUri(), input.getETag(),
+                                 input.getCreationDate(), input.getLastModified(), input.getUserMetadata());
                      }
                      return input;
                   }
