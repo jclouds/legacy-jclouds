@@ -131,7 +131,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
     * Broken out as a separate field because when LoadBalancers are returned from 
     * {@link LoadBalancerApi#list()}, no Nodes are returned (so you can't rely on getNodes().size())
     * but a nodeCount is returned. When {@link LoadBalancerApi#get(int)} is called, nodes are
-    * returned by no nodeCount is returned.
+    * returned but no nodeCount is returned.
     *  
     * @return The number of Nodes in this LoadBalancer 
     */

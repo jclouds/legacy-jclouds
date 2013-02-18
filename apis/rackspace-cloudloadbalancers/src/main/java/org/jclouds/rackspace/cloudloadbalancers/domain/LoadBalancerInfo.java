@@ -33,8 +33,8 @@ public final class LoadBalancerInfo {
    private Iterable<LoadBalancerUsage> loadBalancerUsageRecords;
 
    @ConstructorProperties({ "loadBalancerId", "loadBalancerName", "loadBalancerUsageRecords" })
-   protected LoadBalancerInfo(int port, String name, Iterable<LoadBalancerUsage> loadBalancerUsageRecords) {
-      this.loadBalancerId = port;
+   protected LoadBalancerInfo(int id, String name, Iterable<LoadBalancerUsage> loadBalancerUsageRecords) {
+      this.loadBalancerId = id;
       this.loadBalancerName = checkNotNull(name, "name");
       this.loadBalancerUsageRecords = checkNotNull(loadBalancerUsageRecords, "loadBalancerUsageRecords");
    }
