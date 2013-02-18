@@ -118,12 +118,12 @@ public class Node extends BaseNode<Node> {
       ONLINE,
 
       /**
-       * represents a node that cannot accept or service traffic
+       * Represents a node that cannot accept or service traffic.
        */
       OFFLINE,
 
       /**
-       * represents a node that stops the traffic manager from sending any additional new
+       * Represents a node that stops the traffic manager from sending any additional new
        * connections to the node, but honors established sessions.
        */
       DRAINING,

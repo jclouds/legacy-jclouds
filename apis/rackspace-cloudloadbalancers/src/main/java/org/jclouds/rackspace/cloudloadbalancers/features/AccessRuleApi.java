@@ -41,7 +41,7 @@ public interface AccessRuleApi {
    void create(Iterable<AccessRule> accessRules);
 
    /**
-    * List the AccessRules
+    * List the AccessRules.
     */
    Iterable<AccessRuleWithId> list();
    
