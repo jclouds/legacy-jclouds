@@ -1,0 +1,1 @@
+{"status": "success", "data": {"zone": "adrianc.zone.dynecttest.jclouds.org", "ttl": 3600, "fqdn": "_http._tcp.www.jclouds.org.", "record_type": "SRV", "rdata": {"priority": 0, "weight": 2, "port": 80, "target": "www.jclouds.org."}, "record_id": 50976579}, "job_id": 273523378, "msgs": [{"INFO": "get: Found the record", "SOURCE": "API-B", "ERR_CD": null, "LVL": "INFO"}]}
