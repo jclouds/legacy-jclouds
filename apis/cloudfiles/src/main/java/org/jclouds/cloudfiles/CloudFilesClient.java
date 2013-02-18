@@ -20,14 +20,12 @@ package org.jclouds.cloudfiles;
 
 import java.net.URI;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.openstack.swift.CommonSwiftClient;
+import org.jclouds.openstack.swift.SwiftClient;
 
 /**
  * Provides access to Cloud Files via their REST API.
@@ -36,7 +34,7 @@ import org.jclouds.openstack.swift.CommonSwiftClient;
  * @see <a href="http://docs.rackspace.com/files/api/v1/cf-devguide/content/index.html">Cloud Files</a>
  */
 @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
-public interface CloudFilesClient extends CommonSwiftClient {
+public interface CloudFilesClient extends SwiftClient {
 
    /**
     * Retrieve a list of existing CDN-enabled containers.

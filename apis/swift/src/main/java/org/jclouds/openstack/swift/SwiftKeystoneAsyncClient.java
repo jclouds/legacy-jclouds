@@ -29,6 +29,6 @@ import org.jclouds.rest.annotations.RequestFilters;
  */
 @RequestFilters(AuthenticateRequest.class)
 @Endpoint(Storage.class)
-public interface SwiftKeystoneAsyncClient extends CommonSwiftAsyncClient {
+public interface SwiftKeystoneAsyncClient extends SwiftAsyncClient {
 
 }
