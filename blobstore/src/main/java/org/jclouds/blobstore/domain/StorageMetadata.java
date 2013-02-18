@@ -83,6 +83,11 @@ public interface StorageMetadata extends ResourceMetadata<StorageType> {
    String getETag();
 
    /**
+    * Creation date of the resource, possibly null.
+    */
+   Date getCreationDate();
+
+   /**
     * Last modification time of the resource
     * 
     * @see org.jclouds.blobstore.attr.ContainerCapability#CONTAINER_LAST_MODIFIED
