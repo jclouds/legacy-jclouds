@@ -26,8 +26,12 @@ import javax.inject.Singleton;
 import org.jclouds.dynect.v3.domain.SessionCredentials;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.primitives.UnsignedInteger;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.inject.AbstractModule;
@@ -47,17 +51,24 @@ public class DynECTParserModule extends AbstractModule {
    public Map<Type, Object> provideCustomAdapterBindings() {
       return new ImmutableMap.Builder<Type, Object>()
               .put(SessionCredentials.class, new SessionCredentialsTypeAdapter())
+              .put(UnsignedInteger.class, new UnsignedIntegerAdapter())
               .build();
    }
 
    private static class SessionCredentialsTypeAdapter implements JsonSerializer<SessionCredentials> {
-      @Override
       public JsonElement serialize(SessionCredentials src, Type typeOfSrc, JsonSerializationContext context) {
          JsonObject metadataObject = new JsonObject();
          metadataObject.addProperty("customer_name", src.getCustomerName());
          metadataObject.addProperty("user_name", src.getUserName());
          metadataObject.addProperty("password", src.getPassword());
          return metadataObject;
+      }
+   }
+
+   private static class UnsignedIntegerAdapter implements JsonDeserializer<UnsignedInteger> {
+      public UnsignedInteger deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context)
+            throws JsonParseException {
+         return UnsignedInteger.valueOf(jsonElement.getAsBigInteger().intValue());
       }
    }
 }

@@ -21,7 +21,7 @@ package org.jclouds.dynect.v3.functions;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.dynect.v3.functions.ExtractNames.ExtractNameInPath;
+import org.jclouds.dynect.v3.functions.ExtractZoneNames.ExtractNameInPath;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.FluentIterable;
@@ -31,14 +31,14 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class ExtractNamesTest {
-   ExtractNames fn = new ExtractNames();
+public class ExtractZoneNamesTest {
+   ExtractZoneNames fn = new ExtractZoneNames();
 
    public void testExtractNameInPath() {
       assertEquals(ExtractNameInPath.INSTANCE.apply("/REST/Zone/jclouds.org/"), "jclouds.org");
    }
 
-   public void testExtractNames() {
+   public void testExtractZoneNames() {
       assertEquals(fn.apply(FluentIterable.from(ImmutableSet.of("/REST/Zone/jclouds.org/"))).toImmutableSet(),
             ImmutableSet.of("jclouds.org"));
    }

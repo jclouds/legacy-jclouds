@@ -36,6 +36,8 @@ import org.jclouds.Constants;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.dynect.v3.DynECTApi;
 import org.jclouds.dynect.v3.DynECTAsyncApi;
+import org.jclouds.dynect.v3.features.RecordApi;
+import org.jclouds.dynect.v3.features.RecordAsyncApi;
 import org.jclouds.dynect.v3.features.SessionApi;
 import org.jclouds.dynect.v3.features.SessionAsyncApi;
 import org.jclouds.dynect.v3.features.ZoneApi;
@@ -75,7 +77,8 @@ public class DynECTRestClientModule extends RestClientModule<DynECTApi, DynECTAs
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
          .put(SessionApi.class, SessionAsyncApi.class)
-         .put(ZoneApi.class, ZoneAsyncApi.class).build();
+         .put(ZoneApi.class, ZoneAsyncApi.class)
+         .put(RecordApi.class, RecordAsyncApi.class).build();
 
    public DynECTRestClientModule() {
       super(DELEGATE_MAP);

@@ -36,7 +36,7 @@ import org.jclouds.dynect.v3.domain.CreatePrimaryZone.ToFQDN;
 import org.jclouds.dynect.v3.domain.Job;
 import org.jclouds.dynect.v3.domain.Zone;
 import org.jclouds.dynect.v3.filters.SessionManager;
-import org.jclouds.dynect.v3.functions.ExtractNames;
+import org.jclouds.dynect.v3.functions.ExtractZoneNames;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
@@ -72,7 +72,7 @@ public interface ZoneAsyncApi {
    @Named("ListZones")
    @GET
    @SelectJson("data")
-   @Transform(ExtractNames.class)
+   @Transform(ExtractZoneNames.class)
    ListenableFuture<FluentIterable<String>> list();
 
    /**

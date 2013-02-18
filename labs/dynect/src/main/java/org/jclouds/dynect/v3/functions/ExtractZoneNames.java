@@ -28,7 +28,7 @@ import com.google.common.collect.FluentIterable;
  * @author Adrian Cole
  * 
  */
-public final class ExtractNames implements Function<FluentIterable<String>, FluentIterable<String>> {
+public final class ExtractZoneNames implements Function<FluentIterable<String>, FluentIterable<String>> {
    public FluentIterable<String> apply(FluentIterable<String> in) {
       return in.transform(ExtractNameInPath.INSTANCE);
    }
