@@ -23,6 +23,6 @@ package org.jclouds.openstack.swift;
  * 
  * @author Adrian Cole
  */
-public interface SwiftKeystoneClient extends CommonSwiftClient {
+public interface SwiftKeystoneClient extends SwiftClient {
 
 }
