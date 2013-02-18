@@ -220,18 +220,6 @@ public class VirtualMachine extends DomainWithTasksWrapper<VirtualMachineWithNod
       return state;
    }
 
-   public void refresh() {
-      RESTLink link = checkNotNull(target.getEditLink(), ValidationErrors.MISSING_REQUIRED_LINK + " edit");
-
-      ExtendedUtils utils = (ExtendedUtils) context.getUtils();
-      HttpResponse response = utils.getAbiquoHttpClient().get(link);
-
-      ParseXMLWithJAXB<VirtualMachineWithNodeExtendedDto> parser = new ParseXMLWithJAXB<VirtualMachineWithNodeExtendedDto>(
-            utils.getXml(), TypeLiteral.get(VirtualMachineWithNodeExtendedDto.class));
-
-      target = parser.apply(response);
-   }
-
    // Parent access
 
    /**
