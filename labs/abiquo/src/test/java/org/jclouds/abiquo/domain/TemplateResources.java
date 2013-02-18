@@ -66,7 +66,7 @@ public class TemplateResources {
             + "/datacenterrepositories/1/virtualmachinetemplates/1/conversions"));
       template.addLink(new RESTLink("tasks", "http://localhost/api/admin/enterprises/1"
             + "/datacenterrepositories/1/virtualmachinetemplates/1/tasks"));
-
+      template.setCostCode(0);
       return template;
    }
 
