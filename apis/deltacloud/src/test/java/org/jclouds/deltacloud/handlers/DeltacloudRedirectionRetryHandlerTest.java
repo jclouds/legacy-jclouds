@@ -67,6 +67,7 @@ public class DeltacloudRedirectionRetryHandlerTest {
       HttpRequest request = HttpRequest.builder().method("GET").endpoint("http://localhost").build();
       HttpResponse response = HttpResponse.builder().statusCode(302).message("HTTP/1.1 302 Found").build();
 
+      expect(command.isReplayable()).andReturn(true);
       expect(command.getCurrentRequest()).andReturn(request).atLeastOnce();
       expect(command.incrementRedirectCount()).andReturn(1);
 
