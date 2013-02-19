@@ -19,6 +19,7 @@
 package org.jclouds.dynect.v3.features;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.jclouds.dynect.v3.domain.RecordId.recordIdBuilder;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
@@ -54,7 +55,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
    HttpResponse soaResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResourceWithContentType("/get_record_soa.json", APPLICATION_JSON)).build();
 
-   RecordId soaId = RecordId.builder()
+   RecordId soaId = recordIdBuilder()
                             .zone("adrianc.zone.dynecttest.jclouds.org")
                             .fqdn("adrianc.zone.dynecttest.jclouds.org")
                             .type("SOA")
@@ -80,7 +81,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
    HttpResponse aaaaResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResourceWithContentType("/get_record_aaaa.json", APPLICATION_JSON)).build();
 
-   RecordId aaaaId = RecordId.builder()
+   RecordId aaaaId = recordIdBuilder()
         .zone("adrianc.zone.dynecttest.jclouds.org")
         .fqdn("adrianc.zone.dynecttest.jclouds.org")
         .type("AAAA")
@@ -106,7 +107,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
    HttpResponse aResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResourceWithContentType("/get_record_a.json", APPLICATION_JSON)).build();
 
-   RecordId aId = RecordId.builder()
+   RecordId aId = recordIdBuilder()
         .zone("adrianc.zone.dynecttest.jclouds.org")
         .fqdn("adrianc.zone.dynecttest.jclouds.org")
         .type("A")
@@ -132,7 +133,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
    HttpResponse cnameResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResourceWithContentType("/get_record_cname.json", APPLICATION_JSON)).build();
 
-   RecordId cnameId = RecordId.builder()
+   RecordId cnameId = recordIdBuilder()
         .zone("adrianc.zone.dynecttest.jclouds.org")
         .fqdn("adrianc.zone.dynecttest.jclouds.org")
         .type("CNAME")
@@ -158,7 +159,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
    HttpResponse mxResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResourceWithContentType("/get_record_mx.json", APPLICATION_JSON)).build();
 
-   RecordId mxId = RecordId.builder()
+   RecordId mxId = recordIdBuilder()
         .zone("adrianc.zone.dynecttest.jclouds.org")
         .fqdn("adrianc.zone.dynecttest.jclouds.org")
         .type("MX")
@@ -184,7 +185,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
    HttpResponse nsResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResourceWithContentType("/get_record_ns.json", APPLICATION_JSON)).build();
 
-   RecordId nsId = RecordId.builder()
+   RecordId nsId = recordIdBuilder()
         .zone("adrianc.zone.dynecttest.jclouds.org")
         .fqdn("adrianc.zone.dynecttest.jclouds.org")
         .type("NS")
@@ -210,7 +211,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
    HttpResponse ptrResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResourceWithContentType("/get_record_ptr.json", APPLICATION_JSON)).build();
 
-   RecordId ptrId = RecordId.builder()
+   RecordId ptrId = recordIdBuilder()
         .zone("adrianc.zone.dynecttest.jclouds.org")
         .fqdn("adrianc.zone.dynecttest.jclouds.org")
         .type("PTR")
@@ -247,7 +248,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
    HttpResponse srvResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResourceWithContentType("/get_record_srv.json", APPLICATION_JSON)).build();
 
-   RecordId srvId = RecordId.builder()
+   RecordId srvId = recordIdBuilder()
         .zone("adrianc.zone.dynecttest.jclouds.org")
         .fqdn("adrianc.zone.dynecttest.jclouds.org")
         .type("SRV")
@@ -268,7 +269,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
    HttpResponse txtResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResourceWithContentType("/get_record_txt.json", APPLICATION_JSON)).build();
 
-   RecordId txtId = RecordId.builder()
+   RecordId txtId = recordIdBuilder()
         .zone("adrianc.zone.dynecttest.jclouds.org")
         .fqdn("adrianc.zone.dynecttest.jclouds.org")
         .type("TXT")
