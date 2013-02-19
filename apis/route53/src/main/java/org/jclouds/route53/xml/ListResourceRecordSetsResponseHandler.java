@@ -22,9 +22,8 @@ import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.route53.domain.RecordSet.Type;
-import org.jclouds.route53.domain.RecordSetIterable;
-import org.jclouds.route53.domain.RecordSetIterable.Builder;
+import org.jclouds.route53.domain.ResourceRecordSetIterable;
+import org.jclouds.route53.domain.ResourceRecordSetIterable.Builder;
 import org.xml.sax.Attributes;
 
 import com.google.inject.Inject;
@@ -37,12 +36,12 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 public class ListResourceRecordSetsResponseHandler extends
-      ParseSax.HandlerForGeneratedRequestWithResult<RecordSetIterable> {
+      ParseSax.HandlerForGeneratedRequestWithResult<ResourceRecordSetIterable> {
 
    private final ResourceRecordSetHandler resourceRecordSetHandler;
 
    private StringBuilder currentText = new StringBuilder();
-   private Builder builder = RecordSetIterable.builder();
+   private Builder builder = ResourceRecordSetIterable.builder();
 
    private boolean inResourceRecordSets;
 
@@ -52,11 +51,11 @@ public class ListResourceRecordSetsResponseHandler extends
    }
 
    @Override
-   public RecordSetIterable getResult() {
+   public ResourceRecordSetIterable getResult() {
       try {
          return builder.build();
       } finally {
-         builder = RecordSetIterable.builder();
+         builder = ResourceRecordSetIterable.builder();
       }
    }
 
@@ -83,7 +82,7 @@ public class ListResourceRecordSetsResponseHandler extends
       } else if (qName.equals("NextRecordName")) {
          builder.nextRecordName(currentOrNull(currentText));
       } else if (qName.equals("NextRecordType")) {
-         builder.nextRecordType(Type.valueOf(currentOrNull(currentText)));
+         builder.nextRecordType(currentOrNull(currentText));
       } else if (qName.equals("NextRecordIdentifier")) {
          builder.nextRecordIdentifier(currentOrNull(currentText));
       }

@@ -22,8 +22,8 @@ import javax.ws.rs.PathParam;
 
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.route53.domain.Change;
-import org.jclouds.route53.features.RecordSetApi;
-import org.jclouds.route53.features.ZoneApi;
+import org.jclouds.route53.features.ResourceRecordSetApi;
+import org.jclouds.route53.features.HostedZoneApi;
 
 /**
  * Provides access to Amazon Route53 via the Query API
@@ -49,11 +49,11 @@ public interface Route53Api {
     * Provides synchronous access to Zone features.
     */
    @Delegate
-   ZoneApi getZoneApi();
+   HostedZoneApi getHostedZoneApi();
    
    /**
     * Provides synchronous access to record set features.
     */
    @Delegate
-   RecordSetApi getRecordSetApiForZone(@PathParam("zoneId") String zoneId);
+   ResourceRecordSetApi getResourceRecordSetApiForHostedZone(@PathParam("zoneId") String zoneId);
 }

@@ -23,9 +23,8 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.route53.domain.RecordSet;
-import org.jclouds.route53.domain.RecordSet.Type;
-import org.jclouds.route53.domain.RecordSetIterable;
+import org.jclouds.route53.domain.ResourceRecordSet;
+import org.jclouds.route53.domain.ResourceRecordSetIterable;
 import org.jclouds.route53.xml.ListResourceRecordSetsResponseHandler;
 import org.testng.annotations.Test;
 
@@ -40,26 +39,26 @@ public class ListResourceRecordSetsResponseTest extends BaseHandlerTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/rrsets.xml");
 
-      RecordSetIterable expected = expected();
+      ResourceRecordSetIterable expected = expected();
 
       ListResourceRecordSetsResponseHandler handler = injector.getInstance(ListResourceRecordSetsResponseHandler.class);
-      RecordSetIterable result = factory.create(handler).parse(is);
+      ResourceRecordSetIterable result = factory.create(handler).parse(is);
 
       assertEquals(result.toString(), expected.toString());
 
    }
 
-   public RecordSetIterable expected() {
-      return RecordSetIterable.builder()
-            .add(RecordSet.builder()
+   public ResourceRecordSetIterable expected() {
+      return ResourceRecordSetIterable.builder()
+            .add(ResourceRecordSet.builder()
                                   .name("example.com.")
-                                  .type(Type.SOA)
+                                  .type("SOA")
                                   .ttl(900)
                                   .add("ns-2048.awsdns-64.net. hostmaster.awsdns.com. 1 7200 900 1209600 86400")
                                   .build())
-            .add(RecordSet.builder()
+            .add(ResourceRecordSet.builder()
                                   .name("example.com.")
-                                  .type(Type.NS)
+                                  .type("NS")
                                   .ttl(172800)
                                   .add("ns-2048.awsdns-64.com.")
                                   .add("ns-2049.awsdns-65.net.")
@@ -67,6 +66,6 @@ public class ListResourceRecordSetsResponseTest extends BaseHandlerTest {
                                   .add("ns-2051.awsdns-67.co.uk.")
                                   .build())
             .nextRecordName("testdoc2.example.com")
-            .nextRecordType(Type.NS).build();
+            .nextRecordType("NS").build();
    }
 }

@@ -22,8 +22,8 @@ import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.route53.domain.Zone;
-import org.jclouds.route53.domain.ZoneAndNameServers;
+import org.jclouds.route53.domain.HostedZone;
+import org.jclouds.route53.domain.HostedZoneAndNameServers;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.ImmutableList;
@@ -37,26 +37,26 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
-public class GetHostedZoneResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<ZoneAndNameServers> {
+public class GetHostedZoneResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<HostedZoneAndNameServers> {
 
-   private final ZoneHandler zoneHandler;
+   private final HostedZoneHandler zoneHandler;
 
    private StringBuilder currentText = new StringBuilder();
    
-   private boolean inZone;
+   private boolean inHostedZone;
 
-   private Zone zone;
+   private HostedZone zone;
    private Builder<String> nameServers = ImmutableList.<String> builder();
 
    @Inject
-   public GetHostedZoneResponseHandler(ZoneHandler zoneHandler) {
+   public GetHostedZoneResponseHandler(HostedZoneHandler zoneHandler) {
       this.zoneHandler = zoneHandler;
    }
 
    @Override
-   public ZoneAndNameServers getResult() {
+   public HostedZoneAndNameServers getResult() {
       try {
-         return ZoneAndNameServers.create(zone, nameServers.build());
+         return HostedZoneAndNameServers.create(zone, nameServers.build());
       } finally {
          zone = null;
          nameServers = ImmutableList.<String> builder();
@@ -66,18 +66,18 @@ public class GetHostedZoneResponseHandler extends ParseSax.HandlerForGeneratedRe
    @Override
    public void startElement(String url, String name, String qName, Attributes attributes) {
       if (equalsOrSuffix(qName, "HostedZone")) {
-         inZone = true;
+         inHostedZone = true;
       }
-      if (inZone) {
+      if (inHostedZone) {
          zoneHandler.startElement(url, name, qName, attributes);
       }
    }
 
    @Override
    public void endElement(String uri, String name, String qName) {
-      if (inZone) {
+      if (inHostedZone) {
          if (qName.equals("HostedZone")) {
-            inZone = false;
+            inHostedZone = false;
             zone = zoneHandler.getResult();
          } else {
             zoneHandler.endElement(uri, name, qName);
@@ -91,7 +91,7 @@ public class GetHostedZoneResponseHandler extends ParseSax.HandlerForGeneratedRe
 
    @Override
    public void characters(char ch[], int start, int length) {
-      if (inZone) {
+      if (inHostedZone) {
          zoneHandler.characters(ch, start, length);
       } else {
          currentText.append(ch, start, length);

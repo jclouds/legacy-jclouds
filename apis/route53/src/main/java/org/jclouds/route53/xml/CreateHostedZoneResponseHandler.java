@@ -21,8 +21,8 @@ package org.jclouds.route53.xml;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.route53.domain.NewZone;
-import org.jclouds.route53.domain.ZoneAndNameServers;
+import org.jclouds.route53.domain.HostedZoneAndNameServers;
+import org.jclouds.route53.domain.NewHostedZone;
 import org.xml.sax.Attributes;
 
 import com.google.inject.Inject;
@@ -34,7 +34,7 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
-public class CreateHostedZoneResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<NewZone> {
+public class CreateHostedZoneResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<NewHostedZone> {
 
    private final GetHostedZoneResponseHandler zoneHandler;
    private final ChangeHandler changeHandler;
@@ -48,9 +48,9 @@ public class CreateHostedZoneResponseHandler extends ParseSax.HandlerForGenerate
    }
 
    @Override
-   public NewZone getResult() {
-      ZoneAndNameServers zone = zoneHandler.getResult();
-      return NewZone.create(zone, changeHandler.getResult());
+   public NewHostedZone getResult() {
+      HostedZoneAndNameServers zone = zoneHandler.getResult();
+      return NewHostedZone.create(zone, changeHandler.getResult());
    }
 
    @Override

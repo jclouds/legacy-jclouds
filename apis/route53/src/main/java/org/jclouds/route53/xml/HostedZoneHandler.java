@@ -21,24 +21,26 @@ package org.jclouds.route53.xml;
 import static org.jclouds.util.SaxUtils.currentOrNull;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.route53.domain.Zone;
+import org.jclouds.route53.domain.HostedZone;
 import org.xml.sax.Attributes;
+
+import com.google.common.primitives.UnsignedInteger;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class ZoneHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Zone> {
+public class HostedZoneHandler extends ParseSax.HandlerForGeneratedRequestWithResult<HostedZone> {
 
    private StringBuilder currentText = new StringBuilder();
-   private Zone.Builder builder = Zone.builder();
+   private HostedZone.Builder builder = HostedZone.builder();
 
    @Override
-   public Zone getResult() {
+   public HostedZone getResult() {
       try {
          return builder.build();
       } finally {
-         builder = Zone.builder();
+         builder = HostedZone.builder();
       }
    }
 
@@ -57,7 +59,7 @@ public class ZoneHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Z
       } else if (qName.equals("Comment")) {
          builder.comment(currentOrNull(currentText));
       } else if (qName.equals("ResourceRecordSetCount")) {
-         builder.resourceRecordSetCount(Integer.parseInt(currentOrNull(currentText)));
+         builder.resourceRecordSetCount(UnsignedInteger.valueOf(currentOrNull(currentText)).intValue());
       }
       currentText = new StringBuilder();
    }

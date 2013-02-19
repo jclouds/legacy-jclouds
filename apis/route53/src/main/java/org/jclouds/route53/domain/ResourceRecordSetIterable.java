@@ -27,7 +27,6 @@ import java.util.Iterator;
 
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.route53.domain.RecordSet.Type;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
@@ -37,12 +36,12 @@ import com.google.common.collect.ImmutableList;
  * 
  * @author Adrian Cole
  */
-public class RecordSetIterable extends IterableWithMarker<RecordSet> {
+public class ResourceRecordSetIterable extends IterableWithMarker<ResourceRecordSet> {
 
-   private final Iterable<RecordSet> items;
+   private final Iterable<ResourceRecordSet> items;
    private final Optional<NextRecord> nextRecord;
 
-   private RecordSetIterable(Iterable<RecordSet> items, @Nullable NextRecord nextRecord) {
+   private ResourceRecordSetIterable(Iterable<ResourceRecordSet> items, @Nullable NextRecord nextRecord) {
       this.items = checkNotNull(items, "items");
       this.nextRecord = Optional.fromNullable(nextRecord);
    }
@@ -61,7 +60,7 @@ public class RecordSetIterable extends IterableWithMarker<RecordSet> {
    }
 
    @Override
-   public Iterator<RecordSet> iterator() {
+   public Iterator<ResourceRecordSet> iterator() {
       return items.iterator();
    }
 
@@ -76,7 +75,7 @@ public class RecordSetIterable extends IterableWithMarker<RecordSet> {
          return true;
       if (obj == null || getClass() != obj.getClass())
          return false;
-      RecordSetIterable that = RecordSetIterable.class.cast(obj);
+      ResourceRecordSetIterable that = ResourceRecordSetIterable.class.cast(obj);
       return equal(this.items, that.items) && equal(this.nextRecord, that.nextRecord);
    }
 
@@ -89,19 +88,19 @@ public class RecordSetIterable extends IterableWithMarker<RecordSet> {
     * If the results were truncated, this holds the position of the next item.
     */
    public static class NextRecord {
-      public static NextRecord nameAndType(String name, Type type) {
+      public static NextRecord nameAndType(String name, String type) {
          return new NextRecord(name, type, null);
       }
 
-      public static NextRecord nameTypeAndIdentifier(String name, Type type, String identifier) {
+      public static NextRecord nameTypeAndIdentifier(String name, String type, String identifier) {
          return new NextRecord(name, type, identifier);
       }
 
       private final String name;
-      private final Type type;
+      private final String type;
       private final Optional<String> identifier;
 
-      private NextRecord(String name, Type type, String identifier) {
+      private NextRecord(String name, String type, String identifier) {
          this.name = checkNotNull(name, "name");
          this.type = checkNotNull(type, "type for %s", name);
          this.identifier = Optional.fromNullable(identifier);
@@ -117,7 +116,7 @@ public class RecordSetIterable extends IterableWithMarker<RecordSet> {
       /**
        * the type of the next record in the list.
        */
-      public Type getType() {
+      public String getType() {
          return type;
       }
 
@@ -157,17 +156,17 @@ public class RecordSetIterable extends IterableWithMarker<RecordSet> {
 
    public static final class Builder {
 
-      private ImmutableList.Builder<RecordSet> items = ImmutableList.<RecordSet> builder();
+      private ImmutableList.Builder<ResourceRecordSet> items = ImmutableList.<ResourceRecordSet> builder();
       private String nextRecordName;
-      private Type nextRecordType;
+      private String nextRecordType;
       private String nextRecordIdentifier;
 
-      public Builder add(RecordSet item) {
+      public Builder add(ResourceRecordSet item) {
          this.items.add(item);
          return this;
       }
 
-      public Builder addAll(Iterable<RecordSet> items) {
+      public Builder addAll(Iterable<ResourceRecordSet> items) {
          this.items.addAll(items);
          return this;
       }
@@ -177,7 +176,7 @@ public class RecordSetIterable extends IterableWithMarker<RecordSet> {
          return this;
       }
 
-      public Builder nextRecordType(Type nextRecordType) {
+      public Builder nextRecordType(String nextRecordType) {
          this.nextRecordType = nextRecordType;
          return this;
       }
@@ -187,10 +186,10 @@ public class RecordSetIterable extends IterableWithMarker<RecordSet> {
          return this;
       }
 
-      public RecordSetIterable build() {
+      public ResourceRecordSetIterable build() {
          NextRecord nextRecord = nextRecordName != null ? new NextRecord(nextRecordName, nextRecordType,
                nextRecordIdentifier) : null;
-         return new RecordSetIterable(items.build(), nextRecord);
+         return new ResourceRecordSetIterable(items.build(), nextRecord);
       }
    }
 }

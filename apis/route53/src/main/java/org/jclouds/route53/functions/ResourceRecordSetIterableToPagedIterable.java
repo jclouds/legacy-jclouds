@@ -25,8 +25,9 @@ import javax.inject.Inject;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.internal.CallerArg0ToPagedIterable;
 import org.jclouds.route53.Route53Api;
-import org.jclouds.route53.domain.Zone;
-import org.jclouds.route53.features.ZoneApi;
+import org.jclouds.route53.domain.ResourceRecordSet;
+import org.jclouds.route53.domain.ResourceRecordSetIterable.NextRecord;
+import org.jclouds.route53.features.ResourceRecordSetApi;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
@@ -35,30 +36,30 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Beta
-public class ZonesToPagedIterable extends CallerArg0ToPagedIterable<Zone, ZonesToPagedIterable> {
+public class ResourceRecordSetIterableToPagedIterable extends
+      CallerArg0ToPagedIterable<ResourceRecordSet, ResourceRecordSetIterableToPagedIterable> {
 
    private final Route53Api api;
 
    @Inject
-   protected ZonesToPagedIterable(Route53Api api) {
+   protected ResourceRecordSetIterableToPagedIterable(Route53Api api) {
       this.api = checkNotNull(api, "api");
    }
 
    @Override
-   protected Function<Object, IterableWithMarker<Zone>> markerToNextForCallingArg0(String ignored) {
-      final ZoneApi zoneApi = api.getZoneApi();
-      return new Function<Object, IterableWithMarker<Zone>>() {
+   protected Function<Object, IterableWithMarker<ResourceRecordSet>> markerToNextForCallingArg0(String zoneId) {
+      final ResourceRecordSetApi resourceResourceRecordSetApi = api.getResourceRecordSetApiForHostedZone(zoneId);
+      return new Function<Object, IterableWithMarker<ResourceRecordSet>>() {
 
          @Override
-         public IterableWithMarker<Zone> apply(Object input) {
-            return zoneApi.listAt(input.toString());
+         public IterableWithMarker<ResourceRecordSet> apply(Object input) {
+            return resourceResourceRecordSetApi.listAt(NextRecord.class.cast(input));
          }
 
          @Override
          public String toString() {
-            return "listZones()";
+            return "listResourceRecordSets()";
          }
       };
    }
-
 }

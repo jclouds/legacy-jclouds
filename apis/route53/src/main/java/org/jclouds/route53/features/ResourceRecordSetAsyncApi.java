@@ -41,11 +41,11 @@ import org.jclouds.route53.binders.BindChangeBatch;
 import org.jclouds.route53.binders.BindNextRecord;
 import org.jclouds.route53.domain.Change;
 import org.jclouds.route53.domain.ChangeBatch;
-import org.jclouds.route53.domain.RecordSet;
-import org.jclouds.route53.domain.RecordSetIterable;
-import org.jclouds.route53.domain.RecordSetIterable.NextRecord;
+import org.jclouds.route53.domain.ResourceRecordSet;
+import org.jclouds.route53.domain.ResourceRecordSetIterable;
+import org.jclouds.route53.domain.ResourceRecordSetIterable.NextRecord;
 import org.jclouds.route53.filters.RestAuthentication;
-import org.jclouds.route53.functions.RecordSetIterableToPagedIterable;
+import org.jclouds.route53.functions.ResourceRecordSetIterableToPagedIterable;
 import org.jclouds.route53.functions.SerializeRRS;
 import org.jclouds.route53.xml.ChangeHandler;
 import org.jclouds.route53.xml.ListResourceRecordSetsResponseHandler;
@@ -53,7 +53,7 @@ import org.jclouds.route53.xml.ListResourceRecordSetsResponseHandler;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * @see RecordSetApi
+ * @see ResourceRecordSetApi
  * @see <a href=
  *      "http://docs.aws.amazon.com/Route53/latest/APIReference/ActionsOnRRS.html"
  *      />
@@ -62,9 +62,9 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(RestAuthentication.class)
 @VirtualHost
 @Path("/{jclouds.api-version}/hostedzone/{zoneId}")
-public interface RecordSetAsyncApi {
+public interface ResourceRecordSetAsyncApi {
    /**
-    * @see RecordSetApi#create
+    * @see ResourceRecordSetApi#create
     */
    @Named("ChangeResourceRecordSets")
    @POST
@@ -72,10 +72,10 @@ public interface RecordSetAsyncApi {
    @Path("/rrset")
    @Payload("<ChangeResourceRecordSetsRequest xmlns=\"https://route53.amazonaws.com/doc/2012-02-29/\"><ChangeBatch><Changes><Change><Action>CREATE</Action>{rrs}</Change></Changes></ChangeBatch></ChangeResourceRecordSetsRequest>")
    @XMLResponseParser(ChangeHandler.class)
-   ListenableFuture<Change> create(@PayloadParam("rrs") @ParamParser(SerializeRRS.class) RecordSet rrs);
+   ListenableFuture<Change> create(@PayloadParam("rrs") @ParamParser(SerializeRRS.class) ResourceRecordSet rrs);
    
    /**
-    * @see RecordSetApi#apply
+    * @see ResourceRecordSetApi#apply
     */
    @Named("ChangeResourceRecordSets")
    @POST
@@ -85,35 +85,35 @@ public interface RecordSetAsyncApi {
    ListenableFuture<Change> apply(@BinderParam(BindChangeBatch.class) ChangeBatch changes);
 
    /**
-    * @see RecordSetApi#list()
+    * @see ResourceRecordSetApi#list()
     */
    @Named("ListResourceRecordSets")
    @GET
    @Path("/rrset")
    @XMLResponseParser(ListResourceRecordSetsResponseHandler.class)
-   @Transform(RecordSetIterableToPagedIterable.class)
-   ListenableFuture<PagedIterable<RecordSet>> list();
+   @Transform(ResourceRecordSetIterableToPagedIterable.class)
+   ListenableFuture<PagedIterable<ResourceRecordSet>> list();
 
    /**
-    * @see RecordSetApi#listFirstPage
+    * @see ResourceRecordSetApi#listFirstPage
     */
    @Named("ListResourceRecordSets")
    @GET
    @Path("/rrset")
    @XMLResponseParser(ListResourceRecordSetsResponseHandler.class)
-   ListenableFuture<RecordSetIterable> listFirstPage();
+   ListenableFuture<ResourceRecordSetIterable> listFirstPage();
 
    /**
-    * @see RecordSetApi#listAt(NextRecord)
+    * @see ResourceRecordSetApi#listAt(NextRecord)
     */
    @Named("ListResourceRecordSets")
    @GET
    @Path("/rrset")
    @XMLResponseParser(ListResourceRecordSetsResponseHandler.class)
-   ListenableFuture<RecordSetIterable> listAt(@BinderParam(BindNextRecord.class) NextRecord nextRecord);
+   ListenableFuture<ResourceRecordSetIterable> listAt(@BinderParam(BindNextRecord.class) NextRecord nextRecord);
 
    /**
-    * @see RecordSetApi#delete
+    * @see ResourceRecordSetApi#delete
     */
    @Named("ChangeResourceRecordSets")
    @POST
@@ -122,5 +122,5 @@ public interface RecordSetAsyncApi {
    @Payload("<ChangeResourceRecordSetsRequest xmlns=\"https://route53.amazonaws.com/doc/2012-02-29/\"><ChangeBatch><Changes><Change><Action>DELETE</Action>{rrs}</Change></Changes></ChangeBatch></ChangeResourceRecordSetsRequest>")
    @XMLResponseParser(ChangeHandler.class)
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<Change> delete(@PayloadParam("rrs") @ParamParser(SerializeRRS.class) RecordSet rrs);
+   ListenableFuture<Change> delete(@PayloadParam("rrs") @ParamParser(SerializeRRS.class) ResourceRecordSet rrs);
 }

@@ -23,7 +23,7 @@ import javax.inject.Singleton;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequest.Builder;
 import org.jclouds.rest.Binder;
-import org.jclouds.route53.domain.RecordSetIterable.NextRecord;
+import org.jclouds.route53.domain.ResourceRecordSetIterable.NextRecord;
 
 /**
  * 

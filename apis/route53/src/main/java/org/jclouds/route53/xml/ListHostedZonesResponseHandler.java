@@ -24,7 +24,7 @@ import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.IterableWithMarkers;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.route53.domain.Zone;
+import org.jclouds.route53.domain.HostedZone;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.ImmutableList;
@@ -39,44 +39,44 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 public class ListHostedZonesResponseHandler extends
-      ParseSax.HandlerForGeneratedRequestWithResult<IterableWithMarker<Zone>> {
+      ParseSax.HandlerForGeneratedRequestWithResult<IterableWithMarker<HostedZone>> {
 
-   private final ZoneHandler zoneHandler;
+   private final HostedZoneHandler zoneHandler;
 
    private StringBuilder currentText = new StringBuilder();
-   private Builder<Zone> zones = ImmutableList.<Zone> builder();
-   private boolean inZones;
+   private Builder<HostedZone> zones = ImmutableList.<HostedZone> builder();
+   private boolean inHostedZones;
    private String afterMarker;
 
    @Inject
-   public ListHostedZonesResponseHandler(ZoneHandler zoneHandler) {
+   public ListHostedZonesResponseHandler(HostedZoneHandler zoneHandler) {
       this.zoneHandler = zoneHandler;
    }
 
    @Override
-   public IterableWithMarker<Zone> getResult() {
+   public IterableWithMarker<HostedZone> getResult() {
       try {
          return IterableWithMarkers.from(zones.build(), afterMarker);
       } finally {
-         zones = ImmutableList.<Zone> builder();
+         zones = ImmutableList.<HostedZone> builder();
       }
    }
 
    @Override
    public void startElement(String url, String name, String qName, Attributes attributes) {
       if (equalsOrSuffix(qName, "HostedZones")) {
-         inZones = true;
+         inHostedZones = true;
       }
-      if (inZones) {
+      if (inHostedZones) {
          zoneHandler.startElement(url, name, qName, attributes);
       }
    }
 
    @Override
    public void endElement(String uri, String name, String qName) {
-      if (inZones) {
+      if (inHostedZones) {
          if (qName.equals("HostedZones")) {
-            inZones = false;
+            inHostedZones = false;
          } else if (qName.equals("HostedZone")) {
             zones.add(zoneHandler.getResult());
          } else {
@@ -91,7 +91,7 @@ public class ListHostedZonesResponseHandler extends
 
    @Override
    public void characters(char ch[], int start, int length) {
-      if (inZones) {
+      if (inHostedZones) {
          zoneHandler.characters(ch, start, length);
       } else {
          currentText.append(ch, start, length);

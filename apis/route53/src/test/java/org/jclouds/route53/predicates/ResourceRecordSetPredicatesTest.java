@@ -18,26 +18,27 @@
  */
 package org.jclouds.route53.predicates;
 
-import static org.jclouds.route53.predicates.ZonePredicates.nameEquals;
+import static org.jclouds.route53.predicates.ResourceRecordSetPredicates.typeEquals;
 
-import org.jclouds.route53.domain.Zone;
+import org.jclouds.route53.domain.ResourceRecordSet;
 import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ZonePredicatesTest")
-public class ZonePredicatesTest {
-   Zone zone = Zone.builder().id("EEEFFFEEE").callerReference("goog").name("jclouds.org.").build();
+@Test(groups = "unit", testName = "ResourceRecordSetPredicatesTest")
+public class ResourceRecordSetPredicatesTest {
+   ResourceRecordSet rrs = ResourceRecordSet.builder().name("jclouds.org.").type("NS").add("ns-119.awsdns-14.com.")
+         .build();
 
    @Test
-   public void testNameEqualsWhenEqual() {
-      assert nameEquals("jclouds.org.").apply(zone);
+   public void testTypeEqualsWhenEqual() {
+      assert typeEquals("NS").apply(rrs);
    }
 
    @Test
-   public void testNameEqualsWhenNotEqual() {
-      assert !nameEquals("kclouds.org.").apply(zone);
+   public void testTypeEqualsWhenNotEqual() {
+      assert !typeEquals("AAAA").apply(rrs);
    }
 }

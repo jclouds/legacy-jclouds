@@ -25,7 +25,7 @@ import java.io.InputStream;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.IterableWithMarkers;
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.route53.domain.Zone;
+import org.jclouds.route53.domain.HostedZone;
 import org.jclouds.route53.xml.ListHostedZonesResponseHandler;
 import org.testng.annotations.Test;
 
@@ -41,25 +41,25 @@ public class ListHostedZonesResponseTest extends BaseHandlerTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/hosted_zones.xml");
 
-      IterableWithMarker<Zone> expected = expected();
+      IterableWithMarker<HostedZone> expected = expected();
 
       ListHostedZonesResponseHandler handler = injector.getInstance(ListHostedZonesResponseHandler.class);
-      IterableWithMarker<Zone> result = factory.create(handler).parse(is);
+      IterableWithMarker<HostedZone> result = factory.create(handler).parse(is);
 
       assertEquals(result.toString(), expected.toString());
 
    }
 
-   public IterableWithMarker<Zone> expected() {
+   public IterableWithMarker<HostedZone> expected() {
       return IterableWithMarkers.from(
             ImmutableSet.of(
-                  Zone.builder()
+                  HostedZone.builder()
                       .id("Z21DW1QVGID6NG")
                       .name("example.com.")
                       .callerReference("a_unique_reference")
                       .resourceRecordSetCount(17)
                       .comment("Migrate an existing domain to Route 53").build(),
-                  Zone.builder()
+                  HostedZone.builder()
                       .id("Z2682N5HXP0BZ4")
                       .name("example2.com.")
                       .callerReference("a_unique_reference2")

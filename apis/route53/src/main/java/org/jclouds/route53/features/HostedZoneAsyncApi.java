@@ -40,11 +40,11 @@ import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.route53.domain.Change;
-import org.jclouds.route53.domain.NewZone;
-import org.jclouds.route53.domain.Zone;
-import org.jclouds.route53.domain.ZoneAndNameServers;
+import org.jclouds.route53.domain.HostedZone;
+import org.jclouds.route53.domain.HostedZoneAndNameServers;
+import org.jclouds.route53.domain.NewHostedZone;
 import org.jclouds.route53.filters.RestAuthentication;
-import org.jclouds.route53.functions.ZonesToPagedIterable;
+import org.jclouds.route53.functions.HostedZonesToPagedIterable;
 import org.jclouds.route53.xml.ChangeHandler;
 import org.jclouds.route53.xml.CreateHostedZoneResponseHandler;
 import org.jclouds.route53.xml.GetHostedZoneResponseHandler;
@@ -53,7 +53,7 @@ import org.jclouds.route53.xml.ListHostedZonesResponseHandler;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * @see ZoneApi
+ * @see HostedZoneApi
  * @see <a href=
  *      "http://docs.aws.amazon.com/Route53/latest/APIReference/ActionsOnHostedZones.html"
  *      />
@@ -62,9 +62,9 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(RestAuthentication.class)
 @VirtualHost
 @Path("/{jclouds.api-version}")
-public interface ZoneAsyncApi {
+public interface HostedZoneAsyncApi {
    /**
-    * @see ZoneApi#createWithReference
+    * @see HostedZoneApi#createWithReference
     */
    @Named("CreateHostedZone")
    @POST
@@ -72,11 +72,11 @@ public interface ZoneAsyncApi {
    @Path("/hostedzone")
    @Payload("<CreateHostedZoneRequest xmlns=\"https://route53.amazonaws.com/doc/2012-02-29/\"><Name>{name}</Name><CallerReference>{callerReference}</CallerReference></CreateHostedZoneRequest>")
    @XMLResponseParser(CreateHostedZoneResponseHandler.class)
-   ListenableFuture<NewZone> createWithReference(@PayloadParam("name") String name,
+   ListenableFuture<NewHostedZone> createWithReference(@PayloadParam("name") String name,
          @PayloadParam("callerReference") String callerReference);
 
    /**
-    * @see ZoneApi#createWithReferenceAndComment
+    * @see HostedZoneApi#createWithReferenceAndComment
     */
    @Named("CreateHostedZone")
    @POST
@@ -84,49 +84,49 @@ public interface ZoneAsyncApi {
    @Path("/hostedzone")
    @Payload("<CreateHostedZoneRequest xmlns=\"https://route53.amazonaws.com/doc/2012-02-29/\"><Name>{name}</Name><CallerReference>{callerReference}</CallerReference><HostedZoneConfig><Comment>{comment}</Comment></HostedZoneConfig></CreateHostedZoneRequest>")
    @XMLResponseParser(CreateHostedZoneResponseHandler.class)
-   ListenableFuture<NewZone> createWithReferenceAndComment(@PayloadParam("name") String name,
+   ListenableFuture<NewHostedZone> createWithReferenceAndComment(@PayloadParam("name") String name,
          @PayloadParam("callerReference") String callerReference, @PayloadParam("comment") String comment);
 
    /**
-    * @see ZoneApi#list()
+    * @see HostedZoneApi#list()
     */
    @Named("ListHostedZones")
    @GET
    @Path("/hostedzone")
    @XMLResponseParser(ListHostedZonesResponseHandler.class)
-   @Transform(ZonesToPagedIterable.class)
-   ListenableFuture<PagedIterable<Zone>> list();
+   @Transform(HostedZonesToPagedIterable.class)
+   ListenableFuture<PagedIterable<HostedZone>> list();
 
    /**
-    * @see ZoneApi#listFirstPage
+    * @see HostedZoneApi#listFirstPage
     */
    @Named("ListHostedZones")
    @GET
    @Path("/hostedzone")
    @XMLResponseParser(ListHostedZonesResponseHandler.class)
-   ListenableFuture<IterableWithMarker<Zone>> listFirstPage();
+   ListenableFuture<IterableWithMarker<HostedZone>> listFirstPage();
 
    /**
-    * @see ZoneApi#listAt(String)
+    * @see HostedZoneApi#listAt(String)
     */
    @Named("ListHostedZones")
    @GET
    @Path("/hostedzone")
    @XMLResponseParser(ListHostedZonesResponseHandler.class)
-   ListenableFuture<IterableWithMarker<Zone>> listAt(@QueryParam("marker") String nextMarker);
+   ListenableFuture<IterableWithMarker<HostedZone>> listAt(@QueryParam("marker") String nextMarker);
 
    /**
-    * @see ZoneApi#get()
+    * @see HostedZoneApi#get()
     */
    @Named("GetHostedZone")
    @GET
    @Path("/hostedzone/{zoneId}")
    @XMLResponseParser(GetHostedZoneResponseHandler.class)
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<ZoneAndNameServers> get(@PathParam("zoneId") String zoneId);
+   ListenableFuture<HostedZoneAndNameServers> get(@PathParam("zoneId") String zoneId);
 
    /**
-    * @see ZoneApi#delete()
+    * @see HostedZoneApi#delete()
     */
    @Named("DeleteHostedZone")
    @DELETE

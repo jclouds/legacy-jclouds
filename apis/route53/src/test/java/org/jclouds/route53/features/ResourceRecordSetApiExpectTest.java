@@ -26,9 +26,8 @@ import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.route53.InvalidChangeBatchException;
 import org.jclouds.route53.Route53Api;
 import org.jclouds.route53.domain.ChangeBatch;
-import org.jclouds.route53.domain.RecordSet;
-import org.jclouds.route53.domain.RecordSet.Type;
-import org.jclouds.route53.domain.RecordSetIterable.NextRecord;
+import org.jclouds.route53.domain.ResourceRecordSet;
+import org.jclouds.route53.domain.ResourceRecordSetIterable.NextRecord;
 import org.jclouds.route53.internal.BaseRoute53ApiExpectTest;
 import org.jclouds.route53.parse.GetChangeResponseTest;
 import org.jclouds.route53.parse.ListResourceRecordSetsResponseTest;
@@ -39,8 +38,8 @@ import com.google.common.collect.ImmutableSet;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ResourceRecordSetApiExpectTest")
-public class RecordSetApiExpectTest extends BaseRoute53ApiExpectTest {
+@Test(groups = "unit", testName = "ResourceResourceRecordSetApiExpectTest")
+public class ResourceRecordSetApiExpectTest extends BaseRoute53ApiExpectTest {
 
    HttpRequest create = HttpRequest.builder().method("POST")
          .endpoint("https://route53.amazonaws.com/2012-02-29/hostedzone/Z1PA6795UKMFR9/rrset")
@@ -54,7 +53,7 @@ public class RecordSetApiExpectTest extends BaseRoute53ApiExpectTest {
 
    public void testCreateWhenResponseIs2xx() {
       Route53Api success = requestSendsResponse(create, jobResponse);
-      assertEquals(success.getRecordSetApiForZone("Z1PA6795UKMFR9").create(RecordSet.builder().name("jclouds.org.").type(Type.TXT).add("my texts").build()).toString(),
+      assertEquals(success.getResourceRecordSetApiForHostedZone("Z1PA6795UKMFR9").create(ResourceRecordSet.builder().name("jclouds.org.").type("TXT").add("my texts").build()).toString(),
             new GetChangeResponseTest().expected().toString());
    }
 
@@ -67,10 +66,10 @@ public class RecordSetApiExpectTest extends BaseRoute53ApiExpectTest {
 
    public void testApplyWhenResponseIs2xx() {
       Route53Api success = requestSendsResponse(apply, jobResponse);
-      assertEquals(success.getRecordSetApiForZone("Z1PA6795UKMFR9").apply(
+      assertEquals(success.getResourceRecordSetApiForHostedZone("Z1PA6795UKMFR9").apply(
             ChangeBatch.builder()
-                       .delete(RecordSet.builder().name("jclouds.org.").type(Type.TXT).add("my texts").build())
-                       .create(RecordSet.builder().name("jclouds.org.").type(Type.TXT).add("my better texts").build())
+                       .delete(ResourceRecordSet.builder().name("jclouds.org.").type("TXT").add("my texts").build())
+                       .create(ResourceRecordSet.builder().name("jclouds.org.").type("TXT").add("my better texts").build())
                        .build()).toString(),
             new GetChangeResponseTest().expected().toString());
    }
@@ -81,10 +80,10 @@ public class RecordSetApiExpectTest extends BaseRoute53ApiExpectTest {
             .payload(payloadFromResourceWithContentType("/invalid_change_batch.xml", "application/xml")).build();
 
       Route53Api fails = requestSendsResponse(apply, batchErrorFound);
-      fails.getRecordSetApiForZone("Z1PA6795UKMFR9").apply(
+      fails.getResourceRecordSetApiForHostedZone("Z1PA6795UKMFR9").apply(
             ChangeBatch.builder()
-                       .delete(RecordSet.builder().name("jclouds.org.").type(Type.TXT).add("my texts").build())
-                       .create(RecordSet.builder().name("jclouds.org.").type(Type.TXT).add("my better texts").build())
+                       .delete(ResourceRecordSet.builder().name("jclouds.org.").type("TXT").add("my texts").build())
+                       .create(ResourceRecordSet.builder().name("jclouds.org.").type("TXT").add("my better texts").build())
                        .build());
    }
 
@@ -99,7 +98,7 @@ public class RecordSetApiExpectTest extends BaseRoute53ApiExpectTest {
    
    public void testListWhenResponseIs2xx() {
       Route53Api success = requestSendsResponse(list, listResponse);
-      assertEquals(success.getRecordSetApiForZone("Z1PA6795UKMFR9").list().get(0).toString(), new ListResourceRecordSetsResponseTest().expected()
+      assertEquals(success.getResourceRecordSetApiForHostedZone("Z1PA6795UKMFR9").list().get(0).toString(), new ListResourceRecordSetsResponseTest().expected()
             .toString());
    }
 
@@ -107,7 +106,7 @@ public class RecordSetApiExpectTest extends BaseRoute53ApiExpectTest {
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testListWhenResponseIs404() {
       Route53Api fail = requestSendsResponse(list, notFound);
-      assertEquals(fail.getRecordSetApiForZone("Z1PA6795UKMFR9").list().get(0).toSet(), ImmutableSet.of());
+      assertEquals(fail.getResourceRecordSetApiForHostedZone("Z1PA6795UKMFR9").list().get(0).toSet(), ImmutableSet.of());
    }
    
    HttpRequest listAt = HttpRequest.builder().method("GET")
@@ -118,8 +117,8 @@ public class RecordSetApiExpectTest extends BaseRoute53ApiExpectTest {
    
    public void testListAtWhenResponseIs2xx() {
       Route53Api apiWhenAtExist = requestSendsResponse(listAt, listResponse);
-      NextRecord next = NextRecord.nameAndType("testdoc2.example.com", Type.NS);
-      assertEquals(apiWhenAtExist.getRecordSetApiForZone("Z1PA6795UKMFR9").listAt(next).toString(),
+      NextRecord next = NextRecord.nameAndType("testdoc2.example.com", "NS");
+      assertEquals(apiWhenAtExist.getResourceRecordSetApiForHostedZone("Z1PA6795UKMFR9").listAt(next).toString(),
             new ListResourceRecordSetsResponseTest().expected().toString());
    }
    
@@ -128,7 +127,7 @@ public class RecordSetApiExpectTest extends BaseRoute53ApiExpectTest {
             .payload(payloadFromStringWithContentType("<ListResourceRecordSetsResponse />", "text/xml")).build();
 
       Route53Api success = requestsSendResponses(list, listResponse, listAt, noMore);
-      assertEquals(success.getRecordSetApiForZone("Z1PA6795UKMFR9").list().concat().toSet(), new ListResourceRecordSetsResponseTest().expected()
+      assertEquals(success.getResourceRecordSetApiForHostedZone("Z1PA6795UKMFR9").list().concat().toSet(), new ListResourceRecordSetsResponseTest().expected()
             .toSet());
    }
 
@@ -141,7 +140,7 @@ public class RecordSetApiExpectTest extends BaseRoute53ApiExpectTest {
 
    public void testDeleteWhenResponseIs2xx() {
       Route53Api success = requestSendsResponse(delete, jobResponse);
-      assertEquals(success.getRecordSetApiForZone("Z1PA6795UKMFR9").create(RecordSet.builder().name("jclouds.org.").type(Type.TXT).add("my texts").build()).toString(),
+      assertEquals(success.getResourceRecordSetApiForHostedZone("Z1PA6795UKMFR9").create(ResourceRecordSet.builder().name("jclouds.org.").type("TXT").add("my texts").build()).toString(),
             new GetChangeResponseTest().expected().toString());
    }
 }

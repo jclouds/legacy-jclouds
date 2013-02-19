@@ -16,31 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.route53.predicates;
+package org.jclouds.aws.route53.features;
 
-import static org.jclouds.route53.domain.RecordSet.Type.AAAA;
-import static org.jclouds.route53.domain.RecordSet.Type.NS;
-import static org.jclouds.route53.predicates.RecordSetPredicates.typeEquals;
-
-import org.jclouds.route53.domain.RecordSet;
+import org.jclouds.route53.features.HostedZoneApiLiveTest;
 import org.testng.annotations.Test;
 
 /**
- * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ResourceRecordSetPredicatesTest")
-public class RecordSetPredicatesTest {
-   RecordSet rrs = RecordSet.builder().name("jclouds.org.").type(NS).add("ns-119.awsdns-14.com.")
-         .build();
-
-   @Test
-   public void testTypeEqualsWhenEqual() {
-      assert typeEquals(NS).apply(rrs);
-   }
-
-   @Test
-   public void testTypeEqualsWhenNotEqual() {
-      assert !typeEquals(AAAA).apply(rrs);
+@Test(groups = "live", testName = "AWSHostedZoneApiLiveTest")
+public class AWSHostedZoneApiLiveTest extends HostedZoneApiLiveTest {
+   public AWSHostedZoneApiLiveTest() {
+      provider = "aws-route53";
    }
 }
