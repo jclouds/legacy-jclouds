@@ -20,11 +20,16 @@ package org.jclouds.dynect.v3.internal;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
+import org.jclouds.dynect.v3.config.DynECTRestClientModule;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.config.SSLModule;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
+import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.BaseRestApiExpectTest;
+
+import com.google.inject.Module;
 
 /**
  * Base class for writing DynECT Expect tests
@@ -32,10 +37,24 @@ import org.jclouds.rest.internal.BaseRestApiExpectTest;
  * @author Adrian Cole
  */
 public class BaseDynECTExpectTest<T> extends BaseRestApiExpectTest<T> {
-    public BaseDynECTExpectTest() {
+   public BaseDynECTExpectTest() {
       provider = "dynect";
       identity = "jclouds:joe";
       credential = "letmein";
+   }
+
+   @Override
+   protected Module createModule() {
+      return new TestDynECTRestClientModule();
+   }
+
+   @ConfiguresRestClient
+   private static final class TestDynECTRestClientModule extends DynECTRestClientModule {
+      @Override
+      protected void configure() {
+         install(new SSLModule());
+         super.configure();
+      }
    }
 
    public static Payload emptyJsonPayload() {
@@ -57,12 +76,16 @@ public class BaseDynECTExpectTest<T> extends BaseRestApiExpectTest<T> {
 
    protected String authToken = "FFFFFFFFFF";
 
-   protected HttpRequest createSession = HttpRequest.builder().method("POST")
+   protected HttpRequest createSession = HttpRequest
+         .builder()
+         .method("POST")
          .endpoint("https://api2.dynect.net/REST/Session")
          .addHeader("API-Version", "3.3.7")
-         .payload(payloadFromStringWithContentType("{\"customer_name\":\"jclouds\",\"user_name\":\"joe\",\"password\":\"letmein\"}",APPLICATION_JSON))
+         .payload(
+               payloadFromStringWithContentType(
+                     "{\"customer_name\":\"jclouds\",\"user_name\":\"joe\",\"password\":\"letmein\"}", APPLICATION_JSON))
          .build();
-   
+
    protected HttpResponse createSessionResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResourceWithContentType("/create_session.json", APPLICATION_JSON)).build();
 
