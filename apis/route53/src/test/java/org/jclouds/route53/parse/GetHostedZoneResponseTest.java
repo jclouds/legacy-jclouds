@@ -23,8 +23,8 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.route53.domain.Zone;
-import org.jclouds.route53.domain.ZoneAndNameServers;
+import org.jclouds.route53.domain.HostedZone;
+import org.jclouds.route53.domain.HostedZoneAndNameServers;
 import org.jclouds.route53.xml.GetHostedZoneResponseHandler;
 import org.testng.annotations.Test;
 
@@ -40,16 +40,16 @@ public class GetHostedZoneResponseTest extends BaseHandlerTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/hosted_zone.xml");
 
-      ZoneAndNameServers expected = expected();
+      HostedZoneAndNameServers expected = expected();
 
       GetHostedZoneResponseHandler handler = injector.getInstance(GetHostedZoneResponseHandler.class);
-      ZoneAndNameServers result = factory.create(handler).parse(is);
+      HostedZoneAndNameServers result = factory.create(handler).parse(is);
 
       assertEquals(result, expected);
    }
 
-   public ZoneAndNameServers expected() {
-      return ZoneAndNameServers.create(Zone.builder()
+   public HostedZoneAndNameServers expected() {
+      return HostedZoneAndNameServers.create(HostedZone.builder()
                                            .id("Z21DW1QVGID6NG")
                                            .name("example.com.")
                                            .callerReference("a_unique_reference")

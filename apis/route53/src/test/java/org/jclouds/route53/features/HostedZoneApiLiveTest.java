@@ -29,8 +29,8 @@ import java.util.Date;
 
 import org.jclouds.JcloudsVersion;
 import org.jclouds.route53.domain.Change;
-import org.jclouds.route53.domain.NewZone;
-import org.jclouds.route53.domain.Zone;
+import org.jclouds.route53.domain.NewHostedZone;
+import org.jclouds.route53.domain.HostedZone;
 import org.jclouds.route53.internal.BaseRoute53ApiLiveTest;
 import org.testng.annotations.Test;
 
@@ -39,62 +39,62 @@ import com.google.common.collect.ImmutableList;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "ZoneApiLiveTest")
-public class ZoneApiLiveTest extends BaseRoute53ApiLiveTest {
+@Test(groups = "live", testName = "HostedZoneApiLiveTest")
+public class HostedZoneApiLiveTest extends BaseRoute53ApiLiveTest {
 
-   private void checkZone(Zone zone) {
+   private void checkHostedZone(HostedZone zone) {
       getAnonymousLogger().info(format("zone %s rrs: %s", zone.getName(), zone.getResourceRecordSetCount()));
 
-      checkNotNull(zone.getId(), "Id: Zone %s", zone);
-      checkNotNull(zone.getName(), "Name: Zone %s", zone);
-      checkNotNull(zone.getCallerReference(), "CallerReference: Zone %s", zone);
-      checkNotNull(zone.getComment(), "While Comment can be null for a Zone, its Optional wrapper cannot %s", zone);
+      checkNotNull(zone.getId(), "Id: HostedZone %s", zone);
+      checkNotNull(zone.getName(), "Name: HostedZone %s", zone);
+      checkNotNull(zone.getCallerReference(), "CallerReference: HostedZone %s", zone);
+      checkNotNull(zone.getComment(), "While Comment can be null for a HostedZone, its Optional wrapper cannot %s", zone);
    }
 
    @Test
-   protected void testListZones() {
-      ImmutableList<Zone> zones = api().list().concat().toImmutableList();
+   protected void testListHostedZones() {
+      ImmutableList<HostedZone> zones = api().list().concat().toImmutableList();
       getAnonymousLogger().info("zones: " + zones.size());
 
-      for (Zone zone : zones) {
-         checkZone(zone);
+      for (HostedZone zone : zones) {
+         checkHostedZone(zone);
          assertEquals(api().get(zone.getId()).getZone(), zone);
       }
    }
 
    @Test
-   public void testGetZoneWhenNotFound() {
+   public void testGetHostedZoneWhenNotFound() {
       assertNull(api().get("AAAAAAAAAAAAAAAA"));
    }
 
    @Test
-   public void testDeleteZoneWhenNotFound() {
+   public void testDeleteHostedZoneWhenNotFound() {
       assertNull(api().delete("AAAAAAAAAAAAAAAA"));
    }
 
    @Test
-   public void testCreateAndDeleteZone() {
+   public void testCreateAndDeleteHostedZone() {
       String name = System.getProperty("user.name").replace('.', '-') + ".zone.route53test.jclouds.org.";
       String nonce = name + " @ " + new Date();
       String comment = name + " for " + JcloudsVersion.get();
-      NewZone newZone = api().createWithReferenceAndComment(name, nonce, comment);
-      getAnonymousLogger().info("created zone: " + newZone);
+      NewHostedZone newHostedZone = api().createWithReferenceAndComment(name, nonce, comment);
+      getAnonymousLogger().info("created zone: " + newHostedZone);
       try {
-         checkZone(newZone.getZone());
-         assertEquals(newZone.getChange().getStatus(), PENDING, "invalid status on zone " + newZone);
-         assertTrue(newZone.getNameServers().size() > 0, "no name servers for zone " + newZone);
-         assertEquals(newZone.getZone().getName(), name);
-         assertEquals(newZone.getZone().getCallerReference(), nonce);
-         assertEquals(newZone.getZone().getComment().get(), comment);
+         checkHostedZone(newHostedZone.getZone());
+         assertEquals(newHostedZone.getChange().getStatus(), PENDING, "invalid status on zone " + newHostedZone);
+         assertTrue(newHostedZone.getNameServers().size() > 0, "no name servers for zone " + newHostedZone);
+         assertEquals(newHostedZone.getZone().getName(), name);
+         assertEquals(newHostedZone.getZone().getCallerReference(), nonce);
+         assertEquals(newHostedZone.getZone().getComment().get(), comment);
          
-         assertTrue(inSync.apply(newZone.getChange()), "zone didn't sync " + newZone);
+         assertTrue(inSync.apply(newHostedZone.getChange()), "zone didn't sync " + newHostedZone);
       } finally {
-         Change delete = api().delete(newZone.getZone().getId());
+         Change delete = api().delete(newHostedZone.getZone().getId());
          assertTrue(inSync.apply(delete), "delete didn't sync " + delete);
       }
    }
 
-   protected ZoneApi api() {
-      return context.getApi().getZoneApi();
+   protected HostedZoneApi api() {
+      return context.getApi().getHostedZoneApi();
    }
 }

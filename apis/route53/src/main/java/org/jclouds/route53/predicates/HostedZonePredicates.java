@@ -20,33 +20,32 @@ package org.jclouds.route53.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.route53.domain.RecordSet;
-import org.jclouds.route53.domain.RecordSet.Type;
+import org.jclouds.route53.domain.HostedZone;
 
 import com.google.common.base.Predicate;
 
 /**
- * Predicates handy when working with ResourceRecordSet Types
+ * Predicates handy when working with HostedZones
  * 
  * @author Adrian Cole
  */
-public class RecordSetPredicates {
+public class HostedZonePredicates {
 
    /**
-    * matches zones of the given type
+    * matches zones of the given name
     */
-   public static Predicate<RecordSet> typeEquals(final Type type) {
-      checkNotNull(type, "type must be defined");
+   public static Predicate<HostedZone> nameEquals(final String name) {
+      checkNotNull(name, "name must be defined");
 
-      return new Predicate<RecordSet>() {
+      return new Predicate<HostedZone>() {
          @Override
-         public boolean apply(RecordSet zone) {
-            return type.equals(zone.getType());
+         public boolean apply(HostedZone zone) {
+            return name.equals(zone.getName());
          }
 
          @Override
          public String toString() {
-            return "typeEquals(" + type + ")";
+            return "nameEquals(" + name + ")";
          }
       };
    }

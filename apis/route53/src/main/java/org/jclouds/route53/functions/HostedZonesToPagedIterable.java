@@ -25,9 +25,8 @@ import javax.inject.Inject;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.internal.CallerArg0ToPagedIterable;
 import org.jclouds.route53.Route53Api;
-import org.jclouds.route53.domain.RecordSet;
-import org.jclouds.route53.domain.RecordSetIterable.NextRecord;
-import org.jclouds.route53.features.RecordSetApi;
+import org.jclouds.route53.domain.HostedZone;
+import org.jclouds.route53.features.HostedZoneApi;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
@@ -36,29 +35,28 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Beta
-public class RecordSetIterableToPagedIterable extends
-      CallerArg0ToPagedIterable<RecordSet, RecordSetIterableToPagedIterable> {
+public class HostedZonesToPagedIterable extends CallerArg0ToPagedIterable<HostedZone, HostedZonesToPagedIterable> {
 
    private final Route53Api api;
 
    @Inject
-   protected RecordSetIterableToPagedIterable(Route53Api api) {
+   protected HostedZonesToPagedIterable(Route53Api api) {
       this.api = checkNotNull(api, "api");
    }
 
    @Override
-   protected Function<Object, IterableWithMarker<RecordSet>> markerToNextForCallingArg0(String zoneId) {
-      final RecordSetApi resourceRecordSetApi = api.getRecordSetApiForZone(zoneId);
-      return new Function<Object, IterableWithMarker<RecordSet>>() {
+   protected Function<Object, IterableWithMarker<HostedZone>> markerToNextForCallingArg0(String ignored) {
+      final HostedZoneApi zoneApi = api.getHostedZoneApi();
+      return new Function<Object, IterableWithMarker<HostedZone>>() {
 
          @Override
-         public IterableWithMarker<RecordSet> apply(Object input) {
-            return resourceRecordSetApi.listAt(NextRecord.class.cast(input));
+         public IterableWithMarker<HostedZone> apply(Object input) {
+            return zoneApi.listAt(input.toString());
          }
 
          @Override
          public String toString() {
-            return "listResourceRecordSets()";
+            return "listHostedZones()";
          }
       };
    }

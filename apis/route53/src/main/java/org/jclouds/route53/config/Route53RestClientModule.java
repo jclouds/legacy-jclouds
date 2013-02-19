@@ -34,10 +34,10 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.route53.Route53Api;
 import org.jclouds.route53.Route53AsyncApi;
-import org.jclouds.route53.features.RecordSetApi;
-import org.jclouds.route53.features.RecordSetAsyncApi;
-import org.jclouds.route53.features.ZoneApi;
-import org.jclouds.route53.features.ZoneAsyncApi;
+import org.jclouds.route53.features.ResourceRecordSetApi;
+import org.jclouds.route53.features.ResourceRecordSetAsyncApi;
+import org.jclouds.route53.features.HostedZoneApi;
+import org.jclouds.route53.features.HostedZoneAsyncApi;
 import org.jclouds.route53.filters.RestAuthentication;
 import org.jclouds.route53.handlers.Route53ErrorHandler;
 
@@ -53,8 +53,8 @@ import com.google.inject.Provides;
 @ConfiguresRestClient
 public class Route53RestClientModule extends AWSRestClientModule<Route53Api, Route53AsyncApi> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(ZoneApi.class, ZoneAsyncApi.class)
-         .put(RecordSetApi.class, RecordSetAsyncApi.class).build();
+         .put(HostedZoneApi.class, HostedZoneAsyncApi.class)
+         .put(ResourceRecordSetApi.class, ResourceRecordSetAsyncApi.class).build();
 
    public Route53RestClientModule() {
       super(TypeToken.of(Route53Api.class), TypeToken.of(Route53AsyncApi.class), DELEGATE_MAP);
