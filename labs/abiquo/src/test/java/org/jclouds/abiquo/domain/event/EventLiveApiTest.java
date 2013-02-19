@@ -230,7 +230,8 @@ public class EventLiveApiTest extends BaseAbiquoApiLiveApiTest {
 
    private VirtualMachine createVirtualMachine() {
       VirtualMachine virtualMachine = VirtualMachine
-            .builder(env.context.getApiContext(), env.virtualAppliance, env.template).cpu(2).ram(128).build();
+            .builder(env.context.getApiContext(), env.virtualAppliance, env.template).cpu(2).ram(128)
+            .nameLabel(PREFIX + "events").build();
 
       virtualMachine.save();
       assertNotNull(virtualMachine.getId());
