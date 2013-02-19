@@ -101,7 +101,7 @@ public class RecordId {
       return toStringHelper(this).add("zone", zone).add("fqdn", fqdn).add("type", type).add("id", id);
    }
 
-   public static Builder<?> builder() {
+   public static Builder<?> recordIdBuilder() {
       return new ConcreteBuilder();
    }
 

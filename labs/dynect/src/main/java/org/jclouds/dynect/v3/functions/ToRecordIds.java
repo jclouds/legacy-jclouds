@@ -20,6 +20,7 @@ package org.jclouds.dynect.v3.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.dynect.v3.domain.RecordId.recordIdBuilder;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -63,7 +64,7 @@ public final class ToRecordIds implements Function<HttpResponse, FluentIterable<
       public RecordId apply(String in) {
          Matcher matcher = DEFAULT_PATTERN.matcher(in);
          checkState(matcher.find() && matcher.groupCount() == 4, "%s didn't match %s", in, DEFAULT_PATTERN);
-         return RecordId.builder().type(matcher.group(1)).zone(matcher.group(2)).fqdn(matcher.group(3))
+         return recordIdBuilder().type(matcher.group(1)).zone(matcher.group(2)).fqdn(matcher.group(3))
                .id(Long.parseLong(matcher.group(4))).build();
       }
    }

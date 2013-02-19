@@ -1,5 +1,6 @@
 package org.jclouds.dynect.v3.predicates;
 
+import static org.jclouds.dynect.v3.domain.RecordId.recordIdBuilder;
 import static org.jclouds.dynect.v3.predicates.RecordPredicates.typeEquals;
 
 import org.jclouds.dynect.v3.domain.RecordId;
@@ -11,7 +12,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit")
 public class RecordPredicatesTest {
-   RecordId recordId = RecordId.builder()
+   RecordId recordId = recordIdBuilder()
                                .zone("adrianc.zone.dynecttest.jclouds.org")
                                .fqdn("adrianc.zone.dynecttest.jclouds.org")
                                .type("SOA")
