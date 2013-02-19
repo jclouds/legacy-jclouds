@@ -22,31 +22,28 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Set;
+import java.util.List;
 
-import org.jclouds.route53.domain.RecordSet.RecordSubset.Latency;
-import org.jclouds.route53.domain.RecordSet.RecordSubset.Weighted;
+import org.jclouds.route53.domain.ResourceRecordSet.RecordSubset.Latency;
+import org.jclouds.route53.domain.ResourceRecordSet.RecordSubset.Weighted;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
+import com.google.common.primitives.UnsignedInteger;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class RecordSet {
+public class ResourceRecordSet {
 
    protected final String name;
-   protected final Type type;
-   protected final Optional<Integer> ttl;
-   protected final Set<String> values;
+   protected final String type;
+   protected final Optional<UnsignedInteger> ttl;
+   protected final List<String> values;
    protected final Optional<AliasTarget> aliasTarget;
-
-   public enum Type {
-      A, AAAA, CNAME, MX, NS, PTR, SOA, SPF, SRV, TXT;
-   }
 
    /**
     * In this case, the rrs is an alias, and it points to another Route53 hosted
@@ -98,22 +95,22 @@ public class RecordSet {
    /**
     * A portion of a RRs who share the same name and type
     */
-   public static abstract class RecordSubset extends RecordSet {
+   public static abstract class RecordSubset extends ResourceRecordSet {
       public static final class Weighted extends RecordSubset {
 
-         private final int weight;
+         private final UnsignedInteger weight;
 
-         private Weighted(String id, String name, Type type, int weight, Optional<Integer> ttl, Set<String> values,
+         private Weighted(String id, String name, String type, UnsignedInteger weight, Optional<UnsignedInteger> ttl, List<String> values,
                Optional<AliasTarget> aliasTarget) {
             super(id, name, type, ttl, values, aliasTarget);
-            this.weight = weight;
+            this.weight = checkNotNull(weight, "weight");
          }
 
          /**
           * determines what portion of traffic for the current resource record
           * set is routed to this subset.
           */
-         public int getWeight() {
+         public UnsignedInteger getWeight() {
             return weight;
          }
 
@@ -127,7 +124,7 @@ public class RecordSet {
 
          private final String region;
 
-         private Latency(String id, String name, Type type, String region, Optional<Integer> ttl, Set<String> values,
+         private Latency(String id, String name, String type, String region, Optional<UnsignedInteger> ttl, List<String> values,
                Optional<AliasTarget> aliasTarget) {
             super(id, name, type, ttl, values, aliasTarget);
             this.region = checkNotNull(region, "region of %s", name);
@@ -149,7 +146,7 @@ public class RecordSet {
 
       private final String id;
 
-      private RecordSubset(String id, String name, Type type, Optional<Integer> ttl, Set<String> values,
+      private RecordSubset(String id, String name, String type, Optional<UnsignedInteger> ttl, List<String> values,
             Optional<AliasTarget> aliasTarget) {
          super(name, type, ttl, values, aliasTarget);
          this.id = checkNotNull(id, "id of %s", name);
@@ -186,7 +183,7 @@ public class RecordSet {
       }
    }
 
-   private RecordSet(String name, Type type, Optional<Integer> ttl, Set<String> values, Optional<AliasTarget> aliasTarget) {
+   private ResourceRecordSet(String name, String type, Optional<UnsignedInteger> ttl, List<String> values, Optional<AliasTarget> aliasTarget) {
       this.name = checkNotNull(name, "name");
       this.type = checkNotNull(type, "type of %s", name);
       this.ttl = checkNotNull(ttl, "ttl for %s", name);
@@ -204,7 +201,7 @@ public class RecordSet {
    /**
     * The resource record set type.
     */
-   public Type getType() {
+   public String getType() {
       return type;
    }
 
@@ -212,21 +209,21 @@ public class RecordSet {
     * Present in all resource record sets except aliases. The resource record
     * cache time to live (TTL), in seconds.
     */
-   public Optional<Integer> getTTL() {
+   public Optional<UnsignedInteger> getTTL() {
       return ttl;
    }
 
    /**
     * Type-specific values that differentiates the RRs in this set. Empty if
-    * {@link #getType()} is {@link Type#A} or {@link Type#AAAA} and
+    * {@link #getType()} is {@code A} or {@code AAAA} and
     * {@link #getAliasTarget} is present.
     */
-   public Set<String> getValues() {
+   public List<String> getValues() {
       return values;
    }
 
    /**
-    * When present, {@link #getType()} is {@link Type#A} or {@link Type#AAAA}.
+    * When present, {@link #getType()} is {@code A} or {@code AAAA}.
     * Instead of {@link #getValues()} containing the corresponding IP addresses,
     * the server will follow this link and resolve one on-demand.
     */
@@ -245,7 +242,7 @@ public class RecordSet {
          return true;
       if (obj == null || getClass() != obj.getClass())
          return false;
-      RecordSet other = RecordSet.class.cast(obj);
+      ResourceRecordSet other = ResourceRecordSet.class.cast(obj);
       return equal(this.name, other.name) && equal(this.type, other.type);
    }
 
@@ -266,12 +263,12 @@ public class RecordSet {
    public final static class Builder {
       private String id;
       private String name;
-      private Type type;
-      private Optional<Integer> ttl = Optional.absent();
-      private ImmutableSet.Builder<String> values = ImmutableSet.<String> builder();
+      private String type;
+      private Optional<UnsignedInteger> ttl = Optional.absent();
+      private ImmutableList.Builder<String> values = ImmutableList.<String> builder();
       private String dnsName;
       private String zoneId;
-      private Integer weight;
+      private UnsignedInteger weight;
       private String region;
 
       /**
@@ -283,7 +280,7 @@ public class RecordSet {
       }
 
       /**
-       * @see RecordSet#getName()
+       * @see ResourceRecordSet#getName()
        */
       public Builder name(String name) {
          this.name = name;
@@ -291,23 +288,30 @@ public class RecordSet {
       }
 
       /**
-       * @see RecordSet#getType()
+       * @see ResourceRecordSet#getType()
        */
-      public Builder type(Type type) {
+      public Builder type(String type) {
          this.type = type;
          return this;
       }
 
       /**
-       * @see RecordSet#getTTL()
+       * @see ResourceRecordSet#getTTL()
        */
-      public Builder ttl(Integer ttl) {
+      public Builder ttl(UnsignedInteger ttl) {
          this.ttl = Optional.fromNullable(ttl);
          return this;
       }
 
       /**
-       * @see RecordSet#getAliasTarget()
+       * @see ResourceRecordSet#getTTL()
+       */
+      public Builder ttl(int ttl) {
+         return ttl(UnsignedInteger.fromIntBits(ttl));
+      }
+
+      /**
+       * @see ResourceRecordSet#getAliasTarget()
        */
       public Builder dnsName(String dnsName) {
          this.dnsName = dnsName;
@@ -315,7 +319,7 @@ public class RecordSet {
       }
 
       /**
-       * @see RecordSet#getAliasTarget()
+       * @see ResourceRecordSet#getAliasTarget()
        */
       public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
@@ -323,7 +327,7 @@ public class RecordSet {
       }
 
       /**
-       * @see RecordSet#getAliasTarget()
+       * @see ResourceRecordSet#getAliasTarget()
        */
       public Builder aliasTarget(AliasTarget aliasTarget) {
          if (aliasTarget == null) {
@@ -337,7 +341,7 @@ public class RecordSet {
       }
 
       /**
-       * @see RecordSet#getValues()
+       * @see ResourceRecordSet#getValues()
        */
       public Builder add(String values) {
          this.values.add(values);
@@ -345,7 +349,7 @@ public class RecordSet {
       }
 
       /**
-       * @see RecordSet#getValues()
+       * @see ResourceRecordSet#getValues()
        */
       public Builder addAll(Iterable<String> values) {
          this.values.addAll(values);
@@ -355,7 +359,7 @@ public class RecordSet {
       /**
        * @see RecordSubset.Weighted
        */
-      public Builder weight(Integer weight) {
+      public Builder weight(UnsignedInteger weight) {
          this.weight = weight;
          return this;
       }
@@ -368,7 +372,7 @@ public class RecordSet {
          return this;
       }
 
-      public RecordSet build() {
+      public ResourceRecordSet build() {
          Optional<AliasTarget> aliasTarget = dnsName != null ? Optional.fromNullable(AliasTarget.dnsNameInZone(dnsName, zoneId))
                : Optional.<AliasTarget> absent();
          if (weight != null) {
@@ -376,10 +380,10 @@ public class RecordSet {
          } else if (region != null) {
             return new RecordSubset.Latency(id, name, type, region, ttl, values.build(), aliasTarget);
          }
-         return new RecordSet(name, type, ttl, values.build(), aliasTarget);
+         return new ResourceRecordSet(name, type, ttl, values.build(), aliasTarget);
       }
 
-      public Builder from(RecordSet in) {
+      public Builder from(ResourceRecordSet in) {
          if (in instanceof RecordSubset)
             id(RecordSubset.class.cast(in).id);
          if (in instanceof Weighted) {

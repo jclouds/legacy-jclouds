@@ -21,25 +21,26 @@ package org.jclouds.route53.xml;
 import static org.jclouds.util.SaxUtils.currentOrNull;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.route53.domain.RecordSet;
-import org.jclouds.route53.domain.RecordSet.Type;
+import org.jclouds.route53.domain.ResourceRecordSet;
 import org.xml.sax.Attributes;
+
+import com.google.common.primitives.UnsignedInteger;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class ResourceRecordSetHandler extends ParseSax.HandlerForGeneratedRequestWithResult<RecordSet> {
+public class ResourceRecordSetHandler extends ParseSax.HandlerForGeneratedRequestWithResult<ResourceRecordSet> {
 
    private StringBuilder currentText = new StringBuilder();
-   private RecordSet.Builder builder = RecordSet.builder();
+   private ResourceRecordSet.Builder builder = ResourceRecordSet.builder();
 
    @Override
-   public RecordSet getResult() {
+   public ResourceRecordSet getResult() {
       try {
          return builder.build();
       } finally {
-         builder = RecordSet.builder();
+         builder = ResourceRecordSet.builder();
       }
    }
 
@@ -52,9 +53,9 @@ public class ResourceRecordSetHandler extends ParseSax.HandlerForGeneratedReques
       if (qName.equals("Name")) {
          builder.name(currentOrNull(currentText));
       } else if (qName.equals("Type")) {
-         builder.type(Type.valueOf(currentOrNull(currentText)));
+         builder.type(currentOrNull(currentText));
       } else if (qName.equals("TTL")) {
-         builder.ttl(Integer.parseInt(currentOrNull(currentText)));
+         builder.ttl(UnsignedInteger.valueOf(currentOrNull(currentText)));
       } else if (qName.equals("Value")) {
          builder.add(currentOrNull(currentText));
       } else if (qName.equals("HostedZoneId")) {
@@ -64,7 +65,7 @@ public class ResourceRecordSetHandler extends ParseSax.HandlerForGeneratedReques
       } else if (qName.equals("DNSName")) {
          builder.dnsName(currentOrNull(currentText));
       } else if (qName.equals("Weight")) {
-         builder.weight(Integer.parseInt(currentOrNull(currentText)));
+         builder.weight(UnsignedInteger.valueOf(currentOrNull(currentText)));
       } else if (qName.equals("Region")) {
          builder.region(currentOrNull(currentText));
       }

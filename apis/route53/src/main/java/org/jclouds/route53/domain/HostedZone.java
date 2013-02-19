@@ -29,7 +29,7 @@ import com.google.common.base.Optional;
  * 
  * @author Adrian Cole
  */
-public final class Zone {
+public final class HostedZone {
 
    private final String id;
    private final String name;
@@ -37,7 +37,7 @@ public final class Zone {
    private final int resourceRecordSetCount;
    private final Optional<String> comment;
 
-   private Zone(String id, String name, String callerReference, int resourceRecordSetCount, Optional<String> comment) {
+   private HostedZone(String id, String name, String callerReference, int resourceRecordSetCount, Optional<String> comment) {
       this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name");
       this.callerReference = checkNotNull(callerReference, "callerReference for %s", name);
@@ -67,7 +67,7 @@ public final class Zone {
    }
 
    /**
-    * A percentage value that indicates the size of the policy in packed form.
+    * count of record sets
     */
    public int getResourceRecordSetCount() {
       return resourceRecordSetCount;
@@ -88,7 +88,7 @@ public final class Zone {
          return true;
       if (obj == null || getClass() != obj.getClass())
          return false;
-      Zone that = Zone.class.cast(obj);
+      HostedZone that = HostedZone.class.cast(obj);
       return equal(this.id, that.id) && equal(this.name, that.name)
             && equal(this.callerReference, that.callerReference);
    }
@@ -112,11 +112,11 @@ public final class Zone {
       private String id;
       private String name;
       private String callerReference;
-      private int resourceRecordSetCount = 0;
+      private int resourceRecordSetCount;
       private Optional<String> comment = Optional.absent();
 
       /**
-       * @see Zone#getId()
+       * @see HostedZone#getId()
        */
       public Builder id(String id) {
          this.id = id;
@@ -124,7 +124,7 @@ public final class Zone {
       }
 
       /**
-       * @see Zone#getName()
+       * @see HostedZone#getName()
        */
       public Builder name(String name) {
          this.name = name;
@@ -132,7 +132,7 @@ public final class Zone {
       }
 
       /**
-       * @see Zone#getCallerReference()
+       * @see HostedZone#getCallerReference()
        */
       public Builder callerReference(String callerReference) {
          this.callerReference = callerReference;
@@ -140,7 +140,7 @@ public final class Zone {
       }
 
       /**
-       * @see Zone#getResourceRecordSetCount()
+       * @see HostedZone#getResourceRecordSetCount()
        */
       public Builder resourceRecordSetCount(int resourceRecordSetCount) {
          this.resourceRecordSetCount = resourceRecordSetCount;
@@ -148,18 +148,18 @@ public final class Zone {
       }
 
       /**
-       * @see Zone#getComment()
+       * @see HostedZone#getComment()
        */
       public Builder comment(String comment) {
          this.comment = Optional.fromNullable(comment);
          return this;
       }
 
-      public Zone build() {
-         return new Zone(id, name, callerReference, resourceRecordSetCount, comment);
+      public HostedZone build() {
+         return new HostedZone(id, name, callerReference, resourceRecordSetCount, comment);
       }
 
-      public Builder from(Zone in) {
+      public Builder from(HostedZone in) {
          return this.id(in.id).name(in.name).callerReference(in.callerReference)
                .resourceRecordSetCount(in.resourceRecordSetCount).comment(in.comment.orNull());
       }

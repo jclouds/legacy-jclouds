@@ -18,35 +18,26 @@
  */
 package org.jclouds.route53.predicates;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.route53.predicates.HostedZonePredicates.nameEquals;
 
-import org.jclouds.route53.domain.Zone;
-
-import com.google.common.base.Predicate;
+import org.jclouds.route53.domain.HostedZone;
+import org.testng.annotations.Test;
 
 /**
- * Predicates handy when working with Zones
  * 
  * @author Adrian Cole
  */
-public class ZonePredicates {
+@Test(groups = "unit", testName = "HostedZonePredicatesTest")
+public class HostedZonePredicatesTest {
+   HostedZone zone = HostedZone.builder().id("EEEFFFEEE").callerReference("goog").name("jclouds.org.").build();
 
-   /**
-    * matches zones of the given name
-    */
-   public static Predicate<Zone> nameEquals(final String name) {
-      checkNotNull(name, "name must be defined");
+   @Test
+   public void testNameEqualsWhenEqual() {
+      assert nameEquals("jclouds.org.").apply(zone);
+   }
 
-      return new Predicate<Zone>() {
-         @Override
-         public boolean apply(Zone zone) {
-            return name.equals(zone.getName());
-         }
-
-         @Override
-         public String toString() {
-            return "nameEquals(" + name + ")";
-         }
-      };
+   @Test
+   public void testNameEqualsWhenNotEqual() {
+      assert !nameEquals("kclouds.org.").apply(zone);
    }
 }
