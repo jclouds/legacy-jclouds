@@ -20,9 +20,10 @@ package org.jclouds.cloudfiles;
 
 import java.net.URI;
 import java.util.Set;
+
 import org.jclouds.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.cloudfiles.options.ListCdnContainerOptions;
-import org.jclouds.openstack.swift.CommonSwiftClient;
+import org.jclouds.openstack.swift.SwiftClient;
 
 /**
  * Provides access to Cloud Files via their REST API.
@@ -30,7 +31,7 @@ import org.jclouds.openstack.swift.CommonSwiftClient;
  * @author Adrian Cole
  * @see <a href="http://docs.rackspace.com/files/api/v1/cf-devguide/content/index.html">Cloud Files</a>
  */
-public interface CloudFilesClient extends CommonSwiftClient {
+public interface CloudFilesClient extends SwiftClient {
 
    /**
     * Retrieve a list of existing CDN-enabled containers.
