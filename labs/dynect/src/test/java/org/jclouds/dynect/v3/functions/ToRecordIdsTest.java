@@ -19,6 +19,7 @@
 
 package org.jclouds.dynect.v3.functions;
 
+import static org.jclouds.dynect.v3.domain.RecordId.recordIdBuilder;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.dynect.v3.domain.RecordId;
@@ -34,7 +35,7 @@ import com.google.gson.Gson;
 @Test(groups = "unit")
 public class ToRecordIdsTest {
    ToRecordIds fn = new ToRecordIds(new GsonWrapper(new Gson()));
-   RecordId recordId = RecordId.builder()
+   RecordId recordId = recordIdBuilder()
                                .id(50976583)
                                .type("NS")
                                .zone("adrianc.zone.dynecttest.jclouds.org")
