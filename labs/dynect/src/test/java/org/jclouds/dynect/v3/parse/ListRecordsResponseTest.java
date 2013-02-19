@@ -19,6 +19,8 @@
 
 package org.jclouds.dynect.v3.parse;
 
+import static org.jclouds.dynect.v3.domain.RecordId.recordIdBuilder;
+
 import org.jclouds.dynect.v3.domain.RecordId;
 import org.jclouds.dynect.v3.domain.RecordId.Builder;
 import org.jclouds.dynect.v3.functions.ToRecordIds;
@@ -43,7 +45,7 @@ public class ListRecordsResponseTest extends BaseDynECTParseTest<FluentIterable<
    @Override
    @ResponseParser(ToRecordIds.class)
    public FluentIterable<RecordId> expected() {
-      Builder<?> builder = RecordId.builder()
+      Builder<?> builder = recordIdBuilder()
                                    .zone("adrianc.zone.dynecttest.jclouds.org")
                                    .fqdn("adrianc.zone.dynecttest.jclouds.org");
       return FluentIterable.from(ImmutableSet.<RecordId> builder()
