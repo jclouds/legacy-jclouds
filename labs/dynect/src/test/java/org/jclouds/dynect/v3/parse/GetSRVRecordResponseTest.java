@@ -16,42 +16,42 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.dynect.v3.parse;
 
-import static com.google.common.base.Functions.compose;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
 
-import org.jclouds.dynect.v3.functions.ExtractZoneNames;
+import org.jclouds.dynect.v3.domain.Record;
+import org.jclouds.dynect.v3.domain.rdata.SRVData;
 import org.jclouds.dynect.v3.internal.BaseDynECTParseTest;
-import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Function;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Injector;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class ListZonesResponseTest extends BaseDynECTParseTest<FluentIterable<String>> {
+public class GetSRVRecordResponseTest extends BaseDynECTParseTest<Record<SRVData>> {
 
    @Override
    public String resource() {
-      return "/list_zones.json";
+      return "/get_record_srv.json";
    }
 
    @Override
    @SelectJson("data")
-   public FluentIterable<String> expected() {
-      return FluentIterable.from(ImmutableSet.of("0.0.0.0.d.6.e.0.0.a.2.ip6.arpa", "126.12.44.in-addr.arpa", "jclouds.org"));
-   }
-
-   // TODO: currently our parsing of annotations on expected() ignores @Transform
-   @Override
-   protected Function<HttpResponse, FluentIterable<String>> parser(Injector i) {
-      return compose(new ExtractZoneNames(), super.parser(i));
+   @Consumes(MediaType.APPLICATION_JSON)
+   public Record<SRVData> expected() {
+      return Record.<SRVData> builder()
+                   .zone("adrianc.zone.dynecttest.jclouds.org")
+                   .fqdn("_http._tcp.www.jclouds.org.")
+                   .type("SRV")
+                   .id(50976579l)
+                   .ttl(3600)
+                   .rdata(SRVData.builder()
+                                 .priority(0)
+                                 .weight(2)
+                                 .port(80)
+                                 .target("www.jclouds.org.").build()).build();
    }
 }

@@ -1,0 +1,1 @@
+{"status": "success", "data": {"zone": "egg.org", "ttl": 86400, "fqdn": "1.2.3.0.0.0.0.0.0.0.0.0.0.0.0.0.d.9.2.1.4.0.0.7.0.c.6.8.0.0.a.2.ip6.arpa", "record_type": "PTR", "rdata": {"ptrdname": "egg.org."}, "record_id": 50959331}, "job_id": 274279510, "msgs": [{"INFO": "get: Found the record", "SOURCE": "API-B", "ERR_CD": null, "LVL": "INFO"}]}

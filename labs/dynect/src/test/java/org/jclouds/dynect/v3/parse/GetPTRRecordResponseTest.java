@@ -3,7 +3,7 @@
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
+ * to you under the Apache License, String 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
@@ -16,42 +16,40 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.dynect.v3.parse;
+import static org.jclouds.dynect.v3.domain.rdata.PTRData.ptr;
 
-import static com.google.common.base.Functions.compose;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
 
-import org.jclouds.dynect.v3.functions.ExtractZoneNames;
+import org.jclouds.dynect.v3.domain.Record;
+import org.jclouds.dynect.v3.domain.rdata.PTRData;
 import org.jclouds.dynect.v3.internal.BaseDynECTParseTest;
-import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Function;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Injector;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class ListZonesResponseTest extends BaseDynECTParseTest<FluentIterable<String>> {
+public class GetPTRRecordResponseTest extends BaseDynECTParseTest<Record<PTRData>> {
 
    @Override
    public String resource() {
-      return "/list_zones.json";
+      return "/get_record_ptr.json";
    }
 
    @Override
    @SelectJson("data")
-   public FluentIterable<String> expected() {
-      return FluentIterable.from(ImmutableSet.of("0.0.0.0.d.6.e.0.0.a.2.ip6.arpa", "126.12.44.in-addr.arpa", "jclouds.org"));
-   }
-
-   // TODO: currently our parsing of annotations on expected() ignores @Transform
-   @Override
-   protected Function<HttpResponse, FluentIterable<String>> parser(Injector i) {
-      return compose(new ExtractZoneNames(), super.parser(i));
+   @Consumes(MediaType.APPLICATION_JSON)
+   public Record<PTRData> expected() {
+      return Record.<PTRData> builder()
+                   .zone("egg.org")
+                   .fqdn("1.2.3.0.0.0.0.0.0.0.0.0.0.0.0.0.d.9.2.1.4.0.0.7.0.c.6.8.0.0.a.2.ip6.arpa")
+                   .type("PTR")
+                   .id(50959331)
+                   .ttl(86400)
+                   .rdata(ptr("egg.org."))
+                   .build();
    }
 }

@@ -1,0 +1,1 @@
+{"status": "success", "data": {"zone": "egg.org", "ttl": 86400, "fqdn": "egg.org", "record_type": "CNAME", "rdata": {"cname": "prod-LB-359594650.us-east-1.elb.amazonaws.com."}, "record_id": 50959331}, "job_id": 274279510, "msgs": [{"INFO": "get: Found the record", "SOURCE": "API-B", "ERR_CD": null, "LVL": "INFO"}]}

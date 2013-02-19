@@ -18,7 +18,10 @@
  */
 package org.jclouds.dynect.v3;
 
+import javax.ws.rs.PathParam;
+
 import org.jclouds.dynect.v3.domain.Job;
+import org.jclouds.dynect.v3.features.RecordApi;
 import org.jclouds.dynect.v3.features.SessionApi;
 import org.jclouds.dynect.v3.features.ZoneApi;
 import org.jclouds.javax.annotation.Nullable;
@@ -55,4 +58,10 @@ public interface DynECTApi {
     */
    @Delegate
    ZoneApi getZoneApi();
+   
+   /**
+    * Provides synchronous access to Record features
+    */
+   @Delegate
+   RecordApi getRecordApiForZone(@PathParam("zone") String zone);
 }
