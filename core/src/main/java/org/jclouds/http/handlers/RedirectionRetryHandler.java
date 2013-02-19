@@ -35,13 +35,12 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Multimaps2;
 
-import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 
 /**
- * Handles Retryable responses with error codes in the 3xx range
+ * Handles Retryable responses with error codes in the 3xx range, backing off
+ * when redirecting to itself.
  * 
  * @author Adrian Cole
  */
@@ -63,35 +62,36 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
 
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
       closeClientButKeepContentStream(response);
-      String hostHeader = response.getFirstHeaderOrNull(LOCATION);
-      if (command.incrementRedirectCount() < retryCountLimit && hostHeader != null) {
-         URI redirectionUrl = URI.create(hostHeader);
-
-         // if you are sent the same uri, assume there's a transient problem and retry.
-         HttpRequest currentRequest = command.getCurrentRequest();
-         if (redirectionUrl.equals(currentRequest.getEndpoint()))
-            return backoffHandler.shouldRetryRequest(command, response);
-
-         assert redirectionUrl.getPath() != null : "no path in redirect header from: " + response;
-         if (!redirectionUrl.isAbsolute()) {
-            redirectionUrl = uriBuilder(currentRequest.getEndpoint()).path(redirectionUrl.getPath())
-                  .query(redirectionUrl.getQuery()).build();
-         }
-
-         if (currentRequest.getFirstHeaderOrNull(HOST) != null && redirectionUrl.getHost() != null) {
-            String host = redirectionUrl.getHost();
-            if (redirectionUrl.getPort() != -1) {
-               host += ":" + redirectionUrl.getPort();
-            }
-            Multimap<String, String> newHeaders = Multimaps2.replaceValue(currentRequest.getHeaders(), HOST, host);
-            command.setCurrentRequest(currentRequest.toBuilder().headers(newHeaders).endpoint(redirectionUrl).build());
-         } else {
-            command.setCurrentRequest(currentRequest.toBuilder().endpoint(redirectionUrl).build());
-         }
-         return true;
-      } else {
+      if (!command.isReplayable()) {
+         logger.error("Cannot retry after redirect, command is not replayable: %s", command);
          return false;
       }
+      if (command.incrementRedirectCount() > retryCountLimit) {
+         logger.error("Cannot retry after redirect, command exceeded retry limit %d: %s", retryCountLimit, command);
+         return false;
+      }
+      String location = response.getFirstHeaderOrNull(LOCATION);
+      if (location == null) {
+         logger.error("Cannot retry after redirect, no host header: %s", command);
+         return false;
+      }
+      HttpRequest current = command.getCurrentRequest();
+      URI redirect = URI.create(location);
+      if (!redirect.isAbsolute()) {
+         if (redirect.getPath() == null) {
+            logger.error("Cannot retry after redirect, no path in location header %s", command);
+            return false;
+         }
+         redirect = uriBuilder(current.getEndpoint()).path(redirect.getPath()).query(redirect.getQuery()).build();
+      }
+      if (redirect.equals(current.getEndpoint())) {
+         backoffHandler.imposeBackoffExponentialDelay(command.getRedirectCount(), "redirect: " + command.toString());
+      } else if (current.getFirstHeaderOrNull(HOST) != null && redirect.getHost() != null) {
+         String host = redirect.getPort() > 0 ? redirect.getHost() + ":" + redirect.getPort() : redirect.getHost();
+         command.setCurrentRequest(current.toBuilder().replaceHeader(HOST, host).endpoint(redirect).build());
+      } else {
+         command.setCurrentRequest(current.toBuilder().endpoint(redirect).build());
+      }
+      return true;
    }
-
 }

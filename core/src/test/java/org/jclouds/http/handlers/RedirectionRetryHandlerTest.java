@@ -59,6 +59,7 @@ public class RedirectionRetryHandlerTest {
                                           .statusCode(302)
                                           .message("HTTP/1.1 302 Found").build();
 
+      expect(command.isReplayable()).andReturn(true);
       expect(command.incrementRedirectCount()).andReturn(0);
 
       replay(command);
@@ -80,7 +81,8 @@ public class RedirectionRetryHandlerTest {
                                           .message("HTTP/1.1 302 Found")
                                           .addHeader(LOCATION, "/api/v0.8b-ext2.5/Error.aspx?aspxerrorpath=/api/v0.8b-ext2.5/org.svc/1906645").build(); 
 
-      expect(command.incrementRedirectCount()).andReturn(5);
+      expect(command.isReplayable()).andReturn(true);
+      expect(command.incrementRedirectCount()).andReturn(6);
 
       replay(command);
 
@@ -174,6 +176,7 @@ public class RedirectionRetryHandlerTest {
    protected void verifyRedirectRoutes(HttpRequest request, HttpResponse response, HttpRequest expected) {
       HttpCommand command = createMock(HttpCommand.class);
 
+      expect(command.isReplayable()).andReturn(true);
       expect(command.incrementRedirectCount()).andReturn(0);
       expect(command.getCurrentRequest()).andReturn(request);
       command.setCurrentRequest(expected);
