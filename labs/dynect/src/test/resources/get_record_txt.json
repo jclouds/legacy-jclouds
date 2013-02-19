@@ -1,0 +1,1 @@
+{"status": "success", "data": {"zone": "egg.org", "ttl": 86400, "fqdn": "sm._domainkey.email.egg.org", "record_type": "TXT", "rdata": {"txtdata": "k=rsa\\; p=4KAtUdsUGRtjPHE1rsyFYs8XVzvdke8pXnoo+80Kj5b6C37rnyCmZ0w1R5LY=="}, "record_id": 50959331}, "job_id": 274279510, "msgs": [{"INFO": "get: Found the record", "SOURCE": "API-B", "ERR_CD": null, "LVL": "INFO"}]}

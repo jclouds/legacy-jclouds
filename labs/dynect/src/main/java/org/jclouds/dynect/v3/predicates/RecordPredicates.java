@@ -16,30 +16,40 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.dynect.v3.functions;
+package org.jclouds.dynect.v3.predicates;
 
-import com.google.common.base.Function;
-import com.google.common.collect.FluentIterable;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.jclouds.dynect.v3.domain.RecordId;
+
+import com.google.common.base.Predicate;
 
 /**
- * Zones come back encoded in REST paths, such as
- * {@code /REST/Zone/jclouds.org/}
+ * Predicates handy when working with Records
  * 
  * @author Adrian Cole
- * 
  */
-public final class ExtractNames implements Function<FluentIterable<String>, FluentIterable<String>> {
-   public FluentIterable<String> apply(FluentIterable<String> in) {
-      return in.transform(ExtractNameInPath.INSTANCE);
-   }
+public class RecordPredicates {
 
-   static enum ExtractNameInPath implements Function<String, String> {
-      INSTANCE;
+   /**
+    * matches type of the given record
+    * 
+    * @param type
+    * @return predicate that matches type
+    */
+   public static <R extends RecordId> Predicate<R> typeEquals(final String type) {
+      checkNotNull(type, "type must be defined");
 
-      final int position = "/REST/Zone/".length();
+      return new Predicate<R>() {
+         @Override
+         public boolean apply(R record) {
+            return type.equals(record.getType());
+         }
 
-      public String apply(String in) {
-         return in.substring(position, in.length() - 1);
-      }
+         @Override
+         public String toString() {
+            return "typeEquals(" + type + ")";
+         }
+      };
    }
 }

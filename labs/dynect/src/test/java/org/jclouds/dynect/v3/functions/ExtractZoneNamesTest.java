@@ -17,41 +17,29 @@
  * under the License.
  */
 
-package org.jclouds.dynect.v3.parse;
+package org.jclouds.dynect.v3.functions;
 
-import static com.google.common.base.Functions.compose;
+import static org.testng.Assert.assertEquals;
 
-import org.jclouds.dynect.v3.functions.ExtractZoneNames;
-import org.jclouds.dynect.v3.internal.BaseDynECTParseTest;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.dynect.v3.functions.ExtractZoneNames.ExtractNameInPath;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
-import com.google.inject.Injector;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class ListZonesResponseTest extends BaseDynECTParseTest<FluentIterable<String>> {
+public class ExtractZoneNamesTest {
+   ExtractZoneNames fn = new ExtractZoneNames();
 
-   @Override
-   public String resource() {
-      return "/list_zones.json";
+   public void testExtractNameInPath() {
+      assertEquals(ExtractNameInPath.INSTANCE.apply("/REST/Zone/jclouds.org/"), "jclouds.org");
    }
 
-   @Override
-   @SelectJson("data")
-   public FluentIterable<String> expected() {
-      return FluentIterable.from(ImmutableSet.of("0.0.0.0.d.6.e.0.0.a.2.ip6.arpa", "126.12.44.in-addr.arpa", "jclouds.org"));
-   }
-
-   // TODO: currently our parsing of annotations on expected() ignores @Transform
-   @Override
-   protected Function<HttpResponse, FluentIterable<String>> parser(Injector i) {
-      return compose(new ExtractZoneNames(), super.parser(i));
+   public void testExtractZoneNames() {
+      assertEquals(fn.apply(FluentIterable.from(ImmutableSet.of("/REST/Zone/jclouds.org/"))).toSet(),
+            ImmutableSet.of("jclouds.org"));
    }
 }

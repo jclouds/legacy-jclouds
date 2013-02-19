@@ -29,6 +29,7 @@ import javax.ws.rs.Produces;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.dynect.v3.domain.Job;
+import org.jclouds.dynect.v3.features.RecordAsyncApi;
 import org.jclouds.dynect.v3.features.SessionAsyncApi;
 import org.jclouds.dynect.v3.features.ZoneAsyncApi;
 import org.jclouds.dynect.v3.filters.SessionManager;
@@ -72,4 +73,10 @@ public interface DynECTAsyncApi {
     */
    @Delegate
    ZoneAsyncApi getZoneApi();
+
+   /**
+    * Provides asynchronous access to Record features
+    */
+   @Delegate
+   RecordAsyncApi getRecordApiForZone(@PathParam("zone") String zone);
 }

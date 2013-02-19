@@ -1,0 +1,1 @@
+{"status": "success", "data": {"zone": "egg.org", "ttl": 86400, "fqdn": "egg.org", "record_type": "MX", "rdata": {"preference": 10, "exchange": "mail.egg.org."}, "record_id": 50959331}, "job_id": 274279510, "msgs": [{"INFO": "get: Found the record", "SOURCE": "API-B", "ERR_CD": null, "LVL": "INFO"}]}
