@@ -60,10 +60,10 @@ public class DirectoryEntryListToResourceMetadataList implements
                      StorageType type = from.getType() == FileType.DIRECTORY ? StorageType.FOLDER : StorageType.BLOB;
                      if (type == StorageType.FOLDER)
                         return new StorageMetadataImpl(type, from.getObjectID(), from.getObjectName(), defaultLocation
-                                 .get(), null, null, null,ImmutableMap.<String,String>of());
+                                 .get(), null, null, null, null, ImmutableMap.<String,String>of());
                      else
                         return new BlobMetadataImpl(from.getObjectID(), from.getObjectName(), defaultLocation.get(),
-                                 null, null, null,ImmutableMap.<String,String>of(), null,
+                                 null, null, null, null, ImmutableMap.<String,String>of(), null,
                                  null, new BaseMutableContentMetadata());
                   }
 

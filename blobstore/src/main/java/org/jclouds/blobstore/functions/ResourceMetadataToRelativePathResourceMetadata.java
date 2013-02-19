@@ -43,7 +43,7 @@ public class ResourceMetadataToRelativePathResourceMetadata implements Function<
             name = name.substring(0, name.length() - suffix.length());
       }
       return new StorageMetadataImpl(StorageType.RELATIVE_PATH, md.getProviderId(), name, md.getLocation(),
-            md.getUri(), md.getETag(), md.getLastModified(), md.getUserMetadata());
+            md.getUri(), md.getETag(), md.getCreationDate(), md.getLastModified(), md.getUserMetadata());
    }
 
 }

@@ -24,6 +24,8 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 
+import com.google.common.base.Objects;
+
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.domain.Location;
@@ -40,14 +42,18 @@ public class StorageMetadataImpl extends ResourceMetadataImpl<StorageType> imple
    @Nullable
    private final String eTag;
    @Nullable
+   private final Date creationDate;
+   @Nullable
    private final Date lastModified;
    private final StorageType type;
 
    public StorageMetadataImpl(StorageType type, @Nullable String id, @Nullable String name,
-         @Nullable Location location, @Nullable URI uri, @Nullable String eTag, @Nullable Date lastModified,
+         @Nullable Location location, @Nullable URI uri, @Nullable String eTag,
+         @Nullable Date creationDate, @Nullable Date lastModified,
          Map<String, String> userMetadata) {
       super(id, name, location, uri, userMetadata);
       this.eTag = eTag;
+      this.creationDate = creationDate;
       this.lastModified = lastModified;
       this.type = checkNotNull(type, "type");
    }
@@ -62,12 +68,8 @@ public class StorageMetadataImpl extends ResourceMetadataImpl<StorageType> imple
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((eTag == null) ? 0 : eTag.hashCode());
-      result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
-      result = prime * result + ((type == null) ? 0 : type.hashCode());
-      return result;
+      return Objects.hashCode(super.hashCode(), eTag, creationDate,
+            lastModified, type);
    }
 
    @Override
@@ -79,18 +81,10 @@ public class StorageMetadataImpl extends ResourceMetadataImpl<StorageType> imple
       if (getClass() != obj.getClass())
          return false;
       StorageMetadataImpl other = (StorageMetadataImpl) obj;
-      if (eTag == null) {
-         if (other.eTag != null)
-            return false;
-      } else if (!eTag.equals(other.eTag))
-         return false;
-      if (lastModified == null) {
-         if (other.lastModified != null)
-            return false;
-      } else if (!lastModified.equals(other.lastModified))
-         return false;
-      if (type != other.type)
-         return false;
+      if (!Objects.equal(eTag, other.eTag)) { return false; }
+      if (!Objects.equal(creationDate, other.creationDate)) { return false; }
+      if (!Objects.equal(lastModified, other.lastModified)) { return false; }
+      if (!Objects.equal(type, other.type)) { return false; }
       return true;
    }
 
@@ -100,6 +94,11 @@ public class StorageMetadataImpl extends ResourceMetadataImpl<StorageType> imple
    @Override
    public String getETag() {
       return eTag;
+   }
+
+   @Override
+   public Date getCreationDate() {
+      return creationDate;
    }
 
    /**
