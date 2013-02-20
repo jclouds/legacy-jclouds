@@ -38,11 +38,11 @@ import com.google.common.collect.ImmutableList;
  */
 public class ChangeBatch extends ForwardingList<ActionOnResourceRecordSet> {
 
-   public static ChangeBatch createAll(Iterable<RecordSet> toCreate) {
+   public static ChangeBatch createAll(Iterable<ResourceRecordSet> toCreate) {
       return builder().createAll(toCreate).build();
    }
 
-   public static ChangeBatch deleteAll(Iterable<RecordSet> toDelete) {
+   public static ChangeBatch deleteAll(Iterable<ResourceRecordSet> toDelete) {
       return builder().deleteAll(toDelete).build();
    }
 
@@ -55,9 +55,9 @@ public class ChangeBatch extends ForwardingList<ActionOnResourceRecordSet> {
 
    public static class ActionOnResourceRecordSet {
       private final Action action;
-      private final RecordSet rrs;
+      private final ResourceRecordSet rrs;
 
-      private ActionOnResourceRecordSet(Action action, RecordSet rrs) {
+      private ActionOnResourceRecordSet(Action action, ResourceRecordSet rrs) {
          this.action = action;
          this.rrs = rrs;
       }
@@ -66,7 +66,7 @@ public class ChangeBatch extends ForwardingList<ActionOnResourceRecordSet> {
          return action;
       }
 
-      public RecordSet getRRS() {
+      public ResourceRecordSet getRRS() {
          return rrs;
       }
 
@@ -145,24 +145,24 @@ public class ChangeBatch extends ForwardingList<ActionOnResourceRecordSet> {
          return this;
       }
 
-      public Builder create(RecordSet rrs) {
+      public Builder create(ResourceRecordSet rrs) {
          this.changes.add(new ActionOnResourceRecordSet(Action.CREATE, rrs));
          return this;
       }
 
-      public Builder createAll(Iterable<RecordSet> toCreate) {
-         for (RecordSet rrs : toCreate)
+      public Builder createAll(Iterable<ResourceRecordSet> toCreate) {
+         for (ResourceRecordSet rrs : toCreate)
             create(rrs);
          return this;
       }
 
-      public Builder delete(RecordSet rrs) {
+      public Builder delete(ResourceRecordSet rrs) {
          this.changes.add(new ActionOnResourceRecordSet(Action.DELETE, rrs));
          return this;
       }
 
-      public Builder deleteAll(Iterable<RecordSet> toDelete) {
-         for (RecordSet rrs : toDelete)
+      public Builder deleteAll(Iterable<ResourceRecordSet> toDelete) {
+         for (ResourceRecordSet rrs : toDelete)
             delete(rrs);
          return this;
       }

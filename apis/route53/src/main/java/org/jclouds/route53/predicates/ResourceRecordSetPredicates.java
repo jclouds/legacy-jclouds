@@ -16,17 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.aws.route53.features;
+package org.jclouds.route53.predicates;
 
-import org.jclouds.route53.features.ZoneApiLiveTest;
-import org.testng.annotations.Test;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.jclouds.route53.domain.ResourceRecordSet;
+
+import com.google.common.base.Predicate;
 
 /**
+ * Predicates handy when working with ResourceResourceRecordSet Types
+ * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "AWSZoneApiLiveTest")
-public class AWSZoneApiLiveTest extends ZoneApiLiveTest {
-   public AWSZoneApiLiveTest() {
-      provider = "aws-route53";
+public class ResourceRecordSetPredicates {
+
+   /**
+    * matches zones of the given type
+    */
+   public static Predicate<ResourceRecordSet> typeEquals(final String type) {
+      checkNotNull(type, "type must be defined");
+
+      return new Predicate<ResourceRecordSet>() {
+         @Override
+         public boolean apply(ResourceRecordSet zone) {
+            return type.equals(zone.getType());
+         }
+
+         @Override
+         public String toString() {
+            return "typeEquals(" + type + ")";
+         }
+      };
    }
 }

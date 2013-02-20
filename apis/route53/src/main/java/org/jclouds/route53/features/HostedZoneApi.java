@@ -23,18 +23,18 @@ import org.jclouds.collect.PagedIterable;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.route53.domain.Change;
 import org.jclouds.route53.domain.Change.Status;
-import org.jclouds.route53.domain.NewZone;
-import org.jclouds.route53.domain.Zone;
-import org.jclouds.route53.domain.ZoneAndNameServers;
+import org.jclouds.route53.domain.HostedZone;
+import org.jclouds.route53.domain.HostedZoneAndNameServers;
+import org.jclouds.route53.domain.NewHostedZone;
 
 /**
- * @see ZoneAsyncApi
+ * @see HostedZoneAsyncApi
  * @see <a href=
  *      "http://docs.aws.amazon.com/Route53/latest/APIReference/ActionsOnHostedZones.html"
  *      />
  * @author Adrian Cole
  */
-public interface ZoneApi {
+public interface HostedZoneApi {
 
    /**
     * This action creates a new hosted zone.
@@ -51,28 +51,28 @@ public interface ZoneApi {
     *           retries. ex. {@code MyDNSMigration_01}
     * @return the new zone in progress, in {@link Status#PENDING}.
     */
-   NewZone createWithReference(String name, String callerReference);
+   NewHostedZone createWithReference(String name, String callerReference);
 
    /**
     * like {@link #createWithReference(String, String)}, except you can specify
     * a comment.
     */
-   NewZone createWithReferenceAndComment(String name, String callerReference, String comment);
+   NewHostedZone createWithReferenceAndComment(String name, String callerReference, String comment);
 
    /**
     * returns all zones in order.
     */
-   PagedIterable<Zone> list();
+   PagedIterable<HostedZone> list();
 
    /**
     * retrieves up to 100 zones in order.
     */
-   IterableWithMarker<Zone> listFirstPage();
+   IterableWithMarker<HostedZone> listFirstPage();
 
    /**
     * retrieves up to 100 zones in order, starting at {@code nextMarker}
     */
-   IterableWithMarker<Zone> listAt(String nextMarker);
+   IterableWithMarker<HostedZone> listAt(String nextMarker);
 
    /**
     * Retrieves information about the specified zone, including its nameserver
@@ -84,7 +84,7 @@ public interface ZoneApi {
     * @return null if not found
     */
    @Nullable
-   ZoneAndNameServers get(String id);
+   HostedZoneAndNameServers get(String id);
 
    /**
     * This action deletes a hosted zone.

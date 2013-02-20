@@ -23,7 +23,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.route53.domain.NewZone;
+import org.jclouds.route53.domain.NewHostedZone;
 import org.jclouds.route53.xml.CreateHostedZoneResponseHandler;
 import org.testng.annotations.Test;
 
@@ -37,15 +37,15 @@ public class CreateHostedZoneResponseTest extends BaseHandlerTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/new_zone.xml");
 
-      NewZone expected = expected();
+      NewHostedZone expected = expected();
 
       CreateHostedZoneResponseHandler handler = injector.getInstance(CreateHostedZoneResponseHandler.class);
-      NewZone result = factory.create(handler).parse(is);
+      NewHostedZone result = factory.create(handler).parse(is);
 
       assertEquals(result, expected);
    }
 
-   public NewZone expected() {
-      return NewZone.create(new GetHostedZoneResponseTest().expected(), new GetChangeResponseTest().expected());
+   public NewHostedZone expected() {
+      return NewHostedZone.create(new GetHostedZoneResponseTest().expected(), new GetChangeResponseTest().expected());
    }
 }

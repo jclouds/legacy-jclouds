@@ -18,15 +18,15 @@
  */
 package org.jclouds.aws.route53.features;
 
-import org.jclouds.route53.features.RecordSetApiLiveTest;
+import org.jclouds.route53.features.ResourceRecordSetApiLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "AWSResourceRecordSetApiLiveTest")
-public class AWSRecordSetApiLiveTest extends RecordSetApiLiveTest {
-   public AWSRecordSetApiLiveTest() {
+@Test(groups = "live", testName = "AWSResourceResourceRecordSetApiLiveTest")
+public class AWSResourceRecordSetApiLiveTest extends ResourceRecordSetApiLiveTest {
+   public AWSResourceRecordSetApiLiveTest() {
       provider = "aws-route53";
    }
 }

@@ -22,23 +22,23 @@ import org.jclouds.collect.PagedIterable;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.route53.domain.Change;
 import org.jclouds.route53.domain.ChangeBatch;
-import org.jclouds.route53.domain.RecordSet;
-import org.jclouds.route53.domain.RecordSetIterable;
-import org.jclouds.route53.domain.RecordSetIterable.NextRecord;
+import org.jclouds.route53.domain.ResourceRecordSet;
+import org.jclouds.route53.domain.ResourceRecordSetIterable;
+import org.jclouds.route53.domain.ResourceRecordSetIterable.NextRecord;
 
 /**
- * @see RecordSetAsyncApi
+ * @see ResourceRecordSetAsyncApi
  * @see <a href=
  *      "http://docs.aws.amazon.com/Route53/latest/APIReference/ActionsOnRRS.html"
  *      />
  * @author Adrian Cole
  */
-public interface RecordSetApi {
+public interface ResourceRecordSetApi {
 
    /**
     * schedules creation of the resource record set.
     */
-   Change create(RecordSet rrs);
+   Change create(ResourceRecordSet rrs);
 
    /**
     * applies a batch of changes atomically.
@@ -48,18 +48,18 @@ public interface RecordSetApi {
    /**
     * returns all resource record sets in order.
     */
-   PagedIterable<RecordSet> list();
+   PagedIterable<ResourceRecordSet> list();
 
    /**
     * retrieves up to 100 resource record sets in order.
     */
-   RecordSetIterable listFirstPage();
+   ResourceRecordSetIterable listFirstPage();
 
    /**
     * retrieves up to 100 resource record sets in order, starting at
     * {@code nextRecord}
     */
-   RecordSetIterable listAt(NextRecord nextRecord);
+   ResourceRecordSetIterable listAt(NextRecord nextRecord);
 
    /**
     * This action deletes a resource record set.
@@ -69,5 +69,5 @@ public interface RecordSetApi {
     * @return null if not found or the change in progress
     */
    @Nullable
-   Change delete(RecordSet rrs);
+   Change delete(ResourceRecordSet rrs);
 }

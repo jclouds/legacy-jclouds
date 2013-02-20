@@ -29,40 +29,33 @@ import com.google.common.collect.ImmutableList;
  * 
  * @author Adrian Cole
  */
-public final class NewZone {
+public final class HostedZoneAndNameServers {
 
-   private final ZoneAndNameServers zone;
-   private final Change change;
+   private final HostedZone zone;
+   private final ImmutableList<String> nameServers;
 
-   private NewZone(ZoneAndNameServers zone, Change change) {
+   private HostedZoneAndNameServers(HostedZone zone, ImmutableList<String> nameServers) {
       this.zone = checkNotNull(zone, "zone");
-      this.change = checkNotNull(change, "change of %s", zone);
+      this.nameServers = checkNotNull(nameServers, "nameServers for %s", zone);
    }
 
    /**
-    * @see ZoneAndNameServers#getZone()
+    * the hosted zone
     */
-   public Zone getZone() {
-      return zone.getZone();
+   public HostedZone getZone() {
+      return zone;
    }
 
    /**
-    * @see ZoneAndNameServers#getNameServers()
+    * the authoritative name servers for the hosted zone
     */
    public ImmutableList<String> getNameServers() {
-      return zone.getNameServers();
-   }
-
-   /**
-    * the zone creation event
-    */
-   public Change getChange() {
-      return change;
+      return nameServers;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(zone);
+      return Objects.hashCode(zone, nameServers);
    }
 
    @Override
@@ -71,17 +64,16 @@ public final class NewZone {
          return true;
       if (obj == null || getClass() != obj.getClass())
          return false;
-      NewZone that = NewZone.class.cast(obj);
-      return equal(this.zone, that.zone);
+      HostedZoneAndNameServers that = HostedZoneAndNameServers.class.cast(obj);
+      return equal(this.zone, that.zone) && equal(this.nameServers, that.nameServers);
    }
 
    @Override
    public String toString() {
-      return toStringHelper("").add("zone", zone.getZone()).add("nameServers", zone.getNameServers())
-            .add("change", change).toString();
+      return toStringHelper("").add("zone", zone).add("nameServers", nameServers).toString();
    }
 
-   public static NewZone create(ZoneAndNameServers zone, Change change) {
-      return new NewZone(zone, change);
+   public static HostedZoneAndNameServers create(HostedZone zone, Iterable<String> nameServers) {
+      return new HostedZoneAndNameServers(zone, ImmutableList.<String> copyOf(checkNotNull(nameServers, "nameServers")));
    }
 }

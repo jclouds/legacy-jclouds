@@ -21,12 +21,13 @@ package org.jclouds.route53.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.rest.annotations.ParamParser;
-import org.jclouds.route53.domain.RecordSet;
-import org.jclouds.route53.domain.RecordSet.RecordSubset;
-import org.jclouds.route53.domain.RecordSet.RecordSubset.Latency;
-import org.jclouds.route53.domain.RecordSet.RecordSubset.Weighted;
+import org.jclouds.route53.domain.ResourceRecordSet;
+import org.jclouds.route53.domain.ResourceRecordSet.RecordSubset;
+import org.jclouds.route53.domain.ResourceRecordSet.RecordSubset.Latency;
+import org.jclouds.route53.domain.ResourceRecordSet.RecordSubset.Weighted;
 
 import com.google.common.base.Function;
+import com.google.common.primitives.UnsignedInteger;
 
 /**
  * @author Adrian Cole
@@ -35,7 +36,7 @@ import com.google.common.base.Function;
 public class SerializeRRS implements Function<Object, String> {
    @Override
    public String apply(Object in) {
-      RecordSet rrs = RecordSet.class.cast(checkNotNull(in, "rrs"));
+      ResourceRecordSet rrs = ResourceRecordSet.class.cast(checkNotNull(in, "rrs"));
       StringBuilder builder = new StringBuilder().append("<ResourceRecordSet>");
       builder.append("<Name>").append(rrs.getName()).append("</Name>");
       builder.append("<Type>").append(rrs.getType()).append("</Type>");
@@ -53,7 +54,7 @@ public class SerializeRRS implements Function<Object, String> {
          builder.append("<DNSName>").append(rrs.getAliasTarget().get().getDNSName()).append("</DNSName>");
          builder.append("</AliasTarget>");
       } else {
-         builder.append("<TTL>").append(rrs.getTTL().or(0)).append("</TTL>");
+         builder.append("<TTL>").append(rrs.getTTL().or(UnsignedInteger.ZERO)).append("</TTL>");
          builder.append("<ResourceRecords>");
          for (String record : rrs.getValues())
             builder.append("<ResourceRecord>").append("<Value>").append(record).append("</Value>")
