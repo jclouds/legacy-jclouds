@@ -20,6 +20,7 @@ package org.jclouds.dynect.v3.features;
 
 import java.util.Map;
 
+import org.jclouds.dynect.v3.DynECTExceptions.JobStillRunningException;
 import org.jclouds.dynect.v3.domain.Record;
 import org.jclouds.dynect.v3.domain.RecordId;
 import org.jclouds.dynect.v3.domain.SOARecord;
@@ -41,16 +42,16 @@ import com.google.common.collect.FluentIterable;
 public interface RecordApi {
    /**
     * Retrieves a list of resource record ids for all records of any type in the
-    * given zone;
+    * given zone throws JobStillRunningException;
     */
-   FluentIterable<RecordId> list();
+   FluentIterable<RecordId> list() throws JobStillRunningException;
 
    /**
     * retrieves a resource record without regard to type
     * 
     * @return null if not found
     */
-   Record<? extends Map<String, Object>> get(RecordId recordId);
+   Record<? extends Map<String, Object>> get(RecordId recordId) throws JobStillRunningException;
 
    /**
     * Gets the {@link AAAARecord} or null if not present.
@@ -61,7 +62,7 @@ public interface RecordApi {
     *           {@link RecordId#getId()}
     * @return null if not found
     */
-   Record<AAAAData> getAAAA(String fqdn, long recordId);
+   Record<AAAAData> getAAAA(String fqdn, long recordId) throws JobStillRunningException;
 
    /**
     * Gets the {@link ARecord} or null if not present.
@@ -72,7 +73,7 @@ public interface RecordApi {
     *           {@link RecordId#getId()}
     * @return null if not found
     */
-   Record<AData> getA(String fqdn, long recordId);
+   Record<AData> getA(String fqdn, long recordId) throws JobStillRunningException;
 
    /**
     * Gets the {@link CNAMERecord} or null if not present.
@@ -83,7 +84,7 @@ public interface RecordApi {
     *           {@link RecordId#getId()}
     * @return null if not found
     */
-   Record<CNAMEData> getCNAME(String fqdn, long recordId);
+   Record<CNAMEData> getCNAME(String fqdn, long recordId) throws JobStillRunningException;
 
    /**
     * Gets the {@link MXRecord} or null if not present.
@@ -94,7 +95,7 @@ public interface RecordApi {
     *           {@link RecordId#getId()}
     * @return null if not found
     */
-   Record<MXData> getMX(String fqdn, long recordId);
+   Record<MXData> getMX(String fqdn, long recordId) throws JobStillRunningException;
 
    /**
     * Gets the {@link NSRecord} or null if not present.
@@ -105,7 +106,7 @@ public interface RecordApi {
     *           {@link RecordId#getId()}
     * @return null if not found
     */
-   Record<NSData> getNS(String fqdn, long recordId);
+   Record<NSData> getNS(String fqdn, long recordId) throws JobStillRunningException;
 
    /**
     * Gets the {@link PTRRecord} or null if not present.
@@ -116,7 +117,7 @@ public interface RecordApi {
     *           {@link RecordId#getId()}
     * @return null if not found
     */
-   Record<PTRData> getPTR(String fqdn, long recordId);
+   Record<PTRData> getPTR(String fqdn, long recordId) throws JobStillRunningException;
 
    /**
     * Gets the {@link SOARecord} or null if not present.
@@ -127,7 +128,7 @@ public interface RecordApi {
     *           {@link RecordId#getId()}
     * @return null if not found
     */
-   SOARecord getSOA(String fqdn, long recordId);
+   SOARecord getSOA(String fqdn, long recordId) throws JobStillRunningException;
 
    /**
     * Gets the {@link SRVRecord} or null if not present.
@@ -138,7 +139,7 @@ public interface RecordApi {
     *           {@link RecordId#getId()}
     * @return null if not found
     */
-   Record<SRVData> getSRV(String fqdn, long recordId);
+   Record<SRVData> getSRV(String fqdn, long recordId) throws JobStillRunningException;
 
    /**
     * Gets the {@link TXTRecord} or null if not present.
@@ -149,5 +150,5 @@ public interface RecordApi {
     *           {@link RecordId#getId()}
     * @return null if not found
     */
-   Record<TXTData> getTXT(String fqdn, long recordId);
+   Record<TXTData> getTXT(String fqdn, long recordId) throws JobStillRunningException;
 }

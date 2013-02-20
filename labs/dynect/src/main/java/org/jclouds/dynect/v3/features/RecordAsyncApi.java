@@ -32,6 +32,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.dynect.v3.DynECTExceptions.JobStillRunningException;
 import org.jclouds.dynect.v3.domain.Record;
 import org.jclouds.dynect.v3.domain.RecordId;
 import org.jclouds.dynect.v3.domain.SOARecord;
@@ -78,7 +79,7 @@ public interface RecordAsyncApi {
    @GET
    @Path("/AllRecord/{zone}")
    @ResponseParser(ToRecordIds.class)
-   ListenableFuture<FluentIterable<RecordId>> list();
+   ListenableFuture<FluentIterable<RecordId>> list() throws JobStillRunningException;
 
    /**
     * @see RecordApi#get
@@ -87,7 +88,7 @@ public interface RecordAsyncApi {
    @GET
    @SelectJson("data")
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<Record<? extends Map<String, Object>>> get(@BinderParam(RecordIdBinder.class) RecordId recordId);
+   ListenableFuture<Record<? extends Map<String, Object>>> get(@BinderParam(RecordIdBinder.class) RecordId recordId) throws JobStillRunningException;
 
    static class RecordIdBinder implements Binder {
       @SuppressWarnings("unchecked")
@@ -113,7 +114,7 @@ public interface RecordAsyncApi {
    @Path("/AAAARecord/{zone}/{fqdn}/{id}")
    @SelectJson("data")
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<Record<AAAAData>> getAAAA(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId);
+   ListenableFuture<Record<AAAAData>> getAAAA(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId) throws JobStillRunningException;
 
    /**
     * @see RecordApi#getA
@@ -123,7 +124,7 @@ public interface RecordAsyncApi {
    @Path("/ARecord/{zone}/{fqdn}/{id}")
    @SelectJson("data")
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<Record<AData>> getA(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId);
+   ListenableFuture<Record<AData>> getA(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId) throws JobStillRunningException;
 
    /**
     * @see RecordApi#getCNAME
@@ -133,7 +134,7 @@ public interface RecordAsyncApi {
    @Path("/CNAMERecord/{zone}/{fqdn}/{id}")
    @SelectJson("data")
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<Record<CNAMEData>> getCNAME(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId);
+   ListenableFuture<Record<CNAMEData>> getCNAME(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId) throws JobStillRunningException;
 
    /**
     * @see RecordApi#getMX
@@ -143,7 +144,7 @@ public interface RecordAsyncApi {
    @Path("/MXRecord/{zone}/{fqdn}/{id}")
    @SelectJson("data")
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<Record<MXData>> getMX(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId);
+   ListenableFuture<Record<MXData>> getMX(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId) throws JobStillRunningException;
 
    /**
     * @see RecordApi#getNS
@@ -153,7 +154,7 @@ public interface RecordAsyncApi {
    @Path("/NSRecord/{zone}/{fqdn}/{id}")
    @SelectJson("data")
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<Record<NSData>> getNS(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId);
+   ListenableFuture<Record<NSData>> getNS(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId) throws JobStillRunningException;
 
    /**
     * @see RecordApi#getPTR
@@ -163,7 +164,7 @@ public interface RecordAsyncApi {
    @Path("/PTRRecord/{zone}/{fqdn}/{id}")
    @SelectJson("data")
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<Record<PTRData>> getPTR(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId);
+   ListenableFuture<Record<PTRData>> getPTR(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId) throws JobStillRunningException;
 
    /**
     * @see RecordApi#getSOA
@@ -173,7 +174,7 @@ public interface RecordAsyncApi {
    @Path("/SOARecord/{zone}/{fqdn}/{id}")
    @SelectJson("data")
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<SOARecord> getSOA(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId);
+   ListenableFuture<SOARecord> getSOA(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId) throws JobStillRunningException;
 
    /**
     * @see RecordApi#getSRV
@@ -183,7 +184,7 @@ public interface RecordAsyncApi {
    @Path("/SRVRecord/{zone}/{fqdn}/{id}")
    @SelectJson("data")
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<Record<SRVData>> getSRV(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId);
+   ListenableFuture<Record<SRVData>> getSRV(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId) throws JobStillRunningException;
 
    /**
     * @see RecordApi#getTXT
@@ -193,5 +194,5 @@ public interface RecordAsyncApi {
    @Path("/TXTRecord/{zone}/{fqdn}/{id}")
    @SelectJson("data")
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<Record<TXTData>> getTXT(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId);
+   ListenableFuture<Record<TXTData>> getTXT(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId) throws JobStillRunningException;
 }

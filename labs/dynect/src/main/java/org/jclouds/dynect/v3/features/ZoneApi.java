@@ -18,6 +18,8 @@
  */
 package org.jclouds.dynect.v3.features;
 
+import org.jclouds.dynect.v3.DynECTExceptions.TargetExistsException;
+import org.jclouds.dynect.v3.DynECTExceptions.JobStillRunningException;
 import org.jclouds.dynect.v3.domain.CreatePrimaryZone;
 import org.jclouds.dynect.v3.domain.Job;
 import org.jclouds.dynect.v3.domain.Zone;
@@ -34,7 +36,7 @@ public interface ZoneApi {
    /**
     * Lists all zone ids.
     */
-   FluentIterable<String> list();
+   FluentIterable<String> list() throws JobStillRunningException;
 
    /**
     * Creates a new primary zone.
@@ -43,7 +45,7 @@ public interface ZoneApi {
     *           required parameters to create the zone.
     * @return unpublished zone
     */
-   Zone create(CreatePrimaryZone zone);
+   Zone create(CreatePrimaryZone zone) throws JobStillRunningException, TargetExistsException;
 
    /**
     * Creates a new primary zone with one hour default TTL and
@@ -55,7 +57,7 @@ public interface ZoneApi {
     *           email address of the contact
     * @return unpublished zone
     */
-   Zone createWithContact(String fqdn, String contact);
+   Zone createWithContact(String fqdn, String contact) throws JobStillRunningException, TargetExistsException;
 
    /**
     * Retrieves information about the specified zone.
@@ -66,7 +68,7 @@ public interface ZoneApi {
     * @return null if not found
     */
    @Nullable
-   Zone get(String fqdn);
+   Zone get(String fqdn) throws JobStillRunningException;
 
    /**
     * deletes the specified zone.
@@ -76,7 +78,16 @@ public interface ZoneApi {
     * @return null if not found
     */
    @Nullable
-   Job delete(String fqdn);
+   Job delete(String fqdn) throws JobStillRunningException;
+
+   /**
+    * Deletes changes to the specified zone that have been created during the
+    * current session but not yet published to the zone.
+    * 
+    * @param fqdn
+    *           fqdn of the zone to delete changes from ex {@code jclouds.org}
+    */
+   Job deleteChanges(String fqdn) throws JobStillRunningException;
 
    /**
     * Publishes the current zone
@@ -85,7 +96,7 @@ public interface ZoneApi {
     *           fqdn of the zone to publish. ex
     *           {@code jclouds.org}
     */
-   Zone publish(String fqdn);
+   Zone publish(String fqdn) throws JobStillRunningException;
 
    /**
     * freezes the specified zone.
@@ -93,7 +104,7 @@ public interface ZoneApi {
     * @param fqdn
     *           fqdn of the zone to freeze ex {@code jclouds.org}
     */
-   Job freeze(String fqdn);
+   Job freeze(String fqdn) throws JobStillRunningException;
    
    /**
     * thaws the specified zone.
@@ -101,5 +112,5 @@ public interface ZoneApi {
     * @param fqdn
     *           fqdn of the zone to thaw ex {@code jclouds.org}
     */
-   Job thaw(String fqdn);
+   Job thaw(String fqdn) throws JobStillRunningException;
 }
