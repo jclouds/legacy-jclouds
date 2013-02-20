@@ -48,7 +48,7 @@ import org.testng.annotations.Test;
 public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
    HttpRequest getSOA = HttpRequest.builder().method("GET")
                                 .endpoint("https://api2.dynect.net/REST/SOARecord/adrianc.zone.dynecttest.jclouds.org/adrianc.zone.dynecttest.jclouds.org/50976579")
-                                .addHeader("API-Version", "3.3.7")
+                                .addHeader("API-Version", "3.3.8")
                                 .addHeader("Auth-Token", authToken)
                                 .payload(emptyJsonPayload()).build();   
 
@@ -74,7 +74,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
 
    HttpRequest getAAAA = HttpRequest.builder().method("GET")
          .endpoint("https://api2.dynect.net/REST/AAAARecord/adrianc.zone.dynecttest.jclouds.org/adrianc.zone.dynecttest.jclouds.org/50976579")
-         .addHeader("API-Version", "3.3.7")
+         .addHeader("API-Version", "3.3.8")
          .addHeader("Auth-Token", authToken)
          .payload(emptyJsonPayload()).build();   
    
@@ -100,7 +100,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
 
    HttpRequest getA = HttpRequest.builder().method("GET")
          .endpoint("https://api2.dynect.net/REST/ARecord/adrianc.zone.dynecttest.jclouds.org/adrianc.zone.dynecttest.jclouds.org/50976579")
-         .addHeader("API-Version", "3.3.7")
+         .addHeader("API-Version", "3.3.8")
          .addHeader("Auth-Token", authToken)
          .payload(emptyJsonPayload()).build();   
    
@@ -126,7 +126,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
 
    HttpRequest getCNAME = HttpRequest.builder().method("GET")
          .endpoint("https://api2.dynect.net/REST/CNAMERecord/adrianc.zone.dynecttest.jclouds.org/adrianc.zone.dynecttest.jclouds.org/50976579")
-         .addHeader("API-Version", "3.3.7")
+         .addHeader("API-Version", "3.3.8")
          .addHeader("Auth-Token", authToken)
          .payload(emptyJsonPayload()).build();   
    
@@ -152,7 +152,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
 
    HttpRequest getMX = HttpRequest.builder().method("GET")
          .endpoint("https://api2.dynect.net/REST/MXRecord/adrianc.zone.dynecttest.jclouds.org/adrianc.zone.dynecttest.jclouds.org/50976579")
-         .addHeader("API-Version", "3.3.7")
+         .addHeader("API-Version", "3.3.8")
          .addHeader("Auth-Token", authToken)
          .payload(emptyJsonPayload()).build();   
    
@@ -178,7 +178,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
 
    HttpRequest getNS = HttpRequest.builder().method("GET")
          .endpoint("https://api2.dynect.net/REST/NSRecord/adrianc.zone.dynecttest.jclouds.org/adrianc.zone.dynecttest.jclouds.org/50976579")
-         .addHeader("API-Version", "3.3.7")
+         .addHeader("API-Version", "3.3.8")
          .addHeader("Auth-Token", authToken)
          .payload(emptyJsonPayload()).build();   
    
@@ -204,7 +204,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
 
    HttpRequest getPTR = HttpRequest.builder().method("GET")
          .endpoint("https://api2.dynect.net/REST/PTRRecord/adrianc.zone.dynecttest.jclouds.org/adrianc.zone.dynecttest.jclouds.org/50976579")
-         .addHeader("API-Version", "3.3.7")
+         .addHeader("API-Version", "3.3.8")
          .addHeader("Auth-Token", authToken)
          .payload(emptyJsonPayload()).build();   
    
@@ -241,7 +241,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
 
    HttpRequest getSRV = HttpRequest.builder().method("GET")
          .endpoint("https://api2.dynect.net/REST/SRVRecord/adrianc.zone.dynecttest.jclouds.org/adrianc.zone.dynecttest.jclouds.org/50976579")
-         .addHeader("API-Version", "3.3.7")
+         .addHeader("API-Version", "3.3.8")
          .addHeader("Auth-Token", authToken)
          .payload(emptyJsonPayload()).build();   
    
@@ -262,7 +262,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
 
    HttpRequest getTXT = HttpRequest.builder().method("GET")
          .endpoint("https://api2.dynect.net/REST/TXTRecord/adrianc.zone.dynecttest.jclouds.org/adrianc.zone.dynecttest.jclouds.org/50976579")
-         .addHeader("API-Version", "3.3.7")
+         .addHeader("API-Version", "3.3.8")
          .addHeader("Auth-Token", authToken)
          .payload(emptyJsonPayload()).build();   
    
@@ -288,7 +288,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
 
    HttpRequest list = HttpRequest.builder().method("GET")
                                  .endpoint("https://api2.dynect.net/REST/AllRecord/adrianc.zone.dynecttest.jclouds.org")
-                                 .addHeader("API-Version", "3.3.7")
+                                 .addHeader("API-Version", "3.3.8")
                                  .addHeader("Auth-Token", authToken)
                                  .payload(emptyJsonPayload()).build();   
 

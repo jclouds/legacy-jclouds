@@ -73,7 +73,7 @@ public class DynECTApiMetadata extends BaseRestApiMetadata {
          .credentialName("Password")
          .defaultCredential(ANONYMOUS_IDENTITY)
          .documentation(URI.create("https://manage.dynect.net/help/docs/api2/rest/"))
-         .version("3.3.7")
+         .version("3.3.8")
          .defaultEndpoint("https://api2.dynect.net/REST")
          .defaultProperties(DynECTApiMetadata.defaultProperties())
          .defaultModules(ImmutableSet.<Class<? extends Module>>builder()

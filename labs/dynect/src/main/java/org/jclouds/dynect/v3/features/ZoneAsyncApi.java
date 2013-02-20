@@ -31,6 +31,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.dynect.v3.DynECTExceptions.TargetExistsException;
+import org.jclouds.dynect.v3.DynECTExceptions.JobStillRunningException;
 import org.jclouds.dynect.v3.domain.CreatePrimaryZone;
 import org.jclouds.dynect.v3.domain.CreatePrimaryZone.ToFQDN;
 import org.jclouds.dynect.v3.domain.Job;
@@ -61,7 +63,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 // required for all calls
 @Produces(APPLICATION_JSON)
 @Headers(keys = "API-Version", values = "{jclouds.api-version}")
-@Path("/Zone")
 @RequestFilters(SessionManager.class)
 public interface ZoneAsyncApi {
 
@@ -70,29 +71,31 @@ public interface ZoneAsyncApi {
     */
    @Named("ListZones")
    @GET
+   @Path("/Zone")
    @SelectJson("data")
    @Transform(ExtractZoneNames.class)
-   ListenableFuture<FluentIterable<String>> list();
+   ListenableFuture<FluentIterable<String>> list() throws JobStillRunningException;
 
    /**
     * @see ZoneApi#get
     */
    @Named("GetZone")
    @GET
-   @Path("/{fqdn}")
+   @Path("/Zone/{fqdn}")
    @SelectJson("data")
    @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<Zone> get(@PathParam("fqdn") String fqdn);
+   ListenableFuture<Zone> get(@PathParam("fqdn") String fqdn) throws JobStillRunningException;
 
    /**
     * @see ZoneApi#create
     */
    @Named("CreatePrimaryZone")
    @POST
-   @Path("/{fqdn}")
+   @Path("/Zone/{fqdn}")
    @SelectJson("data")
    ListenableFuture<Zone> create(
-         @PathParam("fqdn") @ParamParser(ToFQDN.class) @BinderParam(BindToJsonPayload.class) CreatePrimaryZone createZone);
+         @PathParam("fqdn") @ParamParser(ToFQDN.class) @BinderParam(BindToJsonPayload.class) CreatePrimaryZone createZone)
+         throws JobStillRunningException, TargetExistsException;
 
    /**
     * @see ZoneApi#createWithContact
@@ -100,19 +103,29 @@ public interface ZoneAsyncApi {
    @Named("CreatePrimaryZone")
    @POST
    @Payload("%7B\"rname\":\"{contact}\",\"serial_style\":\"increment\",\"ttl\":3600%7D")
-   @Path("/{fqdn}")
+   @Path("/Zone/{fqdn}")
    @SelectJson("data")
-   ListenableFuture<Zone> createWithContact(@PathParam("fqdn") String fqdn, @PayloadParam("contact") String contact);
+   ListenableFuture<Zone> createWithContact(@PathParam("fqdn") String fqdn, @PayloadParam("contact") String contact)
+         throws JobStillRunningException, TargetExistsException;
 
    /**
     * @see ZoneApi#delete
     */
    @Named("DeleteZone")
    @DELETE
-   @Path("/{fqdn}")
+   @Path("/Zone/{fqdn}")
    @Fallback(NullOnNotFoundOr404.class)
    @Consumes(APPLICATION_JSON)
-   ListenableFuture<Job> delete(@PathParam("fqdn") String fqdn);
+   ListenableFuture<Job> delete(@PathParam("fqdn") String fqdn) throws JobStillRunningException;
+
+   /**
+    * @see ZoneApi#deleteChanges
+    */
+   @Named("DeleteZoneChanges")
+   @DELETE
+   @Path("/ZoneChanges/{fqdn}")
+   @Consumes(APPLICATION_JSON)
+   ListenableFuture<Job> deleteChanges(@PathParam("fqdn") String fqdn) throws JobStillRunningException;
 
    /**
     * @see ZoneApi#publish
@@ -120,27 +133,27 @@ public interface ZoneAsyncApi {
    @Named("PublishZone")
    @PUT
    @Payload("{\"publish\":true}")
-   @Path("/{fqdn}")
+   @Path("/Zone/{fqdn}")
    @SelectJson("data")
-   ListenableFuture<Zone> publish(@PathParam("fqdn") String fqdn);
+   ListenableFuture<Zone> publish(@PathParam("fqdn") String fqdn) throws JobStillRunningException;
    
    /**
     * @see ZoneApi#freeze
     */
    @Named("FreezeZone")
    @PUT
-   @Path("/{fqdn}")
+   @Path("/Zone/{fqdn}")
    @Payload("{\"freeze\":true}")
    @Consumes(APPLICATION_JSON)
-   ListenableFuture<Job> freeze(@PathParam("fqdn") String fqdn);
+   ListenableFuture<Job> freeze(@PathParam("fqdn") String fqdn) throws JobStillRunningException;
 
    /**
     * @see ZoneApi#thaw
     */
    @Named("ThawZone")
    @PUT
-   @Path("/{fqdn}")
+   @Path("/Zone/{fqdn}")
    @Payload("{\"thaw\":true}")
    @Consumes(APPLICATION_JSON)
-   ListenableFuture<Job> thaw(@PathParam("fqdn") String fqdn);
+   ListenableFuture<Job> thaw(@PathParam("fqdn") String fqdn) throws JobStillRunningException;
 }

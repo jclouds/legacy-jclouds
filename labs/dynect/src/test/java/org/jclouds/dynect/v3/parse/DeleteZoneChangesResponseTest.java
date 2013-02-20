@@ -22,26 +22,24 @@ package org.jclouds.dynect.v3.parse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.dynect.v3.domain.Session;
+import org.jclouds.dynect.v3.domain.Job;
 import org.jclouds.dynect.v3.internal.BaseDynECTParseTest;
-import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class CreateSessionResponseTest extends BaseDynECTParseTest<Session> {
+public class DeleteZoneChangesResponseTest extends BaseDynECTParseTest<Job> {
 
    @Override
    public String resource() {
-      return "/create_session.json";
+      return "/delete_zone_changes.json";
    }
 
    @Override
-   @SelectJson("data")
    @Consumes(MediaType.APPLICATION_JSON)
-   public Session expected() {
-      return Session.forTokenAndVersion("FFFFFFFFFF", "3.3.8");
+   public Job expected() {
+      return Job.success(275625520l);
    }
 }

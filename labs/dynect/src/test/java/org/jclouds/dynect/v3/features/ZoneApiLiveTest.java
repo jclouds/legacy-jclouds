@@ -36,7 +36,7 @@ import com.google.common.collect.ImmutableList;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "ZoneApiLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "ZoneApiLiveTest")
 public class ZoneApiLiveTest extends BaseDynECTApiLiveTest {
 
    private void checkZone(Zone zone) {
@@ -102,6 +102,13 @@ public class ZoneApiLiveTest extends BaseDynECTApiLiveTest {
    }
 
    @Test(dependsOnMethods = "testThawZone")
+   public void testDeleteZoneChanges() {
+      Job job = api().deleteChanges(fqdn);
+      assertEquals(job.getStatus(), Status.SUCCESS);
+      assertEquals(context.getApi().getJob(job.getId()), job);
+   }
+
+   @Test(dependsOnMethods = "testDeleteZoneChanges")
    public void testDeleteZone() {
       Job job = api().delete(fqdn);
       assertEquals(job.getStatus(), Status.SUCCESS);
