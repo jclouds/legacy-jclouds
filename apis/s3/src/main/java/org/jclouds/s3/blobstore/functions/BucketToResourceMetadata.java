@@ -48,6 +48,7 @@ public class BucketToResourceMetadata implements Function<BucketMetadata, Storag
       to.setName(from.getName());
       to.setType(StorageType.CONTAINER);
       to.setLocation(locationOfBucket.apply(from.getName()));
+      to.setCreationDate(from.getCreationDate());
       return to;
    }
 }
