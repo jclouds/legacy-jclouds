@@ -35,7 +35,7 @@
 
   <properties>
     <test.dynect.endpoint>https://api2.dynect.net/REST</test.dynect.endpoint>
-    <test.dynect.api-version>3.3.7</test.dynect.api-version>
+    <test.dynect.api-version>3.3.8</test.dynect.api-version>
     <test.dynect.build-version />
     <test.dynect.identity />
     <test.dynect.credential />
@@ -95,6 +95,8 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
+                  <!-- TODO: remove when multiple jobs/session are supported -->
+                  <threadCount>1</threadCount>
                   <systemPropertyVariables>
                     <test.dynect.endpoint>${test.dynect.endpoint}</test.dynect.endpoint>
                     <test.dynect.api-version>${test.dynect.api-version}</test.dynect.api-version>

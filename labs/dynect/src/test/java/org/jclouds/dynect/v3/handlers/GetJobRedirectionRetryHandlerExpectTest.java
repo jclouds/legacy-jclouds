@@ -39,7 +39,7 @@ public class GetJobRedirectionRetryHandlerExpectTest extends BaseDynECTApiExpect
 
       HttpRequest thaw = HttpRequest.builder().method("PUT")
                                     .endpoint("https://api2.dynect.net/REST/Zone/jclouds.org")
-                                    .addHeader("API-Version", "3.3.7")
+                                    .addHeader("API-Version", "3.3.8")
                                     .addHeader(ACCEPT, APPLICATION_JSON)
                                     .addHeader("Auth-Token", authToken)
                                     .payload(stringPayload("{\"thaw\":true}"))
@@ -52,7 +52,7 @@ public class GetJobRedirectionRetryHandlerExpectTest extends BaseDynECTApiExpect
 
       HttpRequest job = HttpRequest.builder().method("GET")
                                    .endpoint("https://api2.dynect.net/REST/Job/1234")
-                                   .addHeader("API-Version", "3.3.7")
+                                   .addHeader("API-Version", "3.3.8")
                                    .addHeader(ACCEPT, APPLICATION_JSON)
                                    .addHeader("Auth-Token", authToken)
                                    .payload(emptyJsonPayload())

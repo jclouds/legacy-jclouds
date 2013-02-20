@@ -52,14 +52,14 @@ public class RecordApiLiveTest extends BaseDynECTApiLiveTest {
       assertTrue(record.getId() > 0, "Id cannot be zero for RecordId: " + record);
       checkNotNull(record.getType(), "Type cannot be null for RecordId: %s", record);
       checkNotNull(record.getFQDN(), "FQDN cannot be null for RecordId: %s", record);
-      checkNotNull(record.getZone(), "Serial cannot be null for RecordId: %s", record);
+      checkNotNull(record.getZone(), "Zone cannot be null for RecordId: %s", record);
    }
 
    private void checkRecord(Record<? extends Map<String, Object>> record) {
       checkRecordId(record);
       assertTrue(record.getRData().size() > 0, "RData entries should be present for cannot be zero for Record: "
             + record);
-      assertTrue(record.getTTL() > -1, "TTL cannot be negative for RecordId: " + record);
+      checkNotNull(record.getTTL(), "TTL cannot be null for RecordId: %s", record);
    }
 
    @Test

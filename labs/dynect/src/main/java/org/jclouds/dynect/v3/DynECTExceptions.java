@@ -16,32 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package org.jclouds.dynect.v3.parse;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.core.MediaType;
-
-import org.jclouds.dynect.v3.domain.Session;
-import org.jclouds.dynect.v3.internal.BaseDynECTParseTest;
-import org.jclouds.rest.annotations.SelectJson;
-import org.testng.annotations.Test;
+package org.jclouds.dynect.v3;
 
 /**
+ * Exceptions likely to be encountered when using {@link DynECTApi}
+ * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
-public class CreateSessionResponseTest extends BaseDynECTParseTest<Session> {
+public interface DynECTExceptions {
+   /**
+    * You must wait until another job is finished before attempting this command
+    * again
+    */
+   public static class JobStillRunningException extends IllegalStateException {
+      private static final long serialVersionUID = 1L;
 
-   @Override
-   public String resource() {
-      return "/create_session.json";
+      public JobStillRunningException(String message, Throwable cause) {
+         super(message, cause);
+      }
    }
 
-   @Override
-   @SelectJson("data")
-   @Consumes(MediaType.APPLICATION_JSON)
-   public Session expected() {
-      return Session.forTokenAndVersion("FFFFFFFFFF", "3.3.8");
+   /**
+    * The Zone or other resource already exists
+    */
+   public static class TargetExistsException extends IllegalStateException {
+      private static final long serialVersionUID = 1L;
+
+      public TargetExistsException(String message, Throwable cause) {
+         super(message, cause);
+      }
    }
 }
