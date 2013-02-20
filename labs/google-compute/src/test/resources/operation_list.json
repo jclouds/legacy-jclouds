@@ -15,16 +15,7 @@
      "progress": 100,
      "insertTime": "2012-11-28T06:41:05.060",
      "startTime": "2012-11-28T06:41:05.142",
-     "httpErrorStatusCode": 400,
-     "httpErrorMessage": "BAD REQUEST",
-     "error": {
-      "errors": [
-       {
-        "code": "RESOURCE_ALREADY_EXISTS",
-        "message": "The resource 'projects/myproject/instances/instance-api-live-test-instance' already exists"
-       }
-      ]
-     },
+     "endTime": "2012-11-28T06:41:06.142",
      "operationType": "insert"
     }
  ]

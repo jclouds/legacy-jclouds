@@ -49,8 +49,7 @@ public final class Network extends Resource {
    })
    protected Network(String id, Date creationTimestamp, URI selfLink, String name, String description,
                      String IPv4Range, String gatewayIPv4) {
-      super(Kind.NETWORK, checkNotNull(id, "id of %s", name), fromNullable(creationTimestamp), checkNotNull(selfLink,
-              "selfLink of %s", name), checkNotNull(name, "name"), fromNullable(description));
+      super(Kind.NETWORK, id, creationTimestamp, selfLink, name, description);
       this.IPv4Range = checkNotNull(IPv4Range);
       this.gatewayIPv4 = fromNullable(gatewayIPv4);
    }

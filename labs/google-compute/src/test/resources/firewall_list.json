@@ -8,10 +8,10 @@
    "kind": "compute#firewall",
    "id": "12862241031274216284",
    "creationTimestamp": "2012-04-13T03:05:02.855",
-   "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/google/firewalls/default-allow-internal",
-   "name": "default-allow-internal",
+   "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/myproject/firewalls/jclouds-test",
+   "name": "jclouds-test",
    "description": "Internal traffic from default allowed",
-   "network": "https://www.googleapis.com/compute/v1beta13/projects/google/networks/default",
+   "network": "https://www.googleapis.com/compute/v1beta13/projects/myproject/networks/jclouds-test",
    "sourceRanges": [
     "10.0.0.0/8"
    ],

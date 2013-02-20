@@ -24,6 +24,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import org.jclouds.collect.IterableWithMarker;
 
+import java.beans.ConstructorProperties;
 import java.net.URI;
 import java.util.Iterator;
 
@@ -45,6 +46,9 @@ public class ListPage<T> extends IterableWithMarker<T> {
    private final String nextPageToken;
    private final Iterable<T> items;
 
+   @ConstructorProperties({
+           "kind", "id", "selfLink", "nextPageToken", "items"
+   })
    protected ListPage(Kind kind, String id, URI selfLink, String nextPageToken, Iterable<T> items) {
       this.id = checkNotNull(id, "id");
       this.kind = checkNotNull(kind, "kind of %id", id);
@@ -72,7 +76,7 @@ public class ListPage<T> extends IterableWithMarker<T> {
 
    @Override
    public Iterator<T> iterator() {
-      return items.iterator();
+      return checkNotNull(items, "items").iterator();
    }
 
    /**

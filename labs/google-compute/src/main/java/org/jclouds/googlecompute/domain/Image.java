@@ -51,8 +51,7 @@ public final class Image extends Resource {
    })
    protected Image(String id, Date creationTimestamp, URI selfLink, String name, String description,
                    String sourceType, URI preferredKernel, RawDisk rawDisk) {
-      super(Kind.IMAGE, checkNotNull(id, "id of %s", name), fromNullable(creationTimestamp),
-              checkNotNull(selfLink, "selfLink of %s", name), checkNotNull(name, "name"), fromNullable(description));
+      super(Kind.IMAGE, id, creationTimestamp, selfLink, name, description);
       this.sourceType = checkNotNull(sourceType, "sourceType of %s", name);
       this.preferredKernel = fromNullable(preferredKernel);
       this.rawDisk = checkNotNull(rawDisk, "rawDisk of %s", name); ;

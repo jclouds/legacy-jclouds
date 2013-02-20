@@ -32,7 +32,6 @@ import java.util.Set;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;
-import static com.google.common.base.Optional.fromNullable;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -59,8 +58,7 @@ public final class MachineType extends Resource {
    private MachineType(String id, Date creationTimestamp, URI selfLink, String name, String description,
                        int guestCpus, int memoryMb, int imageSpaceGb, List<EphemeralDisk> ephemeralDisks,
                        int maximumPersistentDisks, long maximumPersistentDisksSizeGb, Set<String> availableZone) {
-      super(Kind.MACHINE_TYPE, checkNotNull(id, "id of %s", name), fromNullable(creationTimestamp),
-              checkNotNull(selfLink, "selfLink of %s", name), checkNotNull(name, "name"), fromNullable(description));
+      super(Kind.MACHINE_TYPE, id, creationTimestamp, selfLink, name, description);
       this.guestCpus = checkNotNull(guestCpus, "guestCpus of %s", name);
       this.memoryMb = checkNotNull(memoryMb, "memoryMb of %s", name);
       this.imageSpaceGb = checkNotNull(imageSpaceGb, "imageSpaceGb of %s", name);

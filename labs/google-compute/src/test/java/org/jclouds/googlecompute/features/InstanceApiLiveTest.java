@@ -39,8 +39,10 @@ import static org.testng.Assert.assertNotNull;
  */
 public class InstanceApiLiveTest extends BaseGoogleComputeApiLiveTest {
 
+   private static final String INSTANCE_NETWORK_NAME = "instance-api-live-test-network";
    private static final String INSTANCE_NAME = "instance-api-live-test-instance";
    private static final String DISK_NAME = "instance-live-test-disk";
+   private static final String IPV4_RANGE = "10.0.0.0/8";
    private static final int TIME_WAIT = 600;
 
    private InstanceTemplate instance;
@@ -49,8 +51,9 @@ public class InstanceApiLiveTest extends BaseGoogleComputeApiLiveTest {
    public void setupContext() {
       super.setupContext();
       instance = InstanceTemplate.builder()
-              .forMachineTypeAndNetwork(getDefaultMachineTypekUrl(getUserProject()),
-                      getDefaultNetworkUrl(getUserProject()))
+              .forMachineType(getDefaultMachineTypekUrl(getUserProject()))
+              .addNetworkInterface(getNetworkUrl(getUserProject(), INSTANCE_NETWORK_NAME),
+                      Instance.NetworkInterface.AccessConfig.Type.ONE_TO_ONE_NAT)
               .addMetadata("mykey", "myvalue")
               .addTag("atag")
               .description("a description")
@@ -65,20 +68,15 @@ public class InstanceApiLiveTest extends BaseGoogleComputeApiLiveTest {
    @Test(groups = "live")
    public void testInsertInstance() {
 
+      // need to create the network first
+      assertOperationDoneSucessfully(context.getApi().getNetworkApiForProject(getUserProject()).createInIPv4Range
+              (INSTANCE_NETWORK_NAME, IPV4_RANGE), TIME_WAIT);
+
       assertOperationDoneSucessfully(context.getApi().getDiskApiForProject(getUserProject()).createInZone
               ("instance-live-test-disk", 1, getDefaultZoneUrl(getUserProject())), TIME_WAIT);
 
       assertOperationDoneSucessfully(api().createInZone(INSTANCE_NAME, instance, DEFAULT_ZONE_NAME), TIME_WAIT);
 
-   }
-
-   @Test(groups = "live", dependsOnMethods = "testInsertInstance")
-   public void testInsertInstanceCopy() {
-      Instance instance = api().get(INSTANCE_NAME);
-      InstanceTemplate copy = InstanceTemplate.fromInstance(instance);
-      copy.network(instance.getNetworkInterfaces().iterator().next().getNetwork());
-
-      assertOperationDoneSucessfully(api().createInZone(INSTANCE_NAME + "-2", copy, DEFAULT_ZONE_NAME), TIME_WAIT);
    }
 
    @Test(groups = "live", dependsOnMethods = "testInsertInstance")
@@ -103,13 +101,14 @@ public class InstanceApiLiveTest extends BaseGoogleComputeApiLiveTest {
 
    }
 
-   @Test(groups = "live", dependsOnMethods = {"testListInstance", "testInsertInstanceCopy"})
+   @Test(groups = "live", dependsOnMethods = "testListInstance")
    public void testDeleteInstance() {
 
       assertOperationDoneSucessfully(api().delete(INSTANCE_NAME), TIME_WAIT);
-      assertOperationDoneSucessfully(api().delete(INSTANCE_NAME + "-2"), TIME_WAIT);
       assertOperationDoneSucessfully(context.getApi().getDiskApiForProject(getUserProject()).delete(DISK_NAME),
               TIME_WAIT);
+      assertOperationDoneSucessfully(context.getApi().getNetworkApiForProject(getUserProject()).delete
+              (INSTANCE_NETWORK_NAME), TIME_WAIT);
    }
 
    private void assertInstanceEquals(Instance result, InstanceTemplate expected) {
