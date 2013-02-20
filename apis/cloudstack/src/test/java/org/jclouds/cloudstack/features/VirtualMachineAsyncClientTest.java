@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.AssignVirtualMachineOptions;
 import org.jclouds.cloudstack.options.ListVirtualMachinesOptions;
+import org.jclouds.cloudstack.options.StopVirtualMachineOptions;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
@@ -138,10 +139,31 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
 
    public void testStopVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VirtualMachineAsyncClient.class.getMethod("stopVirtualMachine", String.class);
+
       HttpRequest httpRequest = processor.createRequest(method, 5);
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=stopVirtualMachine&id=5 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testStopVirtualMachineForced() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VirtualMachineAsyncClient.class.getMethod("stopVirtualMachine", String.class,
+                                                                StopVirtualMachineOptions.class);
+
+      HttpRequest httpRequest = processor.createRequest(method, 5,
+                                                        StopVirtualMachineOptions.Builder.forced(true));
+
+      assertRequestLineEquals(httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=stopVirtualMachine&id=5&forced=true HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
