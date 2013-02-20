@@ -42,8 +42,8 @@ import org.jclouds.cloudfiles.functions.ParseContainerCDNMetadataFromHeaders;
 import org.jclouds.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.cloudfiles.reference.CloudFilesHeaders;
 import org.jclouds.openstack.filters.AuthenticateRequest;
-import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.Storage;
+import org.jclouds.openstack.swift.SwiftAsyncClient;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -67,7 +67,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters(AuthenticateRequest.class)
 @Endpoint(Storage.class)
-public interface CloudFilesAsyncClient extends CommonSwiftAsyncClient {
+public interface CloudFilesAsyncClient extends SwiftAsyncClient {
 
    /**
     * @see CloudFilesClient#listCDNContainers
