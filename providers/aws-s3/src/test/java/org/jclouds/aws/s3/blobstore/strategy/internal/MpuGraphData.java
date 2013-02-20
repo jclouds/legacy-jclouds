@@ -18,20 +18,20 @@
  */
 package org.jclouds.aws.s3.blobstore.strategy.internal;
 
-import org.jclouds.aws.s3.blobstore.strategy.MultipartUploadStrategy;
+import org.jclouds.aws.s3.blobstore.strategy.MultipartUpload;
 
 /**
  * Print out on the console some graph data regarding the partitioning algorithm.
- * 
+ *
  * @author Tibor Kiss
  */
 public class MpuGraphData {
 
    private static void calculate(long length, MultipartUploadSlicingAlgorithm algorithm) {
-      System.out.println("" + length + " " + algorithm.getParts() + " " 
+      System.out.println("" + length + " " + algorithm.getParts() + " "
             + algorithm.calculateChunkSize(length) + " " + + algorithm.getRemaining());
    }
-   
+
    private static void foreach(long from, long to1, long to2, long to3, MultipartUploadSlicingAlgorithm algorithm) {
       long i = 0L, step = 1L;
       System.out.println("=== {" + from + "," + to1 + "} ===");
@@ -53,10 +53,10 @@ public class MpuGraphData {
 
    public static void main(String[] args) {
       MultipartUploadSlicingAlgorithm algorithm = new MultipartUploadSlicingAlgorithm();
-      foreach(1L, 
+      foreach(1L,
             algorithm.defaultPartSize * algorithm.magnitudeBase,
-            MultipartUploadStrategy.MAX_PART_SIZE * algorithm.magnitudeBase,
-            MultipartUploadStrategy.MAX_PART_SIZE * MultipartUploadStrategy.MAX_NUMBER_OF_PARTS,
+            MultipartUpload.MAX_PART_SIZE * algorithm.magnitudeBase,
+            MultipartUpload.MAX_PART_SIZE * MultipartUpload.MAX_NUMBER_OF_PARTS,
             algorithm);
    }
 
