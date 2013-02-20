@@ -26,6 +26,7 @@ import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.options.AssignVirtualMachineOptions;
 import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
 import org.jclouds.cloudstack.options.ListVirtualMachinesOptions;
+import org.jclouds.cloudstack.options.StopVirtualMachineOptions;
 import org.jclouds.concurrent.Timeout;
 
 /**
@@ -99,6 +100,17 @@ public interface VirtualMachineClient {
     * @return job id related to destroying the VM
     */
    String stopVirtualMachine(String id);
+
+   /**
+    * Stops a virtual machine.
+    * 
+    * @param id
+    *           The ID of the virtual machine
+    * @param options
+    *           If present, whether to force stop.
+    * @return job id related to destroying the VM
+    */
+   String stopVirtualMachine(String id, StopVirtualMachineOptions options);
 
    /**
     * Resets the password for virtual machine. The virtual machine must be in a
