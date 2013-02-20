@@ -19,6 +19,17 @@
 
 package org.jclouds.googlecompute.features;
 
+import static org.jclouds.googlecompute.GoogleComputeConstants.COMPUTE_READONLY_SCOPE;
+import static org.jclouds.googlecompute.GoogleComputeConstants.COMPUTE_SCOPE;
+import static org.jclouds.googlecompute.domain.InstanceTemplate.Builder.fromInstance;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertNull;
+
+import java.net.URI;
+
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.googlecompute.domain.Instance;
 import org.jclouds.googlecompute.domain.InstanceTemplate;
 import org.jclouds.googlecompute.internal.BaseGoogleComputeApiExpectTest;
@@ -29,15 +40,6 @@ import org.jclouds.googlecompute.parse.ParseOperationTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
-
-import javax.ws.rs.core.MediaType;
-import java.net.URI;
-
-import static org.jclouds.googlecompute.GoogleComputeConstants.COMPUTE_READONLY_SCOPE;
-import static org.jclouds.googlecompute.GoogleComputeConstants.COMPUTE_SCOPE;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-import static org.testng.AssertJUnit.assertNull;
 
 /**
  * @author David Alves
@@ -141,8 +143,7 @@ public class InstanceApiExpectTest extends BaseGoogleComputeApiExpectTest {
               TOKEN_RESPONSE, insert, insertInstanceResponse).getInstanceApiForProject("myproject");
 
       Instance instance = new ParseInstanceTest().expected();
-      InstanceTemplate options = new InstanceTemplate.Builder()
-              .fromInstance(instance)
+      InstanceTemplate options = fromInstance(instance)
               .network(instance.getNetworkInterfaces().iterator().next().getNetwork())
               .addDisk(InstanceTemplate.PersistentDisk.Mode.READ_WRITE,
                       URI.create("https://www.googleapis.com/compute/v1beta13/projects/myproject/disks/test"));
