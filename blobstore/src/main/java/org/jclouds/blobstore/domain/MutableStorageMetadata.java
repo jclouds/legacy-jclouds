@@ -22,6 +22,7 @@ import java.util.Date;
 
 import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
 import org.jclouds.domain.MutableResourceMetadata;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.inject.ImplementedBy;
 
@@ -39,10 +40,14 @@ public interface MutableStorageMetadata extends MutableResourceMetadata<StorageT
     */
    void setETag(String eTag);
 
+   /**
+    * @see #getCreationDate
+    */
+   void setCreationDate(@Nullable Date creationDate);
 
    /**
     * @see #getLastModified
     */
-   void setLastModified(Date lastModified);
+   void setLastModified(@Nullable Date lastModified);
 
 }
