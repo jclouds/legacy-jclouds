@@ -24,10 +24,11 @@ import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
 import org.jclouds.cloudstack.internal.BaseCloudStackAsyncClientTest;
 import org.jclouds.cloudstack.options.AssignVirtualMachineOptions;
 import org.jclouds.cloudstack.options.ListVirtualMachinesOptions;
-import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
+import org.jclouds.cloudstack.options.StopVirtualMachineOptions;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -137,10 +138,30 @@ public class VirtualMachineAsyncClientTest extends BaseCloudStackAsyncClientTest
 
    public void testStopVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = method(VirtualMachineAsyncClient.class, "stopVirtualMachine", String.class);
-      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(5));
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("5"));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=stopVirtualMachine&id=5 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertFallbackClassEquals(method, MapHttp4xxCodesToExceptions.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testStopVirtualMachineForced() throws SecurityException, NoSuchMethodException, IOException {
+      Invokable<?, ?> method = method(VirtualMachineAsyncClient.class, "stopVirtualMachine", String.class,
+                                                                StopVirtualMachineOptions.class);
+
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("5",
+                                                        StopVirtualMachineOptions.Builder.forced(true)));
+
+      assertRequestLineEquals(httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=stopVirtualMachine&id=5&forced=true HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

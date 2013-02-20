@@ -34,6 +34,7 @@ import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.cloudstack.options.AssignVirtualMachineOptions;
 import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
 import org.jclouds.cloudstack.options.ListVirtualMachinesOptions;
+import org.jclouds.cloudstack.options.StopVirtualMachineOptions;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
@@ -118,6 +119,16 @@ public interface VirtualMachineAsyncClient {
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<String> stopVirtualMachine(@QueryParam("id") String id);
+
+   /**
+    * @see VirtualMachineClient#stopVirtualMachine
+    */
+   @GET
+   @QueryParams(keys = "command", values = "stopVirtualMachine")
+   @SelectJson("jobid")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<String> stopVirtualMachine(@QueryParam("id") String id,
+                                               StopVirtualMachineOptions options);
 
    /**
     * @see VirtualMachineClient#resetPasswordForVirtualMachine
