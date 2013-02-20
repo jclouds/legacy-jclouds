@@ -94,14 +94,14 @@ public class Resource {
    @ConstructorProperties({
            "kind", "id", "creationTimestamp", "selfLink", "name", "description"
    })
-   protected Resource(Kind kind, String id, Optional<Date> creationTimestamp, URI selfLink, String name,
-                      Optional<String> description) {
+   protected Resource(Kind kind, String id, Date creationTimestamp, URI selfLink, String name,
+                      String description) {
       this.kind = checkNotNull(kind, "kind");
-      this.id = id;
-      this.creationTimestamp = creationTimestamp;
-      this.selfLink = selfLink;
+      this.id = checkNotNull(id, "id");
+      this.creationTimestamp = fromNullable(creationTimestamp);
+      this.selfLink = checkNotNull(selfLink, "selfLink");
       this.name = checkNotNull(name, "name");
-      this.description = description;
+      this.description = fromNullable(description);
    }
 
    /**
@@ -152,7 +152,7 @@ public class Resource {
     */
    @Override
    public int hashCode() {
-      return Objects.hashCode(kind, id, name);
+      return Objects.hashCode(kind, name);
    }
 
    /**
@@ -164,7 +164,6 @@ public class Resource {
       if (obj == null || getClass() != obj.getClass()) return false;
       Resource that = Resource.class.cast(obj);
       return equal(this.kind, that.kind)
-              && equal(this.id, that.id)
               && equal(this.name, that.name);
    }
 
@@ -259,8 +258,7 @@ public class Resource {
       }
 
       public Resource build() {
-         return new Resource(kind, id, fromNullable(creationTimestamp), selfLink, name,
-                 fromNullable(description));
+         return new Resource(kind, id, creationTimestamp, selfLink, name, description);
       }
 
       public T fromResource(Resource in) {

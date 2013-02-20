@@ -23,8 +23,11 @@ import org.jclouds.collect.PagedIterable;
 import org.jclouds.googlecompute.domain.Firewall;
 import org.jclouds.googlecompute.domain.ListPage;
 import org.jclouds.googlecompute.domain.Operation;
+import org.jclouds.googlecompute.options.FirewallOptions;
 import org.jclouds.googlecompute.options.ListOptions;
 import org.jclouds.javax.annotation.Nullable;
+
+import java.net.URI;
 
 /**
  * Provides synchronous access to Firewalls via their REST API.
@@ -49,32 +52,33 @@ public interface FirewallApi {
    /**
     * Creates a firewall resource in the specified project using the data included in the request.
     *
-    *
-    * @param firewall the firewall to be inserted.
+    * @param name the name of the firewall to be inserted.
+    * @param network the network to which to add the firewall
+    * @param firewallOptions the options of the firewall to add
     * @return an Operation resource. To check on the status of an operation, poll the Operations resource returned to
     *         you, and look for the status field.
     */
-   Operation create(Firewall firewall);
+   Operation createInNetwork(String name, URI network, FirewallOptions firewallOptions);
 
    /**
     * Updates the specified firewall resource with the data included in the request.
     *
     * @param firewallName the name firewall to be updated.
-    * @param firewall     the new firewall.
+    * @param firewallOptions     the new firewall.
     * @return an Operation resource. To check on the status of an operation, poll the Operations resource returned to
     *         you, and look for the status field.
     */
-   Operation update(String firewallName, Firewall firewall);
+   Operation update(String firewallName, FirewallOptions firewallOptions);
 
    /**
     * Updates the specified firewall resource, with patch semantics, with the data included in the request.
     *
     * @param firewallName the name firewall to be updated.
-    * @param firewall     the new firewall.
+    * @param firewallOptions     the new firewall.
     * @return an Operation resource. To check on the status of an operation, poll the Operations resource returned to
     *         you, and look for the status field.
     */
-   Operation patch(String firewallName, Firewall firewall);
+   Operation patch(String firewallName, FirewallOptions firewallOptions);
 
    /**
     * Deletes the specified image resource.

@@ -18,26 +18,31 @@
  */
 package org.jclouds.googlecompute.internal;
 
-import static com.google.common.base.Charsets.UTF_8;
-import static com.google.common.io.BaseEncoding.base64Url;
-
-import java.net.URI;
-import java.util.Properties;
-
-import javax.ws.rs.core.MediaType;
-
+import com.google.common.base.Joiner;
+import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
+import com.google.common.base.Ticker;
+import com.google.inject.Binder;
+import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 import org.jclouds.collect.PagedIterable;
 import org.jclouds.collect.PagedIterables;
 import org.jclouds.googlecompute.domain.ListPage;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.io.Payload;
 import org.jclouds.oauth.v2.OAuthConstants;
 import org.jclouds.rest.internal.BaseRestApiExpectTest;
+import org.jclouds.util.Strings2;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Ticker;
-import com.google.inject.Binder;
-import com.google.inject.Module;
+import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.io.BaseEncoding.base64Url;
 
 /**
  * @author Adrian Cole
@@ -78,6 +83,15 @@ public class BaseGoogleComputeExpectTest<T> extends BaseRestApiExpectTest<T> {
                   return 0;
                }
             });
+            // predictable node names
+            final AtomicInteger suffix = new AtomicInteger();
+            binder.bind(new TypeLiteral<Supplier<String>>() {
+            }).toInstance(new Supplier<String>() {
+               @Override
+               public String get() {
+                  return suffix.getAndIncrement() + "";
+               }
+            });
          }
       };
    }
@@ -113,6 +127,15 @@ public class BaseGoogleComputeExpectTest<T> extends BaseRestApiExpectTest<T> {
     */
    protected <T> PagedIterable<T> toPagedIterable(ListPage<T> list) {
       return PagedIterables.of(list);
+   }
+
+   protected static Payload staticPayloadFromResource(String resource) {
+      try {
+         return payloadFromString(Strings2.toStringAndClose(BaseGoogleComputeExpectTest.class.getResourceAsStream
+                 (resource)));
+      } catch (IOException e) {
+         throw Throwables.propagate(e);
+      }
    }
 
 

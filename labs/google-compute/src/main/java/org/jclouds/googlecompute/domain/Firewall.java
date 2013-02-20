@@ -32,7 +32,6 @@ import java.util.Set;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;
-import static com.google.common.base.Optional.fromNullable;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Range.closed;
@@ -61,8 +60,7 @@ public final class Firewall extends Resource {
    protected Firewall(String id, Date creationTimestamp, URI selfLink, String name, String description,
                       URI network, Set<String> sourceRanges, Set<String> sourceTags, Set<String> targetTags,
                       Set<Rule> allowed) {
-      super(Kind.FIREWALL, id, fromNullable(creationTimestamp), selfLink, checkNotNull(name, "name"),
-              fromNullable(description));
+      super(Kind.FIREWALL, id, creationTimestamp, selfLink, name, description);
       this.network = checkNotNull(network, "network of %s", name);
       this.sourceRanges = sourceRanges == null ? ImmutableSet.<String>of() : sourceRanges;
       this.sourceTags = sourceTags == null ? ImmutableSet.<String>of() : sourceTags;
@@ -119,8 +117,11 @@ public final class Firewall extends Resource {
     */
    protected Objects.ToStringHelper string() {
       return super.string()
-              .add("network", network).add("sourceRanges", sourceRanges).add("sourceTags",
-                      sourceTags).add("targetTags", targetTags).add("allowed", allowed);
+              .add("network", network)
+              .add("sourceRanges", sourceRanges)
+              .add("sourceTags", sourceTags)
+              .add("targetTags", targetTags)
+              .add("allowed", allowed);
    }
 
    /**
@@ -350,7 +351,7 @@ public final class Firewall extends Resource {
           * @see org.jclouds.googlecompute.domain.Firewall.Rule#getIPProtocol()
           */
          public Builder IPProtocol(IPProtocol IPProtocol) {
-            this.ipProtocol = checkNotNull(IPProtocol);
+            this.ipProtocol = IPProtocol;
             return this;
          }
 

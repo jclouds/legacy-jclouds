@@ -41,21 +41,22 @@ import static org.testng.AssertJUnit.assertNull;
 @Test(groups = "unit")
 public class NetworkApiExpectTest extends BaseGoogleComputeApiExpectTest {
 
-   public void testGetNetworkResponseIs2xx() throws Exception {
-      HttpRequest get = HttpRequest
-              .builder()
-              .method("GET")
-              .endpoint("https://www.googleapis.com/compute/v1beta13/projects/myproject/networks/default")
-              .addHeader("Accept", "application/json")
-              .addHeader("Authorization", "Bearer " + TOKEN).build();
+   public static final HttpRequest GET_NETWORK_REQUEST = HttpRequest
+           .builder()
+           .method("GET")
+           .endpoint("https://www.googleapis.com/compute/v1beta13/projects/myproject/networks/jclouds-test")
+           .addHeader("Accept", "application/json")
+           .addHeader("Authorization", "Bearer " + TOKEN).build();
 
-      HttpResponse operationResponse = HttpResponse.builder().statusCode(200)
-              .payload(payloadFromResource("/network_get.json")).build();
+   public static final HttpResponse GET_NETWORK_RESPONSE = HttpResponse.builder().statusCode(200)
+           .payload(staticPayloadFromResource("/network_get.json")).build();
+
+   public void testGetNetworkResponseIs2xx() throws Exception {
 
       NetworkApi api = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
-              TOKEN_RESPONSE, get, operationResponse).getNetworkApiForProject("myproject");
+              TOKEN_RESPONSE, GET_NETWORK_REQUEST, GET_NETWORK_RESPONSE).getNetworkApiForProject("myproject");
 
-      assertEquals(api.get("default"),
+      assertEquals(api.get("jclouds-test"),
               new ParseNetworkTest().expected());
    }
 
@@ -63,7 +64,7 @@ public class NetworkApiExpectTest extends BaseGoogleComputeApiExpectTest {
       HttpRequest get = HttpRequest
               .builder()
               .method("GET")
-              .endpoint("https://www.googleapis.com/compute/v1beta13/projects/myproject/networks/default")
+              .endpoint("https://www.googleapis.com/compute/v1beta13/projects/myproject/networks/jclouds-test")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -72,7 +73,7 @@ public class NetworkApiExpectTest extends BaseGoogleComputeApiExpectTest {
       NetworkApi api = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
               TOKEN_RESPONSE, get, operationResponse).getNetworkApiForProject("myproject");
 
-      assertNull(api.get("default"));
+      assertNull(api.get("jclouds-test"));
    }
 
    public void testInsertNetworkResponseIs2xx() {
@@ -100,7 +101,7 @@ public class NetworkApiExpectTest extends BaseGoogleComputeApiExpectTest {
               .builder()
               .method("DELETE")
               .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta13/projects/myproject/networks/default")
+                      ".com/compute/v1beta13/projects/myproject/networks/jclouds-test")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -110,7 +111,7 @@ public class NetworkApiExpectTest extends BaseGoogleComputeApiExpectTest {
       NetworkApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
               TOKEN_RESPONSE, delete, deleteResponse).getNetworkApiForProject("myproject");
 
-      assertEquals(api.delete("default"),
+      assertEquals(api.delete("jclouds-test"),
               new ParseOperationTest().expected());
    }
 
@@ -119,7 +120,7 @@ public class NetworkApiExpectTest extends BaseGoogleComputeApiExpectTest {
               .builder()
               .method("DELETE")
               .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta13/projects/myproject/networks/default")
+                      ".com/compute/v1beta13/projects/myproject/networks/jclouds-test")
               .addHeader("Accept", "application/json")
               .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -128,7 +129,7 @@ public class NetworkApiExpectTest extends BaseGoogleComputeApiExpectTest {
       NetworkApi api = requestsSendResponses(requestForScopes(COMPUTE_SCOPE),
               TOKEN_RESPONSE, delete, deleteResponse).getNetworkApiForProject("myproject");
 
-      assertNull(api.delete("default"));
+      assertNull(api.delete("jclouds-test"));
    }
 
    public void testListNetworksResponseIs2xx() {

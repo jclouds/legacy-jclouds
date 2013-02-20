@@ -39,70 +39,62 @@ public class ZoneApiExpectTest extends BaseGoogleComputeApiExpectTest {
 
    public static final String ZONES_URL_PREFIX = "https://www.googleapis.com/compute/v1beta13/projects/google/zones";
 
+   public static final HttpRequest GET_ZONE_REQ = HttpRequest
+           .builder()
+           .method("GET")
+           .endpoint(ZONES_URL_PREFIX + "/us-central2-a")
+           .addHeader("Accept", "application/json")
+           .addHeader("Authorization", "Bearer " + TOKEN).build();
+
+   public static final HttpRequest LIST_ZONES_REQ = HttpRequest
+           .builder()
+           .method("GET")
+           .endpoint(ZONES_URL_PREFIX)
+           .addHeader("Accept", "application/json")
+           .addHeader("Authorization", "Bearer " + TOKEN).build();
+
+   public static final HttpResponse LIST_ZONES_RESPONSE = HttpResponse.builder().statusCode(200)
+           .payload(staticPayloadFromResource("/zone_list.json")).build();
+
+
    public void testGetZoneResponseIs2xx() throws Exception {
-      HttpRequest get = HttpRequest
-              .builder()
-              .method("GET")
-              .endpoint(ZONES_URL_PREFIX + "/us-central2-a")
-              .addHeader("Accept", "application/json")
-              .addHeader("Authorization", "Bearer " + TOKEN).build();
+
 
       HttpResponse operationResponse = HttpResponse.builder().statusCode(200)
               .payload(payloadFromResource("/zone_get.json")).build();
 
       ZoneApi api = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
-              TOKEN_RESPONSE, get, operationResponse).getZoneApiForProject("google");
+              TOKEN_RESPONSE, GET_ZONE_REQ, operationResponse).getZoneApiForProject("google");
 
       assertEquals(api.get("us-central2-a"),
               new ParseZoneTest().expected());
    }
 
    public void testGetZoneResponseIs4xx() throws Exception {
-      HttpRequest get = HttpRequest
-              .builder()
-              .method("GET")
-              .endpoint(ZONES_URL_PREFIX + "/us-central2-a")
-              .addHeader("Accept", "application/json")
-              .addHeader("Authorization", "Bearer " + TOKEN).build();
 
       HttpResponse operationResponse = HttpResponse.builder().statusCode(404).build();
 
       ZoneApi api = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
-              TOKEN_RESPONSE, get, operationResponse).getZoneApiForProject("google");
+              TOKEN_RESPONSE, GET_ZONE_REQ, operationResponse).getZoneApiForProject("google");
 
       assertNull(api.get("us-central2-a"));
    }
 
    public void testListZoneNoOptionsResponseIs2xx() throws Exception {
-      HttpRequest list = HttpRequest
-              .builder()
-              .method("GET")
-              .endpoint(ZONES_URL_PREFIX)
-              .addHeader("Accept", "application/json")
-              .addHeader("Authorization", "Bearer " + TOKEN).build();
-
-      HttpResponse operationResponse = HttpResponse.builder().statusCode(200)
-              .payload(payloadFromResource("/zone_list.json")).build();
 
       ZoneApi api = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
-              TOKEN_RESPONSE, list, operationResponse).getZoneApiForProject("google");
+              TOKEN_RESPONSE, LIST_ZONES_REQ, LIST_ZONES_RESPONSE).getZoneApiForProject("google");
 
       assertEquals(api.listFirstPage().toString(),
               new ParseZoneListTest().expected().toString());
    }
 
    public void testListZoneWithPaginationOptionsResponseIs4xx() {
-      HttpRequest list = HttpRequest
-              .builder()
-              .method("GET")
-              .endpoint(ZONES_URL_PREFIX)
-              .addHeader("Accept", "application/json")
-              .addHeader("Authorization", "Bearer " + TOKEN).build();
 
       HttpResponse operationResponse = HttpResponse.builder().statusCode(404).build();
 
       ZoneApi api = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
-              TOKEN_RESPONSE, list, operationResponse).getZoneApiForProject("google");
+              TOKEN_RESPONSE, LIST_ZONES_REQ, operationResponse).getZoneApiForProject("google");
 
       assertTrue(api.list().concat().isEmpty());
    }

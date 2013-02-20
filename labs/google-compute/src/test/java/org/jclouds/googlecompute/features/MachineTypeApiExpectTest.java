@@ -37,6 +37,18 @@ import static org.testng.Assert.assertTrue;
 @Test(groups = "unit")
 public class MachineTypeApiExpectTest extends BaseGoogleComputeApiExpectTest {
 
+   public static final HttpRequest LIST_MACHINE_TYPES_REQUEST = HttpRequest
+           .builder()
+           .method("GET")
+           .endpoint("https://www.googleapis.com/compute/v1beta13/projects/myproject/machineTypes")
+           .addHeader("Accept", "application/json")
+           .addHeader("Authorization", "Bearer " + TOKEN).build();
+
+   public static final HttpResponse LIST_MACHINE_TYPES_RESPONSE = HttpResponse.builder()
+           .statusCode(200)
+           .payload(staticPayloadFromResource("/machinetype_list.json"))
+           .build();
+
    public void testGetMachineTypeResponseIs2xx() throws Exception {
       HttpRequest get = HttpRequest
               .builder()
@@ -74,37 +86,21 @@ public class MachineTypeApiExpectTest extends BaseGoogleComputeApiExpectTest {
    }
 
    public void testListMachineTypeNoOptionsResponseIs2xx() throws Exception {
-      HttpRequest list = HttpRequest
-              .builder()
-              .method("GET")
-              .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta13/projects/myproject/machineTypes")
-              .addHeader("Accept", "application/json")
-              .addHeader("Authorization", "Bearer " + TOKEN).build();
-
-      HttpResponse operationResponse = HttpResponse.builder().statusCode(200)
-              .payload(payloadFromResource("/machinetype_list.json")).build();
 
       MachineTypeApi machineTypeApi = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
-              TOKEN_RESPONSE, list, operationResponse).getMachineTypeApiForProject("myproject");
+              TOKEN_RESPONSE, LIST_MACHINE_TYPES_REQUEST, LIST_MACHINE_TYPES_RESPONSE).getMachineTypeApiForProject
+              ("myproject");
 
       assertEquals(machineTypeApi.listFirstPage().toString(),
               new ParseMachineTypeListTest().expected().toString());
    }
 
    public void testLisOperationWithPaginationOptionsResponseIs4xx() {
-      HttpRequest list = HttpRequest
-              .builder()
-              .method("GET")
-              .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta13/projects/myproject/machineTypes")
-              .addHeader("Accept", "application/json")
-              .addHeader("Authorization", "Bearer " + TOKEN).build();
 
       HttpResponse operationResponse = HttpResponse.builder().statusCode(404).build();
 
       MachineTypeApi machineTypeApi = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
-              TOKEN_RESPONSE, list, operationResponse).getMachineTypeApiForProject("myproject");
+              TOKEN_RESPONSE, LIST_MACHINE_TYPES_REQUEST, operationResponse).getMachineTypeApiForProject("myproject");
 
       assertTrue(machineTypeApi.list().concat().isEmpty());
    }

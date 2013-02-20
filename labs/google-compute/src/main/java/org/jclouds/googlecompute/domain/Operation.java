@@ -69,8 +69,7 @@ public class Operation extends Resource {
                        String statusMessage, String user, Integer progress, Date insertTime, Date startTime,
                        Date endTime, Integer httpErrorStatusCode, String httpErrorMessage, String operationType,
                        List<Error> errors) {
-      super(Kind.OPERATION, checkNotNull(id, "id of %s", name), fromNullable(creationTimestamp),
-              checkNotNull(selfLink, "selfLink of %s", name), checkNotNull(name, "name"), fromNullable(description));
+      super(Kind.OPERATION, id, creationTimestamp, selfLink, name, description);
       this.targetLink = checkNotNull(targetLink, "targetLink of %s", name);
       this.targetId = fromNullable(targetId);
       this.clientOperationId = fromNullable(clientOperationId);
@@ -81,7 +80,7 @@ public class Operation extends Resource {
       this.insertTime = checkNotNull(insertTime, "insertTime of %s", name);
       this.startTime = fromNullable(startTime);
       this.endTime = fromNullable(endTime);
-      this.httpError = httpErrorStatusCode != null ?
+      this.httpError = httpErrorStatusCode != null && httpErrorStatusCode != 0 ?
               Optional.of(HttpResponse.builder()
                       .statusCode(httpErrorStatusCode)
                       .message(httpErrorMessage)

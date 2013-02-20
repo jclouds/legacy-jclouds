@@ -25,9 +25,6 @@ import java.beans.ConstructorProperties;
 import java.net.URI;
 import java.util.Date;
 
-import static com.google.common.base.Optional.fromNullable;
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * Represents a kernel.
  *
@@ -41,9 +38,7 @@ public final class Kernel extends Resource {
            "id", "creationTimestamp", "selfLink", "name", "description"
    })
    private Kernel(String id, Date creationTimestamp, URI selfLink, String name, String description) {
-      super(Kind.KERNEL, checkNotNull(id, "id of %s", name), fromNullable(creationTimestamp),
-              checkNotNull(selfLink, "selfLink of %s", name), checkNotNull(name, "name"),
-              fromNullable(description));
+      super(Kind.KERNEL, id, creationTimestamp, selfLink, name, description);
    }
 
    public static Builder builder() {

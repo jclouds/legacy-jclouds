@@ -39,6 +39,17 @@ import static org.testng.AssertJUnit.assertNull;
 @Test(groups = "unit")
 public class ImageApiExpectTest extends BaseGoogleComputeApiExpectTest {
 
+   public static final HttpRequest LIST_PROJECT_IMAGES_REQUEST = HttpRequest
+           .builder()
+           .method("GET")
+           .endpoint("https://www.googleapis" +
+                   ".com/compute/v1beta13/projects/myproject/images")
+           .addHeader("Accept", "application/json")
+           .addHeader("Authorization", "Bearer " + TOKEN).build();
+
+   public static final HttpResponse LIST_PROJECT_IMAGES_RESPONSE = HttpResponse.builder().statusCode(200)
+           .payload(staticPayloadFromResource("/image_list.json")).build();
+
    public void testGetImageResponseIs2xx() throws Exception {
       HttpRequest get = HttpRequest
               .builder()
@@ -112,37 +123,21 @@ public class ImageApiExpectTest extends BaseGoogleComputeApiExpectTest {
    }
 
    public void testListImagesResponseIs2xx() {
-      HttpRequest list = HttpRequest
-              .builder()
-              .method("GET")
-              .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta13/projects/myproject/images")
-              .addHeader("Accept", "application/json")
-              .addHeader("Authorization", "Bearer " + TOKEN).build();
-
-      HttpResponse operationResponse = HttpResponse.builder().statusCode(200)
-              .payload(payloadFromResource("/image_list.json")).build();
 
       ImageApi imageApi = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
-              TOKEN_RESPONSE, list, operationResponse).getImageApiForProject("myproject");
+              TOKEN_RESPONSE, LIST_PROJECT_IMAGES_REQUEST, LIST_PROJECT_IMAGES_RESPONSE).getImageApiForProject
+              ("myproject");
 
       assertEquals(imageApi.listFirstPage().toString(),
               new ParseImageListTest().expected().toString());
    }
 
    public void testListImagesResponseIs4xx() {
-      HttpRequest list = HttpRequest
-              .builder()
-              .method("GET")
-              .endpoint("https://www.googleapis" +
-                      ".com/compute/v1beta13/projects/myproject/images")
-              .addHeader("Accept", "application/json")
-              .addHeader("Authorization", "Bearer " + TOKEN).build();
 
       HttpResponse operationResponse = HttpResponse.builder().statusCode(404).build();
 
       ImageApi imageApi = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
-              TOKEN_RESPONSE, list, operationResponse).getImageApiForProject("myproject");
+              TOKEN_RESPONSE, LIST_PROJECT_IMAGES_REQUEST, operationResponse).getImageApiForProject("myproject");
 
       assertTrue(imageApi.list().concat().isEmpty());
    }

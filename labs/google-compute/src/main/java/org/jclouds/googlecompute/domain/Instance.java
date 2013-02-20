@@ -70,8 +70,7 @@ public class Instance extends Resource {
                       Set<String> tags, URI image, URI machineType, Status status, String statusMessage,
                       URI zone, Set<NetworkInterface> networkInterfaces, Set<AttachedDisk> disks,
                       Map<String, String> metadata, Set<ServiceAccount> serviceAccounts) {
-      super(Kind.INSTANCE, checkNotNull(id, "id"), fromNullable(creationTimestamp), checkNotNull(selfLink, "selfLink"),
-              checkNotNull(name, "name"), fromNullable(description));
+      super(Kind.INSTANCE, id, creationTimestamp, selfLink, name, description);
       this.tags = tags == null ? ImmutableSet.<String>of() : tags;
       this.image = checkNotNull(image, "image");
       this.machineType = checkNotNull(machineType, "machineType of %s", name);
@@ -716,7 +715,7 @@ public class Instance extends Resource {
             ONE_TO_ONE_NAT
          }
 
-         private String name;
+         private Optional<String> name;
          private Type type;
          private Optional<String> natIP;
 
@@ -724,7 +723,7 @@ public class Instance extends Resource {
                  "name", "type", "natIP"
          })
          private AccessConfig(String name, Type type, String natIP) {
-            this.name = checkNotNull(name, "name");
+            this.name = fromNullable(name);
             this.type = checkNotNull(type, "type");
             this.natIP = fromNullable(natIP);
          }
@@ -732,7 +731,7 @@ public class Instance extends Resource {
          /**
           * @return name of this access configuration.
           */
-         public String getName() {
+         public Optional<String> getName() {
             return name;
          }
 
@@ -832,7 +831,7 @@ public class Instance extends Resource {
             }
 
             public Builder fromAccessConfig(AccessConfig in) {
-               return this.name(in.getName())
+               return this.name(in.getName().orNull())
                        .type(in.getType())
                        .natIP(in.getNatIP().orNull());
             }

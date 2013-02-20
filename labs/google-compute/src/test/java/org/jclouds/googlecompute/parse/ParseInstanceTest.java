@@ -45,11 +45,11 @@ public class ParseInstanceTest extends BaseGoogleComputeParseTest<Instance> {
               .id("13051190678907570425")
               .creationTimestamp(new SimpleDateFormatDateService().iso8601DateParse("2012-11-25T23:48:20.758"))
               .selfLink(URI.create("https://www.googleapis" +
-                      ".com/compute/v1beta13/projects/myproject/instances/test-instance"))
+                      ".com/compute/v1beta13/projects/myproject/instances/test-0"))
               .description("desc")
-              .name("test-instance")
+              .name("test-0")
               .image(URI.create("https://www.googleapis" +
-                      ".com/compute/v1beta13/projects/google/images/ubuntu-12-04-v20120912"))
+                      ".com/compute/v1beta13/projects/google/images/gcel-12-04-v20121106"))
               .machineType(URI.create("https://www.googleapis.com/compute/v1beta13/projects/myproject/machineTypes/n1" +
                       "-standard-1"))
               .status(Instance.Status.RUNNING)
