@@ -24,6 +24,7 @@ import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.cc1_4xlarge;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.cc2_8xlarge;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.cg1_4xlarge;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.hi1_4xlarge;
+import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.hs1_8xlarge;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m1_large;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m1_medium;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m1_small;
@@ -31,6 +32,8 @@ import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m1_xlarge;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m2_2xlarge;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m2_4xlarge;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m2_xlarge;
+import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m3_xlarge;
+import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m3_2xlarge;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.t1_micro;
 
 import java.util.Set;
@@ -65,9 +68,11 @@ public class AWSEC2HardwareSupplier extends EC2HardwareSupplier {
       sizes.add(cc1_4xlarge().supportsImageIds(ccAmis).build());
       sizes.add(cg1_4xlarge().supportsImageIds(ccAmis).build());
       sizes.add(cc2_8xlarge().supportsImageIds(ccAmis).build());
+      sizes.add(hi1_4xlarge().supportsImageIds(ccAmis).build());
+      sizes.add(hs1_8xlarge().supportsImageIds(ccAmis).build());
       sizes.addAll(ImmutableSet.<Hardware> of(t1_micro().build(), c1_medium().build(), c1_xlarge().build(), m1_large()
                .build(), m1_small().build(), m1_medium().build(), m1_xlarge().build(), m2_xlarge().build(), 
-               m2_2xlarge().build(), m2_4xlarge().build(), hi1_4xlarge().build()));
+               m2_2xlarge().build(), m2_4xlarge().build(), m3_xlarge().build(), m3_2xlarge().build()));
       return sizes.build();
    }
 }
