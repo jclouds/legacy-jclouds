@@ -28,6 +28,6 @@ import org.jclouds.concurrent.Timeout;
  * @author Adrian Cole
  */
 @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
-public interface SwiftKeystoneClient extends CommonSwiftClient {
+public interface SwiftKeystoneClient extends SwiftClient {
 
 }
