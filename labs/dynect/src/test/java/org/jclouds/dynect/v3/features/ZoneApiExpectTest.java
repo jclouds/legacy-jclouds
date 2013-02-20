@@ -26,6 +26,7 @@ import static org.testng.Assert.assertNull;
 import org.jclouds.dynect.v3.DynECTApi;
 import org.jclouds.dynect.v3.domain.CreatePrimaryZone;
 import org.jclouds.dynect.v3.internal.BaseDynECTApiExpectTest;
+import org.jclouds.dynect.v3.parse.DeleteZoneChangesResponseTest;
 import org.jclouds.dynect.v3.parse.DeleteZoneResponseTest;
 import org.jclouds.dynect.v3.parse.GetZoneResponseTest;
 import org.jclouds.dynect.v3.parse.ListZonesResponseTest;
@@ -40,7 +41,7 @@ import org.testng.annotations.Test;
 public class ZoneApiExpectTest extends BaseDynECTApiExpectTest {
    HttpRequest get = HttpRequest.builder().method("GET")
          .endpoint("https://api2.dynect.net/REST/Zone/jclouds.org")
-         .addHeader("API-Version", "3.3.7")
+         .addHeader("API-Version", "3.3.8")
          .addHeader("Auth-Token", authToken)
          .payload(emptyJsonPayload())
          .build();   
@@ -56,7 +57,7 @@ public class ZoneApiExpectTest extends BaseDynECTApiExpectTest {
    
    HttpRequest create = HttpRequest.builder().method("POST")
          .endpoint("https://api2.dynect.net/REST/Zone/jclouds.org")
-         .addHeader("API-Version", "3.3.7")
+         .addHeader("API-Version", "3.3.8")
          .addHeader("Auth-Token", authToken)
          .payload(stringPayload("{\"rname\":\"jimmy@jclouds.org\",\"serial_style\":\"increment\",\"ttl\":3600}"))
          .build();   
@@ -83,7 +84,7 @@ public class ZoneApiExpectTest extends BaseDynECTApiExpectTest {
 
    HttpRequest list = HttpRequest.builder().method("GET")
          .endpoint("https://api2.dynect.net/REST/Zone")
-         .addHeader("API-Version", "3.3.7")
+         .addHeader("API-Version", "3.3.8")
          .addHeader("Auth-Token", authToken)
          .payload(emptyJsonPayload())
          .build();   
@@ -96,10 +97,27 @@ public class ZoneApiExpectTest extends BaseDynECTApiExpectTest {
       assertEquals(success.getZoneApi().list().toString(),
                    new ListZonesResponseTest().expected().toString());
    }
-   
+
+   HttpRequest deleteChanges = HttpRequest.builder().method("DELETE")
+         .endpoint("https://api2.dynect.net/REST/ZoneChanges/jclouds.org")
+         .addHeader("API-Version", "3.3.8")
+         .addHeader(ACCEPT, APPLICATION_JSON)
+         .addHeader("Auth-Token", authToken)
+         .payload(emptyJsonPayload())
+         .build();
+
+   HttpResponse deleteChangesResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResourceWithContentType("/delete_zone_changes.json", APPLICATION_JSON)).build();
+
+   public void testDeleteChangesWhenResponseIs2xx() {
+      DynECTApi success = requestsSendResponses(createSession, createSessionResponse, deleteChanges, deleteChangesResponse);
+      assertEquals(success.getZoneApi().deleteChanges("jclouds.org").toString(),
+                   new DeleteZoneChangesResponseTest().expected().toString());
+   }
+
    HttpRequest delete = HttpRequest.builder().method("DELETE")
          .endpoint("https://api2.dynect.net/REST/Zone/jclouds.org")
-         .addHeader("API-Version", "3.3.7")
+         .addHeader("API-Version", "3.3.8")
          .addHeader(ACCEPT, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken)
          .payload(emptyJsonPayload())
@@ -121,7 +139,7 @@ public class ZoneApiExpectTest extends BaseDynECTApiExpectTest {
 
    HttpRequest publish = HttpRequest.builder().method("PUT")
          .endpoint("https://api2.dynect.net/REST/Zone/jclouds.org")
-         .addHeader("API-Version", "3.3.7")
+         .addHeader("API-Version", "3.3.8")
          .addHeader("Auth-Token", authToken)
          .payload(stringPayload("{\"publish\":true}"))
          .build();   
@@ -134,7 +152,7 @@ public class ZoneApiExpectTest extends BaseDynECTApiExpectTest {
 
    HttpRequest freeze = HttpRequest.builder().method("PUT")
          .endpoint("https://api2.dynect.net/REST/Zone/jclouds.org")
-         .addHeader("API-Version", "3.3.7")
+         .addHeader("API-Version", "3.3.8")
          .addHeader(ACCEPT, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken)
          .payload(stringPayload("{\"freeze\":true}"))
@@ -148,7 +166,7 @@ public class ZoneApiExpectTest extends BaseDynECTApiExpectTest {
 
    HttpRequest thaw = HttpRequest.builder().method("PUT")
          .endpoint("https://api2.dynect.net/REST/Zone/jclouds.org")
-         .addHeader("API-Version", "3.3.7")
+         .addHeader("API-Version", "3.3.8")
          .addHeader(ACCEPT, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken)
          .payload(stringPayload("{\"thaw\":true}"))

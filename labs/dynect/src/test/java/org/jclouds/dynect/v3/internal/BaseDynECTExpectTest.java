@@ -80,7 +80,7 @@ public class BaseDynECTExpectTest<T> extends BaseRestApiExpectTest<T> {
          .builder()
          .method("POST")
          .endpoint("https://api2.dynect.net/REST/Session")
-         .addHeader("API-Version", "3.3.7")
+         .addHeader("API-Version", "3.3.8")
          .payload(
                payloadFromStringWithContentType(
                      "{\"customer_name\":\"jclouds\",\"user_name\":\"joe\",\"password\":\"letmein\"}", APPLICATION_JSON))

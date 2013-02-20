@@ -48,7 +48,7 @@ public class SessionApiExpectTest extends BaseDynECTApiExpectTest {
 
    HttpRequest isValid = HttpRequest.builder().method("GET")
          .endpoint("https://api2.dynect.net/REST/Session")
-         .addHeader("API-Version", "3.3.7")
+         .addHeader("API-Version", "3.3.8")
          .addHeader("Auth-Token", authToken)
          .payload(emptyJsonPayload())
          .build();   
@@ -71,7 +71,7 @@ public class SessionApiExpectTest extends BaseDynECTApiExpectTest {
 
    HttpRequest logout = HttpRequest.builder().method("DELETE")
          .endpoint("https://api2.dynect.net/REST/Session")
-         .addHeader("API-Version", "3.3.7")
+         .addHeader("API-Version", "3.3.8")
          .addHeader("Auth-Token", authToken)
          .payload(emptyJsonPayload())
          .build();   

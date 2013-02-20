@@ -21,6 +21,8 @@ package org.jclouds.dynect.v3;
 import java.io.IOException;
 
 import org.jclouds.ContextBuilder;
+import org.jclouds.dynect.v3.DynECTExceptions.TargetExistsException;
+import org.jclouds.dynect.v3.DynECTExceptions.JobStillRunningException;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.Test;
 
@@ -31,21 +33,59 @@ import com.google.mockwebserver.MockWebServer;
  * 
  * @author Adrian Cole
  */
-@Test
+@Test(singleThreaded = true)
 public class DynectApiMockTest {
 
    static RestContext<DynECTApi, DynECTAsyncApi> getContext(String uri) {
       return ContextBuilder.newBuilder("dynect").credentials("jclouds:joe", "letmein").endpoint(uri).build();
    }
 
-   String session = "{\"status\": \"success\", \"data\": {\"token\": \"FFFFFFFFFF\", \"version\": \"3.3.7\"}, \"job_id\": 254417252, \"msgs\": [{\"INFO\": \"login: Login successful\", \"SOURCE\": \"BLL\", \"ERR_CD\": null, \"LVL\": \"INFO\"}]}";
-   String failure = "{\"status\": \"failure\", \"data\": {}, \"job_id\": 274509427, \"msgs\": [{\"INFO\": \"token: This session already has a job running\", \"SOURCE\": \"API-B\", \"ERR_CD\": \"OPERATION_FAILED\", \"LVL\": \"ERROR\"}]}";
+   String session = "{\"status\": \"success\", \"data\": {\"token\": \"FFFFFFFFFF\", \"version\": \"3.3.8\"}, \"job_id\": 254417252, \"msgs\": [{\"INFO\": \"login: Login successful\", \"SOURCE\": \"BLL\", \"ERR_CD\": null, \"LVL\": \"INFO\"}]}";
 
-   @Test(expectedExceptions = IllegalStateException.class, expectedExceptionsMessageRegExp = "This session already has a job running")
-   public void test200OnFailureThrowsExceptionWithoutRetry() throws IOException, InterruptedException {
+   String running = "{\"status\": \"running\", \"data\": {}, \"job_id\": 274509427, \"msgs\": [{\"INFO\": \"token: This session already has a job running\", \"SOURCE\": \"API-B\", \"ERR_CD\": \"OPERATION_FAILED\", \"LVL\": \"ERROR\"}]}";
+
+   @Test(expectedExceptions = JobStillRunningException.class, expectedExceptionsMessageRegExp = "This session already has a job running")
+   public void test200OnFailureThrowsExceptionWithoutRetryWhenJobRunning() throws IOException, InterruptedException {
       MockWebServer server = new MockWebServer();
       server.enqueue(new MockResponse().setResponseCode(200).setBody(session));
-      server.enqueue(new MockResponse().setResponseCode(200).setBody(failure));
+      server.enqueue(new MockResponse().setResponseCode(200).setBody(running));
+      server.play();
+
+      DynECTApi api = getContext(server.getUrl("/").toString()).getApi();
+
+      try {
+         api.getZoneApi().list();
+      } finally {
+         server.shutdown();
+      }
+   }
+
+   String taskBlocking = "[{\"status\": \"failure\", \"data\": {}, \"job_id\": 275545493, \"msgs\": [{\"INFO\": \"zone: Operation blocked by current task\", \"SOURCE\": \"BLL\", \"ERR_CD\": \"ILLEGAL_OPERATION\", \"LVL\": \"ERROR\"}, {\"INFO\": \"task_name: ProvisionZone\", \"SOURCE\": \"BLL\", \"ERR_CD\": null, \"LVL\": \"INFO\"}, {\"INFO\": \"task_id: 39120953\", \"SOURCE\": \"BLL\", \"ERR_CD\": null, \"LVL\": \"INFO\"}]}]";
+
+   @Test(expectedExceptions = JobStillRunningException.class, expectedExceptionsMessageRegExp = "Operation blocked by current task")
+   public void test200OnFailureThrowsExceptionWithoutRetryWhenOperationBlocked() throws IOException,
+         InterruptedException {
+      MockWebServer server = new MockWebServer();
+      server.enqueue(new MockResponse().setResponseCode(200).setBody(session));
+      server.enqueue(new MockResponse().setResponseCode(200).setBody(taskBlocking));
+      server.play();
+
+      DynECTApi api = getContext(server.getUrl("/").toString()).getApi();
+
+      try {
+         api.getZoneApi().list();
+      } finally {
+         server.shutdown();
+      }
+   }
+
+   String targetExists = "[{\"status\": \"failure\", \"data\": {}, \"job_id\": 275533917, \"msgs\": [{\"INFO\": \"name: Name already exists\", \"SOURCE\": \"BLL\", \"ERR_CD\": \"TARGET_EXISTS\", \"LVL\": \"ERROR\"}, {\"INFO\": \"create: You already have this zone.\", \"SOURCE\": \"BLL\", \"ERR_CD\": null, \"LVL\": \"INFO\"}]}]";
+
+   @Test(expectedExceptions = TargetExistsException.class, expectedExceptionsMessageRegExp = "Name already exists")
+   public void test200OnFailureThrowsExceptionWithoutRetryOnNameExists() throws IOException, InterruptedException {
+      MockWebServer server = new MockWebServer();
+      server.enqueue(new MockResponse().setResponseCode(200).setBody(session));
+      server.enqueue(new MockResponse().setResponseCode(200).setBody(targetExists));
       server.play();
 
       DynECTApi api = getContext(server.getUrl("/").toString()).getApi();
