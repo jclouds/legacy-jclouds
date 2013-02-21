@@ -293,7 +293,13 @@ public class RestAnnotationProcessor implements Function<Invocation, HttpRequest
 
       org.jclouds.rest.MapBinder mapBinder = getMapPayloadBinderOrNull(invocation);
       if (mapBinder != null) {
-         Map<String, Object> mapParams = buildPayloadParams(invocation);
+         Map<String, Object> mapParams;
+         if (caller != null) {
+            mapParams = buildPayloadParams(caller);
+            mapParams.putAll(buildPayloadParams(invocation));
+         } else {
+            mapParams = buildPayloadParams(invocation);
+         }
          if (invocation.getInvokable().isAnnotationPresent(PayloadParams.class)) {
             PayloadParams params = invocation.getInvokable().getAnnotation(PayloadParams.class);
             addMapPayload(mapParams, params, headers);
