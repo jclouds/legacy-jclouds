@@ -7,13 +7,13 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICE"NS"E-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
+ * Unles required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIO"NS" OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either expres or implied.  See the License for the
+ * specific language governing permisions and limitations
  * under the License.
  */
 package org.jclouds.route53.features;
@@ -32,7 +32,9 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.jclouds.JcloudsVersion;
 import org.jclouds.collect.PagedIterable;
@@ -45,9 +47,13 @@ import org.jclouds.route53.domain.ResourceRecordSet.RecordSubset.Latency;
 import org.jclouds.route53.domain.ResourceRecordSet.RecordSubset.Weighted;
 import org.jclouds.route53.internal.BaseRoute53ApiLiveTest;
 import org.testng.SkipException;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -77,9 +83,12 @@ public class ResourceRecordSetApiLiveTest extends BaseRoute53ApiLiveTest {
       }
    }
 
+   AtomicLong zones = new AtomicLong();
+
    @Test
    private void testListRRSs() {
       for (HostedZone zone : zones().concat()) {
+         zones.incrementAndGet();
          checkAllRRs(zone.getId());
       }
    }
@@ -90,8 +99,24 @@ public class ResourceRecordSetApiLiveTest extends BaseRoute53ApiLiveTest {
       assertEquals(zone.getResourceRecordSetCount(), records.size());
 
       for (ResourceRecordSet rrs : records) {
+         recordTypeCounts.getUnchecked(rrs.getType()).addAndGet(
+               rrs.getAliasTarget().isPresent() ? 1 : rrs.getValues().size());
          checkRRS(rrs);
       }
+   }
+
+   LoadingCache<String, AtomicLong> recordTypeCounts = CacheBuilder.newBuilder().build(
+         new CacheLoader<String, AtomicLong>() {
+            public AtomicLong load(String key) throws Exception {
+               return new AtomicLong();
+            }
+         });
+
+   @AfterClass
+   void logSummary() {
+      getAnonymousLogger().info("zoneCount: " + zones);
+      for (Entry<String, AtomicLong> entry : recordTypeCounts.asMap().entrySet())
+         getAnonymousLogger().info(String.format("type: %s, count: %s", entry.getKey(), entry.getValue()));
    }
 
    @Test
@@ -118,7 +143,8 @@ public class ResourceRecordSetApiLiveTest extends BaseRoute53ApiLiveTest {
 
       String nonce = name + " @ " + new Date();
       String comment = name + " for " + JcloudsVersion.get();
-      NewHostedZone newHostedZone = context.getApi().getHostedZoneApi().createWithReferenceAndComment(name, nonce, comment);
+      NewHostedZone newHostedZone = context.getApi().getHostedZoneApi()
+            .createWithReferenceAndComment(name, nonce, comment);
       String zoneId = newHostedZone.getZone().getId();
       getAnonymousLogger().info("created zone: " + newHostedZone);
       try {
