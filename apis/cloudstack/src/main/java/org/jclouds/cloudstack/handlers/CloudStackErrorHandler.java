@@ -29,6 +29,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.InsufficientResourcesException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.Strings2;
 
@@ -75,6 +76,11 @@ public class CloudStackErrorHandler implements HttpErrorHandler {
                exception = new ResourceNotFoundException(message, exception);
             } else {
                exception = new IllegalStateException(message, exception);
+            }
+            break;
+         case 534:
+            if (message.contains("Maximum number of resources of type")) {
+               exception = new InsufficientResourcesException(message, exception);
             }
             break;
          case 537:
