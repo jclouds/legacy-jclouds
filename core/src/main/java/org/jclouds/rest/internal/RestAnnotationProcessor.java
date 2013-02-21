@@ -491,7 +491,13 @@ public class RestAnnotationProcessor<T> {
 
       org.jclouds.rest.MapBinder mapBinder = getMapPayloadBinderOrNull(method, args);
       if (mapBinder != null) {
-         Map<String, Object> mapParams = buildPostParams(method, args);
+         Map<String, Object> mapParams;
+         if (caller != null) {
+            mapParams = buildPostParams(caller.getMethod(), caller.getArgs());
+            mapParams.putAll(buildPostParams(method, args));
+         } else {
+            mapParams = buildPostParams(method, args);
+         }
          if (method.isAnnotationPresent(PayloadParams.class)) {
             PayloadParams params = method.getAnnotation(PayloadParams.class);
             addMapPayload(mapParams, params, headers);
