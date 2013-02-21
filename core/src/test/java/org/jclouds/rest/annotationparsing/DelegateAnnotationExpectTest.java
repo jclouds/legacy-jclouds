@@ -22,6 +22,7 @@ import static org.jclouds.providers.AnonymousProviderMetadata.forClientMappedToA
 import static org.testng.Assert.assertTrue;
 
 import javax.ws.rs.HEAD;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
@@ -32,6 +33,8 @@ import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.Payload;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.internal.BaseRestClientExpectTest;
 import org.testng.annotations.Test;
@@ -52,27 +55,42 @@ public class DelegateAnnotationExpectTest extends BaseRestClientExpectTest<Deleg
 
       @Delegate
       @Path("/projects/{project}")
-      DiskApi getDiskApiForProject(@PathParam("project") String projectName);
+      DiskApi getDiskApiForProject(@PayloadParam("project") @PathParam("project") String projectName);
    }
 
    static interface DelegatingAsyncApi {
 
       @Delegate
       @Path("/projects/{project}")
-      DiskAsyncApi getDiskApiForProject(@PathParam("project") String projectName);
+      DiskAsyncApi getDiskApiForProject(@PayloadParam("project") @PathParam("project") String projectName);
    }
 
    static interface DiskApi {
+      void syncAll();
 
       boolean exists(@PathParam("disk") String diskName);
    }
 
    static interface DiskAsyncApi {
-
+      @POST
+      @Payload("<Sync>{project}</Sync>")
+      ListenableFuture<Void> syncAll();
+      
       @HEAD
       @Path("/disks/{disk}")
       @Fallback(FalseOnNotFoundOr404.class)
       public ListenableFuture<Boolean> exists(@PathParam("disk") String diskName);
+   }
+
+   public void testDelegatingCallTakesIntoConsiderationAndCalleePayloadParam() {
+
+      DelegatingApi client = requestSendsResponse(
+            HttpRequest.builder().method("POST")
+                       .endpoint("http://mock/projects/prod")
+                       .payload("<Sync>prod</Sync>").build(),
+            HttpResponse.builder().statusCode(200).build());
+
+      client.getDiskApiForProject("prod").syncAll();
    }
 
    public void testDelegatingCallTakesIntoConsiderationCallerAndCalleePath() {
@@ -82,7 +100,6 @@ public class DelegateAnnotationExpectTest extends BaseRestClientExpectTest<Deleg
             HttpResponse.builder().statusCode(200).build());
 
       assertTrue(client.getDiskApiForProject("prod").exists("disk1"));
-
    }
 
    // crufty junk until we inspect delegating api classes for all their client
