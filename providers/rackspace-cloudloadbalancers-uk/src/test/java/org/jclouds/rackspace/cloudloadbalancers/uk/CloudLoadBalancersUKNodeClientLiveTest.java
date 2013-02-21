@@ -18,7 +18,7 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.uk;
 
-import org.jclouds.rackspace.cloudloadbalancers.features.NodeApiLiveTest;
+import org.jclouds.rackspace.cloudloadbalancers.v1.features.NodeApiLiveTest;
 import org.testng.annotations.Test;
 
 /**
