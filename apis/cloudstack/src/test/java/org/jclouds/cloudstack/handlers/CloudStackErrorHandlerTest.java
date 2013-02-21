@@ -31,6 +31,7 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.InsufficientResourcesException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
@@ -92,6 +93,17 @@ public class CloudStackErrorHandlerTest {
    public void test531MakesAuthorizationException() {
       assertCodeMakes("GET", URI.create("https://cloudstack.com/foo"), 531, "", "Unauthorized",
          AuthorizationException.class);
+   }
+
+   @Test
+   void test534WithMaximumResourcesMakesInsufficientResourcesException() {
+      assertCodeMakes(
+         "GET",
+         URI.create("http://10.26.26.155:8080/client/api?response=json&command=deployVirtualMachine&zoneid=7dbc4787-ec2f-498d-95f0-848c8c81e5da&templateid=240937c8-d695-419c-9908-5c7b2a07e6f1&serviceofferingid=c376102e-b683-4d43-b583-4eeab4627e65&displayname=bousa-4&name=bousa-4"),
+         534,
+         "",
+         "{ \"createipforwardingruleresponse\" : {\"errorcode\" : 534, \"errortext\" : \"Maximum number of resources of type 'volume' for account name=jarcec in domain id=1 has been exceeded.\"}  }",
+         InsufficientResourcesException.class);
    }
 
    @Test
