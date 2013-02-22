@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <ns1:getResourceRecordsOfZoneResponse xmlns:ns1="http://webservice.api.ultra.neustar.com/v01/">
+      <ResourceRecordList xmlns:ns2="http://schema.ultraservice.neustar.com/v01/">
+        <ns2:ResourceRecord ZoneName="jclouds.org." Type="1" DName="www.jclouds.org." TTL="3600" Guid="04023A2507B6468F" ZoneId="0000000000000001" LName="www.jclouds.org." Created="2010-10-02T16:57:16.000Z" Modified="2011-09-27T23:49:21.000Z">
+          <ns2:InfoValues Info1Value="1.2.3.4"/>
+        </ns2:ResourceRecord>
+        <ns2:ResourceRecord ZoneName="jclouds.org." Type="2" DName="jclouds.org." TTL="86400" Guid="0B0338C2023F7969" ZoneId="0000000000000001" LName="jclouds.org." Created="2009-10-12T12:02:23.000Z" Modified="2009-10-12T12:02:23.000Z">
+          <ns2:InfoValues Info1Value="pdns2.ultradns.net."/>
+        </ns2:ResourceRecord>
+        <ns2:ResourceRecord ZoneName="jclouds.org." Type="2" DName="jclouds.org." TTL="86400" Guid="0B0338C2023F7968" ZoneId="0000000000000001" LName="jclouds.org." Created="2009-10-12T12:02:23.000Z" Modified="2009-10-12T12:02:23.000Z">
+          <ns2:InfoValues Info1Value="pdns1.ultradns.net."/>
+        </ns2:ResourceRecord>
+        <ns2:ResourceRecord ZoneName="jclouds.org." Type="2" DName="jclouds.org." TTL="86400" Guid="0B0338C2023F796B" ZoneId="0000000000000001" LName="jclouds.org." Created="2009-10-12T12:02:23.000Z" Modified="2009-10-12T12:02:23.000Z">
+          <ns2:InfoValues Info1Value="pdns4.ultradns.org."/>
+        </ns2:ResourceRecord>
+        <ns2:ResourceRecord ZoneName="jclouds.org." Type="6" DName="jclouds.org." TTL="3600" Guid="0B0338C2023F7983" ZoneId="0000000000000001" LName="jclouds.org." Created="2009-10-12T12:02:23.000Z" Modified="2011-09-27T23:49:22.000Z">
+          <ns2:InfoValues Info1Value="pdns2.ultradns.net." Info2Value="admin.jclouds.org." Info3Value="2011092701" Info4Value="10800" Info5Value="3600" Info6Value="604800" Info7Value="86400"/>
+        </ns2:ResourceRecord>
+        <ns2:ResourceRecord ZoneName="jclouds.org." Type="1" DName="jclouds.org." TTL="3600" Guid="0B0338C2023F796E" ZoneId="0000000000000001" LName="jclouds.org." Created="2009-10-12T12:02:23.000Z" Modified="2011-09-27T23:49:22.000Z">
+          <ns2:InfoValues Info1Value="1.2.3.4"/>
+        </ns2:ResourceRecord>
+        <ns2:ResourceRecord ZoneName="jclouds.org." Type="2" DName="jclouds.org." TTL="86400" Guid="0B0338C2023F796C" ZoneId="0000000000000001" LName="jclouds.org." Created="2009-10-12T12:02:23.000Z" Modified="2009-10-12T12:02:23.000Z">
+          <ns2:InfoValues Info1Value="pdns5.ultradns.info."/>
+        </ns2:ResourceRecord>
+        <ns2:ResourceRecord ZoneName="jclouds.org." Type="2" DName="jclouds.org." TTL="86400" Guid="0B0338C2023F796D" ZoneId="0000000000000001" LName="jclouds.org." Created="2009-10-12T12:02:23.000Z" Modified="2009-10-12T12:02:23.000Z">
+          <ns2:InfoValues Info1Value="pdns6.ultradns.co.uk."/>
+        </ns2:ResourceRecord>
+        <ns2:ResourceRecord ZoneName="jclouds.org." Type="2" DName="jclouds.org." TTL="86400" Guid="0B0338C2023F796A" ZoneId="0000000000000001" LName="jclouds.org." Created="2009-10-12T12:02:23.000Z" Modified="2009-10-12T12:02:23.000Z">
+          <ns2:InfoValues Info1Value="pdns3.ultradns.org."/>
+        </ns2:ResourceRecord>
+      </ResourceRecordList>
+    </ns1:getResourceRecordsOfZoneResponse>
+  </soap:Body>
+</soap:Envelope>

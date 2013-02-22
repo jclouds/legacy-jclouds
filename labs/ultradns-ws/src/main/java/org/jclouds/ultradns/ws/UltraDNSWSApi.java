@@ -22,7 +22,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.ultradns.ws.domain.Account;
+import org.jclouds.ultradns.ws.features.ResourceRecordApi;
 import org.jclouds.ultradns.ws.features.TaskApi;
 import org.jclouds.ultradns.ws.features.ZoneApi;
 
@@ -46,6 +48,15 @@ public interface UltraDNSWSApi {
     */
    @Delegate
    ZoneApi getZoneApi();
+
+   /**
+    * Provides synchronous access to Resource Record features.
+    * 
+    * @param zoneName
+    *           zoneName including a trailing dot
+    */
+   @Delegate
+   ResourceRecordApi getResourceRecordApiForZone(@PayloadParam("zoneName") String zoneName);
 
    /**
     * Provides synchronous access to Task features.

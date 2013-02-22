@@ -1,0 +1,1 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><ns1:updateResourceRecordResponse xmlns:ns1="http://webservice.api.ultra.neustar.com/v01/"><result xmlns:ns2="http://schema.ultraservice.neustar.com/v01/">Successful</result></ns1:updateResourceRecordResponse></soap:Body></soap:Envelope>
