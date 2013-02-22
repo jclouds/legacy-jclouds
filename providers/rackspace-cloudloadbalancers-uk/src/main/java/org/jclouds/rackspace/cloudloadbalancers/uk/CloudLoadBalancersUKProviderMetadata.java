@@ -29,9 +29,9 @@ import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.Z
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityAuthenticationModule;
-import org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersApiMetadata;
-import org.jclouds.rackspace.cloudloadbalancers.config.CloudLoadBalancersRestClientModule;
-import org.jclouds.rackspace.cloudloadbalancers.loadbalancer.config.CloudLoadBalancersLoadBalancerContextModule;
+import org.jclouds.rackspace.cloudloadbalancers.v1.CloudLoadBalancersApiMetadata;
+import org.jclouds.rackspace.cloudloadbalancers.v1.config.CloudLoadBalancersRestClientModule;
+import org.jclouds.rackspace.cloudloadbalancers.v1.loadbalancer.config.CloudLoadBalancersLoadBalancerContextModule;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
