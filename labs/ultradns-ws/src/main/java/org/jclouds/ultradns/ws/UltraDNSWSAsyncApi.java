@@ -23,10 +23,12 @@ import javax.ws.rs.POST;
 
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.Payload;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.ultradns.ws.domain.Account;
+import org.jclouds.ultradns.ws.features.ResourceRecordAsyncApi;
 import org.jclouds.ultradns.ws.features.TaskAsyncApi;
 import org.jclouds.ultradns.ws.features.ZoneAsyncApi;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
@@ -60,6 +62,15 @@ public interface UltraDNSWSAsyncApi {
     */
    @Delegate
    ZoneAsyncApi getZoneApi();
+
+   /**
+    * Provides asynchronous access to Resource Record features.
+    * 
+    * @param zoneName
+    *           zoneName including a trailing dot
+    */
+   @Delegate
+   ResourceRecordAsyncApi getResourceRecordApiForZone(@PayloadParam("zoneName") String zoneName);
 
    /**
     * Provides asynchronous access to Task features.
