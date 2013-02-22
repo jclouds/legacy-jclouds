@@ -41,7 +41,7 @@ import com.google.inject.Guice;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit" )
+@Test(groups = "unit")
 public class UltraDNSWSErrorHandlerTest {
    UltraDNSWSErrorHandler function = Guice.createInjector(new SaxParserModule()).getInstance(
          UltraDNSWSErrorHandler.class);
@@ -49,12 +49,11 @@ public class UltraDNSWSErrorHandlerTest {
    @Test
    public void testCode0SetsResourceNotFoundException() throws IOException {
       HttpRequest request = HttpRequest.builder().method("POST")
-                                       .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-                                       .addHeader("Host", "ultra-api.ultradns.com:8443")
-                                       .payload(payloadFromResource("/list_tasks.xml")).build();
+            .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+            .addHeader("Host", "ultra-api.ultradns.com:8443").payload(payloadFromResource("/list_tasks.xml")).build();
       HttpCommand command = new HttpCommand(request);
       HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
-                                          .payload(payloadFromResource("/task_doesnt_exist.xml")).build();
+            .payload(payloadFromResource("/task_doesnt_exist.xml")).build();
 
       function.handleError(command, response);
 
@@ -71,12 +70,12 @@ public class UltraDNSWSErrorHandlerTest {
    @Test
    public void testCode2401SetsResourceNotFoundException() throws IOException {
       HttpRequest request = HttpRequest.builder().method("POST")
-                                       .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-                                       .addHeader("Host", "ultra-api.ultradns.com:8443")
-                                       .payload(payloadFromResource("/list_zones_by_account.xml")).build();
+            .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+            .addHeader("Host", "ultra-api.ultradns.com:8443")
+            .payload(payloadFromResource("/list_zones_by_account.xml")).build();
       HttpCommand command = new HttpCommand(request);
       HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
-                                          .payload(payloadFromResource("/account_doesnt_exist.xml")).build();
+            .payload(payloadFromResource("/account_doesnt_exist.xml")).build();
 
       function.handleError(command, response);
 
@@ -93,12 +92,11 @@ public class UltraDNSWSErrorHandlerTest {
    @Test
    public void testCode1801SetsResourceNotFoundException() throws IOException {
       HttpRequest request = HttpRequest.builder().method("POST")
-                                       .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-                                       .addHeader("Host", "ultra-api.ultradns.com:8443")
-                                       .payload(payloadFromResource("/get_zone.xml")).build();
+            .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+            .addHeader("Host", "ultra-api.ultradns.com:8443").payload(payloadFromResource("/get_zone.xml")).build();
       HttpCommand command = new HttpCommand(request);
       HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
-                                          .payload(payloadFromResource("/zone_doesnt_exist.xml")).build();
+            .payload(payloadFromResource("/zone_doesnt_exist.xml")).build();
 
       function.handleError(command, response);
 
@@ -113,14 +111,34 @@ public class UltraDNSWSErrorHandlerTest {
    }
 
    @Test
-   public void testCode1802SetsResourceAlreadyExistsException() throws IOException {
+   public void testCode2103SetsResourceNotFoundException() throws IOException {
       HttpRequest request = HttpRequest.builder().method("POST")
-                                       .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-                                       .addHeader("Host", "ultra-api.ultradns.com:8443")
-                                       .payload(payloadFromResource("/create_zone.xml")).build();
+            .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+            .addHeader("Host", "ultra-api.ultradns.com:8443").payload(payloadFromResource("/delete_rr.xml")).build();
       HttpCommand command = new HttpCommand(request);
       HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
-                                          .payload(payloadFromResource("/zone_already_exists.xml")).build();
+            .payload(payloadFromResource("/rr_doesnt_exist.xml")).build();
+
+      function.handleError(command, response);
+
+      assertEquals(command.getException().getClass(), ResourceNotFoundException.class);
+      assertEquals(command.getException().getMessage(), "No Resource Record with GUID found in the system AAAAAAAAAAAAAAAA");
+
+      UltraDNSWSResponseException exception = UltraDNSWSResponseException.class.cast(command.getException().getCause());
+
+      assertEquals(exception.getMessage(), "Error 2103: No Resource Record with GUID found in the system AAAAAAAAAAAAAAAA");
+      assertEquals(exception.getError().getDescription(), "No Resource Record with GUID found in the system AAAAAAAAAAAAAAAA");
+      assertEquals(exception.getError().getCode(), 2103);
+   }
+
+   @Test
+   public void testCode1802SetsResourceAlreadyExistsException() throws IOException {
+      HttpRequest request = HttpRequest.builder().method("POST")
+            .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+            .addHeader("Host", "ultra-api.ultradns.com:8443").payload(payloadFromResource("/create_zone.xml")).build();
+      HttpCommand command = new HttpCommand(request);
+      HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
+            .payload(payloadFromResource("/zone_already_exists.xml")).build();
 
       function.handleError(command, response);
 
@@ -132,6 +150,30 @@ public class UltraDNSWSErrorHandlerTest {
       assertEquals(exception.getMessage(), "Error 1802: Zone already exists in the system.");
       assertEquals(exception.getError().getDescription(), "Zone already exists in the system.");
       assertEquals(exception.getError().getCode(), 1802);
+   }
+
+   @Test
+   public void testCode2111SetsResourceAlreadyExistsException() throws IOException {
+      HttpRequest request = HttpRequest.builder().method("POST")
+            .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+            .addHeader("Host", "ultra-api.ultradns.com:8443").payload(payloadFromResource("/create_rr.xml")).build();
+      HttpCommand command = new HttpCommand(request);
+      HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
+            .payload(payloadFromResource("/rr_already_exists.xml")).build();
+
+      function.handleError(command, response);
+
+      assertEquals(command.getException().getClass(), ResourceAlreadyExistsException.class);
+      assertEquals(command.getException().getMessage(),
+            "Resource Record of type 15 with these attributes already exists in the system.");
+
+      UltraDNSWSResponseException exception = UltraDNSWSResponseException.class.cast(command.getException().getCause());
+
+      assertEquals(exception.getMessage(),
+            "Error 2111: Resource Record of type 15 with these attributes already exists in the system.");
+      assertEquals(exception.getError().getDescription(),
+            "Resource Record of type 15 with these attributes already exists in the system.");
+      assertEquals(exception.getError().getCode(), 2111);
    }
 
    private Payload payloadFromResource(String resource) {
