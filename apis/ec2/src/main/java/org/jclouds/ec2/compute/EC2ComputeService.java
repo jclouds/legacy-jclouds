@@ -71,6 +71,9 @@ import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.predicates.Retryables;
+import org.jclouds.ec2.domain.Tag;
+import org.jclouds.ec2.util.SubnetFilterBuilder;
+import org.jclouds.ec2.util.TagFilterBuilder;
 import org.jclouds.scriptbuilder.functions.InitAdminAccess;
 
 import com.google.common.annotations.VisibleForTesting;
