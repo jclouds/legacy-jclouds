@@ -87,6 +87,8 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
+                  <!-- to prevent live tests from clashing with eachother -->
+                  <threadCount>1</threadCount>
                   <systemPropertyVariables>
                     <test.ultradns-ws.endpoint>${test.ultradns-ws.endpoint}</test.ultradns-ws.endpoint>
                     <test.ultradns-ws.api-version>${test.ultradns-ws.api-version}</test.ultradns-ws.api-version>
