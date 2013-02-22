@@ -18,6 +18,10 @@
  */
 package org.jclouds.blobstore.reference;
 
+import java.util.Collection;
+
+import com.google.common.collect.ImmutableList;
+
 /**
  * Configuration properties and constants used in BlobStore connections.
  * 
@@ -38,8 +42,8 @@ public interface BlobStoreConstants {
     */
    public static final String DIRECTORY_SUFFIX_ROOT = "/";
    public static final String DIRECTORY_SUFFIX_FOLDER = "_$folder$";
-   public static final String[] DIRECTORY_SUFFIXES = { DIRECTORY_SUFFIX_FOLDER,
-            DIRECTORY_SUFFIX_ROOT };
+   public static final Collection<String> DIRECTORY_SUFFIXES =
+         ImmutableList.of(DIRECTORY_SUFFIX_FOLDER, DIRECTORY_SUFFIX_ROOT);
 
    /**
     * Key-value implementations of BlobStore, such as S3, do not have directories. We use an empty
