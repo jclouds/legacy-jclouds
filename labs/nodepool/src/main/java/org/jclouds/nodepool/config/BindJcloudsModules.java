@@ -23,6 +23,7 @@ import java.util.Set;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.common.base.Optional;
 import org.jclouds.nodepool.Backend;
 
 import com.google.common.base.Function;
@@ -50,7 +51,7 @@ public class BindJcloudsModules extends PrivateModule {
                @Override
                public Module apply(String input) {
                   try {
-                     return Module.class.cast(Class.forName(input).newInstance());
+                     return Module.class.cast(loadClass(input).newInstance());
                   } catch (InstantiationException e) {
                      throw Throwables.propagate(e);
                   } catch (IllegalAccessException e) {
@@ -60,5 +61,41 @@ public class BindJcloudsModules extends PrivateModule {
                   }
                }
             }));
+   }
+
+   /**
+    * Loads a {@link Class} from the current {@link ClassLoader} or the Thread context class loader.
+    *
+    * @param className
+    * @return
+    * @throws ClassNotFoundException
+    */
+   private Class loadClass(String className) throws ClassNotFoundException {
+      Optional<ClassLoader> classLoader = Optional.of(getClass().getClassLoader());
+      Optional<ClassLoader> threadContextClassLoader = Optional.fromNullable(Thread.currentThread().getContextClassLoader());
+      Optional<Class> clazz = tryLoad(className, classLoader).or(tryLoad(className, threadContextClassLoader));
+      if (clazz.isPresent()) {
+         return clazz.get();
+      } else {
+         throw new ClassNotFoundException("Failed to load class: " + className);
+      }
+   }
+
+   /**
+    * Attempts to load {@link Class} from the specified {@link ClassLoader}.
+    *
+    * @param className   The class name.
+    * @param classLoader The classLoader to use.
+    * @return
+    */
+   private Optional<Class> tryLoad(String className, Optional<ClassLoader> classLoader) {
+      if (!classLoader.isPresent()) {
+         return Optional.absent();
+      }
+      try {
+         return Optional.<Class>fromNullable(classLoader.get().loadClass(className));
+      } catch (ClassNotFoundException e) {
+         return Optional.absent();
+      }
    }
 }
