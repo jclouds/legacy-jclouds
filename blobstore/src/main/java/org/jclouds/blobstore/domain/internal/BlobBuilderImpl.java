@@ -115,7 +115,7 @@ public class BlobBuilderImpl implements BlobBuilder {
       return blob;
    }
 
-   public class PayloadBlobBuilderImpl implements PayloadBlobBuilder {
+   public static class PayloadBlobBuilderImpl implements PayloadBlobBuilder {
       private final BlobBuilder builder;
       private final Payload payload;
 
