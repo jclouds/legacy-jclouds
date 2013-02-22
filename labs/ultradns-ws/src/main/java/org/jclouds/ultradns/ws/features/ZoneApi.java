@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.ResourceNotFoundException;
+import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
 import org.jclouds.ultradns.ws.domain.Zone;
 import org.jclouds.ultradns.ws.domain.Zone.Type;
 import org.jclouds.ultradns.ws.domain.ZoneProperties;
@@ -37,10 +38,22 @@ import com.google.common.collect.FluentIterable;
 public interface ZoneApi {
 
    /**
+    * creates a primary zone and its supporting records (SOA, NS and A). The
+    * user who issues this request becomes the owner of this zone.
+    * 
+    * @param name
+    *           the fully qualified name of the new zone.
+    * @param accountId
+    *           the account to create the zone in
+    */
+   void createInAccount(String name, String accountId) throws ResourceAlreadyExistsException;
+
+   /**
     * Retrieves information about the specified zone
     * 
     * @param name
-    *           Name of the zone to get information about.
+    *           the fully-qualified name, including the trailing dot, of the
+    *           zone to get information about.
     * @return null if not found
     */
    @Nullable
@@ -61,4 +74,14 @@ public interface ZoneApi {
     *            if the account doesn't exist
     */
    FluentIterable<Zone> listByAccountAndType(String accountId, Type type) throws ResourceNotFoundException;
+
+   /**
+    * deletes a zone and all its resource records
+    * 
+    * @param name
+    *           the fully-qualified name, including the trailing dot, of the
+    *           zone you want to delete.
+    * @return null if not found
+    */
+   void delete(String name);
 }
