@@ -19,6 +19,7 @@
 package org.jclouds.ec2;
 
 import java.util.Set;
+import org.jclouds.ec2.features.SubnetApi;
 import org.jclouds.ec2.features.TagApi;
 import org.jclouds.ec2.features.WindowsApi;
 import org.jclouds.javax.annotation.Nullable;
@@ -76,5 +77,15 @@ public interface EC2Api {
 
    @Delegate
    Optional<? extends TagApi> getTagApiForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+
+   /**
+    * Provides synchronous access to Subnet features.
+    */
+   @Delegate
+   Optional<? extends SubnetApi> getSubnetApi();
+
+   @Delegate
+   Optional<? extends SubnetApi> getSubnetApiForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 }
