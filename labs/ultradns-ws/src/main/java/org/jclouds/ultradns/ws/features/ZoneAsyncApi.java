@@ -22,6 +22,7 @@ import javax.inject.Named;
 import javax.ws.rs.POST;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.Payload;
@@ -29,6 +30,7 @@ import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
 import org.jclouds.ultradns.ws.domain.Zone;
 import org.jclouds.ultradns.ws.domain.Zone.Type;
 import org.jclouds.ultradns.ws.domain.ZoneProperties;
@@ -49,6 +51,15 @@ import com.google.common.util.concurrent.ListenableFuture;
 @VirtualHost
 public interface ZoneAsyncApi {
 
+   /**
+    * @see ZoneApi#createInAccount(String, String
+    */
+   @Named("createPrimaryZone")
+   @POST
+   @Payload("<v01:createPrimaryZone><transactionID /><accountId>{accountId}</accountId><zoneName>{zoneName}</zoneName><forceImport>false</forceImport></v01:createPrimaryZone>")
+   ListenableFuture<Void> createInAccount(@PayloadParam("zoneName") String name,
+         @PayloadParam("accountId") String accountId) throws ResourceAlreadyExistsException;
+   
    /**
     * @see ZoneApi#get(String)
     */
@@ -78,4 +89,13 @@ public interface ZoneAsyncApi {
    @Payload("<v01:getZonesOfAccount><accountId>{accountId}</accountId><zoneType>{zoneType}</zoneType></v01:getZonesOfAccount>")
    ListenableFuture<FluentIterable<Zone>> listByAccountAndType(@PayloadParam("accountId") String accountId,
          @PayloadParam("zoneType") Type type) throws ResourceNotFoundException;
+
+   /**
+    * @see ZoneApi#delete(String)
+    */
+   @Named("deleteZone")
+   @POST
+   @Payload("<v01:deleteZone><transactionID /><zoneName>{zoneName}</zoneName></v01:deleteZone>")
+   @Fallback(VoidOnNotFoundOr404.class)
+   ListenableFuture<Void> delete(@PayloadParam("zoneName") String name);
 }

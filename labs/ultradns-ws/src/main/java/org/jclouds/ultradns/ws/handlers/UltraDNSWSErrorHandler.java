@@ -32,6 +32,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ultradns.ws.UltraDNSWSError;
+import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
 import org.jclouds.ultradns.ws.UltraDNSWSResponseException;
 import org.jclouds.ultradns.ws.xml.UltraWSExceptionHandler;
 
@@ -79,6 +80,8 @@ public class UltraDNSWSErrorHandler implements HttpErrorHandler {
       case 1801:
       case 2401:
          return new ResourceNotFoundException(exception.getError().getDescription(), exception);
+      case 1802:
+         return new ResourceAlreadyExistsException(exception.getError().getDescription(), exception);
       }
       return exception;
    }
