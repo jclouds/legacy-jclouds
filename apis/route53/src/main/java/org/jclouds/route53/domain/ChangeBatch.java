@@ -82,7 +82,7 @@ public class ChangeBatch extends ForwardingList<ActionOnResourceRecordSet> {
          if (obj == null || getClass() != obj.getClass())
             return false;
          ActionOnResourceRecordSet that = ActionOnResourceRecordSet.class.cast(obj);
-         return equal(this.action, that.rrs);
+         return equal(this.action, that.action) && equal(this.rrs, that.rrs);
       }
 
       @Override

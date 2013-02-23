@@ -238,7 +238,7 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
                 });
     }
 
-    class Part {
+    static class Part {
         private int part;
         private long offset;
         private long size;

@@ -72,7 +72,7 @@ public class CreateServerOptions implements MapBinder {
    }
 
    @SuppressWarnings("unused")
-   private class ServerRequest {
+   private static class ServerRequest {
       final String name;
       final int imageId;
       final int flavorId;

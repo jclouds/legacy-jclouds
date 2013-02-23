@@ -81,7 +81,7 @@ public class IpAddressesLoadingCache extends
 
    @Override
    public String getIfPresent(Object key) {
-      return masters.get((String) key);
+      return masters.get((MachineNameOrIdAndNicSlot) key);
    }
 
    @Override

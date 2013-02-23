@@ -49,8 +49,8 @@ public class DataObject extends CDMIObject {
    }
 
    public static class Builder<B extends Builder<B>> extends CDMIObject.Builder<B> {
-      private String mimetype = new String();
-      private String value = new String();
+      private String mimetype = "";
+      private String value = "";
 
       /**
        * @see DataObject#getMimetype()

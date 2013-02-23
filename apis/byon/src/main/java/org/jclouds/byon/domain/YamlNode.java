@@ -88,7 +88,7 @@ public class YamlNode {
    public String credential_url;
    public String sudo_password;
 
-   public static Function<YamlNode, Node> toNode = new Function<YamlNode, Node>() {
+   public static final Function<YamlNode, Node> toNode = new Function<YamlNode, Node>() {
       @Override
       public Node apply(YamlNode arg0) {
          if (arg0 == null)
@@ -106,7 +106,7 @@ public class YamlNode {
       return toNode.apply(this);
    }
 
-   public static Function<InputStream, YamlNode> inputStreamToYamlNode = new Function<InputStream, YamlNode>() {
+   public static final Function<InputStream, YamlNode> inputStreamToYamlNode = new Function<InputStream, YamlNode>() {
       @Override
       public YamlNode apply(InputStream in) {
          if (in == null)
@@ -125,7 +125,7 @@ public class YamlNode {
       return inputStreamToYamlNode.apply(in);
    }
 
-   public static Function<YamlNode, InputStream> yamlNodeToInputStream = new Function<YamlNode, InputStream>() {
+   public static final Function<YamlNode, InputStream> yamlNodeToInputStream = new Function<YamlNode, InputStream>() {
       @Override
       public InputStream apply(YamlNode in) {
          if (in == null)
@@ -181,7 +181,7 @@ public class YamlNode {
       return nodeToYamlNode.apply(in);
    }
 
-   public static Function<Node, YamlNode> nodeToYamlNode = new Function<Node, YamlNode>() {
+   public static final Function<Node, YamlNode> nodeToYamlNode = new Function<Node, YamlNode>() {
       @Override
       public YamlNode apply(Node arg0) {
          if (arg0 == null)

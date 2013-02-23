@@ -76,7 +76,7 @@ import com.jcraft.jsch.Session;
  */
 public class JschSshClient implements SshClient {
 
-   private final class CloseFtpChannelOnCloseInputStream extends FilterInputStream {
+   private static final class CloseFtpChannelOnCloseInputStream extends FilterInputStream {
 
       private final ChannelSftp sftp;
 

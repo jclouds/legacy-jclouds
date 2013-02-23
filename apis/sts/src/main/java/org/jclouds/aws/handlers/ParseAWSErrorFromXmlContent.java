@@ -108,7 +108,7 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
             else if (errorCode != null && (errorCode.indexOf("NotFound") != -1 || errorCode.endsWith(".Unknown")))
                exception = new ResourceNotFoundException(message, exception);
             else if ("IncorrectState".equals(errorCode)
-                     || (errorCode != null && (error.getCode().endsWith(".Duplicate") | error.getCode().endsWith(
+                     || (errorCode != null && (error.getCode().endsWith(".Duplicate") || error.getCode().endsWith(
                               ".InUse")))
                      || (message != null && (message.indexOf("already exists") != -1 || message.indexOf("is in use") != -1)))
                exception = new IllegalStateException(message, exception);

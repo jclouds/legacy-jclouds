@@ -22,7 +22,7 @@ import com.google.common.io.Files;
 public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
 
    public CreateDataObjectOptions() {
-      jsonObjectBody.addProperty("value", new String());
+      jsonObjectBody.addProperty("value", "");
    }
 
    /**
@@ -66,7 +66,7 @@ public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
     * @return CreateDataObjectOptions
     */
    public CreateDataObjectOptions value(String value) {
-      jsonObjectBody.addProperty("value", (value == null) ? new String() : value);
+      jsonObjectBody.addProperty("value", (value == null) ? "" : value);
       this.payload = jsonObjectBody.toString();
       return this;
    }
@@ -79,7 +79,7 @@ public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
     * @return CreateDataObjectOptions
     */
    public CreateDataObjectOptions value(byte[] value) throws IOException {
-      jsonObjectBody.addProperty("value", (value == null) ? new String() : new DataInputStream(
+      jsonObjectBody.addProperty("value", (value == null) ? "" : new DataInputStream(
                new ByteArrayInputStream(value)).readUTF());
       this.payload = jsonObjectBody.toString();
       return this;
@@ -93,7 +93,7 @@ public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
     * @return CreateDataObjectOptions
     */
    public CreateDataObjectOptions value(File value) throws IOException {
-      jsonObjectBody.addProperty("value", (value == null) ? new String() : Files.toString(value, Charsets.UTF_8));
+      jsonObjectBody.addProperty("value", (value == null) ? "" : Files.toString(value, Charsets.UTF_8));
       this.payload = jsonObjectBody.toString();
       return this;
    }
@@ -108,7 +108,7 @@ public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
     * @return CreateDataObjectOptions
     */
    public CreateDataObjectOptions value(File value, Charset charset) throws IOException {
-      jsonObjectBody.addProperty("value", (value == null) ? new String() : Files.toString(value, charset));
+      jsonObjectBody.addProperty("value", (value == null) ? "" : Files.toString(value, charset));
       this.payload = jsonObjectBody.toString();
       return this;
    }
@@ -122,7 +122,7 @@ public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
     */
    public CreateDataObjectOptions value(InputStream value) throws IOException {
       jsonObjectBody.addProperty("value",
-               (value == null) ? new String() : CharStreams.toString(new InputStreamReader(value, Charsets.UTF_8)));
+               (value == null) ? "" : CharStreams.toString(new InputStreamReader(value, Charsets.UTF_8)));
       this.payload = jsonObjectBody.toString();
       return this;
    }
@@ -139,7 +139,7 @@ public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
     */
    public CreateDataObjectOptions value(InputStream value, Charset charset) throws IOException {
       jsonObjectBody.addProperty("value",
-               (value == null) ? new String() : CharStreams.toString(new InputStreamReader(value, charset)));
+               (value == null) ? "" : CharStreams.toString(new InputStreamReader(value, charset)));
       this.payload = jsonObjectBody.toString();
       return this;
    }

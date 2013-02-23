@@ -262,7 +262,7 @@ public class Rack extends DomainWrapper<RackDto> {
          return this;
       }
 
-      public Builder VlansIdAvoided(final String vlansIdAvoided) {
+      public Builder vlansIdAvoided(final String vlansIdAvoided) {
          this.vlansIdAvoided = vlansIdAvoided;
          return this;
       }
@@ -293,7 +293,7 @@ public class Rack extends DomainWrapper<RackDto> {
          return Rack.builder(in.context, in.datacenter).id(in.getId()).name(in.getName())
                .shortDescription(in.getShortDescription()).haEnabled(in.isHaEnabled()).nrsq(in.getNrsq())
                .vlanIdMax(in.getVlanIdMax()).vlanIdMin(in.getVlanIdMin())
-               .vlanPerVdcReserved(in.getVlanPerVdcReserved()).VlansIdAvoided(in.getVlansIdAvoided());
+               .vlanPerVdcReserved(in.getVlanPerVdcReserved()).vlansIdAvoided(in.getVlansIdAvoided());
       }
    }
 

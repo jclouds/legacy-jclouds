@@ -85,7 +85,7 @@ public class KeyStoreSupplier implements Supplier<KeyStore> {
             int privateKeyEndIdx = cert.indexOf("-----END PRIVATE KEY");
             String pemPrivateKey = cert.substring(privateKeyBeginIdx, privateKeyEndIdx + 26);
 
-            String pemCerts = "";
+            StringBuilder pemCerts = new StringBuilder();
             int certsBeginIdx = 0;
 
             do {
@@ -93,7 +93,7 @@ public class KeyStoreSupplier implements Supplier<KeyStore> {
 
                if (certsBeginIdx >= 0) {
                   int certsEndIdx = cert.indexOf("-----END CERTIFICATE", certsBeginIdx) + 26;
-                  pemCerts += cert.substring(certsBeginIdx, certsEndIdx);
+                  pemCerts.append(cert.substring(certsBeginIdx, certsEndIdx));
                   certsBeginIdx = certsEndIdx;
                }
             } while (certsBeginIdx != -1);
@@ -106,7 +106,7 @@ public class KeyStoreSupplier implements Supplier<KeyStore> {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
             @SuppressWarnings("unchecked")
             Collection<Certificate> certs = (Collection<Certificate>) cf.generateCertificates(new ByteArrayInputStream(
-                  pemCerts.getBytes(Charsets.UTF_8)));
+                  pemCerts.toString().getBytes(Charsets.UTF_8)));
             keyStore.load(null);
             keyStore.setKeyEntry("dummy", privateKey, keyStorePassword.toCharArray(),
                   certs.toArray(new java.security.cert.Certificate[0]));

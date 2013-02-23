@@ -109,7 +109,7 @@ public class UnregisterMachineIfExistsAndDeleteItsMedia implements Function<IMac
       return null;
    }
 
-   private class AutoDeleteHardDiskPredicate implements Predicate<IMedium> {
+   private static class AutoDeleteHardDiskPredicate implements Predicate<IMedium> {
 
       private VmSpec vmSpec;
 
@@ -128,7 +128,7 @@ public class UnregisterMachineIfExistsAndDeleteItsMedia implements Function<IMac
 
    };
 
-   private class DeleteChildrenOfMedium implements Function<IMedium, IMedium> {
+   private static class DeleteChildrenOfMedium implements Function<IMedium, IMedium> {
       @Override
       public IMedium apply(IMedium medium) {
          checkNotNull(medium.getChildren());

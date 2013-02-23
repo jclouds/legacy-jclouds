@@ -98,8 +98,6 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
          to.nameTask(this.getTaskName());
    }
 
-   public static final TemplateOptions NONE = new ImmutableTemplateOptions(new TemplateOptions());
-
    public static class ImmutableTemplateOptions extends TemplateOptions {
       private final TemplateOptions delegate;
 
@@ -316,6 +314,8 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
    }
 
    private static final Set<Integer> DEFAULT_INBOUND_PORTS = ImmutableSet.of(22);
+
+   public static final TemplateOptions NONE = new ImmutableTemplateOptions(new TemplateOptions());
    
    protected Set<Integer> inboundPorts = DEFAULT_INBOUND_PORTS;
 

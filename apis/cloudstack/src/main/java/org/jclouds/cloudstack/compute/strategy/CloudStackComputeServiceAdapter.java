@@ -138,7 +138,7 @@ public class CloudStackComputeServiceAdapter implements
       try {
          zone = zoneIdToZone.get().get(zoneId);
       } catch (ExecutionException e) {
-         Throwables.propagate(e);
+         throw Throwables.propagate(e);
       }
 
       CloudStackTemplateOptions templateOptions = template.getOptions().as(CloudStackTemplateOptions.class);
