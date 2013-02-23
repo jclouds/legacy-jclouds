@@ -143,7 +143,7 @@ public class StorageController {
       }
    }
    
-   private class HardDiskPredicate implements Predicate<HardDisk>  {
+   private static class HardDiskPredicate implements Predicate<HardDisk>  {
    	
    	private String diskName;
    	

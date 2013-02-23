@@ -81,7 +81,7 @@ public class VCloudDirectorComputeUtils {
 
    public static String getVirtualSystemIdentifierOf(Vm vm) {
       VirtualHardwareSection virtualHardwareSection = findVirtualHardwareSectionForVApp.apply(vm);
-      if (virtualHardwareSection != null && virtualHardwareSection != null)
+      if (virtualHardwareSection != null && virtualHardwareSection.getSystem() != null)
          return virtualHardwareSection.getSystem().getVirtualSystemIdentifier();
       return null;
    }

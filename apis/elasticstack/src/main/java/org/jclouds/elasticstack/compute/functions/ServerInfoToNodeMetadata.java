@@ -131,7 +131,7 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
          builder.id(input.getId());
          try {
             DriveInfo drive = cache.getUnchecked(input.getDriveUuid());
-            builder.size(drive.getSize() / 1024 / 1024f);
+            builder.size(drive.getSize() / (float) (1024 * 1024));
          } catch (NullPointerException e) {
             logger.debug("drive %s not found", input.getDriveUuid());
          } catch (UncheckedExecutionException e) {

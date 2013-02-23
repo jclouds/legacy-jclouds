@@ -78,8 +78,8 @@ public class OperatingSystemPredicates {
                }
             }
             for (String toMatch : searchStrings(os))
-               if (toMatch != null && toMatch.toLowerCase().indexOf("ubuntu") != -1
-                        || toMatch.toLowerCase().indexOf("debian") != -1)
+               if (toMatch != null && (toMatch.toLowerCase().indexOf("ubuntu") != -1
+                        || toMatch.toLowerCase().indexOf("debian") != -1))
                   return true;
             return false;
          }

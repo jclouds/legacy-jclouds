@@ -69,7 +69,7 @@ public class HardwareBuilderFromResourceAllocations implements
 
    public Volume apply(ResourceAllocationSettingData from) {
       return new VolumeImpl(from.getAddressOnParent() + "", Volume.Type.LOCAL, from.getVirtualQuantity() == null ? null
-               : from.getVirtualQuantity().longValue() / 1024 / 1024f, null, "0".equals(from.getAddressOnParent())
+               : from.getVirtualQuantity().longValue() / (float) (1024 * 1024), null, "0".equals(from.getAddressOnParent())
                || ResourceType.BASE_PARTITIONABLE_UNIT.equals(from.getResourceType()), true);
    }
 }
