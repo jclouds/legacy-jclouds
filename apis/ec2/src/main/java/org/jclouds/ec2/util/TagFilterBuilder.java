@@ -102,7 +102,7 @@ public class TagFilterBuilder extends ImmutableMultimap.Builder<String, String> 
    }
 
    public TagFilterBuilder anyResourceId() {
-      return putAll(RESOURCE_TYPE, ImmutableSet.<String> of());
+      return putAll(RESOURCE_ID, ImmutableSet.<String> of());
    }
 
    public TagFilterBuilder resourceType(String resourceType) {
