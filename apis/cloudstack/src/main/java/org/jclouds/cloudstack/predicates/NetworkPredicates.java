@@ -189,19 +189,19 @@ public class NetworkPredicates {
       }
    }
 
-   public static Predicate<NetworkService> supportsStaticNAT = Predicates.and(new NetworkServiceNamed("Firewall"),
+   public static final Predicate<NetworkService> supportsStaticNAT = Predicates.and(new NetworkServiceNamed("Firewall"),
          new CapabilitiesInclude("StaticNat"));
 
-   public static Predicate<NetworkService> supportsPortForwarding = Predicates.and(new NetworkServiceNamed("Firewall"),
+   public static final Predicate<NetworkService> supportsPortForwarding = Predicates.and(new NetworkServiceNamed("Firewall"),
          new CapabilitiesInclude("PortForwarding"));
 
-   public static Predicate<NetworkService> isLoadBalancerService = new NetworkServiceNamed("Lb");
+   public static final Predicate<NetworkService> isLoadBalancerService = new NetworkServiceNamed("Lb");
 
-   public static Predicate<GuestIPType> isVirtualNetwork = new GuestIPTypeIs(GuestIPType.VIRTUAL);
+   public static final Predicate<GuestIPType> isVirtualNetwork = new GuestIPTypeIs(GuestIPType.VIRTUAL);
 
-   public static Predicate<GuestIPType> isIsolatedNetwork = new GuestIPTypeIs(GuestIPType.ISOLATED);
+   public static final Predicate<GuestIPType> isIsolatedNetwork = new GuestIPTypeIs(GuestIPType.ISOLATED);
 
-   public static Predicate<GuestIPType> isSharedNetwork = new GuestIPTypeIs(GuestIPType.SHARED);
+   public static final Predicate<GuestIPType> isSharedNetwork = new GuestIPTypeIs(GuestIPType.SHARED);
 
    /**
     * 

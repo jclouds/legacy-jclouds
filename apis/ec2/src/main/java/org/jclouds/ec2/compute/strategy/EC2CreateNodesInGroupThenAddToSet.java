@@ -121,7 +121,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
       this.utils = checkNotNull(utils, "utils");
    }
 
-   public static Function<RunningInstance, RegionAndName> instanceToRegionAndName = new Function<RunningInstance, RegionAndName>() {
+   public static final Function<RunningInstance, RegionAndName> instanceToRegionAndName = new Function<RunningInstance, RegionAndName>() {
       @Override
       public RegionAndName apply(RunningInstance from) {
          return new RegionAndName(from.getRegion(), from.getId());

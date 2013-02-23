@@ -126,8 +126,12 @@ public class ComputeServiceUtils {
 
    public static double getSpace(Hardware input) {
       double total = 0;
-      for (Volume volume : input.getVolumes())
-         total += volume.getSize() != null ? volume.getSize() : 0;
+      for (Volume volume : input.getVolumes()) {
+         Float size = volume.getSize();
+         if (size != null) {
+            total += size;
+         }
+      }
       return total;
    }
 

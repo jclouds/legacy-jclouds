@@ -138,7 +138,7 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
 
       ensureVmHasAllocationModeOrPooled(vAppResponse, vOptions.getIpAddressAllocationMode());
 
-      int cpuCount = new Double(getCores(template.getHardware())).intValue();
+      int cpuCount = (int) getCores(template.getHardware());
       logger.trace(">> updating cpuCount(%d) vm(%s)", cpuCount, vm.getName());
       waitForTask(updateCPUCountOfVm(vm, cpuCount));
       logger.trace("<< updated cpuCount vm(%s)", vm.getName());

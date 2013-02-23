@@ -90,6 +90,6 @@ public class VirtualMachineTemplateInVirtualDatacenterToHardware implements
    }
 
    private static float toGb(final long bytes) {
-      return bytes / 1024 / 1024 / (float) 1024;
+      return bytes / (float) (1024 * 1024 * 1024);
    }
 }

@@ -87,7 +87,7 @@ import com.google.inject.Inject;
 @SuppressWarnings("unchecked")
 public class SshjSshClient implements SshClient {
 
-   private final class CloseFtpChannelOnCloseInputStream extends FilterInputStream {
+   private static final class CloseFtpChannelOnCloseInputStream extends FilterInputStream {
 
       private final SFTPClient sftp;
 

@@ -206,7 +206,7 @@ public class CDMIObject {
                      for (String s : cdmi_acl_member) {
                         String cdmi_acl_key = s.substring(0, s.indexOf(":"));
                         String cdmi_acl_value = s.substring(s.indexOf(":") + 1);
-                        cdmi_acl_value.replace('"', ' ').trim();
+                        cdmi_acl_value = cdmi_acl_value.replace('"', ' ').trim();
                         aclMap.put(cdmi_acl_key, cdmi_acl_value);
                      }
                      aclMetaDataIn.add(aclMap);

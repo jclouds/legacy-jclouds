@@ -133,7 +133,7 @@ public class YamlImage {
    public String credential_url;
    public String sudo_password;
 
-   public static Function<YamlImage, Image> toImage = new Function<YamlImage, Image>() {
+   public static final Function<YamlImage, Image> toImage = new Function<YamlImage, Image>() {
       @Override
       public Image apply(YamlImage arg0) {
          if (arg0 == null)

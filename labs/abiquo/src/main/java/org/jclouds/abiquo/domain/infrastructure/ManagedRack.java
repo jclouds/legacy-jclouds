@@ -538,7 +538,7 @@ public class ManagedRack extends DomainWrapper<UcsRackDto> {
          return this;
       }
 
-      public Builder VlansIdAvoided(final String vlansIdAvoided) {
+      public Builder vlansIdAvoided(final String vlansIdAvoided) {
          this.vlansIdAvoided = vlansIdAvoided;
          return this;
       }
@@ -576,7 +576,7 @@ public class ManagedRack extends DomainWrapper<UcsRackDto> {
          return ManagedRack.builder(in.context, in.datacenter).id(in.getId()).name(in.getName())
                .shortDescription(in.getShortDescription()).haEnabled(in.isHaEnabled()).nrsq(in.getNrsq())
                .vlanIdMax(in.getVlanIdMax()).vlanIdMin(in.getVlanIdMin())
-               .vlanPerVdcReserved(in.getVlanPerVdcReserved()).VlansIdAvoided(in.getVlansIdAvoided())
+               .vlanPerVdcReserved(in.getVlanPerVdcReserved()).vlansIdAvoided(in.getVlansIdAvoided())
                .port(in.getPort()).ipAddress(in.getIp()).password(in.getPassword()).user(in.getUser())
                .defaultTemplate(in.getDefaultTemplate()).maxMachinesOn(in.getMaxMachinesOn());
       }

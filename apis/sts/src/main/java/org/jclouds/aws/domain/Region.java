@@ -109,10 +109,10 @@ public class Region {
     */
    public static final String AP_NORTHEAST_1 = "ap-northeast-1";
 
-   public static Set<String> DEFAULT_S3 = ImmutableSet.of(US_STANDARD, US_WEST_1, US_WEST_2, EU_WEST_1, SA_EAST_1,
+   public static final Set<String> DEFAULT_S3 = ImmutableSet.of(US_STANDARD, US_WEST_1, US_WEST_2, EU_WEST_1, SA_EAST_1,
          AP_SOUTHEAST_1, AP_SOUTHEAST_2, AP_NORTHEAST_1);
 
-   public static Set<String> DEFAULT_REGIONS = ImmutableSet.of(US_EAST_1, US_WEST_1, US_WEST_2, SA_EAST_1, EU_WEST_1,
+   public static final Set<String> DEFAULT_REGIONS = ImmutableSet.of(US_EAST_1, US_WEST_1, US_WEST_2, SA_EAST_1, EU_WEST_1,
          AP_SOUTHEAST_1, AP_SOUTHEAST_2, AP_NORTHEAST_1);
 
    public static Properties regionPropertiesS3() {
