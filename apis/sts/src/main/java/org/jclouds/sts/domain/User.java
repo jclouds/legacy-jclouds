@@ -57,6 +57,11 @@ public final class User {
    }
 
    @Override
+   public int hashCode() {
+      return Objects.hashCode(id, arn);
+   }
+
+   @Override
    public boolean equals(Object obj) {
       if (this == obj)
          return true;

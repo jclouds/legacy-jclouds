@@ -100,7 +100,7 @@ public class CloneSpec {
    public boolean equals(Object o) {
       if (this == o)
          return true;
-      if (o instanceof VmSpec) {
+      if (o instanceof CloneSpec) {
          CloneSpec other = (CloneSpec) o;
          return Objects.equal(vmSpec, other.vmSpec) && Objects.equal(networkSpec, other.networkSpec);
       }

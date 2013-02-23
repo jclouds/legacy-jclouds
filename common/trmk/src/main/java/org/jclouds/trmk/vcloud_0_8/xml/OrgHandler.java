@@ -67,7 +67,7 @@ public class OrgHandler extends ParseSax.HandlerWithResult<Org> {
                putReferenceType(catalogs, attributes);
             } else if (type.indexOf("tasksList+xml") != -1) {
                putReferenceType(tasksLists, attributes);
-            } else if (type != null && type.endsWith("keysList+xml")) {
+            } else if (type.endsWith("keysList+xml")) {
                keys = newReferenceType(attributes);
             }
          }

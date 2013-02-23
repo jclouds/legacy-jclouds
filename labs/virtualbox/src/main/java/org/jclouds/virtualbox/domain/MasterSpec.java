@@ -100,7 +100,7 @@ public class MasterSpec {
    public boolean equals(Object o) {
       if (this == o)
          return true;
-      if (o instanceof VmSpec) {
+      if (o instanceof MasterSpec) {
          MasterSpec other = (MasterSpec) o;
          return Objects.equal(vmSpec, other.vmSpec) && Objects.equal(isoSpec, other.isoSpec)
                   && Objects.equal(networkSpec, other.networkSpec);

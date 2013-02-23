@@ -50,8 +50,6 @@ public class DescribeDBInstancesResultHandler extends
    private boolean inInstances;
    private String marker;
 
-   protected int memberDepth;
-
    @Inject
    public DescribeDBInstancesResultHandler(InstanceHandler instanceHandler) {
       this.instanceHandler = instanceHandler;
