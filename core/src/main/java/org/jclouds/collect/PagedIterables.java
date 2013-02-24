@@ -35,22 +35,26 @@ import com.google.common.collect.ImmutableSet;
  */
 @Beta
 public class PagedIterables {
-
    /**
     * @param only
     *           the only page of data
     * 
     * @return iterable with only the one page
     */
-   public static <T> PagedIterable<T> of(final IterableWithMarker<T> only) {
+   public static <T> PagedIterable<T> onlyPage(final IterableWithMarker<T> only) {
       return new PagedIterable<T>() {
-
-         @Override
          public Iterator<IterableWithMarker<T>> iterator() {
             return ImmutableSet.of(only).iterator();
          }
-
       };
+   }
+
+   /**
+    * @see #onlyPage(IterableWithMarker)
+    */
+   @Deprecated
+   public static <T> PagedIterable<T> of(IterableWithMarker<T> only) {
+      return onlyPage(only);
    }
 
    /**
@@ -67,12 +71,9 @@ public class PagedIterables {
    public static <T> PagedIterable<T> advance(final IterableWithMarker<T> initial,
          final Function<Object, IterableWithMarker<T>> markerToNext) {
       return new PagedIterable<T>() {
-
-         @Override
          public Iterator<IterableWithMarker<T>> iterator() {
             return advancingIterator(initial, markerToNext);
          }
-
       };
    }
 
@@ -87,9 +88,6 @@ public class PagedIterables {
          this.markerToNext = checkNotNull(markerToNext, "marker to next iterable");
       }
 
-      /**
-       * {@inheritDoc}
-       */
       @Override
       protected IterableWithMarker<T> computeNext() {
          if (unread)
@@ -104,17 +102,11 @@ public class PagedIterables {
             return endOfData();
       }
 
-      /**
-       * {@inheritDoc}
-       */
       @Override
       public int hashCode() {
          return Objects.hashCode(current, unread);
       }
 
-      /**
-       * {@inheritDoc}
-       */
       @Override
       public boolean equals(Object obj) {
          if (this == obj)
@@ -125,9 +117,6 @@ public class PagedIterables {
          return Objects.equal(this.current, other.current) && Objects.equal(this.unread, other.unread);
       }
 
-      /**
-       * {@inheritDoc}
-       */
       @Override
       public String toString() {
          return Objects.toStringHelper("").add("current", current).add("unread", unread).toString();
@@ -151,5 +140,4 @@ public class PagedIterables {
       }
       return new AdvancingIterator<T>(initial, markerToNext);
    }
-
 }
