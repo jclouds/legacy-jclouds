@@ -20,6 +20,7 @@ package org.jclouds.ec2;
 
 import java.util.Set;
 
+import org.jclouds.ec2.features.SubnetAsyncApi;
 import org.jclouds.ec2.features.TagAsyncApi;
 import org.jclouds.ec2.features.WindowsAsyncApi;
 import org.jclouds.javax.annotation.Nullable;
@@ -64,5 +65,15 @@ public interface EC2AsyncApi {
 
    @Delegate
    Optional<? extends TagAsyncApi> getTagApiForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   
+   /**
+    * Provides asynchronous access to Subnet features.
+    */
+   @Delegate
+   Optional<? extends SubnetAsyncApi> getSubnetApi();
+
+   @Delegate
+   Optional<? extends SubnetAsyncApi> getSubnetApiForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 }
