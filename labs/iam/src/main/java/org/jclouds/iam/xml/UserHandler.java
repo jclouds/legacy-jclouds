@@ -18,13 +18,14 @@
  */
 package org.jclouds.iam.xml;
 
+import static org.jclouds.util.SaxUtils.currentOrNull;
+
 import javax.inject.Inject;
 
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.iam.domain.User;
-import org.jclouds.util.SaxUtils;
-import org.xml.sax.SAXException;
+import org.xml.sax.Attributes;
 
 /**
  * @see <a href="http://docs.amazonwebservices.com/IAM/latest/APIReference/API_GetUser.html" />
@@ -40,11 +41,8 @@ public class UserHandler extends ParseSax.HandlerForGeneratedRequestWithResult<U
    }
    
    private StringBuilder currentText = new StringBuilder();
-   private User.Builder<?> builder = User.builder();
+   private User.Builder builder = User.builder();
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public User getResult() {
       try {
@@ -54,31 +52,28 @@ public class UserHandler extends ParseSax.HandlerForGeneratedRequestWithResult<U
       }
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public void endElement(String uri, String name, String qName) throws SAXException {
+   public void startElement(String url, String name, String qName, Attributes attributes) {
+   }
+
+   @Override
+   public void endElement(String uri, String name, String qName) {
       if (qName.equals("Path")) {
-         builder.path(SaxUtils.currentOrNull(currentText));
+         builder.path(currentOrNull(currentText));
       } else if (qName.equals("UserName")) {
-         builder.name(SaxUtils.currentOrNull(currentText));
+         builder.name(currentOrNull(currentText));
       } else if (qName.equals("UserId")) {
-         builder.id(SaxUtils.currentOrNull(currentText));
+         builder.id(currentOrNull(currentText));
       } else if (qName.equals("Arn")) {
-         builder.arn(SaxUtils.currentOrNull(currentText));
+         builder.arn(currentOrNull(currentText));
       } else if (qName.equals("CreateDate")) {
-         builder.createDate(dateService.iso8601SecondsDateParse(SaxUtils.currentOrNull(currentText)));
+         builder.createDate(dateService.iso8601SecondsDateParse(currentOrNull(currentText)));
       }
       currentText = new StringBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public void characters(char ch[], int start, int length) {
       currentText.append(ch, start, length);
    }
-
 }
