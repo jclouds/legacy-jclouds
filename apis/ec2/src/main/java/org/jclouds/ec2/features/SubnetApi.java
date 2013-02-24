@@ -18,7 +18,6 @@
  */
 package org.jclouds.ec2.features;
 
-import java.util.Map;
 import org.jclouds.ec2.domain.Subnet;
 import org.jclouds.ec2.util.SubnetFilterBuilder;
 import org.jclouds.rest.annotations.SinceApiVersion;
@@ -27,13 +26,10 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Multimap;
 
 /**
- * To help you manage your Amazon EC2 instances, images, and other Amazon EC2
- * resources, you can assign your own metadata to each resource in the form of
- * tags.
+ * To help you manage your Amazon EC2 instances, images, and other Amazon EC2 resources, you can assign your own
+ * metadata to each resource in the form of tags.
  * 
- * @see <a
- *      href="http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_Subnets.html"
- *      >doc</a>
+ * @see <a href="http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_Subnets.html" >doc</a>
  * @see SubnetAsyncApi
  * @author Adrian Cole
  * @author Andrew Bayer
@@ -57,7 +53,7 @@ public interface SubnetApi {
     * <h4>example</h4>
     * 
     * <pre>
-    * subnets = subnetApi.filter(new SubnetFilterBuilder().vpcId("vpc-1a2b3c4d").build());
+    * subnets = subnetApi.filter(new SubnetFilterBuilder().vpcId(&quot;vpc-1a2b3c4d&quot;).build());
     * </pre>
     * 
     * @param filter
