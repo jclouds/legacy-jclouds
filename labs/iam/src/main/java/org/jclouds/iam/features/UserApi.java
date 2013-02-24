@@ -21,7 +21,6 @@ package org.jclouds.iam.features;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
 import org.jclouds.iam.domain.User;
-import org.jclouds.iam.options.ListUsersOptions;
 import org.jclouds.javax.annotation.Nullable;
 
 /**
@@ -38,6 +37,50 @@ public interface UserApi {
    User getCurrent();
 
    /**
+    * returns all users in order.
+    */
+   PagedIterable<User> list();
+
+   /**
+    * retrieves up to 100 users in order.
+    */
+   IterableWithMarker<User> listFirstPage();
+
+   /**
+    * retrieves up to 100 users in order, starting at {@code marker}
+    * 
+    * @param marker
+    *           starting point to resume the list
+    */
+   IterableWithMarker<User> listAt(String marker);
+
+   /**
+    * returns all users in order at the specified {@code pathPrefix}.
+    * 
+    * @param pathPrefix
+    *           ex. {@code /division_abc/subdivision_xyz/}
+    */
+   PagedIterable<User> listPathPrefix(String pathPrefix);
+
+   /**
+    * retrieves up to 100 users in order at the specified {@code pathPrefix}.
+    * 
+    * @param pathPrefix
+    *           ex. {@code /division_abc/subdivision_xyz/}
+    */
+   IterableWithMarker<User> listPathPrefixFirstPage(String pathPrefix);
+
+   /**
+    * retrieves up to 100 users in order at the specified {@code pathPrefix}, starting at {@code marker}.
+    * 
+    * @param pathPrefix
+    *           ex. {@code /division_abc/subdivision_xyz/}
+    * @param marker
+    *           starting point to resume the list
+    */
+   IterableWithMarker<User> listPathPrefixAt(String pathPrefix, String marker);
+
+   /**
     * Retrieves information about the specified user, including the user's path, GUID, and ARN.
     * 
     * @param name
@@ -46,27 +89,4 @@ public interface UserApi {
     */
    @Nullable
    User get(String name);
-
-   /**
-    * Lists the users that have the specified path prefix. If there are none, the action returns an
-    * empty list.
-    * 
-    * <br/>
-    * You can paginate the results using the {@link ListUsersOptions parameter}
-    * 
-    * @param options
-    *           the options describing the users query
-    * 
-    * @return the response object
-    */
-   IterableWithMarker<User> list(ListUsersOptions options);
-
-   /**
-    * Lists the users that have the specified path prefix. If there are none, the action returns an
-    * empty list.
-    * 
-    * @return the response object
-    */
-   PagedIterable<User> list();
-
 }
