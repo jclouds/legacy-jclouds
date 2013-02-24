@@ -44,5 +44,4 @@ public class IAMRestClientModule extends FormSigningRestClientModule<IAMApi, IAM
    public IAMRestClientModule() {
       super(TypeToken.of(IAMApi.class), TypeToken.of(IAMAsyncApi.class), DELEGATE_MAP);
    }
-
 }

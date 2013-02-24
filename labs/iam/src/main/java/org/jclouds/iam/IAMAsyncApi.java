@@ -62,5 +62,4 @@ public interface IAMAsyncApi {
     */
    @Delegate
    UserAsyncApi getUserApi();
-
 }

@@ -18,17 +18,17 @@
  */
 package org.jclouds.iam.xml;
 
-import java.util.Set;
+import static org.jclouds.util.SaxUtils.currentOrNull;
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.IterableWithMarkers;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.iam.domain.User;
-import org.jclouds.util.SaxUtils;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 import com.google.inject.Inject;
 
 /**
@@ -41,7 +41,7 @@ public class ListUsersResultHandler extends ParseSax.HandlerForGeneratedRequestW
    private final UserHandler userHandler;
 
    private StringBuilder currentText = new StringBuilder();
-   private Set<User> users = Sets.newLinkedHashSet();
+   private Builder<User> users = ImmutableList.<User> builder();
    private boolean inUsers;
    private String afterMarker;
 
@@ -50,20 +50,18 @@ public class ListUsersResultHandler extends ParseSax.HandlerForGeneratedRequestW
       this.userHandler = userHandler;
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public IterableWithMarker<User> getResult() {
-      return IterableWithMarkers.from(users, afterMarker);
+      try {
+         return IterableWithMarkers.from(users.build(), afterMarker);
+      } finally {
+         users = ImmutableList.<User> builder();
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public void startElement(String url, String name, String qName, Attributes attributes) throws SAXException {
-      if (SaxUtils.equalsOrSuffix(qName, "Users")) {
+   public void startElement(String url, String name, String qName, Attributes attributes) {
+      if (equalsOrSuffix(qName, "Users")) {
          inUsers = true;
       }
       if (inUsers) {
@@ -71,11 +69,8 @@ public class ListUsersResultHandler extends ParseSax.HandlerForGeneratedRequestW
       }
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public void endElement(String uri, String name, String qName) throws SAXException {
+   public void endElement(String uri, String name, String qName) {
       if (inUsers) {
          if (qName.equals("Users")) {
             inUsers = false;
@@ -85,15 +80,12 @@ public class ListUsersResultHandler extends ParseSax.HandlerForGeneratedRequestW
             userHandler.endElement(uri, name, qName);
          }
       } else if (qName.equals("Marker")) {
-         afterMarker = SaxUtils.currentOrNull(currentText);
+         afterMarker = currentOrNull(currentText);
       }
 
       currentText = new StringBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public void characters(char ch[], int start, int length) {
       if (inUsers) {
@@ -102,5 +94,4 @@ public class ListUsersResultHandler extends ParseSax.HandlerForGeneratedRequestW
          currentText.append(ch, start, length);
       }
    }
-
 }

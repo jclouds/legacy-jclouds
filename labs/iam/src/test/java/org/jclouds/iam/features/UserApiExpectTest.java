@@ -18,7 +18,6 @@
  */
 package org.jclouds.iam.features;
 
-import static org.jclouds.iam.options.ListUsersOptions.Builder.pathPrefix;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
@@ -114,7 +113,7 @@ public class UserApiExpectTest extends BaseIAMApiExpectTest {
                                  .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
                                  .addFormParam("Version", "2010-05-08")
                                  .addFormParam("AWSAccessKeyId", "identity").build();
-   
+
    public void testListWhenResponseIs2xx() throws Exception {
 
       HttpResponse listResponse = HttpResponse.builder().statusCode(200)
@@ -153,7 +152,58 @@ public class UserApiExpectTest extends BaseIAMApiExpectTest {
                ImmutableList.copyOf(Iterables.concat(new ListUsersResponseTest().expected(), new ListUsersResponseTest().expected())));
    }
 
-   
+   HttpRequest listPathPrefix = HttpRequest.builder()
+                                           .method("POST")
+                                           .endpoint("https://iam.amazonaws.com/")
+                                           .addHeader("Host", "iam.amazonaws.com")
+                                           .addFormParam("Action", "ListUsers")
+                                           .addFormParam("PathPrefix", "/subdivision")
+                                           .addFormParam("Signature", "giw/28vFH9GZoqf60bP4Ka80kBXhJDcncC%2BWA0Dkg/o%3D")
+                                           .addFormParam("SignatureMethod", "HmacSHA256")
+                                           .addFormParam("SignatureVersion", "2")
+                                           .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                           .addFormParam("Version", "2010-05-08")
+                                           .addFormParam("AWSAccessKeyId", "identity").build();
+
+   public void testListPathPrefixWhenResponseIs2xx() throws Exception {
+
+      HttpResponse listResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResourceWithContentType("/list_users.xml", "text/xml")).build();
+
+      IAMApi apiWhenExist = requestSendsResponse(
+            listPathPrefix, listResponse);
+
+      assertEquals(apiWhenExist.getUserApi().listPathPrefix("/subdivision").get(0).toString(), new ListUsersResponseTest().expected().toString());
+   }
+
+   public void testListPathPrefix2PagesWhenResponseIs2xx() throws Exception {
+
+      HttpResponse listResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResourceWithContentType("/list_users_marker.xml", "text/xml")).build();
+
+      HttpRequest listPathPrefix2 = HttpRequest.builder()
+                                    .method("POST")
+                                    .endpoint("https://iam.amazonaws.com/")
+                                    .addHeader("Host", "iam.amazonaws.com")
+                                    .addFormParam("Action", "ListUsers")
+                                    .addFormParam("Marker", "MARKER")
+                                    .addFormParam("PathPrefix", "/subdivision")
+                                    .addFormParam("Signature", "JSAWWjJdoz8Twn3CSjkuqWIJmmokjQyKPOdekNeVl30%3D")
+                                    .addFormParam("SignatureMethod", "HmacSHA256")
+                                    .addFormParam("SignatureVersion", "2")
+                                    .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                    .addFormParam("Version", "2010-05-08")
+                                    .addFormParam("AWSAccessKeyId", "identity").build();
+      
+      HttpResponse list2Response = HttpResponse.builder().statusCode(200)
+               .payload(payloadFromResourceWithContentType("/list_users.xml", "text/xml")).build();
+
+      IAMApi apiWhenExist = requestsSendResponses(listPathPrefix, listResponse, listPathPrefix2, list2Response);
+
+      assertEquals(apiWhenExist.getUserApi().listPathPrefix("/subdivision").concat().toImmutableList(),
+               ImmutableList.copyOf(Iterables.concat(new ListUsersResponseTest().expected(), new ListUsersResponseTest().expected())));
+   }
+
    // TODO: this should really be an empty set
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testListWhenResponseIs404() throws Exception {
@@ -166,7 +216,7 @@ public class UserApiExpectTest extends BaseIAMApiExpectTest {
       apiWhenDontExist.getUserApi().list().get(0);
    }
    
-   public void testListWithOptionsWhenResponseIs2xx() throws Exception {
+   public void testListPathPrefixAtWhenResponseIs2xx() throws Exception {
       HttpRequest listWithOptions =
             HttpRequest.builder()
                        .method("POST")
@@ -188,7 +238,7 @@ public class UserApiExpectTest extends BaseIAMApiExpectTest {
       IAMApi apiWhenWithOptionsExist = requestSendsResponse(listWithOptions,
                listWithOptionsResponse);
 
-      assertEquals(apiWhenWithOptionsExist.getUserApi().list(pathPrefix("/foo").afterMarker("MARKER")).toString(),
+      assertEquals(apiWhenWithOptionsExist.getUserApi().listPathPrefixAt("/foo", "MARKER").toString(),
                new ListUsersResponseTest().expected().toString());
    }
 }

@@ -19,15 +19,15 @@
 package org.jclouds.iam.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.logging.Logger.getAnonymousLogger;
+import static org.testng.Assert.assertEquals;
 
-import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.iam.domain.User;
 import org.jclouds.iam.internal.BaseIAMApiLiveTest;
-import org.jclouds.iam.options.ListUsersOptions;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Adrian Cole
@@ -42,30 +42,23 @@ public class UserApiLiveTest extends BaseIAMApiLiveTest {
    }
 
    private void checkUser(User user) {
-      checkNotNull(user.getArn(), "Arn cannot be null for a User.");
-      checkNotNull(user.getId(), "Id cannot be null for a User.");
-      checkNotNull(user.getName(), "While Name can be null for a User, its Optional wrapper cannot.");
-      checkNotNull(user.getPath(), "While Path can be null for a User, its Optional wrapper cannot.");
-      checkNotNull(user.getCreateDate(), "CreateDate cannot be null for a User.");
+      checkNotNull(user.getArn(), "Arn cannot be null for User %s", user);
+      checkNotNull(user.getId(), "Id cannot be null for User %s", user);
+      checkNotNull(user.getName(), "While Name can be null for a User, its Optional wrapper cannot; user %s", user);
+      checkNotNull(user.getPath(), "While Path can be null for a User, its Optional wrapper cannot; user %s", user);
+      checkNotNull(user.getCreateDate(), "CreateDate cannot be null for a User User %s", user);
    }
 
    @Test
    protected void testListUsers() {
-      IterableWithMarker<User> response = api().list().get(0);
-      
-      for (User user : response) {
-         checkUser(user);
-      }
-      
-      if (Iterables.size(response) > 0) {
-         User user = response.iterator().next();
-         Assert.assertEquals(api().get(user.getName().get()), user);
-      }
+      ImmutableList<User> users = api().list().concat().toImmutableList();
+      getAnonymousLogger().info("users: " + users.size());
 
-      // Test with a Marker, even if it's null
-      response = api().list(ListUsersOptions.Builder.afterMarker(response.nextMarker().orNull()));
-      for (User user : response) {
+      for (User user : users) {
          checkUser(user);
+         assertEquals(api().get(user.getId()), user);
+         if (user.getPath().isPresent())
+            assertEquals(api().listPathPrefix(user.getPath().get()).toImmutableSet(), ImmutableSet.of(user));
       }
    }
 
