@@ -20,8 +20,6 @@ package org.jclouds.ec2.features;
 
 import static org.jclouds.aws.reference.FormParameters.ACTION;
 
-import java.util.Map;
-
 import javax.inject.Named;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -47,8 +45,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides access to Amazon EC2 via the Query API
  * <p/>
  * 
- * @see <a
- *      href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeSubnets.html"
+ * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeSubnets.html"
  *      >doc</a>
  * @see SubnetApi
  * @author Adrian Cole

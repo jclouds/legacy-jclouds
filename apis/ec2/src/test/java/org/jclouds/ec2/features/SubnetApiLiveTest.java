@@ -16,32 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.ec2.features.internal;
+package org.jclouds.ec2.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.logging.Logger.getAnonymousLogger;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-import java.util.logging.Logger;
-
 import org.jclouds.ec2.domain.Subnet;
-import org.jclouds.ec2.features.SubnetApi;
 import org.jclouds.ec2.internal.BaseEC2ApiLiveTest;
 import org.jclouds.ec2.util.SubnetFilterBuilder;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.SkipException;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -52,8 +44,6 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "live")
 public class SubnetApiLiveTest extends BaseEC2ApiLiveTest {
-    private Subnet subnet;
-
     
     private void checkSubnet(Subnet subnet) {
         getAnonymousLogger().info(format("subnet %s vpc: %s", subnet.getSubnetId(), subnet.getVpcId()));

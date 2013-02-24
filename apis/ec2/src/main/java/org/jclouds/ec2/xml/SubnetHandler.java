@@ -24,99 +24,74 @@ import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 import javax.inject.Inject;
 
 import org.jclouds.ec2.domain.Subnet;
-import org.jclouds.ec2.domain.Subnet.State;
 import org.jclouds.http.functions.ParseSax;
-
 import org.xml.sax.Attributes;
 
-import com.google.common.base.Supplier;
-
 /**
- * @see <a
- *      href="http://docs.aws.amazon.com/AWSEC2/latest/APIReference/ApiReference-ItemType-SubnetType.html"
- *      >xml</a>
+ * @see <a href="http://docs.aws.amazon.com/AWSEC2/latest/APIReference/ApiReference-ItemType-SubnetType.html" >xml</a>
  * 
  * @author Adrian Cole
  * @author Andrew Bayer
  */
 public class SubnetHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Subnet> {
-    private StringBuilder currentText = new StringBuilder();
-    private Subnet.Builder builder = newBuilder();
-    private final TagSetHandler tagSetHandler;
-    private boolean inTagSet;
+   private StringBuilder currentText = new StringBuilder();
+   private Subnet.Builder builder = Subnet.builder();
+   private final TagSetHandler tagSetHandler;
+   private boolean inTagSet;
 
-    @Inject
-    public SubnetHandler(TagSetHandler tagSetHandler) {
-        this.tagSetHandler = tagSetHandler;
-    }
+   @Inject
+   public SubnetHandler(TagSetHandler tagSetHandler) {
+      this.tagSetHandler = tagSetHandler;
+   }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Subnet getResult() {
-        try {
-            return builder.build();
-        } finally {
-            builder = Subnet.builder();
-        }
-    }
+   @Override
+   public Subnet getResult() {
+      try {
+         return builder.build();
+      } finally {
+         builder = Subnet.builder();
+      }
+   }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void startElement(String uri, String name, String qName, Attributes attrs) {
-        if (equalsOrSuffix(qName, "tagSet")) {
-            inTagSet = true;
-        }
-        if (inTagSet) {
-            tagSetHandler.startElement(uri, name, qName, attrs);
-        }
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void endElement(String uri, String name, String qName) {
-        if (equalsOrSuffix(qName, "tagSet")) {
-            inTagSet = false;
-            builder.tags(tagSetHandler.getResult());
-        } else if (inTagSet) {
-            tagSetHandler.endElement(uri, name, qName);
-        } else if (equalsOrSuffix(qName, "subnetId")) {
-            builder.subnetId(currentOrNull(currentText));
-        } else if (equalsOrSuffix(qName, "state")) {
-            builder.subnetState(Subnet.State.fromValue(currentOrNull(currentText)));
-        } else if (equalsOrSuffix(qName, "vpcId")) {
-            builder.vpcId(currentOrNull(currentText));
-        } else if (equalsOrSuffix(qName, "cidrBlock")) {
-            builder.cidrBlock(currentOrNull(currentText));
-        } else if (equalsOrSuffix(qName, "availableIpAddressCount")) {
-            builder.availableIpAddressCount(Integer.parseInt(currentOrNull(currentText)));
-        } else if (equalsOrSuffix(qName, "availabilityZone")) {
-            builder.availabilityZone(currentOrNull(currentText));
-        }
-        currentText = new StringBuilder();
-    }
+   @Override
+   public void startElement(String uri, String name, String qName, Attributes attrs) {
+      if (equalsOrSuffix(qName, "tagSet")) {
+         inTagSet = true;
+      }
+      if (inTagSet) {
+         tagSetHandler.startElement(uri, name, qName, attrs);
+      }
+   }
 
+   @Override
+   public void endElement(String uri, String name, String qName) {
+      if (equalsOrSuffix(qName, "tagSet")) {
+         inTagSet = false;
+         builder.tags(tagSetHandler.getResult());
+      } else if (inTagSet) {
+         tagSetHandler.endElement(uri, name, qName);
+      } else if (equalsOrSuffix(qName, "subnetId")) {
+         builder.subnetId(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "state")) {
+         builder.subnetState(Subnet.State.fromValue(currentOrNull(currentText)));
+      } else if (equalsOrSuffix(qName, "vpcId")) {
+         builder.vpcId(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "cidrBlock")) {
+         builder.cidrBlock(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "availableIpAddressCount")) {
+         builder.availableIpAddressCount(Integer.parseInt(currentOrNull(currentText)));
+      } else if (equalsOrSuffix(qName, "availabilityZone")) {
+         builder.availabilityZone(currentOrNull(currentText));
+      }
+      currentText = new StringBuilder();
+   }
 
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void characters(char ch[], int start, int length) {
-        if (inTagSet) {
-            tagSetHandler.characters(ch, start, length);
-        } else {
-            currentText.append(ch, start, length);
-        }
-    }
-
-
-    private Subnet.Builder newBuilder() {
-        return Subnet.builder();
-    }
+   @Override
+   public void characters(char ch[], int start, int length) {
+      if (inTagSet) {
+         tagSetHandler.characters(ch, start, length);
+      } else {
+         currentText.append(ch, start, length);
+      }
+   }
 }
