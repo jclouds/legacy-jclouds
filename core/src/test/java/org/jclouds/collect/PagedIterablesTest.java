@@ -74,5 +74,4 @@ public class PagedIterablesTest {
       EasyMock.verify(markerToNext);
 
    }
-
 }

@@ -37,9 +37,14 @@ package org.jclouds.collect.internal;
  * under the License.
  */
 
+import static org.jclouds.collect.PagedIterables.advance;
+import static org.jclouds.collect.PagedIterables.onlyPage;
+
+import java.util.Arrays;
+import java.util.List;
+
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
-import org.jclouds.collect.PagedIterables;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -47,34 +52,38 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 
 /**
+ * Used to propagate {@code arg0} during an advance in a {@link PagedIterable}. For example, in the call
+ * {@code api.getUserApi().listPathPrefix("/users")}, the arg0 is the value {@code "/users"}.
+ * 
  * @author Adrian Cole
- * @deprecated Arg0ToPagedIterable.FromCaller
  */
 @Beta
-@Deprecated
-public abstract class CallerArg0ToPagedIterable<T, I extends CallerArg0ToPagedIterable<T, I>> implements
+public abstract class Arg0ToPagedIterable<T, I extends Arg0ToPagedIterable<T, I>> implements
       Function<IterableWithMarker<T>, PagedIterable<T>>, InvocationContext<I> {
 
    private GeneratedHttpRequest request;
 
    @Override
    public PagedIterable<T> apply(IterableWithMarker<T> input) {
-      if (input.nextMarker() == null)
-         return PagedIterables.of(input);
-
-      Optional<String> arg0Option = Optional.absent();
-      if (request.getCaller().get().getArgs() != null && request.getCaller().get().getArgs().length > 0) {
-         Object arg0 = request.getCaller().get().getArgs()[0];
-         if (arg0 != null)
-            arg0Option = Optional.of(arg0.toString());
-      }
-      final String arg0 = arg0Option.orNull();
-      return PagedIterables.advance(input, markerToNextForCallingArg0(arg0));
+      if (!input.nextMarker().isPresent())
+         return onlyPage(input);
+      List<Object> args = getArgs(request);
+      Optional<Object> arg0 = Optional.fromNullable(args.size() > 0 ? args.get(0) : null);
+      return advance(input, markerToNextForArg0(arg0));
    }
 
-   protected abstract Function<Object, IterableWithMarker<T>> markerToNextForCallingArg0(String arg0);
+   protected List<Object> getArgs(GeneratedHttpRequest request) {
+      return request.getArgs();
+   }
+
+   /**
+    * @param arg0
+    *           present when there was an arg0
+    */
+   protected abstract Function<Object, IterableWithMarker<T>> markerToNextForArg0(Optional<Object> arg0);
 
    @SuppressWarnings("unchecked")
    @Override
@@ -83,4 +92,18 @@ public abstract class CallerArg0ToPagedIterable<T, I extends CallerArg0ToPagedIt
       return (I) this;
    }
 
+   /**
+    * Used to propagate caller {@code arg0} to a callee during an advance in a {@link PagedIterable}. For example, in
+    * the call {@code api.getUserApiForZone(zone).list()}, the caller arg0 is the value of {@code zone}, and the callee
+    * is {@code UserApi.list()}
+    * 
+    * @author Adrian Cole
+    */
+   public static abstract class FromCaller<T, I extends FromCaller<T, I>> extends Arg0ToPagedIterable<T, I> {
+      @Override
+      protected List<Object> getArgs(GeneratedHttpRequest request) {
+         Object[] args = request.getCaller().get().getArgs();
+         return args != null ? Arrays.asList(args) : ImmutableList.of();
+      }
+   }
 }
