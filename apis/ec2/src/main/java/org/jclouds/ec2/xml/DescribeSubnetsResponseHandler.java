@@ -18,95 +18,76 @@
  */
 package org.jclouds.ec2.xml;
 
-import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
-
-import java.util.Set;
 
 import org.jclouds.ec2.domain.Subnet;
 import org.jclouds.http.functions.ParseSax;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 /**
- * @see <a
- *      href="http://docs.aws.amazon.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeSubnets.html"
- *      >xml</a>
+ * @see <a href="http://docs.aws.amazon.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeSubnets.html" >xml</a>
  * 
  * @author Adrian Cole
  * @author Andrew Bayer
  */
-public class DescribeSubnetsResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<FluentIterable<Subnet>> {
-    private final SubnetHandler subnetHandler;
+public class DescribeSubnetsResponseHandler extends
+      ParseSax.HandlerForGeneratedRequestWithResult<FluentIterable<Subnet>> {
+   private final SubnetHandler subnetHandler;
 
-    private StringBuilder currentText = new StringBuilder();
-    private boolean inSubnetSet;
-    private boolean inTagSet;
-    private Builder<Subnet> subnets = ImmutableSet.<Subnet> builder();
+   private StringBuilder currentText = new StringBuilder();
+   private boolean inSubnetSet;
+   private boolean inTagSet;
+   private Builder<Subnet> subnets = ImmutableSet.<Subnet> builder();
 
-    @Inject
-    public DescribeSubnetsResponseHandler(SubnetHandler subnetHandler) {
-        this.subnetHandler = subnetHandler;
-    }
+   @Inject
+   public DescribeSubnetsResponseHandler(SubnetHandler subnetHandler) {
+      this.subnetHandler = subnetHandler;
+   }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public FluentIterable<Subnet> getResult() {
-        return FluentIterable.from(subnets.build());
-    }
+   @Override
+   public FluentIterable<Subnet> getResult() {
+      return FluentIterable.from(subnets.build());
+   }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void startElement(String url, String name, String qName, Attributes attributes) throws SAXException {
-        if (equalsOrSuffix(qName, "subnetSet")) {
-            inSubnetSet = true;
-        } else if (inSubnetSet) {
-            if (equalsOrSuffix(qName, "tagSet")) {
-                inTagSet = true;
-            }
-            subnetHandler.startElement(url, name, qName, attributes);
-        }
-    }
+   @Override
+   public void startElement(String url, String name, String qName, Attributes attributes) {
+      if (equalsOrSuffix(qName, "subnetSet")) {
+         inSubnetSet = true;
+      } else if (inSubnetSet) {
+         if (equalsOrSuffix(qName, "tagSet")) {
+            inTagSet = true;
+         }
+         subnetHandler.startElement(url, name, qName, attributes);
+      }
+   }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void endElement(String uri, String name, String qName) throws SAXException {
-        if (equalsOrSuffix(qName, "subnetSet")) {
-            inSubnetSet = false;
-        } else if (equalsOrSuffix(qName, "tagSet")) {
-            inTagSet = false;
-            subnetHandler.endElement(uri, name, qName);
-        } else if (equalsOrSuffix(qName, "item") && !inTagSet) {
-            subnets.add(subnetHandler.getResult());
-        } else if (inSubnetSet) {
-            subnetHandler.endElement(uri, name, qName);
-        }
+   @Override
+   public void endElement(String uri, String name, String qName) {
+      if (equalsOrSuffix(qName, "subnetSet")) {
+         inSubnetSet = false;
+      } else if (equalsOrSuffix(qName, "tagSet")) {
+         inTagSet = false;
+         subnetHandler.endElement(uri, name, qName);
+      } else if (equalsOrSuffix(qName, "item") && !inTagSet) {
+         subnets.add(subnetHandler.getResult());
+      } else if (inSubnetSet) {
+         subnetHandler.endElement(uri, name, qName);
+      }
 
-        currentText = new StringBuilder();
-    }
+      currentText = new StringBuilder();
+   }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void characters(char ch[], int start, int length) {
-        if (inSubnetSet) {
-            subnetHandler.characters(ch, start, length);
-        } else {
-            currentText.append(ch, start, length);
-        }
-    }
-
+   @Override
+   public void characters(char ch[], int start, int length) {
+      if (inSubnetSet) {
+         subnetHandler.characters(ch, start, length);
+      } else {
+         currentText.append(ch, start, length);
+      }
+   }
 }

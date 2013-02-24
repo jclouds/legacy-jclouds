@@ -46,6 +46,8 @@ import org.jclouds.aws.ec2.services.SpotInstanceClient;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.config.EC2RestClientModule;
+import org.jclouds.ec2.features.SubnetApi;
+import org.jclouds.ec2.features.SubnetAsyncApi;
 import org.jclouds.ec2.features.TagApi;
 import org.jclouds.ec2.features.TagAsyncApi;
 import org.jclouds.ec2.features.WindowsApi;
@@ -94,6 +96,7 @@ public class AWSEC2RestClientModule extends EC2RestClientModule<AWSEC2Client, AW
          .put(SpotInstanceClient.class, SpotInstanceAsyncClient.class)//
          .put(WindowsApi.class, WindowsAsyncApi.class)//
          .put(TagApi.class, TagAsyncApi.class)//
+         .put(SubnetApi.class, SubnetAsyncApi.class)//
          .build();
 
    public AWSEC2RestClientModule() {

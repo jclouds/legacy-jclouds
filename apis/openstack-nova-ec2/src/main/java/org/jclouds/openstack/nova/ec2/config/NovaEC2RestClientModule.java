@@ -27,6 +27,12 @@ import javax.inject.Singleton;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.config.EC2RestClientModule;
+import org.jclouds.ec2.features.SubnetApi;
+import org.jclouds.ec2.features.SubnetAsyncApi;
+import org.jclouds.ec2.features.TagApi;
+import org.jclouds.ec2.features.TagAsyncApi;
+import org.jclouds.ec2.features.WindowsApi;
+import org.jclouds.ec2.features.WindowsAsyncApi;
 import org.jclouds.ec2.services.AMIAsyncClient;
 import org.jclouds.ec2.services.AMIClient;
 import org.jclouds.ec2.services.AvailabilityZoneAndRegionAsyncClient;
@@ -76,6 +82,9 @@ public class NovaEC2RestClientModule extends EC2RestClientModule<NovaEC2Client, 
          .put(WindowsClient.class, WindowsAsyncClient.class)//
          .put(AvailabilityZoneAndRegionClient.class, AvailabilityZoneAndRegionAsyncClient.class)//
          .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
+         .put(WindowsApi.class, WindowsAsyncApi.class)//
+         .put(TagApi.class, TagAsyncApi.class)//
+         .put(SubnetApi.class, SubnetAsyncApi.class)//
          .build();
 
    public NovaEC2RestClientModule() {
