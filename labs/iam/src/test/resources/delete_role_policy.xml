@@ -1,0 +1,5 @@
+<DeleteRolePolicyResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+  <ResponseMetadata>
+    <RequestId>c749ee7f-99ef-11e1-a4c3-27EXAMPLE804</RequestId>
+  </ResponseMetadata>
+</DeleteRolePolicyResponse>

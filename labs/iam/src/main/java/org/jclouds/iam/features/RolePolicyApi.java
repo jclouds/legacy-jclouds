@@ -16,48 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.iam;
+package org.jclouds.iam.features;
 
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import javax.ws.rs.FormParam;
-
-import org.jclouds.iam.domain.User;
-import org.jclouds.iam.features.RoleApi;
-import org.jclouds.iam.features.RolePolicyApi;
-import org.jclouds.iam.features.UserApi;
-import org.jclouds.rest.annotations.Delegate;
 
 /**
- * Provides access to Amazon IAM via the Query API
- * <p/>
+ * @see RolePolicyAsyncApi
  * 
- * @see <a href="http://docs.amazonwebservices.com/IAM/latest/APIReference" />
  * @author Adrian Cole
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface IAMApi {
-   /**
-    * Retrieves information about the current user, including the user's path, GUID, and ARN.
-    */
-   User getCurrentUser();
+public interface RolePolicyApi extends PolicyApi {
 
-   /**
-    * Provides synchronous access to User features.
-    */
-   @Delegate
-   UserApi getUserApi();
-
-   /**
-    * Provides synchronous access to Role features.
-    */
-   @Delegate
-   RoleApi getRoleApi();
-
-   /**
-    * Provides synchronous access to Role Policy features.
-    */
-   @Delegate
-   RolePolicyApi getPolicyApiForRole(@FormParam("RoleName") String roleName);
 }

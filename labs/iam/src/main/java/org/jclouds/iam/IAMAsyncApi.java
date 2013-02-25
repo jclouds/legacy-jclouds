@@ -19,12 +19,14 @@
 package org.jclouds.iam;
 
 import javax.inject.Named;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.iam.domain.User;
 import org.jclouds.iam.features.RoleAsyncApi;
+import org.jclouds.iam.features.RolePolicyAsyncApi;
 import org.jclouds.iam.features.UserAsyncApi;
 import org.jclouds.iam.xml.UserHandler;
 import org.jclouds.rest.annotations.Delegate;
@@ -39,9 +41,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides access to Amazon IAM via the Query API
  * <p/>
  * 
- * @see <a
- *      href="http://docs.amazonwebservices.com/IAM/latest/APIReference"
- *      />
+ * @see <a href="http://docs.amazonwebservices.com/IAM/latest/APIReference" />
  * @author Adrian Cole
  */
 @RequestFilters(FormSigner.class)
@@ -57,16 +57,22 @@ public interface IAMAsyncApi {
    @XMLResponseParser(UserHandler.class)
    @FormParams(keys = "Action", values = "GetUser")
    ListenableFuture<User> getCurrentUser();
-   
+
    /**
     * Provides asynchronous access to User features.
     */
    @Delegate
    UserAsyncApi getUserApi();
-   
+
    /**
     * Provides asynchronous access to Role features.
     */
    @Delegate
    RoleAsyncApi getRoleApi();
+
+   /**
+    * Provides asynchronous access to Role Policy features.
+    */
+   @Delegate
+   RolePolicyAsyncApi getPolicyApiForRole(@FormParam("RoleName") String roleName);
 }
