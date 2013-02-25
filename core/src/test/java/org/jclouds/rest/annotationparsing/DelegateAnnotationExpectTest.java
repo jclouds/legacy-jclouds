@@ -21,6 +21,7 @@ package org.jclouds.rest.annotationparsing;
 import static org.jclouds.providers.AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint;
 import static org.testng.Assert.assertTrue;
 
+import javax.ws.rs.FormParam;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -52,6 +53,8 @@ import com.google.inject.Module;
 public class DelegateAnnotationExpectTest extends BaseRestClientExpectTest<DelegateAnnotationExpectTest.DelegatingApi> {
 
    static interface DelegatingApi {
+      @Delegate
+      DiskApi getDiskApiForProjectForm(@FormParam("project") String projectName);
 
       @Delegate
       @Path("/projects/{project}")
@@ -59,6 +62,8 @@ public class DelegateAnnotationExpectTest extends BaseRestClientExpectTest<Deleg
    }
 
    static interface DelegatingAsyncApi {
+      @Delegate
+      DiskAsyncApi getDiskApiForProjectForm(@FormParam("project") String projectName);
 
       @Delegate
       @Path("/projects/{project}")
@@ -66,12 +71,17 @@ public class DelegateAnnotationExpectTest extends BaseRestClientExpectTest<Deleg
    }
 
    static interface DiskApi {
+      void form();
+
       void syncAll();
 
       boolean exists(@PathParam("disk") String diskName);
    }
 
    static interface DiskAsyncApi {
+      @POST
+      ListenableFuture<Void> form();
+
       @POST
       @Payload("<Sync>{project}</Sync>")
       ListenableFuture<Void> syncAll();
@@ -80,6 +90,14 @@ public class DelegateAnnotationExpectTest extends BaseRestClientExpectTest<Deleg
       @Path("/disks/{disk}")
       @Fallback(FalseOnNotFoundOr404.class)
       public ListenableFuture<Boolean> exists(@PathParam("disk") String diskName);
+   }
+
+   public void testDelegatingCallTakesIntoConsiderationAndCalleeFormParam() {
+
+      DelegatingApi client = requestSendsResponse(HttpRequest.builder().method("POST").endpoint("http://mock")
+            .addFormParam("project", "prod").build(), HttpResponse.builder().statusCode(200).build());
+
+      client.getDiskApiForProjectForm("prod").form();
    }
 
    public void testDelegatingCallTakesIntoConsiderationAndCalleePayloadParam() {
