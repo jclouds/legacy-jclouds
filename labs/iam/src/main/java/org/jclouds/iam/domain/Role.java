@@ -25,27 +25,29 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Date;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
 
 /**
- * @see <a href="http://docs.amazonwebservices.com/IAM/latest/APIReference/API_GetUser.html" />
+ * @see <a href="http://docs.amazonwebservices.com/IAM/latest/APIReference/API_GetRole.html" />
  * 
  * @author Adrian Cole
  */
-public final class User {
+public final class Role {
 
    private final String arn;
    private final String id;
-   private final Optional<String> name;
-   private final Optional<String> path;
+   private final String name;
+   private final String path;
    private final Date createDate;
+   private final String assumeRolePolicy;
 
-   private User(String arn, String id, Optional<String> name, Optional<String> path, Date createDate) {
+   private Role(String arn, String id, String name, String path, Date createDate, String assumeRolePolicy) {
       this.arn = checkNotNull(arn, "arn");
       this.id = checkNotNull(id, "id for %s", arn);
       this.name = checkNotNull(name, "name for %s", arn);
       this.path = checkNotNull(path, "path for %s", arn);
       this.createDate = checkNotNull(createDate, "createDate for %s", arn);
+      this.assumeRolePolicy = checkNotNull(assumeRolePolicy, "assumeRolePolicy for %s",
+            assumeRolePolicy);
    }
 
    /**
@@ -66,22 +68,29 @@ public final class User {
    /**
     * friendly name ex. {@code Developers}
     */
-   public Optional<String> getName() {
+   public String getName() {
       return name;
    }
 
    /**
     * path ex {@code  /division_abc/subdivision_xyz/product_1234/engineering/}
     */
-   public Optional<String> getPath() {
+   public String getPath() {
       return path;
    }
 
    /**
-    * Date the user was created
+    * Date the role was created
     */
    public Date getCreateDate() {
       return createDate;
+   }
+
+   /**
+    * The policy that grants an entity permission to assume the role.
+    */
+   public String getAssumeRolePolicy() {
+      return assumeRolePolicy;
    }
 
    @Override
@@ -95,14 +104,14 @@ public final class User {
          return true;
       if (obj == null || getClass() != obj.getClass())
          return false;
-      User that = User.class.cast(obj);
+      Role that = Role.class.cast(obj);
       return equal(this.arn, that.arn) && equal(this.id, that.id);
    }
 
    @Override
    public String toString() {
-      return toStringHelper(this).omitNullValues().add("arn", arn).add("id", id).add("name", name.orNull())
-            .add("path", path.orNull()).add("createDate", createDate).toString();
+      return toStringHelper(this).add("arn", arn).add("id", id).add("name", name).add("path", path)
+            .add("createDate", createDate).add("assumeRolePolicy", assumeRolePolicy).toString();
    }
 
    public static Builder builder() {
@@ -116,12 +125,13 @@ public final class User {
    public static class Builder {
       private String arn;
       private String id;
-      private Optional<String> name = Optional.absent();
-      private Optional<String> path = Optional.absent();
+      private String name;
+      private String path;
       private Date createDate;
+      private String assumeRolePolicy;
 
       /**
-       * @see User#getArn()
+       * @see Role#getArn()
        */
       public Builder arn(String arn) {
          this.arn = arn;
@@ -129,7 +139,7 @@ public final class User {
       }
 
       /**
-       * @see User#getId()
+       * @see Role#getId()
        */
       public Builder id(String id) {
          this.id = id;
@@ -137,35 +147,44 @@ public final class User {
       }
 
       /**
-       * @see User#getName()
+       * @see Role#getName()
        */
       public Builder name(String name) {
-         this.name = Optional.fromNullable(name);
+         this.name = name;
          return this;
       }
 
       /**
-       * @see User#getPath()
+       * @see Role#getPath()
        */
       public Builder path(String path) {
-         this.path = Optional.fromNullable(path);
+         this.path = path;
          return this;
       }
 
       /**
-       * @see User#getCreateDate()
+       * @see Role#getCreateDate()
        */
       public Builder createDate(Date createDate) {
          this.createDate = createDate;
          return this;
       }
 
-      public User build() {
-         return new User(arn, id, name, path, createDate);
+      /**
+       * @see Role#getAssumeRolePolicy()
+       */
+      public Builder assumeRolePolicy(String assumeRolePolicy) {
+         this.assumeRolePolicy = assumeRolePolicy;
+         return this;
       }
 
-      public Builder from(User in) {
-         return arn(in.arn).id(in.id).name(in.name.orNull()).path(in.path.orNull()).createDate(in.createDate);
+      public Role build() {
+         return new Role(arn, id, name, path, createDate, assumeRolePolicy);
+      }
+
+      public Builder from(Role in) {
+         return arn(in.arn).id(in.id).name(in.name).path(in.path).createDate(in.createDate)
+               .assumeRolePolicy(in.assumeRolePolicy);
       }
    }
 }

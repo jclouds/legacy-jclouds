@@ -16,37 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.iam;
+package org.jclouds.aws.iam.features;
 
-import org.jclouds.iam.domain.User;
-import org.jclouds.iam.features.RoleApi;
-import org.jclouds.iam.features.UserApi;
-import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.iam.features.RoleApiLiveTest;
+import org.testng.annotations.Test;
 
 /**
- * Provides access to Amazon IAM via the Query API
- * <p/>
- * 
- * @see <a
- *      href="http://docs.amazonwebservices.com/IAM/latest/APIReference"
- *      />
  * @author Adrian Cole
  */
-public interface IAMApi {
-   /**
-    * Retrieves information about the current user, including the user's path, GUID, and ARN.
-    */
-   User getCurrentUser();
-
-   /**
-    * Provides synchronous access to User features.
-    */
-   @Delegate
-   UserApi getUserApi();
-
-   /**
-    * Provides synchronous access to Role features.
-    */
-   @Delegate
-   RoleApi getRoleApi();
+@Test(groups = "live", testName = "AWSRoleApiLiveTest")
+public class AWSRoleApiLiveTest extends RoleApiLiveTest {
+   public AWSRoleApiLiveTest() {
+      provider = "aws-iam";
+   }
 }
