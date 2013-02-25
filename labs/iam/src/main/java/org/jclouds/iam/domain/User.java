@@ -18,6 +18,8 @@
  */
 package org.jclouds.iam.domain;
 
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
@@ -32,25 +34,18 @@ import com.google.common.base.Optional;
  */
 public final class User {
 
-   private final Optional<String> path;
-   private final Optional<String> name;
-   private final String id;
    private final String arn;
+   private final String id;
+   private final Optional<String> name;
+   private final Optional<String> path;
    private final Date createDate;
 
-   private User(String id, String arn, Optional<String> path, Optional<String> name, Date createDate) {
-      this.id = checkNotNull(id, "id");
-      this.arn = checkNotNull(arn, "arn for %s", id);
-      this.path = checkNotNull(path, "path for %s", arn);
+   private User(String arn, String id, Optional<String> name, Optional<String> path, Date createDate) {
+      this.arn = checkNotNull(arn, "arn");
+      this.id = checkNotNull(id, "id for %s", arn);
       this.name = checkNotNull(name, "name for %s", arn);
+      this.path = checkNotNull(path, "path for %s", arn);
       this.createDate = checkNotNull(createDate, "createDate for %s", arn);
-   }
-
-   /**
-    * a globally unique identifier (GUID), returned from the api.
-    */
-   public String getId() {
-      return id;
    }
 
    /**
@@ -62,10 +57,10 @@ public final class User {
    }
 
    /**
-    * path ex {@code  /division_abc/subdivision_xyz/product_1234/engineering/}
+    * a globally unique identifier (GUID), returned from the api.
     */
-   public Optional<String> getPath() {
-      return path;
+   public String getId() {
+      return id;
    }
 
    /**
@@ -76,40 +71,38 @@ public final class User {
    }
 
    /**
+    * path ex {@code  /division_abc/subdivision_xyz/product_1234/engineering/}
+    */
+   public Optional<String> getPath() {
+      return path;
+   }
+
+   /**
     * Date the user was created
     */
    public Date getCreateDate() {
       return createDate;
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public int hashCode() {
-      return Objects.hashCode(id, arn);
+      return Objects.hashCode(arn, id);
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
       if (obj == null || getClass() != obj.getClass())
          return false;
-      User other = (User) obj;
-      return Objects.equal(this.id, other.id) && Objects.equal(this.arn, other.arn);
+      User that = User.class.cast(obj);
+      return equal(this.arn, that.arn) && equal(this.id, that.id);
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public String toString() {
-      return Objects.toStringHelper(this).add("path", path).add("name", name).add("id", id).add("arn", arn)
-            .add("createDate", createDate).toString();
+      return toStringHelper(this).omitNullValues().add("arn", arn).add("id", id).add("name", name.orNull())
+            .add("path", path.orNull()).add("createDate", createDate).toString();
    }
 
    public static Builder builder() {
@@ -121,17 +114,17 @@ public final class User {
    }
 
    public static class Builder {
-      private Optional<String> path = Optional.absent();
+      private String arn;
       private String id;
       private Optional<String> name = Optional.absent();
-      private String arn;
+      private Optional<String> path = Optional.absent();
       private Date createDate;
 
       /**
-       * @see User#getPath()
+       * @see User#getArn()
        */
-      public Builder path(String path) {
-         this.path = Optional.fromNullable(path);
+      public Builder arn(String arn) {
+         this.arn = arn;
          return this;
       }
 
@@ -152,10 +145,10 @@ public final class User {
       }
 
       /**
-       * @see User#getArn()
+       * @see User#getPath()
        */
-      public Builder arn(String arn) {
-         this.arn = arn;
+      public Builder path(String path) {
+         this.path = Optional.fromNullable(path);
          return this;
       }
 
@@ -168,11 +161,11 @@ public final class User {
       }
 
       public User build() {
-         return new User(id, arn, path, name, createDate);
+         return new User(arn, id, name, path, createDate);
       }
 
       public Builder from(User in) {
-         return this.path(in.path.orNull()).name(in.name.orNull()).id(in.id).arn(in.arn).createDate(in.createDate);
+         return arn(in.arn).id(in.id).name(in.name.orNull()).path(in.path.orNull()).createDate(in.createDate);
       }
    }
 }

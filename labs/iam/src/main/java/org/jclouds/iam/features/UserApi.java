@@ -27,10 +27,8 @@ import org.jclouds.iam.domain.User;
 import org.jclouds.javax.annotation.Nullable;
 
 /**
- * Provides access to Amazon IAM via the Query API
- * <p/>
  * 
- * @see <a href="http://docs.amazonwebservices.com/IAM/latest/APIReference" />
+ * @see UserAsyncApi
  * @author Adrian Cole
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
