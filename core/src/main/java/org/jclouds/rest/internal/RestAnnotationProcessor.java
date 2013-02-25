@@ -220,8 +220,13 @@ public class RestAnnotationProcessor implements Function<Invocation, HttpRequest
       if (caller != null)
          tokenValues.putAll(addPathAndGetTokens(caller, uriBuilder));
       tokenValues.putAll(addPathAndGetTokens(invocation, uriBuilder));
-
-      Multimap<String, Object> formParams = addFormParams(tokenValues, invocation);
+      Multimap<String, Object> formParams;
+      if (caller != null) {
+         formParams = addFormParams(tokenValues, caller);
+         formParams.putAll(addFormParams(tokenValues, invocation));
+      } else {
+         formParams = addFormParams(tokenValues, invocation);
+      }      
       Multimap<String, Object> queryParams = addQueryParams(tokenValues, invocation);
       Multimap<String, String> headers = buildHeaders(tokenValues, invocation);
 
