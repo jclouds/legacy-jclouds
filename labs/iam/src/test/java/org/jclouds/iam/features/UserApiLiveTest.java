@@ -21,6 +21,7 @@ package org.jclouds.iam.features;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.logging.Logger.getAnonymousLogger;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import org.jclouds.iam.domain.User;
 import org.jclouds.iam.internal.BaseIAMApiLiveTest;
@@ -57,8 +58,10 @@ public class UserApiLiveTest extends BaseIAMApiLiveTest {
       for (User user : users) {
          checkUser(user);
          assertEquals(api().get(user.getId()), user);
-         if (user.getPath().isPresent())
-            assertEquals(api().listPathPrefix(user.getPath().get()).toSet(), ImmutableSet.of(user));
+         if (user.getPath().isPresent()) {
+            ImmutableSet<User> usersAtPath = api().listPathPrefix(user.getPath().get()).concat().toSet();
+            assertTrue(usersAtPath.contains(user), user + " not in " + usersAtPath);
+         }
       }
    }
 

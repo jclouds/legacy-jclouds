@@ -18,6 +18,8 @@
  */
 package org.jclouds.iam.internal;
 
+import java.util.TimeZone;
+
 import org.jclouds.date.DateService;
 import org.jclouds.iam.config.IAMRestClientModule;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -33,8 +35,9 @@ public class BaseIAMExpectTest<T> extends BaseRestApiExpectTest<T> {
 
    public BaseIAMExpectTest() {
       provider = "iam";
+      TimeZone.setDefault(TimeZone.getTimeZone("America/Los_Angeles"));
    }
-   
+
    @ConfiguresRestClient
    private static final class TestIAMRestClientModule extends IAMRestClientModule {
 

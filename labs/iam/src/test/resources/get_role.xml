@@ -1,0 +1,15 @@
+<GetRoleResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+  <GetRoleResult>
+    <Role>
+      <Path>/</Path>
+      <Arn>arn:aws:iam::993194456877:role/foobie</Arn>
+      <RoleName>foobie</RoleName>
+      <AssumeRolePolicyDocument>%7B%22Version%22%3A%222008-10-17%22%2C%22Statement%22%3A%5B%7B%22Sid%22%3A%22%22%2C%22Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22Service%22%3A%22ec2.amazonaws.com%22%7D%2C%22Action%22%3A%22sts%3AAssumeRole%22%7D%5D%7D</AssumeRolePolicyDocument>
+      <CreateDate>2013-02-25T01:51:35Z</CreateDate>
+      <RoleId>AROAIBFDQ5TQHEMPBEUE4</RoleId>
+    </Role>
+  </GetRoleResult>
+  <ResponseMetadata>
+    <RequestId>22fda32f-7eee-11e2-87c7-6b7f31e39cd7</RequestId>
+  </ResponseMetadata>
+</GetRoleResponse>
