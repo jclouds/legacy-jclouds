@@ -24,6 +24,7 @@ import javax.ws.rs.Path;
 
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.iam.domain.User;
+import org.jclouds.iam.features.RoleAsyncApi;
 import org.jclouds.iam.features.UserAsyncApi;
 import org.jclouds.iam.xml.UserHandler;
 import org.jclouds.rest.annotations.Delegate;
@@ -62,4 +63,10 @@ public interface IAMAsyncApi {
     */
    @Delegate
    UserAsyncApi getUserApi();
+   
+   /**
+    * Provides asynchronous access to Role features.
+    */
+   @Delegate
+   RoleAsyncApi getRoleApi();
 }

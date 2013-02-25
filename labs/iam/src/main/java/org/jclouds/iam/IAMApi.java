@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.iam.domain.User;
+import org.jclouds.iam.features.RoleApi;
 import org.jclouds.iam.features.UserApi;
 import org.jclouds.rest.annotations.Delegate;
 
@@ -46,4 +47,10 @@ public interface IAMApi {
     */
    @Delegate
    UserApi getUserApi();
+
+   /**
+    * Provides synchronous access to Role features.
+    */
+   @Delegate
+   RoleApi getRoleApi();
 }
