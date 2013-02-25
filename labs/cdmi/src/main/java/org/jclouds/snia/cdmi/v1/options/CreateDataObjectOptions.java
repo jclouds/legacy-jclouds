@@ -1,28 +1,42 @@
+/**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.jclouds.snia.cdmi.v1.options;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.Map;
-
 import com.google.common.base.Charsets;
+import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
-import com.google.common.io.Files;
+import com.google.common.io.BaseEncoding;
+import org.jclouds.io.Payload;
 
 /**
- * CreateDataObjectOptions options supported in the REST API for the CREATE CDMI Data Object
- * operation. <h2>
+ * CreateDataObjectOptions options supported in the REST API for the CREATE CDMI Data Object operation.
  * 
  * @author Kenneth Nagin
  */
 public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
+   public static final String BASE64 = "base64";
+   public static final String UTF8 = "utf-8";
 
    public CreateDataObjectOptions() {
-      jsonObjectBody.addProperty("value", "");
    }
 
    /**
@@ -54,6 +68,7 @@ public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
     * @return CreateDataObjectOptions
     */
    public CreateDataObjectOptions value() {
+      jsonObjectBody.addProperty("value", new String());
       this.payload = jsonObjectBody.toString();
       return this;
    }
@@ -72,74 +87,26 @@ public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
    }
 
    /**
-    * Create CDMI data object with byte array value
-    * 
-    * @param value
-    *           byte array value byte array is converted to a String value
-    * @return CreateDataObjectOptions
-    */
-   public CreateDataObjectOptions value(byte[] value) throws IOException {
-      jsonObjectBody.addProperty("value", (value == null) ? "" : new DataInputStream(
-               new ByteArrayInputStream(value)).readUTF());
-      this.payload = jsonObjectBody.toString();
-      return this;
-   }
-
-   /**
-    * Create CDMI data object with file value
-    * 
-    * @param value
-    *           File File is converted to a String value with charset UTF_8
-    * @return CreateDataObjectOptions
-    */
-   public CreateDataObjectOptions value(File value) throws IOException {
-      jsonObjectBody.addProperty("value", (value == null) ? "" : Files.toString(value, Charsets.UTF_8));
-      this.payload = jsonObjectBody.toString();
-      return this;
-   }
-
-   /**
-    * Create CDMI data object with file value
-    * 
-    * @param value
-    *           File
-    * @param charset
-    *           character set of file File is converted to a String value
-    * @return CreateDataObjectOptions
-    */
-   public CreateDataObjectOptions value(File value, Charset charset) throws IOException {
-      jsonObjectBody.addProperty("value", (value == null) ? "" : Files.toString(value, charset));
-      this.payload = jsonObjectBody.toString();
-      return this;
-   }
-
-   /**
     * Create CDMI data object with InputStream value
     * 
-    * @param value
-    *           InputSteam InputSteam is converted to a String value with charset UTF_8
+    * @param value 
+    *           Payload is converted to a String value with UTF-8 (default) or  base64.
+    *           User sets value's contentEncoding field to base64.
     * @return CreateDataObjectOptions
     */
-   public CreateDataObjectOptions value(InputStream value) throws IOException {
-      jsonObjectBody.addProperty("value",
-               (value == null) ? "" : CharStreams.toString(new InputStreamReader(value, Charsets.UTF_8)));
-      this.payload = jsonObjectBody.toString();
-      return this;
-   }
-
-   /**
-    * Create CDMI data object with InputStream value
-    * 
-    * @param value
-    *           InputSteam
-    * @param charset
-    *           character set of input stream InputSteam is converted to a String value with charset
-    *           UTF_8
-    * @return CreateDataObjectOptions
-    */
-   public CreateDataObjectOptions value(InputStream value, Charset charset) throws IOException {
-      jsonObjectBody.addProperty("value",
-               (value == null) ? "" : CharStreams.toString(new InputStreamReader(value, charset)));
+   public CreateDataObjectOptions value(Payload value) throws IOException {
+      if(value==null) {
+         throw new IllegalArgumentException("CreateDataObjectOptions Payload can not be null");
+         
+      }
+      if(value.getContentMetadata().getContentEncoding()!=null && BASE64.matches(value.getContentMetadata().getContentEncoding())) {
+         jsonObjectBody.addProperty("value",
+                  (value == null) ? new String() : BaseEncoding.base64().encode(ByteStreams.toByteArray(value.getInput())));
+         jsonObjectBody.addProperty("valuetransferencoding", BASE64);
+      } else {
+         jsonObjectBody.addProperty("value", (value == null) ? new String() : CharStreams.toString(new InputStreamReader(value.getInput(), Charsets.UTF_8)));
+         jsonObjectBody.addProperty("valuetransferencoding", UTF8);         
+      }
       this.payload = jsonObjectBody.toString();
       return this;
    }
@@ -164,30 +131,10 @@ public class CreateDataObjectOptions extends CreateCDMIObjectOptions {
          CreateDataObjectOptions options = new CreateDataObjectOptions();
          return (CreateDataObjectOptions) options.value(value);
       }
-
-      public static CreateDataObjectOptions value(byte[] value) throws IOException {
+      
+      public static CreateDataObjectOptions value(Payload value) throws IOException {
          CreateDataObjectOptions options = new CreateDataObjectOptions();
          return (CreateDataObjectOptions) options.value(value);
-      }
-
-      public static CreateDataObjectOptions value(File value) throws IOException {
-         CreateDataObjectOptions options = new CreateDataObjectOptions();
-         return (CreateDataObjectOptions) options.value(value);
-      }
-
-      public static CreateDataObjectOptions value(File value, Charset charset) throws IOException {
-         CreateDataObjectOptions options = new CreateDataObjectOptions();
-         return (CreateDataObjectOptions) options.value(value, charset);
-      }
-
-      public static CreateDataObjectOptions value(InputStream value) throws IOException {
-         CreateDataObjectOptions options = new CreateDataObjectOptions();
-         return (CreateDataObjectOptions) options.value(value);
-      }
-
-      public static CreateDataObjectOptions value(InputStream value, Charset charset) throws IOException {
-         CreateDataObjectOptions options = new CreateDataObjectOptions();
-         return (CreateDataObjectOptions) options.value(value, charset);
       }
 
    }

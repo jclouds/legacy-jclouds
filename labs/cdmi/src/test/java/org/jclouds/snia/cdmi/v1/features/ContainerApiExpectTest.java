@@ -39,7 +39,7 @@ import com.google.common.collect.ImmutableMultimap;
 public class ContainerApiExpectTest extends BaseCDMIApiExpectTest {
 
    public void testGetContainerWhenResponseIs2xx() throws Exception {
-
+   	System.setProperty("jclouds.cdmi.authType","basicAuthTid");
       HttpRequest get = HttpRequest
                .builder()
                .method("GET")
@@ -54,7 +54,7 @@ public class ContainerApiExpectTest extends BaseCDMIApiExpectTest {
 
       CDMIApi apiWhenContainersExist = requestSendsResponse(get, getResponse);
 
-      assertEquals(apiWhenContainersExist.getApi().get("MyContainer/"), new ParseContainerTest().expected());
+      assertEquals(apiWhenContainersExist.getApi().get("MyContainer"), new ParseContainerTest().expected());
    }
 
 }

@@ -18,6 +18,7 @@
  */
 package org.jclouds.snia.cdmi.v1.features;
 
+import org.jclouds.snia.cdmi.v1.domain.CDMIObjectCapability;
 import org.jclouds.snia.cdmi.v1.domain.Container;
 import org.jclouds.snia.cdmi.v1.options.CreateContainerOptions;
 import org.jclouds.snia.cdmi.v1.queryparams.ContainerQueryParams;
@@ -30,6 +31,12 @@ import org.jclouds.snia.cdmi.v1.queryparams.ContainerQueryParams;
  * @see <a href="http://www.snia.org/cdmi">api doc</a>
  */
 public interface ContainerApi {
+
+   /**
+    * get CDMI root Container
+    * @return Container
+    */
+   Container get();	
 
    /**
     * get CDMI Container
@@ -109,5 +116,23 @@ public interface ContainerApi {
     * @param containerName
     */
    void delete(String containerName);
+
+   /**
+    * Check whether CDMI Container exists
+    * 
+    * @param containerName
+    * @return true|false
+    */   
+   boolean containerExists(String containerName);
+   
+   /**
+    * Get CDMI Server Capabilities
+    * 
+    * @return CDMIObjectCapability
+    */
+
+   CDMIObjectCapability getCapabilites();
+   
+   
 
 }

@@ -82,6 +82,11 @@
       <artifactId>logback-classic</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jclouds.api</groupId>
+      <artifactId>openstack-keystone</artifactId>
+      <version>${project.version}</version>
+    </dependency>    
   </dependencies>
   
   <profiles>

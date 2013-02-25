@@ -20,24 +20,19 @@ package org.jclouds.snia.cdmi.v1.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-
-import com.google.common.base.Charsets;
+import org.jclouds.io.Payload;
+import org.jclouds.io.Payloads;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
+import com.google.common.io.BaseEncoding;
+
 
 /**
- * 
+ * CDMI Data Object
  * @author Kenneth Nagin
  */
 public class DataObject extends CDMIObject {
+   final String BASE64 = "base64";
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -49,8 +44,10 @@ public class DataObject extends CDMIObject {
    }
 
    public static class Builder<B extends Builder<B>> extends CDMIObject.Builder<B> {
-      private String mimetype = "";
-      private String value = "";
+      private String mimetype = new String();
+      private String valuetransferencoding = new String();
+      private String value = new String();
+      private Payload payload;
 
       /**
        * @see DataObject#getMimetype()
@@ -61,10 +58,26 @@ public class DataObject extends CDMIObject {
       }
 
       /**
-       * @see DataObject#getValueAsString()
+       * @see DataObject#getValuetransferencoding()
+       */
+      public B valuetransferencoding(String valuetransferencoding) {
+         this.valuetransferencoding = valuetransferencoding;
+         return self();
+      }
+
+      /**
+       * @see DataObject#getValue()
        */
       public B value(String value) {
          this.value = value;
+         return self();
+      }
+
+      /**
+       * @see DataObject#getPayload()
+       */
+      public B payload(Payload payload) {
+         this.payload = payload;
          return self();
       }
 
@@ -74,7 +87,7 @@ public class DataObject extends CDMIObject {
       }
 
       public B fromDataObject(DataObject in) {
-         return fromCDMIObject(in).mimetype(in.getMimetype());
+         return fromCDMIObject(in).mimetype(in.getMimetype()).valuetransferencoding(in.getValuetransferencoding());
       }
    }
 
@@ -82,92 +95,59 @@ public class DataObject extends CDMIObject {
    }
 
    private final String mimetype;
+   private final String valuetransferencoding;
    private final String value;
+   private final Payload payload;
 
    protected DataObject(Builder<?> builder) {
       super(builder);
       this.mimetype = checkNotNull(builder.mimetype, "mimetype");
+      this.valuetransferencoding = checkNotNull(builder.valuetransferencoding, "valuetransferencoding");
       this.value = checkNotNull(builder.value, "value");
+      this.payload = checkNotNull(builder.payload, "payload");
    }
 
    /**
     * get dataObject's mimetype.
+    * @return mimetype
     */
    public String getMimetype() {
       return mimetype;
    }
 
    /**
-    * get dataObject's value as a String
+    * get dataObject's valuetransferencoding
+    * 
+    * @return valuetransferencoding
     */
-   public String getValueAsString() {
+   public String getValuetransferencoding() {
+      return valuetransferencoding;
+   }
+
+   /**
+    * get dataObject's value as a String
+    * 
+    * @return value
+    */
+   public String getValue() {
       return value;
    }
 
    /**
-    * get dataObject's value as a InputStream value character set is Charsets.UTF_8
-    * 
-    * @return value
+    * get dataObject's value as a payload. When valuetransferencoding == base64
+    * this method converts the value accordingly.
+    * @return payload
     */
-   public InputSupplier<ByteArrayInputStream> getValueAsInputSupplier() {
-      return ByteStreams.newInputStreamSupplier(value.getBytes(Charsets.UTF_8));
-   }
-
-   /**
-    * get dataObject's value as a InputStream
-    * 
-    * @param charset
-    *           value character set
-    * @return value
-    */
-   public InputSupplier<ByteArrayInputStream> getValueAsInputSupplier(Charset charset) {
-      return ByteStreams.newInputStreamSupplier(value.getBytes(charset));
-   }
-
-   /**
-    * get dataObject's value as a ByteArray value character set is Charsets.UTF_8
-    * 
-    * @return value
-    */
-   public byte[] getValueAsByteArray() {
-      return value.getBytes(Charsets.UTF_8);
-   }
-
-   /**
-    * get dataObject's value as a InputStream
-    * 
-    * @param charset
-    *           value character set
-    * @return value
-    */
-   public byte[] getValueAsByteArray(Charset charset) {
-      return value.getBytes(charset);
-   }
-
-   /**
-    * get dataObject's value as a File value character set is Charsets.UTF_8
-    * 
-    * @param destDir
-    *           destination directory
-    * @return value
-    */
-   public File getValueAsFile(File destDir) throws IOException {
-      File fileOut = new File(destDir, this.getObjectName());
-      Files.copy(getValueAsInputSupplier(), fileOut);
-      return fileOut;
-   }
-
-   /**
-    * get dataObject's value as a File
-    * 
-    * @param charset
-    *           value character set
-    * @return value
-    */
-   public File getValueAsFile(File destDir, Charset charset) throws IOException {
-      File fileOut = new File(destDir, this.getObjectName());
-      Files.copy(getValueAsInputSupplier(charset), fileOut);
-      return fileOut;
+   public Payload getPayload() {
+      Payload payloadout = payload;
+      if (payload == null) {
+         if (value != null && valuetransferencoding != null && BASE64.matches(valuetransferencoding)) {
+         	payloadout = Payloads.newByteArrayPayload(BaseEncoding.base64().withSeparator("\n", 61).decode(value));
+         } else {
+            payloadout = Payloads.newStringPayload(value);
+         }
+      }
+      return payloadout;
    }
 
    @Override
@@ -177,17 +157,19 @@ public class DataObject extends CDMIObject {
       if (o == null || getClass() != o.getClass())
          return false;
       DataObject that = DataObject.class.cast(o);
-      return super.equals(that) && equal(this.mimetype, that.mimetype) && equal(this.value, that.value);
+      return super.equals(that) && equal(this.mimetype, that.mimetype)
+               && equal(this.valuetransferencoding, that.valuetransferencoding) && equal(this.value, that.value)
+               && equal(this.payload, that.payload);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), mimetype, value);
+      return Objects.hashCode(super.hashCode(), mimetype, valuetransferencoding, value, payload);
    }
 
    @Override
    public ToStringHelper string() {
-      return super.string().add("mimetype", mimetype);
+      return super.string().add("mimetype", mimetype).add("valuetransferencoding", valuetransferencoding);
    }
 
 }

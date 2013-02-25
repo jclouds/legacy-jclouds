@@ -45,6 +45,7 @@ public class Container extends CDMIObject {
    public static class Builder<B extends Builder<B>> extends CDMIObject.Builder<B> {
 
       private Set<String> children = ImmutableSet.of();
+      private String childrenrange = new String();
 
       /**
        * @see Container#getChildren()
@@ -52,6 +53,14 @@ public class Container extends CDMIObject {
       public B children(String... children) {
          return children(ImmutableSet.copyOf(checkNotNull(children, "children")));
       }
+      
+      /**
+       * @see Container#getChildren()
+       */
+      public B childrenrange(String... childrenrange) {
+         return children(checkNotNull(childrenrange, "childrenrange"));
+      }
+
 
       /**
        * @see Container#getChildren()
@@ -60,6 +69,15 @@ public class Container extends CDMIObject {
          this.children = ImmutableSet.copyOf(checkNotNull(children, "children"));
          return self();
       }
+      
+      /**
+       * @see Container#getChildren()
+       */
+      public B childrenrange(String childrenrange) {
+         this.childrenrange = checkNotNull(childrenrange, "childrenrange");
+         return self();
+      }
+
 
       @Override
       public Container build() {
@@ -67,8 +85,7 @@ public class Container extends CDMIObject {
       }
 
       public B fromContainer(Container in) {
-         return fromCDMIObject(in).children(in.getChildren());
-         // .metadata(in.getMetadata());
+         return fromCDMIObject(in).children(in.getChildren()).childrenrange(in.getChildrenRange());
       }
    }
 
@@ -76,10 +93,12 @@ public class Container extends CDMIObject {
    }
 
    private final Set<String> children;
+   private final String childrenrange;
 
    protected Container(Builder<?> builder) {
       super(builder);
       this.children = ImmutableSet.copyOf(checkNotNull(builder.children, "children"));
+      this.childrenrange = checkNotNull(builder.childrenrange, "childrenrange");
    }
 
    /**
@@ -88,6 +107,14 @@ public class Container extends CDMIObject {
    public Set<String> getChildren() {
       return children;
    }
+   
+   /**
+    * Names of the children objects in the container object. Child container objects end with "/".
+    */
+   public String getChildrenRange() {
+      return childrenrange;
+   }
+
 
    @Override
    public boolean equals(Object o) {
@@ -96,17 +123,17 @@ public class Container extends CDMIObject {
       if (o == null || getClass() != o.getClass())
          return false;
       Container that = Container.class.cast(o);
-      return super.equals(that) && equal(this.children, that.children);
+      return super.equals(that) && equal(this.children, that.children) && equal(this.childrenrange, that.childrenrange);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), children);
+      return Objects.hashCode(super.hashCode(), children, childrenrange);
    }
 
    @Override
    public ToStringHelper string() {
-      return super.string().add("children", children);
+      return super.string().add("children", children).add("childrenrange", childrenrange);
    }
 
 }

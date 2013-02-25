@@ -16,29 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.snia.cdmi.v1.options;
-
-import java.util.Map;
+package org.jclouds.snia.cdmi.v1.config;
+import org.jclouds.http.HttpRequestFilter;
+import org.jclouds.snia.cdmi.v1.filters.BasicAuthenticationAndTenantId;
+import org.jclouds.snia.cdmi.v1.filters.OpenstackKeystoneAuthReqFilter;
 
 /**
- * Optional Create CDMI Contain options
+ * The authorization type enumerations used when accessing provider.
+ * @see org.jclouds.snia.cdmi.v1.filters.CDMIProperties#AUTHTYPE
  * 
  * @author Kenneth Nagin
  */
-public class CreateContainerOptions extends CreateCDMIObjectOptions {
-   /**
-    * A name-value pair to associate with the container as metadata.
-    */
-   public CreateContainerOptions metadata(Map<String, String> metadata) {
-      super.metadata(metadata);
-      return this;
-
+public enum AuthType {
+  
+   openstackKeystone(OpenstackKeystoneAuthReqFilter.class),
+   basicAuthTid(BasicAuthenticationAndTenantId.class);
+   
+   private Class<HttpRequestFilter> filterClass;
+   @SuppressWarnings("unchecked")
+   private AuthType(Class<?> filterClass) {
+      this.filterClass = (Class<HttpRequestFilter>) filterClass;      
    }
+   public Class<HttpRequestFilter> getFilterClass() {
+      return  filterClass;
+   } 
 
-   public static class Builder {
-      public static CreateContainerOptions metadata(Map<String, String> metadata) {
-         CreateContainerOptions options = new CreateContainerOptions();
-         return (CreateContainerOptions) options.metadata(metadata);
-      }
-   }
 }
