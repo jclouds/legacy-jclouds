@@ -27,6 +27,8 @@ import org.jclouds.iam.IAMApi;
 import org.jclouds.iam.IAMAsyncApi;
 import org.jclouds.iam.features.RoleApi;
 import org.jclouds.iam.features.RoleAsyncApi;
+import org.jclouds.iam.features.RolePolicyApi;
+import org.jclouds.iam.features.RolePolicyAsyncApi;
 import org.jclouds.iam.features.UserApi;
 import org.jclouds.iam.features.UserAsyncApi;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -43,6 +45,7 @@ public class IAMRestClientModule extends FormSigningRestClientModule<IAMApi, IAM
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
          .put(UserApi.class, UserAsyncApi.class)
          .put(RoleApi.class, RoleAsyncApi.class)
+         .put(RolePolicyApi.class, RolePolicyAsyncApi.class)
          .build();
    
    public IAMRestClientModule() {
