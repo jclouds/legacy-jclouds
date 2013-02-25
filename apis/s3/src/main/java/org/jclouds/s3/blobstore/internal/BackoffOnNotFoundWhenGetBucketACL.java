@@ -33,7 +33,7 @@ import com.google.common.cache.CacheLoader;
 @Beta
 public class BackoffOnNotFoundWhenGetBucketACL extends CacheLoader<String, AccessControlList> {
    private final S3Client client;
-   private final int maxTries = 5;
+   private static final int maxTries = 5;
 
    @Inject
    BackoffOnNotFoundWhenGetBucketACL(S3Client client) {

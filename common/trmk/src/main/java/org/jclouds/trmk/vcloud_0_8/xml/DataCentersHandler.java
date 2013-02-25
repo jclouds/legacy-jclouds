@@ -35,11 +35,7 @@ import com.google.common.collect.ImmutableSet.Builder;
  * @author Adrian Cole
  */
 public class DataCentersHandler extends ParseSax.HandlerWithResult<Set<DataCenter>> {
-   protected StringBuilder currentText = new StringBuilder();
-
    protected Builder<DataCenter> dataCenters = ImmutableSet.builder();
-
-   protected DataCenter.Builder builder = DataCenter.builder();
 
    protected final DataCenterHandler handler;
 

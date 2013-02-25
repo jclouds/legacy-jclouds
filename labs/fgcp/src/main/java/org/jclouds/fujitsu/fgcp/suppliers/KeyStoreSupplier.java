@@ -76,8 +76,12 @@ public class KeyStoreSupplier implements Supplier<KeyStore> {
 
          File certFile = new File(checkNotNull(cert));
          if (certFile.isFile()) { // cert is path to pkcs12 file
-
-            keyStore.load(new FileInputStream(certFile), keyStorePassword.toCharArray());
+            FileInputStream stream = new FileInputStream(certFile);
+            try {
+               keyStore.load(stream, keyStorePassword.toCharArray());
+            } finally {
+               stream.close();
+            }
          } else { // cert is PEM encoded, containing private key and certs
 
             // split in private key and certs

@@ -50,7 +50,7 @@ import com.google.common.collect.Sets;
  * 
  */
 public class CloneDriveOptions {
-   private final String SSD_AFFINITY_TAG = "affinity:ssd";
+   private static final String SSD_AFFINITY_TAG = "affinity:ssd";
    private final Map<String, String> options = Maps.newLinkedHashMap();
 
    /**
