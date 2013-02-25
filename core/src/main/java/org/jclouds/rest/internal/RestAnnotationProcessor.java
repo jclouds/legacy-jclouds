@@ -422,7 +422,13 @@ public class RestAnnotationProcessor<T> {
       
       tokenValues.putAll(addPathAndGetTokens(declaring, method, args, uriBuilder));
       
-      Multimap<String, Object> formParams = addFormParams(tokenValues, method, args);
+      Multimap<String, Object> formParams;
+      if (caller != null) {
+         formParams = addFormParams(tokenValues, caller.getMethod(), caller.getArgs());
+         formParams.putAll(addFormParams(tokenValues, method, args));
+      } else {
+         formParams = addFormParams(tokenValues, method, args);
+      }
       Multimap<String, Object> queryParams = addQueryParams(tokenValues, method, args);
       Multimap<String, String> headers = buildHeaders(tokenValues, method, args);
 

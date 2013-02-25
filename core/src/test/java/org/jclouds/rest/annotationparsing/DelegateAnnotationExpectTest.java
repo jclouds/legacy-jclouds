@@ -23,6 +23,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.ws.rs.FormParam;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -56,6 +57,8 @@ public class DelegateAnnotationExpectTest extends BaseRestClientExpectTest<Deleg
 
    @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
    static interface DelegatingApi {
+      @Delegate
+      DiskApi getDiskApiForProjectForm(@FormParam("project") String projectName);
 
       @Delegate
       @Path("/projects/{project}")
@@ -63,6 +66,8 @@ public class DelegateAnnotationExpectTest extends BaseRestClientExpectTest<Deleg
    }
 
    static interface DelegatingAsyncApi {
+      @Delegate
+      DiskAsyncApi getDiskApiForProjectForm(@FormParam("project") String projectName);
 
       @Delegate
       @Path("/projects/{project}")
@@ -71,12 +76,17 @@ public class DelegateAnnotationExpectTest extends BaseRestClientExpectTest<Deleg
 
    @Timeout(duration = 1, timeUnit = TimeUnit.SECONDS)
    static interface DiskApi {
+      void form();
+
       void syncAll();
 
       boolean exists(@PathParam("disk") String diskName);
    }
 
    static interface DiskAsyncApi {
+      @POST
+      ListenableFuture<Void> form();
+
       @POST
       @Payload("<Sync>{project}</Sync>")
       ListenableFuture<Void> syncAll();
@@ -85,6 +95,14 @@ public class DelegateAnnotationExpectTest extends BaseRestClientExpectTest<Deleg
       @Path("/disks/{disk}")
       @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
       public ListenableFuture<Boolean> exists(@PathParam("disk") String diskName);
+   }
+
+   public void testDelegatingCallTakesIntoConsiderationAndCalleeFormParam() {
+
+      DelegatingApi client = requestSendsResponse(HttpRequest.builder().method("POST").endpoint("http://mock")
+            .addFormParam("project", "prod").build(), HttpResponse.builder().statusCode(200).build());
+
+      client.getDiskApiForProjectForm("prod").form();
    }
 
    public void testDelegatingCallTakesIntoConsiderationAndCalleePayloadParam() {
