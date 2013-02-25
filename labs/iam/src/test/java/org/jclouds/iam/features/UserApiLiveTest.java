@@ -42,7 +42,7 @@ public class UserApiLiveTest extends BaseIAMApiLiveTest {
       checkUser(user);
    }
 
-   private void checkUser(User user) {
+   static void checkUser(User user) {
       checkNotNull(user.getArn(), "Arn cannot be null for User %s", user);
       checkNotNull(user.getId(), "Id cannot be null for User %s", user);
       checkNotNull(user.getName(), "While Name can be null for a User, its Optional wrapper cannot; user %s", user);

@@ -34,7 +34,7 @@ import org.testng.annotations.Test;
 @Test(groups = "live", testName = "RolePolicyApiLiveTest")
 public class RolePolicyApiLiveTest extends BaseIAMApiLiveTest {
 
-   private void checkPolicy(Policy policy) {
+   static void checkPolicy(Policy policy) {
       checkNotNull(policy.getOwner(), "Owner cannot be null for Policy %s", policy);
       checkNotNull(policy.getName(), "Name cannot be null for Policy %s", policy);
       checkNotNull(policy.getDocument(), "Document cannot be null for Policy %s", policy);
@@ -49,15 +49,14 @@ public class RolePolicyApiLiveTest extends BaseIAMApiLiveTest {
       }
    }
 
-   String assumeRolePolicy = "{\"Version\":\"2008-10-17\",\"Statement\":[{\"Sid\":\"\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ec2.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}";
-   String s3Policy = "{\"Statement\":[{\"Effect\":\"Allow\",\"Action\":\"s3:*\",\"Resource\":\"*\"}]}";
+   static String s3Policy = "{\"Statement\":[{\"Effect\":\"Allow\",\"Action\":\"s3:*\",\"Resource\":\"*\"}]}";
 
    @Test
    public void testCreateAndDeleteRolePolicy() {
       String roleName = System.getProperty("user.name").replace('.', '-') + ".role_policy.iamtest.jclouds.org.";
       Role newRole;
       try {
-         newRole = context.getApi().getRoleApi().createWithPolicy(roleName, assumeRolePolicy);
+         newRole = context.getApi().getRoleApi().createWithPolicy(roleName, RoleApiLiveTest.assumeRolePolicy);
          getAnonymousLogger().info("created role: " + newRole);
          api(roleName).create("S3Access", s3Policy);
          Policy newPolicy = api(roleName).get("S3Access");

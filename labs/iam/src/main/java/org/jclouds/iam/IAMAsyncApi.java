@@ -25,6 +25,7 @@ import javax.ws.rs.Path;
 
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.iam.domain.User;
+import org.jclouds.iam.features.InstanceProfileAsyncApi;
 import org.jclouds.iam.features.RoleAsyncApi;
 import org.jclouds.iam.features.RolePolicyAsyncApi;
 import org.jclouds.iam.features.UserAsyncApi;
@@ -75,4 +76,10 @@ public interface IAMAsyncApi {
     */
    @Delegate
    RolePolicyAsyncApi getPolicyApiForRole(@FormParam("RoleName") String roleName);
+
+   /**
+    * Provides asynchronous access to Instance Profile features.
+    */
+   @Delegate
+   InstanceProfileAsyncApi getInstanceProfileApi();
 }
