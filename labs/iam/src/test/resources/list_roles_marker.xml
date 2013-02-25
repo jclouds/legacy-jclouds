@@ -1,0 +1,29 @@
+<ListRolesResponse>
+	<ListRolesResult>
+		<Roles>
+			<member>
+				<Path>/</Path>
+				<Arn>arn:aws:iam::993194456877:role/foobie</Arn>
+				<RoleName>foobie</RoleName>
+				<AssumeRolePolicyDocument>%7B%22Version%22%3A%222008-10-17%22%2C%22Statement%22%3A%5B%7B%22Sid%22%3A%22%22%2C%22Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22Service%22%3A%22ec2.amazonaws.com%22%7D%2C%22Action%22%3A%22sts%3AAssumeRole%22%7D%5D%7D
+				</AssumeRolePolicyDocument>
+				<CreateDate>2013-02-25T01:51:35Z</CreateDate>
+				<RoleId>AROAIBFDQ5TQHEMPBEUE4</RoleId>
+			</member>
+			<member>
+				<Path>/</Path>
+				<Arn>arn:aws:iam::993194456877:role/s3-read-only</Arn>
+				<RoleName>s3-read-only</RoleName>
+				<AssumeRolePolicyDocument>%7B%22Version%22%3A%222008-10-17%22%2C%22Statement%22%3A%5B%7B%22Sid%22%3A%22%22%2C%22Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22Service%22%3A%22ec2.amazonaws.com%22%7D%2C%22Action%22%3A%22sts%3AAssumeRole%22%7D%5D%7D
+				</AssumeRolePolicyDocument>
+				<CreateDate>2013-02-25T01:48:59Z</CreateDate>
+				<RoleId>AROAJZ7NAM67BRSDAJ6PA</RoleId>
+			</member>
+		</Roles>
+		<Marker>MARKER</Marker>
+		<IsTruncated>false</IsTruncated>
+	</ListRolesResult>
+	<ResponseMetadata>
+		<RequestId>7a62c49f-347e-4fc4-9331-6e8eEXAMPLE</RequestId>
+	</ResponseMetadata>
+</ListRolesResponse>
