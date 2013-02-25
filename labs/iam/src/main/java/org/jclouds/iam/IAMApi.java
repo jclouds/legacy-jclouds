@@ -18,8 +18,11 @@
  */
 package org.jclouds.iam;
 
+import javax.ws.rs.FormParam;
+
 import org.jclouds.iam.domain.User;
 import org.jclouds.iam.features.RoleApi;
+import org.jclouds.iam.features.RolePolicyApi;
 import org.jclouds.iam.features.UserApi;
 import org.jclouds.rest.annotations.Delegate;
 
@@ -27,9 +30,7 @@ import org.jclouds.rest.annotations.Delegate;
  * Provides access to Amazon IAM via the Query API
  * <p/>
  * 
- * @see <a
- *      href="http://docs.amazonwebservices.com/IAM/latest/APIReference"
- *      />
+ * @see <a href="http://docs.amazonwebservices.com/IAM/latest/APIReference" />
  * @author Adrian Cole
  */
 public interface IAMApi {
@@ -49,4 +50,10 @@ public interface IAMApi {
     */
    @Delegate
    RoleApi getRoleApi();
+
+   /**
+    * Provides synchronous access to Role Policy features.
+    */
+   @Delegate
+   RolePolicyApi getPolicyApiForRole(@FormParam("RoleName") String roleName);
 }

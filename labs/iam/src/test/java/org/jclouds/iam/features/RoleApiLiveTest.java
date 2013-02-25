@@ -79,6 +79,7 @@ public class RoleApiLiveTest extends BaseIAMApiLiveTest {
          newRole = api().createWithPolicy(name, policy);
          getAnonymousLogger().info("created role: " + newRole);
          checkRole(newRole);
+         assertEquals(newRole.getAssumeRolePolicy(), policy);
       } finally {
          api().delete(name);
          assertNull(api().get(name));

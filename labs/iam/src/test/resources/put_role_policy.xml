@@ -1,0 +1,5 @@
+<PutRolePolicyResponse xmlns="https://iam.amazonaws.com/doc/2010-05-08/">
+  <ResponseMetadata>
+    <RequestId>3a03c24e-7f1d-11e2-8529-1d90c00d4f52</RequestId>
+  </ResponseMetadata>
+</PutRolePolicyResponse>
