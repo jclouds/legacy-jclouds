@@ -24,6 +24,7 @@ import org.jclouds.concurrent.Timeout;
 import javax.ws.rs.FormParam;
 
 import org.jclouds.iam.domain.User;
+import org.jclouds.iam.features.InstanceProfileApi;
 import org.jclouds.iam.features.RoleApi;
 import org.jclouds.iam.features.RolePolicyApi;
 import org.jclouds.iam.features.UserApi;
@@ -60,4 +61,10 @@ public interface IAMApi {
     */
    @Delegate
    RolePolicyApi getPolicyApiForRole(@FormParam("RoleName") String roleName);
+
+   /**
+    * Provides synchronous access to Instance Profile features.
+    */
+   @Delegate
+   InstanceProfileApi getInstanceProfileApi();
 }

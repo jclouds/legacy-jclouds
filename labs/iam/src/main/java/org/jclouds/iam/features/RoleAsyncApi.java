@@ -26,8 +26,11 @@ import javax.ws.rs.Path;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
+import org.jclouds.iam.domain.InstanceProfile;
 import org.jclouds.iam.domain.Role;
+import org.jclouds.iam.functions.InstanceProfilesForRoleToPagedIterable;
 import org.jclouds.iam.functions.RolesToPagedIterable;
+import org.jclouds.iam.xml.ListInstanceProfilesResultHandler;
 import org.jclouds.iam.xml.ListRolesResultHandler;
 import org.jclouds.iam.xml.RoleHandler;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -146,6 +149,39 @@ public interface RoleAsyncApi {
    @FormParams(keys = "Action", values = "GetRole")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Role> get(@FormParam("RoleName") String name);
+
+   /**
+    * @see RoleApi#listInstanceProfiles()
+    */
+   @Named("ListInstanceProfilesForRole")
+   @POST
+   @Path("/")
+   @FormParams(keys = "Action", values = "ListInstanceProfilesForRole")
+   @XMLResponseParser(ListInstanceProfilesResultHandler.class)
+   @Transform(InstanceProfilesForRoleToPagedIterable.class)
+   ListenableFuture<PagedIterable<InstanceProfile>> listInstanceProfiles(@FormParam("RoleName") String name);
+
+   /**
+    * @see RoleApi#listFirstPageOfInstanceProfiles
+    */
+   @Named("ListInstanceProfilesForRole")
+   @POST
+   @Path("/")
+   @FormParams(keys = "Action", values = "ListInstanceProfilesForRole")
+   @XMLResponseParser(ListInstanceProfilesResultHandler.class)
+   ListenableFuture<IterableWithMarker<InstanceProfile>> listFirstPageOfInstanceProfiles(
+         @FormParam("RoleName") String name);
+
+   /**
+    * @see RoleApi#listInstanceProfilesAt(String)
+    */
+   @Named("ListInstanceProfilesForRole")
+   @POST
+   @Path("/")
+   @FormParams(keys = "Action", values = "ListInstanceProfilesForRole")
+   @XMLResponseParser(ListInstanceProfilesResultHandler.class)
+   ListenableFuture<IterableWithMarker<InstanceProfile>> listInstanceProfilesAt(@FormParam("RoleName") String name,
+         @FormParam("Marker") String marker);
 
    /**
     * @see RoleApi#delete()

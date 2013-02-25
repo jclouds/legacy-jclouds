@@ -25,9 +25,8 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.iam.IAMApi;
 import org.jclouds.iam.internal.BaseIAMApiExpectTest;
-import org.jclouds.iam.parse.GetRoleResponseTest;
+import org.jclouds.iam.parse.GetInstanceProfileResponseTest;
 import org.jclouds.iam.parse.ListInstanceProfilesResponseTest;
-import org.jclouds.iam.parse.ListRolesResponseTest;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
@@ -37,18 +36,15 @@ import com.google.common.collect.Iterables;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "RoleApiExpectTest")
-public class RoleApiExpectTest extends BaseIAMApiExpectTest {
-   String policy = "{\"Version\":\"2008-10-17\",\"Statement\":[{\"Sid\":\"\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ec2.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}";
-
+@Test(groups = "unit", testName = "InstanceProfileApiExpectTest")
+public class InstanceProfileApiExpectTest extends BaseIAMApiExpectTest {
    HttpRequest create = HttpRequest.builder()
                                    .method("POST")
                                    .endpoint("https://iam.amazonaws.com/")
                                    .addHeader("Host", "iam.amazonaws.com")
-                                   .addFormParam("Action", "CreateRole")
-                                   .addFormParam("AssumeRolePolicyDocument", policy)
-                                   .addFormParam("RoleName", "name")
-                                   .addFormParam("Signature", "zl7UtZElpvnkjo81NmA%2BCvYu0xFEeXQlSRtqTgok2OU%3D")
+                                   .addFormParam("Action", "CreateInstanceProfile")
+                                   .addFormParam("InstanceProfileName", "name")
+                                   .addFormParam("Signature", "UIosTnnvBVHY7m7rqz1489RQ90Mf81/aOXgh8x2mLWU%3D")
                                    .addFormParam("SignatureMethod", "HmacSHA256")
                                    .addFormParam("SignatureVersion", "2")
                                    .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
@@ -58,20 +54,20 @@ public class RoleApiExpectTest extends BaseIAMApiExpectTest {
    public void testCreateWhenResponseIs2xx() throws Exception {
    
       HttpResponse getResponse = HttpResponse.builder().statusCode(200)
-            .payload(payloadFromResourceWithContentType("/get_role.xml", "text/xml")).build();
+            .payload(payloadFromResourceWithContentType("/get_instance_profile.xml", "text/xml")).build();
 
       IAMApi apiWhenExist = requestSendsResponse(create, getResponse);
 
-      assertEquals(apiWhenExist.getRoleApi().createWithPolicy("name", policy).toString(), new GetRoleResponseTest().expected().toString());
+      assertEquals(apiWhenExist.getInstanceProfileApi().create("name").toString(), new GetInstanceProfileResponseTest().expected().toString());
    }
 
    HttpRequest get = HttpRequest.builder()
                                 .method("POST")
                                 .endpoint("https://iam.amazonaws.com/")
                                 .addHeader("Host", "iam.amazonaws.com")
-                                .addFormParam("Action", "GetRole")
-                                .addFormParam("RoleName", "name")
-                                .addFormParam("Signature", "OhV4oxbGMEJtWEDOUhR5n4u5TfGT9YtX/nVXHRyxDrs%3D")
+                                .addFormParam("Action", "GetInstanceProfile")
+                                .addFormParam("InstanceProfileName", "name")
+                                .addFormParam("Signature", "uw5Ix/UFRqENsSWProK3%2BDMIezmvd3fFhTFMaooxFMg%3D")
                                 .addFormParam("SignatureMethod", "HmacSHA256")
                                 .addFormParam("SignatureVersion", "2")
                                 .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
@@ -81,12 +77,11 @@ public class RoleApiExpectTest extends BaseIAMApiExpectTest {
    public void testGetWhenResponseIs2xx() throws Exception {
 
       HttpResponse getResponse = HttpResponse.builder().statusCode(200)
-            .payload(payloadFromResourceWithContentType("/get_role.xml", "text/xml")).build();
+            .payload(payloadFromResourceWithContentType("/get_instance_profile.xml", "text/xml")).build();
 
-      IAMApi apiWhenExist = requestSendsResponse(
-            get, getResponse);
+      IAMApi apiWhenExist = requestSendsResponse(get, getResponse);
 
-      assertEquals(apiWhenExist.getRoleApi().get("name").toString(), new GetRoleResponseTest().expected().toString());
+      assertEquals(apiWhenExist.getInstanceProfileApi().get("name").toString(), new GetInstanceProfileResponseTest().expected().toString());
    }
 
    public void testGetWhenResponseIs404() throws Exception {
@@ -96,16 +91,16 @@ public class RoleApiExpectTest extends BaseIAMApiExpectTest {
       IAMApi apiWhenDontExist = requestSendsResponse(
             get, getResponse);
 
-      assertNull(apiWhenDontExist.getRoleApi().get("name"));
+      assertNull(apiWhenDontExist.getInstanceProfileApi().get("name"));
    }
 
    HttpRequest delete = HttpRequest.builder()
                                    .method("POST")
                                    .endpoint("https://iam.amazonaws.com/")
                                    .addHeader("Host", "iam.amazonaws.com")
-                                   .addFormParam("Action", "DeleteRole")
-                                   .addFormParam("RoleName", "name")
-                                   .addFormParam("Signature", "yhONyyLjFFtLgearEBrBNpSGTafh35LvRaaK8VagOVA%3D")
+                                   .addFormParam("Action", "DeleteInstanceProfile")
+                                   .addFormParam("InstanceProfileName", "name")
+                                   .addFormParam("Signature", "7W47Gj/6NE6p6drXMtqozYOlUOQN7CzbXgrIup4iowk%3D")
                                    .addFormParam("SignatureMethod", "HmacSHA256")
                                    .addFormParam("SignatureVersion", "2")
                                    .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
@@ -115,11 +110,11 @@ public class RoleApiExpectTest extends BaseIAMApiExpectTest {
    public void testDeleteWhenResponseIs2xx() throws Exception {
 
       HttpResponse deleteResponse = HttpResponse.builder().statusCode(200)
-            .payload(payloadFromResourceWithContentType("/delete_role.xml", "text/xml")).build();
+            .payload(payloadFromResourceWithContentType("/delete_instance_profile.xml", "text/xml")).build();
 
       IAMApi apiWhenExist = requestSendsResponse(delete, deleteResponse);
 
-      apiWhenExist.getRoleApi().delete("name");
+      apiWhenExist.getInstanceProfileApi().delete("name");
    }
 
    public void testDeleteWhenResponseIs404() throws Exception {
@@ -128,15 +123,15 @@ public class RoleApiExpectTest extends BaseIAMApiExpectTest {
 
       IAMApi apiWhenDontExist = requestSendsResponse(delete, deleteResponse);
 
-      apiWhenDontExist.getRoleApi().delete("name");
+      apiWhenDontExist.getInstanceProfileApi().delete("name");
    }
 
    HttpRequest list = HttpRequest.builder()
                                  .method("POST")
                                  .endpoint("https://iam.amazonaws.com/")
                                  .addHeader("Host", "iam.amazonaws.com")
-                                 .addFormParam("Action", "ListRoles")
-                                 .addFormParam("Signature", "aUfKE6CqT%2BAiRMmcRWmGrw/6wNpzrKCwd35UufAVEbs%3D")
+                                 .addFormParam("Action", "ListInstanceProfiles")
+                                 .addFormParam("Signature", "i2V6ZeplNRVaZ/9XfD4jv53Qh%2BNQdl3ZuoZc%2BLguf0o%3D")
                                  .addFormParam("SignatureMethod", "HmacSHA256")
                                  .addFormParam("SignatureVersion", "2")
                                  .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
@@ -146,26 +141,25 @@ public class RoleApiExpectTest extends BaseIAMApiExpectTest {
    public void testListWhenResponseIs2xx() throws Exception {
 
       HttpResponse listResponse = HttpResponse.builder().statusCode(200)
-            .payload(payloadFromResourceWithContentType("/list_roles.xml", "text/xml")).build();
+            .payload(payloadFromResourceWithContentType("/list_instance_profiles.xml", "text/xml")).build();
 
-      IAMApi apiWhenExist = requestSendsResponse(
-            list, listResponse);
+      IAMApi apiWhenExist = requestSendsResponse(list, listResponse);
 
-      assertEquals(apiWhenExist.getRoleApi().list().get(0).toString(), new ListRolesResponseTest().expected().toString());
+      assertEquals(apiWhenExist.getInstanceProfileApi().list().get(0).toString(), new ListInstanceProfilesResponseTest().expected().toString());
    }
 
    public void testList2PagesWhenResponseIs2xx() throws Exception {
 
       HttpResponse listResponse = HttpResponse.builder().statusCode(200)
-            .payload(payloadFromResourceWithContentType("/list_roles_marker.xml", "text/xml")).build();
+            .payload(payloadFromResourceWithContentType("/list_instance_profiles_marker.xml", "text/xml")).build();
 
       HttpRequest list2 = HttpRequest.builder()
                                     .method("POST")
                                     .endpoint("https://iam.amazonaws.com/")
                                     .addHeader("Host", "iam.amazonaws.com")
-                                    .addFormParam("Action", "ListRoles")
+                                    .addFormParam("Action", "ListInstanceProfiles")
                                     .addFormParam("Marker", "MARKER")
-                                    .addFormParam("Signature", "gOfxvq54UyrEck9AmMy4tm5zcNlRWwWtLBzGpKASskk%3D")
+                                    .addFormParam("Signature", "x7G5OvKxTIMEjl58OVurKrwf7wEA7exXSml63T89mSY%3D")
                                     .addFormParam("SignatureMethod", "HmacSHA256")
                                     .addFormParam("SignatureVersion", "2")
                                     .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
@@ -173,21 +167,21 @@ public class RoleApiExpectTest extends BaseIAMApiExpectTest {
                                     .addFormParam("AWSAccessKeyId", "identity").build();
       
       HttpResponse list2Response = HttpResponse.builder().statusCode(200)
-               .payload(payloadFromResourceWithContentType("/list_roles.xml", "text/xml")).build();
+               .payload(payloadFromResourceWithContentType("/list_instance_profiles.xml", "text/xml")).build();
 
       IAMApi apiWhenExist = requestsSendResponses(list, listResponse, list2, list2Response);
 
-      assertEquals(apiWhenExist.getRoleApi().list().concat().toImmutableList(),
-               ImmutableList.copyOf(Iterables.concat(new ListRolesResponseTest().expected(), new ListRolesResponseTest().expected())));
+      assertEquals(apiWhenExist.getInstanceProfileApi().list().concat().toImmutableList(),
+               ImmutableList.copyOf(Iterables.concat(new ListInstanceProfilesResponseTest().expected(), new ListInstanceProfilesResponseTest().expected())));
    }
 
    HttpRequest listPathPrefix = HttpRequest.builder()
                                            .method("POST")
                                            .endpoint("https://iam.amazonaws.com/")
                                            .addHeader("Host", "iam.amazonaws.com")
-                                           .addFormParam("Action", "ListRoles")
+                                           .addFormParam("Action", "ListInstanceProfiles")
                                            .addFormParam("PathPrefix", "/subdivision")
-                                           .addFormParam("Signature", "ELuhOLquxfQw5pv9381CBuUfqiXv5FHl836m31HA2BI%3D")
+                                           .addFormParam("Signature", "EEVeWhJhORpibHahIj1skQ3rhHaVb/iaqD22vIFQH7o%3D")
                                            .addFormParam("SignatureMethod", "HmacSHA256")
                                            .addFormParam("SignatureVersion", "2")
                                            .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
@@ -197,27 +191,26 @@ public class RoleApiExpectTest extends BaseIAMApiExpectTest {
    public void testListPathPrefixWhenResponseIs2xx() throws Exception {
 
       HttpResponse listResponse = HttpResponse.builder().statusCode(200)
-            .payload(payloadFromResourceWithContentType("/list_roles.xml", "text/xml")).build();
+            .payload(payloadFromResourceWithContentType("/list_instance_profiles.xml", "text/xml")).build();
 
-      IAMApi apiWhenExist = requestSendsResponse(
-            listPathPrefix, listResponse);
+      IAMApi apiWhenExist = requestSendsResponse(listPathPrefix, listResponse);
 
-      assertEquals(apiWhenExist.getRoleApi().listPathPrefix("/subdivision").get(0).toString(), new ListRolesResponseTest().expected().toString());
+      assertEquals(apiWhenExist.getInstanceProfileApi().listPathPrefix("/subdivision").get(0).toString(), new ListInstanceProfilesResponseTest().expected().toString());
    }
 
    public void testListPathPrefix2PagesWhenResponseIs2xx() throws Exception {
 
       HttpResponse listResponse = HttpResponse.builder().statusCode(200)
-            .payload(payloadFromResourceWithContentType("/list_roles_marker.xml", "text/xml")).build();
+            .payload(payloadFromResourceWithContentType("/list_instance_profiles_marker.xml", "text/xml")).build();
 
       HttpRequest listPathPrefix2 = HttpRequest.builder()
                                     .method("POST")
                                     .endpoint("https://iam.amazonaws.com/")
                                     .addHeader("Host", "iam.amazonaws.com")
-                                    .addFormParam("Action", "ListRoles")
+                                    .addFormParam("Action", "ListInstanceProfiles")
                                     .addFormParam("Marker", "MARKER")
                                     .addFormParam("PathPrefix", "/subdivision")
-                                    .addFormParam("Signature", "Y05M4vbhJpd35erXuhECszxjtx56cdIULGHnRaVr13s%3D")
+                                    .addFormParam("Signature", "8xo94VlrqsoMoa6bpbqQbuVx8TLh8UmiQnc9QC58EhU%3D")
                                     .addFormParam("SignatureMethod", "HmacSHA256")
                                     .addFormParam("SignatureVersion", "2")
                                     .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
@@ -225,12 +218,12 @@ public class RoleApiExpectTest extends BaseIAMApiExpectTest {
                                     .addFormParam("AWSAccessKeyId", "identity").build();
       
       HttpResponse list2Response = HttpResponse.builder().statusCode(200)
-               .payload(payloadFromResourceWithContentType("/list_roles.xml", "text/xml")).build();
+               .payload(payloadFromResourceWithContentType("/list_instance_profiles.xml", "text/xml")).build();
 
       IAMApi apiWhenExist = requestsSendResponses(listPathPrefix, listResponse, listPathPrefix2, list2Response);
 
-      assertEquals(apiWhenExist.getRoleApi().listPathPrefix("/subdivision").concat().toImmutableList(),
-               ImmutableList.copyOf(Iterables.concat(new ListRolesResponseTest().expected(), new ListRolesResponseTest().expected())));
+      assertEquals(apiWhenExist.getInstanceProfileApi().listPathPrefix("/subdivision").concat().toImmutableList(),
+               ImmutableList.copyOf(Iterables.concat(new ListInstanceProfilesResponseTest().expected(), new ListInstanceProfilesResponseTest().expected())));
    }
 
    // TODO: this should really be an empty set
@@ -242,7 +235,7 @@ public class RoleApiExpectTest extends BaseIAMApiExpectTest {
       IAMApi apiWhenDontExist = requestSendsResponse(
             list, listResponse);
 
-      apiWhenDontExist.getRoleApi().list().get(0);
+      apiWhenDontExist.getInstanceProfileApi().list().get(0);
    }
    
    public void testListPathPrefixAtWhenResponseIs2xx() throws Exception {
@@ -251,10 +244,10 @@ public class RoleApiExpectTest extends BaseIAMApiExpectTest {
                        .method("POST")
                        .endpoint("https://iam.amazonaws.com/")
                        .addHeader("Host", "iam.amazonaws.com")
-                       .addFormParam("Action", "ListRoles")
+                       .addFormParam("Action", "ListInstanceProfiles")
                        .addFormParam("Marker", "MARKER")
                        .addFormParam("PathPrefix", "/foo")
-                       .addFormParam("Signature", "HUXPIey7u7ajfog4wFgJn59fcFWpMSjd5yjomenL7jc%3D")
+                       .addFormParam("Signature", "IBRktzqZ/GE8Y7DZqsjuOUNfJZTbkCnOZnHAmzwtju8%3D")
                        .addFormParam("SignatureMethod", "HmacSHA256")
                        .addFormParam("SignatureVersion", "2")
                        .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
@@ -262,63 +255,60 @@ public class RoleApiExpectTest extends BaseIAMApiExpectTest {
                        .addFormParam("AWSAccessKeyId", "identity").build();
 
       HttpResponse listWithOptionsResponse = HttpResponse.builder().statusCode(200)
-               .payload(payloadFromResourceWithContentType("/list_roles.xml", "text/xml")).build();
+               .payload(payloadFromResourceWithContentType("/list_instance_profiles.xml", "text/xml")).build();
 
       IAMApi apiWhenWithOptionsExist = requestSendsResponse(listWithOptions,
                listWithOptionsResponse);
 
-      assertEquals(apiWhenWithOptionsExist.getRoleApi().listPathPrefixAt("/foo", "MARKER").toString(),
-               new ListRolesResponseTest().expected().toString());
+      assertEquals(apiWhenWithOptionsExist.getInstanceProfileApi().listPathPrefixAt("/foo", "MARKER").toString(),
+               new ListInstanceProfilesResponseTest().expected().toString());
    }
 
-   HttpRequest listInstanceProfiles = HttpRequest.builder()
-                                                 .method("POST")
-                                                 .endpoint("https://iam.amazonaws.com/")
-                                                 .addHeader("Host", "iam.amazonaws.com")
-                                                 .addFormParam("Action", "ListInstanceProfilesForRole")
-                                                 .addFormParam("RoleName", "WebServer")
-                                                 .addFormParam("Signature", "WLWyoNHcR09MJ9JN0qGIzzPsZtlTX6UbqsAkaxp9utg%3D")
-                                                 .addFormParam("SignatureMethod", "HmacSHA256")
-                                                 .addFormParam("SignatureVersion", "2")
-                                                 .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
-                                                 .addFormParam("Version", "2010-05-08")
-                                                 .addFormParam("AWSAccessKeyId", "identity").build();
+   HttpRequest addRole = HttpRequest.builder()
+                                   .method("POST")
+                                   .endpoint("https://iam.amazonaws.com/")
+                                   .addHeader("Host", "iam.amazonaws.com")
+                                   .addFormParam("Action", "AddRoleToInstanceProfile")
+                                   .addFormParam("InstanceProfileName", "name")
+                                   .addFormParam("RoleName", "WebServer")
+                                   .addFormParam("Signature", "QTM12yD9GwUKEE9wqbt03VlfZ/%2BfO0UWe9SbNoI9d3c%3D")
+                                   .addFormParam("SignatureMethod", "HmacSHA256")
+                                   .addFormParam("SignatureVersion", "2")
+                                   .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                   .addFormParam("Version", "2010-05-08")
+                                   .addFormParam("AWSAccessKeyId", "identity").build();
 
-   public void testListInstanceProfilesWhenResponseIs2xx() throws Exception {
+   public void testAddRoleWhenResponseIs2xx() throws Exception {
 
-      HttpResponse listInstanceProfilesResponse = HttpResponse.builder().statusCode(200)
-            .payload(payloadFromResourceWithContentType("/list_instance_profiles.xml", "text/xml")).build();
+      HttpResponse addRoleResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResourceWithContentType("/delete_instance_profile.xml", "text/xml")).build();
 
-      IAMApi apiWhenExist = requestSendsResponse(listInstanceProfiles, listInstanceProfilesResponse);
+      IAMApi apiWhenExist = requestSendsResponse(addRole, addRoleResponse);
 
-      assertEquals(apiWhenExist.getRoleApi().listInstanceProfiles("WebServer").get(0).toString(), new ListInstanceProfilesResponseTest().expected().toString());
+      apiWhenExist.getInstanceProfileApi().addRole("name", "WebServer");
    }
 
-   public void testListInstanceProfiles2PagesWhenResponseIs2xx() throws Exception {
+   HttpRequest removeRole = HttpRequest.builder()
+                                       .method("POST")
+                                       .endpoint("https://iam.amazonaws.com/")
+                                       .addHeader("Host", "iam.amazonaws.com")
+                                       .addFormParam("Action", "RemoveRoleFromInstanceProfile")
+                                       .addFormParam("InstanceProfileName", "name")
+                                       .addFormParam("RoleName", "WebServer")
+                                       .addFormParam("Signature", "o1Uz2bOwe8H3DOnyNL5TK9lNDoKvWo7CNhspN7ml5Sc%3D")
+                                       .addFormParam("SignatureMethod", "HmacSHA256")
+                                       .addFormParam("SignatureVersion", "2")
+                                       .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
+                                       .addFormParam("Version", "2010-05-08")
+                                       .addFormParam("AWSAccessKeyId", "identity").build();
 
-      HttpResponse listInstanceProfilesResponse = HttpResponse.builder().statusCode(200)
-            .payload(payloadFromResourceWithContentType("/list_instance_profiles_marker.xml", "text/xml")).build();
+   public void testRemoveRoleWhenResponseIs2xx() throws Exception {
 
-      HttpRequest listInstanceProfiles2 = HttpRequest.builder()
-                                                     .method("POST")
-                                                     .endpoint("https://iam.amazonaws.com/")
-                                                     .addHeader("Host", "iam.amazonaws.com")
-                                                     .addFormParam("Action", "ListInstanceProfilesForRole")
-                                                     .addFormParam("Marker", "MARKER")
-                                                     .addFormParam("RoleName", "WebServer")
-                                                     .addFormParam("Signature", "LHwKxeK/Hwqbv90tSG0tRJl/4BLrPqi%2BMvBnXvxUybs%3D")
-                                                     .addFormParam("SignatureMethod", "HmacSHA256")
-                                                     .addFormParam("SignatureVersion", "2")
-                                                     .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
-                                                     .addFormParam("Version", "2010-05-08")
-                                                     .addFormParam("AWSAccessKeyId", "identity").build();
-      
-      HttpResponse listInstanceProfiles2Response = HttpResponse.builder().statusCode(200)
-               .payload(payloadFromResourceWithContentType("/list_instance_profiles.xml", "text/xml")).build();
+      HttpResponse removeRoleResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResourceWithContentType("/delete_instance_profile.xml", "text/xml")).build();
 
-      IAMApi apiWhenExist = requestsSendResponses(listInstanceProfiles, listInstanceProfilesResponse, listInstanceProfiles2, listInstanceProfiles2Response);
+      IAMApi apiWhenExist = requestSendsResponse(removeRole, removeRoleResponse);
 
-      assertEquals(apiWhenExist.getRoleApi().listInstanceProfiles("WebServer").concat().toImmutableList(),
-               ImmutableList.copyOf(Iterables.concat(new ListInstanceProfilesResponseTest().expected(), new ListInstanceProfilesResponseTest().expected())));
+      apiWhenExist.getInstanceProfileApi().removeRole("name", "WebServer");
    }
 }

@@ -23,6 +23,8 @@ import java.util.Map;
 import org.jclouds.aws.config.FormSigningRestClientModule;
 import org.jclouds.iam.IAMAsyncApi;
 import org.jclouds.iam.IAMApi;
+import org.jclouds.iam.features.InstanceProfileApi;
+import org.jclouds.iam.features.InstanceProfileAsyncApi;
 import org.jclouds.iam.features.RoleApi;
 import org.jclouds.iam.features.RoleAsyncApi;
 import org.jclouds.iam.features.RolePolicyApi;
@@ -46,6 +48,7 @@ public class IAMRestClientModule extends FormSigningRestClientModule<IAMApi, IAM
          .put(UserApi.class, UserAsyncApi.class)
          .put(RoleApi.class, RoleAsyncApi.class)
          .put(RolePolicyApi.class, RolePolicyAsyncApi.class)
+         .put(InstanceProfileApi.class, InstanceProfileAsyncApi.class)
          .build();
    
    public IAMRestClientModule() {
