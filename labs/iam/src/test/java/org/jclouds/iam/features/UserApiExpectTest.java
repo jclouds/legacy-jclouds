@@ -21,8 +21,6 @@ package org.jclouds.iam.features;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
-import java.util.TimeZone;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.iam.IAMApi;
@@ -40,10 +38,6 @@ import com.google.common.collect.Iterables;
  */
 @Test(groups = "unit", testName = "UserApiExpectTest")
 public class UserApiExpectTest extends BaseIAMApiExpectTest {
-
-   public UserApiExpectTest() {
-      TimeZone.setDefault(TimeZone.getTimeZone("America/Los_Angeles"));
-   }
 
    public void testGetCurrentWhenResponseIs2xx() throws Exception {
       HttpRequest get = HttpRequest.builder()
