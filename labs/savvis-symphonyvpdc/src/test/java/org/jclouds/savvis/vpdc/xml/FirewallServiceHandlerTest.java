@@ -55,7 +55,7 @@ public class FirewallServiceHandlerTest {
       assertEquals(
             result.getFirewallRules(),
             ImmutableSet.<FirewallRule> of(
-            	  FirewallRule.builder().firewallType("SERVER_TIER_FIREWALL").isEnabled(true).source("internet")
+            	  FirewallRule.builder().firewallType("SERVER_TIER_FIREWALL").isEnabled(false).source("internet")
             	  	.destination("VM Tier01").port("22").protocol("Tcp").policy("allow").description("Server Tier Firewall Rule").isLogged(false).build(),
             	  FirewallRule.builder().firewallType("SERVER_TIER_FIREWALL").isEnabled(true).source("VM Tier03")
             	  	.destination("VM Tier03").protocol("Icmp-ping").policy("allow").description("Server Tier Firewall Rule").isLogged(false).build()));

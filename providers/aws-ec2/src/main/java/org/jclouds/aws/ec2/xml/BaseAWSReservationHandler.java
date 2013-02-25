@@ -94,8 +94,6 @@ public abstract class BaseAWSReservationHandler<T> extends HandlerForGeneratedRe
 
    private Set<RunningInstance> instances = Sets.newLinkedHashSet();
 
-   protected int depth = 0;
-
    private boolean inPlacement;
 
    @Override

@@ -34,7 +34,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.savvis.vpdc.domain.FirewallRule;
 
 import com.jamesmurty.utils.XMLBuilder;
 
@@ -55,7 +54,7 @@ public class BindCloneVMToXmlPayload extends BindToStringPayload implements MapB
       for (Object arg : gRequest.getInvocation().getArgs()) {
          if (arg instanceof URI) {
             return (URI) arg;
-         } else if (arg instanceof FirewallRule[]) {
+         } else if (arg instanceof URI[]) {
         	 URI[] rules = (URI[]) arg;
             return (rules.length > 0) ? rules[0] : null;
          }

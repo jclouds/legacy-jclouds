@@ -63,7 +63,7 @@ public class NetworkSpec {
    public boolean equals(Object o) {
       if (this == o)
          return true;
-      if (o instanceof VmSpec) {
+      if (o instanceof NetworkSpec) {
          NetworkSpec other = (NetworkSpec) o;
          return Objects.equal(networkInterfaceCards, other.networkInterfaceCards);
       }

@@ -43,13 +43,9 @@ public class Processor implements Comparable<Processor> {
     */
    @Override
    public int compareTo(Processor that) {
-      if (that instanceof Processor) {
-         Processor thatProcessor = Processor.class.cast(that);
-         return ComparisonChain.start().compare(this.getCores(), thatProcessor.getCores())
-               .compare(this.getSpeed(), thatProcessor.getSpeed()).result();
-      } else {
-         return -1;
-      }
+      Processor thatProcessor = Processor.class.cast(that);
+      return ComparisonChain.start().compare(this.getCores(), thatProcessor.getCores())
+            .compare(this.getSpeed(), thatProcessor.getSpeed()).result();
    }
 
    /**

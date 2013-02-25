@@ -20,6 +20,8 @@ package org.jclouds.savvis.vpdc.domain;
 
 import java.net.URI;
 
+import com.google.common.base.Objects;
+
 /**
  * API returns a firewall rule in a firewall service
  * 
@@ -151,48 +153,30 @@ public class FirewallRule extends ResourceImpl {
     public Builder toBuilder() {
 		return Builder.fromFirewallRule(this);
     }
-	
+
+    @Override
+    public int hashCode() {
+      return Objects.hashCode(firewallType, isEnabled, source, destination,
+         port, policy, description, isLogged, protocol);
+    }
+
 	@Override
 	public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
+      if (!(obj instanceof FirewallRule))
          return false;
       FirewallRule other = (FirewallRule) obj;
-      if (firewallType == null) {
-          if (other.firewallType != null)
-             return false;
-       } else if (!firewallType.equals(other.firewallType))
-          return false;
-      if (source == null) {
-         if (other.source != null)
-            return false;
-      } else if (!source.equals(other.source))
-         return false;
-      if (destination == null) {
-         if (other.destination != null)
-            return false;
-      } else if (!destination.equals(other.destination))
-         return false;
-      if (port == null) {
-          if (other.port != null)
-             return false;
-       } else if (!port.equals(other.port))
-          return false;
-      if (policy == null) {
-          if (other.policy != null)
-             return false;
-       } else if (!policy.equals(other.policy))
-          return false;
-      if (protocol == null) {
-          if (other.protocol != null)
-             return false;
-       } else if (!protocol.equals(other.protocol))
-          return false;
-      return true;
-   }
+      return Objects.equal(firewallType, other.firewallType) &&
+	     isEnabled == other.isEnabled &&
+	     Objects.equal(source, other.source) &&
+	     Objects.equal(destination, other.destination) &&
+	     Objects.equal(port, other.port) &&
+	     Objects.equal(policy, other.policy) &&
+	     Objects.equal(description, other.description) &&
+	     isLogged == other.isLogged &&
+	     Objects.equal(protocol, other.protocol);
+    }
 	
 	public boolean isEnabled() {
 		return isEnabled;
@@ -232,7 +216,7 @@ public class FirewallRule extends ResourceImpl {
 
 	@Override
 	public String toString() {
-      return "[firewallType=" + firewallType + ", description=" + description + ", source=" + source + ", destination=" + destination
+      return "[firewallType=" + firewallType + ", isEnabled=" + isEnabled + ", description=" + description + ", source=" + source + ", destination=" + destination
       + ", port=" + port + ", protocol=" + protocol + ", policy=" + policy + ", isLogged=" + isLogged;
 	}
 

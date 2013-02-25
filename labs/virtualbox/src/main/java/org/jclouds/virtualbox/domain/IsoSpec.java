@@ -72,7 +72,7 @@ public class IsoSpec {
    @Override
    public boolean equals(Object o) {
       if (this == o) return true;
-      if (o instanceof VmSpec) {
+      if (o instanceof IsoSpec) {
          IsoSpec other = (IsoSpec) o;
          return Objects.equal(sourcePath, other.sourcePath) &&
                  Objects.equal(installationKeySequence, other.installationKeySequence);

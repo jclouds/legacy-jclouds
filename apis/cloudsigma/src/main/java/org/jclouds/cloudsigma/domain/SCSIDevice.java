@@ -39,7 +39,7 @@ public class SCSIDevice extends Device {
 
    }
 
-   private final int bus = 0;
+   private static final int bus = 0;
    private final int unit;
 
    public SCSIDevice(String driveUuid, MediaType mediaType, int unit) {
