@@ -20,6 +20,7 @@ package org.jclouds.iam.features;
 
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
+import org.jclouds.iam.domain.InstanceProfile;
 import org.jclouds.iam.domain.Role;
 import org.jclouds.javax.annotation.Nullable;
 
@@ -98,6 +99,32 @@ public interface RoleApi {
     */
    @Nullable
    Role get(String name);
+
+   /**
+    * returns all instance profiles in order for this role.
+    * 
+    * @param name
+    *           Name of the role to get instance profiles for.
+    */
+   PagedIterable<InstanceProfile> listInstanceProfiles(String name);
+
+   /**
+    * retrieves up to 100 instance profiles in order for this role.
+    * 
+    * @param name
+    *           Name of the role to get instance profiles for.
+    */
+   IterableWithMarker<InstanceProfile> listFirstPageOfInstanceProfiles(String name);
+
+   /**
+    * retrieves up to 100 instance profiles in order for this role, starting at {@code marker}
+    * 
+    * @param name
+    *           Name of the role to get instance profiles for.
+    * @param marker
+    *           starting point to resume the list
+    */
+   IterableWithMarker<InstanceProfile> listInstanceProfilesAt(String name, String marker);
 
    /**
     * Deletes the specified role. The role must not have any policies attached. 

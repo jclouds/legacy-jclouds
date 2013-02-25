@@ -24,6 +24,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
+import org.jclouds.iam.domain.InstanceProfile;
 import org.jclouds.iam.domain.Role;
 import org.jclouds.iam.internal.BaseIAMApiLiveTest;
 import org.testng.annotations.Test;
@@ -37,7 +38,7 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "live", testName = "RoleApiLiveTest")
 public class RoleApiLiveTest extends BaseIAMApiLiveTest {
 
-   private void checkRole(Role role) {
+   static void checkRole(Role role) {
       checkNotNull(role.getArn(), "Arn cannot be null for Role %s", role);
       checkNotNull(role.getId(), "Id cannot be null for Role %s", role);
       checkNotNull(role.getName(), "Name cannot be null for Role %s", role);
@@ -60,6 +61,15 @@ public class RoleApiLiveTest extends BaseIAMApiLiveTest {
    }
 
    @Test
+   protected void testListInstanceProfiles() {
+      for (Role role : api().list().concat()) {
+         for (InstanceProfile instanceProfile : api().listInstanceProfiles(role.getName()).concat()) {
+            InstanceProfileApiLiveTest.checkInstanceProfile(instanceProfile);
+         }
+      }
+   }
+
+   @Test
    public void testGetRoleWhenNotFound() {
       assertNull(api().get("AAAAAAAAAAAAAAAA"));
    }
@@ -69,17 +79,17 @@ public class RoleApiLiveTest extends BaseIAMApiLiveTest {
       api().delete("AAAAAAAAAAAAAAAA");
    }
 
-   String policy = "{\"Version\":\"2008-10-17\",\"Statement\":[{\"Sid\":\"\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ec2.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}";
+   static String assumeRolePolicy = "{\"Version\":\"2008-10-17\",\"Statement\":[{\"Sid\":\"\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ec2.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}";
 
    @Test
    public void testCreateAndDeleteRole() {
       String name = System.getProperty("user.name").replace('.', '-') + ".role.iamtest.jclouds.org.";
       Role newRole; 
       try {
-         newRole = api().createWithPolicy(name, policy);
+         newRole = api().createWithPolicy(name, assumeRolePolicy);
          getAnonymousLogger().info("created role: " + newRole);
          checkRole(newRole);
-         assertEquals(newRole.getAssumeRolePolicy(), policy);
+         assertEquals(newRole.getAssumeRolePolicy(), assumeRolePolicy);
       } finally {
          api().delete(name);
          assertNull(api().get(name));
