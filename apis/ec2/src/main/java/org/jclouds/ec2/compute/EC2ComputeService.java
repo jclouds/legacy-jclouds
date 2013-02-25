@@ -81,7 +81,6 @@ import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.domain.Tag;
-import org.jclouds.ec2.util.SubnetFilterBuilder;
 import org.jclouds.ec2.util.TagFilterBuilder;
 import org.jclouds.scriptbuilder.functions.InitAdminAccess;
 
@@ -309,7 +308,7 @@ public class EC2ComputeService extends BaseComputeService {
                logger.debug("<< deleted incidentalResources(%s)", input);
                return true;
             } catch (IllegalStateException e) {
-               logger.debug("<< inUse incidentalResources(%s @ %s)", input);
+               logger.debug("<< inUse incidentalResources(%s)", input);
                return false;
             }
          }
