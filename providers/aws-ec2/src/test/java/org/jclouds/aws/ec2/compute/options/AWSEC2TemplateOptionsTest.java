@@ -21,6 +21,8 @@ package org.jclouds.aws.ec2.compute.options;
 import static org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions.Builder.authorizePublicKey;
 import static org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions.Builder.blockOnPort;
 import static org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions.Builder.enableMonitoring;
+import static org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions.Builder.iamInstanceProfileArn;
+import static org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions.Builder.iamInstanceProfileName;
 import static org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions.Builder.inboundPorts;
 import static org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions.Builder.installPrivateKey;
 import static org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions.Builder.keyPair;
@@ -366,5 +368,53 @@ public class AWSEC2TemplateOptionsTest {
       AWSEC2TemplateOptions options = inboundPorts(22, 30);
       assertEquals(options.getInboundPorts()[0], 22);
       assertEquals(options.getInboundPorts()[1], 30);
+   }
+
+   @Test
+   public void testIAMInstanceProfileArn() {
+      AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
+      options.iamInstanceProfileArn("arn:aws:iam::123456789012:instance-profile/application_abc/component_xyz/Webserver");
+      assertEquals(options.getIAMInstanceProfileArn(), "arn:aws:iam::123456789012:instance-profile/application_abc/component_xyz/Webserver");
+   }
+
+   @Test
+   public void testNullIAMInstanceProfileArn() {
+      AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
+      assertEquals(options.getIAMInstanceProfileArn(), null);
+   }
+
+   @Test
+   public void testIAMInstanceProfileArnStatic() {
+      AWSEC2TemplateOptions options = iamInstanceProfileArn("arn:aws:iam::123456789012:instance-profile/application_abc/component_xyz/Webserver");
+      assertEquals(options.getIAMInstanceProfileArn(), "arn:aws:iam::123456789012:instance-profile/application_abc/component_xyz/Webserver");
+   }
+
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testIAMInstanceProfileArnNPE() {
+      iamInstanceProfileArn(null);
+   }
+
+   @Test
+   public void testIAMInstanceProfileName() {
+      AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
+      options.iamInstanceProfileName("Webserver");
+      assertEquals(options.getIAMInstanceProfileName(), "Webserver");
+   }
+
+   @Test
+   public void testNullIAMInstanceProfileName() {
+      AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
+      assertEquals(options.getIAMInstanceProfileName(), null);
+   }
+
+   @Test
+   public void testIAMInstanceProfileNameStatic() {
+      AWSEC2TemplateOptions options = iamInstanceProfileName("Webserver");
+      assertEquals(options.getIAMInstanceProfileName(), "Webserver");
+   }
+
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testIAMInstanceProfileNameNPE() {
+      iamInstanceProfileName(null);
    }
 }

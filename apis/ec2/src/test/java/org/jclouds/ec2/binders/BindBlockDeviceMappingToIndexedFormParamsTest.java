@@ -44,17 +44,18 @@ public class BindBlockDeviceMappingToIndexedFormParamsTest {
    BindBlockDeviceMappingToIndexedFormParams binder = injector
          .getInstance(BindBlockDeviceMappingToIndexedFormParams.class);
 
-   public void testMapping() {
+   public void testMappingOrdersLexicographically() {
       Map<String, BlockDevice> mapping = Maps.newLinkedHashMap();
       mapping.put("apple", new BlockDevice("appleId", true));
       Date date = new Date(999999l);
       mapping.put("cranberry", new BlockDevice("cranberry", Status.ATTACHED, date, false));
 
-      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost").build();
+      HttpRequest request = HttpRequest.builder().method("POST").endpoint("http://localhost")
+            .addFormParam("InstanceId", "i-foo").build();
       request = binder.bindToRequest(request, mapping);
       assertEquals(
             request.getPayload().getRawContent(),
-            "BlockDeviceMapping.1.Ebs.VolumeId=appleId&BlockDeviceMapping.1.DeviceName=apple&BlockDeviceMapping.1.Ebs.DeleteOnTermination=true&BlockDeviceMapping.2.Ebs.VolumeId=cranberry&BlockDeviceMapping.2.DeviceName=cranberry&BlockDeviceMapping.2.Ebs.DeleteOnTermination=false");
+            "Action=ModifyInstanceAttribute&BlockDeviceMapping.1.DeviceName=apple&BlockDeviceMapping.1.Ebs.DeleteOnTermination=true&BlockDeviceMapping.1.Ebs.VolumeId=appleId&BlockDeviceMapping.2.DeviceName=cranberry&BlockDeviceMapping.2.Ebs.DeleteOnTermination=false&BlockDeviceMapping.2.Ebs.VolumeId=cranberry&InstanceId=i-foo");
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)

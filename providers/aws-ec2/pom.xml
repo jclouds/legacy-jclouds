@@ -35,7 +35,7 @@
 
   <properties>
     <test.aws-ec2.endpoint>https://ec2.us-east-1.amazonaws.com</test.aws-ec2.endpoint>
-    <test.aws-ec2.api-version>2011-05-15</test.aws-ec2.api-version>
+    <test.aws-ec2.api-version>2012-06-01</test.aws-ec2.api-version>
     <test.aws-ec2.build-version />
     <test.aws-ec2.identity>${test.aws.identity}</test.aws-ec2.identity>
     <test.aws-ec2.credential>${test.aws.credential}</test.aws-ec2.credential>
@@ -66,6 +66,12 @@
       <artifactId>ec2</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jclouds.labs</groupId>
+      <artifactId>aws-iam</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

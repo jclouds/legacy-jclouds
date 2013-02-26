@@ -33,6 +33,7 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.rest.annotations.SinceApiVersion;
 import org.jclouds.scriptbuilder.domain.Statement;
 
 import com.google.common.base.Objects;
@@ -72,6 +73,10 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
          AWSEC2TemplateOptions eTo = AWSEC2TemplateOptions.class.cast(to);
          if (getSubnetId() != null)
             eTo.subnetId(getSubnetId());
+         if (getIAMInstanceProfileArn() != null)
+            eTo.iamInstanceProfileArn(getIAMInstanceProfileArn());
+         if (getIAMInstanceProfileName() != null)
+            eTo.iamInstanceProfileName(getIAMInstanceProfileName());
          if (isMonitoringEnabled())
             eTo.enableMonitoring();
          if (!shouldAutomaticallyCreatePlacementGroup())
@@ -94,6 +99,8 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
    private Float spotPrice;
    private RequestSpotInstancesOptions spotOptions = RequestSpotInstancesOptions.NONE;
    private Set<String> groupIds = ImmutableSet.of();
+   private String iamInstanceProfileArn;
+   private String iamInstanceProfileName;
 
    @Override
    public boolean equals(Object o) {
@@ -106,13 +113,14 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
                && equal(this.placementGroup, that.placementGroup)
                && equal(this.noPlacementGroup, that.noPlacementGroup) && equal(this.subnetId, that.subnetId)
                && equal(this.spotPrice, that.spotPrice) && equal(this.spotOptions, that.spotOptions)
-               && equal(this.groupIds, that.groupIds);
+               && equal(this.groupIds, that.groupIds) && equal(this.iamInstanceProfileArn, that.iamInstanceProfileArn)
+               && equal(this.iamInstanceProfileName, that.iamInstanceProfileName);
    }
 
    @Override
    public int hashCode() {
       return Objects.hashCode(super.hashCode(), monitoringEnabled, placementGroup, noPlacementGroup, subnetId,
-               spotPrice, spotOptions, groupIds);
+               spotPrice, spotOptions, groupIds, iamInstanceProfileArn, iamInstanceProfileName);
    }
 
    @Override
@@ -129,6 +137,8 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
          toString.add("spotOptions", spotOptions);
       if (groupIds.size() != 0)
          toString.add("groupIds", groupIds);
+      toString.add("iamInstanceProfileArn", iamInstanceProfileArn);
+      toString.add("iamInstanceProfileName", iamInstanceProfileName);
       return toString;
    }
 
@@ -168,6 +178,24 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
     */
    public AWSEC2TemplateOptions subnetId(String subnetId) {
       this.subnetId = checkNotNull(emptyToNull(subnetId), "subnetId must be defined");
+      return this;
+   }
+
+   /**
+    * @see org.jclouds.aws.ec2.options.AWSRunInstancesOptions#withIAMInstanceProfileArn(String)
+    */
+   @SinceApiVersion("2012-06-01")
+   public AWSEC2TemplateOptions iamInstanceProfileArn(String arn) {
+      this.iamInstanceProfileArn = checkNotNull(emptyToNull(arn), "arn must be defined");
+      return this;
+   }
+
+   /**
+    * @see org.jclouds.aws.ec2.options.AWSRunInstancesOptions#withIAMInstanceProfileName(String)
+    */
+   @SinceApiVersion("2012-06-01")
+   public AWSEC2TemplateOptions iamInstanceProfileName(String name) {
+      this.iamInstanceProfileName = checkNotNull(emptyToNull(name), "name must be defined");
       return this;
    }
 
@@ -393,7 +421,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
       }
 
       /**
-       * @see TemplateOptions#spotPrice
+       * @see AWSEC2TemplateOptions#subnetId
        */
       public static AWSEC2TemplateOptions subnetId(String subnetId) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
@@ -401,7 +429,25 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
       }
 
       /**
-       * @see TemplateOptions#spotPrice
+       * @see AWSEC2TemplateOptions#iamInstanceProfileArn
+       */
+      @SinceApiVersion("2012-06-01")
+      public static AWSEC2TemplateOptions iamInstanceProfileArn(String arn) {
+         AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
+         return options.iamInstanceProfileArn(arn);
+      }
+
+      /**
+       * @see AWSEC2TemplateOptions#iamInstanceProfileName
+       */
+      @SinceApiVersion("2012-06-01")
+      public static AWSEC2TemplateOptions iamInstanceProfileName(String name) {
+         AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
+         return options.iamInstanceProfileName(name);
+      }
+
+      /**
+       * @see AWSEC2TemplateOptions#spotPrice
        */
       public static AWSEC2TemplateOptions spotPrice(Float spotPrice) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
@@ -409,7 +455,7 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
       }
 
       /**
-       * @see TemplateOptions#spotOptions
+       * @see AWSEC2TemplateOptions#spotOptions
        */
       public static AWSEC2TemplateOptions spotOptions(RequestSpotInstancesOptions spotOptions) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
@@ -430,6 +476,11 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
       public static AWSEC2TemplateOptions userMetadata(String key, String value) {
          AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
          return AWSEC2TemplateOptions.class.cast(options.userMetadata(key, value));
+      }
+
+      public static AWSEC2TemplateOptions blockUntilRunning(boolean blockUntilRunning) {
+         AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
+         return options.blockUntilRunning(blockUntilRunning);
       }
    }
 
@@ -690,4 +741,23 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
       return spotOptions;
    }
 
+   /**
+    * The Amazon resource name (ARN) of the IAM Instance Profile (IIP) to associate with the instance.
+    * 
+    * @see org.jclouds.aws.ec2.options.AWSRunInstancesOptions#withIAMInstanceProfileArn(String)
+    */
+   @SinceApiVersion("2012-06-01")
+   public String getIAMInstanceProfileArn() {
+      return iamInstanceProfileArn;
+   }
+
+   /**
+    * The name of the IAM Instance Profile (IIP) to associate with the instance.
+    * 
+    * @see org.jclouds.aws.ec2.options.AWSRunInstancesOptions#withIAMInstanceProfileName(String)
+    */
+   @SinceApiVersion("2012-06-01")
+   public String getIAMInstanceProfileName() {
+      return iamInstanceProfileName;
+   }
 }

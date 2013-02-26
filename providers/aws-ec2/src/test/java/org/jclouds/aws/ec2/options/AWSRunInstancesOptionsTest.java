@@ -21,6 +21,8 @@ package org.jclouds.aws.ec2.options;
 import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.asType;
 import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.enableMonitoring;
 import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withBlockDeviceMappings;
+import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withIAMInstanceProfileArn;
+import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withIAMInstanceProfileName;
 import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withKernelId;
 import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withKeyName;
 import static org.jclouds.aws.ec2.options.AWSRunInstancesOptions.Builder.withRamdisk;
@@ -248,6 +250,57 @@ public class AWSRunInstancesOptionsTest {
    @Test(expectedExceptions = NullPointerException.class)
    public void testWithSubnetIdNPE() {
       withSubnetId(null);
+   }
+
+   @Test
+   public void testWithIAMInstanceProfileArn() {
+      AWSRunInstancesOptions options = new AWSRunInstancesOptions();
+      options
+            .withIAMInstanceProfileArn("arn:aws:iam::123456789012:instance-profile/application_abc/component_xyz/Webserver");
+      assertEquals(options.buildFormParameters().get("IamInstanceProfile.Arn"),
+            ImmutableList.of("arn:aws:iam::123456789012:instance-profile/application_abc/component_xyz/Webserver"));
+   }
+
+   @Test
+   public void testNullWithIAMInstanceProfileArn() {
+      AWSRunInstancesOptions options = new AWSRunInstancesOptions();
+      assertEquals(options.buildFormParameters().get("IamInstanceProfile.Arn"), ImmutableList.of());
+   }
+
+   @Test
+   public void testWithIAMInstanceProfileArnStatic() {
+      AWSRunInstancesOptions options = withIAMInstanceProfileArn("arn:aws:iam::123456789012:instance-profile/application_abc/component_xyz/Webserver");
+      assertEquals(options.buildFormParameters().get("IamInstanceProfile.Arn"),
+            ImmutableList.of("arn:aws:iam::123456789012:instance-profile/application_abc/component_xyz/Webserver"));
+   }
+
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testWithIAMInstanceProfileArnNPE() {
+      withIAMInstanceProfileArn(null);
+   }
+
+   @Test
+   public void testWithIAMInstanceProfileName() {
+      AWSRunInstancesOptions options = new AWSRunInstancesOptions();
+      options.withIAMInstanceProfileName("Webserver");
+      assertEquals(options.buildFormParameters().get("IamInstanceProfile.Name"), ImmutableList.of("Webserver"));
+   }
+
+   @Test
+   public void testNullWithIAMInstanceProfileName() {
+      AWSRunInstancesOptions options = new AWSRunInstancesOptions();
+      assertEquals(options.buildFormParameters().get("IamInstanceProfile.Name"), ImmutableList.of());
+   }
+
+   @Test
+   public void testWithIAMInstanceProfileNameStatic() {
+      AWSRunInstancesOptions options = withIAMInstanceProfileName("Webserver");
+      assertEquals(options.buildFormParameters().get("IamInstanceProfile.Name"), ImmutableList.of("Webserver"));
+   }
+
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testWithIAMInstanceProfileNameNPE() {
+      withIAMInstanceProfileName(null);
    }
 
    @Test

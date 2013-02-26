@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2011-05-15/">
+<DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2012-06-01/">
     <requestId>a03c1896-0543-485f-a732-ebc83873a3ca</requestId>
     <reservationSet>
         <item>
@@ -70,7 +70,7 @@
                            <key>Empty</key>
                            <value />
                        </item>
-                    </tagSet>                    
+                    </tagSet>            
                 </item>
                 <item>
                     <instanceId>i-931444f2</instanceId>
@@ -121,6 +121,10 @@
                     <virtualizationType>paravirtual</virtualizationType>
                     <clientToken/>
                     <hypervisor>xen</hypervisor>
+                    <iamInstanceProfile>
+                        <arn>arn:aws:iam::123456789012:instance-profile/application_abc/component_xyz/Webserver</arn>
+                        <id>AIPAD5ARO2C5EXAMPLE3G</id>
+                    </iamInstanceProfile>
                 </item>
             </instancesSet>
         </item>
