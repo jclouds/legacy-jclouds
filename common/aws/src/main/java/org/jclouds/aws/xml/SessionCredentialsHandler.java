@@ -20,7 +20,7 @@ package org.jclouds.aws.xml;
 
 import javax.inject.Inject;
 
-import org.jclouds.aws.domain.TemporaryCredentials;
+import org.jclouds.aws.domain.SessionCredentials;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.SaxUtils;
@@ -32,32 +32,26 @@ import org.jclouds.util.SaxUtils;
  * 
  * @author Adrian Cole
  */
-public class TemporaryCredentialsHandler extends ParseSax.HandlerForGeneratedRequestWithResult<TemporaryCredentials> {
+public class SessionCredentialsHandler extends ParseSax.HandlerForGeneratedRequestWithResult<SessionCredentials> {
    private final DateService dateService;
 
    @Inject
-   protected TemporaryCredentialsHandler(DateService dateService) {
+   protected SessionCredentialsHandler(DateService dateService) {
       this.dateService = dateService;
    }
 
    private StringBuilder currentText = new StringBuilder();
-   private TemporaryCredentials.Builder builder = TemporaryCredentials.builder();
+   private SessionCredentials.Builder builder = SessionCredentials.builder();
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public TemporaryCredentials getResult() {
+   public SessionCredentials getResult() {
       try {
          return builder.build();
       } finally {
-         builder = TemporaryCredentials.builder();
+         builder = SessionCredentials.builder();
       }
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("AccessKeyId")) {
@@ -72,12 +66,8 @@ public class TemporaryCredentialsHandler extends ParseSax.HandlerForGeneratedReq
       currentText = new StringBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public void characters(char ch[], int start, int length) {
       currentText.append(ch, start, length);
    }
-
 }

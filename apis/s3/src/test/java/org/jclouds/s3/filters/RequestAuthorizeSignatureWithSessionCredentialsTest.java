@@ -21,7 +21,7 @@ package org.jclouds.s3.filters;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.ContextBuilder;
-import org.jclouds.aws.domain.TemporaryCredentials;
+import org.jclouds.aws.domain.SessionCredentials;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.domain.Credentials;
@@ -47,8 +47,8 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "unit", testName = "RequestAuthorizeSignatureWithTemporaryCredentialsTest")
-public class RequestAuthorizeSignatureWithTemporaryCredentialsTest {
+@Test(groups = "unit", testName = "RequestAuthorizeSignatureWithSessionCredentialsTest")
+public class RequestAuthorizeSignatureWithSessionCredentialsTest {
    public static Injector injector(Credentials creds) {
       return ContextBuilder.newBuilder("s3")
             .credentialsSupplier(Suppliers.<Credentials> ofInstance(creds))
@@ -68,7 +68,7 @@ public class RequestAuthorizeSignatureWithTemporaryCredentialsTest {
       return injector(creds).getInstance(RequestAuthorizeSignature.class);
    }
 
-   TemporaryCredentials temporaryCredentials =  TemporaryCredentials.builder()
+   SessionCredentials temporaryCredentials =  SessionCredentials.builder()
       .accessKeyId("AKIAIOSFODNN7EXAMPLE")
       .secretAccessKey("wJalrXUtnFEMI/K7MDENG/bPxRfiCYzEXAMPLEKEY")
       .sessionToken("AQoEXAMPLEH4aoAH0gNCAPyJxz4BlCFFxWNE1OPTgk5TthT")

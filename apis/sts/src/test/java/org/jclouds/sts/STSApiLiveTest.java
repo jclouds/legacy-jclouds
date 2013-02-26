@@ -22,12 +22,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.testng.Assert.assertTrue;
 
-import org.jclouds.aws.domain.TemporaryCredentials;
-import org.jclouds.sts.domain.UserAndTemporaryCredentials;
+import org.jclouds.aws.domain.SessionCredentials;
+import org.jclouds.sts.domain.UserAndSessionCredentials;
 import org.jclouds.sts.internal.BaseSTSApiLiveTest;
 import org.jclouds.sts.options.AssumeRoleOptions;
 import org.jclouds.sts.options.FederatedUserOptions;
-import org.jclouds.sts.options.TemporaryCredentialsOptions;
+import org.jclouds.sts.options.SessionCredentialsOptions;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
 
@@ -39,8 +39,8 @@ public class STSApiLiveTest extends BaseSTSApiLiveTest {
 
    @Test
    protected void testCreateTemporaryCredentials() {
-      TemporaryCredentials creds = api().createTemporaryCredentials(
-            new TemporaryCredentialsOptions().durationSeconds(MINUTES.toSeconds(15)));
+      SessionCredentials creds = api().createTemporaryCredentials(
+            new SessionCredentialsOptions().durationSeconds(MINUTES.toSeconds(15)));
       checkTemporaryCredentials(creds);
       // TODO: actually login to some service
       //
@@ -53,7 +53,7 @@ public class STSApiLiveTest extends BaseSTSApiLiveTest {
 
    @Test
    protected void testCreateFederatedUser() {
-      UserAndTemporaryCredentials user = api().createFederatedUser("Bob", new FederatedUserOptions().durationSeconds(MINUTES.toSeconds(15)));
+      UserAndSessionCredentials user = api().createFederatedUser("Bob", new FederatedUserOptions().durationSeconds(MINUTES.toSeconds(15)));
       checkTemporaryCredentials(user.getCredentials());
       assertTrue(user.getUser().getId().contains("Bob"), user + " id incorrect");
       assertTrue(user.getUser().getArn().contains("Bob"), user + " arn incorrect");
@@ -63,7 +63,7 @@ public class STSApiLiveTest extends BaseSTSApiLiveTest {
    @Test
    protected void testAssumeRole() {
       String arnToAssume = getTestArn();
-      UserAndTemporaryCredentials role = api().assumeRole(arnToAssume, "session",
+      UserAndSessionCredentials role = api().assumeRole(arnToAssume, "session",
             new AssumeRoleOptions().durationSeconds(MINUTES.toSeconds(15)));
       checkTemporaryCredentials(role.getCredentials());
       assertTrue(role.getUser().getId().contains("session"), role + " id incorrect");
@@ -75,7 +75,7 @@ public class STSApiLiveTest extends BaseSTSApiLiveTest {
       throw new SkipException("TODO: need to query a valid arn to assume");
    }
 
-   private void checkTemporaryCredentials(TemporaryCredentials creds) {
+   private void checkTemporaryCredentials(SessionCredentials creds) {
       checkNotNull(creds.getAccessKeyId(), "AccessKeyId cannot be null for TemporaryCredentials.");
       checkNotNull(creds.getSecretAccessKey(), "SecretAccessKey cannot be null for TemporaryCredentials.");
       checkNotNull(creds.getSessionToken(), "SessionToken cannot be null for TemporaryCredentials.");

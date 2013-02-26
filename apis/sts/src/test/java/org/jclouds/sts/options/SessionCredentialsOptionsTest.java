@@ -18,9 +18,9 @@
  */
 package org.jclouds.sts.options;
 
-import static org.jclouds.sts.options.TemporaryCredentialsOptions.Builder.serialNumber;
-import static org.jclouds.sts.options.TemporaryCredentialsOptions.Builder.durationSeconds;
-import static org.jclouds.sts.options.TemporaryCredentialsOptions.Builder.tokenCode;
+import static org.jclouds.sts.options.SessionCredentialsOptions.Builder.serialNumber;
+import static org.jclouds.sts.options.SessionCredentialsOptions.Builder.durationSeconds;
+import static org.jclouds.sts.options.SessionCredentialsOptions.Builder.tokenCode;
 import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
@@ -31,36 +31,36 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "TemporaryCredentialsOptionsTest")
-public class TemporaryCredentialsOptionsTest {
+@Test(groups = "unit", testName = "SessionCredentialsOptionsTest")
+public class SessionCredentialsOptionsTest {
 
    public void testSerialNumber() {
-      TemporaryCredentialsOptions options = new TemporaryCredentialsOptions().serialNumber("YourMFADeviceSerialNumber");
+      SessionCredentialsOptions options = new SessionCredentialsOptions().serialNumber("YourMFADeviceSerialNumber");
       assertEquals(ImmutableSet.of("YourMFADeviceSerialNumber"), options.buildFormParameters().get("SerialNumber"));
    }
 
    public void testSerialNumberStatic() {
-      TemporaryCredentialsOptions options = serialNumber("YourMFADeviceSerialNumber");
+      SessionCredentialsOptions options = serialNumber("YourMFADeviceSerialNumber");
       assertEquals(ImmutableSet.of("YourMFADeviceSerialNumber"), options.buildFormParameters().get("SerialNumber"));
    }
 
    public void testDurationSeconds() {
-      TemporaryCredentialsOptions options = new TemporaryCredentialsOptions().durationSeconds(3600);
+      SessionCredentialsOptions options = new SessionCredentialsOptions().durationSeconds(3600);
       assertEquals(ImmutableSet.of("3600"), options.buildFormParameters().get("DurationSeconds"));
    }
 
    public void testDurationSecondsStatic() {
-      TemporaryCredentialsOptions options = durationSeconds(3600);
+      SessionCredentialsOptions options = durationSeconds(3600);
       assertEquals(ImmutableSet.of("3600"), options.buildFormParameters().get("DurationSeconds"));
    }
 
    public void testTokenCode() {
-      TemporaryCredentialsOptions options = new TemporaryCredentialsOptions().tokenCode("123456");
+      SessionCredentialsOptions options = new SessionCredentialsOptions().tokenCode("123456");
       assertEquals(ImmutableSet.of("123456"), options.buildFormParameters().get("TokenCode"));
    }
 
    public void testTokenCodeStatic() {
-      TemporaryCredentialsOptions options = tokenCode("123456");
+      SessionCredentialsOptions options = tokenCode("123456");
       assertEquals(ImmutableSet.of("123456"), options.buildFormParameters().get("TokenCode"));
    }
 

@@ -22,8 +22,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
-import org.jclouds.aws.domain.TemporaryCredentials;
-import org.jclouds.aws.xml.TemporaryCredentialsHandler;
+import org.jclouds.aws.domain.SessionCredentials;
+import org.jclouds.aws.xml.SessionCredentialsHandler;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
@@ -38,10 +38,10 @@ public class GetSessionTokenResponseTest extends BaseHandlerTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/session_token.xml");
 
-      TemporaryCredentials expected = expected();
+      SessionCredentials expected = expected();
 
-      TemporaryCredentialsHandler handler = injector.getInstance(TemporaryCredentialsHandler.class);
-      TemporaryCredentials result = factory.create(handler).parse(is);
+      SessionCredentialsHandler handler = injector.getInstance(SessionCredentialsHandler.class);
+      SessionCredentials result = factory.create(handler).parse(is);
 
       assertEquals(result, expected);
       assertEquals(result.getAccessKeyId(), expected.getAccessKeyId());
@@ -50,8 +50,8 @@ public class GetSessionTokenResponseTest extends BaseHandlerTest {
       assertEquals(result.getExpiration(), expected.getExpiration());
    }
 
-   public TemporaryCredentials expected() {
-      return TemporaryCredentials.builder()
+   public SessionCredentials expected() {
+      return SessionCredentials.builder()
             .accessKeyId("AKIAIOSFODNN7EXAMPLE")
             .secretAccessKey("wJalrXUtnFEMI/K7MDENG/bPxRfiCYzEXAMPLEKEY")
             .sessionToken("AQoEXAMPLEH4aoAH0gNCAPyJxz4BlCFFxWNE1OPTgk5TthT")
