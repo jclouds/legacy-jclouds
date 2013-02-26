@@ -22,15 +22,11 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Date;
 
-import org.jclouds.aws.ec2.domain.LaunchSpecification;
 import org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptions;
-import org.jclouds.aws.ec2.options.RequestSpotInstancesOptions;
 import org.jclouds.aws.ec2.xml.DescribeSpotPriceHistoryResponseHandler;
-import org.jclouds.aws.ec2.xml.SpotInstanceHandler;
-import org.jclouds.aws.ec2.xml.SpotInstancesHandler;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -38,6 +34,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.TypeLiteral;
 
+import com.google.common.collect.Lists;
 /**
  * Tests behavior of {@code SpotInstanceAsyncClient}
  * 
@@ -46,83 +43,6 @@ import com.google.inject.TypeLiteral;
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "SpotInstanceAsyncClientTest")
 public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotInstanceAsyncClient> {
-
-   HttpRequest requestSpotInstances = HttpRequest.builder().method("POST")
-                                                 .endpoint("https://ec2.us-east-1.amazonaws.com/")
-                                                 .addHeader("Host", "ec2.us-east-1.amazonaws.com")
-                                                 .addFormParam("Action", "RequestSpotInstances")
-                                                 .addFormParam("LaunchSpecification.ImageId", "m1.small")
-                                                 .addFormParam("LaunchSpecification.InstanceType", "ami-voo")
-                                                 .addFormParam("Signature", "5PZRT8xXMugx1ku/NxQpaGWqYLLbKwJksBbeldGLO2s=")
-                                                 .addFormParam("SignatureMethod", "HmacSHA256")
-                                                 .addFormParam("SignatureVersion", "2")
-                                                 .addFormParam("SpotPrice", "0.01")
-                                                 .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
-                                                 .addFormParam("Version", "2011-05-15")
-                                                 .addFormParam("AWSAccessKeyId", "identity").build();
-
-   public void testRequestSpotInstance() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SpotInstanceAsyncClient.class.getMethod("requestSpotInstanceInRegion", String.class,
-            float.class, String.class, String.class);
-      HttpRequest request = processor.createRequest(method, null, 0.01f, "m1.small", "ami-voo");
-
-      request = request.getFilters().get(0).filter(request);
-      
-      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, requestSpotInstances.getPayload().getRawContent().toString(),
-            "application/x-www-form-urlencoded", false);
-
-      assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, SpotInstanceHandler.class);
-      assertExceptionParserClassEquals(method, null);
-
-      checkFilters(request);
-   }
-
-   HttpRequest requestSpotInstancesOptions = HttpRequest.builder().method("POST")
-                                                        .endpoint("https://ec2.us-east-1.amazonaws.com/")
-                                                        .addHeader("Host", "ec2.us-east-1.amazonaws.com")
-                                                        .addFormParam("Action", "RequestSpotInstances")
-                                                        .addFormParam("AvailabilityZoneGroup", "availabilityZoneGroup")
-                                                        .addFormParam("InstanceCount", "3")
-                                                        .addFormParam("LaunchGroup", "launchGroup")
-                                                        .addFormParam("LaunchSpecification.ImageId", "ami-voo")
-                                                        .addFormParam("LaunchSpecification.InstanceType", "m1.small")
-                                                        .addFormParam("LaunchSpecification.KernelId", "kernelId")
-                                                        .addFormParam("LaunchSpecification.Placement.AvailabilityZone", "eu-west-1a")
-                                                        .addFormParam("LaunchSpecification.SecurityGroup.1", "group1")
-                                                        .addFormParam("Signature", "94pCsdmfYVMbMzofCeTvfvpQozIY6iDu0LewXvHl1ao=")
-                                                        .addFormParam("SignatureMethod", "HmacSHA256")
-                                                        .addFormParam("SignatureVersion", "2")
-                                                        .addFormParam("SpotPrice", "0.01")
-                                                        .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
-                                                        .addFormParam("ValidFrom", "1970-05-23T21%3A21%3A18Z")
-                                                        .addFormParam("ValidUntil", "2009-02-13T23%3A31%3A31Z")
-                                                        .addFormParam("Version", "2011-05-15")
-                                                        .addFormParam("AWSAccessKeyId", "identity").build();
-
-   public void testRequestSpotInstancesOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SpotInstanceAsyncClient.class.getMethod("requestSpotInstancesInRegion", String.class,
-            float.class, int.class, LaunchSpecification.class, RequestSpotInstancesOptions[].class);
-      HttpRequest request = processor.createRequest(method, "eu-west-1", 0.01, 3,
-            LaunchSpecification.builder().instanceType("m1.small").imageId("ami-voo").availabilityZone("eu-west-1a")
-                  .kernelId("kernelId").securityGroupName("group1").build(), new RequestSpotInstancesOptions().validFrom(from)
-                  .validUntil(to).availabilityZoneGroup("availabilityZoneGroup").launchGroup("launchGroup"));
-
-      request = request.getFilters().get(0).filter(request);
-      
-      assertRequestLineEquals(request, "POST https://ec2.eu-west-1.amazonaws.com/ HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: ec2.eu-west-1.amazonaws.com\n");
-      assertPayloadEquals(request, requestSpotInstancesOptions.getPayload().getRawContent().toString(),
-            "application/x-www-form-urlencoded", false);
-
-      assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, SpotInstancesHandler.class);
-      assertExceptionParserClassEquals(method, null);
-
-      checkFilters(request);
-   }
 
    public void testCancelSpotInstanceRequests() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SpotInstanceAsyncClient.class.getMethod("cancelSpotInstanceRequestsInRegion", String.class,
@@ -137,42 +57,6 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
-
-      checkFilters(request);
-   }
-
-   public void testDescribeSpotInstanceRequests() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SpotInstanceAsyncClient.class.getMethod("describeSpotInstanceRequestsInRegion", String.class,
-            String[].class);
-      HttpRequest request = processor.createRequest(method, (String) null);
-
-      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Action=DescribeSpotInstanceRequests",
-            "application/x-www-form-urlencoded", false);
-
-      assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, SpotInstancesHandler.class);
-      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
-
-      checkFilters(request);
-   }
-
-   public void testDescribeSpotInstanceRequestsArgs() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SpotInstanceAsyncClient.class.getMethod("describeSpotInstanceRequestsInRegion", String.class,
-            String[].class);
-      HttpRequest request = processor.createRequest(method, null, "1", "2");
-
-      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(
-            request,
-            "Action=DescribeSpotInstanceRequests&SpotInstanceRequestId.1=1&SpotInstanceRequestId.2=2",
-            "application/x-www-form-urlencoded", false);
-
-      assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, SpotInstancesHandler.class);
-      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(request);
    }

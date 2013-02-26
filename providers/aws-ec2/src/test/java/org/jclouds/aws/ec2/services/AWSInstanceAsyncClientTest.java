@@ -365,13 +365,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
                                                    .addFormParam("Action", "ModifyInstanceAttribute")
                                                    .addFormParam("Attribute", "userData")
                                                    .addFormParam("InstanceId", "1")
-                                                   .addFormParam("Signature", "nArJlrtyAfgqDnXxv%2B2y0r9O%2BIfUcitpQMjfQR0oeRM=")
-                                                   .addFormParam("SignatureMethod", "HmacSHA256")
-                                                   .addFormParam("SignatureVersion", "2")
-                                                   .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
-                                                   .addFormParam("Value", "dGVzdA%3D%3D")
-                                                   .addFormParam("Version", "2011-05-15")
-                                                   .addFormParam("AWSAccessKeyId", "identity").build();
+                                                   .addFormParam("Value", "dGVzdA%3D%3D").build();
 
    public void testSetUserDataForInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AWSInstanceAsyncClient.class.getMethod("setUserDataForInstanceInRegion", String.class, String.class,
@@ -382,7 +376,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, setUserDataForInstance.getPayload().getRawContent().toString(),
+      assertPayloadEquals(request, filter.filter(setUserDataForInstance).getPayload().getRawContent().toString(),
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -398,13 +392,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
                                                   .addFormParam("Action", "ModifyInstanceAttribute")
                                                   .addFormParam("Attribute", "ramdisk")
                                                   .addFormParam("InstanceId", "1")
-                                                  .addFormParam("Signature", "y9xr294R57Pjzzafq90Xi2LMi0JKj/Jwy5HL%2BYWyTvo=")
-                                                  .addFormParam("SignatureMethod", "HmacSHA256")
-                                                  .addFormParam("SignatureVersion", "2")
-                                                  .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
-                                                  .addFormParam("Value", "test")
-                                                  .addFormParam("Version", "2011-05-15")
-                                                  .addFormParam("AWSAccessKeyId", "identity").build();
+                                                  .addFormParam("Value", "test").build();
 
    public void testSetRamdiskForInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AWSInstanceAsyncClient.class.getMethod("setRamdiskForInstanceInRegion", String.class, String.class,
@@ -415,7 +403,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, setRamdiskForInstance.getPayload().getRawContent().toString(),
+      assertPayloadEquals(request, filter.filter(setRamdiskForInstance).getPayload().getRawContent().toString(),
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -431,13 +419,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
                                                  .addFormParam("Action", "ModifyInstanceAttribute")
                                                  .addFormParam("Attribute", "kernel")
                                                  .addFormParam("InstanceId", "1")
-                                                 .addFormParam("Signature", "vqAuTOcX6i8UfiVGAO/2yz2HHTqZyayiy/SiEU4ySws=")
-                                                 .addFormParam("SignatureMethod", "HmacSHA256")
-                                                 .addFormParam("SignatureVersion", "2")
-                                                 .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
-                                                 .addFormParam("Value", "test")
-                                                 .addFormParam("Version", "2011-05-15")
-                                                 .addFormParam("AWSAccessKeyId", "identity").build();
+                                                 .addFormParam("Value", "test").build();
 
    public void testSetKernelForInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AWSInstanceAsyncClient.class.getMethod("setKernelForInstanceInRegion", String.class, String.class,
@@ -448,7 +430,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, setKernelForInstance.getPayload().getRawContent().toString(),
+      assertPayloadEquals(request, filter.filter(setKernelForInstance).getPayload().getRawContent().toString(),
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -464,13 +446,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
                                                       .addFormParam("Action", "ModifyInstanceAttribute")
                                                       .addFormParam("Attribute", "disableApiTermination")
                                                       .addFormParam("InstanceId", "1")
-                                                      .addFormParam("Signature", "tOgWZ2rJ2KDgV55oMEa3RXKHvroiuqZfGfugBCV7ZLk=")
-                                                      .addFormParam("SignatureMethod", "HmacSHA256")
-                                                      .addFormParam("SignatureVersion", "2")
-                                                      .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
-                                                      .addFormParam("Value", "true")
-                                                      .addFormParam("Version", "2011-05-15")
-                                                      .addFormParam("AWSAccessKeyId", "identity").build();
+                                                      .addFormParam("Value", "true").build();
 
    public void testSetApiTerminationDisabledForInstanceInRegion() throws SecurityException, NoSuchMethodException,
             IOException {
@@ -482,7 +458,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, setApiTerminationDisabled.getPayload().getRawContent().toString(),
+      assertPayloadEquals(request, filter.filter(setApiTerminationDisabled).getPayload().getRawContent().toString(),
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -498,13 +474,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
                                                     .addFormParam("Action", "ModifyInstanceAttribute")
                                                     .addFormParam("Attribute", "instanceType")
                                                     .addFormParam("InstanceId", "1")
-                                                    .addFormParam("Signature", "DC1r80OrSLCVcVt/y3gUPWxRWrPK8T96FXjNfmCMwRY=")
-                                                    .addFormParam("SignatureMethod", "HmacSHA256")
-                                                    .addFormParam("SignatureVersion", "2")
-                                                    .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
-                                                    .addFormParam("Value", "c1.medium")
-                                                    .addFormParam("Version", "2011-05-15")
-                                                    .addFormParam("AWSAccessKeyId", "identity").build();
+                                                    .addFormParam("Value", "c1.medium").build();
 
    public void testSetInstanceTypeForInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AWSInstanceAsyncClient.class.getMethod("setInstanceTypeForInstanceInRegion", String.class,
@@ -515,7 +485,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, instanceTypeForInstance.getPayload().getRawContent().toString(),
+      assertPayloadEquals(request, filter.filter(instanceTypeForInstance).getPayload().getRawContent().toString(),
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -531,13 +501,7 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
                                                                  .addFormParam("Action", "ModifyInstanceAttribute")
                                                                  .addFormParam("Attribute", "instanceInitiatedShutdownBehavior")
                                                                  .addFormParam("InstanceId", "1")
-                                                                 .addFormParam("Signature", "HLu0ufuCEUPUrNzjMsmFvjqEFbdawad/7Hufdg9flbc=")
-                                                                 .addFormParam("SignatureMethod", "HmacSHA256")
-                                                                 .addFormParam("SignatureVersion", "2")
-                                                                 .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
-                                                                 .addFormParam("Value", "terminate")
-                                                                 .addFormParam("Version", "2011-05-15")
-                                                                 .addFormParam("AWSAccessKeyId", "identity").build();
+                                                                 .addFormParam("Value", "terminate").build();
 
    public void testSetInstanceInitiatedShutdownBehaviorForInstanceInRegion() throws SecurityException,
             NoSuchMethodException, IOException {
@@ -549,8 +513,8 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, setInstanceInitiatedShutdownBehavior.getPayload().getRawContent().toString(),
-            "application/x-www-form-urlencoded", false);
+      assertPayloadEquals(request, filter.filter(setInstanceInitiatedShutdownBehavior).getPayload().getRawContent()
+            .toString(), "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -558,6 +522,15 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
 
       checkFilters(request);
    }
+
+   HttpRequest setBlockDeviceMapping = HttpRequest.builder().method("POST")
+                                                           .endpoint("https://ec2.us-east-1.amazonaws.com/")
+                                                           .addHeader("Host", "ec2.us-east-1.amazonaws.com")
+                                                           .addFormParam("Action", "ModifyInstanceAttribute")
+                                                           .addFormParam("BlockDeviceMapping.1.DeviceName", "/dev/sda1")
+                                                           .addFormParam("BlockDeviceMapping.1.Ebs.DeleteOnTermination", "true")
+                                                           .addFormParam("BlockDeviceMapping.1.Ebs.VolumeId", "vol-test1")
+                                                           .addFormParam("InstanceId", "1").build();
 
    public void testSetBlockDeviceMappingForInstanceInRegion() throws SecurityException, NoSuchMethodException,
          IOException {
@@ -568,16 +541,11 @@ public class AWSInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<AWSIns
       mapping.put("/dev/sda1", new BlockDevice("vol-test1", true));
       HttpRequest request = processor.createRequest(method, null, "1", mapping);
 
+      request = request.getFilters().get(0).filter(request);
+
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(
-            request,
-            "Action=ModifyInstanceAttribute&InstanceId=1&BlockDeviceMapping.1.Ebs.VolumeId=vol-test1&BlockDeviceMapping.1.DeviceName=/dev/sda1&BlockDeviceMapping.1.Ebs.DeleteOnTermination=true",
-            "application/x-www-form-urlencoded", false);
-      filter.filter(request);// ensure encoding worked properly
-      assertPayloadEquals(
-            request,
-            "Action=ModifyInstanceAttribute&BlockDeviceMapping.1.DeviceName=/dev/sda1&BlockDeviceMapping.1.Ebs.DeleteOnTermination=true&BlockDeviceMapping.1.Ebs.VolumeId=vol-test1&InstanceId=1&Signature=qqJpPk8UmhPY9Jica0JSADEZiY3eHf9WETm%2B5tLT0NE%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Version=2011-05-15&AWSAccessKeyId=identity",
+      assertPayloadEquals(request, filter.filter(setBlockDeviceMapping).getPayload().getRawContent().toString(),
             "application/x-www-form-urlencoded", false);
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
