@@ -171,4 +171,23 @@ public class FloatingIPApiExpectTest extends BaseNovaApiExpectTest {
       assertNull(apiWhenNoServersExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().create());
    }
 
+   public void testAllocateWithPoolNameWhenResponseIs2xx() throws Exception {
+      HttpRequest createFloatingIP = HttpRequest
+            .builder()
+            .method("POST")
+            .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-floating-ips")
+            .addHeader("Accept", "application/json")
+            .addHeader("X-Auth-Token", authToken)
+            .payload(payloadFromStringWithContentType("{\"pool\":\"myPool\"}", "application/json")).build();
+
+      HttpResponse createFloatingIPResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/floatingip_details.json")).build();
+
+      NovaApi apiWhenFloatingIPsExist = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName,
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createFloatingIP,
+            createFloatingIPResponse);
+
+      assertEquals(apiWhenFloatingIPsExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().create("myPool").toString(),
+            new ParseFloatingIPTest().expected().toString());
+   }
 }

@@ -98,6 +98,20 @@ public interface FloatingIPAsyncApi {
    ListenableFuture<? extends FloatingIP> create();
 
    /**
+    * @see org.jclouds.openstack.nova.v2_0.extensions.FloatingIPApi#create
+    */
+   @Named("floatingip:create")
+   @POST
+   @Path("/os-floating-ips")
+   @SelectJson("floating_ip")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Produces(MediaType.APPLICATION_JSON)
+   @Fallback(NullOnNotFoundOr404.class)
+   @Payload("%7B\"pool\":\"{pool}\"%7D")
+   ListenableFuture<? extends FloatingIP> create(@PayloadParam("pool") String pool);
+
+
+   /**
     * @see FloatingIPApi#delete
     */
    @Named("floatingip:delete")
