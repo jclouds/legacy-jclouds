@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.0-alpha.3</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.labs</groupId>
@@ -33,7 +33,7 @@
     <description>jclouds components to access OAuth</description>
 
     <properties>
-        <jclouds.version>1.6.0-SNAPSHOT</jclouds.version>
+        <jclouds.version>1.6.0-alpha.3</jclouds.version>
         <test.oauth.identity>FIX_ME</test.oauth.identity>
         <test.oauth.credential>FIX_ME</test.oauth.credential>
         <test.oauth.endpoint>FIX_ME</test.oauth.endpoint>
