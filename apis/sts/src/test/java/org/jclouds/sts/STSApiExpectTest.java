@@ -20,7 +20,7 @@ package org.jclouds.sts;
 
 import static org.jclouds.sts.options.AssumeRoleOptions.Builder.externalId;
 import static org.jclouds.sts.options.FederatedUserOptions.Builder.policy;
-import static org.jclouds.sts.options.TemporaryCredentialsOptions.Builder.serialNumber;
+import static org.jclouds.sts.options.SessionCredentialsOptions.Builder.serialNumber;
 import static org.testng.Assert.assertEquals;
 
 import java.util.concurrent.TimeUnit;

@@ -23,9 +23,9 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.sts.domain.UserAndTemporaryCredentials;
+import org.jclouds.sts.domain.UserAndSessionCredentials;
 import org.jclouds.sts.domain.User;
-import org.jclouds.sts.xml.UserAndTemporaryCredentialsHandler;
+import org.jclouds.sts.xml.UserAndSessionCredentialsHandler;
 import org.testng.annotations.Test;
 
 /**
@@ -38,18 +38,18 @@ public class GetFederationTokenResponseTest extends BaseHandlerTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/federation_token.xml");
 
-      UserAndTemporaryCredentials expected = expected();
+      UserAndSessionCredentials expected = expected();
 
-      UserAndTemporaryCredentialsHandler handler = injector.getInstance(UserAndTemporaryCredentialsHandler.class);
-      UserAndTemporaryCredentials result = factory.create(handler).parse(is);
+      UserAndSessionCredentialsHandler handler = injector.getInstance(UserAndSessionCredentialsHandler.class);
+      UserAndSessionCredentials result = factory.create(handler).parse(is);
 
       assertEquals(result, expected);
       assertEquals(result.getUser(), expected.getUser());
       assertEquals(result.getPackedPolicySize(), expected.getPackedPolicySize());
    }
 
-   public UserAndTemporaryCredentials expected() {
-      return UserAndTemporaryCredentials.builder()
+   public UserAndSessionCredentials expected() {
+      return UserAndSessionCredentials.builder()
                         .credentials(new GetSessionTokenResponseTest().expected())
                         .user(User.fromIdAndArn("123456789012:Bob", "arn:aws:sts::123456789012:federated-user/Bob"))
                         .packedPolicySize(6).build();
