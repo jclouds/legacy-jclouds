@@ -18,6 +18,8 @@
  */
 package org.jclouds.aws.ec2.domain;
 
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Arrays;
@@ -29,7 +31,10 @@ import org.jclouds.ec2.domain.BlockDeviceMapping.MapEBSSnapshotToDevice;
 import org.jclouds.ec2.domain.BlockDeviceMapping.MapEphemeralDeviceToDevice;
 import org.jclouds.ec2.domain.BlockDeviceMapping.MapNewVolumeToDevice;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.rest.annotations.SinceApiVersion;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
@@ -62,6 +67,8 @@ public class LaunchSpecification {
       protected ImmutableSet.Builder<String> securityGroupIds = ImmutableSet.builder();
       protected ImmutableSet.Builder<String> securityGroupNames = ImmutableSet.builder();
       protected byte[] userData;
+      private String iamInstanceProfileArn;
+      private String iamInstanceProfileName;
 
       public void clear() {
          securityGroupIdToNames = ImmutableMap.builder();
@@ -77,6 +84,8 @@ public class LaunchSpecification {
          securityGroupIds = ImmutableSet.builder();
          securityGroupNames = ImmutableSet.builder();
          userData = null;
+         iamInstanceProfileArn = null;
+         iamInstanceProfileName = null;
       }
 
       public Builder securityGroupIdToNames(Map<String, String> securityGroupIdToNames) {
@@ -183,19 +192,52 @@ public class LaunchSpecification {
          return this;
       }
 
+      /**
+       * @see LaunchSpecification#getIAMInstanceProfile()
+       */
+      public Builder iamInstanceProfileArn(String iamInstanceProfileArn) {
+         this.iamInstanceProfileArn = iamInstanceProfileArn;
+         return this;
+      }
+
+      /**
+       * @see LaunchSpecification#getIAMInstanceProfile()
+       */
+      public Builder iamInstanceProfileName(String iamInstanceProfileName) {
+         this.iamInstanceProfileName = iamInstanceProfileName;
+         return this;
+      }
+
       public LaunchSpecification build() {
+         Optional<IAMInstanceProfileRequest> iamInstanceProfile;
+         if (iamInstanceProfileArn != null && iamInstanceProfileName != null) {
+            iamInstanceProfile = Optional.of(IAMInstanceProfileRequest.forArnAndName(iamInstanceProfileArn,
+                  iamInstanceProfileName));
+         } else if (iamInstanceProfileArn != null) {
+            iamInstanceProfile = Optional.of(IAMInstanceProfileRequest.forArn(iamInstanceProfileArn));
+         } else if (iamInstanceProfileName != null) {
+            iamInstanceProfile = Optional.of(IAMInstanceProfileRequest.forName(iamInstanceProfileName));
+         } else {
+            iamInstanceProfile = Optional.absent();
+         }
          return new LaunchSpecification(instanceType, imageId, kernelId, ramdiskId, availabilityZone, subnetId,
                keyName, securityGroupIdToNames.build(), blockDeviceMappings.build(), monitoringEnabled,
-               securityGroupIds.build(), securityGroupNames.build(), userData);
+               securityGroupIds.build(), securityGroupNames.build(), userData, iamInstanceProfile);
       }
 
       public static Builder fromLaunchSpecification(LaunchSpecification in) {
-         return new Builder().instanceType(in.getInstanceType()).imageId(in.getImageId()).kernelId(in.getKernelId())
+         Builder builder = new Builder();
+         builder.instanceType(in.getInstanceType()).imageId(in.getImageId()).kernelId(in.getKernelId())
                .ramdiskId(in.getRamdiskId()).availabilityZone(in.getAvailabilityZone()).subnetId(in.getSubnetId())
                .keyName(in.getKeyName()).securityGroupIdToNames(in.getSecurityGroupIdToNames())
                .securityGroupIds(in.getSecurityGroupIds()).securityGroupNames(in.getSecurityGroupNames())
                .blockDeviceMappings(in.getBlockDeviceMappings()).monitoringEnabled(in.isMonitoringEnabled())
                .userData(in.getUserData());
+         if (in.getIAMInstanceProfile().isPresent()) {
+            builder.iamInstanceProfileArn(in.getIAMInstanceProfile().get().getArn().orNull());
+            builder.iamInstanceProfileName(in.getIAMInstanceProfile().get().getName().orNull());
+         }
+         return builder;
       }
    }
 
@@ -212,11 +254,13 @@ public class LaunchSpecification {
    protected final Set<String> securityGroupNames;
    protected final Boolean monitoringEnabled;
    protected final byte[] userData;
+   protected final Optional<IAMInstanceProfileRequest> iamInstanceProfile;
 
    public LaunchSpecification(String instanceType, String imageId, String kernelId, String ramdiskId,
          String availabilityZone, String subnetId, String keyName, Map<String, String> securityGroupIdToNames,
          Iterable<? extends BlockDeviceMapping> blockDeviceMappings, Boolean monitoringEnabled,
-         Set<String> securityGroupIds, Set<String> securityGroupNames, byte[] userData) {
+         Set<String> securityGroupIds, Set<String> securityGroupNames, byte[] userData,
+         Optional<IAMInstanceProfileRequest> iamInstanceProfile) {
       this.instanceType = checkNotNull(instanceType, "instanceType");
       this.imageId = checkNotNull(imageId, "imageId");
       this.kernelId = kernelId;
@@ -230,6 +274,7 @@ public class LaunchSpecification {
       this.securityGroupNames = ImmutableSortedSet.copyOf(checkNotNull(securityGroupNames, "securityGroupNames"));
       this.monitoringEnabled = monitoringEnabled;
       this.userData = userData;
+      this.iamInstanceProfile = checkNotNull(iamInstanceProfile, "iamInstanceProfile");
    }
 
    public Map<String, String> getSecurityGroupIdToNames() {
@@ -322,6 +367,14 @@ public class LaunchSpecification {
       return userData;
    }
 
+   /**
+    * The IAM Instance Profile (IIP) associated with the instance.
+    */
+   @SinceApiVersion("2012-06-01")
+   public Optional<IAMInstanceProfileRequest> getIAMInstanceProfile() {
+      return iamInstanceProfile;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -338,6 +391,7 @@ public class LaunchSpecification {
       result = prime * result + ((securityGroupIdToNames == null) ? 0 : securityGroupIdToNames.hashCode());
       result = prime * result + ((securityGroupIds == null) ? 0 : securityGroupIds.hashCode());
       result = prime * result + ((securityGroupNames == null) ? 0 : securityGroupNames.hashCode());
+      result = prime * result + ((!iamInstanceProfile.isPresent()) ? 0 : iamInstanceProfile.get().hashCode());
       result = prime * result + Arrays.hashCode(userData);
       return result;
    }
@@ -411,6 +465,11 @@ public class LaunchSpecification {
             return false;
       } else if (!securityGroupNames.equals(other.securityGroupNames))
          return false;
+      if (!iamInstanceProfile.isPresent()) {
+         if (other.iamInstanceProfile.isPresent())
+            return false;
+      } else if (!iamInstanceProfile.get().equals(other.iamInstanceProfile.orNull()))
+         return false;
       if (!Arrays.equals(userData, other.userData))
          return false;
       return true;
@@ -426,7 +485,65 @@ public class LaunchSpecification {
             + ramdiskId + ", availabilityZone=" + availabilityZone + ", subnetId=" + subnetId + ", keyName=" + keyName
             + ", securityGroupIdToNames=" + securityGroupIdToNames + ", blockDeviceMappings=" + blockDeviceMappings
             + ", securityGroupIds=" + securityGroupIds + ", securityGroupNames=" + securityGroupNames
-            + ", monitoringEnabled=" + monitoringEnabled + ", userData=" + Arrays.toString(userData) + "]";
+            + ", monitoringEnabled=" + monitoringEnabled + ", userData=" + Arrays.toString(userData)
+            + ", iamInstanceProfile=" + iamInstanceProfile.orNull() + "]";
    }
 
+   @SinceApiVersion("2012-06-01")
+   public static class IAMInstanceProfileRequest {
+
+      public static IAMInstanceProfileRequest forArn(String arn) {
+         return new IAMInstanceProfileRequest(Optional.of(checkNotNull(arn, "arn")), Optional.<String> absent());
+      }
+
+      public static IAMInstanceProfileRequest forName(String name) {
+         return new IAMInstanceProfileRequest(Optional.<String> absent(), Optional.of(checkNotNull(name, "name")));
+      }
+
+      public static IAMInstanceProfileRequest forArnAndName(String arn, String name) {
+         return new IAMInstanceProfileRequest(Optional.of(checkNotNull(arn, "arn")), Optional.of(checkNotNull(name, "name")));
+      }
+
+      private final Optional<String> arn;
+      private final Optional<String> name;
+
+      private IAMInstanceProfileRequest(Optional<String> arn, Optional<String> name) {
+         this.arn = checkNotNull(arn, "arn");
+         this.name = checkNotNull(name, "name for %s", arn);
+      }
+
+      /**
+       * The Amazon resource name (ARN) of the IAM Instance Profile (IIP) to associate with the instance.
+       */
+      public Optional<String> getArn() {
+         return arn;
+      }
+
+      /**
+       * The name of the IAM Instance Profile (IIP) to associate with the instance.
+       */
+      public Optional<String> getName() {
+         return name;
+      }
+
+      @Override
+      public int hashCode() {
+         return Objects.hashCode(arn, name);
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null || getClass() != obj.getClass())
+            return false;
+         IAMInstanceProfileRequest that = IAMInstanceProfileRequest.class.cast(obj);
+         return equal(this.arn, that.arn) && equal(this.name, that.name);
+      }
+
+      @Override
+      public String toString() {
+         return toStringHelper("").omitNullValues().add("arn", arn.orNull()).add("name", name.orNull()).toString();
+      }
+   }
 }

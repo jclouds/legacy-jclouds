@@ -1,4 +1,4 @@
-<DescribeSpotInstanceRequestsResponse xmlns="http://ec2.amazonaws.com/doc/2011-05-15/">
+<DescribeSpotInstanceRequestsResponse xmlns="http://ec2.amazonaws.com/doc/2012-06-01/">
     <requestId>7c4dd2bd-106d-4cd3-987c-35ee819180a6</requestId>
     <spotInstanceRequestSet>
         <item>

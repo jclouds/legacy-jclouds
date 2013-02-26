@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.domain.LaunchSpecification;
+import org.jclouds.aws.ec2.domain.LaunchSpecification.IAMInstanceProfileRequest;
 import org.jclouds.aws.ec2.options.AWSRunInstancesOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
@@ -78,7 +79,13 @@ public class BindLaunchSpecificationToFormParams implements Binder, Function<Lau
          options.enableMonitoring();
       if (launchSpec.getUserData() != null)
          options.withUserData(launchSpec.getUserData());
-
+      if (launchSpec.getIAMInstanceProfile().isPresent()) {
+         IAMInstanceProfileRequest profile = launchSpec.getIAMInstanceProfile().get();
+         if (profile.getArn().isPresent())
+            options.withIAMInstanceProfileArn(profile.getArn().get());
+         if (profile.getName().isPresent())
+            options.withIAMInstanceProfileName(profile.getName().get());
+      }
       for (Entry<String, String> entry : options.buildFormParameters().entries()) {
          builder.put("LaunchSpecification." + entry.getKey(), entry.getValue());
       }

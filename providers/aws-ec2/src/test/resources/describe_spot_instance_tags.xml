@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<DescribeSpotInstanceRequestsResponse xmlns="http://ec2.amazonaws.com/doc/2011-05-15/">
+<DescribeSpotInstanceRequestsResponse xmlns="http://ec2.amazonaws.com/doc/2012-06-01/">
     <requestId>f2247378-7df0-4725-b55f-8ef58b557dcd</requestId>
     <spotInstanceRequestSet>
         <item>

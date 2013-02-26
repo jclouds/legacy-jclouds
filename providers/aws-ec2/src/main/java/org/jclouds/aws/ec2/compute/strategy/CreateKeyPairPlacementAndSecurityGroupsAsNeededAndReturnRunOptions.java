@@ -91,8 +91,13 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
       if (placementGroupName != null)
          instanceOptions.inPlacementGroup(placementGroupName);
 
-      if (AWSEC2TemplateOptions.class.cast(template.getOptions()).isMonitoringEnabled())
+      AWSEC2TemplateOptions awsTemplateOptions = AWSEC2TemplateOptions.class.cast(template.getOptions());
+      if (awsTemplateOptions.isMonitoringEnabled())
          instanceOptions.enableMonitoring();
+      if (awsTemplateOptions.getIAMInstanceProfileArn() != null)
+         instanceOptions.withIAMInstanceProfileArn(awsTemplateOptions.getIAMInstanceProfileArn());
+      if (awsTemplateOptions.getIAMInstanceProfileName() != null)
+         instanceOptions.withIAMInstanceProfileName(awsTemplateOptions.getIAMInstanceProfileName());
 
       return instanceOptions;
    }

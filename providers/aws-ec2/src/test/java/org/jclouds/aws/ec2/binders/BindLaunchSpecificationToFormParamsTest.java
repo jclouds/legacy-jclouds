@@ -75,4 +75,26 @@ public class BindLaunchSpecificationToFormParamsTest {
       assertEquals(binder.apply(spec), ImmutableMap.of("LaunchSpecification.InstanceType", "t1.micro",
             "LaunchSpecification.ImageId", "ami-123", "LaunchSpecification.SubnetId", "subnet-xyz"));
    }
+
+   @Test
+   public void testApplyWithIAMInstanceProfileArn() {
+      LaunchSpecification spec = LaunchSpecification.builder()
+            .instanceType(InstanceType.T1_MICRO)
+            .imageId("ami-123")
+            .iamInstanceProfileArn("arn:aws:iam::123456789012:instance-profile/application_abc/component_xyz/Webserver")
+            .build();
+
+      assertEquals(binder.apply(spec), ImmutableMap.of("LaunchSpecification.InstanceType", "t1.micro",
+            "LaunchSpecification.ImageId", "ami-123", "LaunchSpecification.IamInstanceProfile.Arn",
+            "arn:aws:iam::123456789012:instance-profile/application_abc/component_xyz/Webserver"));
+   }
+
+   @Test
+   public void testApplyWithIAMInstanceProfileName() {
+      LaunchSpecification spec = LaunchSpecification.builder().instanceType(InstanceType.T1_MICRO).imageId("ami-123")
+            .iamInstanceProfileName("Webserver").build();
+
+      assertEquals(binder.apply(spec), ImmutableMap.of("LaunchSpecification.InstanceType", "t1.micro",
+            "LaunchSpecification.ImageId", "ami-123", "LaunchSpecification.IamInstanceProfile.Name", "Webserver"));
+   }
 }
