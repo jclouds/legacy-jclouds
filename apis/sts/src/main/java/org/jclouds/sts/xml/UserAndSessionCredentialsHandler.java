@@ -21,10 +21,10 @@ package org.jclouds.sts.xml;
 import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
-import org.jclouds.aws.xml.TemporaryCredentialsHandler;
+import org.jclouds.aws.xml.SessionCredentialsHandler;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.sts.domain.User;
-import org.jclouds.sts.domain.UserAndTemporaryCredentials;
+import org.jclouds.sts.domain.UserAndSessionCredentials;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -34,27 +34,24 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
-public class UserAndTemporaryCredentialsHandler extends ParseSax.HandlerForGeneratedRequestWithResult<UserAndTemporaryCredentials> {
+public class UserAndSessionCredentialsHandler extends ParseSax.HandlerForGeneratedRequestWithResult<UserAndSessionCredentials> {
 
-   private final TemporaryCredentialsHandler credsHandler;
+   private final SessionCredentialsHandler credsHandler;
 
    private StringBuilder currentText = new StringBuilder();
-   private UserAndTemporaryCredentials.Builder builder = UserAndTemporaryCredentials.builder();
+   private UserAndSessionCredentials.Builder builder = UserAndSessionCredentials.builder();
 
    @Inject
-   public UserAndTemporaryCredentialsHandler(TemporaryCredentialsHandler credsHandler) {
+   public UserAndSessionCredentialsHandler(SessionCredentialsHandler credsHandler) {
       this.credsHandler = credsHandler;
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public UserAndTemporaryCredentials getResult() {
+   public UserAndSessionCredentials getResult() {
       try {
          return builder.build();
       } finally {
-         builder = UserAndTemporaryCredentials.builder();
+         builder = UserAndSessionCredentials.builder();
       }
    }
 

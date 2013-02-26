@@ -24,7 +24,7 @@ import static org.testng.Assert.assertEquals;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.ContextBuilder;
-import org.jclouds.aws.xml.TemporaryCredentialsHandlerTest;
+import org.jclouds.aws.xml.SessionCredentialsHandlerTest;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRequest;
@@ -84,7 +84,7 @@ public class FormSignerTest {
 
    @Test
    void testAddsSecurityToken() {
-      HttpRequest filtered = filter(new TemporaryCredentialsHandlerTest().expected()).filter(request);
+      HttpRequest filtered = filter(new SessionCredentialsHandlerTest().expected()).filter(request);
       assertEquals(
             filtered.getPayload().getRawContent(),
             "Action=DescribeImages&ImageId.1=ami-2bb65342&SecurityToken=AQoEXAMPLEH4aoAH0gNCAPyJxz4BlCFFxWNE1OPTgk5TthT&Signature=/8ReFVH1tvyNORsJb%2BSBieT9zvdqREQQr/olwmxC7VY%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Version=apiVersion&AWSAccessKeyId=AKIAIOSFODNN7EXAMPLE");

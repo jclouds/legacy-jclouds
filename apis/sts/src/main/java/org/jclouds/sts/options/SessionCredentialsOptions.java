@@ -32,7 +32,7 @@ import com.google.common.collect.Multimap;
  * 
  * @author Adrian Cole
  */
-public class TemporaryCredentialsOptions extends BaseHttpRequestOptions implements Cloneable {
+public class SessionCredentialsOptions extends BaseHttpRequestOptions implements Cloneable {
 
    // long as this is a more typical unit for duration, hence less casting
    private Long durationSeconds;
@@ -42,7 +42,7 @@ public class TemporaryCredentialsOptions extends BaseHttpRequestOptions implemen
    /**
     * The identification number of the MFA device for the user.
     */
-   public TemporaryCredentialsOptions serialNumber(String serialNumber) {
+   public SessionCredentialsOptions serialNumber(String serialNumber) {
       this.serialNumber = serialNumber;
       return this;
    }
@@ -51,7 +51,7 @@ public class TemporaryCredentialsOptions extends BaseHttpRequestOptions implemen
     * The duration, in seconds, that the credentials should remain valid. 12
     * hours is default. 15 minutes is current minimum.
     */
-   public TemporaryCredentialsOptions durationSeconds(long durationSeconds) {
+   public SessionCredentialsOptions durationSeconds(long durationSeconds) {
       this.durationSeconds = durationSeconds;
       return this;
    }
@@ -59,7 +59,7 @@ public class TemporaryCredentialsOptions extends BaseHttpRequestOptions implemen
    /**
     * The value provided by the MFA device.
     */
-   public TemporaryCredentialsOptions tokenCode(String tokenCode) {
+   public SessionCredentialsOptions tokenCode(String tokenCode) {
       this.tokenCode = tokenCode;
       return this;
    }
@@ -67,24 +67,24 @@ public class TemporaryCredentialsOptions extends BaseHttpRequestOptions implemen
    public static class Builder {
 
       /**
-       * @see TemporaryCredentialsOptions#serialNumber
+       * @see SessionCredentialsOptions#serialNumber
        */
-      public static TemporaryCredentialsOptions serialNumber(String serialNumber) {
-         return new TemporaryCredentialsOptions().serialNumber(serialNumber);
+      public static SessionCredentialsOptions serialNumber(String serialNumber) {
+         return new SessionCredentialsOptions().serialNumber(serialNumber);
       }
 
       /**
-       * @see TemporaryCredentialsOptions#durationSeconds
+       * @see SessionCredentialsOptions#durationSeconds
        */
-      public static TemporaryCredentialsOptions durationSeconds(long durationSeconds) {
-         return new TemporaryCredentialsOptions().durationSeconds(durationSeconds);
+      public static SessionCredentialsOptions durationSeconds(long durationSeconds) {
+         return new SessionCredentialsOptions().durationSeconds(durationSeconds);
       }
 
       /**
-       * @see TemporaryCredentialsOptions#tokenCode
+       * @see SessionCredentialsOptions#tokenCode
        */
-      public static TemporaryCredentialsOptions tokenCode(String tokenCode) {
-         return new TemporaryCredentialsOptions().tokenCode(tokenCode);
+      public static SessionCredentialsOptions tokenCode(String tokenCode) {
+         return new SessionCredentialsOptions().tokenCode(tokenCode);
       }
    }
 
@@ -109,8 +109,8 @@ public class TemporaryCredentialsOptions extends BaseHttpRequestOptions implemen
    }
 
    @Override
-   public TemporaryCredentialsOptions clone() {
-      return new TemporaryCredentialsOptions().serialNumber(serialNumber).durationSeconds(durationSeconds)
+   public SessionCredentialsOptions clone() {
+      return new SessionCredentialsOptions().serialNumber(serialNumber).durationSeconds(durationSeconds)
             .tokenCode(tokenCode);
    }
 
@@ -125,7 +125,7 @@ public class TemporaryCredentialsOptions extends BaseHttpRequestOptions implemen
          return false;
       if (getClass() != obj.getClass())
          return false;
-      TemporaryCredentialsOptions other = TemporaryCredentialsOptions.class.cast(obj);
+      SessionCredentialsOptions other = SessionCredentialsOptions.class.cast(obj);
       return Objects.equal(this.serialNumber, other.serialNumber)
             && Objects.equal(this.durationSeconds, other.durationSeconds)
             && Objects.equal(this.tokenCode, other.tokenCode);

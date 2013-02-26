@@ -20,7 +20,7 @@ package org.jclouds.sts.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.aws.domain.TemporaryCredentials;
+import org.jclouds.aws.domain.SessionCredentials;
 
 import com.google.common.base.Objects;
 
@@ -28,7 +28,7 @@ import com.google.common.base.Objects;
  * 
  * @author Adrian Cole
  */
-public final class UserAndTemporaryCredentials {
+public final class UserAndSessionCredentials {
    public static Builder builder() {
       return new Builder();
    }
@@ -39,11 +39,11 @@ public final class UserAndTemporaryCredentials {
 
    public final static class Builder {
       private User user;
-      private TemporaryCredentials credentials;
+      private SessionCredentials credentials;
       private int packedPolicySize;
 
       /**
-       * @see UserAndTemporaryCredentials#getUser()
+       * @see UserAndSessionCredentials#getUser()
        */
       public Builder user(User user) {
          this.user = user;
@@ -51,42 +51,42 @@ public final class UserAndTemporaryCredentials {
       }
 
       /**
-       * @see UserAndTemporaryCredentials#getCredentials()
+       * @see UserAndSessionCredentials#getCredentials()
        */
-      public Builder credentials(TemporaryCredentials credentials) {
+      public Builder credentials(SessionCredentials credentials) {
          this.credentials = credentials;
          return this;
       }
 
       /**
-       * @see UserAndTemporaryCredentials#getPackedPolicySize()
+       * @see UserAndSessionCredentials#getPackedPolicySize()
        */
       public Builder packedPolicySize(int packedPolicySize) {
          this.packedPolicySize = packedPolicySize;
          return this;
       }
 
-      public UserAndTemporaryCredentials build() {
-         return new UserAndTemporaryCredentials(user, credentials, packedPolicySize);
+      public UserAndSessionCredentials build() {
+         return new UserAndSessionCredentials(user, credentials, packedPolicySize);
       }
 
-      public Builder from(UserAndTemporaryCredentials in) {
+      public Builder from(UserAndSessionCredentials in) {
          return this.user(in.user).credentials(in.credentials).packedPolicySize(in.packedPolicySize);
       }
    }
 
    private final User user;
-   private final TemporaryCredentials credentials;
+   private final SessionCredentials credentials;
    private final int packedPolicySize;
 
-   private UserAndTemporaryCredentials(User user, TemporaryCredentials credentials, int packedPolicySize) {
+   private UserAndSessionCredentials(User user, SessionCredentials credentials, int packedPolicySize) {
       this.user = checkNotNull(user, "user");
       this.credentials = checkNotNull(credentials, "credentials for %s", user);
       this.packedPolicySize = checkNotNull(packedPolicySize, "packedPolicySize for %s", user);
    }
 
    /**
-    * user correlating to {@link UserAndTemporaryCredentials#getCredentials()}
+    * user correlating to {@link UserAndSessionCredentials#getCredentials()}
     */
    public User getUser() {
       return user;
@@ -96,7 +96,7 @@ public final class UserAndTemporaryCredentials {
     * The temporary security credentials, which includes an Access Key ID, a
     * Secret Access Key, and a security token.
     */
-   public TemporaryCredentials getCredentials() {
+   public SessionCredentials getCredentials() {
       return credentials;
    }
 
@@ -120,7 +120,7 @@ public final class UserAndTemporaryCredentials {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      UserAndTemporaryCredentials other = (UserAndTemporaryCredentials) obj;
+      UserAndSessionCredentials other = (UserAndSessionCredentials) obj;
       return Objects.equal(this.user, other.user) && Objects.equal(this.credentials, other.credentials)
             && Objects.equal(this.packedPolicySize, other.packedPolicySize);
    }

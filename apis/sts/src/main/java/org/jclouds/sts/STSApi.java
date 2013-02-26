@@ -18,12 +18,12 @@
  */
 package org.jclouds.sts;
 
-import org.jclouds.aws.domain.TemporaryCredentials;
+import org.jclouds.aws.domain.SessionCredentials;
 import org.jclouds.sts.domain.User;
-import org.jclouds.sts.domain.UserAndTemporaryCredentials;
+import org.jclouds.sts.domain.UserAndSessionCredentials;
 import org.jclouds.sts.options.AssumeRoleOptions;
 import org.jclouds.sts.options.FederatedUserOptions;
-import org.jclouds.sts.options.TemporaryCredentialsOptions;
+import org.jclouds.sts.options.SessionCredentialsOptions;
 
 /**
  * Provides access to Amazon STS via the Query API
@@ -38,13 +38,13 @@ public interface STSApi {
     * Returns a set of temporary credentials for an AWS account or IAM user,
     * with a default timeout
     */
-   TemporaryCredentials createTemporaryCredentials();
+   SessionCredentials createTemporaryCredentials();
 
    /**
     * like {@link #createTemporaryCredentials()}, except you can modify the
     * timeout and other parameters.
     */
-   TemporaryCredentials createTemporaryCredentials(TemporaryCredentialsOptions options);
+   SessionCredentials createTemporaryCredentials(SessionCredentialsOptions options);
 
    /**
     * Assumes a role for a specified session. Only IAM users can assume a role.
@@ -56,13 +56,13 @@ public interface STSApi {
     *           The Amazon Resource Name (ARN) of the role that the caller is
     *           assuming.
     */
-   UserAndTemporaryCredentials assumeRole(String roleArn, String sessionName);
+   UserAndSessionCredentials assumeRole(String roleArn, String sessionName);
    
    /**
     * like {@link #assumeRole(String, String)}, except you can modify the
     * timeout and other parameters.
     */
-   UserAndTemporaryCredentials assumeRole(String roleArn, String sessionName, AssumeRoleOptions options);
+   UserAndSessionCredentials assumeRole(String roleArn, String sessionName, AssumeRoleOptions options);
    
    /**
     * Returns a set of temporary credentials for a federated user with the user
@@ -72,12 +72,12 @@ public interface STSApi {
     *           The name of the federated user, included as part of
     *           {@link User#getId}.
     */
-   UserAndTemporaryCredentials createFederatedUser(String userName);
+   UserAndSessionCredentials createFederatedUser(String userName);
    
    /**
     * like {@link #createFederatedUser(String)}, except you can modify the
     * timeout and other parameters.
     */
-   UserAndTemporaryCredentials createFederatedUser(String userName, FederatedUserOptions options);
+   UserAndSessionCredentials createFederatedUser(String userName, FederatedUserOptions options);
 
 }

@@ -47,7 +47,7 @@ import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.domain.TemporaryCredentials;
+import org.jclouds.aws.domain.SessionCredentials;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.domain.Credentials;
@@ -206,8 +206,8 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
       params.removeAll(SIGNATURE);
       params.removeAll(SECURITY_TOKEN);
       Credentials current = creds.get();
-      if (current instanceof TemporaryCredentials) {
-         params.put(SECURITY_TOKEN, TemporaryCredentials.class.cast(current).getSessionToken());
+      if (current instanceof SessionCredentials) {
+         params.put(SECURITY_TOKEN, SessionCredentials.class.cast(current).getSessionToken());
       }
       params.replaceValues(SIGNATURE_METHOD, ImmutableList.of("HmacSHA256"));
       params.replaceValues(SIGNATURE_VERSION, ImmutableList.of("2"));
