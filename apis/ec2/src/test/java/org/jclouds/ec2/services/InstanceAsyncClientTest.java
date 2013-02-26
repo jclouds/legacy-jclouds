@@ -547,6 +547,15 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       checkFilters(request);
    }
 
+   HttpRequest setBlockDeviceMapping = HttpRequest.builder().method("POST")
+                                                           .endpoint("https://ec2.us-east-1.amazonaws.com/")
+                                                           .addHeader("Host", "ec2.us-east-1.amazonaws.com")
+                                                           .addFormParam("Action", "ModifyInstanceAttribute")
+                                                           .addFormParam("BlockDeviceMapping.1.DeviceName", "/dev/sda1")
+                                                           .addFormParam("BlockDeviceMapping.1.Ebs.DeleteOnTermination", "true")
+                                                           .addFormParam("BlockDeviceMapping.1.Ebs.VolumeId", "vol-test1")
+                                                           .addFormParam("InstanceId", "1").build();
+
    public void testSetBlockDeviceMappingForInstanceInRegion() throws SecurityException, NoSuchMethodException,
             IOException {
       Invokable<?, ?> method = method(InstanceAsyncClient.class, "setBlockDeviceMappingForInstanceInRegion", String.class,
@@ -556,20 +565,13 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
       mapping.put("/dev/sda1", new BlockDevice("vol-test1", true));
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "1", mapping));
 
+      request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
+
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(
-               request,
-               "Action=ModifyInstanceAttribute&InstanceId=1&BlockDeviceMapping.1.Ebs.VolumeId=vol-test1&BlockDeviceMapping.1.DeviceName=/dev/sda1&BlockDeviceMapping.1.Ebs.DeleteOnTermination=true",
-               "application/x-www-form-urlencoded", false);
-      filter.filter(request);// ensure encoding worked properly
-      assertPayloadEquals(
-               request,
-               "Action=ModifyInstanceAttribute&BlockDeviceMapping.1.DeviceName=/dev/sda1&BlockDeviceMapping.1.Ebs.DeleteOnTermination=true&BlockDeviceMapping.1.Ebs.VolumeId=vol-test1&InstanceId=1&Signature=RwY8lVPHSQxQkd5efUKccHdSTkN4OxMIMFiYAe3rrUE%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Version=2010-06-15&AWSAccessKeyId=identity",
-               "application/x-www-form-urlencoded", false);
-      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
-      assertSaxResponseParserClassEquals(method, null);
-      assertFallbackClassEquals(method, null);
+      assertPayloadEquals(request, filter.filter(setBlockDeviceMapping).getPayload().getRawContent().toString(),
+            "application/x-www-form-urlencoded", false);
+
 
       checkFilters(request);
    }

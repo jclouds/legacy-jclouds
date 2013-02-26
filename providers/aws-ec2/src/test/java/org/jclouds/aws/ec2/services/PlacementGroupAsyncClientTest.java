@@ -64,13 +64,7 @@ public class PlacementGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<Pla
                                                  .addHeader("Host", "ec2.us-east-1.amazonaws.com")
                                                  .addFormParam("Action", "CreatePlacementGroup")
                                                  .addFormParam("GroupName", "name")
-                                                 .addFormParam("Signature", "V3o3tjvFQfI1zdP4iZJLnlusP3dSpPFx7bJVJlJbs2w=")
-                                                 .addFormParam("SignatureMethod", "HmacSHA256")
-                                                 .addFormParam("SignatureVersion", "2")
-                                                 .addFormParam("Strategy", "cluster")
-                                                 .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
-                                                 .addFormParam("Version", "2011-05-15")
-                                                 .addFormParam("AWSAccessKeyId", "identity").build();
+                                                 .addFormParam("Strategy", "cluster").build();
 
    public void testCreatePlacementGroup() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = method(PlacementGroupAsyncClient.class, "createPlacementGroupInRegion", String.class,
@@ -81,7 +75,7 @@ public class PlacementGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<Pla
       
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, createPlacementGroup.getPayload().getRawContent().toString(),
+      assertPayloadEquals(request, filter.filter(createPlacementGroup).getPayload().getRawContent().toString(),
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
