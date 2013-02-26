@@ -23,18 +23,18 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import org.jclouds.aws.domain.TemporaryCredentials;
+import org.jclouds.aws.domain.SessionCredentials;
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.aws.xml.TemporaryCredentialsHandler;
+import org.jclouds.aws.xml.SessionCredentialsHandler;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.sts.domain.UserAndTemporaryCredentials;
+import org.jclouds.sts.domain.UserAndSessionCredentials;
 import org.jclouds.sts.options.AssumeRoleOptions;
 import org.jclouds.sts.options.FederatedUserOptions;
-import org.jclouds.sts.options.TemporaryCredentialsOptions;
-import org.jclouds.sts.xml.UserAndTemporaryCredentialsHandler;
+import org.jclouds.sts.options.SessionCredentialsOptions;
+import org.jclouds.sts.xml.UserAndSessionCredentialsHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -55,19 +55,19 @@ public interface STSAsyncApi {
    @Named("GetSessionToken")
    @POST
    @Path("/")
-   @XMLResponseParser(TemporaryCredentialsHandler.class)
+   @XMLResponseParser(SessionCredentialsHandler.class)
    @FormParams(keys = "Action", values = "GetSessionToken")
-   ListenableFuture<TemporaryCredentials> createTemporaryCredentials();
+   ListenableFuture<SessionCredentials> createTemporaryCredentials();
 
    /**
-    * @see STSApi#createTemporaryCredentials(TemporaryCredentialsOptions)
+    * @see STSApi#createTemporaryCredentials(SessionCredentialsOptions)
     */
    @Named("GetSessionToken")
    @POST
    @Path("/")
-   @XMLResponseParser(TemporaryCredentialsHandler.class)
+   @XMLResponseParser(SessionCredentialsHandler.class)
    @FormParams(keys = "Action", values = "GetSessionToken")
-   ListenableFuture<TemporaryCredentials> createTemporaryCredentials(TemporaryCredentialsOptions options);
+   ListenableFuture<SessionCredentials> createTemporaryCredentials(SessionCredentialsOptions options);
 
    /**
     * @see STSApi#assumeRole(String, String)
@@ -75,9 +75,9 @@ public interface STSAsyncApi {
    @Named("AssumeRole")
    @POST
    @Path("/")
-   @XMLResponseParser(UserAndTemporaryCredentialsHandler.class)
+   @XMLResponseParser(UserAndSessionCredentialsHandler.class)
    @FormParams(keys = "Action", values = "AssumeRole")
-   ListenableFuture<UserAndTemporaryCredentials> assumeRole(@FormParam("RoleArn") String roleArn,
+   ListenableFuture<UserAndSessionCredentials> assumeRole(@FormParam("RoleArn") String roleArn,
          @FormParam("RoleSessionName") String sessionName);
 
    /**
@@ -86,9 +86,9 @@ public interface STSAsyncApi {
    @Named("AssumeRole")
    @POST
    @Path("/")
-   @XMLResponseParser(UserAndTemporaryCredentialsHandler.class)
+   @XMLResponseParser(UserAndSessionCredentialsHandler.class)
    @FormParams(keys = "Action", values = "AssumeRole")
-   ListenableFuture<UserAndTemporaryCredentials> assumeRole(@FormParam("RoleArn") String roleArn,
+   ListenableFuture<UserAndSessionCredentials> assumeRole(@FormParam("RoleArn") String roleArn,
          @FormParam("RoleSessionName") String sessionName, AssumeRoleOptions options);
    
    /**
@@ -97,9 +97,9 @@ public interface STSAsyncApi {
    @Named("GetFederationToken")
    @POST
    @Path("/")
-   @XMLResponseParser(UserAndTemporaryCredentialsHandler.class)
+   @XMLResponseParser(UserAndSessionCredentialsHandler.class)
    @FormParams(keys = "Action", values = "GetFederationToken")
-   ListenableFuture<UserAndTemporaryCredentials> createFederatedUser(@FormParam("Name") String userName);
+   ListenableFuture<UserAndSessionCredentials> createFederatedUser(@FormParam("Name") String userName);
 
    /**
     * @see STSApi#createFederatedUser(FederatedUserOptions)
@@ -107,7 +107,7 @@ public interface STSAsyncApi {
    @Named("GetFederationToken")
    @POST
    @Path("/")
-   @XMLResponseParser(UserAndTemporaryCredentialsHandler.class)
+   @XMLResponseParser(UserAndSessionCredentialsHandler.class)
    @FormParams(keys = "Action", values = "GetFederationToken")
-   ListenableFuture<UserAndTemporaryCredentials> createFederatedUser(@FormParam("Name") String userName, FederatedUserOptions options);
+   ListenableFuture<UserAndSessionCredentials> createFederatedUser(@FormParam("Name") String userName, FederatedUserOptions options);
 }

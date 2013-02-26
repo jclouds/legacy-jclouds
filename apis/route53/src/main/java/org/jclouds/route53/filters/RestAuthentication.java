@@ -33,7 +33,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.domain.TemporaryCredentials;
+import org.jclouds.aws.domain.SessionCredentials;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.domain.Credentials;
@@ -71,15 +71,15 @@ public class RestAuthentication implements HttpRequestFilter, RequestSigner {
 
    public HttpRequest filter(HttpRequest request) throws HttpException {
       Credentials current = creds.get();
-      if (current instanceof TemporaryCredentials) {
-         request = replaceSecurityTokenHeader(request, TemporaryCredentials.class.cast(current));
+      if (current instanceof SessionCredentials) {
+         request = replaceSecurityTokenHeader(request, SessionCredentials.class.cast(current));
       }
       request = replaceDateHeader(request, timeStampProvider.get());
       String signature = sign(createStringToSign(request));
       return replaceAuthorizationHeader(request, signature);
    }
 
-   private HttpRequest replaceSecurityTokenHeader(HttpRequest request, TemporaryCredentials current) {
+   private HttpRequest replaceSecurityTokenHeader(HttpRequest request, SessionCredentials current) {
       return request.toBuilder().replaceHeader("x-amz-security-token", current.getSessionToken()).build();
    }
 
