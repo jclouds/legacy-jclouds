@@ -31,86 +31,110 @@ import org.jclouds.snia.cdmi.v1.queryparams.DataObjectQueryParams;
  */
 public interface DataNonCDMIContentTypeApi {
    /**
-    * get CDMI Data object
+    * get CDMI Data object's payload
     * 
-    * @param containerName
-    *           containerName must end with a forward slash, /.
-    * @param dataObjectName
-    *           dataObjectName must not end with a forward slash, /.
-    * @return DataObjectNonCDMIContentType
+    * @param dataObject data object path in the form <containerName>/<dataObjectName>
+    * @return payload
     * 
     *         <pre>
     *  Examples: 
     *  {@code
-    *  dataObject = get("myDataObject");
-    *  dataObject = get("parentContainer/childContainer/","myDataObject");
+    *  payload = getPayload("mycontainer/myDataObject");
+    *  payload = getPayload("parentContainer/childContainer/myDataObject");
     * }
     * 
     * <pre>
-    * @see DataNonCDMIContentTypeAsyncApi#getValue(String dataObjectName)
+    * @see DataNonCDMIContentTypeAsyncApi#getPayload(String dataObjectName)
     */
-   Payload getValue(String dataObjectName);
+   Payload getPayload(String dataObject);
 
    /**
-    * get CDMI Data object
+    * get CDMI Data object's payload
     * 
-    * @param containerName
-    *           containerName must end with a forward slash, /.
-    * @param dataObjectName
-    *           dataObjectName must not end with a forward slash, /.
+    * @param dataObject data object path in the form <containerName>/<dataObjectName>
     * @param range
     *           a valid ranges-specifier (see RFC2616 Section 14.35.1)
-    * @return DataObjectNonCDMIContentType
+    * @return payload
     * 
     *         <pre>
     *  Examples: 
     *  {@code
-    *  dataObject = get("myDataObject","bytes=0-10");
+    *  payload = get("mycontainer/myDataObject","bytes=0-10");
     * }
     * 
     *         <pre>
     */
-   Payload getValue(String dataObjectName, String range);
+   Payload getPayload(String dataObject, String range);
 
    /**
     * get CDMI Data object
     * 
-    * @param containerName
-    *           containerName must end with a forward slash, /.
-    * @param dataObjectName
-    *           dataObjectName must not end with a forward slash, /.
+    * @param dataObject data object path in the form <containerName>/<dataObjectName>
     * @param queryParams
-    *           enables getting only certain fields, metadata, value range
+    *           enables specifying additional information when retrieving payload
+    * @return payload
+    * 
+    *         <pre>
+    *  Examples: 
+    *  {@code
+    *  dataObject = get("mycontainer/myDataObject","bytes=0-10");
+    * }
+    * 
+    *         <pre>
+    */
+   Payload getPayload(String dataObject, DataObjectQueryParams queryParams);
+
+   /**
+    * get CDMI Data object's payload constrained by byte range
+    * 
+    * @param dataObject data object path in the form <containerName>/<dataObjectName>
+    * @param range
+    *           a valid ranges-specifier (see RFC2616 Section 14.35.1)
+    * @param queryParams
+    *           enables getting only certain fields, metadata, value range, any
+    * @return Payload
+    * 
+    *         <pre>
+    *  Examples: 
+    *  {@code
+    *  dataObject = get("mycontainer/myDataObject","bytes=0-10");
+    * }
+    * 
+    *         <pre>
+    */
+   Payload getPayload(String dataObject, String range, DataObjectQueryParams queryParams);
+
+   /**
+    * get CDMI Data object
+    * 
+    * @param dataObject data object path in the form <containerName>/<dataObjectName>
+    * @param queryParams
+    *           enables getting only certain fields, metadata, value range, any
     * @return DataObject
     * 
     *         <pre>
     *  Examples: 
     *  {@code
-    *  dataObject = get("myDataObject",ContainerQueryParams.Builder.field("parentURI").field("objectName"));
-    *  dataObject = get("myDataObject",ContainerQueryParams.Builder.value(0,10));
+    *  dataObject = get("mycontainer/myDataObject",ContainerQueryParams.Builder.field("parentURI").field("objectName"));
+    *  dataObject = get("mycontainer/myDataObject",ContainerQueryParams.Builder.any("myquery=anyQueryParam"));
     * }
     * 
     *         <pre>
     */
-   DataObject get(String dataObjectName, DataObjectQueryParams queryParams);
+   DataObject get(String dataObject, DataObjectQueryParams queryParams);
 
    /**
     * create CDMI Data object Non CDMI Content Type
     * 
-    * @param containerName
-    *           containerName must end with a forward slash, /.
-    * @param dataObjectName
-    *           dataObjectName must not end with a forward slash, /.
+    * @param dataObject data object path in the form <containerName>/<dataObjectName>
     * @param payload
     *           enables defining the body's payload i.e. file, inputStream, String, ByteArray
+    * @return etag          
     * 
     *           <pre>
     *  Examples: 
     *  {@code
-    *  create("myDataObject",new StringPayload("value");
-    *  create("myDataObject",new ByteArrayPayload(bytes);
-    *  create("myDataObject",new FilePayload(myFileIn);
-    *  create("myDataObject",new InputStreamPayload(is);
+    *  create("mycontainer/myDataObject",Payloads.newPayload(X);
     *  
     *  File f = new File("yellow-flowers.jpg");
     *  payloadIn = new InputStreamPayload(new FileInputStream(f));
@@ -119,74 +143,66 @@ public interface DataNonCDMIContentTypeApi {
     *            .contentType(MediaType.JPEG.toString())
     *            .contentLength(new Long(inFile.length()))
     *            .build()));
-    *  dataNonCDMIContentTypeApi.create(containerName, f.getName(),
+    *  String etag = dataNonCDMIContentTypeApi.create(containerName+ f.getName(),
     * 					payloadIn);
     * }
     * 
     *           <pre>
     */
-   void create(String dataObjectName, Payload payload);
+   String create(String dataObject, Payload payload);
 
    /**
-    * create CDMI Data object partial Non CDMI Content Type Only part of the object is contained in
-    * the payload and the X-CDMI-Partial header flag is set to true
+    * create CDMI Data object partial Non CDMI Content Type Only part of the object is contained in the payload and the
+    * X-CDMI-Partial header flag is set to true
     * 
-    * 
-    * 
-    * @param dataObjectName
-    *           dataObjectName must not end with a forward slash, /.
+    * @param dataObject data object path in the form <containerName>/<dataObjectName>
     * @param payload
     *           enables defining the body's payload i.e. file, inputStream, String, ByteArray
+    * @param partial true|false 
+    *           true Indicates that the object is in the process of being updated 
+    *           and has not yet been fully updated. When set, the completionStatus 
+    *           field shall be set to "Processing".
+    * @param contentrange Content Range as described in RFC 2616, e.g. bytes 21010-47021/47022                           
     * 
     *           <pre>
     *  Examples: 
     *  {@code
-    *  createPartial("myDataObject",new StringPayload("value");
-    *  createPartial("myDataObject",new ByteArrayPayload(bytes);
-    *  createPartial("myDataObject",new FilePayload(myFileIn);
-    *  createPartial("myDataObject",new InputStreamPayload(is);
+    *  createPartial("mycontainer/myDataObject",Payloads.newPayload(X),true,bytes 21010-47021/47022);
     * }
     * 
     *           <pre>
     */
-   void createPartial(String dataObjectName, Payload payload);
+   void createPartial(String dataObject, Payload payload, boolean partial, String contentrange);
 
    /**
     * create CDMI Data object Non CDMI Content Type
     * 
-    * @param containerName
-    *           containerName must end with a forward slash, /.
-    * @param dataObjectName
-    *           dataObjectName must not end with a forward slash, /.
+    * @param dataObject data object path in the form <containerName>/<dataObjectName>
     * @param inputString
     *           simple string input
     * 
     *           <pre>
     *  Examples: 
     *  {@code
-    *  create("myDataObject",new String("value");
+    *  create("mycontainer/myDataObject",new String("value");
     * }
     * 
     *           <pre>
     */
-   void create(String dataObjectName, String inputString);
+   void create(String dataObject, String inputString);
 
    /**
     * delete CDMI Data object
     * 
-    * @param containerName
-    *           containerName must end with a forward slash, /.
-    * @param dataObjectName
-    *           dataObjectName must not end with a forward slash, /.
-    * 
+    * @param dataObject data object path in the form <containerName>/<dataObjectName>
     *           <pre>
     *  Examples: 
     *  {@code
-    *  delete("myDataObject");
+    *  delete("mycontainer/myDataObject");
     * }
     * 
     *           <pre>
     */
-   void delete(String dataObjectName);
+   void delete(String dataObject);
 
 }

@@ -17,8 +17,8 @@
  * under the License.
  */
 package org.jclouds.snia.cdmi.v1.features;
-
 import org.jclouds.snia.cdmi.v1.domain.DataObject;
+import org.jclouds.snia.cdmi.v1.functions.MultipartMimePayload;
 import org.jclouds.snia.cdmi.v1.options.CreateDataObjectOptions;
 import org.jclouds.snia.cdmi.v1.queryparams.DataObjectQueryParams;
 
@@ -33,16 +33,13 @@ public interface DataApi {
    /**
     * get CDMI Data object
     * 
-    * 
     * @param dataObjectName
-    *           dataObjectName must not end with a forward slash, /.
     * @return DataObject
     * 
     *         <pre>
     *  Examples: 
     *  {@code
     *  dataObject = get("myDataObject");
-    *  dataObject = get("parentContainer/childContainer","myDataObject");
     * }
     * 
     *         <pre>
@@ -52,9 +49,7 @@ public interface DataApi {
    /**
     * get CDMI Data object
     * 
-    * 
     * @param dataObjectName
-    *           dataObjectName must not end with a forward slash, /.
     * @param queryParams
     *           enables getting only certain fields, metadata, value range
     * @return DataObject
@@ -71,11 +66,17 @@ public interface DataApi {
    DataObject get(String dataObjectName, DataObjectQueryParams queryParams);
 
    /**
-    * create CDMI Data object
-    * 
+    * Get DataObject using Multi-part MIME.
     * 
     * @param dataObjectName
-    *           dataObjectName must not end with a forward slash, /.
+    * @return
+    */
+   DataObject getMultipartMime(String dataObjectName);
+
+   /**
+    * create CDMI Data object
+    * 
+    * @param dataObjectName
     * @param options
     *           enables defining the body i.e. metadata, mimetype, value
     * @return DataObject
@@ -96,11 +97,45 @@ public interface DataApi {
    DataObject create(String dataObjectName, CreateDataObjectOptions... options);
 
    /**
-    * delete CDMI Data object
+    * Create CDMI data object using Multi-part MIME Multi-part MIME is the CDMI
+    * mechanism to create an data object that contains binary data metadata in
+    * one automic operation. The other way is to set the valuetransferencoding
+    * to base64, but is results in a lot of extra overhead for both the client
+    * and server.
     * 
+    * @param dataObjectName
+    * @param payload
+    *           MultipartMimePayloadIn json metadata in first part and content
+    *           in second part
+    * @return DataObject without content
+    */
+   DataObject create(String dataObjectName, MultipartMimePayload payload);
+
+   /**
+    * Create CDDMI data object but return etag. Added to support Blobstore
     * 
     * @param dataObjectName
     *           dataObjectName must not end with a forward slash, /.
+    * @param options
+    * @return etag
+    */
+   String createRtnEtag(String dataObjectName, CreateDataObjectOptions... options);
+
+   /**
+    * Update a Data Object
+    * 
+    * @param dataObjectName
+    * @param queryParams
+    *           enables updating only certain fields, metadata, value range
+    * @param options
+    *           enables defining the body i.e. metadata, mimetype, value
+    */
+   String update(String dataObjectName, DataObjectQueryParams queryParams, CreateDataObjectOptions... options);
+
+   /**
+    * delete CDMI Data object
+    * 
+    * @param dataObjectName
     * 
     *           <pre>
     *  Examples: 

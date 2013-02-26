@@ -16,29 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.snia.cdmi.v1.options;
+package org.jclouds.snia.cdmi.v1.functions;
+import java.io.InputStream;
 
-import java.util.Map;
+import org.jclouds.io.MutableContentMetadata;
+import org.jclouds.io.payloads.BasePayload;
 
 /**
- * Optional Create CDMI Contain options
+ * Transform MulitpartMimeParts MultipartMimePayload
  * 
  * @author Kenneth Nagin
  */
-public class CreateContainerOptions extends CreateCDMIObjectOptions {
-   /**
-    * A name-value pair to associate with the container as metadata.
-    */
-   public CreateContainerOptions metadata(Map<String, String> metadata) {
-      super.metadata(metadata);
-      return this;
-
+public class MultipartMimePayload extends BasePayload<MultipartMimeParts> {
+	final MultipartMimeParts content;
+	public MultipartMimePayload(MultipartMimeParts content) {
+	   super(content);
+	   this.content = content;
+	   MutableContentMetadata contentMetadata = this.getContentMetadata();
+	   contentMetadata.setContentLength(content.getContentLength());	   
+	   this.setContentMetadata(contentMetadata);
    }
 
-   public static class Builder {
-      public static CreateContainerOptions metadata(Map<String, String> metadata) {
-         CreateContainerOptions options = new CreateContainerOptions();
-         return (CreateContainerOptions) options.metadata(metadata);
-      }
-   }
+	@Override
+	public InputStream getInput() {
+		return content.getInput();
+	}
 }

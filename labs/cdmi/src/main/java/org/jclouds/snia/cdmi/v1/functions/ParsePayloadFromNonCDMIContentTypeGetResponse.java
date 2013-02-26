@@ -16,21 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.snia.cdmi.v1.config;
+package org.jclouds.snia.cdmi.v1.functions;
+
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.io.Payload;
+import org.jclouds.rest.InvocationContext;
+
+import com.google.common.base.Function;
 
 /**
- * Configuration properties and constants used in SNIA CDMI connections.
+ * Parses payload from Non-CDMI Content Type Get response .
  * 
  * @author Kenneth Nagin
  */
-public interface CDMIProperties {
-   /**
-    * Property type for choosing which authorization type is used when accessing
-    * provider. For valid values:
-    * 
-    * @see org.jclouds.snia.cdmi.v1.filters.AuthTypes
-    */
-   public static final String AUTHTYPE = "jclouds.cdmi.authType";
-   public static final String ENDPOINT = "cdmi.endpoint";
+public class ParsePayloadFromNonCDMIContentTypeGetResponse implements Function<HttpResponse, Payload>,
+         InvocationContext<ParsePayloadFromNonCDMIContentTypeGetResponse> {
 
+   public Payload apply(HttpResponse from) {
+      Payload object = from.getPayload();
+      return object;
+   }
+
+   @Override
+   public ParsePayloadFromNonCDMIContentTypeGetResponse setContext(HttpRequest request) {
+      return this;
+   }
 }

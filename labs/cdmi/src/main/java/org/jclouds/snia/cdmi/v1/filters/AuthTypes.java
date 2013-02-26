@@ -16,21 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.snia.cdmi.v1.config;
+package org.jclouds.snia.cdmi.v1.filters;
 
 /**
- * Configuration properties and constants used in SNIA CDMI connections.
- * 
  * @author Kenneth Nagin
+ * 
  */
-public interface CDMIProperties {
-   /**
-    * Property type for choosing which authorization type is used when accessing
-    * provider. For valid values:
-    * 
-    * @see org.jclouds.snia.cdmi.v1.filters.AuthTypes
-    */
-   public static final String AUTHTYPE = "jclouds.cdmi.authType";
-   public static final String ENDPOINT = "cdmi.endpoint";
-
+public interface AuthTypes {
+	/**
+	 * Values for AUTHTYPE
+	 * 
+	 * @see org.jclouds.snia.cdmi.v1.config.CDMIProperties#AUTHTYPE
+	 */
+	public static final String OPENSTACKKEYSTONE_AUTHTYPE = "openstackKeystone";
+	public static final String BASICAUTHTID_AUTHTYPE = "basicAuthTid";
 }

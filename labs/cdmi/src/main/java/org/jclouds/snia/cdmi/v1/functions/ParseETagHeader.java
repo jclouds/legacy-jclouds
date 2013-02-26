@@ -16,29 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.snia.cdmi.v1.options;
+package org.jclouds.snia.cdmi.v1.functions;
 
-import java.util.Map;
+import static org.jclouds.http.HttpUtils.releasePayload;
+
+import javax.inject.Singleton;
+import javax.ws.rs.core.HttpHeaders;
+
+import org.jclouds.http.HttpResponse;
+
+import com.google.common.base.Function;
 
 /**
- * Optional Create CDMI Contain options
+ * Parses an MD5 checksum from the header {@link HttpHeaders#ETAG}.
  * 
  * @author Kenneth Nagin
  */
-public class CreateContainerOptions extends CreateCDMIObjectOptions {
-   /**
-    * A name-value pair to associate with the container as metadata.
-    */
-   public CreateContainerOptions metadata(Map<String, String> metadata) {
-      super.metadata(metadata);
-      return this;
+@Singleton
+public class ParseETagHeader implements Function<HttpResponse, String> {
 
-   }
-
-   public static class Builder {
-      public static CreateContainerOptions metadata(Map<String, String> metadata) {
-         CreateContainerOptions options = new CreateContainerOptions();
-         return (CreateContainerOptions) options.metadata(metadata);
+   public String apply(HttpResponse from) {
+      releasePayload(from);
+      String eTag = from.getFirstHeaderOrNull(HttpHeaders.ETAG);
+      if (eTag == null) {
+         eTag = "";
       }
+      return eTag;
    }
+
 }
+
