@@ -130,7 +130,10 @@ public class AWSDescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest 
                               new BlockDevice("vol-5029fc3a", Attachment.Status.ATTACHED, dateService
                                     .iso8601DateParse("2011-08-16T13:41:19.000Z"), true))
                         .hypervisor(Hypervisor.XEN)
-                        .virtualizationType("paravirtual").build()).build());
+                        .virtualizationType("paravirtual")
+                        .iamInstanceProfileArn("arn:aws:iam::123456789012:instance-profile/application_abc/component_xyz/Webserver")
+                        .iamInstanceProfileId("AIPAD5ARO2C5EXAMPLE3G")
+                        .build()).build());
 
       Set<Reservation<? extends RunningInstance>> result = parseAWSRunningInstances("/describe_instances_latest.xml");
 

@@ -1,4 +1,4 @@
-<DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2011-05-15/">
+<DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2012-06-01/">
         <requestId>xxxxxxxxxxxxxxxx</requestId>
         <securityGroupInfo>
             <item>

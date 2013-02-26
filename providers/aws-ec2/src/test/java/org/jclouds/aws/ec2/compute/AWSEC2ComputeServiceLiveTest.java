@@ -20,6 +20,7 @@ package org.jclouds.aws.ec2.compute;
 
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static com.google.common.collect.Sets.newTreeSet;
+import static java.util.logging.Logger.getAnonymousLogger;
 import static org.jclouds.compute.domain.OsFamily.AMZN_LINUX;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 import static org.jclouds.ec2.util.IpPermissions.permit;
@@ -36,6 +37,7 @@ import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.aws.ec2.services.AWSSecurityGroupClient;
+import org.jclouds.aws.iam.AWSIAMProviderMetadata;
 import org.jclouds.cloudwatch.CloudWatchApi;
 import org.jclouds.cloudwatch.CloudWatchAsyncApi;
 import org.jclouds.cloudwatch.domain.Dimension;
@@ -56,6 +58,9 @@ import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
+import org.jclouds.iam.IAMApi;
+import org.jclouds.iam.IAMAsyncApi;
+import org.jclouds.iam.domain.InstanceProfile;
 import org.jclouds.rest.RestContext;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.testng.annotations.Test;
@@ -82,6 +87,13 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
    public void testExtendedOptionsAndLogin() throws Exception {
       String region = "us-west-2";
 
+      RestContext<IAMApi, IAMAsyncApi> iamContext = ContextBuilder.newBuilder(new AWSIAMProviderMetadata())
+                                                                  .credentials(identity, credential)
+                                                                  .modules(setupModules()).build();
+      String profileName = "ec2Test";
+      // Note this needs to wait an undefined amount of time before it is visible to ec2, seems to be about 15seconds
+      InstanceProfile profile = createIAMInstanceProfile(iamContext.getApi(), profileName);
+
       AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(
                view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi()).getSecurityGroupServices();
 
@@ -106,6 +118,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
       template.getOptions().tags(tags);
       template.getOptions().as(AWSEC2TemplateOptions.class).enableMonitoring();
       template.getOptions().as(AWSEC2TemplateOptions.class).spotPrice(0.3f);
+      template.getOptions().as(AWSEC2TemplateOptions.class).iamInstanceProfileName(profileName);
 
       String startedId = null;
       try {
@@ -146,6 +159,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          assertEquals(instance.getKeyName(), group);
          assert instance.getSpotInstanceRequestId() != null;
          assertEquals(instance.getMonitoringState(), MonitoringState.ENABLED);
+         assertEquals(instance.getIAMInstanceProfile().get().getArn(), profile.getArn());
 
          // generate some load
          ListenableFuture<ExecResponse> future = client.submitScriptOnNode(first.getId(), Statements
@@ -199,9 +213,31 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
             assertEquals(keyPairClient.describeKeyPairsInRegion(region, group).size(), 1);
             assertEquals(securityGroupClient.describeSecurityGroupsInRegion(region, group).size(), 1);
          }
+         deleteIAMInstanceProfile(iamContext.getApi(), profileName);
+         iamContext.close();
          cleanupExtendedStuffInRegion(region, securityGroupClient, keyPairClient, group);
       }
-
    }
 
+   static String assumeRolePolicy = "{\"Version\":\"2008-10-17\",\"Statement\":[{\"Sid\":\"\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ec2.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}";
+   static String route53Policy = "{\"Statement\":[{\"Effect\":\"Allow\",\"Action\":\"route53:*\",\"Resource\":\"*\"}]}";
+
+   static InstanceProfile createIAMInstanceProfile(IAMApi api, String name) {
+      String roleName = name + "route53";
+      api.getRoleApi().createWithPolicy(roleName, assumeRolePolicy);
+      api.getPolicyApiForRole(roleName).create("route53-readonly", route53Policy);
+      api.getInstanceProfileApi().create(name);
+      api.getInstanceProfileApi().addRole(name, roleName);
+      InstanceProfile updated = api.getInstanceProfileApi().get(name);
+      getAnonymousLogger().info("created instanceProfile: " + updated);
+      return updated;
+   }
+
+   static void deleteIAMInstanceProfile(IAMApi api, String name) {
+      String roleName = name + "route53";
+      api.getInstanceProfileApi().removeRole(name, roleName);
+      api.getPolicyApiForRole(roleName).delete("route53-readonly");
+      api.getRoleApi().delete(roleName);
+      api.getInstanceProfileApi().delete(name);
+   }
 }

@@ -18,6 +18,8 @@
  */
 package org.jclouds.aws.ec2.xml;
 
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
+
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
@@ -59,24 +61,33 @@ public class LaunchSpecificationHandler extends HandlerForGeneratedRequestWithRe
    protected StringBuilder currentText = new StringBuilder();
 
    private boolean inBlockDeviceMapping;
+   private boolean inIamInstanceProfile;
 
    private String groupId;
 
    public void startElement(String uri, String name, String qName, Attributes attrs) {
       if (qName.equals("blockDeviceMapping")) {
          inBlockDeviceMapping = true;
+      } else if (equalsOrSuffix(qName, "iamInstanceProfile")) {
+         inIamInstanceProfile = true;
       }
    }
 
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("blockDeviceMapping")) {
          inBlockDeviceMapping = false;
+      } else if (equalsOrSuffix(qName, "iamInstanceProfile")) {
+         inIamInstanceProfile = false;
       } else if (qName.equals("item") && inBlockDeviceMapping) {
          try {
             builder.blockDeviceMapping(blockDeviceMappingBuilder.build());
          } finally {
             blockDeviceMappingBuilder.clear();
          }
+      } else if (equalsOrSuffix(qName, "arn") && inIamInstanceProfile) {
+         builder.iamInstanceProfileArn(currentOrNull());
+      } else if (equalsOrSuffix(qName, "name") && inIamInstanceProfile) {
+         builder.iamInstanceProfileName(currentOrNull());         
       } else if (qName.equals("deviceName")) {
          blockDeviceMappingBuilder.deviceName(currentOrNull());
       } else if (qName.equals("virtualName")) {

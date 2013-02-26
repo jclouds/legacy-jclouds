@@ -95,6 +95,7 @@ public abstract class BaseAWSReservationHandler<T> extends HandlerForGeneratedRe
    private Set<RunningInstance> instances = Sets.newLinkedHashSet();
 
    private boolean inPlacement;
+   private boolean inIamInstanceProfile;
 
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
@@ -104,6 +105,8 @@ public abstract class BaseAWSReservationHandler<T> extends HandlerForGeneratedRe
          inInstancesSet = true;
       } else if (equalsOrSuffix(qName, "placement")) {
          inPlacement = true;
+      } else if (equalsOrSuffix(qName, "iamInstanceProfile")) {
+         inIamInstanceProfile = true;
       }
    }
 
@@ -117,6 +120,10 @@ public abstract class BaseAWSReservationHandler<T> extends HandlerForGeneratedRe
          groupId = currentOrNull(currentText);
       } else if (equalsOrSuffix(qName, "groupName") && inPlacement) {
          builder.placementGroup(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "arn") && inIamInstanceProfile) {
+         builder.iamInstanceProfileArn(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "id") && inIamInstanceProfile) {
+         builder.iamInstanceProfileId(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "groupName")) {
          switch (itemDepth) {
          case 2:
@@ -141,6 +148,8 @@ public abstract class BaseAWSReservationHandler<T> extends HandlerForGeneratedRe
          inInstancesSet = false;
       } else if (equalsOrSuffix(qName, "placement")) {
          inPlacement = false;
+      } else if (equalsOrSuffix(qName, "iamInstanceProfile")) {
+         inIamInstanceProfile = false;
       } else if (equalsOrSuffix(qName, "ownerId")) {
          ownerId = currentOrNull(currentText);
       } else if (equalsOrSuffix(qName, "requesterId")) {

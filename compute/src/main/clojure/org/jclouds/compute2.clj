@@ -366,6 +366,7 @@ Here's an example of creating and running a small linux node in the group webser
          :key-pair
        ;; aws-ec2
          :placement-group :subnet-id :spot-price :spot-options
+         :iam-instance-profile-name :iam-instance-profile-arn
        ;; cloudstack aws-ec2
          :security-group-ids
        ;; softlayer

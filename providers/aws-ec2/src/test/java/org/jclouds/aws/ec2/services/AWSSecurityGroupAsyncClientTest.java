@@ -106,13 +106,7 @@ public class AWSSecurityGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<A
                                                 .addHeader("Host", "ec2.us-east-1.amazonaws.com")
                                                 .addFormParam("Action", "CreateSecurityGroup")
                                                 .addFormParam("GroupDescription", "description")
-                                                .addFormParam("GroupName", "name")
-                                                .addFormParam("Signature", "4uhrFtF0ppjWPJU6MUto3iQ8z3e5WKMUuPCE294hrg4=")
-                                                .addFormParam("SignatureMethod", "HmacSHA256")
-                                                .addFormParam("SignatureVersion", "2")
-                                                .addFormParam("Timestamp", "2009-11-08T15%3A54%3A08.897Z")
-                                                .addFormParam("Version", "2011-05-15")
-                                                .addFormParam("AWSAccessKeyId", "identity").build();
+                                                .addFormParam("GroupName", "name").build();
 
    public void testCreateSecurityGroup() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = method(AWSSecurityGroupAsyncClient.class, "createSecurityGroupInRegion", String.class,
@@ -120,10 +114,10 @@ public class AWSSecurityGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<A
       GeneratedHttpRequest request = processor.createRequest(method, Lists.<Object> newArrayList(null, "name", "description"));
 
       request = (GeneratedHttpRequest) request.getFilters().get(0).filter(request);
-      
+
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, createSecurityGroup.getPayload().getRawContent().toString(),
+      assertPayloadEquals(request, filter.filter(createSecurityGroup).getPayload().getRawContent().toString(),
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);

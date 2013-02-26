@@ -18,6 +18,8 @@
  */
 package org.jclouds.aws.ec2.domain;
 
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
@@ -30,8 +32,11 @@ import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.rest.annotations.SinceApiVersion;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -64,6 +69,8 @@ public class AWSRunningInstance extends RunningInstance {
       private String vpcId;
       private Hypervisor hypervisor;
       private Map<String, String> securityGroupIdToNames = Maps.newLinkedHashMap();
+      private String iamInstanceProfileArn;
+      private String iamInstanceProfileId;
 
       public Builder securityGroupIdToNames(Map<String, String> securityGroupIdToNames) {
          this.securityGroupIdToNames = ImmutableMap.copyOf(checkNotNull(securityGroupIdToNames,
@@ -118,13 +125,34 @@ public class AWSRunningInstance extends RunningInstance {
          return this;
       }
 
+      /**
+       * @see AWSRunningInstance#getIAMInstanceProfile()
+       */
+      public Builder iamInstanceProfileArn(String iamInstanceProfileArn) {
+         this.iamInstanceProfileArn = iamInstanceProfileArn;
+         return this;
+      }
+
+      /**
+       * @see AWSRunningInstance#getIAMInstanceProfile()
+       */
+      public Builder iamInstanceProfileId(String iamInstanceProfileId) {
+         this.iamInstanceProfileId = iamInstanceProfileId;
+         return this;
+      }
+
       @Override
       public AWSRunningInstance build() {
+         Optional<IAMInstanceProfile> iamInstanceProfile = Optional.absent();
+         if (iamInstanceProfileArn != null && iamInstanceProfileId != null) {
+            iamInstanceProfile = Optional.of(IAMInstanceProfile.forArnAndId(iamInstanceProfileArn,
+                  iamInstanceProfileId));
+         }
          return new AWSRunningInstance(region, securityGroupIdToNames, amiLaunchIndex, dnsName, imageId, instanceId,
                instanceState, rawState, instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone,
                virtualizationType, platform, privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType,
                rootDeviceName, ebsBlockDevices, monitoringState, placementGroup, productCodes, subnetId,
-               spotInstanceRequestId, vpcId, hypervisor, tags);
+               spotInstanceRequestId, vpcId, hypervisor, tags, iamInstanceProfile);
       }
       
       @Override
@@ -136,6 +164,10 @@ public class AWSRunningInstance extends RunningInstance {
                   .productCodes(awsIn.productCodes).subnetId(awsIn.subnetId)
                   .spotInstanceRequestId(awsIn.spotInstanceRequestId).vpcId(awsIn.vpcId).hypervisor(awsIn.hypervisor)
                   .securityGroupIdToNames(awsIn.securityGroupIdToNames);
+            if (awsIn.getIAMInstanceProfile().isPresent()) {
+               iamInstanceProfileArn(awsIn.getIAMInstanceProfile().get().getArn());
+               iamInstanceProfileId(awsIn.getIAMInstanceProfile().get().getId());
+            }
          }
          return this;
       }
@@ -159,6 +191,7 @@ public class AWSRunningInstance extends RunningInstance {
    private final String vpcId;
    private final Hypervisor hypervisor;
    private final Map<String, String> securityGroupIdToNames;
+   private final Optional<IAMInstanceProfile> iamInstanceProfile;
 
    protected AWSRunningInstance(String region, Map<String, String> securityGroupIdToNames, String amiLaunchIndex,
             String dnsName, String imageId, String instanceId, InstanceState instanceState, String rawState,
@@ -167,7 +200,7 @@ public class AWSRunningInstance extends RunningInstance {
             String privateIpAddress, String ramdiskId, String reason, RootDeviceType rootDeviceType,
             String rootDeviceName, Map<String, BlockDevice> ebsBlockDevices, MonitoringState monitoringState,
             String placementGroup, Iterable<String> productCodes, String subnetId, String spotInstanceRequestId,
-            String vpcId, Hypervisor hypervisor, Map<String, String> tags) {
+            String vpcId, Hypervisor hypervisor, Map<String, String> tags, Optional<IAMInstanceProfile> iamInstanceProfile) {
       super(region, securityGroupIdToNames.values(), amiLaunchIndex, dnsName, imageId, instanceId, instanceState,
                rawState, instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone, virtualizationType,
                platform, privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType, rootDeviceName,
@@ -181,6 +214,7 @@ public class AWSRunningInstance extends RunningInstance {
       this.hypervisor = checkNotNull(hypervisor, "hypervisor");
       this.securityGroupIdToNames = ImmutableMap.<String, String> copyOf(checkNotNull(securityGroupIdToNames,
             "securityGroupIdToNames"));
+      this.iamInstanceProfile = checkNotNull(iamInstanceProfile, "iamInstanceProfile of %s", instanceId);
    }
 
    public Map<String, String> getSecurityGroupIdToNames() {
@@ -240,11 +274,66 @@ public class AWSRunningInstance extends RunningInstance {
       return subnetId;
    }
 
+   /**
+    * The IAM Instance Profile (IIP) associated with the instance.
+    */
+   @SinceApiVersion("2012-06-01")
+   public Optional<IAMInstanceProfile> getIAMInstanceProfile() {
+      return iamInstanceProfile;
+   }
+
    @Override
    protected ToStringHelper string() {
       return super.string().add("monitoringState", monitoringState).add("placementGroup", placementGroup)
                .add("subnetId", subnetId).add("spotInstanceRequestId", spotInstanceRequestId).add("vpcId", vpcId)
-               .add("hypervisor", hypervisor);
+               .add("hypervisor", hypervisor).add("iamInstanceProfile", iamInstanceProfile.orNull());
    }
 
+   public static class IAMInstanceProfile {
+      public static IAMInstanceProfile forArnAndId(String arn, String id) {
+         return new IAMInstanceProfile(arn, id);
+      }
+
+      private final String arn;
+      private final String id;
+
+      private IAMInstanceProfile(String arn, String id) {
+         this.arn = checkNotNull(arn, "arn");
+         this.id = checkNotNull(id, "id for %s", arn);
+      }
+
+      /**
+       * The Amazon resource name (ARN) of the IAM Instance Profile (IIP) to associate with the instance.
+       */
+      public String getArn() {
+         return arn;
+      }
+
+      /**
+       * The ID of the IAM Instance Profile ID (IIP) associated with the instance.
+       */
+      public String getId() {
+         return id;
+      }
+
+      @Override
+      public int hashCode() {
+         return Objects.hashCode(arn, id);
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null || getClass() != obj.getClass())
+            return false;
+         IAMInstanceProfile that = IAMInstanceProfile.class.cast(obj);
+         return equal(this.arn, that.arn) && equal(this.id, that.id);
+      }
+
+      @Override
+      public String toString() {
+         return toStringHelper("").add("arn", arn).add("id", id).toString();
+      }
+   }
 }

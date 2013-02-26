@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<DescribeSpotPriceHistoryResponse xmlns="http://ec2.amazonaws.com/doc/2011-05-15/">
+<DescribeSpotPriceHistoryResponse xmlns="http://ec2.amazonaws.com/doc/2012-06-01/">
     <requestId>99777a75-2a2b-4296-a305-650c442d2d63</requestId>
     <spotPriceHistorySet>
         <item>
