@@ -21,6 +21,8 @@ package org.jclouds.encryption.bouncycastle;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
+import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
 import javax.inject.Singleton;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -37,4 +39,14 @@ public class BouncyCastleCrypto extends JCECrypto {
       super(new BouncyCastleProvider());
    }
 
+   
+   /*******
+    * Override the standard implementation to convert the "RSA" algorithm to the String that bouncycastle expects.
+    * See org.jclouds.encryption.bouncycastle.BouncyCastlePasswordDecryptionTest for how this effects password decryption.
+    * 
+    */
+   @Override
+   public Cipher cipher(String algorithm) throws NoSuchAlgorithmException, NoSuchPaddingException {
+      return super.cipher("RSA".equals(algorithm) ? "RSA/NONE/PKCS1Padding" : algorithm);
+   }
 }
