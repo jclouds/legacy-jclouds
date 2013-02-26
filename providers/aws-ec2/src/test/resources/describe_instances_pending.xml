@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2011-05-15/">
+<DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2012-06-01/">
     <requestId>dcd37ecf-e5b6-462b-99a8-112427b3e3a2</requestId>
     <reservationSet>
         <item>

@@ -26,6 +26,7 @@ import org.jclouds.aws.ec2.domain.LaunchSpecification;
 import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.options.RunInstancesOptions;
+import org.jclouds.rest.annotations.SinceApiVersion;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -94,7 +95,29 @@ public class AWSRunInstancesOptions extends RunInstancesOptions {
    public AWSRunInstancesOptions withSecurityGroupIds(String... securityGroupIds) {
       return withSecurityGroupIds(ImmutableSet.copyOf(securityGroupIds));
    }
-   
+
+   /**
+    * Amazon resource name (ARN) of the IAM Instance Profile (IIP) to associate with the instances.
+    * 
+    * @see org.jclouds.aws.ec2.domain.AWSRunningInstance#getIAMInstanceProfile()
+    */
+   @SinceApiVersion("2012-06-01")
+   public AWSRunInstancesOptions withIAMInstanceProfileArn(String arn) {
+      formParameters.put("IamInstanceProfile.Arn", checkNotNull(arn, "arn"));
+      return this;
+   }
+
+   /**
+    * The name of the IAM Instance Profile (IIP) to associate with the instances.
+    * 
+    * @see org.jclouds.aws.ec2.domain.AWSRunningInstance#getIAMInstanceProfile()
+    */
+   @SinceApiVersion("2012-06-01")
+   public AWSRunInstancesOptions withIAMInstanceProfileName(String name) {
+      formParameters.put("IamInstanceProfile.Name", checkNotNull(name, "name"));
+      return this;
+   }
+
    public static class Builder extends RunInstancesOptions.Builder {
 
       /**
@@ -127,6 +150,22 @@ public class AWSRunInstancesOptions extends RunInstancesOptions {
       public static AWSRunInstancesOptions withSubnetId(String subnetId) {
          AWSRunInstancesOptions options = new AWSRunInstancesOptions();
          return options.withSubnetId(subnetId);
+      }
+
+      /**
+       * @see AWSRunInstancesOptions#withIAMInstanceProfileArn(String)
+       */
+      public static AWSRunInstancesOptions withIAMInstanceProfileArn(String arn) {
+         AWSRunInstancesOptions options = new AWSRunInstancesOptions();
+         return options.withIAMInstanceProfileArn(arn);
+      }
+
+      /**
+       * @see AWSRunInstancesOptions#withIAMInstanceProfileName(String)
+       */
+      public static AWSRunInstancesOptions withIAMInstanceProfileName(String id) {
+         AWSRunInstancesOptions options = new AWSRunInstancesOptions();
+         return options.withIAMInstanceProfileName(id);
       }
 
       /**

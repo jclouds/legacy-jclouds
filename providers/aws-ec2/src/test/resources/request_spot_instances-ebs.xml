@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<RequestSpotInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2011-05-15/">
+<RequestSpotInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2012-06-01/">
     <requestId>02401e8e-a4f5-4285-8ea8-6d742fbaadd8</requestId>
     <spotInstanceRequestSet>
         <item>
@@ -40,6 +40,10 @@
                 <monitoring>
                     <enabled>false</enabled>
                 </monitoring>
+                <iamInstanceProfile>
+                     <arn>arn:aws:iam::123456789012:instance-profile/application_abc/component_xyz/Webserver</arn>
+                     <name>Webserver</name>
+                </iamInstanceProfile>
             </launchSpecification>
             <createTime>2011-03-08T03:30:36.000Z</createTime>
             <productDescription>Linux/UNIX</productDescription>
