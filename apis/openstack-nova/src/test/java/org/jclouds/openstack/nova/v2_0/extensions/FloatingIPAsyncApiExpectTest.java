@@ -189,7 +189,7 @@ public class FloatingIPAsyncApiExpectTest extends BaseNovaAsyncApiExpectTest {
               responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createFloatingIP,
               createFloatingIPResponse);
 
-      assertEquals(apiWhenFloatingIPsExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().create("myPool")
+      assertEquals(apiWhenFloatingIPsExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().allocateFromPool("myPool")
               .get()
               .toString(), new ParseFloatingIPTest().expected().toString());
    }

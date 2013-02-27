@@ -98,7 +98,7 @@ public interface FloatingIPAsyncApi {
    ListenableFuture<? extends FloatingIP> create();
 
    /**
-    * @see org.jclouds.openstack.nova.v2_0.extensions.FloatingIPApi#create
+    * @see org.jclouds.openstack.nova.v2_0.extensions.FloatingIPApi#allocateFromPool
     */
    @Named("floatingip:create")
    @POST
@@ -108,7 +108,7 @@ public interface FloatingIPAsyncApi {
    @Produces(MediaType.APPLICATION_JSON)
    @Fallback(NullOnNotFoundOr404.class)
    @Payload("%7B\"pool\":\"{pool}\"%7D")
-   ListenableFuture<? extends FloatingIP> create(@PayloadParam("pool") String pool);
+   ListenableFuture<? extends FloatingIP> allocateFromPool(@PayloadParam("pool") String pool);
 
 
    /**

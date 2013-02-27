@@ -64,7 +64,7 @@ public interface FloatingIPApi {
     *         Pool to allocate IP address from
     * @return a newly created FloatingIP
     */
-   FloatingIP create(String pool);
+   FloatingIP allocateFromPool(String pool);
 
    /**
     * Decreate a Floating IP address
