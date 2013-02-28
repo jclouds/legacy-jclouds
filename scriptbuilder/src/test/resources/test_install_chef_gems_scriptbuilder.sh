@@ -184,7 +184,7 @@ END_OF_JCLOUDS_SCRIPT
 	gem update --system
 	gem update --no-rdoc --no-ri
 	
-	gem install chef -v '>= 10.16.4' --no-rdoc --no-ri
+	gem install chef --no-rdoc --no-ri
 	
 END_OF_JCLOUDS_SCRIPT
    
