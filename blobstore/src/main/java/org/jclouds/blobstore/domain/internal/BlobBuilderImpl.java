@@ -18,7 +18,9 @@
  */
 package org.jclouds.blobstore.domain.internal;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.io.Payloads.newPayload;
 
 import java.io.File;
@@ -48,6 +50,8 @@ public class BlobBuilderImpl implements BlobBuilder {
 
    @Override
    public BlobBuilder name(String name) {
+      checkNotNull(name, "name");
+      checkArgument(!name.isEmpty(), "name");
       this.name = name;
       return this;
    }
@@ -106,8 +110,8 @@ public class BlobBuilderImpl implements BlobBuilder {
    @Override
    public Blob build() {
       Blob blob = new BlobImpl(new MutableBlobMetadataImpl());
-      if (name != null)
-         blob.getMetadata().setName(name);
+      checkState(name != null, "name");
+      blob.getMetadata().setName(name);
       if (payload != null)
          blob.setPayload(payload);
       blob.getMetadata().setUserMetadata(userMetadata);
