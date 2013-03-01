@@ -47,9 +47,7 @@ import org.jclouds.vcloud.domain.VApp;
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 
-/**
- * @author Adrian Cole
- */
+/** @author Adrian Cole */
 @Singleton
 public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
    @Resource
@@ -63,8 +61,8 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
 
    @Inject
    protected VAppToNodeMetadata(Map<Status, NodeMetadata.Status> vAppStatusToNodeStatus, Map<String, Credentials> credentialStore,
-         FindLocationForResource findLocationForResourceInVDC, Function<VApp, Hardware> hardwareForVApp,
-         GroupNamingConvention.Factory namingConvention) {
+                                FindLocationForResource findLocationForResourceInVDC, Function<VApp, Hardware> hardwareForVApp,
+                                GroupNamingConvention.Factory namingConvention) {
       this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
       this.hardwareForVApp = checkNotNull(hardwareForVApp, "hardwareForVApp");
       this.findLocationForResourceInVDC = checkNotNull(findLocationForResourceInVDC, "findLocationForResourceInVDC");
@@ -77,9 +75,16 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
       builder.ids(from.getHref().toASCIIString());
       builder.uri(from.getHref());
       builder.name(from.getName());
-      if (!isNullOrEmpty(from.getDescription()) && from.getDescription().indexOf('=') != -1)
-         addMetadataAndParseTagsFromCommaDelimitedValue(builder,
-                  Splitter.on('\n').withKeyValueSeparator("=").split(from.getDescription()));
+      if (!isNullOrEmpty(from.getDescription())
+         && from.getDescription().indexOf('=') != -1
+         && from.getDescription().indexOf('\n') != -1) {
+         try {
+            addMetadataAndParseTagsFromCommaDelimitedValue(builder,
+               Splitter.on('\n').withKeyValueSeparator("=").split(from.getDescription()));
+         } catch (IllegalArgumentException iae) {
+            // no op
+         }
+      }
       builder.hostname(from.getName());
       builder.location(findLocationForResourceInVDC.apply(from.getVDC()));
       builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getName()));
