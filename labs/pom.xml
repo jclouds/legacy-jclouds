@@ -58,7 +58,9 @@
        <module>fgcp</module>
        <module>fgcp-au</module>
        <module>fgcp-de</module>
+       <!-- Disabled until Abiquo deps are in Maven Central
        <module>abiquo</module>
+       -->
        <module>openstack-quantum</module>
        <module>openstack-glance</module>
        <module>dynect</module>
