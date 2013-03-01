@@ -18,6 +18,9 @@
  */
 package org.jclouds.openstack.nova.v2_0.domain;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.beans.ConstructorProperties;
 
 import javax.inject.Named;
@@ -34,7 +37,7 @@ import com.google.common.base.Optional;
  * A flavor is an available hardware configuration for a server. Each flavor has
  * a unique combination of disk space and memory capacity.
  * 
- * @author Jeremy Daggett
+ * @author Jeremy Daggett, Ilja Bobkevic
  * @see <a href=
       "http://docs.openstack.org/api/openstack-compute/2/content/List_Flavors-d1e4188.html"
       />
@@ -139,9 +142,11 @@ public class Flavor extends Resource {
    @ConstructorProperties({
       "id", "name", "links", "ram", "disk", "vcpus", "swap", "rxtx_factor", "OS-FLV-EXT-DATA:ephemeral"
    })
-   protected Flavor(String id, @Nullable String name, java.util.Set<Link> links, int ram, int disk, int vcpus,
+   protected Flavor(String id, String name, java.util.Set<Link> links, int ram, int disk, int vcpus,
                     @Nullable String swap, @Nullable Double rxtxFactor, @Nullable Integer ephemeral) {
-      super(id, name, links);
+      super(id, checkNotNull(name, "name"), links);
+      checkArgument(ram > 0, "Value of ram has to greater than 0");
+      checkArgument(vcpus > 0,  "Value of vcpus has to greater than 0");
       this.ram = ram;
       this.disk = disk;
       this.vcpus = vcpus;
@@ -149,7 +154,7 @@ public class Flavor extends Resource {
       this.rxtxFactor = Optional.fromNullable(rxtxFactor);
       this.ephemeral = Optional.fromNullable(ephemeral);
    }
-
+   
    public int getRam() {
       return this.ram;
    }

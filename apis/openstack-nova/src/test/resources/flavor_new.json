@@ -1,0 +1,10 @@
+{
+    "flavor" : {
+        "id" : "1cb47a44-9b84-4da4-bf81-c1976e8414ab",
+        "name" : "128 MB Server",
+        "ram" : 128,
+        "disk" : 10,
+        "vcpus" : 1,
+        "links" : []
+    }
+}

@@ -32,7 +32,7 @@ import org.jclouds.openstack.v2_0.options.PaginationOptions;
  * @see <a href=
  *      "http://docs.openstack.org/api/openstack-compute/2/content/List_Flavors-d1e4188.html"
  *      />
- * @author Jeremy Daggett
+ * @author Jeremy Daggett, Ilja Bobkevic
  */
 public interface FlavorApi {
 
@@ -63,4 +63,18 @@ public interface FlavorApi {
     */
    Flavor get(String id);
 
+	/**
+	 * Create flavor according to the provided object
+	 * 
+	 * @param flavor - flavor object
+	 * @return newly created flavor
+	 */
+	Flavor create(Flavor flavor);
+
+	/**
+	 * Delete flavor with a given id
+	 * 
+	 * @param id - flavor id
+	 */
+	void delete(String id);
 }
