@@ -19,6 +19,7 @@
 package org.jclouds.vcloud.compute.functions;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -116,13 +117,59 @@ public class VAppToNodeMetadataTest {
       VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
       VAppToNodeMetadata converter = injector.getInstance(VAppToNodeMetadata.class);
       NodeMetadata node = converter.apply(result);
+      assertNotNull(node);
       assertEquals(node.getUserMetadata(), ImmutableMap.<String, String>of());
       assertEquals(node.getTags(), ImmutableSet.<String>of());
       assertEquals(node.getLocation(), location);
       assertEquals(node.getPrivateAddresses(), ImmutableSet.of("172.16.7.230"));
       assertEquals(node.getPublicAddresses(), ImmutableSet.of());
    }
-   
+
+   public void testWithMetadataParseException() {
+      Location location = new LocationBuilder().id("https://1.1.1.1/api/v1.0/vdc/1").description("description")
+         .scope(LocationScope.PROVIDER).build();
+      Injector injector = createInjectorWithLocation(location);
+      InputStream is = getClass().getResourceAsStream("/vapp-pool.xml");
+      Factory factory = injector.getInstance(ParseSax.Factory.class);
+      VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
+      VAppToNodeMetadata converter = injector.getInstance(VAppToNodeMetadata.class);
+      ImmutableMap<String, String> metadata = ImmutableMap.<String, String>of();
+      ImmutableSet<String> tags = ImmutableSet.<String>of();
+
+      String description = " user=user_ssoid_1\nuid=3b7bb605-bb30-4e62-a3de-9076b052dee7 label='foo-DEVELOPMENT' date=2013-01-22 17:39:28.252";
+
+      result = new VAppImpl(result.getName(), result.getType(), result.getHref(), result.getStatus(), result.getVDC(),
+         description, result.getTasks(), result.isOvfDescriptorUploaded(), result.getChildren(),
+         result.getNetworkSection());
+
+      NodeMetadata node = converter.apply(result);
+      assertNotNull(node);
+      assertEquals(node.getUserMetadata(), metadata);
+      assertEquals(node.getTags(), tags);
+   }
+
+   public void testWithMetadataNoNewLines() {
+      Location location = new LocationBuilder().id("https://1.1.1.1/api/v1.0/vdc/1").description("description")
+         .scope(LocationScope.PROVIDER).build();
+      Injector injector = createInjectorWithLocation(location);
+      InputStream is = getClass().getResourceAsStream("/vapp-pool.xml");
+      Factory factory = injector.getInstance(ParseSax.Factory.class);
+      VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
+      VAppToNodeMetadata converter = injector.getInstance(VAppToNodeMetadata.class);
+      ImmutableMap<String, String> metadata = ImmutableMap.<String, String>of();
+      ImmutableSet<String> tags = ImmutableSet.<String>of();
+
+      String description = " user=user_ssoid_1 uid=3b7bb605-bb30-4e62-a3de-9076b052dee7 label='foo-DEVELOPMENT' date=2013-01-22 17:39:28.252";
+
+      result = new VAppImpl(result.getName(), result.getType(), result.getHref(), result.getStatus(), result.getVDC(),
+         description, result.getTasks(), result.isOvfDescriptorUploaded(), result.getChildren(),
+         result.getNetworkSection());
+
+      NodeMetadata node = converter.apply(result);
+      assertNotNull(node);
+      assertEquals(node.getUserMetadata(), metadata);
+      assertEquals(node.getTags(), tags);
+   }
 
    public void testWithEncodedMetadata() {
       Location location = new LocationBuilder().id("https://1.1.1.1/api/v1.0/vdc/1").description("description")
@@ -146,6 +193,7 @@ public class VAppToNodeMetadataTest {
                result.getNetworkSection());
       
       NodeMetadata node = converter.apply(result);
+      assertNotNull(node);
       assertEquals(node.getUserMetadata(), metadata);
       assertEquals(node.getTags(), tags);
 
@@ -160,6 +208,7 @@ public class VAppToNodeMetadataTest {
       VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
       VAppToNodeMetadata converter = injector.getInstance(VAppToNodeMetadata.class);
       NodeMetadata node = converter.apply(result);
+      assertNotNull(node);
       assertEquals(node.getLocation(), location);
       assertEquals(node.getPrivateAddresses(), ImmutableSet.of());
       assertEquals(node.getPublicAddresses(), ImmutableSet.of());
@@ -175,6 +224,7 @@ public class VAppToNodeMetadataTest {
       VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
       VAppToNodeMetadata converter = injector.getInstance(VAppToNodeMetadata.class);
       NodeMetadata node = converter.apply(result);
+      assertNotNull(node);
       assertEquals(node.getLocation(), location);
    }
 }
