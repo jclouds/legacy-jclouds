@@ -47,7 +47,7 @@ public class InstallChefGemsTest {
       assertEquals(
             new InstallChefGems().render(OsFamily.UNIX),
             Resources.toString(Resources.getResource("test_install_ruby." + ShellToken.SH.to(OsFamily.UNIX)),
-                  Charsets.UTF_8) + "gem install chef -v '>= 10.16.4' --no-rdoc --no-ri\n");
+                  Charsets.UTF_8) + "gem install chef --no-rdoc --no-ri\n");
    }
 
    public void installChefGemsUnixInScriptBuilderSourcesSetupPublicCurl() throws IOException {
