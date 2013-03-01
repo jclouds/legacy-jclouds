@@ -58,6 +58,15 @@ public interface FloatingIPApi {
    FloatingIP create();
 
    /**
+    * Allocate a Floating IP address from a pool
+    *
+    * @param pool
+    *         Pool to allocate IP address from
+    * @return a newly created FloatingIP
+    */
+   FloatingIP allocateFromPool(String pool);
+
+   /**
     * Decreate a Floating IP address
     * 
     * @param id
