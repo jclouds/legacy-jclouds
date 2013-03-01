@@ -15,8 +15,8 @@
     <packaging>bundle</packaging>
     
     <properties>
-        <abiquomodel.version>2.2.0</abiquomodel.version>
-        <abiquoam.version>2.1.2</abiquoam.version>
+        <abiquomodel.version>2.2.0.1</abiquomodel.version>
+        <abiquoam.version>2.1.2.1</abiquoam.version>
         <test.abiquo.endpoint>http://localhost/api</test.abiquo.endpoint>
         <test.abiquo.identity>FIXME</test.abiquo.identity>
         <test.abiquo.credential>FIXME</test.abiquo.credential>
@@ -25,15 +25,6 @@
         <jclouds.osgi.export>org.jclouds.abiquo*;version="${project.version}"</jclouds.osgi.export>
         <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
     </properties>
-    
-    <!-- To be removed when the Abiquo deps are in Maven Central -->
-    <repositories>
-        <repository>
-            <id>abiquo-repo</id>
-            <name>Abiquo Maven Repository</name>
-            <url>http://repo.community.abiquo.com/repo</url>
-        </repository>
-    </repositories>
     
     <dependencies>
         <dependency>
