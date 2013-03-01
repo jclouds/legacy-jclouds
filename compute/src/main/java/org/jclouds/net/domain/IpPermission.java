@@ -219,7 +219,7 @@ public class IpPermission implements Comparable<IpPermission> {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(ipProtocol, fromPort, toPort, tenantIdGroupNamePairs, groupIds, groupIds);
+      return Objects.hashCode(ipProtocol, fromPort, toPort, tenantIdGroupNamePairs, groupIds, cidrBlocks);
    }
 
    @Override
