@@ -288,4 +288,23 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
       }
    }
 
+   public void testDirectoryEndingWithSlash() throws InterruptedException {
+	   String containerName = getContainerName();
+	   try {
+		   BlobStore blobStore = view.getBlobStore();
+		   blobStore.createDirectory(containerName, "someDir");
+
+		   // According to the S3 documentation, a directory is nothing but a blob
+		   // whose name ends with a '/'. So let's try to remove the blob we just
+		   // created.
+		   blobStore.removeBlob(containerName, "someDir/");
+
+		   // The directory "someDir" shouldn't exist since we removed it. If this
+		   // test succeeds, it confirms that a directory (or folder) is nothing
+		   // but a blob with a name ending in '/'.
+		   assertEquals(blobStore.directoryExists(containerName, "someDir"), false);
+	   } finally {
+		   returnContainer(containerName);
+	   }
+   }
 }
