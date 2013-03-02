@@ -64,7 +64,7 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
 
       @Override
       public Blob apply(String arg0) {
-         return map.blobBuilder().payload(arg0).build();
+         return map.blobBuilder().name(arg0).payload(arg0).build();
       }
    }
 
@@ -235,7 +235,7 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
 
          Map<String, Blob> newMap = Maps.newLinkedHashMap();
          for (String key : keySet.build()) {
-            newMap.put(key, map.blobBuilder().payload(key).build());
+            newMap.put(key, map.blobBuilder().name(key).payload(key).build());
          }
          map.putAll(newMap);
          newMap.clear();
@@ -280,7 +280,7 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
    protected void addTenObjectsUnderPrefix(String containerName, String prefix) throws InterruptedException {
       BlobMap blobMap = createMap(view, containerName, inDirectory(prefix));
       for (int i = 0; i < 10; i++) {
-         blobMap.put(i + "", blobMap.blobBuilder().payload(i + "content").build());
+         blobMap.put(i + "", blobMap.blobBuilder().name(i + "").payload(i + "content").build());
       }
    }
 
@@ -288,7 +288,7 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
    protected void addTenObjectsUnderRoot(String containerName) throws InterruptedException {
       BlobMap blobMap = createMap(view, containerName, ListContainerOptions.NONE);
       for (int i = 0; i < 10; i++) {
-         blobMap.put(i + "", blobMap.blobBuilder().payload(i + "content").build());
+         blobMap.put(i + "", blobMap.blobBuilder().name(i + "").payload(i + "content").build());
       }
    }
 }
