@@ -40,6 +40,7 @@ import org.jclouds.dynect.v3.domain.Zone;
 import org.jclouds.dynect.v3.filters.AlwaysAddContentType;
 import org.jclouds.dynect.v3.filters.SessionManager;
 import org.jclouds.dynect.v3.functions.ExtractZoneNames;
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.Headers;
@@ -86,27 +87,27 @@ public interface ZoneAsyncApi {
    ListenableFuture<Zone> get(@PathParam("fqdn") String fqdn) throws JobStillRunningException;
 
    /**
-    * @see ZoneApi#create
+    * @see ZoneApi#scheduleCreate
     */
    @Named("CreatePrimaryZone")
    @POST
    @Path("/Zone/{fqdn}")
-   @SelectJson("data")
-   ListenableFuture<Zone> create(
+   @Consumes(APPLICATION_JSON)
+   ListenableFuture<Job> scheduleCreate(
          @PathParam("fqdn") @ParamParser(ToFQDN.class) @BinderParam(BindToJsonPayload.class) CreatePrimaryZone createZone)
          throws JobStillRunningException, TargetExistsException;
 
    /**
-    * @see ZoneApi#createWithContact
+    * @see ZoneApi#scheduleCreateWithContact
     */
    @Named("CreatePrimaryZone")
    @POST
    @Produces(APPLICATION_JSON)
    @Payload("%7B\"rname\":\"{contact}\",\"serial_style\":\"increment\",\"ttl\":3600%7D")
    @Path("/Zone/{fqdn}")
-   @SelectJson("data")
-   ListenableFuture<Zone> createWithContact(@PathParam("fqdn") String fqdn, @PayloadParam("contact") String contact)
-         throws JobStillRunningException, TargetExistsException;
+   @Consumes(APPLICATION_JSON)
+   ListenableFuture<Job> scheduleCreateWithContact(@PathParam("fqdn") String fqdn,
+         @PayloadParam("contact") String contact) throws JobStillRunningException, TargetExistsException;
 
    /**
     * @see ZoneApi#delete
@@ -136,7 +137,7 @@ public interface ZoneAsyncApi {
    @Produces(APPLICATION_JSON)
    @Payload("{\"publish\":true}")
    @SelectJson("data")
-   ListenableFuture<Zone> publish(@PathParam("fqdn") String fqdn) throws JobStillRunningException;
+   ListenableFuture<Zone> publish(@PathParam("fqdn") String fqdn) throws JobStillRunningException, ResourceNotFoundException;
    
    /**
     * @see ZoneApi#freeze

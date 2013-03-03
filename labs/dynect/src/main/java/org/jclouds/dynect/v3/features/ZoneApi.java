@@ -18,13 +18,14 @@
  */
 package org.jclouds.dynect.v3.features;
 
-import org.jclouds.dynect.v3.DynECTExceptions.TargetExistsException;
 import org.jclouds.dynect.v3.DynECTExceptions.JobStillRunningException;
+import org.jclouds.dynect.v3.DynECTExceptions.TargetExistsException;
 import org.jclouds.dynect.v3.domain.CreatePrimaryZone;
 import org.jclouds.dynect.v3.domain.Job;
 import org.jclouds.dynect.v3.domain.Zone;
 import org.jclouds.dynect.v3.domain.Zone.SerialStyle;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.collect.FluentIterable;
 
@@ -35,57 +36,74 @@ import com.google.common.collect.FluentIterable;
 public interface ZoneApi {
    /**
     * Lists all zone ids.
+    * 
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
     */
    FluentIterable<String> list() throws JobStillRunningException;
 
    /**
-    * Creates a new primary zone.
+    * Schedules addition of a new primary zone into the current session. Calling {@link ZoneApi#publish(String)} will
+    * publish the zone, creating the zone.
     * 
     * @param zone
     *           required parameters to create the zone.
-    * @return unpublished zone
+    * @return job relating to the scheduled creation.
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
+    * @throws TargetExistsException
+    *            if the same fqdn exists
     */
-   Zone create(CreatePrimaryZone zone) throws JobStillRunningException, TargetExistsException;
+   Job scheduleCreate(CreatePrimaryZone zone) throws JobStillRunningException, TargetExistsException;
 
    /**
-    * Creates a new primary zone with one hour default TTL and
-    * {@link SerialStyle#INCREMENT}
+    * Schedules addition of a new primary zone with one hour default TTL and {@link SerialStyle#INCREMENT} into the
+    * current session. Calling {@link ZoneApi#publish(String)} will publish the zone, creating the zone.
     * 
     * @param fqdn
     *           fqdn of the zone to create {@ex. jclouds.org}
     * @param contact
     *           email address of the contact
-    * @return unpublished zone
+    * @return job relating to the scheduled creation.
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
+    * @throws TargetExistsException
+    *            if the same fqdn exists
     */
-   Zone createWithContact(String fqdn, String contact) throws JobStillRunningException, TargetExistsException;
+   Job scheduleCreateWithContact(String fqdn, String contact) throws JobStillRunningException, TargetExistsException;
 
    /**
     * Retrieves information about the specified zone.
     * 
     * @param fqdn
-    *           fqdn of the zone to get information about. ex
-    *           {@code jclouds.org}
+    *           fqdn of the zone to get information about. ex {@code jclouds.org}
     * @return null if not found
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
     */
    @Nullable
    Zone get(String fqdn) throws JobStillRunningException;
 
    /**
-    * deletes the specified zone.
+    * Deletes the zone.  No need to call @link ZoneApi#publish(String)}.
     * 
     * @param fqdn
-    *           fqdn of the zone to delete ex {@code jclouds.org}
-    * @return null if not found
+    *           zone to delete
+    * @return job relating to the scheduled deletion or null, if the zone never existed.
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
     */
    @Nullable
    Job delete(String fqdn) throws JobStillRunningException;
 
    /**
-    * Deletes changes to the specified zone that have been created during the
-    * current session but not yet published to the zone.
+    * Deletes changes to the specified zone that have been created during the current session but not yet published to
+    * the zone.
     * 
     * @param fqdn
     *           fqdn of the zone to delete changes from ex {@code jclouds.org}
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
     */
    Job deleteChanges(String fqdn) throws JobStillRunningException;
 
@@ -93,24 +111,31 @@ public interface ZoneApi {
     * Publishes the current zone
     * 
     * @param fqdn
-    *           fqdn of the zone to publish. ex
-    *           {@code jclouds.org}
+    *           fqdn of the zone to publish. ex {@code jclouds.org}
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
+    * @throws ResourceNotFoundException
+    *            if the zone doesn't exist
     */
-   Zone publish(String fqdn) throws JobStillRunningException;
+   Zone publish(String fqdn) throws JobStillRunningException, ResourceNotFoundException;
 
    /**
     * freezes the specified zone.
     * 
     * @param fqdn
     *           fqdn of the zone to freeze ex {@code jclouds.org}
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
     */
    Job freeze(String fqdn) throws JobStillRunningException;
-   
+
    /**
     * thaws the specified zone.
     * 
     * @param fqdn
     *           fqdn of the zone to thaw ex {@code jclouds.org}
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
     */
    Job thaw(String fqdn) throws JobStillRunningException;
 }

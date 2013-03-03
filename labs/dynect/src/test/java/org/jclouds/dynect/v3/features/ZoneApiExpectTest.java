@@ -26,6 +26,7 @@ import static org.testng.Assert.assertNull;
 
 import org.jclouds.dynect.v3.DynECTApi;
 import org.jclouds.dynect.v3.domain.CreatePrimaryZone;
+import org.jclouds.dynect.v3.domain.Job;
 import org.jclouds.dynect.v3.internal.BaseDynECTApiExpectTest;
 import org.jclouds.dynect.v3.parse.DeleteZoneChangesResponseTest;
 import org.jclouds.dynect.v3.parse.DeleteZoneResponseTest;
@@ -54,27 +55,29 @@ public class ZoneApiExpectTest extends BaseDynECTApiExpectTest {
       assertEquals(success.getZoneApi().get("jclouds.org").toString(),
                    new GetZoneResponseTest().expected().toString());
    }
-   
+
    HttpRequest create = HttpRequest.builder().method("POST")
          .endpoint("https://api2.dynect.net/REST/Zone/jclouds.org")
          .addHeader("API-Version", "3.3.8")
+         .addHeader(ACCEPT, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken)
          .payload(stringPayload("{\"rname\":\"jimmy@jclouds.org\",\"serial_style\":\"increment\",\"ttl\":3600}"))
          .build();   
 
+   HttpResponse createResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResourceWithContentType("/new_zone.json", APPLICATION_JSON)).build();
+
    public void testCreateWhenResponseIs2xx() {
-      DynECTApi success = requestsSendResponses(createSession, createSessionResponse, create, getResponse);
-      assertEquals(success.getZoneApi().create(CreatePrimaryZone.builder()
-                                                                .fqdn("jclouds.org")
-                                                                .contact("jimmy@jclouds.org")
-                                                                .build()).toString(),
-                   new GetZoneResponseTest().expected().toString());
+      DynECTApi success = requestsSendResponses(createSession, createSessionResponse, create, createResponse);
+      assertEquals(success.getZoneApi().scheduleCreate(CreatePrimaryZone.builder()
+                                                                        .fqdn("jclouds.org")
+                                                                        .contact("jimmy@jclouds.org")
+                                                                        .build()), Job.success(285351593l));
    }
 
    public void testCreateWithContactWhenResponseIs2xx() {
-      DynECTApi success = requestsSendResponses(createSession, createSessionResponse, create, getResponse);
-      assertEquals(success.getZoneApi().createWithContact("jclouds.org", "jimmy@jclouds.org").toString(),
-                   new GetZoneResponseTest().expected().toString());
+      DynECTApi success = requestsSendResponses(createSession, createSessionResponse, create, createResponse);
+      assertEquals(success.getZoneApi().scheduleCreateWithContact("jclouds.org", "jimmy@jclouds.org"), Job.success(285351593l));
    }
 
    public void testGetWhenResponseIs404() {
