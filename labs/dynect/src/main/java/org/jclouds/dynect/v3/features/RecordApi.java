@@ -21,6 +21,8 @@ package org.jclouds.dynect.v3.features;
 import java.util.Map;
 
 import org.jclouds.dynect.v3.DynECTExceptions.JobStillRunningException;
+import org.jclouds.dynect.v3.domain.CreateRecord;
+import org.jclouds.dynect.v3.domain.Job;
 import org.jclouds.dynect.v3.domain.Record;
 import org.jclouds.dynect.v3.domain.RecordId;
 import org.jclouds.dynect.v3.domain.SOARecord;
@@ -32,6 +34,7 @@ import org.jclouds.dynect.v3.domain.rdata.NSData;
 import org.jclouds.dynect.v3.domain.rdata.PTRData;
 import org.jclouds.dynect.v3.domain.rdata.SRVData;
 import org.jclouds.dynect.v3.domain.rdata.TXTData;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.collect.FluentIterable;
 
@@ -41,15 +44,52 @@ import com.google.common.collect.FluentIterable;
  */
 public interface RecordApi {
    /**
-    * Retrieves a list of resource record ids for all records of any type in the
-    * given zone throws JobStillRunningException;
+    * Retrieves a list of resource record ids for all records of any type in the given zone.
+    * 
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
     */
    FluentIterable<RecordId> list() throws JobStillRunningException;
+
+   /**
+    * Retrieves a list of resource record ids for all records of the fqdn and type in the given zone
+    * 
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
+    */
+   FluentIterable<RecordId> listByFQDNAndType(String fqdn, String type) throws JobStillRunningException;
+
+   /**
+    * Schedules addition of a new record into the current session. Calling {@link ZoneApi#publish(String)} will publish
+    * the zone, creating the record.
+    * 
+    * @param newRecord
+    *           record to create
+    * @return job relating to the scheduled creation.
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
+    */
+   Job scheduleCreate(CreateRecord<?> newRecord) throws JobStillRunningException;
+
+   /**
+    * Schedules deletion of a record into the current session. Calling {@link ZoneApi#publish(String)} will publish the
+    * changes, deleting the record.
+    * 
+    * @param recordId
+    *           record to delete
+    * @return job relating to the scheduled deletion or null, if the record never existed.
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
+    */
+   @Nullable
+   Job scheduleDelete(RecordId recordId) throws JobStillRunningException;
 
    /**
     * retrieves a resource record without regard to type
     * 
     * @return null if not found
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
     */
    Record<? extends Map<String, Object>> get(RecordId recordId) throws JobStillRunningException;
 
@@ -61,6 +101,8 @@ public interface RecordApi {
     * @param recordId
     *           {@link RecordId#getId()}
     * @return null if not found
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
     */
    Record<AAAAData> getAAAA(String fqdn, long recordId) throws JobStillRunningException;
 
@@ -72,6 +114,8 @@ public interface RecordApi {
     * @param recordId
     *           {@link RecordId#getId()}
     * @return null if not found
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
     */
    Record<AData> getA(String fqdn, long recordId) throws JobStillRunningException;
 
@@ -83,6 +127,8 @@ public interface RecordApi {
     * @param recordId
     *           {@link RecordId#getId()}
     * @return null if not found
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
     */
    Record<CNAMEData> getCNAME(String fqdn, long recordId) throws JobStillRunningException;
 
@@ -94,6 +140,8 @@ public interface RecordApi {
     * @param recordId
     *           {@link RecordId#getId()}
     * @return null if not found
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
     */
    Record<MXData> getMX(String fqdn, long recordId) throws JobStillRunningException;
 
@@ -105,6 +153,8 @@ public interface RecordApi {
     * @param recordId
     *           {@link RecordId#getId()}
     * @return null if not found
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
     */
    Record<NSData> getNS(String fqdn, long recordId) throws JobStillRunningException;
 
@@ -116,6 +166,8 @@ public interface RecordApi {
     * @param recordId
     *           {@link RecordId#getId()}
     * @return null if not found
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
     */
    Record<PTRData> getPTR(String fqdn, long recordId) throws JobStillRunningException;
 
@@ -127,6 +179,8 @@ public interface RecordApi {
     * @param recordId
     *           {@link RecordId#getId()}
     * @return null if not found
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
     */
    SOARecord getSOA(String fqdn, long recordId) throws JobStillRunningException;
 
@@ -138,6 +192,8 @@ public interface RecordApi {
     * @param recordId
     *           {@link RecordId#getId()}
     * @return null if not found
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
     */
    Record<SRVData> getSRV(String fqdn, long recordId) throws JobStillRunningException;
 
@@ -149,6 +205,8 @@ public interface RecordApi {
     * @param recordId
     *           {@link RecordId#getId()}
     * @return null if not found
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
     */
    Record<TXTData> getTXT(String fqdn, long recordId) throws JobStillRunningException;
 }
