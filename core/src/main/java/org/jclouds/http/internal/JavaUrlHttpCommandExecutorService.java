@@ -238,7 +238,6 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
    void writePayloadToConnection(Payload payload, HttpURLConnection connection) throws IOException {
       Long length = payload.getContentMetadata().getContentLength();
       connection.setRequestProperty(CONTENT_LENGTH, length.toString());
-      connection.setRequestProperty("Expect", "100-continue");
       connection.setFixedLengthStreamingMode(length.intValue());
       connection.setDoOutput(true);
       CountingOutputStream out = new CountingOutputStream(connection.getOutputStream());
