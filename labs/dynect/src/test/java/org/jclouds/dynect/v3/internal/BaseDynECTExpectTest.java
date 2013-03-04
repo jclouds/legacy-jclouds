@@ -57,12 +57,6 @@ public class BaseDynECTExpectTest<T> extends BaseRestApiExpectTest<T> {
       }
    }
 
-   public static Payload emptyJsonPayload() {
-      Payload p = Payloads.newByteArrayPayload(new byte[] {});
-      p.getContentMetadata().setContentType(APPLICATION_JSON);
-      return p;
-   }
-
    public static Payload stringPayload(String json) {
       Payload p = Payloads.newPayload(json);
       p.getContentMetadata().setContentType(APPLICATION_JSON);

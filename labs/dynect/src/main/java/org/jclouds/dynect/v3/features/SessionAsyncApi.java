@@ -18,22 +18,21 @@
  */
 package org.jclouds.dynect.v3.features;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-
 import javax.inject.Named;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 
 import org.jclouds.dynect.v3.DynECTFallbacks.FalseOn400;
 import org.jclouds.dynect.v3.domain.Session;
 import org.jclouds.dynect.v3.domain.SessionCredentials;
+import org.jclouds.dynect.v3.filters.AlwaysAddContentType;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.Headers;
+import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
@@ -47,10 +46,9 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="https://manage.dynect.net/help/docs/api2/rest/" />
  * @author Adrian Cole
  */
-// required for all calls
-@Produces(APPLICATION_JSON)
 @Headers(keys = "API-Version", values = "{jclouds.api-version}")
 @Path("/Session")
+@RequestFilters(AlwaysAddContentType.class)
 public interface SessionAsyncApi {
 
    /**

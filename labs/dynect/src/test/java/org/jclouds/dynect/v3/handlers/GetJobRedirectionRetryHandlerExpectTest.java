@@ -19,6 +19,7 @@
 package org.jclouds.dynect.v3.handlers;
 
 import static com.google.common.net.HttpHeaders.ACCEPT;
+import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 import static com.google.common.net.HttpHeaders.LOCATION;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -54,9 +55,8 @@ public class GetJobRedirectionRetryHandlerExpectTest extends BaseDynECTApiExpect
                                    .endpoint("https://api2.dynect.net/REST/Job/1234")
                                    .addHeader("API-Version", "3.3.8")
                                    .addHeader(ACCEPT, APPLICATION_JSON)
-                                   .addHeader("Auth-Token", authToken)
-                                   .payload(emptyJsonPayload())
-                                   .build();
+                                   .addHeader(CONTENT_TYPE, APPLICATION_JSON)
+                                   .addHeader("Auth-Token", authToken).build();
 
       HttpResponse success = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResourceWithContentType("/delete_zone.json", APPLICATION_JSON)).build();
