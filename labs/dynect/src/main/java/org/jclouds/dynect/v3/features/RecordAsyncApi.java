@@ -19,18 +19,26 @@
 package org.jclouds.dynect.v3.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.jclouds.http.Uris.uriBuilder;
 
 import java.net.URI;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.inject.Named;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.dynect.v3.DynECTExceptions.JobStillRunningException;
+import org.jclouds.dynect.v3.domain.CreateRecord;
+import org.jclouds.dynect.v3.domain.Job;
 import org.jclouds.dynect.v3.domain.Record;
 import org.jclouds.dynect.v3.domain.RecordId;
 import org.jclouds.dynect.v3.domain.SOARecord;
@@ -46,6 +54,7 @@ import org.jclouds.dynect.v3.filters.AlwaysAddContentType;
 import org.jclouds.dynect.v3.filters.SessionManager;
 import org.jclouds.dynect.v3.functions.ToRecordIds;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.json.Json;
 import org.jclouds.rest.Binder;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Fallback;
@@ -77,6 +86,58 @@ public interface RecordAsyncApi {
    @Path("/AllRecord/{zone}")
    @ResponseParser(ToRecordIds.class)
    ListenableFuture<FluentIterable<RecordId>> list() throws JobStillRunningException;
+
+   /**
+    * @see RecordApi#listByFQDNAndType
+    */
+   @Named("GetRecord")
+   @GET
+   @Path("/{type}Record/{zone}/{fqdn}")
+   @ResponseParser(ToRecordIds.class)
+   ListenableFuture<FluentIterable<RecordId>> listByFQDNAndType(@PathParam("fqdn") String fqdn,
+         @PathParam("type") String type) throws JobStillRunningException;
+
+   /**
+    * @see RecordApi#scheduleCreate
+    */
+   @Named("CreateRecord")
+   @POST
+   @Path("/{type}Record/{zone}/{fqdn}")
+   @Consumes(APPLICATION_JSON)
+   @Produces(APPLICATION_JSON)
+   ListenableFuture<Job> scheduleCreate(@BinderParam(CreateRecordBinder.class) CreateRecord<?> newRecord)
+         throws JobStillRunningException;
+
+   static class CreateRecordBinder implements Binder {
+      private final Json json;
+
+      @Inject
+      CreateRecordBinder(Json json){
+         this.json = checkNotNull(json, "json");
+      }
+
+      @SuppressWarnings("unchecked")
+      @Override
+      public <R extends HttpRequest> R bindToRequest(R request, Object arg) {
+         CreateRecord<?> in = CreateRecord.class.cast(checkNotNull(arg, "record to create"));
+         URI path = uriBuilder(request.getEndpoint())
+                     .build(ImmutableMap.<String, Object> builder()
+                                        .put("type", in.getType())
+                                        .put("fqdn", in.getFQDN()).build());
+         return (R) request.toBuilder()
+                           .endpoint(path)
+                           .payload(json.toJson(ImmutableMap.of("rdata", ImmutableMap.copyOf(in.getRData()), "ttl", in.getTTL().intValue()))).build();
+      }
+   }
+
+   /**
+    * @see RecordApi#scheduleDelete
+    */
+   @Named("DeleteRecord")
+   @DELETE
+   @Fallback(NullOnNotFoundOr404.class)
+   @Consumes(APPLICATION_JSON)
+   ListenableFuture<Job> scheduleDelete(@BinderParam(RecordIdBinder.class) RecordId recordId) throws JobStillRunningException;
 
    /**
     * @see RecordApi#get

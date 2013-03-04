@@ -20,14 +20,21 @@ package org.jclouds.dynect.v3.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.logging.Logger.getAnonymousLogger;
+import static org.jclouds.dynect.v3.domain.rdata.AData.a;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
 
+import org.jclouds.JcloudsVersion;
+import org.jclouds.dynect.v3.DynECTExceptions.JobStillRunningException;
+import org.jclouds.dynect.v3.domain.CreateRecord;
+import org.jclouds.dynect.v3.domain.Job;
+import org.jclouds.dynect.v3.domain.Job.Status;
 import org.jclouds.dynect.v3.domain.Record;
 import org.jclouds.dynect.v3.domain.RecordId;
 import org.jclouds.dynect.v3.domain.SOARecord;
+import org.jclouds.dynect.v3.domain.Zone;
 import org.jclouds.dynect.v3.domain.rdata.AAAAData;
 import org.jclouds.dynect.v3.domain.rdata.AData;
 import org.jclouds.dynect.v3.domain.rdata.CNAMEData;
@@ -38,6 +45,7 @@ import org.jclouds.dynect.v3.domain.rdata.SOAData;
 import org.jclouds.dynect.v3.domain.rdata.SRVData;
 import org.jclouds.dynect.v3.domain.rdata.TXTData;
 import org.jclouds.dynect.v3.internal.BaseDynECTApiLiveTest;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -64,8 +72,8 @@ public class RecordApiLiveTest extends BaseDynECTApiLiveTest {
 
    @Test
    protected void testListAndGetRecords() {
-      for (String zone : context.getApi().getZoneApi().list()) {
-         RecordApi api = context.getApi().getRecordApiForZone(zone);
+      for (String zone : zoneApi().list()) {
+         RecordApi api = api(zone);
          ImmutableList<RecordId> records = api.list().toList();
          getAnonymousLogger().info("zone: " + zone + " record count: " + records.size());
 
@@ -161,5 +169,86 @@ public class RecordApiLiveTest extends BaseDynECTApiLiveTest {
       TXTData rdata = record.getRData();
       checkNotNull(rdata.getTxtdata(), "rdata.txtdata cannot be null for TXTRecord: %s", record);
       return record;
+   }
+
+   String zoneFQDN = System.getProperty("user.name").replace('.', '-') + ".record.dynecttest.jclouds.org";
+   String contact = JcloudsVersion.get() + ".jclouds.org";
+
+   private void createZone() {
+      Job job = zoneApi().scheduleCreateWithContact(zoneFQDN, contact);
+      checkNotNull(job, "unable to create zone %s", zoneFQDN);
+      getAnonymousLogger().info("created zone: " + job);
+      assertEquals(job.getStatus(), Status.SUCCESS);
+      assertEquals(context.getApi().getJob(job.getId()), job);
+      Zone zone = zoneApi().publish(zoneFQDN);
+      checkNotNull(zone, "unable to publish zone %s", zoneFQDN);
+      getAnonymousLogger().info("published zone: " + zone);
+   }
+
+   String fqdn = "www." + zoneFQDN;
+   CreateRecord<AData> record = CreateRecord.<AData> builder()
+                                            .fqdn("www." + zoneFQDN)
+                                            .type("A")
+                                            .ttl(86400)
+                                            .rdata(a("1.1.1.1"))
+                                            .build();
+
+   public void testCreateRecord() {
+      createZone();
+
+      Job job = null;
+      while (true) {
+         try {
+            job = api(zoneFQDN).scheduleCreate(record);
+            break;
+         } catch (JobStillRunningException e) {
+            continue;
+         }
+      }
+
+      checkNotNull(job, "unable to create record %s", record);
+      getAnonymousLogger().info("created record: " + job);
+      assertEquals(job.getStatus(), Status.SUCCESS);
+      assertEquals(context.getApi().getJob(job.getId()), job);
+      zoneApi().publish(zoneFQDN);
+   }
+
+   RecordId id;
+
+   @Test(dependsOnMethods = "testCreateRecord")
+   public void testListByFQDNAndType() {
+      id = api(zoneFQDN).listByFQDNAndType(record.getFQDN(), record.getType()).toList().get(0);
+      getAnonymousLogger().info(id.toString());
+      Record<? extends Map<String, Object>> newRecord = api(zoneFQDN).get(id);
+      assertEquals(newRecord.getFQDN(), record.getFQDN());
+      assertEquals(newRecord.getType(), record.getType());
+      assertEquals(newRecord.getTTL(), record.getTTL());
+      assertEquals(newRecord.getRData(), record.getRData());
+      checkRecord(newRecord);
+   }
+
+   @Test(dependsOnMethods = "testListByFQDNAndType")
+   public void testDeleteRecord() {
+      Job job = api(zoneFQDN).scheduleDelete(id);
+      checkNotNull(job, "unable to delete record %s", id);
+      getAnonymousLogger().info("deleted record: " + job);
+      assertEquals(job.getStatus(), Status.SUCCESS);
+      assertEquals(context.getApi().getJob(job.getId()), job);
+      zoneApi().publish(zoneFQDN);
+   }
+
+   protected RecordApi api(String zoneFQDN) {
+      return context.getApi().getRecordApiForZone(zoneFQDN);
+   }
+
+   protected ZoneApi zoneApi() {
+      return context.getApi().getZoneApi();
+   }
+
+   @Override
+   @AfterClass(groups = "live", alwaysRun = true)
+   protected void tearDownContext() {
+      zoneApi().delete(zoneFQDN);
+      super.tearDownContext();
    }
 }
