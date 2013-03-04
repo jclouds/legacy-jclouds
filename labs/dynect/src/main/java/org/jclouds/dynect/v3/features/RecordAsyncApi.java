@@ -19,7 +19,6 @@
 package org.jclouds.dynect.v3.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.jclouds.http.Uris.uriBuilder;
 
 import java.net.URI;
@@ -29,7 +28,6 @@ import javax.inject.Named;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.dynect.v3.DynECTExceptions.JobStillRunningException;
@@ -44,6 +42,7 @@ import org.jclouds.dynect.v3.domain.rdata.NSData;
 import org.jclouds.dynect.v3.domain.rdata.PTRData;
 import org.jclouds.dynect.v3.domain.rdata.SRVData;
 import org.jclouds.dynect.v3.domain.rdata.TXTData;
+import org.jclouds.dynect.v3.filters.AlwaysAddContentType;
 import org.jclouds.dynect.v3.filters.SessionManager;
 import org.jclouds.dynect.v3.functions.ToRecordIds;
 import org.jclouds.http.HttpRequest;
@@ -66,10 +65,8 @@ import com.google.common.util.concurrent.ListenableFuture;
  *      href="https://manage.dynect.net/help/docs/api2/rest/resources/AllRecord.html">doc</a>
  * @author Adrian Cole
  */
-// required for all calls
-@Produces(APPLICATION_JSON)
 @Headers(keys = "API-Version", values = "{jclouds.api-version}")
-@RequestFilters(SessionManager.class)
+@RequestFilters({ AlwaysAddContentType.class, SessionManager.class })
 public interface RecordAsyncApi {
 
    /**

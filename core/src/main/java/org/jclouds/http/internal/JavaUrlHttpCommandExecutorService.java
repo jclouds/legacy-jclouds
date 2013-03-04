@@ -63,7 +63,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableMultimap.Builder;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.io.CountingOutputStream;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Inject;
@@ -227,18 +226,14 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
    }
 
    protected void writeNothing(HttpURLConnection connection) {
-      connection.setRequestProperty(CONTENT_LENGTH, "0");
-      // for some reason POST/PUT undoes the content length header above.
-      if (ImmutableSet.of("POST", "PUT").contains(connection.getRequestMethod())) {
-         connection.setFixedLengthStreamingMode(0);
-         connection.setDoOutput(true);
+      if (!HttpRequest.NON_PAYLOAD_METHODS.contains(connection.getRequestMethod())) {
+         connection.setRequestProperty(CONTENT_LENGTH, "0");
       }
    }
 
    void writePayloadToConnection(Payload payload, HttpURLConnection connection) throws IOException {
       Long length = payload.getContentMetadata().getContentLength();
       connection.setRequestProperty(CONTENT_LENGTH, length.toString());
-      connection.setRequestProperty("Expect", "100-continue");
       connection.setFixedLengthStreamingMode(length.intValue());
       connection.setDoOutput(true);
       CountingOutputStream out = new CountingOutputStream(connection.getOutputStream());

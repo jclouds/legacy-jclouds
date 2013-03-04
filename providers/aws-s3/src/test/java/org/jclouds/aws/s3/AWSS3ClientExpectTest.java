@@ -73,6 +73,7 @@ public class AWSS3ClientExpectTest extends BaseAWSS3ClientExpectTest {
          HttpRequest.builder()
                     .method("PUT")
                     .endpoint("https://test.s3-eu-west-1.amazonaws.com/test")
+                    .addHeader("Expect", "100-continue")
                     .addHeader("x-amz-storage-class", "REDUCED_REDUNDANCY")
                     .addHeader("Host", "test.s3-eu-west-1.amazonaws.com")
                     .addHeader("Date", CONSTANT_DATE)

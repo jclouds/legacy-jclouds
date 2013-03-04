@@ -451,6 +451,7 @@
                        </property>
                    </properties>
                     <systemPropertyVariables>
+                        <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                         <jclouds.wire.httpstream.url>${jclouds.wire.httpstream.url}</jclouds.wire.httpstream.url>
                         <jclouds.wire.httpstream.md5>${jclouds.wire.httpstream.md5}</jclouds.wire.httpstream.md5>
                     </systemPropertyVariables>

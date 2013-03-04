@@ -72,13 +72,16 @@ public class SwiftKeystoneBlobSignerExpectTest extends BaseBlobSignerExpectTest 
    protected HttpRequest putBlob() {
       return HttpRequest.builder().method("PUT")
             .endpoint("https://objects.jclouds.org/v1.0/40806637803162/container/name")
+            .addHeader("Expect", "100-continue")
             .addHeader("X-Auth-Token", "Auth_4f173437e4b013bee56d1007").build();
    }
 
    @Override
    protected HttpRequest putBlobWithTime() {
       return HttpRequest.builder().method("PUT")
-            .endpoint("https://objects.jclouds.org/v1.0/40806637803162/container/name?temp_url_sig=72e5f6ebafab2b3da0586198797e58fb7478211e&temp_url_expires=123456792").build();
+            .endpoint("https://objects.jclouds.org/v1.0/40806637803162/container/name?temp_url_sig=72e5f6ebafab2b3da0586198797e58fb7478211e&temp_url_expires=123456792")
+            .addHeader("Expect", "100-continue")
+            .build();
    }
 
    @Override

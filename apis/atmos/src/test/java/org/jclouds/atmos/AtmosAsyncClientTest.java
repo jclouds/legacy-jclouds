@@ -167,7 +167,7 @@ public class AtmosAsyncClientTest extends BaseAsyncClientTest<AtmosAsyncClient> 
                .apply(BindBlobToMultipartFormTest.TEST_BLOB)));
 
       assertRequestLineEquals(request, "POST https://accesspoint.atmosonline.com/rest/namespace/dir/hello HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT + ": */*\n");
+      assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT + ": */*\nExpect: 100-continue\n");
       assertPayloadEquals(request, "hello", "text/plain", false);
 
       assertResponseParserClassEquals(method, request, ParseURIFromListOrLocationHeaderIf20x.class);
@@ -185,7 +185,7 @@ public class AtmosAsyncClientTest extends BaseAsyncClientTest<AtmosAsyncClient> 
 
       assertRequestLineEquals(request, "POST https://accesspoint.atmosonline.com/rest/namespace/dir/hello HTTP/1.1");
       assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT
-               + ": */*\nx-emc-groupacl: other=READ\nx-emc-useracl: root=FULL_CONTROL\n");
+               + ": */*\nExpect: 100-continue\nx-emc-groupacl: other=READ\nx-emc-useracl: root=FULL_CONTROL\n");
       assertPayloadEquals(request, "hello", "text/plain", false);
 
       assertResponseParserClassEquals(method, request, ParseURIFromListOrLocationHeaderIf20x.class);
@@ -202,7 +202,7 @@ public class AtmosAsyncClientTest extends BaseAsyncClientTest<AtmosAsyncClient> 
                .apply(BindBlobToMultipartFormTest.TEST_BLOB)));
 
       assertRequestLineEquals(request, "PUT https://accesspoint.atmosonline.com/rest/namespace/dir/hello HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT + ": */*\n");
+      assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT + ": */*\nExpect: 100-continue\n");
       assertPayloadEquals(request, "hello", "text/plain", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -220,7 +220,7 @@ public class AtmosAsyncClientTest extends BaseAsyncClientTest<AtmosAsyncClient> 
 
       assertRequestLineEquals(request, "PUT https://accesspoint.atmosonline.com/rest/namespace/dir/hello HTTP/1.1");
       assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT
-               + ": */*\nx-emc-groupacl: other=READ\nx-emc-useracl: root=FULL_CONTROL\n");
+               + ": */*\nExpect: 100-continue\nx-emc-groupacl: other=READ\nx-emc-useracl: root=FULL_CONTROL\n");
       assertPayloadEquals(request, "hello", "text/plain", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);

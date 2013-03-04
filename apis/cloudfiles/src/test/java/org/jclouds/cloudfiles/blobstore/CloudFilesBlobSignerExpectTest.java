@@ -80,12 +80,14 @@ public class CloudFilesBlobSignerExpectTest extends BaseBlobSignerExpectTest {
    protected HttpRequest putBlob() {
       return HttpRequest.builder().method("PUT")
             .endpoint("https://storage101.lon3.clouddrive.com/v1/MossoCloudFS_83a9d536-2e25-4166-bd3b-a503a934f953/container/name")
+            .addHeader("Expect", "100-continue")
             .addHeader("X-Auth-Token", authToken).build();
    }
 
    @Override
    protected HttpRequest putBlobWithTime() {
       return HttpRequest.builder().method("PUT")
+            .addHeader("Expect", "100-continue")
             .endpoint("https://storage101.lon3.clouddrive.com/v1/MossoCloudFS_83a9d536-2e25-4166-bd3b-a503a934f953/container/name?temp_url_sig=f83fa711f353f6f0bab3a66c56e35a972b9b3922&temp_url_expires=123456792").build();
    }
 

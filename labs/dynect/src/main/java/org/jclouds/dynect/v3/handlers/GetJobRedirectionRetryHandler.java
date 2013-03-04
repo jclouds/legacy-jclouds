@@ -56,7 +56,7 @@ public class GetJobRedirectionRetryHandler extends RedirectionRetryHandler {
       if (location != null && location.indexOf("Job") != -1) {
          HttpRequest getRequest = command.getCurrentRequest().toBuilder()
                                                              .method("GET")
-                                                             .payload(emptyPayload).build();
+                                                             .payload((Payload) null).build();
          command.setCurrentRequest(getRequest);
       }
       return super.shouldRetryRequest(command, response);

@@ -75,6 +75,7 @@ public class HPCloudObjectStorageBlobSignerExpectTest extends BaseBlobSignerExpe
    protected HttpRequest putBlob() {
       return HttpRequest.builder().method("PUT")
             .endpoint("https://objects.jclouds.org/v1.0/40806637803162/container/name")
+            .addHeader("Expect", "100-continue")
             .addHeader("X-Auth-Token", "Auth_4f173437e4b013bee56d1007").build();
    }
 
@@ -82,6 +83,7 @@ public class HPCloudObjectStorageBlobSignerExpectTest extends BaseBlobSignerExpe
    protected HttpRequest putBlobWithTime() {
       return HttpRequest.builder().method("PUT")
             .endpoint("https://objects.jclouds.org/v1.0/40806637803162/container/name?temp_url_sig=40806637803162%3Aidentity%3Ac90269245ab0a316d5ea5e654d4c2a975fb4bf77&temp_url_expires=123456792")
+            .addHeader("Expect", "100-continue")
             .build();
    }
 

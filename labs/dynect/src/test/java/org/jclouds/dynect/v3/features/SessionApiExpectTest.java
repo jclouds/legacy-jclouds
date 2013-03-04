@@ -18,6 +18,7 @@
  */
 package org.jclouds.dynect.v3.features;
 
+import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -47,11 +48,10 @@ public class SessionApiExpectTest extends BaseDynECTApiExpectTest {
    }
 
    HttpRequest isValid = HttpRequest.builder().method("GET")
-         .endpoint("https://api2.dynect.net/REST/Session")
-         .addHeader("API-Version", "3.3.8")
-         .addHeader("Auth-Token", authToken)
-         .payload(emptyJsonPayload())
-         .build();   
+                                    .endpoint("https://api2.dynect.net/REST/Session")
+                                    .addHeader("API-Version", "3.3.8")
+                                    .addHeader(CONTENT_TYPE, APPLICATION_JSON)
+                                    .addHeader("Auth-Token", authToken).build();
 
    HttpResponse validResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResourceWithContentType("/session_valid.json", APPLICATION_JSON)).build();
@@ -70,11 +70,10 @@ public class SessionApiExpectTest extends BaseDynECTApiExpectTest {
    }
 
    HttpRequest logout = HttpRequest.builder().method("DELETE")
-         .endpoint("https://api2.dynect.net/REST/Session")
-         .addHeader("API-Version", "3.3.8")
-         .addHeader("Auth-Token", authToken)
-         .payload(emptyJsonPayload())
-         .build();   
+                                   .endpoint("https://api2.dynect.net/REST/Session")
+                                   .addHeader("API-Version", "3.3.8")
+                                   .addHeader(CONTENT_TYPE, APPLICATION_JSON)
+                                   .addHeader("Auth-Token", authToken).build();
 
    HttpResponse logoutResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResourceWithContentType("/logout.json", APPLICATION_JSON)).build();
