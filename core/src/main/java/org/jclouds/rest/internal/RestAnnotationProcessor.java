@@ -200,10 +200,13 @@ public class RestAnnotationProcessor implements Function<Invocation, HttpRequest
          throw new NoSuchElementException(format("no endpoint found for %s", invocation));
       GeneratedHttpRequest.Builder requestBuilder = GeneratedHttpRequest.builder().invocation(invocation)
             .caller(caller);
+      String requestMethod = null;
       if (r != null) {
+         requestMethod = r.getMethod();
          requestBuilder.fromHttpRequest(r);
       } else {
-         requestBuilder.method(tryFindHttpMethod(invocation.getInvokable()).get());
+         requestMethod = tryFindHttpMethod(invocation.getInvokable()).get();
+         requestBuilder.method(requestMethod);
       }
 
       requestBuilder.filters(getFiltersIfAnnotated(invocation));
@@ -286,7 +289,7 @@ public class RestAnnotationProcessor implements Function<Invocation, HttpRequest
          payload = new MultipartForm(MultipartForm.BOUNDARY, parts);
       } else if (formParams.size() > 0) {
          payload = Payloads.newUrlEncodedFormPayload(transformValues(formParams, NullableToStringFunction.INSTANCE));
-      } else if (headers.containsKey(CONTENT_TYPE)) {
+      } else if (headers.containsKey(CONTENT_TYPE) && !HttpRequest.NON_PAYLOAD_METHODS.contains(requestMethod)) {
          if (payload == null)
             payload = Payloads.newByteArrayPayload(new byte[] {});
          payload.getContentMetadata().setContentType(get(headers.get(CONTENT_TYPE), 0));
