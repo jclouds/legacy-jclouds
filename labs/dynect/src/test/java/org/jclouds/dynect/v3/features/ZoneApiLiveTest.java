@@ -67,14 +67,15 @@ public class ZoneApiLiveTest extends BaseDynECTApiLiveTest {
    }
 
    String fqdn = System.getProperty("user.name").replace('.', '-') + ".zone.dynecttest.jclouds.org";
-   String contact = JcloudsVersion.get() + "@jclouds.org";
+   String contact = JcloudsVersion.get() + ".jclouds.org";
 
    @Test
    public void testCreateZone() {
-      Zone zone = api().createWithContact(fqdn, contact);
-      checkNotNull(zone, "unable to create zone %s", fqdn);
-      getAnonymousLogger().info("created zone: " + zone);
-      checkZone(zone);
+      Job job = api().scheduleCreateWithContact(fqdn, contact);
+      checkNotNull(job, "unable to create zone %s", fqdn);
+      getAnonymousLogger().info("created zone: " + job);
+      assertEquals(job.getStatus(), Status.SUCCESS);
+      assertEquals(context.getApi().getJob(job.getId()), job);
    }
 
    @Test(dependsOnMethods = "testCreateZone")
@@ -121,7 +122,7 @@ public class ZoneApiLiveTest extends BaseDynECTApiLiveTest {
    }
 
    @Override
-   @AfterClass(groups = "live")
+   @AfterClass(groups = "live", alwaysRun = true)
    protected void tearDownContext() {
       api().delete(fqdn);
       super.tearDownContext();

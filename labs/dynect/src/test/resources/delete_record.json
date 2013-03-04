@@ -1,0 +1,1 @@
+{"status": "success", "data": {}, "job_id": 285372457, "msgs": [{"INFO": "delete: Record will be deleted on zone publish", "SOURCE": "BLL", "ERR_CD": null, "LVL": "INFO"}, {"INFO": "remove_node: www.adriancole.zone.dynecttest.jclouds.org removed from tree.", "SOURCE": "BLL", "ERR_CD": null, "LVL": "INFO"}]}

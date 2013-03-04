@@ -19,13 +19,18 @@
 package org.jclouds.dynect.v3.features;
 
 import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
+import static com.google.common.net.HttpHeaders.ACCEPT;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.jclouds.dynect.v3.domain.RecordId.recordIdBuilder;
+import static org.jclouds.dynect.v3.domain.rdata.AData.a;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import org.jclouds.dynect.v3.DynECTApi;
+import org.jclouds.dynect.v3.domain.CreateRecord;
+import org.jclouds.dynect.v3.domain.Job;
 import org.jclouds.dynect.v3.domain.RecordId;
+import org.jclouds.dynect.v3.domain.rdata.AData;
 import org.jclouds.dynect.v3.internal.BaseDynECTApiExpectTest;
 import org.jclouds.dynect.v3.parse.GetAAAARecordResponseTest;
 import org.jclouds.dynect.v3.parse.GetARecordResponseTest;
@@ -48,33 +53,33 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "RecordApiExpectTest")
 public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
    HttpRequest getSOA = HttpRequest.builder().method("GET")
-                                .endpoint("https://api2.dynect.net/REST/SOARecord/adrianc.zone.dynecttest.jclouds.org/adrianc.zone.dynecttest.jclouds.org/50976579")
-                                .addHeader("API-Version", "3.3.8")
-                                .addHeader(CONTENT_TYPE, APPLICATION_JSON)
-                                .addHeader("Auth-Token", authToken).build();   
+                                   .endpoint("https://api2.dynect.net/REST/SOARecord/jclouds.org/jclouds.org/50976579")
+                                   .addHeader("API-Version", "3.3.8")
+                                   .addHeader(CONTENT_TYPE, APPLICATION_JSON)
+                                   .addHeader("Auth-Token", authToken).build();   
 
    HttpResponse soaResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResourceWithContentType("/get_record_soa.json", APPLICATION_JSON)).build();
 
    RecordId soaId = recordIdBuilder()
-                            .zone("adrianc.zone.dynecttest.jclouds.org")
-                            .fqdn("adrianc.zone.dynecttest.jclouds.org")
+                            .zone("jclouds.org")
+                            .fqdn("jclouds.org")
                             .type("SOA")
                             .id(50976579l).build();
 
    public void testGetWhenResponseIs2xx() {
       DynECTApi success = requestsSendResponses(createSession, createSessionResponse, getSOA, soaResponse);
-      assertEquals(success.getRecordApiForZone("adrianc.zone.dynecttest.jclouds.org").get(soaId).toString(),
+      assertEquals(success.getRecordApiForZone("jclouds.org").get(soaId).toString(),
                    new GetRecordResponseTest().expected().toString());
    }
 
    public void testGetWhenResponseIs404() {
       DynECTApi fail = requestsSendResponses(createSession, createSessionResponse, getSOA, notFound);
-      assertNull(fail.getRecordApiForZone("adrianc.zone.dynecttest.jclouds.org").get(soaId));
+      assertNull(fail.getRecordApiForZone("jclouds.org").get(soaId));
    }
 
    HttpRequest getAAAA = HttpRequest.builder().method("GET")
-         .endpoint("https://api2.dynect.net/REST/AAAARecord/adrianc.zone.dynecttest.jclouds.org/adrianc.zone.dynecttest.jclouds.org/50976579")
+         .endpoint("https://api2.dynect.net/REST/AAAARecord/jclouds.org/jclouds.org/50976579")
          .addHeader("API-Version", "3.3.8")
          .addHeader(CONTENT_TYPE, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken).build();
@@ -83,24 +88,24 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
          .payload(payloadFromResourceWithContentType("/get_record_aaaa.json", APPLICATION_JSON)).build();
 
    RecordId aaaaId = recordIdBuilder()
-        .zone("adrianc.zone.dynecttest.jclouds.org")
-        .fqdn("adrianc.zone.dynecttest.jclouds.org")
+        .zone("jclouds.org")
+        .fqdn("jclouds.org")
         .type("AAAA")
         .id(50976579l).build();
 
    public void testGetAAAAWhenResponseIs2xx() {
       DynECTApi success = requestsSendResponses(createSession, createSessionResponse, getAAAA, aaaaResponse);
-      assertEquals(success.getRecordApiForZone("adrianc.zone.dynecttest.jclouds.org").getAAAA(aaaaId.getFQDN(), aaaaId.getId()).toString(),
+      assertEquals(success.getRecordApiForZone("jclouds.org").getAAAA(aaaaId.getFQDN(), aaaaId.getId()).toString(),
                    new GetAAAARecordResponseTest().expected().toString());
    }
 
    public void testGetAAAAWhenResponseIs404() {
       DynECTApi fail = requestsSendResponses(createSession, createSessionResponse, getAAAA, notFound);
-      assertNull(fail.getRecordApiForZone("adrianc.zone.dynecttest.jclouds.org").getAAAA(aaaaId.getFQDN(), aaaaId.getId()));
+      assertNull(fail.getRecordApiForZone("jclouds.org").getAAAA(aaaaId.getFQDN(), aaaaId.getId()));
    }
 
    HttpRequest getA = HttpRequest.builder().method("GET")
-         .endpoint("https://api2.dynect.net/REST/ARecord/adrianc.zone.dynecttest.jclouds.org/adrianc.zone.dynecttest.jclouds.org/50976579")
+         .endpoint("https://api2.dynect.net/REST/ARecord/jclouds.org/jclouds.org/50976579")
          .addHeader("API-Version", "3.3.8")
          .addHeader(CONTENT_TYPE, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken).build();   
@@ -109,24 +114,24 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
          .payload(payloadFromResourceWithContentType("/get_record_a.json", APPLICATION_JSON)).build();
 
    RecordId aId = recordIdBuilder()
-        .zone("adrianc.zone.dynecttest.jclouds.org")
-        .fqdn("adrianc.zone.dynecttest.jclouds.org")
+        .zone("jclouds.org")
+        .fqdn("jclouds.org")
         .type("A")
         .id(50976579l).build();
 
    public void testGetAWhenResponseIs2xx() {
       DynECTApi success = requestsSendResponses(createSession, createSessionResponse, getA, aResponse);
-      assertEquals(success.getRecordApiForZone("adrianc.zone.dynecttest.jclouds.org").getA(aId.getFQDN(), aId.getId()).toString(),
+      assertEquals(success.getRecordApiForZone("jclouds.org").getA(aId.getFQDN(), aId.getId()).toString(),
                    new GetARecordResponseTest().expected().toString());
    }
 
    public void testGetAWhenResponseIs404() {
       DynECTApi fail = requestsSendResponses(createSession, createSessionResponse, getA, notFound);
-      assertNull(fail.getRecordApiForZone("adrianc.zone.dynecttest.jclouds.org").getA(aId.getFQDN(), aId.getId()));
+      assertNull(fail.getRecordApiForZone("jclouds.org").getA(aId.getFQDN(), aId.getId()));
    }
 
    HttpRequest getCNAME = HttpRequest.builder().method("GET")
-         .endpoint("https://api2.dynect.net/REST/CNAMERecord/adrianc.zone.dynecttest.jclouds.org/adrianc.zone.dynecttest.jclouds.org/50976579")
+         .endpoint("https://api2.dynect.net/REST/CNAMERecord/jclouds.org/jclouds.org/50976579")
          .addHeader("API-Version", "3.3.8")
          .addHeader(CONTENT_TYPE, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken).build();   
@@ -135,24 +140,24 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
          .payload(payloadFromResourceWithContentType("/get_record_cname.json", APPLICATION_JSON)).build();
 
    RecordId cnameId = recordIdBuilder()
-        .zone("adrianc.zone.dynecttest.jclouds.org")
-        .fqdn("adrianc.zone.dynecttest.jclouds.org")
+        .zone("jclouds.org")
+        .fqdn("jclouds.org")
         .type("CNAME")
         .id(50976579l).build();
 
    public void testGetCNAMEWhenResponseIs2xx() {
       DynECTApi success = requestsSendResponses(createSession, createSessionResponse, getCNAME, cnameResponse);
-      assertEquals(success.getRecordApiForZone("adrianc.zone.dynecttest.jclouds.org").getCNAME(cnameId.getFQDN(), cnameId.getId()).toString(),
+      assertEquals(success.getRecordApiForZone("jclouds.org").getCNAME(cnameId.getFQDN(), cnameId.getId()).toString(),
                    new GetCNAMERecordResponseTest().expected().toString());
    }
 
    public void testGetCNAMEWhenResponseIs404() {
       DynECTApi fail = requestsSendResponses(createSession, createSessionResponse, getCNAME, notFound);
-      assertNull(fail.getRecordApiForZone("adrianc.zone.dynecttest.jclouds.org").getCNAME(cnameId.getFQDN(), cnameId.getId()));
+      assertNull(fail.getRecordApiForZone("jclouds.org").getCNAME(cnameId.getFQDN(), cnameId.getId()));
    }
 
    HttpRequest getMX = HttpRequest.builder().method("GET")
-         .endpoint("https://api2.dynect.net/REST/MXRecord/adrianc.zone.dynecttest.jclouds.org/adrianc.zone.dynecttest.jclouds.org/50976579")
+         .endpoint("https://api2.dynect.net/REST/MXRecord/jclouds.org/jclouds.org/50976579")
          .addHeader("API-Version", "3.3.8")
          .addHeader(CONTENT_TYPE, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken).build();   
@@ -161,24 +166,24 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
          .payload(payloadFromResourceWithContentType("/get_record_mx.json", APPLICATION_JSON)).build();
 
    RecordId mxId = recordIdBuilder()
-        .zone("adrianc.zone.dynecttest.jclouds.org")
-        .fqdn("adrianc.zone.dynecttest.jclouds.org")
+        .zone("jclouds.org")
+        .fqdn("jclouds.org")
         .type("MX")
         .id(50976579l).build();
 
    public void testGetMXWhenResponseIs2xx() {
       DynECTApi success = requestsSendResponses(createSession, createSessionResponse, getMX, mxResponse);
-      assertEquals(success.getRecordApiForZone("adrianc.zone.dynecttest.jclouds.org").getMX(mxId.getFQDN(), mxId.getId()).toString(),
+      assertEquals(success.getRecordApiForZone("jclouds.org").getMX(mxId.getFQDN(), mxId.getId()).toString(),
                    new GetMXRecordResponseTest().expected().toString());
    }
 
    public void testGetMXWhenResponseIs404() {
       DynECTApi fail = requestsSendResponses(createSession, createSessionResponse, getMX, notFound);
-      assertNull(fail.getRecordApiForZone("adrianc.zone.dynecttest.jclouds.org").getMX(mxId.getFQDN(), mxId.getId()));
+      assertNull(fail.getRecordApiForZone("jclouds.org").getMX(mxId.getFQDN(), mxId.getId()));
    }
 
    HttpRequest getNS = HttpRequest.builder().method("GET")
-         .endpoint("https://api2.dynect.net/REST/NSRecord/adrianc.zone.dynecttest.jclouds.org/adrianc.zone.dynecttest.jclouds.org/50976579")
+         .endpoint("https://api2.dynect.net/REST/NSRecord/jclouds.org/jclouds.org/50976579")
          .addHeader("API-Version", "3.3.8")
          .addHeader(CONTENT_TYPE, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken).build();   
@@ -187,24 +192,24 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
          .payload(payloadFromResourceWithContentType("/get_record_ns.json", APPLICATION_JSON)).build();
 
    RecordId nsId = recordIdBuilder()
-        .zone("adrianc.zone.dynecttest.jclouds.org")
-        .fqdn("adrianc.zone.dynecttest.jclouds.org")
+        .zone("jclouds.org")
+        .fqdn("jclouds.org")
         .type("NS")
         .id(50976579l).build();
 
    public void testGetNSWhenResponseIs2xx() {
       DynECTApi success = requestsSendResponses(createSession, createSessionResponse, getNS, nsResponse);
-      assertEquals(success.getRecordApiForZone("adrianc.zone.dynecttest.jclouds.org").getNS(nsId.getFQDN(), nsId.getId()).toString(),
+      assertEquals(success.getRecordApiForZone("jclouds.org").getNS(nsId.getFQDN(), nsId.getId()).toString(),
                    new GetNSRecordResponseTest().expected().toString());
    }
 
    public void testGetNSWhenResponseIs404() {
       DynECTApi fail = requestsSendResponses(createSession, createSessionResponse, getNS, notFound);
-      assertNull(fail.getRecordApiForZone("adrianc.zone.dynecttest.jclouds.org").getNS(nsId.getFQDN(), nsId.getId()));
+      assertNull(fail.getRecordApiForZone("jclouds.org").getNS(nsId.getFQDN(), nsId.getId()));
    }
 
    HttpRequest getPTR = HttpRequest.builder().method("GET")
-         .endpoint("https://api2.dynect.net/REST/PTRRecord/adrianc.zone.dynecttest.jclouds.org/adrianc.zone.dynecttest.jclouds.org/50976579")
+         .endpoint("https://api2.dynect.net/REST/PTRRecord/jclouds.org/jclouds.org/50976579")
          .addHeader("API-Version", "3.3.8")
          .addHeader(CONTENT_TYPE, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken).build();   
@@ -213,35 +218,35 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
          .payload(payloadFromResourceWithContentType("/get_record_ptr.json", APPLICATION_JSON)).build();
 
    RecordId ptrId = recordIdBuilder()
-        .zone("adrianc.zone.dynecttest.jclouds.org")
-        .fqdn("adrianc.zone.dynecttest.jclouds.org")
+        .zone("jclouds.org")
+        .fqdn("jclouds.org")
         .type("PTR")
         .id(50976579l).build();
 
    public void testGetPTRWhenResponseIs2xx() {
       DynECTApi success = requestsSendResponses(createSession, createSessionResponse, getPTR, ptrResponse);
-      assertEquals(success.getRecordApiForZone("adrianc.zone.dynecttest.jclouds.org").getPTR(ptrId.getFQDN(), ptrId.getId()).toString(),
+      assertEquals(success.getRecordApiForZone("jclouds.org").getPTR(ptrId.getFQDN(), ptrId.getId()).toString(),
                    new GetPTRRecordResponseTest().expected().toString());
    }
 
    public void testGetPTRWhenResponseIs404() {
       DynECTApi fail = requestsSendResponses(createSession, createSessionResponse, getPTR, notFound);
-      assertNull(fail.getRecordApiForZone("adrianc.zone.dynecttest.jclouds.org").getPTR(ptrId.getFQDN(), ptrId.getId()));
+      assertNull(fail.getRecordApiForZone("jclouds.org").getPTR(ptrId.getFQDN(), ptrId.getId()));
    }
 
    public void testGetSOAWhenResponseIs2xx() {
       DynECTApi success = requestsSendResponses(createSession, createSessionResponse, getSOA, soaResponse);
-      assertEquals(success.getRecordApiForZone("adrianc.zone.dynecttest.jclouds.org").getSOA(soaId.getFQDN(), soaId.getId()).toString(),
+      assertEquals(success.getRecordApiForZone("jclouds.org").getSOA(soaId.getFQDN(), soaId.getId()).toString(),
                    new GetSOARecordResponseTest().expected().toString());
    }
 
    public void testGetSOAWhenResponseIs404() {
       DynECTApi fail = requestsSendResponses(createSession, createSessionResponse, getSOA, notFound);
-      assertNull(fail.getRecordApiForZone("adrianc.zone.dynecttest.jclouds.org").getSOA(soaId.getFQDN(), soaId.getId()));
+      assertNull(fail.getRecordApiForZone("jclouds.org").getSOA(soaId.getFQDN(), soaId.getId()));
    }
 
    HttpRequest getSRV = HttpRequest.builder().method("GET")
-         .endpoint("https://api2.dynect.net/REST/SRVRecord/adrianc.zone.dynecttest.jclouds.org/adrianc.zone.dynecttest.jclouds.org/50976579")
+         .endpoint("https://api2.dynect.net/REST/SRVRecord/jclouds.org/jclouds.org/50976579")
          .addHeader("API-Version", "3.3.8")
          .addHeader(CONTENT_TYPE, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken).build();   
@@ -250,19 +255,19 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
          .payload(payloadFromResourceWithContentType("/get_record_srv.json", APPLICATION_JSON)).build();
 
    RecordId srvId = recordIdBuilder()
-        .zone("adrianc.zone.dynecttest.jclouds.org")
-        .fqdn("adrianc.zone.dynecttest.jclouds.org")
+        .zone("jclouds.org")
+        .fqdn("jclouds.org")
         .type("SRV")
         .id(50976579l).build();
 
    public void testGetSRVWhenResponseIs2xx() {
       DynECTApi success = requestsSendResponses(createSession, createSessionResponse, getSRV, srvResponse);
-      assertEquals(success.getRecordApiForZone("adrianc.zone.dynecttest.jclouds.org").getSRV(srvId.getFQDN(), srvId.getId()).toString(),
+      assertEquals(success.getRecordApiForZone("jclouds.org").getSRV(srvId.getFQDN(), srvId.getId()).toString(),
                    new GetSRVRecordResponseTest().expected().toString());
    }
 
    HttpRequest getTXT = HttpRequest.builder().method("GET")
-         .endpoint("https://api2.dynect.net/REST/TXTRecord/adrianc.zone.dynecttest.jclouds.org/adrianc.zone.dynecttest.jclouds.org/50976579")
+         .endpoint("https://api2.dynect.net/REST/TXTRecord/jclouds.org/jclouds.org/50976579")
          .addHeader("API-Version", "3.3.8")
          .addHeader(CONTENT_TYPE, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken).build();   
@@ -271,24 +276,24 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
          .payload(payloadFromResourceWithContentType("/get_record_txt.json", APPLICATION_JSON)).build();
 
    RecordId txtId = recordIdBuilder()
-        .zone("adrianc.zone.dynecttest.jclouds.org")
-        .fqdn("adrianc.zone.dynecttest.jclouds.org")
+        .zone("jclouds.org")
+        .fqdn("jclouds.org")
         .type("TXT")
         .id(50976579l).build();
 
    public void testGetTXTWhenResponseIs2xx() {
       DynECTApi success = requestsSendResponses(createSession, createSessionResponse, getTXT, txtResponse);
-      assertEquals(success.getRecordApiForZone("adrianc.zone.dynecttest.jclouds.org").getTXT(txtId.getFQDN(), txtId.getId()).toString(),
+      assertEquals(success.getRecordApiForZone("jclouds.org").getTXT(txtId.getFQDN(), txtId.getId()).toString(),
                    new GetTXTRecordResponseTest().expected().toString());
    }
 
    public void testGetTXTWhenResponseIs404() {
       DynECTApi fail = requestsSendResponses(createSession, createSessionResponse, getTXT, notFound);
-      assertNull(fail.getRecordApiForZone("adrianc.zone.dynecttest.jclouds.org").getTXT(txtId.getFQDN(), txtId.getId()));
+      assertNull(fail.getRecordApiForZone("jclouds.org").getTXT(txtId.getFQDN(), txtId.getId()));
    }
 
    HttpRequest list = HttpRequest.builder().method("GET")
-                                 .endpoint("https://api2.dynect.net/REST/AllRecord/adrianc.zone.dynecttest.jclouds.org")
+                                 .endpoint("https://api2.dynect.net/REST/AllRecord/jclouds.org")
                                  .addHeader("API-Version", "3.3.8")
                                  .addHeader(CONTENT_TYPE, APPLICATION_JSON)
                                  .addHeader("Auth-Token", authToken).build();   
@@ -298,7 +303,69 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
 
    public void testListWhenResponseIs2xx() {
       DynECTApi success = requestsSendResponses(createSession, createSessionResponse, list, listResponse);
-      assertEquals(success.getRecordApiForZone("adrianc.zone.dynecttest.jclouds.org").list().toString(),
+      assertEquals(success.getRecordApiForZone("jclouds.org").list().toString(),
                    new ListRecordsResponseTest().expected().toString());
+   }
+
+   HttpRequest listByFQDNAndType = HttpRequest.builder().method("GET")
+                                              .endpoint("https://api2.dynect.net/REST/ARecord/jclouds.org/www.foo.com")
+                                              .addHeader("API-Version", "3.3.8")
+                                              .addHeader(CONTENT_TYPE, APPLICATION_JSON)
+                                              .addHeader("Auth-Token", authToken).build();   
+
+   public void testListByFQDNAndTypeWhenResponseIs2xx() {
+      DynECTApi success = requestsSendResponses(createSession, createSessionResponse, listByFQDNAndType, listResponse);
+      assertEquals(success.getRecordApiForZone("jclouds.org").listByFQDNAndType("www.foo.com", "A").toString(),
+            new ListRecordsResponseTest().expected().toString());
+   }
+
+   HttpRequest create = HttpRequest.builder().method("POST")
+         .endpoint("https://api2.dynect.net/REST/ARecord/jclouds.org/www.jclouds.org")
+         .addHeader("API-Version", "3.3.8")
+         .addHeader(ACCEPT, APPLICATION_JSON)
+         .addHeader("Auth-Token", authToken)
+         .payload(stringPayload("{\"rdata\":{\"address\":\"1.1.1.1\"},\"ttl\":86400}"))
+         .build();   
+
+   HttpResponse createResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResourceWithContentType("/new_record.json", APPLICATION_JSON)).build();
+
+   public void testCreateWhenResponseIs2xx() {
+      DynECTApi success = requestsSendResponses(createSession, createSessionResponse, create, createResponse);
+      CreateRecord<AData> record = CreateRecord.<AData> builder()
+                                               .fqdn("www.jclouds.org")
+                                               .type("A")
+                                               .ttl(86400)
+                                               .rdata(a("1.1.1.1"))
+                                               .build();
+      assertEquals(success.getRecordApiForZone("jclouds.org").scheduleCreate(record), Job.success(285372440l));
+   }
+
+   HttpRequest delete = HttpRequest.builder().method("DELETE")
+                                             .endpoint("https://api2.dynect.net/REST/ARecord/jclouds.org/www.jclouds.org/285372440")
+                                             .addHeader("API-Version", "3.3.8")
+                                             .addHeader(ACCEPT, APPLICATION_JSON)
+                                             .addHeader(CONTENT_TYPE, APPLICATION_JSON)
+                                             .addHeader("Auth-Token", authToken).build();  
+
+   HttpResponse deleteResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResourceWithContentType("/delete_record.json", APPLICATION_JSON)).build();
+
+   RecordId id = recordIdBuilder()
+                     .zone("jclouds.org")
+                     .fqdn("www.jclouds.org")
+                     .type("A")
+                     .id(285372440l)
+                     .build();
+
+   public void testDeleteWhenResponseIs2xx() {
+      DynECTApi success = requestsSendResponses(createSession, createSessionResponse, delete, deleteResponse);
+
+      assertEquals(success.getRecordApiForZone("jclouds.org").scheduleDelete(id), Job.success(285372457l));
+   }
+
+   public void testDeleteWhenResponseIs404() {
+      DynECTApi fail = requestsSendResponses(createSession, createSessionResponse, delete, notFound);
+      assertNull(fail.getRecordApiForZone("jclouds.org").scheduleDelete(id));
    }
 }

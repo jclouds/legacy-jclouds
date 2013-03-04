@@ -1,0 +1,1 @@
+{"status": "success", "data": {"zone": "adriancole.zone.dynecttest.jclouds.org", "ttl": 86400, "fqdn": "www.adriancole.zone.dynecttest.jclouds.org", "record_type": "A", "rdata": {"address": "1.1.1.1"}, "record_id": 0}, "job_id": 285372440, "msgs": [{"INFO": "add: Record added", "SOURCE": "BLL", "ERR_CD": null, "LVL": "INFO"}]}
