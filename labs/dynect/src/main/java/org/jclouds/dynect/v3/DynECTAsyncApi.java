@@ -25,13 +25,13 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.dynect.v3.domain.Job;
 import org.jclouds.dynect.v3.features.RecordAsyncApi;
 import org.jclouds.dynect.v3.features.SessionAsyncApi;
 import org.jclouds.dynect.v3.features.ZoneAsyncApi;
+import org.jclouds.dynect.v3.filters.AlwaysAddContentType;
 import org.jclouds.dynect.v3.filters.SessionManager;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.Fallback;
@@ -55,8 +55,7 @@ public interface DynECTAsyncApi {
    @Named("GetJob")
    @GET
    @Path("/Job/{jobId}")
-   @Produces(APPLICATION_JSON)
-   @RequestFilters(SessionManager.class)
+   @RequestFilters({ AlwaysAddContentType.class, SessionManager.class })
    @Headers(keys = "API-Version", values = "{jclouds.api-version}")
    @Fallback(NullOnNotFoundOr404.class)
    @Consumes(APPLICATION_JSON)

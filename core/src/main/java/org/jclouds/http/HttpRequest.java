@@ -28,6 +28,7 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jclouds.io.Payload;
 import org.jclouds.javax.annotation.Nullable;
@@ -36,6 +37,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -46,6 +48,9 @@ import com.google.common.collect.Multimaps;
  * @author Adrian Cole
  */
 public class HttpRequest extends HttpMessage {
+
+   public static final Set<String> NON_PAYLOAD_METHODS = ImmutableSet
+         .of("OPTIONS", "GET", "HEAD", "DELETE", "TRACE", "CONNECT");
 
    public static Builder<?> builder() { 
       return new ConcreteBuilder();

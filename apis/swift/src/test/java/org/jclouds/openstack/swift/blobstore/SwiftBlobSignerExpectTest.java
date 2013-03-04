@@ -78,6 +78,7 @@ public class SwiftBlobSignerExpectTest extends BaseBlobSignerExpectTest {
    protected HttpRequest putBlob() {
       return HttpRequest.builder().method("PUT")
             .endpoint("http://storage/container/name")
+            .addHeader("Expect", "100-continue")
             .addHeader("X-Auth-Token", "testtoken").build();
    }
 
@@ -85,6 +86,7 @@ public class SwiftBlobSignerExpectTest extends BaseBlobSignerExpectTest {
    protected HttpRequest putBlobWithTime() {
       return HttpRequest.builder().method("PUT")
             .endpoint("http://storage/container/name?temp_url_sig=e894c60fa1284cc575cf22d7786bab07b8c33610&temp_url_expires=123456792")
+            .addHeader("Expect", "100-continue")
             .build();
    }
 

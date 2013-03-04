@@ -19,17 +19,16 @@
 package org.jclouds.dynect.v3;
 
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
-import static org.jclouds.Constants.PROPERTY_CONNECTION_TIMEOUT;
 import static org.jclouds.Constants.PROPERTY_MAX_RETRIES;
-import static org.jclouds.Constants.PROPERTY_SO_TIMEOUT;
 
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Set;
 
 import org.jclouds.ContextBuilder;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.dynect.v3.DynECTExceptions.TargetExistsException;
 import org.jclouds.dynect.v3.DynECTExceptions.JobStillRunningException;
+import org.jclouds.dynect.v3.DynECTExceptions.TargetExistsException;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -43,18 +42,18 @@ import com.google.mockwebserver.MockWebServer;
  */
 @Test(singleThreaded = true)
 public class DynectApiMockTest {
+   
+   private static final Set<Module> modules = ImmutableSet.<Module> of(
+         new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()));
 
    static DynECTApi mockDynectApi(String uri) {
       Properties overrides = new Properties();
-      overrides.setProperty(PROPERTY_CONNECTION_TIMEOUT, "1000");
-      // prevent expect-100 bug http://code.google.com/p/mockwebserver/issues/detail?id=6
-      overrides.setProperty(PROPERTY_SO_TIMEOUT, "0");
       overrides.setProperty(PROPERTY_MAX_RETRIES, "1");
       return ContextBuilder.newBuilder("dynect")
                            .credentials("jclouds:joe", "letmein")
                            .endpoint(uri)
                            .overrides(overrides)
-                           .modules(ImmutableSet.<Module> of(new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor())))
+                           .modules(modules)
                            .build(DynECTApiMetadata.CONTEXT_TOKEN).getApi();
    }
 

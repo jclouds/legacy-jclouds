@@ -19,6 +19,7 @@
 package org.jclouds.dynect.v3.features;
 
 import static com.google.common.net.HttpHeaders.ACCEPT;
+import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
@@ -40,11 +41,10 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "ZoneApiExpectTest")
 public class ZoneApiExpectTest extends BaseDynECTApiExpectTest {
    HttpRequest get = HttpRequest.builder().method("GET")
-         .endpoint("https://api2.dynect.net/REST/Zone/jclouds.org")
-         .addHeader("API-Version", "3.3.8")
-         .addHeader("Auth-Token", authToken)
-         .payload(emptyJsonPayload())
-         .build();   
+                                .endpoint("https://api2.dynect.net/REST/Zone/jclouds.org")
+                                .addHeader("API-Version", "3.3.8")
+                                .addHeader(CONTENT_TYPE, APPLICATION_JSON)
+                                .addHeader("Auth-Token", authToken).build();
 
    HttpResponse getResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResourceWithContentType("/get_zone.json", APPLICATION_JSON)).build();
@@ -83,11 +83,10 @@ public class ZoneApiExpectTest extends BaseDynECTApiExpectTest {
    }
 
    HttpRequest list = HttpRequest.builder().method("GET")
-         .endpoint("https://api2.dynect.net/REST/Zone")
-         .addHeader("API-Version", "3.3.8")
-         .addHeader("Auth-Token", authToken)
-         .payload(emptyJsonPayload())
-         .build();   
+                                 .endpoint("https://api2.dynect.net/REST/Zone")
+                                 .addHeader("API-Version", "3.3.8")
+                                 .addHeader(CONTENT_TYPE, APPLICATION_JSON)
+                                 .addHeader("Auth-Token", authToken).build();  
 
    HttpResponse listResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResourceWithContentType("/list_zones.json", APPLICATION_JSON)).build();
@@ -99,12 +98,11 @@ public class ZoneApiExpectTest extends BaseDynECTApiExpectTest {
    }
 
    HttpRequest deleteChanges = HttpRequest.builder().method("DELETE")
-         .endpoint("https://api2.dynect.net/REST/ZoneChanges/jclouds.org")
-         .addHeader("API-Version", "3.3.8")
-         .addHeader(ACCEPT, APPLICATION_JSON)
-         .addHeader("Auth-Token", authToken)
-         .payload(emptyJsonPayload())
-         .build();
+                                          .endpoint("https://api2.dynect.net/REST/ZoneChanges/jclouds.org")
+                                          .addHeader("API-Version", "3.3.8")
+                                          .addHeader(ACCEPT, APPLICATION_JSON)
+                                          .addHeader(CONTENT_TYPE, APPLICATION_JSON)
+                                          .addHeader("Auth-Token", authToken).build();
 
    HttpResponse deleteChangesResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResourceWithContentType("/delete_zone_changes.json", APPLICATION_JSON)).build();
@@ -116,12 +114,11 @@ public class ZoneApiExpectTest extends BaseDynECTApiExpectTest {
    }
 
    HttpRequest delete = HttpRequest.builder().method("DELETE")
-         .endpoint("https://api2.dynect.net/REST/Zone/jclouds.org")
-         .addHeader("API-Version", "3.3.8")
-         .addHeader(ACCEPT, APPLICATION_JSON)
-         .addHeader("Auth-Token", authToken)
-         .payload(emptyJsonPayload())
-         .build();
+                                   .endpoint("https://api2.dynect.net/REST/Zone/jclouds.org")
+                                   .addHeader("API-Version", "3.3.8")
+                                   .addHeader(ACCEPT, APPLICATION_JSON)
+                                   .addHeader(CONTENT_TYPE, APPLICATION_JSON)
+                                   .addHeader("Auth-Token", authToken).build();
 
    HttpResponse deleteResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResourceWithContentType("/delete_zone.json", APPLICATION_JSON)).build();

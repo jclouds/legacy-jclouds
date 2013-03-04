@@ -31,12 +31,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
-import org.jclouds.dynect.v3.DynECTExceptions.TargetExistsException;
 import org.jclouds.dynect.v3.DynECTExceptions.JobStillRunningException;
+import org.jclouds.dynect.v3.DynECTExceptions.TargetExistsException;
 import org.jclouds.dynect.v3.domain.CreatePrimaryZone;
 import org.jclouds.dynect.v3.domain.CreatePrimaryZone.ToFQDN;
 import org.jclouds.dynect.v3.domain.Job;
 import org.jclouds.dynect.v3.domain.Zone;
+import org.jclouds.dynect.v3.filters.AlwaysAddContentType;
 import org.jclouds.dynect.v3.filters.SessionManager;
 import org.jclouds.dynect.v3.functions.ExtractZoneNames;
 import org.jclouds.rest.annotations.BinderParam;
@@ -60,10 +61,8 @@ import com.google.common.util.concurrent.ListenableFuture;
  *      href="https://manage.dynect.net/help/docs/api2/rest/resources/Zone.html">doc</a>
  * @author Adrian Cole
  */
-// required for all calls
-@Produces(APPLICATION_JSON)
 @Headers(keys = "API-Version", values = "{jclouds.api-version}")
-@RequestFilters(SessionManager.class)
+@RequestFilters({ AlwaysAddContentType.class, SessionManager.class })
 public interface ZoneAsyncApi {
 
    /**
@@ -102,6 +101,7 @@ public interface ZoneAsyncApi {
     */
    @Named("CreatePrimaryZone")
    @POST
+   @Produces(APPLICATION_JSON)
    @Payload("%7B\"rname\":\"{contact}\",\"serial_style\":\"increment\",\"ttl\":3600%7D")
    @Path("/Zone/{fqdn}")
    @SelectJson("data")
@@ -132,8 +132,9 @@ public interface ZoneAsyncApi {
     */
    @Named("PublishZone")
    @PUT
-   @Payload("{\"publish\":true}")
    @Path("/Zone/{fqdn}")
+   @Produces(APPLICATION_JSON)
+   @Payload("{\"publish\":true}")
    @SelectJson("data")
    ListenableFuture<Zone> publish(@PathParam("fqdn") String fqdn) throws JobStillRunningException;
    
@@ -143,6 +144,7 @@ public interface ZoneAsyncApi {
    @Named("FreezeZone")
    @PUT
    @Path("/Zone/{fqdn}")
+   @Produces(APPLICATION_JSON)
    @Payload("{\"freeze\":true}")
    @Consumes(APPLICATION_JSON)
    ListenableFuture<Job> freeze(@PathParam("fqdn") String fqdn) throws JobStillRunningException;
@@ -153,6 +155,7 @@ public interface ZoneAsyncApi {
    @Named("ThawZone")
    @PUT
    @Path("/Zone/{fqdn}")
+   @Produces(APPLICATION_JSON)
    @Payload("{\"thaw\":true}")
    @Consumes(APPLICATION_JSON)
    ListenableFuture<Job> thaw(@PathParam("fqdn") String fqdn) throws JobStillRunningException;

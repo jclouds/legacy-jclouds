@@ -18,6 +18,8 @@
  */
 package org.jclouds.atmos;
 
+import static com.google.common.net.HttpHeaders.EXPECT;
+
 import java.net.URI;
 
 import javax.inject.Named;
@@ -56,6 +58,7 @@ import org.jclouds.blobstore.BlobStoreFallbacks.ThrowKeyNotFoundOn404;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -119,6 +122,7 @@ public interface AtmosAsyncClient {
    @Named("CreateObject")
    @POST
    @Path("/{parent}/{name}")
+   @Headers(keys = EXPECT, values = "100-continue")
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<URI> createFile(
             @PathParam("parent") String parent,
@@ -131,6 +135,7 @@ public interface AtmosAsyncClient {
    @Named("UpdateObject")
    @PUT
    @Path("/{parent}/{name}")
+   @Headers(keys = EXPECT, values = "100-continue")
    @Fallback(ThrowKeyNotFoundOn404.class)
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<Void> updateFile(

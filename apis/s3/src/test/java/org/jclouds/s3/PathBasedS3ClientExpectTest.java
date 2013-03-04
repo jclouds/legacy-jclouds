@@ -82,6 +82,7 @@ public class PathBasedS3ClientExpectTest extends BaseS3ClientExpectTest {
       
       HttpRequest bucketFooExists = HttpRequest.builder().method("PUT")
                                                .endpoint("https://s3.amazonaws.com/bucket/object")
+                                               .addHeader("Expect", "100-continue")
                                                .addHeader("Date", CONSTANT_DATE)
                                                .addHeader("Authorization", "AWS identity:6gC0m7SYFDPwkUqY5EHV/6i9DfM=")
                                                .payload("hello world")
