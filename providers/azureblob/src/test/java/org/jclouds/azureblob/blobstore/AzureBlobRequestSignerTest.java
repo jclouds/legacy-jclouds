@@ -97,7 +97,7 @@ public class AzureBlobRequestSignerTest extends BaseAsyncClientTest<AzureBlobAsy
       assertRequestLineEquals(request, "PUT https://identity.blob.core.windows.net/container/name HTTP/1.1");
       assertNonPayloadHeadersEqual(
                request,
-               "Authorization: SharedKeyLite identity:ssvK6ZB8GMqRcp1lBpY9vIzbLKL9Goxh7wZ2YhfHNzQ=\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nx-ms-blob-type: BlockBlob\nx-ms-version: 2009-09-19\n");
+               "Authorization: SharedKeyLite identity:ssvK6ZB8GMqRcp1lBpY9vIzbLKL9Goxh7wZ2YhfHNzQ=\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nExpect: 100-continue\nx-ms-blob-type: BlockBlob\nx-ms-version: 2009-09-19\n");
       assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 }, new Date(1000));
 
       assertEquals(request.getFilters().size(), 0);

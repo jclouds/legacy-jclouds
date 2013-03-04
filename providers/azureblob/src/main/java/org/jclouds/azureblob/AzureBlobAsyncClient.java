@@ -18,6 +18,8 @@
  */
 package org.jclouds.azureblob;
 
+import static com.google.common.net.HttpHeaders.EXPECT;
+
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -217,6 +219,7 @@ public interface AzureBlobAsyncClient {
    @Named("PutBlob")
    @PUT
    @Path("{container}/{name}")
+   @Headers(keys = EXPECT, values = "100-continue")
    @ResponseParser(ParseETagHeader.class)
    ListenableFuture<String> putBlob(
             @PathParam("container") @ParamValidators(ContainerNameValidator.class) String container,
