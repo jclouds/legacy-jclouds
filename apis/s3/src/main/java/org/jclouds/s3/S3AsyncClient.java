@@ -18,6 +18,7 @@
  */
 package org.jclouds.s3;
 
+import static com.google.common.net.HttpHeaders.EXPECT;
 import static org.jclouds.blobstore.attr.BlobScopes.CONTAINER;
 
 import java.util.Set;
@@ -168,6 +169,7 @@ public interface S3AsyncClient {
    @Named("PutObject")
    @PUT
    @Path("/{key}")
+   @Headers(keys = EXPECT, values = "100-continue")
    @ResponseParser(ParseETagHeader.class)
    ListenableFuture<String> putObject(
             @Bucket @EndpointParam(parser = AssignCorrectHostnameForBucket.class) @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators(BucketNameValidator.class) String bucketName,

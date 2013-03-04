@@ -20,7 +20,10 @@ package org.jclouds.s3;
 
 import static com.google.common.net.HttpHeaders.CONTENT_LENGTH;
 import static com.google.common.net.HttpHeaders.ETAG;
+import static com.google.common.net.HttpHeaders.EXPECT;
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.jclouds.Constants.PROPERTY_MAX_RETRIES;
+import static org.jclouds.Constants.PROPERTY_SO_TIMEOUT;
 import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS;
 import static org.testng.Assert.assertEquals;
 
@@ -46,7 +49,7 @@ import com.google.mockwebserver.RecordedRequest;
  * 
  * @author Adrian Cole
  */
-@Test
+@Test(singleThreaded = true)
 public class S3ClientMockTest {
 
    private static final Set<Module> modules = ImmutableSet.<Module> of(
@@ -55,7 +58,9 @@ public class S3ClientMockTest {
    static RestContext<? extends S3Client,? extends  S3AsyncClient> getContext(URL server) {
       Properties overrides = new Properties();
       overrides.setProperty(PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "false");
-
+      // prevent expect-100 bug http://code.google.com/p/mockwebserver/issues/detail?id=6
+      overrides.setProperty(PROPERTY_SO_TIMEOUT, "0");
+      overrides.setProperty(PROPERTY_MAX_RETRIES, "1");
       return ContextBuilder.newBuilder("s3")
                            .credentials("accessKey", "secretKey")
                            .endpoint(server.toString())
@@ -79,24 +84,28 @@ public class S3ClientMockTest {
       RecordedRequest request = server.takeRequest();
       assertEquals(request.getRequestLine(), "PUT /bucket/object HTTP/1.1");
       assertEquals(request.getHeaders(CONTENT_LENGTH), ImmutableList.of("0"));
+      // will fail unless -Dsun.net.http.allowRestrictedHeaders=true is set
+      assertEquals(request.getHeaders(EXPECT), ImmutableList.of("100-continue"));
       server.shutdown();
    }
 
    public void testDirectorySeparator() throws IOException, InterruptedException {
-	      MockWebServer server = new MockWebServer();
-	      server.enqueue(new MockResponse().setBody("").addHeader(ETAG, "ABCDEF"));
-	      server.play();
+      MockWebServer server = new MockWebServer();
+      server.enqueue(new MockResponse().setBody("").addHeader(ETAG, "ABCDEF"));
+      server.play();
 
-	      S3Client client = getContext(server.getUrl("/")).getApi();
-	      S3Object fileInDir = client.newS3Object();
-	      fileInDir.getMetadata().setKey("someDir/fileName");
-	      fileInDir.setPayload(new byte[] {});
+      S3Client client = getContext(server.getUrl("/")).getApi();
+      S3Object fileInDir = client.newS3Object();
+      fileInDir.getMetadata().setKey("someDir/fileName");
+      fileInDir.setPayload(new byte[] { 1, 2, 3, 4 });
 
-	      assertEquals(client.putObject("bucket", fileInDir), "ABCDEF");
+      assertEquals(client.putObject("bucket", fileInDir), "ABCDEF");
 
-	      RecordedRequest request = server.takeRequest();
-	      assertEquals(request.getRequestLine(), "PUT /bucket/someDir/fileName HTTP/1.1");
+      RecordedRequest request = server.takeRequest();
+      assertEquals(request.getRequestLine(), "PUT /bucket/someDir/fileName HTTP/1.1");
+      // will fail unless -Dsun.net.http.allowRestrictedHeaders=true is set
+      assertEquals(request.getHeaders(EXPECT), ImmutableList.of("100-continue"));
 
-	      server.shutdown();
-	   }
+      server.shutdown();
+   }
 }

@@ -105,7 +105,7 @@ public class AWSS3AsyncClientTest extends S3AsyncClientTest<AWSS3AsyncClient> {
             blobToS3Object.apply(BindBlobToMultipartFormTest.TEST_BLOB)));
 
       assertRequestLineEquals(request, "PUT https://bucket." + url + "/hello HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
+      assertNonPayloadHeadersEqual(request, "Expect: 100-continue\nHost: bucket." + url + "\n");
       assertPayloadEquals(request, "hello", "text/plain", false);
 
       assertResponseParserClassEquals(method, request, ParseETagHeader.class);
