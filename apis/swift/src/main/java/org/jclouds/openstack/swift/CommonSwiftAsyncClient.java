@@ -18,6 +18,8 @@
  */
 package org.jclouds.openstack.swift;
 
+import static com.google.common.net.HttpHeaders.EXPECT;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -196,6 +198,7 @@ public interface CommonSwiftAsyncClient {
    @Named("PutObject")
    @PUT
    @Path("/{container}/{name}")
+   @Headers(keys = EXPECT, values = "100-continue")
    @ResponseParser(ParseETagHeader.class)
    ListenableFuture<String> putObject(@PathParam("container") String container,
                                       @PathParam("name") @ParamParser(ObjectName.class) @BinderParam(BindSwiftObjectMetadataToRequest.class) SwiftObject object);
