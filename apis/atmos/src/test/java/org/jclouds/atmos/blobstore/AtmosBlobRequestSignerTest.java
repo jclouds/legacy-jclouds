@@ -101,7 +101,7 @@ public class AtmosBlobRequestSignerTest extends BaseAsyncClientTest<AtmosAsyncCl
                "POST https://accesspoint.atmosonline.com/rest/namespace/container/name HTTP/1.1");
       assertNonPayloadHeadersEqual(
                request,
-               "Accept: */*\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nx-emc-signature: 7Cbdnu+YA5rG9J/C9RlHk07mU7w=\nx-emc-uid: identity\n");
+               "Accept: */*\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nExpect: 100-continue\nx-emc-signature: 7Cbdnu+YA5rG9J/C9RlHk07mU7w=\nx-emc-uid: identity\n");
 
       assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 }, new Date(1000));
 
