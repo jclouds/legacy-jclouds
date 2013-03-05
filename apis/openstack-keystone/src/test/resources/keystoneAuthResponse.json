@@ -138,6 +138,16 @@
                     }
                 ],
                 "endpoints_links": []
+            },
+            {
+                "type": "dns",
+                "name": "dns",
+                "endpoints": [
+                    {
+                        "publicURL": "http://172.16.0.1:8776/v1/3456",
+                        "tenantId": "3456"
+                    }
+                ]
             }
         ]
     }

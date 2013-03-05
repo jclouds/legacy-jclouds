@@ -38,7 +38,7 @@ public class KeystoneApiExpectTest extends BaseKeystoneRestApiExpectTest<Keyston
 
    public void testGetApiMetaData() {
       KeystoneApi api = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess,
             HttpRequest.builder().method("GET").endpoint(endpoint + "/v2.0/").
             addHeader("Accept", APPLICATION_JSON).build(),
             HttpResponse.builder().statusCode(200).
@@ -50,7 +50,7 @@ public class KeystoneApiExpectTest extends BaseKeystoneRestApiExpectTest<Keyston
 
    public void testGetApiMetaDataFailNotFound() {
       KeystoneApi api = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess,
             HttpRequest.builder().method("GET").endpoint(endpoint + "/v2.0/").addHeader("Accept", APPLICATION_JSON).build(),
             HttpResponse.builder().statusCode(404).build());
       assertNull(api.getApiMetadata());

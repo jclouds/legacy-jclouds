@@ -16,23 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.jclouds.rackspace.clouddns.v1.config;
 
-package org.jclouds.rackspace.cloudidentity.v2_0;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.inject.Qualifier;
 
 /**
- * An Rackspace service, such as Cloud Load Balancers, DNS, etc.
- * A service provides one or more endpoints through which users can access resources and perform operations.
+ * Represents a component related to Rackspace Cloud DNS.
  * 
  * @author Everett Toews
  */
-public interface ServiceType {
-   /**
-    * Cloud Load Balancers
-    */
-   public static final String LOAD_BALANCERS = "rax:load-balancer";
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface CloudDNS {
 
-   /**
-    * Cloud Load DNS
-    */
-   public static final String DNS = "rax:dns";
 }

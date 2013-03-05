@@ -16,23 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.jclouds.rackspace.clouddns.v1;
 
-package org.jclouds.rackspace.cloudidentity.v2_0;
+import org.jclouds.rackspace.clouddns.v1.features.LimitApi;
+import org.jclouds.rest.annotations.Delegate;
 
 /**
- * An Rackspace service, such as Cloud Load Balancers, DNS, etc.
- * A service provides one or more endpoints through which users can access resources and perform operations.
- * 
+ * Provides access to the Rackspace Cloud DNS API.
+ * <p/>
+ * See <a href="http://docs.rackspace.com/cdns/api/v1.0/cdns-devguide/content/index.html">Cloud DNS Developer Guide</a> 
+ * @see CloudDNSAsyncApi
  * @author Everett Toews
  */
-public interface ServiceType {
+public interface CloudDNSApi {
    /**
-    * Cloud Load Balancers
+    * Provides synchronous access to Limit features.
     */
-   public static final String LOAD_BALANCERS = "rax:load-balancer";
-
-   /**
-    * Cloud Load DNS
-    */
-   public static final String DNS = "rax:dns";
+   @Delegate
+   LimitApi getLimitApi();
 }

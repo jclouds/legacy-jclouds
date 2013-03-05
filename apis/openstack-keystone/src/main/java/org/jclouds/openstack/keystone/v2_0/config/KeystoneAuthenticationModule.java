@@ -20,7 +20,9 @@ package org.jclouds.openstack.keystone.v2_0.config;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
+import static org.jclouds.util.Suppliers2.getLastValueInMap;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -48,14 +50,17 @@ import org.jclouds.location.suppliers.implicit.FirstZone;
 import org.jclouds.openstack.keystone.v2_0.AuthenticationApi;
 import org.jclouds.openstack.keystone.v2_0.AuthenticationAsyncApi;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
+import org.jclouds.openstack.keystone.v2_0.domain.Endpoint;
 import org.jclouds.openstack.keystone.v2_0.functions.AuthenticateApiAccessKeyCredentials;
 import org.jclouds.openstack.keystone.v2_0.functions.AuthenticatePasswordCredentials;
 import org.jclouds.openstack.keystone.v2_0.handlers.RetryOnRenew;
+import org.jclouds.openstack.keystone.v2_0.suppliers.LocationIdToURIFromAccessForTypeAndVersion;
 import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToAdminURIFromAccessForTypeAndVersion;
 import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToAdminURISupplier;
 import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToURIFromAccessForTypeAndVersion;
 import org.jclouds.openstack.keystone.v2_0.suppliers.ZoneIdToURIFromAccessForTypeAndVersion;
 import org.jclouds.rest.annotations.ApiVersion;
+import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -75,14 +80,55 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  * @author Adrian Cole
  */
 public class KeystoneAuthenticationModule extends AbstractModule {
-   
+
+   /**
+    * For global services who have no regions, such as DNS. To use, do the following
+    * <ol>
+    * <li>add this module to your {@link org.jclouds.apis.ApiMetadata#getDefaultModules()}</li>
+    * <li>create a service-specific annotation, such as {@code @CloudDNS}, and make sure that has the meta-annotation
+    * {@link javax.inject.Qualifier}</li>
+    * <li>add the above annotation to any {@link AsyncApi} classes by placing it on the type. ex.
+    * {@code @Endpoint(CloudDNS.class)}</li>
+    * <li>add the following to your {@link RestClientModule}</li>
+    * 
+    * <pre>
+    * bind(new TypeLiteral&lt;Supplier&lt;URI&gt;&gt;() {
+    * }).annotatedWith(CloudDNS.class).to(new TypeLiteral&lt;Supplier&lt;URI&gt;&gt;() {
+    * });
+    * </pre>
+    */
+   public static class ProviderModule extends AbstractModule {
+      @Override
+      protected void configure() {
+         install(new FactoryModuleBuilder().build(LocationIdToURIFromAccessForTypeAndVersion.Factory.class));
+      }
+
+      @Provides
+      @Singleton
+      protected Supplier<URI> provideZoneIdToURISupplierForApiVersion(
+            @Named(KeystoneProperties.SERVICE_TYPE) String serviceType, @ApiVersion String apiVersion,
+            LocationIdToURIFromAccessForTypeAndVersion.Factory factory) {
+         return getLastValueInMap(factory.createForApiTypeAndVersion(serviceType, apiVersion));
+      }
+
+      @Provides
+      @Singleton
+      Function<Endpoint, String> provideProvider(@Provider final String provider) {
+         return new Function<Endpoint, String>() {
+            public String apply(Endpoint in) {
+               return provider;
+            }
+         };
+      }
+   }
+
    public static class RegionModule extends AbstractModule {
       @Override
       protected void configure() {
          install(new FactoryModuleBuilder().implement(RegionIdToURISupplier.class,
-                  RegionIdToURIFromAccessForTypeAndVersion.class).build(RegionIdToURISupplier.Factory.class));
+               RegionIdToURIFromAccessForTypeAndVersion.class).build(RegionIdToURISupplier.Factory.class));
          install(new FactoryModuleBuilder().implement(RegionIdToAdminURISupplier.class,
-                  RegionIdToAdminURIFromAccessForTypeAndVersion.class).build(RegionIdToAdminURISupplier.Factory.class));
+               RegionIdToAdminURIFromAccessForTypeAndVersion.class).build(RegionIdToAdminURISupplier.Factory.class));
          // dynamically build the region list as opposed to from properties
          bind(RegionIdsSupplier.class).to(RegionIdsFromRegionIdToURIKeySet.class);
          bind(ImplicitLocationSupplier.class).to(FirstRegion.class).in(Scopes.SINGLETON);
@@ -94,8 +140,8 @@ public class KeystoneAuthenticationModule extends AbstractModule {
       @Provides
       @Singleton
       protected RegionIdToURISupplier provideRegionIdToURISupplierForApiVersion(
-               @Named(KeystoneProperties.SERVICE_TYPE) String serviceType, @ApiVersion String apiVersion,
-               RegionIdToURISupplier.Factory factory) {
+            @Named(KeystoneProperties.SERVICE_TYPE) String serviceType, @ApiVersion String apiVersion,
+            RegionIdToURISupplier.Factory factory) {
          return factory.createForApiTypeAndVersion(serviceType, apiVersion);
       }
 
@@ -105,8 +151,8 @@ public class KeystoneAuthenticationModule extends AbstractModule {
       @Provides
       @Singleton
       protected RegionIdToAdminURISupplier provideRegionIdToAdminURISupplierForApiVersion(
-               @Named(KeystoneProperties.SERVICE_TYPE) String serviceType, @ApiVersion String apiVersion,
-               RegionIdToAdminURISupplier.Factory factory) {
+            @Named(KeystoneProperties.SERVICE_TYPE) String serviceType, @ApiVersion String apiVersion,
+            RegionIdToAdminURISupplier.Factory factory) {
          return factory.createForApiTypeAndVersion(serviceType, apiVersion);
       }
 
@@ -116,7 +162,7 @@ public class KeystoneAuthenticationModule extends AbstractModule {
       @Override
       protected void configure() {
          install(new FactoryModuleBuilder().implement(ZoneIdToURISupplier.class,
-                  ZoneIdToURIFromAccessForTypeAndVersion.class).build(ZoneIdToURISupplier.Factory.class));
+               ZoneIdToURIFromAccessForTypeAndVersion.class).build(ZoneIdToURISupplier.Factory.class));
          // dynamically build the zone list as opposed to from properties
          bind(ZoneIdsSupplier.class).to(ZoneIdsFromZoneIdToURIKeySet.class);
          bind(ImplicitLocationSupplier.class).to(FirstZone.class).in(Scopes.SINGLETON);
@@ -128,8 +174,8 @@ public class KeystoneAuthenticationModule extends AbstractModule {
       @Provides
       @Singleton
       protected ZoneIdToURISupplier provideZoneIdToURISupplierForApiVersion(
-               @Named(KeystoneProperties.SERVICE_TYPE) String serviceType, @ApiVersion String apiVersion,
-               ZoneIdToURISupplier.Factory factory) {
+            @Named(KeystoneProperties.SERVICE_TYPE) String serviceType, @ApiVersion String apiVersion,
+            ZoneIdToURISupplier.Factory factory) {
          return factory.createForApiTypeAndVersion(serviceType, apiVersion);
       }
 
@@ -153,7 +199,7 @@ public class KeystoneAuthenticationModule extends AbstractModule {
    @Singleton
    @Authentication
    protected Supplier<String> provideAuthenticationTokenCache(final Supplier<Access> supplier)
-            throws InterruptedException, ExecutionException, TimeoutException {
+         throws InterruptedException, ExecutionException, TimeoutException {
       return new Supplier<String>() {
          public String get() {
             return supplier.get().getToken().getId();
@@ -173,10 +219,10 @@ public class KeystoneAuthenticationModule extends AbstractModule {
    @Provides
    @Singleton
    protected Function<Credentials, Access> authenticationMethodForCredentialType(
-            @Named(KeystoneProperties.CREDENTIAL_TYPE) String credentialType,
-            Map<String, Function<Credentials, Access>> authenticationMethods) {
+         @Named(KeystoneProperties.CREDENTIAL_TYPE) String credentialType,
+         Map<String, Function<Credentials, Access>> authenticationMethods) {
       checkArgument(authenticationMethods.containsKey(credentialType), "credential type %s not in supported list: %s",
-               credentialType, authenticationMethods.keySet());
+            credentialType, authenticationMethods.keySet());
       return authenticationMethods.get(credentialType);
    }
 

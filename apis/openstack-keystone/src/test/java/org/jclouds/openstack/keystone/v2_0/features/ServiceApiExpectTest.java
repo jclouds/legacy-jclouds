@@ -44,7 +44,7 @@ public class ServiceApiExpectTest extends BaseKeystoneRestApiExpectTest<Keystone
 
    public void testListTenants() {
       ServiceApi api = requestsSendResponses(
-               keystoneAuthWithUsernameAndPassword,
+               keystoneAuthWithUsernameAndPasswordAndTenantName,
                responseWithKeystoneAccess,
                authenticatedGET().endpoint(endpoint + "/v2.0/tenants").build(),
                HttpResponse.builder().statusCode(200)
@@ -61,7 +61,7 @@ public class ServiceApiExpectTest extends BaseKeystoneRestApiExpectTest<Keystone
    }
 
    public void testListTenantsFailNotFound() {
-      ServiceApi api = requestsSendResponses(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+      ServiceApi api = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess,
                authenticatedGET().endpoint(endpoint + "/v2.0/tenants").build(),
                HttpResponse.builder().statusCode(404).build()).getServiceApi();
       assertTrue(api.listTenants().isEmpty());
