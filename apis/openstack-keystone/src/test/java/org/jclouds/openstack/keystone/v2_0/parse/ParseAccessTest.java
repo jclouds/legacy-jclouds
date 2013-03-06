@@ -115,7 +115,12 @@ public class ParseAccessTest extends BaseItemParserTest<Access> {
                                           .publicURL("http://172.16.0.1:8776/v1/50cdb4c60374463198695d9f798fa34d")
                                           .internalURL("http://10.0.2.15:8776/v1/50cdb4c60374463198695d9f798fa34d")
                                           .adminURL("http://10.0.2.15:8776/v1/50cdb4c60374463198695d9f798fa34d")
-                                          .region("RegionOne").build()).build()).build();
+                                          .region("RegionOne").build()).build())
+                  .service(Service.builder().name("dns").type("dns")
+                        .endpoint(Endpoint.builder()
+                                          .publicURL("http://172.16.0.1:8776/v1/3456")
+                                          .tenantId("3456")
+                                          .build()).build()).build();
    }
 
 }

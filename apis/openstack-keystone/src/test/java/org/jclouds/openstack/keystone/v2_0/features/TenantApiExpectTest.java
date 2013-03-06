@@ -54,7 +54,7 @@ public class TenantApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneA
 
    public void testListTenants() {
       TenantApi api = requestsSendResponses(
-               keystoneAuthWithUsernameAndPassword,
+               keystoneAuthWithUsernameAndPasswordAndTenantName,
                responseWithKeystoneAccess,
                authenticatedGET().endpoint(endpoint + "/v2.0/tenants").build(),
                HttpResponse.builder().statusCode(200).payload(
@@ -66,7 +66,7 @@ public class TenantApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneA
    
    public void testListTenantsPage() {
       TenantApi api = requestsSendResponses(
-               keystoneAuthWithUsernameAndPassword,
+               keystoneAuthWithUsernameAndPasswordAndTenantName,
                responseWithKeystoneAccess,
                authenticatedGET().endpoint(endpoint + "/v2.0/tenants").build(),
                HttpResponse.builder().statusCode(200).payload(
@@ -84,7 +84,7 @@ public class TenantApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneA
    @Test(enabled = false)
    public void testListTenantsATT() {
       TenantApi api = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword,
+            keystoneAuthWithUsernameAndPasswordAndTenantName,
             responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/v2.0/tenants").build(),
             HttpResponse.builder().statusCode(200).payload(
@@ -100,7 +100,7 @@ public class TenantApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneA
    // http://docs.openstack.org/api/openstack-identity-service/2.0/content/Paginated_Collections-d1e325.html
    @Test(enabled = false)
    public void testListTenantsFailNotFound() {
-      TenantApi api = requestsSendResponses(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+      TenantApi api = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess,
                authenticatedGET().endpoint(endpoint + "/v2.0/tenants").build(), HttpResponse.builder().statusCode(404).build())
                .getTenantApi().get();
       assertTrue(api.list().isEmpty());
@@ -108,7 +108,7 @@ public class TenantApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneA
 
    public void testGetTenant() {
       TenantApi api = requestsSendResponses(
-               keystoneAuthWithUsernameAndPassword,
+               keystoneAuthWithUsernameAndPasswordAndTenantName,
                responseWithKeystoneAccess,
                authenticatedGET().endpoint(endpoint + "/v2.0/tenants/013ba41150a14830bec85ffe93353bcc").build(),
                HttpResponse.builder().statusCode(200).payload(
@@ -121,7 +121,7 @@ public class TenantApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneA
 
    @Test(expectedExceptions = AuthorizationException.class)
    public void testListTenantsFailNotAuthorized() {
-      TenantApi api = requestsSendResponses(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+      TenantApi api = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess,
                authenticatedGET().endpoint(endpoint + "/v2.0/tenants/013ba41150a14830bec85ffe93353bcc").build(),
                HttpResponse.builder().statusCode(401).build()).getTenantApi().get();
       api.get("013ba41150a14830bec85ffe93353bcc");
@@ -129,7 +129,7 @@ public class TenantApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneA
 
    public void testGetTenantByName() {
       TenantApi api = requestsSendResponses(
-               keystoneAuthWithUsernameAndPassword,
+               keystoneAuthWithUsernameAndPasswordAndTenantName,
                responseWithKeystoneAccess,
                authenticatedGET().endpoint(endpoint + "/v2.0/tenants?name=admin").build(),
                HttpResponse.builder().statusCode(200).payload(
@@ -141,7 +141,7 @@ public class TenantApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneA
    }
 
    public void testGetTenantByNameFailNotFound() {
-      TenantApi api = requestsSendResponses(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+      TenantApi api = requestsSendResponses(keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess,
                authenticatedGET().endpoint(endpoint + "/v2.0/tenants?name=admin").build(),
                HttpResponse.builder().statusCode(404).build()).getTenantApi().get();
       assertNull(api.getByName("admin"));

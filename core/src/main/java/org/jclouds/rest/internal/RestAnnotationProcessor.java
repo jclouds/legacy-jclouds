@@ -818,8 +818,8 @@ public class RestAnnotationProcessor implements Function<Invocation, HttpRequest
 
    @Override
    public String toString() {
-      String callerString = String.format("%s.%s%s", caller.getInvokable().getOwnerType().getRawType().getSimpleName(),
-            caller.getInvokable().getName(), caller.getArgs());
+      String callerString = caller != null ? String.format("%s.%s%s", caller.getInvokable().getOwnerType().getRawType().getSimpleName(),
+            caller.getInvokable().getName(), caller.getArgs()) : null;
       return Objects.toStringHelper("").omitNullValues().add("caller", callerString).toString();
    }
 }

@@ -39,6 +39,7 @@ import com.google.common.base.Objects;
  * @author Adam Lowe
  */
 public class BaseKeystoneRestApiExpectTest<S> extends BaseRestApiExpectTest<S> {
+   protected HttpRequest keystoneAuthWithUsernameAndPasswordAndTenantName;
    protected HttpRequest keystoneAuthWithUsernameAndPassword;
    protected HttpRequest keystoneAuthWithAccessKeyAndSecretKey;
    protected String authToken;
@@ -47,10 +48,12 @@ public class BaseKeystoneRestApiExpectTest<S> extends BaseRestApiExpectTest<S> {
 
    public BaseKeystoneRestApiExpectTest() {
       provider = "openstack-keystone";
-      keystoneAuthWithUsernameAndPassword = KeystoneFixture.INSTANCE.initialAuthWithUsernameAndPasswordAndTenantName(identity,
-               credential);
-      keystoneAuthWithAccessKeyAndSecretKey = KeystoneFixture.INSTANCE.initialAuthWithAccessKeyAndSecretKeyAndTenantName(identity,
-               credential);
+      keystoneAuthWithUsernameAndPasswordAndTenantName = KeystoneFixture.INSTANCE
+            .initialAuthWithUsernameAndPasswordAndTenantName(identity, credential);
+      keystoneAuthWithUsernameAndPassword = KeystoneFixture.INSTANCE
+            .initialAuthWithUsernameAndPassword(identity, credential);
+      keystoneAuthWithAccessKeyAndSecretKey = KeystoneFixture.INSTANCE
+            .initialAuthWithAccessKeyAndSecretKeyAndTenantName(identity, credential);
 
       authToken = KeystoneFixture.INSTANCE.getAuthToken();
       responseWithKeystoneAccess = KeystoneFixture.INSTANCE.responseWithAccess();
@@ -59,10 +62,8 @@ public class BaseKeystoneRestApiExpectTest<S> extends BaseRestApiExpectTest<S> {
    }
 
    protected HttpRequest.Builder<?> authenticatedGET() {
-      return HttpRequest.builder()
-                        .method("GET")
-                        .addHeader("Accept", MediaType.APPLICATION_JSON)
-                        .addHeader("X-Auth-Token", authToken);
+      return HttpRequest.builder().method("GET").addHeader("Accept", MediaType.APPLICATION_JSON)
+            .addHeader("X-Auth-Token", authToken);
    }
 
    @Override
@@ -75,7 +76,7 @@ public class BaseKeystoneRestApiExpectTest<S> extends BaseRestApiExpectTest<S> {
    @Override
    protected HttpRequestComparisonType compareHttpRequestAsType(HttpRequest input) {
       return Objects.equal("HEAD", input.getMethod()) ? HttpRequestComparisonType.DEFAULT
-               : HttpRequestComparisonType.JSON;
+            : HttpRequestComparisonType.JSON;
    }
 
    @Override
