@@ -25,45 +25,20 @@
         <artifactId>jclouds-project</artifactId>
         <groupId>org.jclouds</groupId>
         <version>1.6.0-SNAPSHOT</version>
-        <relativePath>../project/pom.xml</relativePath>
+        <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.labs</groupId>
-    <artifactId>jclouds-labs-project</artifactId>
+    <artifactId>jclouds-labs-openstack-project</artifactId>
     <packaging>pom</packaging>
-    <name>jclouds labs project</name>
+    <name>jclouds labs openstack project</name>
     <modules>
-       <module>virtualbox</module>
-       <module>vcloud-director</module>
-       <module>opsource-servers</module>
-       <module>elb</module>
-       <module>aws-elb</module>
-       <module>savvis-symphonyvpdc</module>
-       <module>dmtf</module>
-       <module>carrenza-vcloud-director</module>
-       <module>jenkins</module>
-       <module>cdmi</module>
-       <module>joyent-cloudapi</module>
-       <module>joyentcloud</module>
-       <module>google-compute</module>
-       <module>greenqloud-compute</module>
-       <module>greenqloud-storage</module>
-       <module>iam</module>
-       <module>aws-iam</module>
-       <module>nodepool</module>
-       <module>rds</module>
-       <module>aws-rds</module>
-       <module>smartos-ssh</module>
-       <module>cloudstack-ec2</module>
-       <module>azure-management</module>
-       <module>fgcp</module>
-       <module>fgcp-au</module>
-       <module>fgcp-de</module>
-       <!-- Disabled until Abiquo deps are in Maven Central
-       <module>abiquo</module>
-       -->
-       <module>oauth</module>
-       <module>openstack</module>
-       <module>dynect</module>
-       <module>ultradns-ws</module>
+       <!--<module>openstack-atlas</module>-->
+       <!--<module>openstack-cinder-v2</module>-->
+       <module>openstack-glance</module>
+       <!--<module>openstack-keystone-v3</module>-->
+       <!--<module>openstack-moniker</module>-->
+       <module>openstack-quantum</module>
+       <!--<module>openstack-reddwarf</module>-->
+       <module>openstack-swift</module>
   </modules>
 </project>
