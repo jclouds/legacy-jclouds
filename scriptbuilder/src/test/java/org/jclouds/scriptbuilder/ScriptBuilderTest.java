@@ -26,7 +26,6 @@ import static org.jclouds.scriptbuilder.domain.Statements.kill;
 import static org.jclouds.scriptbuilder.domain.Statements.newStatementList;
 import static org.jclouds.scriptbuilder.domain.Statements.switchArg;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
