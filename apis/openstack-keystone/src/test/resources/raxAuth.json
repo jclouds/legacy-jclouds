@@ -87,7 +87,7 @@
                 "publicURL": "https:\/\/dns.api.rackspacecloud.com\/v1.0\/40806637803162"
             }],
             "name": "cloudDNS",
-            "type": "dnsextension:dns"
+            "type": "rax:dns"
         }, {
             "endpoints": [{
                 "region": "DFW",

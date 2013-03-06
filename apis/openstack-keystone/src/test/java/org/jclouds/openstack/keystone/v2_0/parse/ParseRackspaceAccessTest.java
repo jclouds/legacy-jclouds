@@ -112,7 +112,7 @@ public class ParseRackspaceAccessTest extends BaseItemParserTest<Access> {
                                    .endpoint(Endpoint.builder()
                                                      .tenantId("40806637803162")
                                                      .publicURL("https://monitoring.api.rackspacecloud.com/v1.0/40806637803162").build()).build())
-                   .service(Service.builder().name("cloudDNS").type("dnsextension:dns")
+                   .service(Service.builder().name("cloudDNS").type("rax:dns")
                                    .endpoint(Endpoint.builder()
                                                      .tenantId("40806637803162")
                                                      .publicURL("https://dns.api.rackspacecloud.com/v1.0/40806637803162").build()).build())

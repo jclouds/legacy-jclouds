@@ -61,7 +61,7 @@ public class UserApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi
    
    public void testListUsers() {
       UserApi api = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/v2.0/users").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/user_list.json", APPLICATION_JSON)).build())
             .getUserApi().get();
@@ -71,7 +71,7 @@ public class UserApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi
    
    public void testListUsersPage() {
       UserApi api = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/v2.0/users").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/user_list.json", APPLICATION_JSON)).build())
             .getUserApi().get();
@@ -85,7 +85,7 @@ public class UserApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi
    
    public void testListUsersNotFound() {
       UserApi api = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/v2.0/users").build(),
             HttpResponse.builder().statusCode(404).build()).getUserApi().get();
       assertEquals( api.list(new PaginationOptions()).size(), 0);
@@ -94,7 +94,7 @@ public class UserApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi
    @Test(expectedExceptions = AuthorizationException.class)
    public void testListUsersFailNotAuth() {
       UserApi api = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/v2.0/users").build(),
             HttpResponse.builder().statusCode(401).build()).getUserApi().get();
       api.list(new PaginationOptions());
@@ -102,7 +102,7 @@ public class UserApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi
 
    public void testGetUser() {
       UserApi api = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/v2.0/users/e021dfd758eb44a89f1c57c8ef3be8e2").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/user_details.json", APPLICATION_JSON)).build())
             .getUserApi().get();
@@ -113,7 +113,7 @@ public class UserApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi
 
    public void testGetUserFailNotFound() {
       UserApi api = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/v2.0/users/f021dfd758eb44a89f1c57c8ef3be8e2").build(),
             HttpResponse.builder().statusCode(404).build()).getUserApi().get();
       assertNull(api.get("f021dfd758eb44a89f1c57c8ef3be8e2"));
@@ -121,7 +121,7 @@ public class UserApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi
 
    public void testGetUserByName() {
       UserApi api = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/v2.0/users?name=nova").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/user_details.json", APPLICATION_JSON)).build())
             .getUserApi().get();
@@ -132,7 +132,7 @@ public class UserApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi
 
    public void testGetUserByNameFailNotFound() {
       UserApi api = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/v2.0/users?name=fred").build(),
             HttpResponse.builder().statusCode(404).build()).getUserApi().get();
       assertNull(api.getByName("fred"));
@@ -140,7 +140,7 @@ public class UserApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi
    
    public void testListRolesOfUser() {
       UserApi api = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/v2.0/users/3f6c1c9ba993495ead7d2eb2192e284f/roles").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/user_role_list.json", APPLICATION_JSON)).build())
             .getUserApi().get();
@@ -154,7 +154,7 @@ public class UserApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi
 
    public void testListRolesOfUserFailNotFound() {
       UserApi api = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/v2.0/users/4f6c1c9ba993495ead7d2eb2192e284f/roles").build(),
             HttpResponse.builder().statusCode(404).build()).getUserApi().get();
       assertTrue(api.listRolesOfUser("4f6c1c9ba993495ead7d2eb2192e284f").isEmpty());
@@ -163,7 +163,7 @@ public class UserApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi
    @Test(expectedExceptions = HttpResponseException.class)
    public void testListRolesOfUserFailNotImplemented() {
       UserApi api = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/v2.0/users/5f6c1c9ba993495ead7d2eb2192e284f/roles").build(),
             HttpResponse.builder().statusCode(501).build()).getUserApi().get();
       assertTrue(api.listRolesOfUser("5f6c1c9ba993495ead7d2eb2192e284f").isEmpty());
@@ -171,7 +171,7 @@ public class UserApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi
 
    public void testListRolesOfUserInTenant() {
       UserApi api = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/v2.0/users/3f6c1c9ba993495ead7d2eb2192e284f/roles").build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResourceWithContentType("/user_tenant_role_list.json", APPLICATION_JSON)).build())
             .getUserApi().get();
@@ -186,7 +186,7 @@ public class UserApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi
 
    public void testListRolesOfUserInTenantFailNotFound() {
       UserApi api = requestsSendResponses(
-            keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
+            keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess,
             authenticatedGET().endpoint(endpoint + "/v2.0/users/3f6c1c9ba993495ead7d2eb2192e284f/roles").build(),
             HttpResponse.builder().statusCode(404).build()).getUserApi().get();
       assertTrue(api.listRolesOfUser("3f6c1c9ba993495ead7d2eb2192e284f").isEmpty());
