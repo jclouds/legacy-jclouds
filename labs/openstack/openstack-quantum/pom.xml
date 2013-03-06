@@ -25,28 +25,25 @@
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
     <version>1.6.0-SNAPSHOT</version>
-    <relativePath>../../project/pom.xml</relativePath>
+    <relativePath>../../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.labs</groupId>
-  <artifactId>openstack-swift</artifactId>
-  <name>jcloud openstack-swift api</name>
-  <description>jclouds components to access an implementation of OpenStack Swift</description>
+  <artifactId>openstack-quantum</artifactId>
+  <name>jclouds openstack-quantum api</name>
+  <description>jclouds components to access an implementation of OpenStack Quantum</description>
   <packaging>bundle</packaging>
 
   <properties>
     <!-- keystone endpoint -->
-    <test.openstack-swift.endpoint>http://localhost:5000/v2.0/</test.openstack-swift.endpoint>
-    <test.openstack-swift.api-version>1.0</test.openstack-swift.api-version>
-    <test.openstack-swift.build-version />
-    <test.openstack-swift.identity>FIXME_IDENTITY</test.openstack-swift.identity>
-    <test.openstack-swift.credential>FIXME_CREDENTIALS</test.openstack-swift.credential>
+    <test.openstack-quantum.endpoint>http://localhost:5000/v2.0/</test.openstack-quantum.endpoint>
+    <!-- keystone version -->
+    <test.openstack-quantum.api-version>1.0</test.openstack-quantum.api-version>
+    <test.openstack-quantum.build-version />
+    <test.openstack-quantum.identity>FIXME_IDENTITY</test.openstack-quantum.identity>
+    <test.openstack-quantum.credential>FIXME_CREDENTIALS</test.openstack-quantum.credential>
     <test.jclouds.keystone.credential-type>passwordCredentials</test.jclouds.keystone.credential-type>
-    <jclouds.blobstore.httpstream.url>FIXME_HTTPURL</jclouds.blobstore.httpstream.url>
-    <jclouds.blobstore.httpstream.md5>FIXME_HTTPMD5</jclouds.blobstore.httpstream.md5>
-
-    <jclouds.osgi.export>org.jclouds.openstack.swift.v1*;version="${project.version}"</jclouds.osgi.export>
+    <jclouds.osgi.export>org.jclouds.openstack.quantum.v1_0*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
-      org.jclouds.blobstore.internal;version="${project.version}",
       org.jclouds.rest.internal;version="${project.version}",
       org.jclouds*;version="${project.version}",
       *
@@ -61,7 +58,7 @@
     </dependency>
     <dependency>
       <groupId>org.jclouds</groupId>
-      <artifactId>jclouds-blobstore</artifactId>
+      <artifactId>jclouds-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -79,13 +76,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jclouds</groupId>
-      <artifactId>jclouds-blobstore</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.jclouds.driver</groupId>
       <artifactId>jclouds-slf4j</artifactId>
       <version>${project.version}</version>
@@ -97,7 +87,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <profiles>
     <profile>
       <id>live</id>
@@ -115,14 +105,12 @@
                 </goals>
                 <configuration>
                   <systemPropertyVariables>
-                    <test.openstack-swift.endpoint>${test.openstack-swift.endpoint}</test.openstack-swift.endpoint>
-                    <test.openstack-swift.api-version>${test.openstack-swift.api-version}</test.openstack-swift.api-version>
-                    <test.openstack-swift.build-version>${test.openstack-swift.build-version}</test.openstack-swift.build-version>
-                    <test.openstack-swift.identity>${test.openstack-swift.identity}</test.openstack-swift.identity>
-                    <test.openstack-swift.credential>${test.openstack-swift.credential}</test.openstack-swift.credential>
+                    <test.openstack-quantum.endpoint>${test.openstack-quantum.endpoint}</test.openstack-quantum.endpoint>
+                    <test.openstack-quantum.api-version>${test.openstack-quantum.api-version}</test.openstack-quantum.api-version>
+                    <test.openstack-quantum.build-version>${test.openstack-quantum.build-version}</test.openstack-quantum.build-version>
+                    <test.openstack-quantum.identity>${test.openstack-quantum.identity}</test.openstack-quantum.identity>
+                    <test.openstack-quantum.credential>${test.openstack-quantum.credential}</test.openstack-quantum.credential>
                     <test.jclouds.keystone.credential-type>${test.jclouds.keystone.credential-type}</test.jclouds.keystone.credential-type>
-                    <jclouds.blobstore.httpstream.url>${jclouds.blobstore.httpstream.url}</jclouds.blobstore.httpstream.url>
-                    <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
                   </systemPropertyVariables>
                 </configuration>
               </execution>
@@ -132,6 +120,5 @@
       </build>
     </profile>
   </profiles>
-
 
 </project>
