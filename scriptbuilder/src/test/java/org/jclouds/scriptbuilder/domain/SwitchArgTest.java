@@ -23,8 +23,6 @@ import static org.jclouds.scriptbuilder.domain.Statements.interpret;
 import static org.jclouds.scriptbuilder.domain.Statements.newStatementList;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
-
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
