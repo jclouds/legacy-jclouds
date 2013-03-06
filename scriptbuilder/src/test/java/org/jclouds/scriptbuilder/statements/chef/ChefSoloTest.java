@@ -26,17 +26,14 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
-import org.jclouds.scriptbuilder.domain.ShellToken;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.chef.DataBag;
 import org.jclouds.scriptbuilder.domain.chef.Role;
 import org.jclouds.scriptbuilder.domain.chef.RunList;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.io.Resources;
 
 /**
  * Unit tests for the {@link ChefSoloTest} statement.
@@ -380,9 +377,18 @@ public class ChefSoloTest {
             + "chef-solo -c /var/chef/solo.rb -j /var/chef/node.json -N `hostname` -u foo\n");
    }
 
+   public void testChefSoloWithChefGemVersion() throws IOException {
+      String script = ChefSolo.builder().chefVersion(">= 0.10.8").build().render(OsFamily.UNIX);
+      assertEquals(script, installChefGems(">= 0.10.8") + createConfigFile() + createNodeFile()
+            + "chef-solo -c /var/chef/solo.rb -j /var/chef/node.json -N `hostname`\n");
+   }
+
    private static String installChefGems() throws IOException {
-      return Resources.toString(Resources.getResource("test_install_ruby." + ShellToken.SH.to(OsFamily.UNIX)),
-            Charsets.UTF_8) + "gem install chef --no-rdoc --no-ri\n";
+      return "gem install chef --no-rdoc --no-ri\n";
+   }
+
+   private static String installChefGems(String version) throws IOException {
+      return "gem install chef -v '" + version + "' --no-rdoc --no-ri\n";
    }
 
    private static String createConfigFile() {

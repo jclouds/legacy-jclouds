@@ -73,6 +73,7 @@ public class ChefSolo implements Statement {
       private List<Role> roles = Lists.newArrayList();
       private List<DataBag> databags = Lists.newArrayList();
       private RunList runlist;
+      private String chefVersion;
 
       /**
        * Directory where Chef Solo will store files.
@@ -232,13 +233,22 @@ public class ChefSolo implements Statement {
          return this;
       }
 
+      /**
+       * The version of the Chef gem to install.
+       */
+      public Builder chefVersion(String chefVersion) {
+         this.chefVersion = checkNotNull(chefVersion, "chefVersion");
+         return this;
+      }
+
       public ChefSolo build() {
          return new ChefSolo(Optional.of(fileCachePath), Optional.fromNullable(rolePath),
                Optional.fromNullable(databagPath), Optional.of(cookbookPath.build()),
                Optional.fromNullable(cookbooksArchiveLocation), Optional.fromNullable(jsonAttributes),
                Optional.fromNullable(group), Optional.fromNullable(interval), Optional.fromNullable(logLevel),
                Optional.fromNullable(logFile), Optional.fromNullable(nodeName), Optional.fromNullable(splay),
-               Optional.fromNullable(user), Optional.of(roles), Optional.of(databags), Optional.fromNullable(runlist));
+               Optional.fromNullable(user), Optional.of(roles), Optional.of(databags), Optional.fromNullable(runlist),
+               Optional.fromNullable(chefVersion));
       }
 
    }
@@ -259,13 +269,14 @@ public class ChefSolo implements Statement {
    private Optional<List<Role>> roles;
    private Optional<List<DataBag>> databags;
    private RunList runlist;
-   private final InstallChefGems installChefGems = new InstallChefGems();
+   private final InstallChefGems installChefGems;
 
    public ChefSolo(Optional<String> fileCachePath, Optional<String> rolePath, Optional<String> databagPath,
          Optional<ImmutableList<String>> cookbookPath, Optional<String> cookbooksArchiveLocation,
          Optional<String> jsonAttributes, Optional<String> group, Optional<Integer> interval,
          Optional<String> logLevel, Optional<String> logFile, Optional<String> nodeName, Optional<Integer> splay,
-         Optional<String> user, Optional<List<Role>> roles, Optional<List<DataBag>> databags, Optional<RunList> runlist) {
+         Optional<String> user, Optional<List<Role>> roles, Optional<List<DataBag>> databags,
+         Optional<RunList> runlist, Optional<String> chefVersion) {
       this.fileCachePath = checkNotNull(fileCachePath, "fileCachePath must be set").or(DEFAULT_SOLO_PATH);
       this.rolePath = checkNotNull(rolePath, "rolePath must be set").or(this.fileCachePath + "/roles");
       this.databagPath = checkNotNull(databagPath, "databagPath must be set").or(this.fileCachePath + "/data_bags");
@@ -281,11 +292,13 @@ public class ChefSolo implements Statement {
       this.roles = checkNotNull(roles, "roles must be set");
       this.databags = checkNotNull(databags, "databags must be set");
       this.runlist = checkNotNull(runlist, "runlist must be set").or(RunList.builder().build());
+      this.user = checkNotNull(user, "chefVersion must be set");
       if (!checkNotNull(cookbookPath, "cookbookPath must be set").isPresent() || cookbookPath.get().isEmpty()) {
          this.cookbookPath = ImmutableList.<String> of(this.fileCachePath + "/cookbooks");
       } else {
          this.cookbookPath = ImmutableList.<String> copyOf(cookbookPath.get());
       }
+      this.installChefGems = InstallChefGems.builder().version(chefVersion.orNull()).build();
    }
 
    @Override

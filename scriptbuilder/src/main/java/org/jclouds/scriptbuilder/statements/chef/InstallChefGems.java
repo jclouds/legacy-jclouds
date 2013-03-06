@@ -20,21 +20,46 @@ package org.jclouds.scriptbuilder.statements.chef;
 
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.scriptbuilder.domain.OsFamily;
-import org.jclouds.scriptbuilder.domain.StatementList;
-import org.jclouds.scriptbuilder.statements.ruby.InstallRuby;
+import org.jclouds.scriptbuilder.domain.Statement;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Installs Chef gems onto a host.
  * 
  * @author Ignasi Barrera
  */
-public class InstallChefGems extends StatementList {
+public class InstallChefGems implements Statement {
 
-   public InstallChefGems() {
-      // Chef versions prior to 10.16.4 install an incompatible moneta gem.
-      // See: http://tickets.opscode.com/browse/CHEF-3721
-      super(new InstallRuby(), exec("gem install chef --no-rdoc --no-ri"));
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+      private Optional<String> version = Optional.absent();
+
+      /**
+       * The version of the Chef gem to install.
+       * <p>
+       * Can be something like '>= 0.10.8'.
+       */
+      public Builder version(@Nullable String version) {
+         this.version = Optional.fromNullable(version);
+         return this;
+      }
+
+      public InstallChefGems build() {
+         return new InstallChefGems(version);
+      }
+   }
+
+   private Optional<String> version;
+
+   public InstallChefGems(Optional<String> version) {
+      this.version = version;
    }
 
    @Override
@@ -42,7 +67,16 @@ public class InstallChefGems extends StatementList {
       if (family == OsFamily.WINDOWS) {
          throw new UnsupportedOperationException("windows not yet implemented");
       }
-      return super.render(family);
+
+      Statement statement = version.isPresent() ? exec(String.format("gem install chef -v '%s' --no-rdoc --no-ri",
+            version.get())) : exec("gem install chef --no-rdoc --no-ri");
+
+      return statement.render(family);
+   }
+
+   @Override
+   public Iterable<String> functionDependencies(OsFamily family) {
+      return ImmutableSet.<String> of();
    }
 
 }

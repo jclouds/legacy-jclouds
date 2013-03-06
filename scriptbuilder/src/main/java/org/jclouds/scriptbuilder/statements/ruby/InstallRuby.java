@@ -19,41 +19,19 @@
 package org.jclouds.scriptbuilder.statements.ruby;
 
 import static org.jclouds.scriptbuilder.domain.Statements.call;
-import static org.jclouds.scriptbuilder.domain.Statements.exec;
-import static org.jclouds.scriptbuilder.domain.Statements.extractTargzAndFlattenIntoDirectory;
-
-import java.net.URI;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
-import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
 
 /**
- * Installs Ruby and Rubygems gems onto a host.
+ * Installs Ruby onto a host.
  * 
  * @author Ignasi Barrera
  */
 public class InstallRuby extends StatementList {
 
-   private static final URI RUBYGEMS_URI = URI.create("http://production.cf.rubygems.org/rubygems/rubygems-1.8.10.tgz");
-
-   public static Statement installRubyGems() {
-      return new StatementList(//
-            exec("if ! hash gem 2>/dev/null; then"), //
-            exec("("), //
-            extractTargzAndFlattenIntoDirectory(RUBYGEMS_URI, "/tmp/rubygems"), //
-            exec("{cd} /tmp/rubygems"), //
-            exec("ruby setup.rb --no-format-executable"), //
-            exec("{rm} -fr /tmp/rubygems"), //
-            exec(")"), //
-            exec("fi"), //
-            // Make sure RubyGems is up to date
-            exec("gem update --system"), //
-            exec("gem update --no-rdoc --no-ri"));
-   }
-
    public InstallRuby() {
-      super(call("setupPublicCurl"), call("installRuby"), installRubyGems());
+      super(call("setupPublicCurl"), call("installRuby"));
    }
 
    @Override

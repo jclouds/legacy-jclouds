@@ -40,21 +40,22 @@ public class InstallChefGemsTest {
 
    @Test(expectedExceptions = UnsupportedOperationException.class, expectedExceptionsMessageRegExp = "windows not yet implemented")
    public void installChefGemsInWindows() {
-      new InstallChefGems().render(OsFamily.WINDOWS);
+      InstallChefGems.builder().build().render(OsFamily.WINDOWS);
    }
 
    public void installChefGemsUnix() throws IOException {
-      assertEquals(
-            new InstallChefGems().render(OsFamily.UNIX),
-            Resources.toString(Resources.getResource("test_install_ruby." + ShellToken.SH.to(OsFamily.UNIX)),
-                  Charsets.UTF_8) + "gem install chef --no-rdoc --no-ri\n");
+      assertEquals(InstallChefGems.builder().build().render(OsFamily.UNIX), "gem install chef --no-rdoc --no-ri\n");
    }
 
-   public void installChefGemsUnixInScriptBuilderSourcesSetupPublicCurl() throws IOException {
-      assertEquals(
-            InitScript.builder().name("install_chef_gems").run(new InstallChefGems()).build().render(OsFamily.UNIX),
-            Resources.toString(
-                  Resources.getResource("test_install_chef_gems_scriptbuilder." + ShellToken.SH.to(OsFamily.UNIX)),
-                  Charsets.UTF_8));
+   public void installChefGemsUnixWithCustomVersion() throws IOException {
+      assertEquals(InstallChefGems.builder().version(">= 0.10.8").build().render(OsFamily.UNIX),
+            "gem install chef -v '>= 0.10.8' --no-rdoc --no-ri\n");
+   }
+
+   public void installChefGemsUnixInScriptBuilder() throws IOException {
+      assertEquals(InitScript.builder().name("install_chef_gems").run(InstallChefGems.builder().build()).build()
+            .render(OsFamily.UNIX), Resources.toString(
+            Resources.getResource("test_install_chef_gems_scriptbuilder." + ShellToken.SH.to(OsFamily.UNIX)),
+            Charsets.UTF_8));
    }
 }
