@@ -4,12 +4,6 @@
 			xmlns:ns1="http://webservice.api.ultra.neustar.com/v01/">
 			<LBPoolList xmlns:ns2="http://schema.ultraservice.neustar.com/v01/">
 				<ns2:LBPoolData zoneid="0000000000000001">
-					<ns2:PoolData PoolName="us-west-1c.app.jclouds.org."
-						PoolId="000000000000001" PoolType="TC" PoolStatus="0"
-						PoolDName="us-west-1c.app.jclouds.org." FailOver="Enabled"
-						Probing="Enabled" MaxActiveServers="0" />
-				</ns2:LBPoolData>
-				<ns2:LBPoolData zoneid="0000000000000001">
 					<ns2:PoolData PoolName="app-uswest1.jclouds.org."
 						PoolId="000000000000002" PoolType="RD" PoolDName="app-uswest1.jclouds.org."
 						ResponseMethod="RR" />

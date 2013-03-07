@@ -21,7 +21,7 @@ package org.jclouds.ultradns.ws.xml;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.ultradns.ws.domain.PoolRecord;
+import org.jclouds.ultradns.ws.domain.RoundRobinPool;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.FluentIterable;
@@ -33,33 +33,33 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
-public class PoolRecordListHandler extends ParseSax.HandlerForGeneratedRequestWithResult<FluentIterable<PoolRecord>> {
+public class RoundRobinPoolListHandler extends ParseSax.HandlerForGeneratedRequestWithResult<FluentIterable<RoundRobinPool>> {
 
-   private final PoolRecordHandler zoneHandler;
+   private final RoundRobinPoolHandler poolHandler;
 
-   private Builder<PoolRecord> zones = ImmutableSet.<PoolRecord> builder();
+   private Builder<RoundRobinPool> pools = ImmutableSet.<RoundRobinPool> builder();
 
    @Inject
-   public PoolRecordListHandler(PoolRecordHandler zoneHandler) {
-      this.zoneHandler = zoneHandler;
+   public RoundRobinPoolListHandler(RoundRobinPoolHandler poolHandler) {
+      this.poolHandler = poolHandler;
    }
 
    @Override
-   public FluentIterable<PoolRecord> getResult() {
-      return FluentIterable.from(zones.build());
+   public FluentIterable<RoundRobinPool> getResult() {
+      return FluentIterable.from(pools.build());
    }
 
    @Override
    public void startElement(String url, String name, String qName, Attributes attributes) {
-      if (equalsOrSuffix(qName, "PoolRecordData")) {
-         zoneHandler.startElement(url, name, qName, attributes);
+      if (equalsOrSuffix(qName, "LBPoolData") || equalsOrSuffix(qName, "PoolData")) {
+         poolHandler.startElement(url, name, qName, attributes);
       }
    }
 
    @Override
    public void endElement(String uri, String name, String qName) {
-      if (equalsOrSuffix(qName, "PoolRecordData")) {
-         zones.add(zoneHandler.getResult());
+      if (equalsOrSuffix(qName, "LBPoolData")) {
+         pools.add(poolHandler.getResult());
       }
    }
 }

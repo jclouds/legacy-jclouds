@@ -1,0 +1,5 @@
+<env:Body>
+	<v01:addRRLBPoolResponse xmlns:web="http://webservice.api.ultra.neustar.com/">
+		<RRPoolID>060339AA04175655</RRPoolID>
+	</v01:addRRLBPoolResponse>
+</env:Body>

@@ -23,9 +23,8 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.ultradns.ws.domain.LBPool;
-import org.jclouds.ultradns.ws.domain.LBPool.Type;
-import org.jclouds.ultradns.ws.xml.LBPoolListHandler;
+import org.jclouds.ultradns.ws.domain.RoundRobinPool;
+import org.jclouds.ultradns.ws.xml.RoundRobinPoolListHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.FluentIterable;
@@ -38,40 +37,32 @@ import com.google.common.collect.ImmutableList;
 public class GetLoadBalancingPoolsByZoneResponseTest extends BaseHandlerTest {
 
    public void test() {
-      InputStream is = getClass().getResourceAsStream("/lbpools.xml");
+      InputStream is = getClass().getResourceAsStream("/rrpools.xml");
 
-      FluentIterable<LBPool> expected = expected();
+      FluentIterable<RoundRobinPool> expected = expected();
 
-      LBPoolListHandler handler = injector.getInstance(LBPoolListHandler.class);
-      FluentIterable<LBPool> result = factory.create(handler).parse(is);
+      RoundRobinPoolListHandler handler = injector.getInstance(RoundRobinPoolListHandler.class);
+      FluentIterable<RoundRobinPool> result = factory.create(handler).parse(is);
 
       assertEquals(result.toSet().toString(), expected.toSet().toString());
    }
 
-   public FluentIterable<LBPool> expected() {
-      return FluentIterable.from(ImmutableList.<LBPool> builder()
-                           .add(LBPool.builder()
-                                      .zoneId("0000000000000001")
-                                      .id("000000000000001")
-                                      .name("us-west-1c.app.jclouds.org.")
-                                      .type(Type.TC).build())
-                           .add(LBPool.builder()
+   public FluentIterable<RoundRobinPool> expected() {
+      return FluentIterable.from(ImmutableList.<RoundRobinPool> builder()
+                           .add(RoundRobinPool.builder()
                                       .zoneId("0000000000000001")
                                       .id("000000000000002")
                                       .name("app-uswest1.jclouds.org.")
-                                      .type(Type.RD)
-                                      .responseMethod(Type.RR).build())
-                           .add(LBPool.builder()
+                                      .dname("app-uswest1.jclouds.org.").build())
+                           .add(RoundRobinPool.builder()
                                       .zoneId("0000000000000001")
                                       .id("000000000000003")
                                       .name("app-uswest2.jclouds.org.")
-                                      .type(Type.RD)
-                                      .responseMethod(Type.RR).build())
-                           .add(LBPool.builder()
+                                      .dname("app-uswest2.jclouds.org.").build())
+                           .add(RoundRobinPool.builder()
                                       .zoneId("0000000000000001")
                                       .id("000000000000004")
                                       .name("app-euwest.jclouds.org.")
-                                      .type(Type.RD)
-                                      .responseMethod(Type.RR).build()).build());
+                                      .dname("app-euwest.jclouds.org.").build()).build());
    }
 }
