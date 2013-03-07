@@ -176,6 +176,51 @@ public class UltraDNSWSErrorHandlerTest {
       assertEquals(exception.getError().getCode(), 2111);
    }
 
+   @Test
+   public void testCode2911SetsResourceNotFoundException() throws IOException {
+      HttpRequest request = HttpRequest.builder().method("POST")
+            .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+            .addHeader("Host", "ultra-api.ultradns.com:8443").payload(payloadFromResource("/delete_lbpool.xml")).build();
+      HttpCommand command = new HttpCommand(request);
+      HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
+            .payload(payloadFromResource("/lbpool_doesnt_exist.xml")).build();
+
+      function.handleError(command, response);
+
+      assertEquals(command.getException().getClass(), ResourceNotFoundException.class);
+      assertEquals(command.getException().getMessage(), "Pool does not exist in the system");
+
+      UltraDNSWSResponseException exception = UltraDNSWSResponseException.class.cast(command.getException().getCause());
+
+      assertEquals(exception.getMessage(), "Error 2911: Pool does not exist in the system");
+      assertEquals(exception.getError().getDescription(), "Pool does not exist in the system");
+      assertEquals(exception.getError().getCode(), 2911);
+   }
+
+   @Test
+   public void testCode2912SetsResourceAlreadyExistsException() throws IOException {
+      HttpRequest request = HttpRequest.builder().method("POST")
+            .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+            .addHeader("Host", "ultra-api.ultradns.com:8443").payload(payloadFromResource("/create_rrpool_a.xml")).build();
+      HttpCommand command = new HttpCommand(request);
+      HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
+            .payload(payloadFromResource("/lbpool_already_exists.xml")).build();
+
+      function.handleError(command, response);
+
+      assertEquals(command.getException().getClass(), ResourceAlreadyExistsException.class);
+      assertEquals(command.getException().getMessage(),
+            "Pool already created for this host name : www.rrpool.adrianc.rrpool.ultradnstest.jclouds.org.");
+
+      UltraDNSWSResponseException exception = UltraDNSWSResponseException.class.cast(command.getException().getCause());
+
+      assertEquals(exception.getMessage(),
+            "Error 2912: Pool already created for this host name : www.rrpool.adrianc.rrpool.ultradnstest.jclouds.org.");
+      assertEquals(exception.getError().getDescription(),
+            "Pool already created for this host name : www.rrpool.adrianc.rrpool.ultradnstest.jclouds.org.");
+      assertEquals(exception.getError().getCode(), 2912);
+   }
+
    private Payload payloadFromResource(String resource) {
       try {
          return payloadFromStringWithContentType(toStringAndClose(getClass().getResourceAsStream(resource)),

@@ -21,26 +21,23 @@ package org.jclouds.ultradns.ws.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
 
 /**
  * 
  * @author Adrian Cole
  */
-public final class LBPool {
+public final class RoundRobinPool {
 
    private final String zoneId;
    private final String id;
    private final String name;
-   private final Type type;
-   private final Optional<Type> responseMethod;
+   private final String dname;
 
-   private LBPool(String zoneId, String id, String name, Type type, Optional<Type> responseMethod) {
+   private RoundRobinPool(String zoneId, String id, String name, String dname) {
       this.zoneId = checkNotNull(zoneId, "zoneId");
       this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name for %s", id);
-      this.type = checkNotNull(type, "type for %s", name);
-      this.responseMethod = checkNotNull(responseMethod, "responseMethod for %s", name);
+      this.dname = checkNotNull(dname, "dname for %s", id);
    }
 
    /**
@@ -58,29 +55,22 @@ public final class LBPool {
    }
 
    /**
-    * The name of the pool. ex. {@code jclouds.org.}
+    * The name of the pool. ex. {@code My Pool}
     */
    public String getName() {
       return name;
    }
 
    /**
-    * The type of the pool
+    * The dname of the pool. ex. {@code jclouds.org.}
     */
-   public Type getType() {
-      return type;
-   }
-
-   /**
-    * The response method
-    */
-   public Optional<Type> getResponseMethod() {
-      return responseMethod;
+   public String getDName() {
+      return dname;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(zoneId, id, name, type, responseMethod);
+      return Objects.hashCode(zoneId, id, name, dname);
    }
 
    @Override
@@ -91,29 +81,15 @@ public final class LBPool {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      LBPool that = LBPool.class.cast(obj);
+      RoundRobinPool that = RoundRobinPool.class.cast(obj);
       return Objects.equal(this.zoneId, that.zoneId) && Objects.equal(this.id, that.id)
-            && Objects.equal(this.name, that.name) && Objects.equal(this.type, that.type)
-            && Objects.equal(this.responseMethod, that.responseMethod);
+            && Objects.equal(this.name, that.name) && Objects.equal(this.dname, that.dname);
    }
 
    @Override
    public String toString() {
       return Objects.toStringHelper(this).omitNullValues().add("zoneId", zoneId).add("id", id).add("name", name)
-            .add("type", type).add("responseMethod", responseMethod.orNull()).toString();
-   }
-
-   public static enum Type {
-
-      RD, RR, SB, TC, UNRECOGNIZED;
-
-      public static Type fromValue(String type) {
-         try {
-            return valueOf(checkNotNull(type, "type"));
-         } catch (IllegalArgumentException e) {
-            return UNRECOGNIZED;
-         }
-      }
+            .add("dname", dname).toString();
    }
 
    public static Builder builder() {
@@ -128,11 +104,10 @@ public final class LBPool {
       private String zoneId;
       private String id;
       private String name;
-      private Type type;
-      private Optional<Type> responseMethod = Optional.absent();
+      private String dname;
 
       /**
-       * @see LBPool#getZoneId()
+       * @see RoundRobinPool#getZoneId()
        */
       public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
@@ -140,7 +115,7 @@ public final class LBPool {
       }
 
       /**
-       * @see LBPool#getId()
+       * @see RoundRobinPool#getId()
        */
       public Builder id(String id) {
          this.id = id;
@@ -148,7 +123,7 @@ public final class LBPool {
       }
 
       /**
-       * @see LBPool#getName()
+       * @see RoundRobinPool#getName()
        */
       public Builder name(String name) {
          this.name = name;
@@ -156,27 +131,19 @@ public final class LBPool {
       }
 
       /**
-       * @see LBPool#getType()
+       * @see RoundRobinPool#getDName()
        */
-      public Builder type(Type type) {
-         this.type = type;
+      public Builder dname(String dname) {
+         this.dname = dname;
          return this;
       }
 
-      /**
-       * @see LBPool#getResponseMethod()
-       */
-      public Builder responseMethod(Type responseMethod) {
-         this.responseMethod = Optional.fromNullable(responseMethod);
-         return this;
+      public RoundRobinPool build() {
+         return new RoundRobinPool(zoneId, id, name, dname);
       }
 
-      public LBPool build() {
-         return new LBPool(zoneId, id, name, type, responseMethod);
-      }
-
-      public Builder from(LBPool in) {
-         return this.zoneId(in.zoneId).id(in.id).name(in.name).type(in.type).responseMethod(in.responseMethod.orNull());
+      public Builder from(RoundRobinPool in) {
+         return this.zoneId(in.zoneId).id(in.id).name(in.name).dname(in.dname);
       }
    }
 }

@@ -24,36 +24,34 @@ import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.ultradns.ws.domain.PoolRecord;
+import org.jclouds.ultradns.ws.domain.RoundRobinPool;
+import org.jclouds.ultradns.ws.domain.RoundRobinPool.Builder;
 import org.xml.sax.Attributes;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class PoolRecordHandler extends ParseSax.HandlerForGeneratedRequestWithResult<PoolRecord> {
+public class RoundRobinPoolHandler extends ParseSax.HandlerForGeneratedRequestWithResult<RoundRobinPool> {
 
-   private PoolRecord poolRecord;
+   private Builder pool = RoundRobinPool.builder();
 
    @Override
-   public PoolRecord getResult() {
+   public RoundRobinPool getResult() {
       try {
-         return poolRecord;
+         return pool.build();
       } finally {
-         poolRecord = null;
+         pool = RoundRobinPool.builder();
       }
    }
 
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) {
       Map<String, String> attributes = cleanseAttributes(attrs);
-      if (equalsOrSuffix(qName, "PoolRecordData")) {
-         poolRecord = PoolRecord.builder()
-                                .poolId(attributes.get("poolId"))
-                                .id(attributes.get("poolRecordID"))
-                                .description(attributes.get("description"))
-                                .type(attributes.get("recordType"))
-                                .pointsTo(attributes.get("pointsTo")).build();
+      if (equalsOrSuffix(qName, "LBPoolData")) {
+         pool.zoneId(attributes.get("zoneid"));
+      } else if (equalsOrSuffix(qName, "PoolData")) {
+         pool.id(attributes.get("PoolId")).name(attributes.get("PoolName")).dname(attributes.get("PoolDName"));
       }
    }
 }

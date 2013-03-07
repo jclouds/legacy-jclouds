@@ -107,7 +107,7 @@ public interface ResourceRecordApi {
          throws ResourceNotFoundException;
 
    /**
-    * deletes a specific resource record/
+    * deletes a specific resource record
     * 
     * @param guid
     *           the global unique identifier for the resource record {@see
