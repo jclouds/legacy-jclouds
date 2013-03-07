@@ -69,7 +69,7 @@ import com.google.common.io.InputSupplier;
 
 /**
  * Tests behavior of {@code S3Client}
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "AWSS3ClientLiveTest")
@@ -107,6 +107,66 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
       return temp;
    }
 
+   public void testClearContainer() throws InterruptedException, IOException {
+	   String containerName = getContainerName();
+
+	   try {
+	      BlobStore blobStore = view.getBlobStore();
+	      String dirName = "someDir";
+	      blobStore.createDirectory(containerName, dirName);
+
+	      int i;
+
+	      // create files directly in the container.
+	      for (i = 0; i < 3; i++) {
+              Blob blob = blobStore.blobBuilder("file-" + i).payload("someData").build();
+              blobStore.putBlob(containerName, blob);
+	      }
+
+	      // create files in a directory inside the container.
+	      for (i = 0; i < 3; i++) {
+              Blob blob = blobStore.blobBuilder(dirName + "/file-" + i).payload("someData").build();
+              blobStore.putBlob(containerName, blob);
+	      }
+
+	      blobStore.clearContainer(containerName);
+	      assertEquals(blobStore.countBlobs(containerName), 0);
+	   } finally {
+	      returnContainer(containerName);
+	   }
+   }
+
+   public void testMultiDeleteMoreThanPageSize() throws InterruptedException {
+	   String containerName = getContainerName();
+
+	   try {
+		   BlobStore blobStore = view.getBlobStore();
+		   String blobName = "blob";
+
+		   int i;
+		   for (i = 0; i < 1111; i++) {
+			   Blob blob = blobStore.blobBuilder(blobName + i).payload("").build();
+			   blobStore.putBlob(containerName, blob);
+
+			   blobStore.clearContainer(containerName);
+			   assertEquals(blobStore.countBlobs(containerName), 0);
+		   }
+	   } finally {
+		   returnContainer(containerName);
+	   }
+   }
+
+   public void testClearEmptyContainer() throws InterruptedException {
+	   String containerName = getContainerName();
+
+	   try {
+		   BlobStore blobStore = view.getBlobStore();
+		   blobStore.clearContainer(containerName);
+	   } finally {
+		   returnContainer(containerName);
+	   }
+   }
+
    public void testMultipartSynchronously() throws InterruptedException, IOException {
       String containerName = getContainerName();
       S3Object object = null;
@@ -115,7 +175,7 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
          String uploadId = getApi().initiateMultipartUpload(containerName,
                   ObjectMetadataBuilder.create().key(key).contentMD5(oneHundredOneConstitutionsMD5).build());
          byte[] buffer = toByteArray(oneHundredOneConstitutions);
-         assertEquals(oneHundredOneConstitutionsLength, (long) buffer.length);
+         assertEquals(oneHundredOneConstitutionsLength, buffer.length);
 
          Payload part1 = newByteArrayPayload(buffer);
          part1.getContentMetadata().setContentLength((long) buffer.length);
@@ -152,13 +212,13 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
          returnContainer(containerName);
       }
    }
-   
+
    public void testMultipartChunkedFileStream() throws IOException, InterruptedException {
-      
+
       File file = new File("target/const.txt");
       Files.copy(oneHundredOneConstitutions, file);
       String containerName = getContainerName();
-      
+
       try {
          BlobStore blobStore = view.getBlobStore();
          blobStore.createContainerInLocation(null, containerName);
@@ -172,7 +232,7 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
 
    public void testMultipartAsynchronouslySmallBlob() throws IOException, InterruptedException, Exception {
       String containerName = getContainerName();
-      
+
       try {
          AsyncBlobStore asyncBlobStore = view.getAsyncBlobStore();
          asyncBlobStore.createContainerInLocation(null, containerName).get();
@@ -259,17 +319,17 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
          assertEquals("InvalidBucketName", e.getError().getCode());
       }
    }
-   
+
    public void testDeleteMultipleObjects() throws InterruptedException {
       String container = getContainerName();
       try {
          ImmutableSet.Builder<String> builder = ImmutableSet.builder();
          for (int i = 0; i < 5; i++) {
             String key = UUID.randomUUID().toString();
-            
+
             Blob blob = view.getBlobStore().blobBuilder(key).payload("").build();
             view.getBlobStore().putBlob(container, blob);
-            
+
             builder.add(key);
          }
 
@@ -282,7 +342,7 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
          for (String key : keys) {
             assertConsistencyAwareBlobDoesntExist(container, key);
          }
-         
+
       }  finally {
          returnContainer(container);
       }
