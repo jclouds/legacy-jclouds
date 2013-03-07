@@ -61,7 +61,7 @@ public class UltraDNSWSProviderMetadata extends BaseProviderMetadata {
          .name("Neustar UltraDNS WS")
          .apiMetadata(new UltraDNSWSApiMetadata())
          .homepage(URI.create("http://www.neustar.biz/enterprise/dns-services/what-is-external-dns"))
-         .console(URI.create("https://www.ultradns.net"))
+         .console(URI.create("https://portal.ultradns.com"))
          .iso3166Codes("US-CA", "US-VA") // TODO
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
          .defaultProperties(UltraDNSWSProviderMetadata.defaultProperties());
