@@ -18,48 +18,43 @@
  */
 package org.jclouds.ultradns.ws.xml;
 
+import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.ultradns.ws.domain.LBPool;
 import org.xml.sax.Attributes;
-
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
-import com.google.inject.Inject;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class LBPoolListHandler extends ParseSax.HandlerForGeneratedRequestWithResult<FluentIterable<LBPool>> {
-
-   private final LBPoolHandler poolHandler;
-
-   private Builder<LBPool> pools = ImmutableSet.<LBPool> builder();
-
-   @Inject
-   public LBPoolListHandler(LBPoolHandler poolHandler) {
-      this.poolHandler = poolHandler;
-   }
+public class RRPoolIDHandler extends ParseSax.HandlerForGeneratedRequestWithResult<String> {
+   private StringBuilder currentText = new StringBuilder();
+   private String rrPoolID = null;
 
    @Override
-   public FluentIterable<LBPool> getResult() {
-      return FluentIterable.from(pools.build());
+   public String getResult() {
+      try {
+         return rrPoolID;
+      } finally {
+         rrPoolID = null;
+      }
    }
 
    @Override
    public void startElement(String url, String name, String qName, Attributes attributes) {
-      if (equalsOrSuffix(qName, "LBPoolData") || equalsOrSuffix(qName, "PoolData")) {
-         poolHandler.startElement(url, name, qName, attributes);
-      }
    }
 
    @Override
    public void endElement(String uri, String name, String qName) {
-      if (equalsOrSuffix(qName, "LBPoolData")) {
-         pools.add(poolHandler.getResult());
+      if (equalsOrSuffix(qName, "RRPoolID")) {
+         rrPoolID = currentOrNull(currentText);
       }
+      currentText = new StringBuilder();
+   }
+
+   @Override
+   public void characters(char ch[], int start, int length) {
+      currentText.append(ch, start, length);
    }
 }

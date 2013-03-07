@@ -29,8 +29,8 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.ultradns.ws.UltraDNSWSApi;
 import org.jclouds.ultradns.ws.UltraDNSWSAsyncApi;
-import org.jclouds.ultradns.ws.features.LBPoolApi;
-import org.jclouds.ultradns.ws.features.LBPoolAsyncApi;
+import org.jclouds.ultradns.ws.features.RoundRobinPoolApi;
+import org.jclouds.ultradns.ws.features.RoundRobinPoolAsyncApi;
 import org.jclouds.ultradns.ws.features.ResourceRecordApi;
 import org.jclouds.ultradns.ws.features.ResourceRecordAsyncApi;
 import org.jclouds.ultradns.ws.features.TaskApi;
@@ -52,7 +52,7 @@ public class UltraDNSWSRestClientModule extends RestClientModule<UltraDNSWSApi, 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
          .put(ZoneApi.class, ZoneAsyncApi.class)
          .put(ResourceRecordApi.class, ResourceRecordAsyncApi.class)
-         .put(LBPoolApi.class, LBPoolAsyncApi.class)
+         .put(RoundRobinPoolApi.class, RoundRobinPoolAsyncApi.class)
          .put(TaskApi.class, TaskAsyncApi.class).build();
 
    public UltraDNSWSRestClientModule() {

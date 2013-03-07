@@ -21,7 +21,7 @@ package org.jclouds.ultradns.ws;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.ultradns.ws.domain.Account;
-import org.jclouds.ultradns.ws.features.LBPoolApi;
+import org.jclouds.ultradns.ws.features.RoundRobinPoolApi;
 import org.jclouds.ultradns.ws.features.ResourceRecordApi;
 import org.jclouds.ultradns.ws.features.TaskApi;
 import org.jclouds.ultradns.ws.features.ZoneApi;
@@ -56,13 +56,13 @@ public interface UltraDNSWSApi {
    ResourceRecordApi getResourceRecordApiForZone(@PayloadParam("zoneName") String zoneName);
 
    /**
-    * Provides synchronous access to Load Balancing Pool features.
+    * Provides synchronous access to Round Robin Pool features.
     * 
     * @param zoneName
     *           zoneName including a trailing dot
     */
    @Delegate
-   LBPoolApi getLBPoolApiForZone(@PayloadParam("zoneName") String zoneName);
+   RoundRobinPoolApi getRoundRobinPoolApiForZone(@PayloadParam("zoneName") String zoneName);
 
    /**
     * Provides synchronous access to Task features.
