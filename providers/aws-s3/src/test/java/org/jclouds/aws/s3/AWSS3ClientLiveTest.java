@@ -107,6 +107,35 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
       return temp;
    }
 
+   public void testClearContainer() throws InterruptedException, IOException {
+	   String containerName = getContainerName();
+
+	   try {
+	      BlobStore blobStore = view.getBlobStore();
+	      String dirName = "someDir";
+	      blobStore.createDirectory(containerName, dirName);
+
+	      int i;
+
+	      // create files directly in the container.
+	      for (i = 0; i < 3; i++) {
+              Blob blob = blobStore.blobBuilder("file-" + i).payload("someData").build();
+              blobStore.putBlob(containerName, blob);
+	      }
+
+	      // create files in a directory inside the container.
+	      for (i = 0; i < 3; i++) {
+              Blob blob = blobStore.blobBuilder(dirName + "/file-" + i).payload("someData").build();
+              blobStore.putBlob(containerName, blob);
+	      }
+
+	      blobStore.clearContainer(containerName);
+	      assertEquals(blobStore.countBlobs(containerName), 0);
+	   } finally {
+	      returnContainer(containerName);
+	   }
+   }
+
    public void testMultipartSynchronously() throws InterruptedException, IOException {
       String containerName = getContainerName();
       S3Object object = null;

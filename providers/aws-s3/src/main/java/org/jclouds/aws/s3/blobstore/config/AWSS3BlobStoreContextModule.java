@@ -21,11 +21,14 @@ package org.jclouds.aws.s3.blobstore.config;
 import org.jclouds.aws.s3.AWSS3AsyncClient;
 import org.jclouds.aws.s3.blobstore.AWSS3AsyncBlobStore;
 import org.jclouds.aws.s3.blobstore.AWSS3BlobStore;
+import org.jclouds.aws.s3.blobstore.strategy.AWSS3DeleteAllKeysInList;
 import org.jclouds.aws.s3.blobstore.strategy.AsyncMultipartUploadStrategy;
 import org.jclouds.aws.s3.blobstore.strategy.MultipartUploadStrategy;
 import org.jclouds.aws.s3.blobstore.strategy.internal.ParallelMultipartUploadStrategy;
 import org.jclouds.aws.s3.blobstore.strategy.internal.SequentialMultipartUploadStrategy;
 import org.jclouds.blobstore.BlobRequestSigner;
+import org.jclouds.blobstore.strategy.ClearContainerStrategy;
+import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.s3.blobstore.S3AsyncBlobStore;
 import org.jclouds.s3.blobstore.S3BlobRequestSigner;
 import org.jclouds.s3.blobstore.S3BlobStore;
@@ -48,6 +51,8 @@ public class AWSS3BlobStoreContextModule extends S3BlobStoreContextModule {
       bind(S3BlobStore.class).to(AWSS3BlobStore.class).in(Scopes.SINGLETON);
       bind(MultipartUploadStrategy.class).to(SequentialMultipartUploadStrategy.class);
       bind(AsyncMultipartUploadStrategy.class).to(ParallelMultipartUploadStrategy.class);
+      bind(ClearListStrategy.class).to(AWSS3DeleteAllKeysInList.class);
+      bind(ClearContainerStrategy.class).to(AWSS3DeleteAllKeysInList.class);
    }
 
    @Override
