@@ -66,7 +66,7 @@ public class UltraDNSWSApiMetadata extends BaseRestApiMetadata {
          .identityName("Username")
          .credentialName("Password")
          .version("v01")
-         .documentation(URI.create("https://www.ultradns.net/api/NUS_API_XML_SOAP.pdf"))
+         .documentation(URI.create("https://portal.ultradns.com/static/docs/NUS_API_XML_SOAP.pdf"))
          .defaultEndpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
          .defaultProperties(UltraDNSWSApiMetadata.defaultProperties())
          .defaultModule(UltraDNSWSRestClientModule.class);
