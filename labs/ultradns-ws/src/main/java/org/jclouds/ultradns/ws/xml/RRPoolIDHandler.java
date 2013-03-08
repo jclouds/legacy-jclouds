@@ -18,6 +18,7 @@
  */
 package org.jclouds.ultradns.ws.xml;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
@@ -35,7 +36,7 @@ public class RRPoolIDHandler extends ParseSax.HandlerForGeneratedRequestWithResu
    @Override
    public String getResult() {
       try {
-         return rrPoolID;
+         return checkNotNull(rrPoolID, "RRPoolId not present in the response");
       } finally {
          rrPoolID = null;
       }
