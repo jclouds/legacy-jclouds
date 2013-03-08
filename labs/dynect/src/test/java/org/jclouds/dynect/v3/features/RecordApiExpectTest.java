@@ -18,13 +18,14 @@
  */
 package org.jclouds.dynect.v3.features;
 
-import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 import static com.google.common.net.HttpHeaders.ACCEPT;
+import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.jclouds.dynect.v3.domain.RecordId.recordIdBuilder;
 import static org.jclouds.dynect.v3.domain.rdata.AData.a;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import org.jclouds.dynect.v3.DynECTApi;
 import org.jclouds.dynect.v3.domain.CreateRecord;
@@ -318,6 +319,11 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
       assertEquals(success.getRecordApiForZone("jclouds.org").listByFQDNAndType("www.foo.com", "A").toString(),
             new ListRecordsResponseTest().expected().toString());
    }
+   
+   public void testListByFQDNAndTypeWhenResponseIs404() {
+       DynECTApi fail = requestsSendResponses(createSession, createSessionResponse, listByFQDNAndType, notFound);
+       assertTrue(fail.getRecordApiForZone("jclouds.org").listByFQDNAndType("www.foo.com", "A").isEmpty());
+    }
 
    HttpRequest create = HttpRequest.builder().method("POST")
          .endpoint("https://api2.dynect.net/REST/ARecord/jclouds.org/www.jclouds.org")

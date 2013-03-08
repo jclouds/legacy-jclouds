@@ -35,6 +35,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import org.jclouds.Fallbacks.EmptyFluentIterableOnNotFoundOr404;
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.dynect.v3.DynECTExceptions.JobStillRunningException;
 import org.jclouds.dynect.v3.domain.CreateRecord;
@@ -94,6 +95,7 @@ public interface RecordAsyncApi {
    @GET
    @Path("/{type}Record/{zone}/{fqdn}")
    @ResponseParser(ToRecordIds.class)
+   @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
    ListenableFuture<FluentIterable<RecordId>> listByFQDNAndType(@PathParam("fqdn") String fqdn,
          @PathParam("type") String type) throws JobStillRunningException;
 
