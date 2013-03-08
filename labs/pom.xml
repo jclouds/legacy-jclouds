@@ -34,27 +34,17 @@
     <modules>
        <module>virtualbox</module>
        <module>vcloud-director</module>
-       <module>opsource-servers</module>
        <module>elb</module>
        <module>aws-elb</module>
-       <module>savvis-symphonyvpdc</module>
        <module>dmtf</module>
-       <module>carrenza-vcloud-director</module>
-       <module>jenkins</module>
        <module>cdmi</module>
        <module>joyent-cloudapi</module>
        <module>joyentcloud</module>
        <module>google-compute</module>
-       <module>greenqloud-compute</module>
-       <module>greenqloud-storage</module>
        <module>iam</module>
        <module>aws-iam</module>
-       <module>nodepool</module>
        <module>rds</module>
        <module>aws-rds</module>
-       <module>smartos-ssh</module>
-       <module>cloudstack-ec2</module>
-       <module>azure-management</module>
        <module>fgcp</module>
        <module>fgcp-au</module>
        <module>fgcp-de</module>
