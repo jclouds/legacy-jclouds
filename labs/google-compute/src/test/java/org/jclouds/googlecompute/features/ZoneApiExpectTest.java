@@ -37,12 +37,12 @@ import static org.testng.Assert.assertTrue;
 @Test(groups = "unit")
 public class ZoneApiExpectTest extends BaseGoogleComputeApiExpectTest {
 
-   public static final String ZONES_URL_PREFIX = "https://www.googleapis.com/compute/v1beta13/projects/google/zones";
+   public static final String ZONES_URL_PREFIX = "https://www.googleapis.com/compute/v1beta13/projects/myproject/zones";
 
    public static final HttpRequest GET_ZONE_REQ = HttpRequest
            .builder()
            .method("GET")
-           .endpoint(ZONES_URL_PREFIX + "/us-central2-a")
+           .endpoint(ZONES_URL_PREFIX + "/us-central1-a")
            .addHeader("Accept", "application/json")
            .addHeader("Authorization", "Bearer " + TOKEN).build();
 
@@ -64,9 +64,9 @@ public class ZoneApiExpectTest extends BaseGoogleComputeApiExpectTest {
               .payload(payloadFromResource("/zone_get.json")).build();
 
       ZoneApi api = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
-              TOKEN_RESPONSE, GET_ZONE_REQ, operationResponse).getZoneApiForProject("google");
+              TOKEN_RESPONSE, GET_ZONE_REQ, operationResponse).getZoneApiForProject("myproject");
 
-      assertEquals(api.get("us-central2-a"),
+      assertEquals(api.get("us-central1-a"),
               new ParseZoneTest().expected());
    }
 
@@ -75,15 +75,15 @@ public class ZoneApiExpectTest extends BaseGoogleComputeApiExpectTest {
       HttpResponse operationResponse = HttpResponse.builder().statusCode(404).build();
 
       ZoneApi api = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
-              TOKEN_RESPONSE, GET_ZONE_REQ, operationResponse).getZoneApiForProject("google");
+              TOKEN_RESPONSE, GET_ZONE_REQ, operationResponse).getZoneApiForProject("myproject");
 
-      assertNull(api.get("us-central2-a"));
+      assertNull(api.get("us-central1-a"));
    }
 
    public void testListZoneNoOptionsResponseIs2xx() throws Exception {
 
       ZoneApi api = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
-              TOKEN_RESPONSE, LIST_ZONES_REQ, LIST_ZONES_RESPONSE).getZoneApiForProject("google");
+              TOKEN_RESPONSE, LIST_ZONES_REQ, LIST_ZONES_RESPONSE).getZoneApiForProject("myproject");
 
       assertEquals(api.listFirstPage().toString(),
               new ParseZoneListTest().expected().toString());
@@ -94,7 +94,7 @@ public class ZoneApiExpectTest extends BaseGoogleComputeApiExpectTest {
       HttpResponse operationResponse = HttpResponse.builder().statusCode(404).build();
 
       ZoneApi api = requestsSendResponses(requestForScopes(COMPUTE_READONLY_SCOPE),
-              TOKEN_RESPONSE, LIST_ZONES_REQ, operationResponse).getZoneApiForProject("google");
+              TOKEN_RESPONSE, LIST_ZONES_REQ, operationResponse).getZoneApiForProject("myproject");
 
       assertTrue(api.list().concat().isEmpty());
    }

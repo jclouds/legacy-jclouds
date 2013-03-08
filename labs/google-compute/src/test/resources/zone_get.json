@@ -2,9 +2,9 @@
  "kind": "compute#zone",
  "id": "13020128040171887099",
  "creationTimestamp": "2012-10-19T16:42:54.131",
- "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/google/zones/us-central2-a",
- "name": "us-central2-a",
- "description": "us-central2-a",
+ "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/myproject/zones/us-central1-a",
+ "name": "us-central1-a",
+ "description": "us-central1-a",
  "status": "DOWN",
  "maintenanceWindows": [
   {

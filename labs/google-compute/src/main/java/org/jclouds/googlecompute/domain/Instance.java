@@ -555,7 +555,7 @@ public class Instance extends Resource {
 
       private final String name;
       private final URI network;
-      private final String networkIP;
+      private final Optional<String> networkIP;
       private final Set<AccessConfig> accessConfigs;
 
       @ConstructorProperties({
@@ -565,7 +565,7 @@ public class Instance extends Resource {
                                Set<AccessConfig> accessConfigs) {
          this.name = checkNotNull(name, "name");
          this.network = checkNotNull(network, "network");
-         this.networkIP = checkNotNull(networkIP, "networkIP");
+         this.networkIP = fromNullable(networkIP);
          this.accessConfigs = accessConfigs == null ? ImmutableSet.<AccessConfig>of() : accessConfigs;
       }
 
@@ -586,7 +586,7 @@ public class Instance extends Resource {
       /**
        * @return An IPV4 internal network address to assign to this instance.
        */
-      public String getNetworkIP() {
+      public Optional<String> getNetworkIP() {
          return networkIP;
       }
 
@@ -698,7 +698,7 @@ public class Instance extends Resource {
 
          public Builder fromNetworkInterface(NetworkInterface in) {
             return this.network(in.getNetwork())
-                    .networkIP(in.getNetworkIP())
+                    .networkIP(in.getNetworkIP().orNull())
                     .accessConfigs(in.getAccessConfigs());
          }
       }
