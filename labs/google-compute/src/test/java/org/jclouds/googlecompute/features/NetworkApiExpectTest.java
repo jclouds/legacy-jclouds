@@ -93,7 +93,7 @@ public class NetworkApiExpectTest extends BaseGoogleComputeApiExpectTest {
               TOKEN_RESPONSE, insert,
               insertNetworkResponse).getNetworkApiForProject("myproject");
 
-      assertEquals(api.createInIPv4Range("test-network", "10.0.1.0/8"), new ParseOperationTest().expected());
+      assertEquals(api.createInIPv4Range("test-network", "10.0.0.0/8"), new ParseOperationTest().expected());
    }
 
    public void testDeleteNetworkResponseIs2xx() {
