@@ -52,6 +52,5 @@
        <module>oauth</module>
        <module>openstack</module>
        <module>dynect</module>
-       <module>ultradns-ws</module>
   </modules>
 </project>
