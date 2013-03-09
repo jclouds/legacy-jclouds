@@ -69,12 +69,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jclouds.labs</groupId>
-      <artifactId>aws-iam</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.jclouds.provider</groupId>
       <artifactId>aws-cloudwatch</artifactId>
       <version>${project.version}</version>
