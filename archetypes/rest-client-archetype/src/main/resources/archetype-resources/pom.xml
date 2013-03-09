@@ -27,7 +27,7 @@ $symbol_dollar = '$' )
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.7.0-SNAPSHOT</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>${groupId}</groupId>
@@ -56,7 +56,7 @@ $symbol_dollar = '$' )
   </repositories>
 
   <properties>
-    <jclouds.version>1.6.0-SNAPSHOT</jclouds.version>
+    <jclouds.version>1.7.0-SNAPSHOT</jclouds.version>
     <test.${lcaseProviderName}.identity>${providerIdentity}</test.${lcaseProviderName}.identity>
     <test.${lcaseProviderName}.credential>${providerCredential}</test.${lcaseProviderName}.credential>
     <test.${lcaseProviderName}.api-version>${providerApiVersion}</test.${lcaseProviderName}.api-version>

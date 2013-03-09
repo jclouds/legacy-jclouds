@@ -24,7 +24,7 @@
 	<parent>
 		<groupId>org.jclouds</groupId>
 		<artifactId>jclouds-demos-project</artifactId>
-		<version>1.6.0-SNAPSHOT</version>
+		<version>1.7.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>jclouds-demo-speedtest-sqs</artifactId>
 	<name>Speed tests of SQS across regions</name>
