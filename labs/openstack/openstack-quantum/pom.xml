@@ -22,10 +22,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.jclouds</groupId>
-    <artifactId>jclouds-project</artifactId>
+    <groupId>org.jclouds.labs</groupId>
+    <artifactId>jclouds-labs-project</artifactId>
     <version>1.7.0-SNAPSHOT</version>
-    <relativePath>../../../project/pom.xml</relativePath>
+    <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.labs</groupId>
   <artifactId>openstack-quantum</artifactId>
@@ -44,8 +44,9 @@
     <test.jclouds.keystone.credential-type>passwordCredentials</test.jclouds.keystone.credential-type>
     <jclouds.osgi.export>org.jclouds.openstack.quantum.v1_0*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
-      org.jclouds.rest.internal;version="${project.version}",
-      org.jclouds*;version="${project.version}",
+      org.jclouds.rest.internal;version="${jclouds.version}",
+      org.jclouds.labs*;version="${project.version}",
+      org.jclouds*;version="${jclouds.version}",
       *
     </jclouds.osgi.import>
   </properties>
@@ -54,31 +55,31 @@
     <dependency>
       <groupId>org.jclouds.api</groupId>
       <artifactId>openstack-keystone</artifactId>
-      <version>${project.version}</version>
+      <version>${jclouds.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jclouds</groupId>
       <artifactId>jclouds-core</artifactId>
-      <version>${project.version}</version>
+      <version>${jclouds.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jclouds</groupId>
       <artifactId>jclouds-core</artifactId>
-      <version>${project.version}</version>
+      <version>${jclouds.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jclouds.api</groupId>
       <artifactId>openstack-keystone</artifactId>
-      <version>${project.version}</version>
+      <version>${jclouds.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jclouds.driver</groupId>
       <artifactId>jclouds-slf4j</artifactId>
-      <version>${project.version}</version>
+      <version>${jclouds.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -21,18 +21,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.jclouds</groupId>
-        <artifactId>jclouds-project</artifactId>
+        <groupId>org.jclouds.labs</groupId>
+        <artifactId>jclouds-labs-project</artifactId>
         <version>1.7.0-SNAPSHOT</version>
-        <relativePath>../../project/pom.xml</relativePath>
+        <relativePath>../project/pom.xml</relativePath>
     </parent>
-    <groupId>org.jclouds.labs</groupId>
     <artifactId>google-compute</artifactId>
     <name>jclouds Google Compute Engine provider</name>
     <description>jclouds components to access GoogleCompute</description>
 
     <properties>
-        <jclouds.version>1.7.0-SNAPSHOT</jclouds.version>
         <test.google-compute.identity>Email associated with the Google API client_id</test.google-compute.identity>
         <test.google-compute.credential>Private key (PKCS12 file) associated with the Google API client_id</test.google-compute.credential>
         <test.google-compute.api-version>v1beta13</test.google-compute.api-version>
@@ -86,7 +84,7 @@
         <dependency>
             <groupId>org.jclouds.driver</groupId>
             <artifactId>jclouds-sshj</artifactId>
-            <version>${project.version}</version>
+            <version>${jclouds.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
