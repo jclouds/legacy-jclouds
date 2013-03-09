@@ -46,8 +46,8 @@ public class ParseNetworkTest extends BaseGoogleComputeParseTest<Network> {
               .selfLink(URI.create("https://www.googleapis.com/compute/v1beta13/projects/myproject/networks/jclouds-test"))
               .name("default")
               .description("Default network for the project")
-              .IPv4Range("10.240.0.0/16")
-              .gatewayIPv4("10.240.0.1")
+              .IPv4Range("10.0.0.0/8")
+              .gatewayIPv4("10.0.0.1")
               .build();
    }
 }

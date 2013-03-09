@@ -60,6 +60,7 @@ import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.jclouds.location.Provider;
+import org.jclouds.location.config.LocationModule;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
@@ -164,4 +165,9 @@ public class GoogleComputeRestClientModule extends RestClientModule<GoogleComput
          }
       };
    }
+
+//   @Override
+//   protected void installLocations() {
+//      install(new LocationModule());
+//   }
 }

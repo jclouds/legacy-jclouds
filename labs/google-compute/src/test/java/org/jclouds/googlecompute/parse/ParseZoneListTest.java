@@ -47,8 +47,8 @@ public class ParseZoneListTest extends BaseGoogleComputeParseTest<ListPage<Zone>
    public ListPage<Zone> expected() {
       return ListPage.<Zone>builder()
               .kind(Resource.Kind.ZONE_LIST)
-              .id("projects/google/zones")
-              .selfLink(URI.create("https://www.googleapis.com/compute/v1beta13/projects/google/zones"))
+              .id("projects/myproject/zones")
+              .selfLink(URI.create("https://www.googleapis.com/compute/v1beta13/projects/myproject/zones"))
               .items(ImmutableSet.of(
                       new ParseZoneTest().expected()
                       , Zone.builder()
@@ -56,7 +56,7 @@ public class ParseZoneListTest extends BaseGoogleComputeParseTest<ListPage<Zone>
                       .creationTimestamp(new SimpleDateFormatDateService().iso8601DateParse
                               ("2012-10-24T20:13:19.271"))
                       .selfLink(URI.create("https://www.googleapis" +
-                              ".com/compute/v1beta13/projects/google/zones/us-east1-a"))
+                              ".com/compute/v1beta13/projects/myproject/zones/us-east1-a"))
                       .name("us-east1-a")
                       .description("us-east1-a")
                       .status(Zone.Status.UP)
