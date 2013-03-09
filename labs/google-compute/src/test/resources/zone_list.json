@@ -1,15 +1,15 @@
 {
  "kind": "compute#zoneList",
- "id": "projects/google/zones",
- "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/google/zones",
+ "id": "projects/myproject/zones",
+ "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/myproject/zones",
  "items": [
   {
    "kind": "compute#zone",
    "id": "13020128040171887099",
    "creationTimestamp": "2012-10-19T16:42:54.131",
-   "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/google/zones/us-central2-a",
-   "name": "us-central2-a",
-   "description": "us-central2-a",
+   "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/myproject/zones/us-central1-a",
+   "name": "us-central1-a",
+   "description": "us-central1-a",
    "status": "DOWN",
    "maintenanceWindows": [
     {
@@ -24,7 +24,7 @@
    "kind": "compute#zone",
    "id": "13024414164050619686",
    "creationTimestamp": "2012-10-24T20:13:19.271",
-   "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/google/zones/us-east1-a",
+   "selfLink": "https://www.googleapis.com/compute/v1beta13/projects/myproject/zones/us-east1-a",
    "name": "us-east1-a",
    "description": "us-east1-a",
    "status": "UP",
