@@ -51,6 +51,5 @@
        <module>abiquo</module>
        <module>oauth</module>
        <module>openstack</module>
-       <module>dynect</module>
   </modules>
 </project>

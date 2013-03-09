@@ -76,5 +76,6 @@
         <module>aws-sts</module>
         <module>aws-route53</module>
         <module>ultradns-ws</module>
+        <module>dynect</module>
     </modules>
 </project>
