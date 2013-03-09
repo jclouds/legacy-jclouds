@@ -27,7 +27,7 @@
     <version>1.6.0-SNAPSHOT</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
-  <groupId>org.jclouds.labs</groupId>
+  <groupId>org.jclouds.provider</groupId>
   <artifactId>ultradns-ws</artifactId>
   <name>jcloud ultradns-ws provider</name>
   <description>jclouds components to access UltraDNS Web Services API</description>
