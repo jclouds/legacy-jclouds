@@ -2,13 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.jclouds</groupId>
-        <artifactId>jclouds-project</artifactId>
+        <groupId>org.jclouds.labs</groupId>
+        <artifactId>jclouds-labs-project</artifactId>
         <version>1.7.0-SNAPSHOT</version>
-        <relativePath>../../project/pom.xml</relativePath>
+        <relativePath>../project/pom.xml</relativePath>
     </parent>
     
-    <groupId>org.jclouds.labs</groupId>
     <artifactId>abiquo</artifactId>
     <name>jclouds Abiquo api</name>
     <description>jclouds components to access an implementation of Abiquo</description>
@@ -23,19 +22,23 @@
         <test.abiquo.api-version />
         <test.abiquo.build-version />
         <jclouds.osgi.export>org.jclouds.abiquo*;version="${project.version}"</jclouds.osgi.export>
-        <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
+        <jclouds.osgi.import>
+          org.jclouds.labs*;version="${project.version}",
+          org.jclouds*;version="${jclouds.version}",
+          *
+        </jclouds.osgi.import>
     </properties>
     
     <dependencies>
         <dependency>
             <groupId>org.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
-            <version>${project.version}</version>
+            <version>${jclouds.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jclouds</groupId>
             <artifactId>jclouds-compute</artifactId>
-            <version>${project.version}</version>
+            <version>${jclouds.version}</version>
         </dependency>
         <!-- Abiquo -->
         <dependency>
@@ -92,27 +95,27 @@
         <dependency>
             <groupId>org.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
-            <version>${project.version}</version>
+            <version>${jclouds.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jclouds</groupId>
             <artifactId>jclouds-compute</artifactId>
-            <version>${project.version}</version>
+            <version>${jclouds.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jclouds.driver</groupId>
             <artifactId>jclouds-sshj</artifactId>
-            <version>${project.version}</version>
+            <version>${jclouds.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jclouds.driver</groupId>
             <artifactId>jclouds-slf4j</artifactId>
-            <version>${project.version}</version>
+            <version>${jclouds.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

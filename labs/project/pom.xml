@@ -22,22 +22,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.jclouds.labs</groupId>
-        <artifactId>jclouds-labs-project</artifactId>
+        <groupId>org.jclouds</groupId>
+        <artifactId>jclouds-project</artifactId>
         <version>1.7.0-SNAPSHOT</version>
-        <relativePath>../project/pom.xml</relativePath>
+        <relativePath>../../project/pom.xml</relativePath>
     </parent>
-    <artifactId>jclouds-labs-openstack</artifactId>
+    <groupId>org.jclouds.labs</groupId>
+    <artifactId>jclouds-labs-project</artifactId>
+    <version>1.7.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>jclouds labs openstack</name>
-    <modules>
-       <!--<module>openstack-atlas</module>-->
-       <!--<module>openstack-cinder-v2</module>-->
-       <module>openstack-glance</module>
-       <!--<module>openstack-keystone-v3</module>-->
-       <!--<module>openstack-moniker</module>-->
-       <module>openstack-quantum</module>
-       <!--<module>openstack-reddwarf</module>-->
-       <module>openstack-swift</module>
-  </modules>
+    <name>jclouds Labs Project</name>
+    
+    <properties>
+        <jclouds.version>1.7.0-SNAPSHOT</jclouds.version>
+    </properties>
 </project>
