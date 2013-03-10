@@ -1,1 +1,0 @@
-<OSImage xmlns="http://schemas.microsoft.com/windowsazure"><Label>foo</Label><MediaLink>http://example.blob.core.windows.net/disks/mydisk.vhd</MediaLink><Name>myimage</Name><OS>Linux</OS></OSImage>

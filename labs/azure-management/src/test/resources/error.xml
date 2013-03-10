@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Error>
-  <Code>MissingOrInvalidRequiredQueryParameter</Code>
-  <Message>A required query parameter was not specified for this request or was specified incorrectly.</Message>
-</Error>

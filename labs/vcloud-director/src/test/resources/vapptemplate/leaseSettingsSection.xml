@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<LeaseSettingsSection type="application/vnd.vmware.vcloud.leaseSettingsSection+xml" href="http://vcloud.example.com/api/v1.5/vAppTemplate/vAppTemplate-7/leaseSettingsSection/" ovf:required="false" xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1">
-    <ovf:Info>VApp lease settings</ovf:Info>
-    <Link rel="edit" type="application/vnd.vmware.vcloud.leaseSettingsSection+xml" href="http://vcloud.example.com/api/v1.5/vAppTemplate/vAppTemplate-7/leaseSettingsSection/"/>
-    <DeploymentLeaseInSeconds>3600</DeploymentLeaseInSeconds>
-    <StorageLeaseInSeconds>3600</StorageLeaseInSeconds>
-    <DeploymentLeaseExpiration>2010-01-21T21:50:59.764-08:00</DeploymentLeaseExpiration>
-</LeaseSettingsSection>

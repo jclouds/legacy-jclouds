@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<CatalogItem name="ubuntu10" id="urn:vcloud:catalogitem:a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df" type="application/vnd.vmware.vcloud.catalogItem+xml" href="https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df" xmlns="http://www.vmware.com/vcloud/v1.5">
-    <Link rel="up" type="application/vnd.vmware.vcloud.catalog+xml" href="https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"/>
-    <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml" href="https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata"/>
-    <Link rel="edit" type="application/vnd.vmware.vcloud.catalogItem+xml" href="https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"/>
-    <Link rel="remove" href="https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"/>
-    <Description>For testing</Description>
-    <Entity type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="ubuntu10" href="https://vcloudbeta.bluelock.com/api/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9"/>
-</CatalogItem>
