@@ -19,6 +19,7 @@
 package org.jclouds.blobstore.functions;
 
 import org.jclouds.blobstore.ContainerNotFoundException;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 
 import com.google.common.base.Function;
@@ -35,8 +36,8 @@ public class ThrowContainerNotFoundOn404 implements Function<Exception, Object> 
 
    public Object apply(Exception from) {
       if (from instanceof HttpResponseException) {
-         HttpResponseException responseException = (HttpResponseException) from;
-         if (responseException.getResponse().getStatusCode() == 404) {
+         HttpResponse response = ((HttpResponseException) from).getResponse();
+         if (response != null && response.getStatusCode() == 404) {
             // TODO: parse to get the bucket name
             throw new ContainerNotFoundException(from);
          }
