@@ -74,8 +74,8 @@
         <connection>scm:git:git://github.com/jclouds/jclouds.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/jclouds/jclouds.git</developerConnection>
         <url>http://github.com/jclouds/jclouds</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <repositories>
         <repository>
