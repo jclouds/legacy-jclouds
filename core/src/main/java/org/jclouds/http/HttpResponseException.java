@@ -104,6 +104,7 @@ public class HttpResponseException extends RuntimeException {
       return command;
    }
 
+   @Nullable
    public HttpResponse getResponse() {
       return response;
    }
