@@ -21,6 +21,7 @@ package org.jclouds.io;
 import java.io.File;
 import java.io.InputStream;
 
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * 
@@ -46,6 +47,7 @@ public interface PayloadEnclosing {
 
    void setPayload(String data);
 
+   @Nullable
    Payload getPayload();
 
 }
