@@ -49,8 +49,8 @@
     </organization>
 
     <issueManagement>
-        <system>Google Code</system>
-        <url>http://code.google.com/p/jclouds/issues</url>
+        <system>GitHub</system>
+        <url>https://github.com/jclouds/jclouds/issues</url>
     </issueManagement>
 
     <mailingLists>
