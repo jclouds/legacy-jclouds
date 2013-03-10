@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<StopVServerResponse xmlns="http://apioviss.jp.fujitsu.com">
-  <responseMessage>Processing was completed.</responseMessage>
-  <responseStatus>SUCCESS</responseStatus>
-</StopVServerResponse>

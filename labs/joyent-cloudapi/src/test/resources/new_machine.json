@@ -1,1 +1,0 @@
-{"id":"94eba336-ecb7-49f5-8a27-52f5e4dd57a1","name":"sample-e92","type":"virtualmachine","state":"stopped","dataset":"sdc:sdc:centos-5.7:1.2.1","ips":["37.153.96.62","10.224.0.63"],"memory":1024,"disk":61440,"metadata":{"root_authorized_keys":"ssh-rsa XXXXXX== test@xxxx.ovh.net"},"created":"2012-05-09T13:32:46+00:00","updated":"2012-05-11T08:44:53+00:00"}
