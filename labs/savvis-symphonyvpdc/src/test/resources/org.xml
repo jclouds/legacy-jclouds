@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<vApp:Org xmlns:common="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:vApp="http://www.vmware.com/vcloud/v0.8" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" name="100000.0">
-  <vApp:Link name="demo_vpdcname" type="application/vnd.vmware.vcloud.vdc+xml" href="https://api.sandbox.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736" rel="down"/>
-  <vApp:Description>SAVVISStation Integration Testing</vApp:Description>
-</vApp:Org>

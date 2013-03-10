@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<CloneMediaParams name="moved test media" xmlns="http://www.vmware.com/vcloud/v1.5">
-    <Description>moved by testCloneMedia()</Description>
-    <Source type="application/vnd.vmware.vcloud.media+xml" name="copied test media" href="https://mycloud.greenhousedata.com/api/media/da8361af-cccd-4103-a71c-493513c49094"/>
-    <IsSourceDelete>false</IsSourceDelete>
-</CloneMediaParams>

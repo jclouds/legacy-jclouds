@@ -1,1 +1,0 @@
-<CreateHostedService xmlns="http://schemas.microsoft.com/windowsazure"><ServiceName>myservice</ServiceName><Label>c2VydmljZSBtaW5l</Label><Description>my description</Description><Location>West US</Location><ExtendedProperties><ExtendedProperty><Name>Role</Name><Value>Production</Value></ExtendedProperty></ExtendedProperties></CreateHostedService>
