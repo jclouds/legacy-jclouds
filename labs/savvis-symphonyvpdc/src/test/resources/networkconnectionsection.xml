@@ -1,5 +1,0 @@
-    <ovf:Section xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="vApp:NetworkConnectionType"
-                 Network="VM Tier01">
-        <ovf:Info>Read only description of a network connection to a deployed vApp</ovf:Info>
-        <vApp:IpAddress>10.76.0.5</vApp:IpAddress>
-    </ovf:Section>

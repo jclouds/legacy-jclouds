@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<GetPerformanceInformationResponse xmlns="http://apioviss.jp.fujitsu.com">
-  <interval>10minute</interval>
-  <responseMessage>Processing was completed.</responseMessage>
-  <responseStatus>SUCCESS</responseStatus>
-  <serverId>CONTRACT-VSYS00001-S-0001</serverId>
-  <serverName>my server</serverName>
-  <serverType>GENERAL</serverType>
-</GetPerformanceInformationResponse>
