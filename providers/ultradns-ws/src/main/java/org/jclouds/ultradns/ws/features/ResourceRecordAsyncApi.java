@@ -41,7 +41,6 @@ import org.jclouds.ultradns.ws.xml.GuidHandler;
 import org.jclouds.ultradns.ws.xml.ResourceRecordListHandler;
 
 import com.google.common.collect.FluentIterable;
-import com.google.common.primitives.UnsignedInteger;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -90,17 +89,6 @@ public interface ResourceRecordAsyncApi {
    @XMLResponseParser(ResourceRecordListHandler.class)
    @Payload("<v01:getResourceRecordsOfDNameByType><zoneName>{zoneName}</zoneName><hostName>{hostName}</hostName><rrType>0</rrType></v01:getResourceRecordsOfDNameByType>")
    ListenableFuture<FluentIterable<ResourceRecordMetadata>> listByName(@PayloadParam("hostName") String hostName)
-         throws ResourceNotFoundException;
-
-   /**
-    * @see ResourceRecordApi#listByNameAndType(String, UnsignedInteger)
-    */
-   @Named("getResourceRecordsOfDNameByType")
-   @POST
-   @XMLResponseParser(ResourceRecordListHandler.class)
-   @Payload("<v01:getResourceRecordsOfDNameByType><zoneName>{zoneName}</zoneName><hostName>{hostName}</hostName><rrType>{rrType}</rrType></v01:getResourceRecordsOfDNameByType>")
-   ListenableFuture<FluentIterable<ResourceRecordMetadata>> listByNameAndType(
-         @PayloadParam("hostName") String hostName, @PayloadParam("rrType") UnsignedInteger rrType)
          throws ResourceNotFoundException;
 
    /**

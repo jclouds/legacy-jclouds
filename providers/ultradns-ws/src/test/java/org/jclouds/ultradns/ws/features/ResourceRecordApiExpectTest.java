@@ -31,7 +31,6 @@ import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiExpectTest;
 import org.jclouds.ultradns.ws.parse.GetResourceRecordsOfResourceRecordResponseTest;
 import org.testng.annotations.Test;
 
-import com.google.common.primitives.UnsignedInteger;
 
 /**
  * @author Adrian Cole
@@ -127,7 +126,7 @@ public class ResourceRecordApiExpectTest extends BaseUltraDNSWSApiExpectTest {
       
       assertEquals(
             success.getResourceRecordApiForZone("jclouds.org.")
-                  .listByNameAndType("www.jclouds.org.", UnsignedInteger.ONE).toString(),
+                  .listByNameAndType("www.jclouds.org.", 1).toString(),
             new GetResourceRecordsOfResourceRecordResponseTest().expected().toString());
       
       assertEquals(success.getResourceRecordApiForZone("jclouds.org.").listByNameAndType("www.jclouds.org.", "A")

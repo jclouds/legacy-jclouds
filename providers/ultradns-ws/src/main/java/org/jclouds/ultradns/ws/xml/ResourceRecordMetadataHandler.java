@@ -29,7 +29,6 @@ import org.jclouds.ultradns.ws.domain.ResourceRecord;
 import org.jclouds.ultradns.ws.domain.ResourceRecordMetadata;
 import org.xml.sax.Attributes;
 
-import com.google.common.primitives.UnsignedInteger;
 import com.google.inject.Inject;
 
 /**
@@ -67,9 +66,9 @@ public class ResourceRecordMetadataHandler extends
          rrm.zoneName(attributes.get("ZoneName"));
          rrm.created(dateService.iso8601DateParse(attributes.get("Created")));
          rrm.modified(dateService.iso8601DateParse(attributes.get("Modified")));
-         rr.type(UnsignedInteger.valueOf(attributes.get("Type")));
+         rr.type(Integer.parseInt(attributes.get("Type")));
          rr.name(attributes.get("DName"));
-         rr.ttl(UnsignedInteger.valueOf(attributes.get("TTL")));
+         rr.ttl(Integer.parseInt(attributes.get("TTL")));
       } else if (equalsOrSuffix(qName, "InfoValues")) {
          rr.rdata(attributes.values());
       }

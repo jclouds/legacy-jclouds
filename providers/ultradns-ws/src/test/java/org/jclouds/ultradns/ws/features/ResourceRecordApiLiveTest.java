@@ -47,7 +47,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.FluentIterable;
-import com.google.common.primitives.UnsignedInteger;
 
 /**
  * @author Adrian Cole
@@ -77,7 +76,7 @@ public class ResourceRecordApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    static void checkResourceRecord(ResourceRecord rr) {
       checkNotNull(rr.getName(), "DName cannot be null for a ResourceRecord %s", rr);
       checkNotNull(rr.getType(), "Type cannot be null for a ResourceRecord %s", rr);
-      assertTrue(rr.getType().intValue() > 0, "Type must be positive for a ResourceRecord " + rr);
+      assertTrue(rr.getType() > 0, "Type must be unsigned for a ResourceRecord " + rr);
       checkNotNull(rr.getType(), "Type cannot be null for a ResourceRecord %s", rr);
       checkNotNull(rr.getTTL(), "TTL cannot be null for a ResourceRecord %s", rr);
       checkNotNull(rr.getRData(), "InfoValues cannot be null for a ResourceRecord %s", rr);
@@ -105,19 +104,19 @@ public class ResourceRecordApiLiveTest extends BaseUltraDNSWSApiLiveTest {
       }
    }
 
-   LoadingCache<UnsignedInteger, AtomicLong> recordTypeCounts = CacheBuilder.newBuilder().build(
-         new CacheLoader<UnsignedInteger, AtomicLong>() {
-            public AtomicLong load(UnsignedInteger key) throws Exception {
+   LoadingCache<Integer, AtomicLong> recordTypeCounts = CacheBuilder.newBuilder().build(
+         new CacheLoader<Integer, AtomicLong>() {
+            public AtomicLong load(Integer key) throws Exception {
                return new AtomicLong();
             }
          });
 
-   private final static BiMap<UnsignedInteger, String> valueToType = new ResourceTypeToValue().inverse();
+   private final static BiMap<Integer, String> valueToType = new ResourceTypeToValue().inverse();
 
    @AfterClass
    void logSummary() {
       getAnonymousLogger().info("zoneCount: " + zones);
-      for (Entry<UnsignedInteger, AtomicLong> entry : recordTypeCounts.asMap().entrySet())
+      for (Entry<Integer, AtomicLong> entry : recordTypeCounts.asMap().entrySet())
          getAnonymousLogger().info(
                String.format("type: %s, count: %s", valueToType.get(entry.getKey()), entry.getValue()));
    }
