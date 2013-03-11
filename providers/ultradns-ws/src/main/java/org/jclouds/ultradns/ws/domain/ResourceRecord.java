@@ -21,6 +21,7 @@ package org.jclouds.ultradns.ws.domain;
 import static com.google.common.base.Functions.toStringFunction;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
 
@@ -30,7 +31,6 @@ import org.jclouds.ultradns.ws.ResourceTypeToValue;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.UnsignedInteger;
 
 /**
  * @author Adrian Cole
@@ -38,14 +38,16 @@ import com.google.common.primitives.UnsignedInteger;
 public class ResourceRecord {
 
    private final String dName;
-   private final UnsignedInteger type;
-   private final UnsignedInteger ttl;
+   private final int type;
+   private final int ttl;
    private final List<String> infoValues;
 
-   private ResourceRecord(String dName, UnsignedInteger type, UnsignedInteger ttl, List<String> infoValues) {
+   private ResourceRecord(String dName, int type, int ttl, List<String> infoValues) {
       this.dName = checkNotNull(dName, "dName");
-      this.type = checkNotNull(type, "type of %s", dName);
-      this.ttl = checkNotNull(ttl, "ttl of %s", dName);
+      checkArgument(type >= 0, "type of %s must be unsigned", dName);
+      this.type = type;
+      checkArgument(ttl >= 0, "ttl of %s must be unsigned", dName);
+      this.ttl = ttl;
       this.infoValues = checkNotNull(infoValues, "infoValues of %s", dName);
    }
 
@@ -59,11 +61,11 @@ public class ResourceRecord {
    /**
     * the type value. ex {@code 1} for type {@code A}
     */
-   public UnsignedInteger getType() {
+   public int getType() {
       return type;
    }
 
-   public UnsignedInteger getTTL() {
+   public int getTTL() {
       return ttl;
    }
 
@@ -106,8 +108,8 @@ public class ResourceRecord {
 
    public final static class Builder {
       private String dName;
-      private UnsignedInteger type;
-      private UnsignedInteger ttl;
+      private int type = -1;
+      private int ttl = -1;
       private ImmutableList.Builder<String> infoValues = ImmutableList.<String> builder();
 
       /**
@@ -135,23 +137,8 @@ public class ResourceRecord {
       /**
        * @see ResourceRecord#getType()
        */
-      public Builder type(UnsignedInteger type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see ResourceRecord#getType()
-       */
       public Builder type(int type) {
-         return type(UnsignedInteger.fromIntBits(type));
-      }
-
-      /**
-       * @see ResourceRecord#getTTL()
-       */
-      public Builder ttl(UnsignedInteger ttl) {
-         this.ttl = ttl;
+         this.type = type;
          return this;
       }
 
@@ -159,7 +146,8 @@ public class ResourceRecord {
        * @see ResourceRecord#getTTL()
        */
       public Builder ttl(int ttl) {
-         return ttl(UnsignedInteger.fromIntBits(ttl));
+         this.ttl = ttl;
+         return this;
       }
 
       /**

@@ -25,7 +25,6 @@ import org.jclouds.ultradns.ws.domain.ResourceRecordMetadata;
 import org.jclouds.ultradns.ws.domain.RoundRobinPool;
 
 import com.google.common.collect.FluentIterable;
-import com.google.common.primitives.UnsignedInteger;
 
 /**
  * @see RoundRobinPoolAsyncApi
@@ -59,7 +58,7 @@ public interface RoundRobinPoolApi {
     * @throws ResourceAlreadyExistsException
     *            if a record already exists with the same attrs
     */
-   String addARecordWithAddressAndTTL(String lbPoolID, String ipv4Address, UnsignedInteger ttl)
+   String addARecordWithAddressAndTTL(String lbPoolID, String ipv4Address, int ttl)
          throws ResourceAlreadyExistsException;
 
    /**
@@ -89,7 +88,7 @@ public interface RoundRobinPoolApi {
     * @throws ResourceAlreadyExistsException
     *            if a record already exists with the same attrs
     */
-   String addAAAARecordWithAddressAndTTL(String lbPoolID, String ipv6Address, UnsignedInteger ttl)
+   String addAAAARecordWithAddressAndTTL(String lbPoolID, String ipv6Address, int ttl)
          throws ResourceAlreadyExistsException;
 
    /**
@@ -108,7 +107,7 @@ public interface RoundRobinPoolApi {
     * @throws ResourceNotFoundException
     *            if the guid doesn't exist
     */
-   void updateRecordWithAddressAndTTL(String lbPoolID, String guid, String address, UnsignedInteger ttl)
+   void updateRecordWithAddressAndTTL(String lbPoolID, String guid, String address, int ttl)
          throws ResourceNotFoundException;
 
    /**

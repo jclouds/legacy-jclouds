@@ -18,11 +18,11 @@
  */
 package org.jclouds.ultradns.ws.domain;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
-import com.google.common.primitives.UnsignedInteger;
 
 /**
  * 
@@ -33,17 +33,18 @@ public final class Zone {
    private final String id;
    private final String name;
    private final Type type;
-   private final UnsignedInteger typeCode;
+   private final int typeCode;
    private final String accountId;
    private final String ownerId;
    private final DNSSECStatus dnssecStatus;
    private final Optional<String> primarySrc;
 
-   private Zone(String id, String name, Type type, UnsignedInteger typeCode, String accountId, String ownerId,
+   private Zone(String id, String name, Type type, int typeCode, String accountId, String ownerId,
          DNSSECStatus dnssecStatus, Optional<String> primarySrc) {
       this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name for %s", id);
-      this.typeCode = checkNotNull(typeCode, "typeCode for %s", name);
+      checkArgument(typeCode >= 0, "typeCode of %s must be unsigned", id);
+      this.typeCode = typeCode;
       this.type = checkNotNull(type, "type for %s", name);
       this.accountId = checkNotNull(accountId, "accountId for %s", name);
       this.ownerId = checkNotNull(ownerId, "ownerId for %s", name);
@@ -75,7 +76,7 @@ public final class Zone {
    /**
     * The type of the zone
     */
-   public UnsignedInteger getTypeCode() {
+   public int getTypeCode() {
       return typeCode;
    }
 
@@ -136,13 +137,13 @@ public final class Zone {
 
       PRIMARY(1), SECONDARY(2), ALIAS(3), UNRECOGNIZED(-1);
 
-      private final UnsignedInteger code;
+      private final int code;
 
       Type(int code) {
-         this.code = UnsignedInteger.fromIntBits(code);
+         this.code = code;
       }
 
-      public UnsignedInteger getCode() {
+      public int getCode() {
          return code;
       }
 
@@ -152,11 +153,11 @@ public final class Zone {
       }
 
       public static Type fromValue(String type) {
-         return fromValue(UnsignedInteger.valueOf(checkNotNull(type, "type")));
+         return fromValue(Integer.parseInt(checkNotNull(type, "type")));
       }
 
-      public static Type fromValue(UnsignedInteger code) {
-         switch (code.intValue()) {
+      public static Type fromValue(int code) {
+         switch (code) {
          case 1:
             return PRIMARY;
          case 2:
@@ -194,7 +195,7 @@ public final class Zone {
       private String id;
       private String name;
       private Type type;
-      private UnsignedInteger typeCode;
+      private int typeCode = -1;
       private String accountId;
       private String ownerId;
       private DNSSECStatus dnssecStatus;
@@ -227,17 +228,10 @@ public final class Zone {
       /**
        * @see Zone#getTypeCode()
        */
-      public Builder typeCode(UnsignedInteger typeCode) {
+      public Builder typeCode(int typeCode) {
          this.typeCode = typeCode;
          this.type = Type.fromValue(typeCode);
          return this;
-      }
-
-      /**
-       * @see ZoneProperties#getTypeCode()
-       */
-      public Builder typeCode(int typeCode) {
-         return typeCode(UnsignedInteger.fromIntBits(typeCode));
       }
 
       /**
