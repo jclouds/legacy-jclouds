@@ -24,7 +24,6 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.route53.domain.ResourceRecordSet;
 import org.xml.sax.Attributes;
 
-import com.google.common.primitives.UnsignedInteger;
 
 /**
  * 
@@ -55,7 +54,7 @@ public class ResourceRecordSetHandler extends ParseSax.HandlerForGeneratedReques
       } else if (qName.equals("Type")) {
          builder.type(currentOrNull(currentText));
       } else if (qName.equals("TTL")) {
-         builder.ttl(UnsignedInteger.valueOf(currentOrNull(currentText)));
+         builder.ttl(Integer.parseInt(currentOrNull(currentText)));
       } else if (qName.equals("Value")) {
          builder.add(currentOrNull(currentText));
       } else if (qName.equals("HostedZoneId")) {
@@ -65,7 +64,7 @@ public class ResourceRecordSetHandler extends ParseSax.HandlerForGeneratedReques
       } else if (qName.equals("DNSName")) {
          builder.dnsName(currentOrNull(currentText));
       } else if (qName.equals("Weight")) {
-         builder.weight(UnsignedInteger.valueOf(currentOrNull(currentText)));
+         builder.weight(Integer.parseInt(currentOrNull(currentText)));
       } else if (qName.equals("Region")) {
          builder.region(currentOrNull(currentText));
       }

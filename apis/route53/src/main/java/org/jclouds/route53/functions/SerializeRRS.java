@@ -27,7 +27,6 @@ import org.jclouds.route53.domain.ResourceRecordSet.RecordSubset.Latency;
 import org.jclouds.route53.domain.ResourceRecordSet.RecordSubset.Weighted;
 
 import com.google.common.base.Function;
-import com.google.common.primitives.UnsignedInteger;
 
 /**
  * @author Adrian Cole
@@ -54,7 +53,8 @@ public class SerializeRRS implements Function<Object, String> {
          builder.append("<DNSName>").append(rrs.getAliasTarget().get().getDNSName()).append("</DNSName>");
          builder.append("</AliasTarget>");
       } else {
-         builder.append("<TTL>").append(rrs.getTTL().or(UnsignedInteger.ZERO)).append("</TTL>");
+         // default ttl from the amazon console is 300
+         builder.append("<TTL>").append(rrs.getTTL().or(300)).append("</TTL>");
          builder.append("<ResourceRecords>");
          for (String record : rrs.getValues())
             builder.append("<ResourceRecord>").append("<Value>").append(record).append("</Value>")
