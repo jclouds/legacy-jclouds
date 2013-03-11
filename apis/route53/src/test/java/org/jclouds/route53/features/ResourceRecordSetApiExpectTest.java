@@ -140,7 +140,7 @@ public class ResourceRecordSetApiExpectTest extends BaseRoute53ApiExpectTest {
 
    public void testDeleteWhenResponseIs2xx() {
       Route53Api success = requestSendsResponse(delete, jobResponse);
-      assertEquals(success.getResourceRecordSetApiForHostedZone("Z1PA6795UKMFR9").create(ResourceRecordSet.builder().name("jclouds.org.").type("TXT").add("my texts").build()).toString(),
+      assertEquals(success.getResourceRecordSetApiForHostedZone("Z1PA6795UKMFR9").create(ResourceRecordSet.builder().name("jclouds.org.").type("TXT").ttl(0).add("my texts").build()).toString(),
             new GetChangeResponseTest().expected().toString());
    }
 }

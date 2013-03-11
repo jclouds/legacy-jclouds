@@ -128,7 +128,7 @@ public interface RecordAsyncApi {
                                         .put("fqdn", in.getFQDN()).build());
          return (R) request.toBuilder()
                            .endpoint(path)
-                           .payload(json.toJson(ImmutableMap.of("rdata", ImmutableMap.copyOf(in.getRData()), "ttl", in.getTTL().intValue()))).build();
+                           .payload(json.toJson(ImmutableMap.of("rdata", in.getRData(), "ttl", in.getTTL()))).build();
       }
    }
 

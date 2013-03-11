@@ -40,22 +40,26 @@ import com.google.common.collect.ImmutableMap;
  * @see <a href="http://www.ietf.org/rfc/rfc1035.txt">RFC 1035</a>
  */
 public class TXTData extends ForwardingMap<String, Object> {
-   private final ImmutableMap<String, Object> delegate;
+
+   private final String txtdata;
 
    @ConstructorProperties("txtdata")
    private TXTData(String txtdata) {
-      this.delegate = ImmutableMap.<String, Object> of("txtdata", checkNotNull(txtdata, "txtdata"));
-   }
-
-   protected Map<String, Object> delegate() {
-      return delegate;
+      this.txtdata = checkNotNull(txtdata, "txtdata");
+      this.delegate = ImmutableMap.<String, Object> of("txtdata", txtdata);
    }
 
    /**
     * One or more character-strings.
     */
    public String getTxtdata() {
-      return get("txtdata").toString();
+      return txtdata;
+   }
+
+   private final transient ImmutableMap<String, Object> delegate;
+
+   protected Map<String, Object> delegate() {
+      return delegate;
    }
 
    public static TXTData txt(String txtdata) {

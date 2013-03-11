@@ -24,7 +24,6 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.route53.domain.HostedZone;
 import org.xml.sax.Attributes;
 
-import com.google.common.primitives.UnsignedInteger;
 
 /**
  * 
@@ -59,7 +58,7 @@ public class HostedZoneHandler extends ParseSax.HandlerForGeneratedRequestWithRe
       } else if (qName.equals("Comment")) {
          builder.comment(currentOrNull(currentText));
       } else if (qName.equals("ResourceRecordSetCount")) {
-         builder.resourceRecordSetCount(UnsignedInteger.valueOf(currentOrNull(currentText)).intValue());
+         builder.resourceRecordSetCount(Integer.parseInt(currentOrNull(currentText)));
       }
       currentText = new StringBuilder();
    }

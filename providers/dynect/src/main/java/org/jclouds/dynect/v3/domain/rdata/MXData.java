@@ -18,6 +18,7 @@
  */
 package org.jclouds.dynect.v3.domain.rdata;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.beans.ConstructorProperties;
@@ -25,7 +26,6 @@ import java.util.Map;
 
 import com.google.common.collect.ForwardingMap;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.primitives.UnsignedInteger;
 
 /**
  * Corresponds to the binary representation of the {@code MX} (Mail Exchange)
@@ -43,24 +43,24 @@ import com.google.common.primitives.UnsignedInteger;
  */
 public class MXData extends ForwardingMap<String, Object> {
 
+   private final int preference;
+   private final String exchange;
+
    @ConstructorProperties({ "preference", "exchange" })
-   private MXData(UnsignedInteger preference, String exchange) {
-      this.delegate = ImmutableMap.<String, Object> builder().put("preference", checkNotNull(preference, "preference"))
-            .put("exchange", checkNotNull(exchange, "exchange")).build();
-   }
-
-   private final ImmutableMap<String, Object> delegate;
-
-   protected Map<String, Object> delegate() {
-      return delegate;
+   private MXData(int preference, String exchange) {
+      checkArgument(preference >= 0, "preference of %s must be unsigned", exchange);
+      this.preference = preference;
+      this.exchange = checkNotNull(exchange, "exchange");
+      this.delegate = ImmutableMap.<String, Object> builder().put("preference", preference).put("exchange", exchange)
+            .build();
    }
 
    /**
     * specifies the preference given to this RR among others at the same owner.
     * Lower values are preferred.
     */
-   public UnsignedInteger getPreference() {
-      return UnsignedInteger.class.cast(get("preference"));
+   public int getPreference() {
+      return preference;
    }
 
    /**
@@ -68,7 +68,13 @@ public class MXData extends ForwardingMap<String, Object> {
     * the owner name.
     */
    public String getExchange() {
-      return String.class.cast(get("exchange"));
+      return exchange;
+   }
+
+   private final transient ImmutableMap<String, Object> delegate;
+
+   protected Map<String, Object> delegate() {
+      return delegate;
    }
 
    public static MXData mx(int preference, String exchange) {
@@ -84,20 +90,13 @@ public class MXData extends ForwardingMap<String, Object> {
    }
 
    public final static class Builder {
-      private UnsignedInteger preference;
+      private int preference = -1;
       private String exchange;
 
       /**
        * @see MXData#getPreference()
        */
       public MXData.Builder preference(int preference) {
-         return preference(UnsignedInteger.fromIntBits(preference));
-      }
-
-      /**
-       * @see MXData#getPreference()
-       */
-      public MXData.Builder preference(UnsignedInteger preference) {
          this.preference = preference;
          return this;
       }
