@@ -40,22 +40,25 @@ import com.google.common.collect.ImmutableMap;
  * @see <aaaa href="http://www.ietf.org/rfc/rfc3596.txt">RFC 3596</aaaa>
  */
 public class AAAAData extends ForwardingMap<String, Object> {
-   private final ImmutableMap<String, Object> delegate;
+   private final String address;
 
    @ConstructorProperties("address")
    private AAAAData(String address) {
-      this.delegate = ImmutableMap.<String, Object> of("address", checkNotNull(address, "address"));
-   }
-
-   protected Map<String, Object> delegate() {
-      return delegate;
+      this.address = checkNotNull(address, "address");
+      this.delegate = ImmutableMap.<String, Object> of("address", address);
    }
 
    /**
     * a 128 bit IPv6 address
     */
    public String getAddress() {
-      return get("address").toString();
+      return address;
+   }
+
+   private final transient ImmutableMap<String, Object> delegate;
+
+   protected Map<String, Object> delegate() {
+      return delegate;
    }
 
    public static AAAAData aaaa(String address) {
