@@ -42,7 +42,6 @@ import org.testng.annotations.Test;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
-import com.google.common.primitives.UnsignedInteger;
 
 /**
  * @author Adrian Cole
@@ -122,21 +121,21 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
    @Test(dependsOnMethods = "testCreateAPool")
    public void addARecordToPool() {
-      aRecord1 = api(zoneName).addARecordWithAddressAndTTL(aPoolId, "1.2.3.4", UnsignedInteger.ONE);
+      aRecord1 = api(zoneName).addARecordWithAddressAndTTL(aPoolId, "1.2.3.4", 1);
 
       getAnonymousLogger().info("created A record: " + aRecord1);
 
       assertTrue(listRRs(aPoolId).anyMatch(
             equalTo(rrBuilder().name(hostname).type("A").ttl(1).rdata("1.2.3.4").build())));
 
-      aRecord2 = api(zoneName).addARecordWithAddressAndTTL(aPoolId, "3.4.5.6", UnsignedInteger.ONE);
+      aRecord2 = api(zoneName).addARecordWithAddressAndTTL(aPoolId, "3.4.5.6", 1);
 
       assertTrue(listRRs(aPoolId).anyMatch(
             equalTo(rrBuilder().name(hostname).type("A").ttl(1).rdata("3.4.5.6").build())));
 
       getAnonymousLogger().info("created A record: " + aRecord1);
       try {
-         api(zoneName).addARecordWithAddressAndTTL(aPoolId, "1.2.3.4", UnsignedInteger.ONE);
+         api(zoneName).addARecordWithAddressAndTTL(aPoolId, "1.2.3.4", 1);
          fail();
       } catch (ResourceAlreadyExistsException e) {
 
@@ -145,7 +144,7 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
    @Test(dependsOnMethods = "addARecordToPool")
    public void testUpdateRecord() {
-      api(zoneName).updateRecordWithAddressAndTTL(aPoolId, aRecord1, "1.1.1.1", UnsignedInteger.ZERO);
+      api(zoneName).updateRecordWithAddressAndTTL(aPoolId, aRecord1, "1.1.1.1", 0);
       assertTrue(listRRs(aPoolId).anyMatch(
             equalTo(rrBuilder().name(hostname).type("A").ttl(0).rdata("1.1.1.1").build())));
    }
@@ -190,7 +189,7 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    @Test(dependsOnMethods = "testCreateAAAAPool")
    public void addAAAARecordToPool() {
       aaaaRecord1 = api(zoneName).addAAAARecordWithAddressAndTTL(aaaaPoolId, "2001:0DB8:85A3:0000:0000:8A2E:0370:7334",
-            UnsignedInteger.ONE);
+            1);
 
       getAnonymousLogger().info("created AAAA record: " + aaaaRecord1);
 
@@ -199,7 +198,7 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
                   .build())));
 
       aaaaRecord2 = api(zoneName).addAAAARecordWithAddressAndTTL(aaaaPoolId, "2002:0DB8:85A3:0000:0000:8A2E:0370:7334",
-            UnsignedInteger.ONE);
+            1);
 
       assertTrue(listRRs(aaaaPoolId).anyMatch(
             equalTo(rrBuilder().name(hostname).type("AAAA").ttl(1).rdata("2002:0DB8:85A3:0000:0000:8A2E:0370:7334")
@@ -207,8 +206,7 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
       getAnonymousLogger().info("created AAAA record: " + aaaaRecord1);
       try {
-         api(zoneName).addAAAARecordWithAddressAndTTL(aaaaPoolId, "2001:0DB8:85A3:0000:0000:8A2E:0370:7334",
-               UnsignedInteger.ONE);
+         api(zoneName).addAAAARecordWithAddressAndTTL(aaaaPoolId, "2001:0DB8:85A3:0000:0000:8A2E:0370:7334", 1);
          fail();
       } catch (ResourceAlreadyExistsException e) {
 

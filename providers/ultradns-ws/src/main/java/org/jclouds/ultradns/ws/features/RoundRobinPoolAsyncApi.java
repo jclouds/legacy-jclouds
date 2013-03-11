@@ -39,7 +39,6 @@ import org.jclouds.ultradns.ws.xml.ResourceRecordListHandler;
 import org.jclouds.ultradns.ws.xml.RoundRobinPoolListHandler;
 
 import com.google.common.collect.FluentIterable;
-import com.google.common.primitives.UnsignedInteger;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -89,7 +88,7 @@ public interface RoundRobinPoolAsyncApi {
    @XMLResponseParser(GuidHandler.class)
    @Payload("<v01:addRecordToRRPool><transactionID /><roundRobinRecord lbPoolID=\"{lbPoolID}\" info1Value=\"{address}\" ZoneName=\"{zoneName}\" Type=\"1\" TTL=\"{ttl}\"/></v01:addRecordToRRPool>")
    ListenableFuture<String> addARecordWithAddressAndTTL(@PayloadParam("lbPoolID") String lbPoolID,
-         @PayloadParam("address") String ipv4Address, @PayloadParam("ttl") UnsignedInteger ttl)
+         @PayloadParam("address") String ipv4Address, @PayloadParam("ttl") int ttl)
          throws ResourceAlreadyExistsException;
 
    /**
@@ -100,7 +99,7 @@ public interface RoundRobinPoolAsyncApi {
    @Payload("<v01:updateRecordOfRRPool><transactionID /><resourceRecord rrGuid=\"{guid}\" lbPoolID=\"{lbPoolID}\" info1Value=\"{address}\" TTL=\"{ttl}\"/></v01:updateRecordOfRRPool>")
    ListenableFuture<Void> updateRecordWithAddressAndTTL(@PayloadParam("lbPoolID") String lbPoolID,
          @PayloadParam("guid") String guid, @PayloadParam("address") String ipv4Address,
-         @PayloadParam("ttl") UnsignedInteger ttl) throws ResourceNotFoundException;
+         @PayloadParam("ttl") int ttl) throws ResourceNotFoundException;
 
    /**
     * @see RoundRobinPoolApi#deleteRecord(String)
@@ -129,7 +128,7 @@ public interface RoundRobinPoolAsyncApi {
    @XMLResponseParser(GuidHandler.class)
    @Payload("<v01:addRecordToRRPool><transactionID /><roundRobinRecord lbPoolID=\"{lbPoolID}\" info1Value=\"{address}\" ZoneName=\"{zoneName}\" Type=\"28\" TTL=\"{ttl}\"/></v01:addRecordToRRPool>")
    ListenableFuture<String> addAAAARecordWithAddressAndTTL(@PayloadParam("lbPoolID") String lbPoolID,
-         @PayloadParam("address") String ipv6Address, @PayloadParam("ttl") UnsignedInteger ttl)
+         @PayloadParam("address") String ipv6Address, @PayloadParam("ttl") int ttl)
          throws ResourceAlreadyExistsException;
 
    /**

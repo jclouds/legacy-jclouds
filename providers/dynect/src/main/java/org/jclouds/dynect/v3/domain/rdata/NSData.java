@@ -40,15 +40,13 @@ import com.google.common.collect.ImmutableMap;
  * @see <a href="http://www.ietf.org/rfc/rfc1035.txt">RFC 1035</a>
  */
 public class NSData extends ForwardingMap<String, Object> {
-   private final ImmutableMap<String, Object> delegate;
+
+   private final String nsdname;
 
    @ConstructorProperties("nsdname")
    private NSData(String nsdname) {
-      this.delegate = ImmutableMap.<String, Object> of("nsdname", checkNotNull(nsdname, "nsdname"));
-   }
-
-   protected Map<String, Object> delegate() {
-      return delegate;
+      this.nsdname = checkNotNull(nsdname, "nsdname");
+      this.delegate = ImmutableMap.<String, Object> of("nsdname", nsdname);
    }
 
    /**
@@ -56,7 +54,13 @@ public class NSData extends ForwardingMap<String, Object> {
     * specified class and domain.
     */
    public String getNsdname() {
-      return get("nsdname").toString();
+      return nsdname;
+   }
+
+   private final transient ImmutableMap<String, Object> delegate;
+
+   protected Map<String, Object> delegate() {
+      return delegate;
    }
 
    public static NSData ns(String nsdname) {

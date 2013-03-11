@@ -20,6 +20,7 @@ package org.jclouds.route53.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
@@ -31,7 +32,6 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.UnsignedInteger;
 
 /**
  * 
@@ -41,7 +41,7 @@ public class ResourceRecordSet {
 
    protected final String name;
    protected final String type;
-   protected final Optional<UnsignedInteger> ttl;
+   protected final Optional<Integer> ttl;
    protected final List<String> values;
    protected final Optional<AliasTarget> aliasTarget;
 
@@ -98,9 +98,9 @@ public class ResourceRecordSet {
    public static abstract class RecordSubset extends ResourceRecordSet {
       public static final class Weighted extends RecordSubset {
 
-         private final UnsignedInteger weight;
+         private final int weight;
 
-         private Weighted(String id, String name, String type, UnsignedInteger weight, Optional<UnsignedInteger> ttl, List<String> values,
+         private Weighted(String id, String name, String type, int weight, Optional<Integer> ttl, List<String> values,
                Optional<AliasTarget> aliasTarget) {
             super(id, name, type, ttl, values, aliasTarget);
             this.weight = checkNotNull(weight, "weight");
@@ -110,7 +110,7 @@ public class ResourceRecordSet {
           * determines what portion of traffic for the current resource record
           * set is routed to this subset.
           */
-         public UnsignedInteger getWeight() {
+         public int getWeight() {
             return weight;
          }
 
@@ -124,7 +124,7 @@ public class ResourceRecordSet {
 
          private final String region;
 
-         private Latency(String id, String name, String type, String region, Optional<UnsignedInteger> ttl, List<String> values,
+         private Latency(String id, String name, String type, String region, Optional<Integer> ttl, List<String> values,
                Optional<AliasTarget> aliasTarget) {
             super(id, name, type, ttl, values, aliasTarget);
             this.region = checkNotNull(region, "region of %s", name);
@@ -146,7 +146,7 @@ public class ResourceRecordSet {
 
       private final String id;
 
-      private RecordSubset(String id, String name, String type, Optional<UnsignedInteger> ttl, List<String> values,
+      private RecordSubset(String id, String name, String type, Optional<Integer> ttl, List<String> values,
             Optional<AliasTarget> aliasTarget) {
          super(name, type, ttl, values, aliasTarget);
          this.id = checkNotNull(id, "id of %s", name);
@@ -183,10 +183,11 @@ public class ResourceRecordSet {
       }
    }
 
-   private ResourceRecordSet(String name, String type, Optional<UnsignedInteger> ttl, List<String> values, Optional<AliasTarget> aliasTarget) {
+   private ResourceRecordSet(String name, String type, Optional<Integer> ttl, List<String> values, Optional<AliasTarget> aliasTarget) {
       this.name = checkNotNull(name, "name");
       this.type = checkNotNull(type, "type of %s", name);
       this.ttl = checkNotNull(ttl, "ttl for %s", name);
+      checkArgument(ttl.or(0) >= 0, "ttl of %s must be unsigned", name);
       this.values = checkNotNull(values, "values for %s", name);
       this.aliasTarget = checkNotNull(aliasTarget, "aliasTarget for %s", aliasTarget);
    }
@@ -209,7 +210,7 @@ public class ResourceRecordSet {
     * Present in all resource record sets except aliases. The resource record
     * cache time to live (TTL), in seconds.
     */
-   public Optional<UnsignedInteger> getTTL() {
+   public Optional<Integer> getTTL() {
       return ttl;
    }
 
@@ -264,11 +265,11 @@ public class ResourceRecordSet {
       private String id;
       private String name;
       private String type;
-      private Optional<UnsignedInteger> ttl = Optional.absent();
+      private Optional<Integer> ttl = Optional.absent();
       private ImmutableList.Builder<String> values = ImmutableList.<String> builder();
       private String dnsName;
       private String zoneId;
-      private UnsignedInteger weight;
+      private Integer weight;
       private String region;
 
       /**
@@ -298,16 +299,9 @@ public class ResourceRecordSet {
       /**
        * @see ResourceRecordSet#getTTL()
        */
-      public Builder ttl(UnsignedInteger ttl) {
-         this.ttl = Optional.fromNullable(ttl);
-         return this;
-      }
-
-      /**
-       * @see ResourceRecordSet#getTTL()
-       */
       public Builder ttl(int ttl) {
-         return ttl(UnsignedInteger.fromIntBits(ttl));
+         this.ttl = Optional.of(ttl);
+         return this;
       }
 
       /**
@@ -359,7 +353,7 @@ public class ResourceRecordSet {
       /**
        * @see RecordSubset.Weighted
        */
-      public Builder weight(UnsignedInteger weight) {
+      public Builder weight(int weight) {
          this.weight = weight;
          return this;
       }

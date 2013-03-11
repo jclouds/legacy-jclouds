@@ -20,12 +20,12 @@ package org.jclouds.dynect.v3.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
 
 import com.google.common.base.Objects;
-import com.google.common.primitives.UnsignedInteger;
 
 /**
  * @author Adrian Cole
@@ -34,13 +34,14 @@ public class CreateRecord<D extends Map<String, Object>> {
 
    private final String fqdn;
    private final String type;
-   private final UnsignedInteger ttl;
+   private final int ttl;
    private final D rdata;
 
-   private CreateRecord(String fqdn, String type, UnsignedInteger ttl, D rdata) {
+   private CreateRecord(String fqdn, String type, int ttl, D rdata) {
       this.fqdn = checkNotNull(fqdn, "fqdn");
       this.type = checkNotNull(type, "type of %s", fqdn);
-      this.ttl = checkNotNull(ttl, "ttl of %s", fqdn);
+      checkArgument(ttl >= 0, "ttl of %s must be unsigned", fqdn);
+      this.ttl = ttl;
       this.rdata = checkNotNull(rdata, "rdata of %s", fqdn);
    }
 
@@ -63,7 +64,7 @@ public class CreateRecord<D extends Map<String, Object>> {
     * 
     * @see Record#getTTL()
     */
-   public UnsignedInteger getTTL() {
+   public int getTTL() {
       return ttl;
    }
 
@@ -106,7 +107,8 @@ public class CreateRecord<D extends Map<String, Object>> {
    public static class Builder<D extends Map<String, Object>> {
       protected String fqdn;
       protected String type;
-      protected UnsignedInteger ttl = UnsignedInteger.ZERO;
+      // default of zone is implied when ttl is set to zero
+      protected int ttl = 0;
       protected D rdata;
 
       /**
@@ -128,16 +130,9 @@ public class CreateRecord<D extends Map<String, Object>> {
       /**
        * @see CreateRecord#getTTL()
        */
-      public Builder<D> ttl(UnsignedInteger ttl) {
+      public Builder<D> ttl(int ttl) {
          this.ttl = ttl;
          return this;
-      }
-
-      /**
-       * @see CreateRecord#getTTL()
-       */
-      public Builder<D> ttl(int ttl) {
-         return ttl(UnsignedInteger.fromIntBits(ttl));
       }
 
       /**

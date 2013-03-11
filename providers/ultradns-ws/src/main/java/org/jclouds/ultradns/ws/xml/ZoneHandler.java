@@ -29,7 +29,6 @@ import org.jclouds.ultradns.ws.domain.Zone;
 import org.jclouds.ultradns.ws.domain.Zone.DNSSECStatus;
 import org.xml.sax.Attributes;
 
-import com.google.common.primitives.UnsignedInteger;
 
 /**
  * 
@@ -55,7 +54,7 @@ public class ZoneHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Z
          zone = Zone.builder()
                     .id(attributes.get("zoneId"))
                     .name(attributes.get("zoneName"))
-                    .typeCode(UnsignedInteger.valueOf(checkNotNull(attributes.get("zoneType"), "zoneType")))
+                    .typeCode(Integer.parseInt(checkNotNull(attributes.get("zoneType"), "zoneType")))
                     .accountId(attributes.get("accountId"))
                     .ownerId(attributes.get("owner"))
                     .dnssecStatus(DNSSECStatus.fromValue(attributes.get("dnssecStatus")))

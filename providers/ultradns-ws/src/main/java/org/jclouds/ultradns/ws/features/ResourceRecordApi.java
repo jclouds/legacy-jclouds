@@ -25,7 +25,6 @@ import org.jclouds.ultradns.ws.domain.ResourceRecord;
 import org.jclouds.ultradns.ws.domain.ResourceRecordMetadata;
 
 import com.google.common.collect.FluentIterable;
-import com.google.common.primitives.UnsignedInteger;
 
 /**
  * @see ResourceRecordAsyncApi
@@ -88,12 +87,6 @@ public interface ResourceRecordApi {
     * @throws ResourceNotFoundException
     *            if the zone doesn't exist
     */
-   FluentIterable<ResourceRecordMetadata> listByNameAndType(String hostName, UnsignedInteger rrType)
-         throws ResourceNotFoundException;
-
-   /**
-    * @see #listByNameAndType(String, UnsignedInteger)
-    */
    FluentIterable<ResourceRecordMetadata> listByNameAndType(String hostName, int rrType)
          throws ResourceNotFoundException;
 
@@ -101,7 +94,7 @@ public interface ResourceRecordApi {
     * @param type
     *           the literal type defined in {@link ResourceTypeToValue}. ex
     *           {@code AAAA}
-    * @see #listByNameAndType(String, UnsignedInteger)
+    * @see #listByNameAndType(String, int)
     */
    FluentIterable<ResourceRecordMetadata> listByNameAndType(String hostName, String type)
          throws ResourceNotFoundException;

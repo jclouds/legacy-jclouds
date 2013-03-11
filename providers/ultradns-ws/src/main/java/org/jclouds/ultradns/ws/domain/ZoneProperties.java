@@ -18,6 +18,7 @@
  */
 package org.jclouds.ultradns.ws.domain;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
@@ -25,7 +26,6 @@ import java.util.Date;
 import org.jclouds.ultradns.ws.domain.Zone.Type;
 
 import com.google.common.base.Objects;
-import com.google.common.primitives.UnsignedInteger;
 
 /**
  * 
@@ -35,13 +35,14 @@ public final class ZoneProperties {
 
    private final String name;
    private final Type type;
-   private final UnsignedInteger typeCode;
+   private final int typeCode;
    private final Date modified;
    private final int resourceRecordCount;
 
-   private ZoneProperties(String name, Type type, UnsignedInteger typeCode, Date modified, int resourceRecordCount) {
+   private ZoneProperties(String name, Type type, int typeCode, Date modified, int resourceRecordCount) {
       this.name = checkNotNull(name, "name");
-      this.typeCode = checkNotNull(typeCode, "typeCode for %s", name);
+      checkArgument(typeCode >= 0, "typeCode of %s must be unsigned", name);
+      this.typeCode = typeCode;
       this.type = checkNotNull(type, "type for %s", name);
       this.modified = checkNotNull(modified, "modified for %s", name);
       this.resourceRecordCount = checkNotNull(resourceRecordCount, "resourceRecordCount for %s", name);
@@ -64,7 +65,7 @@ public final class ZoneProperties {
    /**
     * The type of the zone
     */
-   public UnsignedInteger getTypeCode() {
+   public int getTypeCode() {
       return typeCode;
    }
 
@@ -114,7 +115,7 @@ public final class ZoneProperties {
    public final static class Builder {
       private String name;
       private Type type;
-      private UnsignedInteger typeCode;
+      private int typeCode = -1;
       private Date modified;
       private int resourceRecordCount;
 
@@ -137,17 +138,10 @@ public final class ZoneProperties {
       /**
        * @see ZoneProperties#getTypeCode()
        */
-      public Builder typeCode(UnsignedInteger typeCode) {
+      public Builder typeCode(int typeCode) {
          this.typeCode = typeCode;
          this.type = Type.fromValue(typeCode);
          return this;
-      }
-
-      /**
-       * @see ZoneProperties#getTypeCode()
-       */
-      public Builder typeCode(int typeCode) {
-         return typeCode(UnsignedInteger.fromIntBits(typeCode));
       }
 
       /**
