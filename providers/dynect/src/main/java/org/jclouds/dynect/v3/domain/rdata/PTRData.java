@@ -40,22 +40,26 @@ import com.google.common.collect.ImmutableMap;
  * @see <a href="http://www.ietf.org/rfc/rfc1035.txt">RFC 1035</a>
  */
 public class PTRData extends ForwardingMap<String, Object> {
-   private final ImmutableMap<String, Object> delegate;
+
+   private final String ptrdname;
 
    @ConstructorProperties("ptrdname")
    private PTRData(String ptrdname) {
-      this.delegate = ImmutableMap.<String, Object> of("ptrdname", checkNotNull(ptrdname, "ptrdname"));
-   }
-
-   protected Map<String, Object> delegate() {
-      return delegate;
+      this.ptrdname = checkNotNull(ptrdname, "ptrdname");
+      this.delegate = ImmutableMap.<String, Object> of("ptrdname", ptrdname);
    }
 
    /**
     * domain-name which points to some location in the domain name space.
     */
    public String getPtrdname() {
-      return get("ptrdname").toString();
+      return ptrdname;
+   }
+
+   private final transient ImmutableMap<String, Object> delegate;
+
+   protected Map<String, Object> delegate() {
+      return delegate;
    }
 
    public static PTRData ptr(String ptrdname) {

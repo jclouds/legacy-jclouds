@@ -28,7 +28,6 @@ import org.jclouds.dynect.v3.domain.Zone.SerialStyle;
 import org.jclouds.dynect.v3.domain.rdata.SOAData;
 
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.primitives.UnsignedInteger;
 
 /**
  * Start of Authority per RFC 1035
@@ -41,7 +40,7 @@ public final class SOARecord extends Record<SOAData> {
    private final SerialStyle serialStyle;
 
    @ConstructorProperties({ "zone", "fqdn", "record_type", "record_id", "ttl", "rdata", "serial_style" })
-   private SOARecord(String zone, String fqdn, String type, long id, UnsignedInteger ttl, SOAData rdata, SerialStyle serialStyle) {
+   private SOARecord(String zone, String fqdn, String type, long id, int ttl, SOAData rdata, SerialStyle serialStyle) {
       super(zone, fqdn, type, id, ttl, rdata);
       this.serialStyle = checkNotNull(serialStyle, "serialStyle of %s", id);
    }

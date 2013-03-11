@@ -40,15 +40,13 @@ import com.google.common.collect.ImmutableMap;
  * @see <a href="http://www.ietf.org/rfc/rfc1035.txt">RFC 1035</a>
  */
 public class CNAMEData extends ForwardingMap<String, Object> {
-   private final ImmutableMap<String, Object> delegate;
+
+   private final String cname;
 
    @ConstructorProperties("cname")
    private CNAMEData(String cname) {
-      this.delegate = ImmutableMap.<String, Object> of("cname", checkNotNull(cname, "cname"));
-   }
-
-   protected Map<String, Object> delegate() {
-      return delegate;
+      this.cname = checkNotNull(cname, "cname");
+      this.delegate = ImmutableMap.<String, Object> of("cname", cname);
    }
 
    /**
@@ -56,7 +54,13 @@ public class CNAMEData extends ForwardingMap<String, Object> {
     * The owner name is an alias.
     */
    public String getCname() {
-      return get("cname").toString();
+      return cname;
+   }
+
+   private final transient ImmutableMap<String, Object> delegate;
+
+   protected Map<String, Object> delegate() {
+      return delegate;
    }
 
    public static CNAMEData cname(String cname) {
