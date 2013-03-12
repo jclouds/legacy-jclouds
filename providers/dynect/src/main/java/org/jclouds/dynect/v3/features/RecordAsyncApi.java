@@ -49,7 +49,9 @@ import org.jclouds.dynect.v3.domain.rdata.CNAMEData;
 import org.jclouds.dynect.v3.domain.rdata.MXData;
 import org.jclouds.dynect.v3.domain.rdata.NSData;
 import org.jclouds.dynect.v3.domain.rdata.PTRData;
+import org.jclouds.dynect.v3.domain.rdata.SPFData;
 import org.jclouds.dynect.v3.domain.rdata.SRVData;
+import org.jclouds.dynect.v3.domain.rdata.SSHFPData;
 import org.jclouds.dynect.v3.domain.rdata.TXTData;
 import org.jclouds.dynect.v3.filters.AlwaysAddContentType;
 import org.jclouds.dynect.v3.filters.SessionManager;
@@ -237,6 +239,16 @@ public interface RecordAsyncApi {
    ListenableFuture<SOARecord> getSOA(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId) throws JobStillRunningException;
 
    /**
+    * @see RecordApi#getSPF
+    */
+   @Named("GetSPFRecord")
+   @GET
+   @Path("/SPFRecord/{zone}/{fqdn}/{id}")
+   @SelectJson("data")
+   @Fallback(NullOnNotFoundOr404.class)
+   ListenableFuture<Record<SPFData>> getSPF(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId) throws JobStillRunningException;
+
+   /**
     * @see RecordApi#getSRV
     */
    @Named("GetSRVRecord")
@@ -245,6 +257,16 @@ public interface RecordAsyncApi {
    @SelectJson("data")
    @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<Record<SRVData>> getSRV(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId) throws JobStillRunningException;
+
+   /**
+    * @see RecordApi#getSSHFP
+    */
+   @Named("GetSSHFPRecord")
+   @GET
+   @Path("/SSHFPRecord/{zone}/{fqdn}/{id}")
+   @SelectJson("data")
+   @Fallback(NullOnNotFoundOr404.class)
+   ListenableFuture<Record<SSHFPData>> getSSHFP(@PathParam("fqdn") String fqdn, @PathParam("id") long recordId) throws JobStillRunningException;
 
    /**
     * @see RecordApi#getTXT

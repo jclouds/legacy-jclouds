@@ -1,0 +1,1 @@
+{"status": "success", "data": {"zone": "adrianc.zone.dynecttest.jclouds.org", "ttl": 3600, "fqdn": "_http._tcp.www.jclouds.org.", "record_type": "SPF", "rdata": {"txtdata": "v=spf1 a -all"}, "record_id": 50976579}, "job_id": 273523378, "msgs": [{"INFO": "get: Found the record", "SOURCE": "API-B", "ERR_CD": null, "LVL": "INFO"}]}
