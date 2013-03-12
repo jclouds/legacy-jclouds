@@ -32,7 +32,9 @@ import org.jclouds.dynect.v3.domain.rdata.CNAMEData;
 import org.jclouds.dynect.v3.domain.rdata.MXData;
 import org.jclouds.dynect.v3.domain.rdata.NSData;
 import org.jclouds.dynect.v3.domain.rdata.PTRData;
+import org.jclouds.dynect.v3.domain.rdata.SPFData;
 import org.jclouds.dynect.v3.domain.rdata.SRVData;
+import org.jclouds.dynect.v3.domain.rdata.SSHFPData;
 import org.jclouds.dynect.v3.domain.rdata.TXTData;
 import org.jclouds.javax.annotation.Nullable;
 
@@ -185,6 +187,19 @@ public interface RecordApi {
    SOARecord getSOA(String fqdn, long recordId) throws JobStillRunningException;
 
    /**
+    * Gets the {@link SPFRecord} or null if not present.
+    * 
+    * @param fqdn
+    *           {@link RecordId#getFQDN()}
+    * @param recordId
+    *           {@link RecordId#getId()}
+    * @return null if not found
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
+    */
+   Record<SPFData> getSPF(String fqdn, long recordId) throws JobStillRunningException;
+
+   /**
     * Gets the {@link SRVRecord} or null if not present.
     * 
     * @param fqdn
@@ -196,6 +211,19 @@ public interface RecordApi {
     *            if a different job in the session is still running
     */
    Record<SRVData> getSRV(String fqdn, long recordId) throws JobStillRunningException;
+
+   /**
+    * Gets the {@link SSHFPRecord} or null if not present.
+    * 
+    * @param fqdn
+    *           {@link RecordId#getFQDN()}
+    * @param recordId
+    *           {@link RecordId#getId()}
+    * @return null if not found
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
+    */
+   Record<SSHFPData> getSSHFP(String fqdn, long recordId) throws JobStillRunningException;
 
    /**
     * Gets the {@link TXTRecord} or null if not present.

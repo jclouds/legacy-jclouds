@@ -42,7 +42,9 @@ import org.jclouds.dynect.v3.domain.rdata.MXData;
 import org.jclouds.dynect.v3.domain.rdata.NSData;
 import org.jclouds.dynect.v3.domain.rdata.PTRData;
 import org.jclouds.dynect.v3.domain.rdata.SOAData;
+import org.jclouds.dynect.v3.domain.rdata.SPFData;
 import org.jclouds.dynect.v3.domain.rdata.SRVData;
+import org.jclouds.dynect.v3.domain.rdata.SSHFPData;
 import org.jclouds.dynect.v3.domain.rdata.TXTData;
 import org.jclouds.dynect.v3.internal.BaseDynECTApiLiveTest;
 import org.testng.annotations.AfterClass;
@@ -93,8 +95,12 @@ public class RecordApiLiveTest extends BaseDynECTApiLiveTest {
                record = checkPTRRecord(api.getPTR(recordId.getFQDN(), recordId.getId()));
             } else if ("SOA".equals(recordId.getType())) {
                record = checkSOARecord(api.getSOA(recordId.getFQDN(), recordId.getId()));
+            } else if ("SPF".equals(recordId.getType())) {
+               record = checkSPFRecord(api.getSPF(recordId.getFQDN(), recordId.getId()));
             } else if ("SRV".equals(recordId.getType())) {
                record = checkSRVRecord(api.getSRV(recordId.getFQDN(), recordId.getId()));
+            } else if ("SSHFP".equals(recordId.getType())) {
+               record = checkSSHFPRecord(api.getSSHFP(recordId.getFQDN(), recordId.getId()));
             } else if ("TXT".equals(recordId.getType())) {
                record = checkTXTRecord(api.getTXT(recordId.getFQDN(), recordId.getId()));
             } else {
@@ -156,12 +162,26 @@ public class RecordApiLiveTest extends BaseDynECTApiLiveTest {
       return record;
    }
 
+   private Record<SPFData> checkSPFRecord(Record<SPFData> record) {
+      SPFData rdata = record.getRData();
+      checkNotNull(rdata.getTxtdata(), "rdata.txtdata cannot be null for SPFRecord: %s", record);
+      return record;
+   }
+
    private Record<SRVData> checkSRVRecord(Record<SRVData> record) {
       SRVData rdata = record.getRData();
       checkNotNull(rdata.getPriority(), "rdata.priority cannot be null for SRVRecord: %s", record);
       checkNotNull(rdata.getWeight(), "rdata.weight cannot be null for SRVRecord: %s", record);
       checkNotNull(rdata.getPort(), "rdata.port cannot be null for SRVRecord: %s", record);
       checkNotNull(rdata.getTarget(), "rdata.target cannot be null for SRVRecord: %s", record);
+      return record;
+   }
+
+   private Record<SSHFPData> checkSSHFPRecord(Record<SSHFPData> record) {
+      SSHFPData rdata = record.getRData();
+      checkNotNull(rdata.getAlgorithm(), "rdata.algorithm cannot be null for SSHFPRecord: %s", record);
+      checkNotNull(rdata.getType(), "rdata.type cannot be null for SSHFPRecord: %s", record);
+      checkNotNull(rdata.getFingerprint(), "rdata.fingerprint cannot be null for SSHFPRecord: %s", record);
       return record;
    }
 
