@@ -30,7 +30,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.ultradns.ws.ResourceTypeToValue;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
 import org.jclouds.ultradns.ws.domain.Account;
 import org.jclouds.ultradns.ws.domain.ResourceRecord;
@@ -45,7 +44,6 @@ import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.BiMap;
 import com.google.common.collect.FluentIterable;
 
 /**
@@ -111,14 +109,12 @@ public class ResourceRecordApiLiveTest extends BaseUltraDNSWSApiLiveTest {
             }
          });
 
-   private final static BiMap<Integer, String> valueToType = new ResourceTypeToValue().inverse();
-
    @AfterClass
    void logSummary() {
       getAnonymousLogger().info("zoneCount: " + zones);
       for (Entry<Integer, AtomicLong> entry : recordTypeCounts.asMap().entrySet())
          getAnonymousLogger().info(
-               String.format("type: %s, count: %s", valueToType.get(entry.getKey()), entry.getValue()));
+               String.format("type: %s, count: %s", entry.getKey(), entry.getValue()));
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class, expectedExceptionsMessageRegExp = "Zone does not exist in the system.")
@@ -129,7 +125,7 @@ public class ResourceRecordApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    @Test(expectedExceptions = ResourceNotFoundException.class, expectedExceptionsMessageRegExp = "No Resource Record with GUID found in the system")
    public void testUpdateWhenNotFound() {
       api(zoneName).update("AAAAAAAAAAAAAAAA",
-            rrBuilder().name("mail." + zoneName).type("MX").ttl(1800).rdata(10).rdata("maileast.jclouds.org.").build());
+            rrBuilder().name("mail." + zoneName).type(15).ttl(1800).rdata(10).rdata("maileast.jclouds.org.").build());
    }
 
    @Test
@@ -138,7 +134,7 @@ public class ResourceRecordApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    }
 
    String guid;
-   ResourceRecord mx = rrBuilder().name("mail." + zoneName).type("MX").ttl(1800).rdata(10)
+   ResourceRecord mx = rrBuilder().name("mail." + zoneName).type(15).ttl(1800).rdata(10)
          .rdata("maileast.jclouds.org.").build();
 
    @Test

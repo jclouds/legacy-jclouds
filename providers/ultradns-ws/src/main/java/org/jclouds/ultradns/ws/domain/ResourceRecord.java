@@ -27,8 +27,6 @@ import static com.google.common.collect.Iterables.transform;
 
 import java.util.List;
 
-import org.jclouds.ultradns.ws.ResourceTypeToValue;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
@@ -117,20 +115,6 @@ public class ResourceRecord {
        */
       public Builder name(String dName) {
          this.dName = dName;
-         return this;
-      }
-
-      /**
-       * use this for common type values available in
-       * {@link ResourceTypeToValue}, such as {@code MX} or {@code PTR}
-       * 
-       * @see ResourceRecord#getType()
-       * @throws IllegalArgumentException
-       *            if the type value is not present in
-       *            {@link ResourceTypeToValue},
-       */
-      public Builder type(String type) throws IllegalArgumentException {
-         this.type = ResourceTypeToValue.lookup(type);
          return this;
       }
 
