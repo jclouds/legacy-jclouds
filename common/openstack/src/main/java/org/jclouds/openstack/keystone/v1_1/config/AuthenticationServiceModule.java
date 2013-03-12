@@ -20,6 +20,7 @@ package org.jclouds.openstack.keystone.v1_1.config;
 
 import static com.google.common.base.Throwables.propagate;
 import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -49,6 +50,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.inject.AbstractModule;
+import com.google.inject.name.Named;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
@@ -111,8 +113,9 @@ public class AuthenticationServiceModule extends AbstractModule {
 
    @Provides
    @Singleton
-   public LoadingCache<Credentials, Auth> provideAuthCache(Function<Credentials, Auth> getAuth) {
-      return CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS).build(CacheLoader.from(getAuth));
+   protected LoadingCache<Credentials, Auth> provideAuthCache(GetAuth getAuth,
+         @Named(PROPERTY_SESSION_INTERVAL) long sessionInterval) {
+      return CacheBuilder.newBuilder().expireAfterWrite(sessionInterval, TimeUnit.SECONDS).build(CacheLoader.from(getAuth));
    }
 
    @Provides
