@@ -25,13 +25,11 @@ import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.ultradns.ws.ResourceTypeToValue;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
 import org.jclouds.ultradns.ws.binders.ZoneAndResourceRecordToXML;
 import org.jclouds.ultradns.ws.domain.ResourceRecord;
@@ -100,18 +98,6 @@ public interface ResourceRecordAsyncApi {
    @Payload("<v01:getResourceRecordsOfDNameByType><zoneName>{zoneName}</zoneName><hostName>{hostName}</hostName><rrType>{rrType}</rrType></v01:getResourceRecordsOfDNameByType>")
    ListenableFuture<FluentIterable<ResourceRecordMetadata>> listByNameAndType(
          @PayloadParam("hostName") String hostName, @PayloadParam("rrType") int rrType)
-         throws ResourceNotFoundException;
-
-   /**
-    * @see ResourceRecordApi#listByNameAndType(String, String)
-    */
-   @Named("getResourceRecordsOfDNameByType")
-   @POST
-   @XMLResponseParser(ResourceRecordListHandler.class)
-   @Payload("<v01:getResourceRecordsOfDNameByType><zoneName>{zoneName}</zoneName><hostName>{hostName}</hostName><rrType>{rrType}</rrType></v01:getResourceRecordsOfDNameByType>")
-   ListenableFuture<FluentIterable<ResourceRecordMetadata>> listByNameAndType(
-         @PayloadParam("hostName") String hostName,
-         @PayloadParam("rrType") @ParamParser(ResourceTypeToValue.class) String rrType)
          throws ResourceNotFoundException;
 
    /**

@@ -19,7 +19,6 @@
 package org.jclouds.ultradns.ws.features;
 
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.ultradns.ws.ResourceTypeToValue;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
 import org.jclouds.ultradns.ws.domain.ResourceRecord;
 import org.jclouds.ultradns.ws.domain.ResourceRecordMetadata;
@@ -88,15 +87,6 @@ public interface ResourceRecordApi {
     *            if the zone doesn't exist
     */
    FluentIterable<ResourceRecordMetadata> listByNameAndType(String hostName, int rrType)
-         throws ResourceNotFoundException;
-
-   /**
-    * @param type
-    *           the literal type defined in {@link ResourceTypeToValue}. ex
-    *           {@code AAAA}
-    * @see #listByNameAndType(String, int)
-    */
-   FluentIterable<ResourceRecordMetadata> listByNameAndType(String hostName, String type)
          throws ResourceNotFoundException;
 
    /**
