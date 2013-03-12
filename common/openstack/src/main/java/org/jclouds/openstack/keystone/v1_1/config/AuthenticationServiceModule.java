@@ -19,6 +19,7 @@
 package org.jclouds.openstack.keystone.v1_1.config;
 
 import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -46,6 +47,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.inject.AbstractModule;
+import com.google.inject.name.Named;
 import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
@@ -104,8 +106,9 @@ public class AuthenticationServiceModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected LoadingCache<Credentials, Auth> provideAuthCache(GetAuth getAuth) {
-      return CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS).build(getAuth);
+   protected LoadingCache<Credentials, Auth> provideAuthCache(GetAuth getAuth,
+         @Named(PROPERTY_SESSION_INTERVAL) long sessionInterval) {
+      return CacheBuilder.newBuilder().expireAfterWrite(sessionInterval, TimeUnit.SECONDS).build(getAuth);
    }
 
    @Provides

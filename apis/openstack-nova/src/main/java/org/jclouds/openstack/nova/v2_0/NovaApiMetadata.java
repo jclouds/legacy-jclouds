@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v2_0;
 
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERVICE_TYPE;
 import static org.jclouds.openstack.nova.v2_0.config.NovaProperties.AUTO_ALLOCATE_FLOATING_IPS;
@@ -78,6 +79,10 @@ public class NovaApiMetadata extends BaseRestApiMetadata {
       properties.setProperty(AUTO_ALLOCATE_FLOATING_IPS, "false");
       properties.setProperty(AUTO_GENERATE_KEYPAIRS, "false");
       properties.setProperty(TIMEOUT_SECURITYGROUP_PRESENT, "500");
+      // Keystone 1.1 expires tokens after 24 hours and allows renewal 1 hour
+      // before expiry by default.  We choose a value less than the latter
+      // since the former persists between jclouds invocations.
+      properties.setProperty(PROPERTY_SESSION_INTERVAL, 30 * 60 * 60 + "");
       return properties;
    }
 
