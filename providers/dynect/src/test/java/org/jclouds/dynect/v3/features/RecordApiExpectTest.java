@@ -41,7 +41,9 @@ import org.jclouds.dynect.v3.parse.GetNSRecordResponseTest;
 import org.jclouds.dynect.v3.parse.GetPTRRecordResponseTest;
 import org.jclouds.dynect.v3.parse.GetRecordResponseTest;
 import org.jclouds.dynect.v3.parse.GetSOARecordResponseTest;
+import org.jclouds.dynect.v3.parse.GetSPFRecordResponseTest;
 import org.jclouds.dynect.v3.parse.GetSRVRecordResponseTest;
+import org.jclouds.dynect.v3.parse.GetSSHFPRecordResponseTest;
 import org.jclouds.dynect.v3.parse.GetTXTRecordResponseTest;
 import org.jclouds.dynect.v3.parse.ListRecordsResponseTest;
 import org.jclouds.http.HttpRequest;
@@ -246,6 +248,27 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
       assertNull(fail.getRecordApiForZone("jclouds.org").getSOA(soaId.getFQDN(), soaId.getId()));
    }
 
+   HttpRequest getSPF = HttpRequest.builder().method("GET")
+         .endpoint("https://api2.dynect.net/REST/SPFRecord/jclouds.org/jclouds.org/50976579")
+         .addHeader("API-Version", "3.3.8")
+         .addHeader(CONTENT_TYPE, APPLICATION_JSON)
+         .addHeader("Auth-Token", authToken).build();   
+   
+   HttpResponse spfResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResourceWithContentType("/get_record_spf.json", APPLICATION_JSON)).build();
+
+   RecordId spfId = recordIdBuilder()
+        .zone("jclouds.org")
+        .fqdn("jclouds.org")
+        .type("SPF")
+        .id(50976579l).build();
+
+   public void testGetSPFWhenResponseIs2xx() {
+      DynECTApi success = requestsSendResponses(createSession, createSessionResponse, getSPF, spfResponse);
+      assertEquals(success.getRecordApiForZone("jclouds.org").getSPF(spfId.getFQDN(), spfId.getId()).toString(),
+                   new GetSPFRecordResponseTest().expected().toString());
+   }
+
    HttpRequest getSRV = HttpRequest.builder().method("GET")
          .endpoint("https://api2.dynect.net/REST/SRVRecord/jclouds.org/jclouds.org/50976579")
          .addHeader("API-Version", "3.3.8")
@@ -265,6 +288,27 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
       DynECTApi success = requestsSendResponses(createSession, createSessionResponse, getSRV, srvResponse);
       assertEquals(success.getRecordApiForZone("jclouds.org").getSRV(srvId.getFQDN(), srvId.getId()).toString(),
                    new GetSRVRecordResponseTest().expected().toString());
+   }
+
+   HttpRequest getSSHFP = HttpRequest.builder().method("GET")
+         .endpoint("https://api2.dynect.net/REST/SSHFPRecord/jclouds.org/jclouds.org/50976579")
+         .addHeader("API-Version", "3.3.8")
+         .addHeader(CONTENT_TYPE, APPLICATION_JSON)
+         .addHeader("Auth-Token", authToken).build();   
+   
+   HttpResponse sshfpResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResourceWithContentType("/get_record_sshfp.json", APPLICATION_JSON)).build();
+
+   RecordId sshfpId = recordIdBuilder()
+        .zone("jclouds.org")
+        .fqdn("jclouds.org")
+        .type("SSHFP")
+        .id(50976579l).build();
+
+   public void testGetSSHFPWhenResponseIs2xx() {
+      DynECTApi success = requestsSendResponses(createSession, createSessionResponse, getSSHFP, sshfpResponse);
+      assertEquals(success.getRecordApiForZone("jclouds.org").getSSHFP(sshfpId.getFQDN(), sshfpId.getId()).toString(),
+                   new GetSSHFPRecordResponseTest().expected().toString());
    }
 
    HttpRequest getTXT = HttpRequest.builder().method("GET")
