@@ -208,13 +208,16 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
          }
          if (chunked) {
             connection.setChunkedStreamingMode(8196);
+            writePayloadToConnection(payload, "streaming", connection);
          } else {
-            long length = checkNotNull(md.getContentLength(), "payload.getContentLength");
+            Long length = checkNotNull(md.getContentLength(), "payload.getContentLength");
             // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6755625
             checkArgument(length < Integer.MAX_VALUE,
                   "JDK 1.6 does not support >2GB chunks. Use chunked encoding, if possible.");
             if (length > 0) {
-               writePayloadToConnection(payload, connection);
+               connection.setRequestProperty(CONTENT_LENGTH, length.toString());
+               connection.setFixedLengthStreamingMode(length.intValue());
+               writePayloadToConnection(payload, length, connection);
             } else {
                writeNothing(connection);
             }
@@ -231,16 +234,21 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
       }
    }
 
-   void writePayloadToConnection(Payload payload, HttpURLConnection connection) throws IOException {
-      Long length = payload.getContentMetadata().getContentLength();
-      connection.setRequestProperty(CONTENT_LENGTH, length.toString());
-      connection.setFixedLengthStreamingMode(length.intValue());
+   /**
+    * @param payload
+    *           payload to write
+    * @param lengthDesc
+    *           what to use in error log when an IOException occurs
+    * @param connection
+    *           connection to write to
+    */
+   void writePayloadToConnection(Payload payload, Object lengthDesc, HttpURLConnection connection) throws IOException {
       connection.setDoOutput(true);
       CountingOutputStream out = new CountingOutputStream(connection.getOutputStream());
       try {
          payload.writeTo(out);
       } catch (IOException e) {
-         logger.error(e, "error after writing %d/%s bytes to %s", out.getCount(), length, connection.getURL());
+         logger.error(e, "error after writing %d/%s bytes to %s", out.getCount(), lengthDesc, connection.getURL());
          throw e;
       }
    }
