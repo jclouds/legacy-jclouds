@@ -126,12 +126,12 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
       getAnonymousLogger().info("created A record: " + aRecord1);
 
       assertTrue(listRRs(aPoolId).anyMatch(
-            equalTo(rrBuilder().name(hostname).type("A").ttl(1).rdata("1.2.3.4").build())));
+            equalTo(rrBuilder().name(hostname).type(1).ttl(1).rdata("1.2.3.4").build())));
 
       aRecord2 = api(zoneName).addARecordWithAddressAndTTL(aPoolId, "3.4.5.6", 1);
 
       assertTrue(listRRs(aPoolId).anyMatch(
-            equalTo(rrBuilder().name(hostname).type("A").ttl(1).rdata("3.4.5.6").build())));
+            equalTo(rrBuilder().name(hostname).type(1).ttl(1).rdata("3.4.5.6").build())));
 
       getAnonymousLogger().info("created A record: " + aRecord1);
       try {
@@ -146,17 +146,17 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    public void testUpdateRecord() {
       api(zoneName).updateRecordWithAddressAndTTL(aPoolId, aRecord1, "1.1.1.1", 0);
       assertTrue(listRRs(aPoolId).anyMatch(
-            equalTo(rrBuilder().name(hostname).type("A").ttl(0).rdata("1.1.1.1").build())));
+            equalTo(rrBuilder().name(hostname).type(1).ttl(0).rdata("1.1.1.1").build())));
    }
 
    @Test(dependsOnMethods = "testUpdateRecord")
    public void testDeleteRecord() {
       api(zoneName).deleteRecord(aRecord2);
       assertTrue(listRRs(aPoolId).anyMatch(
-            equalTo(rrBuilder().name(hostname).type("A").ttl(0).rdata("1.1.1.1").build())));
+            equalTo(rrBuilder().name(hostname).type(1).ttl(0).rdata("1.1.1.1").build())));
 
       assertFalse(listRRs(aPoolId).anyMatch(
-            equalTo(rrBuilder().name(hostname).type("A").ttl(1).rdata("3.4.5.6").build())));
+            equalTo(rrBuilder().name(hostname).type(1).ttl(1).rdata("3.4.5.6").build())));
    }
 
    @Test(dependsOnMethods = "testDeleteRecord")
@@ -194,14 +194,14 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
       getAnonymousLogger().info("created AAAA record: " + aaaaRecord1);
 
       assertTrue(listRRs(aaaaPoolId).anyMatch(
-            equalTo(rrBuilder().name(hostname).type("AAAA").ttl(1).rdata("2001:0DB8:85A3:0000:0000:8A2E:0370:7334")
+            equalTo(rrBuilder().name(hostname).type(28).ttl(1).rdata("2001:0DB8:85A3:0000:0000:8A2E:0370:7334")
                   .build())));
 
       aaaaRecord2 = api(zoneName).addAAAARecordWithAddressAndTTL(aaaaPoolId, "2002:0DB8:85A3:0000:0000:8A2E:0370:7334",
             1);
 
       assertTrue(listRRs(aaaaPoolId).anyMatch(
-            equalTo(rrBuilder().name(hostname).type("AAAA").ttl(1).rdata("2002:0DB8:85A3:0000:0000:8A2E:0370:7334")
+            equalTo(rrBuilder().name(hostname).type(28).ttl(1).rdata("2002:0DB8:85A3:0000:0000:8A2E:0370:7334")
                   .build())));
 
       getAnonymousLogger().info("created AAAA record: " + aaaaRecord1);
