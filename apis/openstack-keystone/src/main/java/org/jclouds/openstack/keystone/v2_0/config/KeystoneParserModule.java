@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.json.config.GsonModule.DateAdapter;
+import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.SetTypeAdapter;
 import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.SetTypeAdapterFactory;
 
 import com.google.common.base.Objects;
@@ -63,10 +64,10 @@ public class KeystoneParserModule extends AbstractModule {
 
       public static final class Adapter<E> extends TypeAdapter<Set<E>> {
 
-         private final SetTypeAdapterFactory.SetTypeAdapter<E> delegate;
+         private final SetTypeAdapter<E> delegate;
 
          public Adapter(TypeAdapter<E> elementAdapter) {
-            this.delegate = new SetTypeAdapterFactory.SetTypeAdapter<E>(elementAdapter);
+            this.delegate = new SetTypeAdapter<E>(elementAdapter);
             nullSafe();
          }
 
