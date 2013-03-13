@@ -30,6 +30,7 @@ import java.util.Map;
 import org.jclouds.json.internal.NamingStrategies.AnnotationConstructorNamingStrategy;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.reflect.Invokable;
@@ -184,8 +185,10 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactory imp
 
          for (Parameter param : params) {
             if (param.getType().getRawType().isPrimitive()) {
-               checkArgument(values[param.hashCode()] != null, "Primitive param[" + param.hashCode()
-                     + "] in constructor " + parameterizedCtor + " cannot be absent!");
+               checkArgument(values[param.hashCode()] != null,
+                  "Primitive param[%s] in constructor %s cannot be absent!", param.hashCode(), parameterizedCtor);
+            } else if (param.getType().getRawType() == Optional.class && values[param.hashCode()] == null) {
+               values[param.hashCode()] = Optional.absent();
             }
          }
          in.endObject();
