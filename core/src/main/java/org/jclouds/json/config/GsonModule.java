@@ -46,7 +46,10 @@ import org.jclouds.json.internal.NamingStrategies.ExtractNamed;
 import org.jclouds.json.internal.NamingStrategies.ExtractSerializedName;
 import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.CollectionTypeAdapterFactory;
 import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.FluentIterableTypeAdapterFactory;
+import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.ImmutableListTypeAdapterFactory;
+import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.ImmutableSetTypeAdapterFactory;
 import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.IterableTypeAdapterFactory;
+import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.ListTypeAdapterFactory;
 import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.MapTypeAdapterFactory;
 import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.MultimapTypeAdapterFactory;
 import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.SetTypeAdapterFactory;
@@ -88,9 +91,10 @@ public class GsonModule extends AbstractModule {
    @Singleton
    Gson provideGson(TypeAdapter<JsonBall> jsonAdapter, DateAdapter adapter, ByteListAdapter byteListAdapter,
          ByteArrayAdapter byteArrayAdapter, PropertiesAdapter propertiesAdapter, JsonAdapterBindings bindings,
-         OptionalTypeAdapterFactory optional, SetTypeAdapterFactory set, MapTypeAdapterFactory map,
-         MultimapTypeAdapterFactory multimap, IterableTypeAdapterFactory iterable,
-         CollectionTypeAdapterFactory collection, FluentIterableTypeAdapterFactory fluentIterable,
+         OptionalTypeAdapterFactory optional, SetTypeAdapterFactory set, ImmutableSetTypeAdapterFactory immutableSet,
+         MapTypeAdapterFactory map, MultimapTypeAdapterFactory multimap, IterableTypeAdapterFactory iterable,
+         CollectionTypeAdapterFactory collection, ListTypeAdapterFactory list,
+         ImmutableListTypeAdapterFactory immutableList, FluentIterableTypeAdapterFactory fluentIterable,
          DefaultExclusionStrategy exclusionStrategy) {
 
       FieldNamingStrategy serializationPolicy = new AnnotationOrNameFieldNamingStrategy(ImmutableSet.of(
@@ -109,7 +113,10 @@ public class GsonModule extends AbstractModule {
       builder.registerTypeAdapterFactory(optional);
       builder.registerTypeAdapterFactory(iterable);
       builder.registerTypeAdapterFactory(collection);
+      builder.registerTypeAdapterFactory(list);
+      builder.registerTypeAdapterFactory(immutableList);
       builder.registerTypeAdapterFactory(set);
+      builder.registerTypeAdapterFactory(immutableSet);
       builder.registerTypeAdapterFactory(map);
       builder.registerTypeAdapterFactory(multimap);
       builder.registerTypeAdapterFactory(fluentIterable);

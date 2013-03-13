@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import org.jclouds.date.DateService;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
+import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.IterableTypeAdapter;
 import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.IterableTypeAdapterFactory;
 
 import com.google.common.base.Splitter;
@@ -84,10 +85,10 @@ public class CloudStackParserModule extends AbstractModule {
 
       public static final class Adapter<E> extends TypeAdapter<Iterable<E>> {
 
-         private final IterableTypeAdapterFactory.IterableTypeAdapter<E> delegate;
+         private final IterableTypeAdapter<E> delegate;
 
          public Adapter(TypeAdapter<E> elementAdapter) {
-            this.delegate = new IterableTypeAdapterFactory.IterableTypeAdapter<E>(elementAdapter);
+            this.delegate = new IterableTypeAdapter<E>(elementAdapter);
             nullSafe();
          }
 
