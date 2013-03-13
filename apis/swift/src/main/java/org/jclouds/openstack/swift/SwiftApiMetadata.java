@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.swift;
 
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 import static org.jclouds.reflect.Reflection2.typeToken;
@@ -66,6 +67,10 @@ public class SwiftApiMetadata extends BaseRestApiMetadata {
       Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "X-Object-Meta-");
       properties.setProperty(PROPERTY_REGIONS, "DEFAULT");
+      // Keystone 1.1 expires tokens after 24 hours and allows renewal 1 hour
+      // before expiry by default.  We choose a value less than the latter
+      // since the former persists between jclouds invocations.
+      properties.setProperty(PROPERTY_SESSION_INTERVAL, 30 * 60 * 60 + "");
       return properties;
    }
 
