@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -61,15 +62,73 @@ public class NullFilteringTypeAdapterFactories {
             param));
    }
 
-   public static class IterableTypeAdapterFactory implements TypeAdapterFactory {
+   public static final class IterableTypeAdapter<E> extends TypeAdapter<Iterable<E>> {
+
+      private final TypeAdapter<E> elementAdapter;
+
+      public IterableTypeAdapter(TypeAdapter<E> elementAdapter) {
+         this.elementAdapter = elementAdapter;
+         nullSafe();
+      }
+
+      public void write(JsonWriter out, Iterable<E> value) throws IOException {
+         if (value == null) {
+            out.nullValue();
+            return;
+         }
+         out.beginArray();
+         for (E element : value)
+            elementAdapter.write(out, element);
+         out.endArray();
+      }
+
+      public Iterable<E> read(JsonReader in) throws IOException {
+         return readAndBuild(in, ImmutableList.<E> builder());
+      }
+
+      @SuppressWarnings("unchecked")
+      protected <C extends Iterable<E>, B extends ImmutableCollection.Builder<E>> C readAndBuild(JsonReader in,
+            B builder) throws IOException {
+         in.beginArray();
+         while (in.hasNext()) {
+            E element = elementAdapter.read(in);
+            if (element != null)
+               builder.add(element);
+         }
+         in.endArray();
+         return (C) builder.build();
+      }
+
+      @Override
+      public int hashCode() {
+         return elementAdapter.hashCode();
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null || getClass() != obj.getClass())
+            return false;
+         IterableTypeAdapter<?> that = IterableTypeAdapter.class.cast(obj);
+         return equal(this.elementAdapter, that.elementAdapter);
+      }
+
+      @Override
+      public String toString() {
+         return toStringHelper(this).add("elementAdapter", elementAdapter).toString();
+      }
+   }
+
+   public static class ImmutableListTypeAdapterFactory implements TypeAdapterFactory {
 
       protected final Class<?> declaring;
 
-      public IterableTypeAdapterFactory() {
-         this(Iterable.class);
+      public ImmutableListTypeAdapterFactory() {
+         this(ImmutableList.class);
       }
 
-      protected IterableTypeAdapterFactory(Class<?> declaring) {
+      protected ImmutableListTypeAdapterFactory(Class<?> declaring) {
          this.declaring = declaring;
       }
 
@@ -88,164 +147,124 @@ public class NullFilteringTypeAdapterFactories {
          return (TypeAdapter<I>) new IterableTypeAdapter<E>(elementAdapter);
       }
 
-      public static final class IterableTypeAdapter<E> extends TypeAdapter<Iterable<E>> {
-
-         private final TypeAdapter<E> elementAdapter;
-
-         public IterableTypeAdapter(TypeAdapter<E> elementAdapter) {
-            this.elementAdapter = elementAdapter;
-            nullSafe();
-         }
-
-         public void write(JsonWriter out, Iterable<E> value) throws IOException {
-            if (value == null) {
-               out.nullValue();
-               return;
-            }
-            out.beginArray();
-            for (E element : value)
-               elementAdapter.write(out, element);
-            out.endArray();
-         }
-
-         public Iterable<E> read(JsonReader in) throws IOException {
-            return readAndBuild(in, ImmutableList.<E> builder());
-         }
-
-         @SuppressWarnings("unchecked")
-         protected <C extends Iterable<E>, B extends ImmutableCollection.Builder<E>> C readAndBuild(JsonReader in,
-               B builder) throws IOException {
-            in.beginArray();
-            while (in.hasNext()) {
-               E element = elementAdapter.read(in);
-               if (element != null)
-                  builder.add(element);
-            }
-            in.endArray();
-            return (C) builder.build();
-         }
-
-         @Override
-         public int hashCode() {
-            return elementAdapter.hashCode();
-         }
-
-         @Override
-         public boolean equals(Object obj) {
-            if (this == obj)
-               return true;
-            if (obj == null || getClass() != obj.getClass())
-               return false;
-            IterableTypeAdapter<?> that = IterableTypeAdapter.class.cast(obj);
-            return equal(this.elementAdapter, that.elementAdapter);
-         }
-
-         @Override
-         public String toString() {
-            return toStringHelper(this).add("elementAdapter", elementAdapter).toString();
-         }
-      }
    }
 
-   public static class CollectionTypeAdapterFactory extends IterableTypeAdapterFactory {
+   public static class IterableTypeAdapterFactory extends ImmutableListTypeAdapterFactory {
+      public IterableTypeAdapterFactory() {
+         super(Iterable.class);
+      }
+   }
+   
+   public static class CollectionTypeAdapterFactory extends ImmutableListTypeAdapterFactory {
       public CollectionTypeAdapterFactory() {
          super(Collection.class);
       }
+   }
 
-      @SuppressWarnings("unchecked")
-      protected <E, I> TypeAdapter<I> newAdapter(TypeAdapter<E> elementAdapter) {
-         return (TypeAdapter<I>) new CollectionTypeAdapter<E>(elementAdapter);
-      }
-
-      public static final class CollectionTypeAdapter<E> extends TypeAdapter<Collection<E>> {
-
-         private final IterableTypeAdapterFactory.IterableTypeAdapter<E> delegate;
-
-         public CollectionTypeAdapter(TypeAdapter<E> elementAdapter) {
-            this.delegate = new IterableTypeAdapterFactory.IterableTypeAdapter<E>(elementAdapter);
-            nullSafe();
-         }
-
-         public void write(JsonWriter out, Collection<E> value) throws IOException {
-            this.delegate.write(out, value);
-         }
-
-         public Collection<E> read(JsonReader in) throws IOException {
-            return delegate.readAndBuild(in, ImmutableList.<E> builder());
-         }
-
-         @Override
-         public int hashCode() {
-            return delegate.hashCode();
-         }
-
-         @Override
-         public boolean equals(Object obj) {
-            if (this == obj)
-               return true;
-            if (obj == null || getClass() != obj.getClass())
-               return false;
-            CollectionTypeAdapter<?> that = CollectionTypeAdapter.class.cast(obj);
-            return equal(this.delegate, that.delegate);
-         }
-
-         @Override
-         public String toString() {
-            return toStringHelper(this).add("elementAdapter", delegate.elementAdapter).toString();
-         }
+   public static class ListTypeAdapterFactory extends ImmutableListTypeAdapterFactory {
+      public ListTypeAdapterFactory() {
+         super(List.class);
       }
    }
 
-   public static class SetTypeAdapterFactory extends IterableTypeAdapterFactory {
-      public SetTypeAdapterFactory() {
-         super(Set.class);
+   public static final class SetTypeAdapter<E> extends TypeAdapter<Set<E>> {
+
+      private final IterableTypeAdapter<E> delegate;
+
+      public SetTypeAdapter(TypeAdapter<E> elementAdapter) {
+         this.delegate = new IterableTypeAdapter<E>(elementAdapter);
+         nullSafe();
+      }
+
+      public void write(JsonWriter out, Set<E> value) throws IOException {
+         this.delegate.write(out, value);
+      }
+
+      public Set<E> read(JsonReader in) throws IOException {
+         return delegate.readAndBuild(in, ImmutableSet.<E> builder());
+      }
+
+      @Override
+      public int hashCode() {
+         return delegate.hashCode();
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null || getClass() != obj.getClass())
+            return false;
+         SetTypeAdapter<?> that = SetTypeAdapter.class.cast(obj);
+         return equal(this.delegate, that.delegate);
+      }
+
+      @Override
+      public String toString() {
+         return toStringHelper(this).add("elementAdapter", delegate.elementAdapter).toString();
+      }
+   }
+
+   public static class ImmutableSetTypeAdapterFactory extends ImmutableListTypeAdapterFactory {
+      public ImmutableSetTypeAdapterFactory() {
+         this(ImmutableSet.class);
+      }
+
+      protected ImmutableSetTypeAdapterFactory(Class<?> declaring) {
+         super(declaring);
       }
 
       @SuppressWarnings("unchecked")
       protected <E, I> TypeAdapter<I> newAdapter(TypeAdapter<E> elementAdapter) {
          return (TypeAdapter<I>) new SetTypeAdapter<E>(elementAdapter);
       }
+   }
 
-      public static final class SetTypeAdapter<E> extends TypeAdapter<Set<E>> {
-
-         private final IterableTypeAdapterFactory.IterableTypeAdapter<E> delegate;
-
-         public SetTypeAdapter(TypeAdapter<E> elementAdapter) {
-            this.delegate = new IterableTypeAdapterFactory.IterableTypeAdapter<E>(elementAdapter);
-            nullSafe();
-         }
-
-         public void write(JsonWriter out, Set<E> value) throws IOException {
-            this.delegate.write(out, value);
-         }
-
-         public Set<E> read(JsonReader in) throws IOException {
-            return delegate.readAndBuild(in, ImmutableSet.<E> builder());
-         }
-
-         @Override
-         public int hashCode() {
-            return delegate.hashCode();
-         }
-
-         @Override
-         public boolean equals(Object obj) {
-            if (this == obj)
-               return true;
-            if (obj == null || getClass() != obj.getClass())
-               return false;
-            SetTypeAdapter<?> that = SetTypeAdapter.class.cast(obj);
-            return equal(this.delegate, that.delegate);
-         }
-
-         @Override
-         public String toString() {
-            return toStringHelper(this).add("elementAdapter", delegate.elementAdapter).toString();
-         }
+   public static class SetTypeAdapterFactory extends ImmutableSetTypeAdapterFactory {
+      public SetTypeAdapterFactory() {
+         super(Set.class);
       }
    }
 
-   public static class FluentIterableTypeAdapterFactory extends IterableTypeAdapterFactory {
+   private static final class FluentIterableTypeAdapter<E> extends TypeAdapter<FluentIterable<E>> {
+
+      private final IterableTypeAdapter<E> delegate;
+
+      public FluentIterableTypeAdapter(TypeAdapter<E> elementAdapter) {
+         this.delegate = new IterableTypeAdapter<E>(elementAdapter);
+         nullSafe();
+      }
+
+      public void write(JsonWriter out, FluentIterable<E> value) throws IOException {
+         this.delegate.write(out, value.toList());
+      }
+
+      public FluentIterable<E> read(JsonReader in) throws IOException {
+         return FluentIterable.from(delegate.read(in));
+      }
+
+      @Override
+      public int hashCode() {
+         return delegate.hashCode();
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null || getClass() != obj.getClass())
+            return false;
+         FluentIterableTypeAdapter<?> that = FluentIterableTypeAdapter.class.cast(obj);
+         return equal(this.delegate, that.delegate);
+      }
+
+      @Override
+      public String toString() {
+         return toStringHelper(this).add("elementAdapter", delegate.elementAdapter).toString();
+      }
+   }
+
+   public static class FluentIterableTypeAdapterFactory extends ImmutableListTypeAdapterFactory {
       public FluentIterableTypeAdapterFactory() {
          super(FluentIterable.class);
       }
@@ -254,43 +273,64 @@ public class NullFilteringTypeAdapterFactories {
       protected <E, I> TypeAdapter<I> newAdapter(TypeAdapter<E> elementAdapter) {
          return (TypeAdapter<I>) new FluentIterableTypeAdapter<E>(elementAdapter);
       }
+   }
 
-      public static final class FluentIterableTypeAdapter<E> extends TypeAdapter<FluentIterable<E>> {
+   private static final class MapTypeAdapter<K, V> extends TypeAdapter<Map<K, V>> {
 
-         private final IterableTypeAdapterFactory.IterableTypeAdapter<E> delegate;
+      protected final TypeAdapter<K> keyAdapter;
+      protected final TypeAdapter<V> valueAdapter;
 
-         public FluentIterableTypeAdapter(TypeAdapter<E> elementAdapter) {
-            this.delegate = new IterableTypeAdapterFactory.IterableTypeAdapter<E>(elementAdapter);
-            nullSafe();
+      protected MapTypeAdapter(TypeAdapter<K> keyAdapter, TypeAdapter<V> valueAdapter) {
+         this.keyAdapter = keyAdapter;
+         this.valueAdapter = valueAdapter;
+         nullSafe();
+      }
+
+      public void write(JsonWriter out, Map<K, V> value) throws IOException {
+         if (value == null) {
+            out.nullValue();
+            return;
          }
-
-         public void write(JsonWriter out, FluentIterable<E> value) throws IOException {
-            this.delegate.write(out, value.toList());
+         out.beginObject();
+         for (Map.Entry<K, V> element : value.entrySet()) {
+            out.name(String.valueOf(element.getKey()));
+            valueAdapter.write(out, element.getValue());
          }
+         out.endObject();
+      }
 
-         public FluentIterable<E> read(JsonReader in) throws IOException {
-            return FluentIterable.from(delegate.read(in));
+      public Map<K, V> read(JsonReader in) throws IOException {
+         ImmutableMap.Builder<K, V> result = ImmutableMap.builder();
+         in.beginObject();
+         while (in.hasNext()) {
+            JsonReaderInternalAccess.INSTANCE.promoteNameToValue(in);
+            K name = keyAdapter.read(in);
+            V value = valueAdapter.read(in);
+            if (value != null)
+               result.put(name, value);
          }
+         in.endObject();
+         return result.build();
+      }
 
-         @Override
-         public int hashCode() {
-            return delegate.hashCode();
-         }
+      @Override
+      public int hashCode() {
+         return Objects.hashCode(keyAdapter, valueAdapter);
+      }
 
-         @Override
-         public boolean equals(Object obj) {
-            if (this == obj)
-               return true;
-            if (obj == null || getClass() != obj.getClass())
-               return false;
-            FluentIterableTypeAdapter<?> that = FluentIterableTypeAdapter.class.cast(obj);
-            return equal(this.delegate, that.delegate);
-         }
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null || getClass() != obj.getClass())
+            return false;
+         MapTypeAdapter<?, ?> that = MapTypeAdapter.class.cast(obj);
+         return equal(this.keyAdapter, that.keyAdapter) && equal(this.valueAdapter, that.valueAdapter);
+      }
 
-         @Override
-         public String toString() {
-            return toStringHelper(this).add("elementAdapter", delegate.elementAdapter).toString();
-         }
+      @Override
+      public String toString() {
+         return toStringHelper(this).add("keyAdapter", keyAdapter).add("valueAdapter", valueAdapter).toString();
       }
    }
 
@@ -321,64 +361,49 @@ public class NullFilteringTypeAdapterFactories {
       protected <K, V, T> TypeAdapter<T> newAdapter(TypeAdapter<K> keyAdapter, TypeAdapter<V> valueAdapter) {
          return (TypeAdapter<T>) new MapTypeAdapter<K, V>(keyAdapter, valueAdapter);
       }
+   }
 
-      public static final class MapTypeAdapter<K, V> extends TypeAdapter<Map<K, V>> {
+   private static final class MultimapTypeAdapter<K, V> extends TypeAdapter<Multimap<K, V>> {
 
-         protected final TypeAdapter<K> keyAdapter;
-         protected final TypeAdapter<V> valueAdapter;
+      private final MapTypeAdapter<K, Iterable<V>> delegate;
 
-         protected MapTypeAdapter(TypeAdapter<K> keyAdapter, TypeAdapter<V> valueAdapter) {
-            this.keyAdapter = keyAdapter;
-            this.valueAdapter = valueAdapter;
-            nullSafe();
-         }
+      public MultimapTypeAdapter(TypeAdapter<K> keyAdapter, TypeAdapter<V> valueAdapter) {
+         this.delegate = new MapTypeAdapter<K, Iterable<V>>(keyAdapter,
+               new IterableTypeAdapter<V>(valueAdapter));
+         nullSafe();
+      }
 
-         public void write(JsonWriter out, Map<K, V> value) throws IOException {
-            if (value == null) {
-               out.nullValue();
-               return;
-            }
-            out.beginObject();
-            for (Map.Entry<K, V> element : value.entrySet()) {
-               out.name(String.valueOf(element.getKey()));
-               valueAdapter.write(out, element.getValue());
-            }
-            out.endObject();
-         }
+      @SuppressWarnings("unchecked")
+      public void write(JsonWriter out, Multimap<K, V> value) throws IOException {
+         this.delegate.write(out, Map.class.cast(value.asMap()));
+      }
 
-         public Map<K, V> read(JsonReader in) throws IOException {
-            ImmutableMap.Builder<K, V> result = ImmutableMap.builder();
-            in.beginObject();
-            while (in.hasNext()) {
-               JsonReaderInternalAccess.INSTANCE.promoteNameToValue(in);
-               K name = keyAdapter.read(in);
-               V value = valueAdapter.read(in);
-               if (value != null)
-                  result.put(name, value);
-            }
-            in.endObject();
-            return result.build();
-         }
+      public Multimap<K, V> read(JsonReader in) throws IOException {
+         ImmutableMultimap.Builder<K, V> builder = ImmutableMultimap.<K, V> builder();
+         for (Entry<K, Iterable<V>> entry : delegate.read(in).entrySet())
+            builder.putAll(entry.getKey(), entry.getValue());
+         return builder.build();
+      }
 
-         @Override
-         public int hashCode() {
-            return Objects.hashCode(keyAdapter, valueAdapter);
-         }
+      @Override
+      public int hashCode() {
+         return delegate.hashCode();
+      }
 
-         @Override
-         public boolean equals(Object obj) {
-            if (this == obj)
-               return true;
-            if (obj == null || getClass() != obj.getClass())
-               return false;
-            MapTypeAdapter<?, ?> that = MapTypeAdapter.class.cast(obj);
-            return equal(this.keyAdapter, that.keyAdapter) && equal(this.valueAdapter, that.valueAdapter);
-         }
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null || getClass() != obj.getClass())
+            return false;
+         MultimapTypeAdapter<?, ?> that = MultimapTypeAdapter.class.cast(obj);
+         return equal(this.delegate, that.delegate);
+      }
 
-         @Override
-         public String toString() {
-            return toStringHelper(this).add("keyAdapter", keyAdapter).add("valueAdapter", valueAdapter).toString();
-         }
+      @Override
+      public String toString() {
+         return toStringHelper(this).add("keyAdapter", delegate.keyAdapter)
+               .add("valueAdapter", delegate.valueAdapter).toString();
       }
    }
 
@@ -394,47 +419,5 @@ public class NullFilteringTypeAdapterFactories {
          return (TypeAdapter<T>) new MultimapTypeAdapter<K, V>(keyAdapter, valueAdapter);
       }
 
-      public static final class MultimapTypeAdapter<K, V> extends TypeAdapter<Multimap<K, V>> {
-
-         private final MapTypeAdapterFactory.MapTypeAdapter<K, Collection<V>> delegate;
-
-         public MultimapTypeAdapter(TypeAdapter<K> keyAdapter, TypeAdapter<V> valueAdapter) {
-            this.delegate = new MapTypeAdapterFactory.MapTypeAdapter<K, Collection<V>>(keyAdapter,
-                  new CollectionTypeAdapterFactory.CollectionTypeAdapter<V>(valueAdapter));
-            nullSafe();
-         }
-
-         public void write(JsonWriter out, Multimap<K, V> value) throws IOException {
-            this.delegate.write(out, value.asMap());
-         }
-
-         public Multimap<K, V> read(JsonReader in) throws IOException {
-            ImmutableMultimap.Builder<K, V> builder = ImmutableMultimap.<K, V> builder();
-            for (Entry<K, Collection<V>> entry : delegate.read(in).entrySet())
-               builder.putAll(entry.getKey(), entry.getValue());
-            return builder.build();
-         }
-
-         @Override
-         public int hashCode() {
-            return delegate.hashCode();
-         }
-
-         @Override
-         public boolean equals(Object obj) {
-            if (this == obj)
-               return true;
-            if (obj == null || getClass() != obj.getClass())
-               return false;
-            MultimapTypeAdapter<?, ?> that = MultimapTypeAdapter.class.cast(obj);
-            return equal(this.delegate, that.delegate);
-         }
-
-         @Override
-         public String toString() {
-            return toStringHelper(this).add("keyAdapter", delegate.keyAdapter)
-                  .add("valueAdapter", delegate.valueAdapter).toString();
-         }
-      }
    }
 }
