@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertNull;
-import static org.testng.Assert.fail;
 
 import java.beans.ConstructorProperties;
 import java.io.IOException;
@@ -39,6 +38,7 @@ import org.jclouds.json.internal.NamingStrategies.ExtractSerializedName;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -126,10 +126,10 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactoryTest
       final int bar;
 
       @Inject
-      ValidatedConstructor(@Named("foo") int foo, @Named("bar") int bar) {
-         if (foo < 0)
-            throw new IllegalArgumentException("negative!");
-         this.foo = foo;
+      ValidatedConstructor(@Named("foo") Optional<Integer> foo, @Named("bar") int bar) {
+         if (!foo.isPresent())
+            throw new IllegalArgumentException("absent!");
+         this.foo = foo.get();
          this.bar = bar;
       }
 
@@ -139,13 +139,15 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactoryTest
       }
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class, expectedExceptionsMessageRegExp = "negative!")
-   public void testValidatedConstructor() throws IOException {
-      TypeAdapter<ValidatedConstructor> adapter = parameterizedCtorFactory.create(gson,
-            TypeToken.get(ValidatedConstructor.class));
-      assertEquals(new ValidatedConstructor(0, 1), adapter.fromJson("{\"foo\":0,\"bar\":1}"));
-      adapter.fromJson("{\"foo\":-1,\"bar\":1}");
-   }
+    @Test(expectedExceptions = IllegalArgumentException.class, expectedExceptionsMessageRegExp = "absent!")
+    public void testValidatedConstructor() throws IOException {
+        Gson gson = new GsonBuilder().registerTypeAdapterFactory(parameterizedCtorFactory)
+                .registerTypeAdapterFactory(new OptionalTypeAdapterFactory()).create();
+
+        assertEquals(new ValidatedConstructor(Optional.of(0), 1),
+                gson.fromJson("{\"foo\":0,\"bar\":1}", ValidatedConstructor.class));
+        gson.fromJson("{\"bar\":1}", ValidatedConstructor.class);
+    }
 
    private static class GenericParamsCopiedIn {
       final List<String> foo;
@@ -222,8 +224,8 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactoryTest
    }
 
    public void checkSimpleComposedObject() throws IOException {
-      ValidatedConstructor x = new ValidatedConstructor(0, 1);
-      ValidatedConstructor y = new ValidatedConstructor(1, 2);
+      ValidatedConstructor x = new ValidatedConstructor(Optional.of(0), 1);
+      ValidatedConstructor y = new ValidatedConstructor(Optional.of(1), 2);
       TypeAdapter<ComposedObjects> adapter = parameterizedCtorFactory
             .create(gson, TypeToken.get(ComposedObjects.class));
       assertEquals(new ComposedObjects(x, y),
