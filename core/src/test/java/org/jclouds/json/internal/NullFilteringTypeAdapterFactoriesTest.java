@@ -23,12 +23,16 @@ import static org.testng.Assert.assertEquals;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.CollectionTypeAdapterFactory;
 import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.FluentIterableTypeAdapterFactory;
+import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.ImmutableListTypeAdapterFactory;
+import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.ImmutableSetTypeAdapterFactory;
 import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.IterableTypeAdapterFactory;
+import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.ListTypeAdapterFactory;
 import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.MapTypeAdapterFactory;
 import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.MultimapTypeAdapterFactory;
 import org.jclouds.json.internal.NullFilteringTypeAdapterFactories.SetTypeAdapterFactory;
@@ -149,6 +153,46 @@ public class NullFilteringTypeAdapterFactoriesTest {
             ImmutableList.of(new Resource("i-foo", "foo"), new Resource("i-bar", "bar")));
    }
 
+   private Gson list = new GsonBuilder().registerTypeAdapterFactory(new ListTypeAdapterFactory()).create();
+   private Type listType = new TypeToken<List<String>>() {
+      private static final long serialVersionUID = 1L;
+   }.getType();
+   private Type listResourceType = new TypeToken<List<Resource>>() {
+      private static final long serialVersionUID = 1L;
+   }.getType();
+
+   public void testList() {
+      Iterable<String> noNulls = list.fromJson("[\"value\",\"a test string!\"]", listType);
+      assertEquals(noNulls, ImmutableList.of("value", "a test string!"));
+      Iterable<String> withNull = list.fromJson("[null,\"a test string!\"]", listType);
+      assertEquals(withNull, ImmutableList.of("a test string!"));
+      Iterable<String> withDupes = list.fromJson("[\"value\",\"value\"]", listType);
+      assertEquals(withDupes, ImmutableList.of("value", "value"));
+      Iterable<Resource> resources = list.fromJson(
+            "[{\"id\":\"i-foo\",\"name\":\"foo\"},{\"id\":\"i-bar\",\"name\":\"bar\"}]", listResourceType);
+      assertEquals(resources, ImmutableList.of(new Resource("i-foo", "foo"), new Resource("i-bar", "bar")));
+   }
+
+   private Gson immutableList = new GsonBuilder().registerTypeAdapterFactory(new ImmutableListTypeAdapterFactory()).create();
+   private Type immutableListType = new TypeToken<ImmutableList<String>>() {
+      private static final long serialVersionUID = 1L;
+   }.getType();
+   private Type immutableListResourceType = new TypeToken<ImmutableList<Resource>>() {
+      private static final long serialVersionUID = 1L;
+   }.getType();
+
+   public void testImmutableList() {
+      Iterable<String> noNulls = immutableList.fromJson("[\"value\",\"a test string!\"]", immutableListType);
+      assertEquals(noNulls, ImmutableList.of("value", "a test string!"));
+      Iterable<String> withNull = immutableList.fromJson("[null,\"a test string!\"]", immutableListType);
+      assertEquals(withNull, ImmutableList.of("a test string!"));
+      Iterable<String> withDupes = immutableList.fromJson("[\"value\",\"value\"]", immutableListType);
+      assertEquals(withDupes, ImmutableList.of("value", "value"));
+      Iterable<Resource> resources = immutableList.fromJson(
+            "[{\"id\":\"i-foo\",\"name\":\"foo\"},{\"id\":\"i-bar\",\"name\":\"bar\"}]", immutableListResourceType);
+      assertEquals(resources, ImmutableList.of(new Resource("i-foo", "foo"), new Resource("i-bar", "bar")));
+   }
+
    private Gson set = new GsonBuilder().registerTypeAdapterFactory(new SetTypeAdapterFactory()).create();
    private Type setType = new TypeToken<Set<String>>() {
       private static final long serialVersionUID = 1L;
@@ -166,6 +210,26 @@ public class NullFilteringTypeAdapterFactoriesTest {
       assertEquals(withDupes, ImmutableSet.of("value"));
       Set<Resource> resources = set.fromJson(
             "[{\"id\":\"i-foo\",\"name\":\"foo\"},{\"id\":\"i-bar\",\"name\":\"bar\"}]", setResourceType);
+      assertEquals(resources, ImmutableSet.of(new Resource("i-foo", "foo"), new Resource("i-bar", "bar")));
+   }
+
+   private Gson immutableSet = new GsonBuilder().registerTypeAdapterFactory(new ImmutableSetTypeAdapterFactory()).create();
+   private Type immutableSetType = new TypeToken<ImmutableSet<String>>() {
+      private static final long serialVersionUID = 1L;
+   }.getType();
+   private Type immutableSetResourceType = new TypeToken<ImmutableSet<Resource>>() {
+      private static final long serialVersionUID = 1L;
+   }.getType();
+
+   public void testImmutableSet() {
+      Iterable<String> noNulls = immutableSet.fromJson("[\"value\",\"a test string!\"]", immutableSetType);
+      assertEquals(noNulls, ImmutableSet.of("value", "a test string!"));
+      Iterable<String> withNull = immutableSet.fromJson("[null,\"a test string!\"]", immutableSetType);
+      assertEquals(withNull, ImmutableSet.of("a test string!"));
+      Iterable<String> withDupes = immutableSet.fromJson("[\"value\",\"value\"]", immutableSetType);
+      assertEquals(withDupes, ImmutableSet.of("value", "value"));
+      Iterable<Resource> resources = immutableSet.fromJson(
+            "[{\"id\":\"i-foo\",\"name\":\"foo\"},{\"id\":\"i-bar\",\"name\":\"bar\"}]", immutableSetResourceType);
       assertEquals(resources, ImmutableSet.of(new Resource("i-foo", "foo"), new Resource("i-bar", "bar")));
    }
 
