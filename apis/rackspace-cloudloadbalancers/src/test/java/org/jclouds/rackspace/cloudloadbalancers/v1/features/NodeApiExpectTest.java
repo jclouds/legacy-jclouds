@@ -30,8 +30,8 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.cloudloadbalancers.v1.CloudLoadBalancersApi;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.Metadata;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.Node;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.NodeAttributes;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.NodeRequest;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.NodeUpdate;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.NodeAdd;
 import org.jclouds.rackspace.cloudloadbalancers.v1.features.NodeApi;
 import org.jclouds.rackspace.cloudloadbalancers.v1.internal.BaseCloudLoadBalancerApiExpectTest;
 import org.testng.annotations.Test;
@@ -84,31 +84,31 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/nodes-list.json")).build()
       ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
 
-      NodeRequest nodeRequest1 = NodeRequest.builder()
+      NodeAdd nodeAdd1 = NodeAdd.builder()
             .address("10.1.1.1")
-            .condition(NodeRequest.Condition.ENABLED)
+            .condition(Node.Condition.ENABLED)
             .port(80)
             .weight(3)
             .build();
       
-      NodeRequest nodeRequest2 = NodeRequest.builder()
+      NodeAdd nodeAdd2 = NodeAdd.builder()
             .address("10.1.1.2")
-            .condition(NodeRequest.Condition.ENABLED)
+            .condition(Node.Condition.ENABLED)
             .type(Node.Type.SECONDARY)
             .port(80)
             .weight(8)
             .build();
 
-      NodeRequest nodeRequest3 = NodeRequest.builder()
+      NodeAdd nodeAdd3 = NodeAdd.builder()
             .address("10.1.1.3")
-            .condition(NodeRequest.Condition.DISABLED)
+            .condition(Node.Condition.DISABLED)
             .port(80)
             .weight(12)
             .build();
 
-      Set<NodeRequest> nodeRequests = ImmutableSortedSet.<NodeRequest> of(nodeRequest1, nodeRequest2, nodeRequest3);
+      Set<NodeAdd> nodeAdds = ImmutableSortedSet.<NodeAdd> of(nodeAdd1, nodeAdd2, nodeAdd3);
       
-      Set<Node> nodes = api.add(nodeRequests);
+      Set<Node> nodes = api.add(nodeAdds);
       assertEquals(nodes, getExpectedNodes());
    }
 
@@ -121,12 +121,12 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
             HttpResponse.builder().statusCode(200).build()
       ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
 
-      NodeAttributes nodeAttributes = NodeAttributes.Builder
-            .condition(NodeRequest.Condition.DISABLED)
-            .type(NodeRequest.Type.SECONDARY)
+      NodeUpdate nodeUpdate = NodeUpdate.Builder
+            .condition(Node.Condition.DISABLED)
+            .type(Node.Type.SECONDARY)
             .weight(20);
 
-      api.update(410, nodeAttributes);
+      api.update(410, nodeUpdate);
    }
 
    public void testRemoveNodeFromLoadBalancer() {
