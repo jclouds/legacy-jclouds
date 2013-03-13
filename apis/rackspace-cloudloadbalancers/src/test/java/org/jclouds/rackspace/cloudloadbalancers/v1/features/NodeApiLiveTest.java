@@ -37,11 +37,11 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancer;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerRequest;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerCreate;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.Metadata;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.Node;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.NodeAttributes;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.NodeRequest;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.NodeUpdate;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.NodeAdd;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancer.Status;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.VirtualIP.Type;
 import org.jclouds.rackspace.cloudloadbalancers.v1.features.LoadBalancerApi;
@@ -62,8 +62,8 @@ public class NodeApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
       for (String zone : clbApi.getConfiguredZones()) {
          Logger.getAnonymousLogger().info("starting lb in zone " + zone);
          LoadBalancer lb = clbApi.getLoadBalancerApiForZone(zone).create(
-                  LoadBalancerRequest.builder().name(prefix + "-" + zone).protocol("HTTP").port(80).virtualIPType(
-                           Type.PUBLIC).node(NodeRequest.builder().address("192.168.1.1").port(8080).build()).build());
+                  LoadBalancerCreate.builder().name(prefix + "-" + zone).protocol("HTTP").port(80).virtualIPType(
+                           Type.PUBLIC).node(NodeAdd.builder().address("192.168.1.1").port(8080).build()).build());
          nodes.put(lb, new HashSet<Node>());
 
          assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(lb.getRegion())).apply(lb));
@@ -78,7 +78,7 @@ public class NodeApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
          String region = lb.getRegion();
          Logger.getAnonymousLogger().info("starting node on loadbalancer " + lb.getId() + " in region " + region);
          Set<Node> newNodes = clbApi.getNodeApiForZoneAndLoadBalancer(region, lb.getId()).add(
-                  ImmutableSet.<NodeRequest> of(NodeRequest.builder().address("192.168.1.2").port(8080).build()));
+                  ImmutableSet.<NodeAdd> of(NodeAdd.builder().address("192.168.1.2").port(8080).build()));
 
          for (Node n : newNodes) {
             assertEquals(n.getStatus(), Node.Status.ONLINE);
@@ -97,7 +97,7 @@ public class NodeApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
          for (Node n : entry.getValue()) {
             String region = entry.getKey().getRegion();
             clbApi.getNodeApiForZoneAndLoadBalancer(region, entry.getKey().getId()).update(n.getId(),
-                     NodeAttributes.Builder.weight(23));
+                     NodeUpdate.Builder.weight(23));
             assertEquals(clbApi.getNodeApiForZoneAndLoadBalancer(region, entry.getKey().getId()).get(n.getId())
                      .getStatus(), Node.Status.ONLINE);
 
