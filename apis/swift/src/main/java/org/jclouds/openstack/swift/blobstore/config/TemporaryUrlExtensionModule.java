@@ -19,6 +19,10 @@
 package org.jclouds.openstack.swift.blobstore.config;
 
 import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+
+import java.util.concurrent.TimeUnit;
+import javax.inject.Singleton;
 
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.date.TimeStamp;
@@ -33,7 +37,10 @@ import org.jclouds.openstack.swift.extensions.TemporaryUrlKeyAsyncApi;
 import org.jclouds.openstack.swift.suppliers.ReturnOrFetchTemporaryUrlKey;
 
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
@@ -85,7 +92,24 @@ public abstract class TemporaryUrlExtensionModule<A extends CommonSwiftAsyncClie
       bindRequestSigner();
       bindTemporaryUrlKeyApi();
       bind(new TypeLiteral<Supplier<String>>() {
-      }).annotatedWith(TemporaryUrlKey.class).to(ReturnOrFetchTemporaryUrlKey.class);
+      }).annotatedWith(TemporaryUrlKey.class).to(ReturnOrFetchTemporaryUrlKeyMemoized.class);
+   }
+
+   @Singleton
+   private static class ReturnOrFetchTemporaryUrlKeyMemoized implements Supplier<String> {
+      private final Supplier<String> delegate;
+
+      @Inject
+      private ReturnOrFetchTemporaryUrlKeyMemoized(TemporaryUrlKeyApi client,
+            @Named(PROPERTY_SESSION_INTERVAL) long sessionInterval) {
+         this.delegate = Suppliers.memoizeWithExpiration(
+               new ReturnOrFetchTemporaryUrlKey(client), sessionInterval, TimeUnit.SECONDS);
+      }
+
+      @Override
+      public String get() {
+         return delegate.get();
+      }
    }
 
    protected abstract void bindRequestSigner();
