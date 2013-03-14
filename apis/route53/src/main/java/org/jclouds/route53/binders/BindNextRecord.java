@@ -37,7 +37,8 @@ public class BindNextRecord implements Binder {
       NextRecord from = NextRecord.class.cast(payload);
       Builder<?> builder = request.toBuilder();
       builder.addQueryParam("name", from.getName());
-      builder.addQueryParam("type", from.getType().toString());
+      if (from.getType().isPresent())
+         builder.addQueryParam("type", from.getType().get());
       if (from.getIdentifier().isPresent())
          builder.addQueryParam("identifier", from.getIdentifier().get());
       return (R) builder.build();
