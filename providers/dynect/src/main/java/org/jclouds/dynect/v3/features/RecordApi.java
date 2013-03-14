@@ -54,6 +54,14 @@ public interface RecordApi {
    FluentIterable<RecordId> list() throws JobStillRunningException;
 
    /**
+    * Retrieves a list of resource record ids for all records of the fqdn in the given zone
+    * 
+    * @throws JobStillRunningException
+    *            if a different job in the session is still running
+    */
+   FluentIterable<RecordId> listByFQDN(String fqdn) throws JobStillRunningException;
+
+   /**
     * Retrieves a list of resource record ids for all records of the fqdn and type in the given zone
     * 
     * @throws JobStillRunningException

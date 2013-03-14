@@ -352,6 +352,23 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
                    new ListRecordsResponseTest().expected().toString());
    }
 
+   HttpRequest listByFQDN = HttpRequest.builder().method("GET")
+         .endpoint("https://api2.dynect.net/REST/AllRecord/jclouds.org/www.foo.com")
+         .addHeader("API-Version", "3.3.8")
+         .addHeader(CONTENT_TYPE, APPLICATION_JSON)
+         .addHeader("Auth-Token", authToken).build();   
+
+   public void testListByFQDNWhenResponseIs2xx() {
+      DynECTApi success = requestsSendResponses(createSession, createSessionResponse, listByFQDN, listResponse);
+      assertEquals(success.getRecordApiForZone("jclouds.org").listByFQDN("www.foo.com").toString(),
+      new ListRecordsResponseTest().expected().toString());
+   }
+   
+   public void testListByFQDNWhenResponseIs404() {
+      DynECTApi fail = requestsSendResponses(createSession, createSessionResponse, listByFQDN, notFound);
+      assertTrue(fail.getRecordApiForZone("jclouds.org").listByFQDN("www.foo.com").isEmpty());
+   }
+
    HttpRequest listByFQDNAndType = HttpRequest.builder().method("GET")
                                               .endpoint("https://api2.dynect.net/REST/ARecord/jclouds.org/www.foo.com")
                                               .addHeader("API-Version", "3.3.8")

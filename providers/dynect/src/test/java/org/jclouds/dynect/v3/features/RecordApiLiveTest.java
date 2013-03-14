@@ -247,7 +247,19 @@ public class RecordApiLiveTest extends BaseDynECTApiLiveTest {
       checkRecord(newRecord);
    }
 
-   @Test(dependsOnMethods = "testListByFQDNAndType")
+   @Test(dependsOnMethods = "testCreateRecord")
+   public void testListByFQDN() {
+      id = api(zoneFQDN).listByFQDN(record.getFQDN()).toList().get(0);
+      getAnonymousLogger().info(id.toString());
+      Record<? extends Map<String, Object>> newRecord = api(zoneFQDN).get(id);
+      assertEquals(newRecord.getFQDN(), record.getFQDN());
+      assertEquals(newRecord.getType(), record.getType());
+      assertEquals(newRecord.getTTL(), record.getTTL());
+      assertEquals(newRecord.getRData(), record.getRData());
+      checkRecord(newRecord);
+   }
+
+   @Test(dependsOnMethods = { "testListByFQDNAndType", "testListByFQDN" })
    public void testDeleteRecord() {
       Job job = api(zoneFQDN).scheduleDelete(id);
       checkNotNull(job, "unable to delete record %s", id);
