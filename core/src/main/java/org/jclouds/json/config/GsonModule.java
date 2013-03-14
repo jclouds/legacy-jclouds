@@ -106,14 +106,14 @@ public class GsonModule extends AbstractModule {
       // simple (type adapters)
       builder.registerTypeAdapter(Properties.class, propertiesAdapter.nullSafe());
       builder.registerTypeAdapter(Date.class, adapter.nullSafe());
-      builder.registerTypeAdapter(new TypeToken<List<Byte>>() {
-      }.getType(), byteListAdapter.nullSafe());
       builder.registerTypeAdapter(byte[].class, byteArrayAdapter.nullSafe());
       builder.registerTypeAdapter(JsonBall.class, jsonAdapter.nullSafe());
       builder.registerTypeAdapterFactory(optional);
       builder.registerTypeAdapterFactory(iterable);
       builder.registerTypeAdapterFactory(collection);
       builder.registerTypeAdapterFactory(list);
+      builder.registerTypeAdapter(new TypeToken<List<Byte>>() {
+      }.getType(), byteListAdapter.nullSafe());
       builder.registerTypeAdapterFactory(immutableList);
       builder.registerTypeAdapterFactory(set);
       builder.registerTypeAdapterFactory(immutableSet);
