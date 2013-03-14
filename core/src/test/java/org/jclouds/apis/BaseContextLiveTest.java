@@ -108,7 +108,7 @@ public abstract class BaseContextLiveTest<C extends Context> {
     */
    protected ApiMetadata createApiMetadata() {
       try {
-         return (ApiMetadata) Apis.withId(provider);
+         return Apis.withId(provider);
       } catch (NoSuchElementException e) {
          return null;
       }
@@ -123,7 +123,7 @@ public abstract class BaseContextLiveTest<C extends Context> {
    protected ContextBuilder newBuilder() {
       if (provider != null)
          try {
-            return (ContextBuilder) ContextBuilder.newBuilder(provider);
+            return ContextBuilder.newBuilder(provider);
          } catch (NoSuchElementException e){
             Logger.getAnonymousLogger()
                   .warning("provider ["

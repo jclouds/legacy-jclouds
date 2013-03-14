@@ -80,7 +80,7 @@ public class ContainerNameEnumerationResultsHandlerTest extends BaseHandlerTest 
             URI.create("http://myaccount.blob.core.windows.net/mycontainer"), "myfolder/", null, 4, "newblob2.txt",
             null, ImmutableSet.<String> of("myfolder/"));
 
-      ListBlobsResponse result = (ListBlobsResponse) factory.create(
+      ListBlobsResponse result = factory.create(
             injector.getInstance(ContainerNameEnumerationResultsHandler.class)).parse(is);
 
       assertEquals(result, list);
@@ -99,7 +99,7 @@ public class ContainerNameEnumerationResultsHandlerTest extends BaseHandlerTest 
             null, null, 1, "2!68!MDAwMDA2IWFwcGxlcyEwMDAwMjghOTk5OS0xMi0zMVQyMzo1OTo1OS45OTk5OTk5WiE-", "/",
             Sets.<String> newTreeSet());
 
-      ListBlobsResponse result = (ListBlobsResponse) factory.create(
+      ListBlobsResponse result = factory.create(
             injector.getInstance(ContainerNameEnumerationResultsHandler.class)).parse(is);
 
       assertEquals(result, list);

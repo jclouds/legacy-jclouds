@@ -68,7 +68,7 @@ public class CreateContainerOptions extends BaseHttpRequestOptions {
 
       public static CreateContainerOptions withMetadata(Map<String, String> metadata) {
          CreateContainerOptions options = new CreateContainerOptions();
-         return (CreateContainerOptions) options.withMetadata(metadata);
+         return options.withMetadata(metadata);
       }
 	  
    }

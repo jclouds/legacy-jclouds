@@ -124,7 +124,7 @@ public class DescribeImagesResponseHandlerTest {
          }
 
       });
-      ParseSax<Set<Image>> parser = (ParseSax<Set<Image>>) injector.getInstance(ParseSax.Factory.class).create(
+      ParseSax<Set<Image>> parser = injector.getInstance(ParseSax.Factory.class).create(
                injector.getInstance(DescribeImagesResponseHandler.class));
       return parser;
    }

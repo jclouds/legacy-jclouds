@@ -49,7 +49,7 @@ public class InternetServiceHandlerTest extends BaseHandlerTest {
    public void test1() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/InternetService.xml");
 
-      InternetService result = (InternetService) factory.create(injector.getInstance(InternetServiceHandler.class))
+      InternetService result = factory.create(injector.getInstance(InternetServiceHandler.class))
             .parse(is);
       assertEquals(result, new InternetService("IS_for_Jim", null, new PublicIpAddress("10.1.22.159", null), 80,
             Protocol.HTTP, false, 1, "Some test service"));
@@ -58,7 +58,7 @@ public class InternetServiceHandlerTest extends BaseHandlerTest {
    public void test2() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/InternetService2.xml");
 
-      InternetService result = (InternetService) factory.create(injector.getInstance(InternetServiceHandler.class))
+      InternetService result = factory.create(injector.getInstance(InternetServiceHandler.class))
             .parse(is);
       assertEquals(result, new InternetService("IS_for_Jim2", URI
             .create("https://services.vcloudexpress.terremark.com/api/v0.8/InternetServices/524"), new PublicIpAddress(

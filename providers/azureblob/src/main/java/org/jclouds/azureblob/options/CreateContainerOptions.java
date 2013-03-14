@@ -72,7 +72,7 @@ public class CreateContainerOptions extends CreateOptions {
        */
       public static CreateContainerOptions withMetadata(Multimap<String, String> metadata) {
          CreateContainerOptions options = new CreateContainerOptions();
-         return (CreateContainerOptions) options.withMetadata(metadata);
+         return options.withMetadata(metadata);
       }
 
    }

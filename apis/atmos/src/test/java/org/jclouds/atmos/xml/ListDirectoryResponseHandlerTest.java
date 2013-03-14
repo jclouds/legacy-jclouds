@@ -41,7 +41,7 @@ import com.google.common.collect.Sets;
 public class ListDirectoryResponseHandlerTest extends BaseHandlerTest {
 
    ParseSax<Set<DirectoryEntry>> createParser() {
-      ParseSax<Set<DirectoryEntry>> parser = (ParseSax<Set<DirectoryEntry>>) factory
+      ParseSax<Set<DirectoryEntry>> parser = factory
                .create(injector.getInstance(ListDirectoryResponseHandler.class));
       return parser;
    }

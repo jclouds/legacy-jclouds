@@ -156,7 +156,7 @@ public class AWSDescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest 
          }
 
       });
-      ParseSax<Set<Reservation<? extends RunningInstance>>> parser = (ParseSax<Set<Reservation<? extends RunningInstance>>>) injector
+      ParseSax<Set<Reservation<? extends RunningInstance>>> parser = injector
             .getInstance(ParseSax.Factory.class)
             .create(injector.getInstance(AWSDescribeInstancesResponseHandler.class));
       return parser;

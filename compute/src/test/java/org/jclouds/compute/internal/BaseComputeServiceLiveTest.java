@@ -567,7 +567,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
          assert node.getLocation() != null : node;
          assertEquals(node.getType(), ComputeType.NODE);
          assert node instanceof NodeMetadata;
-         NodeMetadata nodeMetadata = (NodeMetadata) node;
+         NodeMetadata nodeMetadata = node;
          assert nodeMetadata.getProviderId() != null : nodeMetadata;
          // nullable
          // assert nodeMetadata.getImage() != null : node;

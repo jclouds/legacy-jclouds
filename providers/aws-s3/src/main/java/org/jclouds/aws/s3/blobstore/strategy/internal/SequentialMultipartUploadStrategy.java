@@ -99,7 +99,7 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
       int parts = algorithm.getParts();
       long chunkSize = algorithm.getChunkSize();
       if (parts > 0) {
-         AWSS3Client client = (AWSS3Client) ablobstore.getContext()
+         AWSS3Client client = ablobstore.getContext()
                .unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN).getApi();
          String uploadId = client.initiateMultipartUpload(container,
                ObjectMetadataBuilder.create().key(key).build()); // TODO md5
