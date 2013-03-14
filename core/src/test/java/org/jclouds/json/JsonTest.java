@@ -18,8 +18,11 @@
  */
 package org.jclouds.json;
 
+import static com.google.common.io.BaseEncoding.base16;
+import static com.google.common.primitives.Bytes.asList;
 import static org.testng.Assert.assertEquals;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -111,6 +114,17 @@ public class JsonTest {
       }
 
       private Test enumValue;
+   }
+
+   private static class ByteList {
+      List<Byte> checksum;
+   }
+
+   public void testByteList() {
+      ByteList bl = new ByteList();
+      bl.checksum = asList(base16().lowerCase().decode("1dda05ed139664f1f89b9dec482b77c0"));
+      assertEquals(json.toJson(bl), "{\"checksum\":\"1dda05ed139664f1f89b9dec482b77c0\"}");
+      assertEquals(json.fromJson(json.toJson(bl), ByteList.class).checksum, bl.checksum);
    }
 
    public void testPropertiesSerializesDefaults() {
