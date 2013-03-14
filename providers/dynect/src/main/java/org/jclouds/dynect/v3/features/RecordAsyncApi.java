@@ -91,6 +91,17 @@ public interface RecordAsyncApi {
    ListenableFuture<FluentIterable<RecordId>> list() throws JobStillRunningException;
 
    /**
+    * @see RecordApi#listByFQDN
+    */
+   @Named("GetRecord")
+   @GET
+   @Path("/AllRecord/{zone}/{fqdn}")
+   @ResponseParser(ToRecordIds.class)
+   @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
+   ListenableFuture<FluentIterable<RecordId>> listByFQDN(@PathParam("fqdn") String fqdn)
+         throws JobStillRunningException;
+
+   /**
     * @see RecordApi#listByFQDNAndType
     */
    @Named("GetRecord")
