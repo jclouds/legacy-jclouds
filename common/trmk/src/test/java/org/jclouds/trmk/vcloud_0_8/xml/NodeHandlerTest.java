@@ -40,7 +40,7 @@ public class NodeHandlerTest extends BaseHandlerTest {
    public void test1() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/NodeService.xml");
 
-      Node result = (Node) factory.create(injector.getInstance(NodeHandler.class)).parse(is);
+      Node result = factory.create(injector.getInstance(NodeHandler.class)).parse(is);
       assertEquals(result, new Node("Node for Jim", URI
             .create("https://services.vcloudexpress.terremark.com/api/v0.8/NodeServices/242"), "172.16.20.3", 80,
             false, "Some test node"));

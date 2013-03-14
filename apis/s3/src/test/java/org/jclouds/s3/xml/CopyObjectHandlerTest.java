@@ -55,7 +55,7 @@ public class CopyObjectHandlerTest extends BaseHandlerTest {
                .iso8601DateParse("2009-03-19T13:23:27.000Z"),
                "\"92836a3ea45a6984d1b4d23a747d46bb\"");
 
-      ObjectMetadata result = (ObjectMetadata) factory.create(
+      ObjectMetadata result = factory.create(
                injector.getInstance(CopyObjectHandler.class)).parse(is);
 
       assertEquals(result, expected);

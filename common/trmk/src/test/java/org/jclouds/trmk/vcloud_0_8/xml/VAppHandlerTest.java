@@ -78,7 +78,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/launched_vapp.xml");
 
-      VApp result = (VApp) factory.create(
+      VApp result = factory.create(
                injector.getInstance(VAppHandler.class)).parse(is);
 
       assertEquals(result.getName(), "adriantest");
@@ -95,7 +95,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
    public void testGetVApp() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/get_vapp.xml");
 
-      VApp result = (VApp) factory.create(
+      VApp result = factory.create(
                injector.getInstance(VAppHandler.class)).parse(is);
 
       assertEquals(result.getName(), "centos-53");

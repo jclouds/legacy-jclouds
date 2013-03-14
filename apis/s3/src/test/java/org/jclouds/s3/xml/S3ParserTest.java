@@ -139,7 +139,7 @@ public class S3ParserTest extends PerformanceTest {
    }
 
    private ListBucketResponse runParseListContainerResult() throws HttpException {
-      return (ListBucketResponse) factory.create(injector.getInstance(ListBucketHandler.class)).setContext(
+      return factory.create(injector.getInstance(ListBucketHandler.class)).setContext(
                HttpRequest.builder().method("GET").endpoint("http://bucket.com").build()).parse(
                Strings2.toInputStream(listContainerResult));
    }
@@ -147,7 +147,7 @@ public class S3ParserTest extends PerformanceTest {
    public static final String successfulCopyObject200 = "<CopyObjectResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><LastModified>2009-03-19T13:23:27.000Z</LastModified><ETag>\"92836a3ea45a6984d1b4d23a747d46bb\"</ETag></CopyObjectResult>";
 
    private ObjectMetadata runParseCopyObjectResult() throws HttpException {
-      return (ObjectMetadata) factory.create(injector.getInstance(CopyObjectHandler.class)).parse(
+      return factory.create(injector.getInstance(CopyObjectHandler.class)).parse(
                Strings2.toInputStream(successfulCopyObject200));
    }
 

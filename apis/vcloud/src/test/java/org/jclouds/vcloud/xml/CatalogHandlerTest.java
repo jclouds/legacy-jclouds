@@ -55,7 +55,7 @@ public class CatalogHandlerTest {
       InputStream is = getClass().getResourceAsStream("/catalog-blank.xml");
       injector = Guice.createInjector(new SaxParserModule());
       factory = injector.getInstance(ParseSax.Factory.class);
-      Catalog result = (Catalog) factory.create(injector.getInstance(CatalogHandler.class)).parse(is);
+      Catalog result = factory.create(injector.getInstance(CatalogHandler.class)).parse(is);
       assertEquals(result, new CatalogImpl("Jclouds-private", "application/vnd.vmware.vcloud.catalog+xml", URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/catalog/921222081"), new ReferenceTypeImpl(null,
                "application/vnd.vmware.vcloud.org+xml", URI
@@ -67,7 +67,7 @@ public class CatalogHandlerTest {
       InputStream is = getClass().getResourceAsStream("/catalog.xml");
       injector = Guice.createInjector(new SaxParserModule());
       factory = injector.getInstance(ParseSax.Factory.class);
-      Catalog result = (Catalog) factory.create(injector.getInstance(CatalogHandler.class)).parse(is);
+      Catalog result = factory.create(injector.getInstance(CatalogHandler.class)).parse(is);
       assertEquals(result.getName(), "Miami Environment 1");
       assert result.getDescription() == null;
 
