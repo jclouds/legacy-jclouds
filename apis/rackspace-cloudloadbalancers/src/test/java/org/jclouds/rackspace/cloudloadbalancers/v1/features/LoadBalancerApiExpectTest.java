@@ -29,10 +29,11 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.cloudloadbalancers.v1.CloudLoadBalancersApi;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancer;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerAttributes;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerRequest;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerUpdate;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerCreate;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.Metadata;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.NodeRequest;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.NodeAdd;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.Node;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.VirtualIP;
 import org.jclouds.rackspace.cloudloadbalancers.v1.features.LoadBalancerApi;
 import org.jclouds.rackspace.cloudloadbalancers.v1.functions.ParseLoadBalancerTest;
@@ -88,30 +89,30 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/loadbalancer-get.json")).build()
       ).getLoadBalancerApiForZone("DFW");
 
-      NodeRequest nodeRequest1 = NodeRequest.builder()
+      NodeAdd nodeAdd1 = NodeAdd.builder()
             .address("10.1.1.1")
-            .condition(NodeRequest.Condition.ENABLED)
+            .condition(Node.Condition.ENABLED)
             .port(80)
             .build();
       
-      NodeRequest nodeRequest2 = NodeRequest.builder()
+      NodeAdd nodeAdd2 = NodeAdd.builder()
             .address("10.1.1.2")
-            .condition(NodeRequest.Condition.ENABLED)
+            .condition(Node.Condition.ENABLED)
             .port(80)
             .build();
       
-      Set<NodeRequest> nodeRequests = Sets.newHashSet(nodeRequest1, nodeRequest2);
+      Set<NodeAdd> nodeAdds = Sets.newHashSet(nodeAdd1, nodeAdd2);
 
-      LoadBalancerRequest lbRequest = LoadBalancerRequest.builder()
+      LoadBalancerCreate lbCreate = LoadBalancerCreate.builder()
             .name("sample-loadbalancer")
             .protocol("HTTP")
             .port(80)
             .algorithm(LoadBalancer.Algorithm.RANDOM)
             .virtualIPType(VirtualIP.Type.PUBLIC)
-            .nodes(nodeRequests)
+            .nodes(nodeAdds)
             .build();
       
-      LoadBalancer loadBalancer = api.create(lbRequest);
+      LoadBalancer loadBalancer = api.create(lbCreate);
       
       assertEquals(loadBalancer, getExpectedLoadBalancer());
    }
@@ -125,13 +126,13 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
             HttpResponse.builder().statusCode(202).payload("").build()
       ).getLoadBalancerApiForZone("DFW");
 
-      LoadBalancerAttributes lbAttrs = LoadBalancerAttributes.Builder
+      LoadBalancerUpdate lbUpdate = LoadBalancerUpdate.Builder
             .name("foo")
             .protocol("HTTPS")
             .port(443)
             .algorithm(LoadBalancer.Algorithm.RANDOM);
 
-      api.update(2000, lbAttrs);
+      api.update(2000, lbUpdate);
    }
 
    public void testRemoveLoadBalancer() {

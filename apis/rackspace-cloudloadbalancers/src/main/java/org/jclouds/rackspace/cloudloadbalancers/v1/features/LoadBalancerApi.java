@@ -24,8 +24,8 @@ import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
 import org.jclouds.openstack.v2_0.options.PaginationOptions;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancer;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerAttributes;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerRequest;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerUpdate;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerCreate;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.Metadata;
 
 /**
@@ -43,7 +43,7 @@ public interface LoadBalancerApi {
     *         identifier, the caller can check on the progress of the operation by performing a
     *         {@link LoadBalancerApi#get}.
     */
-   LoadBalancer create(LoadBalancerRequest lb);
+   LoadBalancer create(LoadBalancerCreate lbCreate);
 
    /**
     * Update the properties of a load balancer.
@@ -52,7 +52,7 @@ public interface LoadBalancerApi {
     *         identifier, the caller can check on the progress of the operation by performing a
     *         {@link LoadBalancerApi#get}.
     */
-   void update(int id, LoadBalancerAttributes attrs);
+   void update(int id, LoadBalancerUpdate lbUpdate);
 
    /**
     * List the load balancers.
