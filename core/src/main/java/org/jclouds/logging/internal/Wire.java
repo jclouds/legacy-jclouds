@@ -26,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -89,14 +90,20 @@ public abstract class Wire {
 
    public InputStream copy(final String header, InputStream instream) {
       int limit = 256 * 1024;
-      FileBackedOutputStream out = null;
+      final FileBackedOutputStream out = new FileBackedOutputStream(limit);
       try {
-         out = new FileBackedOutputStream(limit);
          long bytesRead = ByteStreams.copy(instream, out);
          if (bytesRead >= limit)
             logger.debug("over limit %d/%d: wrote temp file", bytesRead, limit);
          wire(header, out.getSupplier().getInput());
-         return out.getSupplier().getInput();
+         // we must call FileBackedOutputStream.reset to remove temporary file
+         return new FilterInputStream(out.getSupplier().getInput()) {
+            @Override
+            public void close() throws IOException {
+               super.close();
+               out.reset();
+            }
+         };
       } catch (IOException e) {
          throw new RuntimeException("Error tapping line", e);
       } finally {
