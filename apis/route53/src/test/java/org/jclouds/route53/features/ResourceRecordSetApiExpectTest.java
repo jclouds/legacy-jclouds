@@ -108,15 +108,28 @@ public class ResourceRecordSetApiExpectTest extends BaseRoute53ApiExpectTest {
       Route53Api fail = requestSendsResponse(list, notFound);
       assertEquals(fail.getResourceRecordSetApiForHostedZone("Z1PA6795UKMFR9").list().get(0).toSet(), ImmutableSet.of());
    }
-   
+
    HttpRequest listAt = HttpRequest.builder().method("GET")
+         .endpoint("https://route53.amazonaws.com/2012-02-29/hostedzone/Z1PA6795UKMFR9/rrset?name=testdoc2.example.com")
+         .addHeader("Host", "route53.amazonaws.com")
+         .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
+         .addHeader("X-Amzn-Authorization", authForDate).build();
+
+   public void testListAtWhenResponseIs2xx() {
+      Route53Api apiWhenAtExist = requestSendsResponse(listAt, listResponse);
+      NextRecord next = NextRecord.name("testdoc2.example.com");
+      assertEquals(apiWhenAtExist.getResourceRecordSetApiForHostedZone("Z1PA6795UKMFR9").listAt(next).toString(),
+            new ListResourceRecordSetsResponseTest().expected().toString());
+   }
+
+   HttpRequest listAtNameAndType = HttpRequest.builder().method("GET")
          .endpoint("https://route53.amazonaws.com/2012-02-29/hostedzone/Z1PA6795UKMFR9/rrset?name=testdoc2.example.com&type=NS")
          .addHeader("Host", "route53.amazonaws.com")
          .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization", authForDate).build();
    
-   public void testListAtWhenResponseIs2xx() {
-      Route53Api apiWhenAtExist = requestSendsResponse(listAt, listResponse);
+   public void testListAtNameAndTypeWhenResponseIs2xx() {
+      Route53Api apiWhenAtExist = requestSendsResponse(listAtNameAndType, listResponse);
       NextRecord next = NextRecord.nameAndType("testdoc2.example.com", "NS");
       assertEquals(apiWhenAtExist.getResourceRecordSetApiForHostedZone("Z1PA6795UKMFR9").listAt(next).toString(),
             new ListResourceRecordSetsResponseTest().expected().toString());
@@ -126,7 +139,7 @@ public class ResourceRecordSetApiExpectTest extends BaseRoute53ApiExpectTest {
       HttpResponse noMore = HttpResponse.builder().statusCode(200)
             .payload(payloadFromStringWithContentType("<ListResourceRecordSetsResponse />", "text/xml")).build();
 
-      Route53Api success = requestsSendResponses(list, listResponse, listAt, noMore);
+      Route53Api success = requestsSendResponses(list, listResponse, listAtNameAndType, noMore);
       assertEquals(success.getResourceRecordSetApiForHostedZone("Z1PA6795UKMFR9").list().concat().toSet(), new ListResourceRecordSetsResponseTest().expected()
             .toSet());
    }
