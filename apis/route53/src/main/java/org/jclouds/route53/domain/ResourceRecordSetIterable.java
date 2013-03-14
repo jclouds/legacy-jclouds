@@ -88,6 +88,10 @@ public class ResourceRecordSetIterable extends IterableWithMarker<ResourceRecord
     * If the results were truncated, this holds the position of the next item.
     */
    public static class NextRecord {
+      public static NextRecord name(String name) {
+         return new NextRecord(name, null, null);
+      }
+
       public static NextRecord nameAndType(String name, String type) {
          return new NextRecord(name, type, null);
       }
@@ -97,12 +101,12 @@ public class ResourceRecordSetIterable extends IterableWithMarker<ResourceRecord
       }
 
       private final String name;
-      private final String type;
+      private final Optional<String> type;
       private final Optional<String> identifier;
 
       private NextRecord(String name, String type, String identifier) {
          this.name = checkNotNull(name, "name");
-         this.type = checkNotNull(type, "type for %s", name);
+         this.type = Optional.fromNullable(type);
          this.identifier = Optional.fromNullable(identifier);
       }
 
@@ -116,7 +120,7 @@ public class ResourceRecordSetIterable extends IterableWithMarker<ResourceRecord
       /**
        * the type of the next record in the list.
        */
-      public String getType() {
+      public Optional<String> getType() {
          return type;
       }
 
@@ -139,13 +143,12 @@ public class ResourceRecordSetIterable extends IterableWithMarker<ResourceRecord
          if (obj == null || getClass() != obj.getClass())
             return false;
          NextRecord that = NextRecord.class.cast(obj);
-         return equal(this.name, that.name) && equal(this.type, that.type)
-               && equal(this.identifier, that.identifier);
+         return equal(this.name, that.name) && equal(this.type, that.type) && equal(this.identifier, that.identifier);
       }
 
       @Override
       public String toString() {
-         return toStringHelper("").omitNullValues().add("name", name).add("type", type)
+         return toStringHelper("").omitNullValues().add("name", name).add("type", type.orNull())
                .add("identifier", identifier.orNull()).toString();
       }
    }
