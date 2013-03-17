@@ -19,6 +19,8 @@
 package org.jclouds.cloudservers.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.contains;
+import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.cloudservers.options.CreateServerOptions.Builder.withMetadata;
 import static org.jclouds.cloudservers.options.ListOptions.Builder.withDetails;
 import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsCommaDelimitedValue;
@@ -37,7 +39,9 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 /**
  * defines the connection between the {@link CloudServersClient} implementation and the jclouds
@@ -81,6 +85,17 @@ public class CloudServersComputeServiceAdapter implements ComputeServiceAdapter<
    @Override
    public Iterable<Server> listNodes() {
       return client.listServers(ListOptions.Builder.withDetails());
+   }
+
+   @Override
+   public Iterable<Server> listNodesByIds(final Iterable<String> ids) {
+      return filter(listNodes(), new Predicate<Server>() {
+
+            @Override
+            public boolean apply(Server server) {
+               return contains(ids, server.getId());
+            }
+         });
    }
 
    @Override

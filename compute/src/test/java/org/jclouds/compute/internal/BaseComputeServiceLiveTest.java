@@ -20,9 +20,11 @@ package org.jclouds.compute.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
+import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static com.google.common.collect.Sets.filter;
@@ -561,6 +563,22 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
    }
 
    @Test(enabled = true, dependsOnMethods = "testSuspendResume")
+   public void testListNodesByIds() throws Exception {
+      Set<String> nodeIds = copyOf(transform(nodes,
+         new Function<NodeMetadata, String>() {
+                                                
+            @Override
+            public String apply(NodeMetadata from) {
+               return from.getId();
+            }
+            
+         }));
+      
+      // newTreeSet is here because elementsEqual cares about ordering.
+      assert Iterables.elementsEqual(nodes, newTreeSet(client.listNodesByIds(nodeIds))); 
+   }
+
+   @Test(enabled = true, dependsOnMethods = "testSuspendResume")
    public void testGetNodesWithDetails() throws Exception {
       for (NodeMetadata node : client.listNodesDetailsMatching(all())) {
          assert node.getProviderId() != null : node;
@@ -581,7 +599,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
       }
    }
 
-   @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails" })
+   @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails", "testListNodesByIds" })
    public void testDestroyNodes() {
       int toDestroy = refreshNodes().size();
       Set<? extends NodeMetadata> destroyed = client.destroyNodesMatching(inGroup(group));
