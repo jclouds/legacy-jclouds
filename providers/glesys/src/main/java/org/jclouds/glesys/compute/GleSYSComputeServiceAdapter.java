@@ -21,6 +21,9 @@ package org.jclouds.glesys.compute;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.contains;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.find;
 import static com.google.common.io.BaseEncoding.base16;
 import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsCommaDelimitedValue;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
@@ -182,7 +185,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
                               .processors(ImmutableList.of(new Processor(cpuCores, 1.0)))
                               .volumes(ImmutableList.<Volume> of(new VolumeImpl((float) diskSizeGB, true, true)))
                               .hypervisor(platformToArgs.getKey())
-                              .location(Iterables.find(locationsSet, LocationPredicates.idEquals(datacenter)))
+                              .location(find(locationsSet, LocationPredicates.idEquals(datacenter)))
                               .supportsImage(ImagePredicates.idIn(templatesSupported)).build());
                   }
 
@@ -197,7 +200,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
    // cheat until we have a getTemplate command
    @Override
    public OSTemplate getImage(final String id) {
-      return Iterables.find(listImages(), new Predicate<OSTemplate>(){
+      return find(listImages(), new Predicate<OSTemplate>(){
 
          @Override
          public boolean apply(OSTemplate input) {
@@ -214,6 +217,17 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
             return aapi.getServerApi().get(from.getId());
          }
       }, userExecutor, null, logger, "server details");
+   }
+
+   @Override
+   public Iterable<ServerDetails> listNodesByIds(final Iterable<String> ids) {
+      return filter(listNodes(), new Predicate<ServerDetails>() {
+
+            @Override
+            public boolean apply(ServerDetails server) {
+               return contains(ids, server.getId());
+            }
+         });
    }
 
    @Override

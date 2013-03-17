@@ -20,6 +20,7 @@ package org.jclouds.openstack.nova.v2_0.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.Iterables.contains;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsCommaDelimitedValue;
@@ -57,10 +58,12 @@ import org.jclouds.openstack.nova.v2_0.predicates.ImagePredicates;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.Iterables;
 
 /**
  * The adapter used by the NovaComputeServiceContextModule to interface the nova-specific domain
@@ -205,6 +208,17 @@ public class NovaComputeServiceAdapter implements
                   }));
       }
       return builder.build();
+   }
+
+   @Override
+   public Iterable<ServerInZone> listNodesByIds(final Iterable<String> ids) {
+      return filter(listNodes(), new Predicate<ServerInZone>() {
+
+            @Override
+            public boolean apply(ServerInZone server) {
+               return contains(ids, server.slashEncode());
+            }
+         });
    }
 
    @Override
