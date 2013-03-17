@@ -70,7 +70,7 @@ public class SwiftApiMetadata extends BaseRestApiMetadata {
       // Keystone 1.1 expires tokens after 24 hours and allows renewal 1 hour
       // before expiry by default.  We choose a value less than the latter
       // since the former persists between jclouds invocations.
-      properties.setProperty(PROPERTY_SESSION_INTERVAL, 30 * 60 * 60 + "");
+      properties.setProperty(PROPERTY_SESSION_INTERVAL, 30 * 60 + "");
       return properties;
    }
 
