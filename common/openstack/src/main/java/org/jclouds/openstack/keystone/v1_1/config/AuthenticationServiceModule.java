@@ -113,7 +113,7 @@ public class AuthenticationServiceModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected LoadingCache<Credentials, Auth> provideAuthCache(GetAuth getAuth,
+   public LoadingCache<Credentials, Auth> provideAuthCache(Function<Credentials, Auth> getAuth,
          @Named(PROPERTY_SESSION_INTERVAL) long sessionInterval) {
       return CacheBuilder.newBuilder().expireAfterWrite(sessionInterval, TimeUnit.SECONDS).build(CacheLoader.from(getAuth));
    }
