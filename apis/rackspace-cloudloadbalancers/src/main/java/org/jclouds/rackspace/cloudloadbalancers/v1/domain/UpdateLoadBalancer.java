@@ -27,45 +27,48 @@ import com.google.common.base.Objects.ToStringHelper;
 /**
  * Used to update Load Balancers.
  * 
- * @author Adrian Cole
+ * @author Everett Toews
  */
-public class LoadBalancerUpdate {
-
-   protected String name;
-   protected String protocol;
-   protected Integer port;
-   protected Algorithm algorithm;
-   protected Integer timeout;
-   protected Boolean halfClosed;
-
-   public LoadBalancerUpdate name(String name) {
+public class UpdateLoadBalancer {
+   private String name;
+   private String protocol;
+   private Integer port;
+   private Algorithm algorithm;
+   private Integer timeout;
+   private Boolean halfClosed;
+   
+   protected UpdateLoadBalancer(String name, String protocol, Integer port, Algorithm algorithm, Integer timeout,
+         Boolean halfClosed) {
       this.name = name;
-      return this;
-   }
-
-   public LoadBalancerUpdate protocol(String protocol) {
       this.protocol = protocol;
-      return this;
-   }
-
-   public LoadBalancerUpdate port(Integer port) {
       this.port = port;
-      return this;
-   }
-
-   public LoadBalancerUpdate algorithm(Algorithm algorithm) {
       this.algorithm = algorithm;
-      return this;
-   }
-
-   public LoadBalancerUpdate timeout(Integer timeout) {
       this.timeout = timeout;
-      return this;
+      this.halfClosed = halfClosed;
    }
 
-   public LoadBalancerUpdate halfClosed(Boolean halfClosed) {
-      this.halfClosed = halfClosed;
-      return this;
+   public String getName() {
+      return name;
+   }
+
+   public String getProtocol() {
+      return protocol;
+   }
+
+   public Integer getPort() {
+      return port;
+   }
+
+   public Algorithm getAlgorithm() {
+      return algorithm;
+   }
+
+   public Integer getTimeout() {
+      return timeout;
+   }
+
+   public Boolean isHalfClosed() {
+      return halfClosed;
    }
 
    protected ToStringHelper string() {
@@ -90,58 +93,83 @@ public class LoadBalancerUpdate {
       if (obj == null || getClass() != obj.getClass())
          return false;
 
-      LoadBalancerUpdate that = LoadBalancerUpdate.class.cast(obj);
+      UpdateLoadBalancer that = UpdateLoadBalancer.class.cast(obj);
       return Objects.equal(this.name, that.name) && Objects.equal(this.algorithm, that.algorithm)
             && Objects.equal(this.port, that.port) && Objects.equal(this.protocol, that.protocol)
             && Objects.equal(this.timeout, that.timeout) && Objects.equal(this.halfClosed, that.halfClosed);
    }
 
    public static class Builder {
+      private String name;
+      private String protocol;
+      private Integer port;
+      private Algorithm algorithm;
+      private Integer timeout;
+      private Boolean halfClosed;
+
       /**
        * @see BaseLoadBalancer.Builder#name(String)
        */
-      public static LoadBalancerUpdate name(String name) {
-         return new LoadBalancerUpdate().name(name);
+      public Builder name(String name) {
+         this.name = name;
+         return this;
       }
 
       /**
        * @see BaseLoadBalancer.Builder#protocol(String)
        */
-      public static LoadBalancerUpdate protocol(String protocol) {
-         return new LoadBalancerUpdate().protocol(protocol);
+      public Builder protocol(String protocol) {
+         this.protocol = protocol;
+         return this;
       }
 
       /**
        * @see BaseLoadBalancer.Builder#port(Integer)
        */
-      public static LoadBalancerUpdate port(Integer port) {
-         return new LoadBalancerUpdate().port(port);
+      public Builder port(Integer port) {
+         this.port = port;
+         return this;
       }
 
       /**
        * @see BaseLoadBalancer.Builder#algorithm(Algorithm)
        */
-      public static LoadBalancerUpdate algorithm(Algorithm algorithm) {
-         return new LoadBalancerUpdate().algorithm(algorithm);
+      public Builder algorithm(Algorithm algorithm) {
+         this.algorithm = algorithm;
+         return this;
       }
 
       /**
        * @see BaseLoadBalancer.Builder#timeout(Integer)
        */
-      public static LoadBalancerUpdate timeout(Integer timeout) {
-         return new LoadBalancerUpdate().timeout(timeout);
+      public Builder timeout(Integer timeout) {
+         this.timeout = timeout;
+         return this;
       }
 
       /**
        * @see BaseLoadBalancer.Builder#halfClosed(Boolean)
        */
-      public static LoadBalancerUpdate halfClosed(Boolean halfClosed) {
-         return new LoadBalancerUpdate().halfClosed(halfClosed);
+      public Builder halfClosed(Boolean halfClosed) {
+         this.halfClosed = halfClosed;
+         return this;
+      }
+      
+      public UpdateLoadBalancer build() {
+         return new UpdateLoadBalancer(name, protocol, port, algorithm, timeout, halfClosed);
+      }
+
+      public Builder from(UpdateLoadBalancer lb) {
+         return this.name(lb.getName()).port(lb.getPort()).protocol(lb.getProtocol()).algorithm(lb.getAlgorithm())
+               .timeout(lb.getTimeout()).halfClosed(lb.isHalfClosed());
       }
    }
 
-   public static <T extends BaseLoadBalancer<?, T>> LoadBalancerUpdate fromLoadBalancer(T lb) {
-      return Builder.name(lb.getName()).port(lb.getPort()).protocol(lb.getProtocol()).algorithm(lb.getAlgorithm())
-            .timeout(lb.getTimeout()).halfClosed(lb.isHalfClosed());
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public Builder toBuilder() {
+      return new Builder().from(this);
    }
 }

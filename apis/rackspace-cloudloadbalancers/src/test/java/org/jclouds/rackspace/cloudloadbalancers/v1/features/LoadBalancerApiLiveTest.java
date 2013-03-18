@@ -30,10 +30,10 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancer;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerUpdate;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerCreate;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.UpdateLoadBalancer;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.CreateLoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.Metadata;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.NodeAdd;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.AddNode;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.VirtualIP.Type;
 import org.jclouds.rackspace.cloudloadbalancers.v1.internal.BaseCloudLoadBalancersApiLiveTest;
 import org.testng.annotations.AfterGroups;
@@ -67,12 +67,12 @@ public class LoadBalancerApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
          Logger.getAnonymousLogger().info("starting lb in region " + zone);
          
          LoadBalancer lb = clbApi.getLoadBalancerApiForZone(zone).create(
-               LoadBalancerCreate.builder()
+               CreateLoadBalancer.builder()
                      .name(prefix + "-" + zone)
                      .protocol("HTTP")
                      .port(80)
                      .virtualIPType(Type.PUBLIC)
-                     .node(NodeAdd.builder()
+                     .node(AddNode.builder()
                            .address("192.168.1.1")
                            .port(8080)
                            .build())
@@ -96,7 +96,7 @@ public class LoadBalancerApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    public void testUpdateLoadBalancer() throws Exception {
       for (LoadBalancer lb: lbs) {
          clbApi.getLoadBalancerApiForZone(lb.getRegion()).update(lb.getId(),
-               LoadBalancerUpdate.Builder.name("foo" + "-" + lb.getRegion()));
+               UpdateLoadBalancer.builder().name("foo" + "-" + lb.getRegion()).build());
          
          assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(lb.getRegion())).apply(lb));
 
