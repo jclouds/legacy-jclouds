@@ -28,27 +28,29 @@ import com.google.common.base.Objects.ToStringHelper;
 /**
  * Used to update Nodes.
  * 
- * @author Dan Lo Bianco
+ * @author Everett Toews
  */
-public class NodeUpdate {
-
-   protected Condition condition;
-   protected Type type;
-   protected Integer weight;
-
-   public NodeUpdate condition(Condition condition) {
+public class UpdateNode {
+   private Condition condition;
+   private Type type;
+   private Integer weight;
+   
+   protected UpdateNode(Condition condition, Type type, Integer weight) {
       this.condition = condition;
-      return this;
-   }
-
-   public NodeUpdate type(Type type) {
       this.type = type;
-      return this;
+      this.weight = weight;
    }
 
-   public NodeUpdate weight(Integer weight) {
-      this.weight = weight;
-      return this;
+   public Condition getCondition() {
+      return condition;
+   }
+
+   public Type getType() {
+      return type;
+   }
+
+   public Integer getWeight() {
+      return weight;
    }
 
    protected ToStringHelper string() {
@@ -71,36 +73,55 @@ public class NodeUpdate {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
 
-      NodeUpdate that = NodeUpdate.class.cast(obj);
+      UpdateNode that = UpdateNode.class.cast(obj);
       return Objects.equal(this.condition, that.condition)
             && Objects.equal(this.type, that.type)
             && Objects.equal(this.weight, that.weight);
    }
 
    public static class Builder {
+      private Condition condition;
+      private Type type;
+      private Integer weight;
+
       /**
        * @see BaseNode.Builder#condition(Condition)
        */
-      public static NodeUpdate condition(Condition condition) {
-         return new NodeUpdate().condition(condition);
+      public Builder condition(Condition condition) {
+         this.condition = condition;
+         return this;
       }
 
       /**
        * @see BaseNode.Builder#type(Type)
        */
-      public static NodeUpdate type(Type type) {
-         return new NodeUpdate().type(type);
+      public Builder type(Type type) {
+         this.type = type;
+         return this;
       }
 
       /**
        * @see BaseNode.Builder#weight(Integer)
        */
-      public static NodeUpdate weight(Integer weight) {
-         return new NodeUpdate().weight(weight);
+      public Builder weight(Integer weight) {
+         this.weight = weight;
+         return this;
+      }
+      
+      public UpdateNode build() {
+         return new UpdateNode(condition, type, weight);
+      }
+
+      public Builder from(UpdateNode in) {
+         return this.condition(in.getCondition()).type(in.getType()).weight(in.getWeight());
       }
    }
 
-   public static <T extends BaseNode<T>> NodeUpdate fromNode(T n) {
-      return Builder.condition(n.getCondition()).type(n.getType()).weight(n.getWeight());
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public Builder toBuilder() {
+      return new Builder().from(this);
    }
 }

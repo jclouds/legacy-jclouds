@@ -34,8 +34,8 @@ import org.jclouds.loadbalancer.strategy.LoadBalanceNodesStrategy;
 import org.jclouds.logging.Logger;
 import org.jclouds.rackspace.cloudloadbalancers.v1.CloudLoadBalancersApi;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancer;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerCreate;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.NodeAdd;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.CreateLoadBalancer;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.AddNode;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.VirtualIP.Type;
 
 import com.google.common.base.Function;
@@ -67,13 +67,13 @@ public class CloudLoadBalancersLoadBalanceNodesStrategy implements LoadBalanceNo
 
       // TODO need to query and update the LB per current design.
       LoadBalancer lb = client.getLoadBalancerApiForZone(region).create(
-               LoadBalancerCreate.builder().name(name).protocol(protocol.toUpperCase()).port(loadBalancerPort)
+               CreateLoadBalancer.builder().name(name).protocol(protocol.toUpperCase()).port(loadBalancerPort)
                         .virtualIPType(Type.PUBLIC).nodes(
-                                 Iterables.transform(nodes, new Function<NodeMetadata, NodeAdd>() {
+                                 Iterables.transform(nodes, new Function<NodeMetadata, AddNode>() {
 
                                     @Override
-                                    public NodeAdd apply(NodeMetadata arg0) {
-                                       return NodeAdd.builder().address(
+                                    public AddNode apply(NodeMetadata arg0) {
+                                       return AddNode.builder().address(
                                                 Iterables.get(arg0.getPrivateAddresses(), 0)).port(instancePort)
                                                 .build();
 

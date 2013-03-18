@@ -30,10 +30,10 @@ import java.util.Date;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.HistoricalUsage;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancer;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerCreate;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.CreateLoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerStats;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerUsage;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.NodeAdd;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.AddNode;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.Protocol;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.VirtualIP.Type;
 import org.jclouds.rackspace.cloudloadbalancers.v1.internal.BaseCloudLoadBalancersApiLiveTest;
@@ -52,12 +52,12 @@ public class ReportApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    private String zone;
 
    public void testCreateLoadBalancer() {
-      NodeAdd nodeAdd = NodeAdd.builder().address("192.168.1.1").port(8080).build();
-      LoadBalancerCreate lbCreate = LoadBalancerCreate.builder()
-            .name(prefix+"-jclouds").protocol("HTTP").port(80).virtualIPType(Type.PUBLIC).node(nodeAdd).build(); 
+      AddNode addNode = AddNode.builder().address("192.168.1.1").port(8080).build();
+      CreateLoadBalancer createLB = CreateLoadBalancer.builder()
+            .name(prefix+"-jclouds").protocol("HTTP").port(80).virtualIPType(Type.PUBLIC).node(addNode).build(); 
 
       zone = Iterables.getFirst(clbApi.getConfiguredZones(), null);
-      lb = clbApi.getLoadBalancerApiForZone(zone).create(lbCreate);
+      lb = clbApi.getLoadBalancerApiForZone(zone).create(createLB);
       
       assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
    }

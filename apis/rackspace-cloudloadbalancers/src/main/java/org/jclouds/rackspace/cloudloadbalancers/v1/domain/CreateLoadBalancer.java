@@ -37,30 +37,30 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-public class LoadBalancerCreate extends BaseLoadBalancer<NodeAdd, LoadBalancerCreate> {
+public class CreateLoadBalancer extends BaseLoadBalancer<AddNode, CreateLoadBalancer> {
 
    private final Set<Map<String, String>> virtualIps;
    private final Set<AccessRule> accessRules;
    private final Map<String, String> metadata;
 
-   public LoadBalancerCreate(String name, String protocol, @Nullable Integer port, Set<NodeAdd> nodeAdds,
+   public CreateLoadBalancer(String name, String protocol, @Nullable Integer port, Set<AddNode> addNodes,
          @Nullable Algorithm algorithm, @Nullable Integer timeout, @Nullable Boolean halfClosed,
          @Nullable Map<String, SessionPersistence> sessionPersistenceType,
          @Nullable Map<String, Boolean> connectionLogging, @Nullable ConnectionThrottle connectionThrottle,
          @Nullable HealthMonitor healthMonitor, @Nullable Set<AccessRule> accessRules,
          @Nullable Map<String, String> metadata, VirtualIP.Type virtualIPType, Integer virtualIPId) {
-      this(name, protocol, port, nodeAdds, algorithm, timeout, halfClosed, sessionPersistenceType, connectionLogging,
+      this(name, protocol, port, addNodes, algorithm, timeout, halfClosed, sessionPersistenceType, connectionLogging,
             connectionThrottle, healthMonitor, accessRules, metadata, 
             getVirtualIPsFromOptions(virtualIPType, virtualIPId));
    }
 
-   public LoadBalancerCreate(String name, String protocol, @Nullable Integer port, Set<NodeAdd> nodeAdds,
+   public CreateLoadBalancer(String name, String protocol, @Nullable Integer port, Set<AddNode> addNodes,
          @Nullable Algorithm algorithm, @Nullable Integer timeout, @Nullable Boolean halfClosed,
          @Nullable Map<String, SessionPersistence> sessionPersistenceType,
          @Nullable Map<String, Boolean> connectionLogging, @Nullable ConnectionThrottle connectionThrottle,
          @Nullable HealthMonitor healthMonitor, @Nullable Set<AccessRule> accessRules,
          @Nullable Map<String, String> metadata, Set<Map<String, String>> virtualIPsFromOptions) {
-      super(name, protocol, port, nodeAdds, algorithm, timeout, halfClosed, sessionPersistenceType, connectionLogging,
+      super(name, protocol, port, addNodes, algorithm, timeout, halfClosed, sessionPersistenceType, connectionLogging,
             connectionThrottle, healthMonitor);
       this.virtualIps = checkNotNull(virtualIPsFromOptions, "virtualIPsFromOptions");
       this.accessRules = accessRules;
@@ -100,7 +100,7 @@ public class LoadBalancerCreate extends BaseLoadBalancer<NodeAdd, LoadBalancerCr
       return string().toString();
    }
 
-   public static class Builder extends BaseLoadBalancer.Builder<NodeAdd, LoadBalancerCreate> {
+   public static class Builder extends BaseLoadBalancer.Builder<AddNode, CreateLoadBalancer> {
       private VirtualIP.Type virtualIPType;
       private Integer virtualIPId;
       private Set<Map<String, String>> virtualIps;
@@ -150,14 +150,14 @@ public class LoadBalancerCreate extends BaseLoadBalancer<NodeAdd, LoadBalancerCr
          return this;
       }
 
-      public LoadBalancerCreate build() {
+      public CreateLoadBalancer build() {
          if (virtualIps == null) {
-            return new LoadBalancerCreate(name, protocol, port, nodes, algorithm, timeout, halfClosed,
+            return new CreateLoadBalancer(name, protocol, port, nodes, algorithm, timeout, halfClosed,
                   sessionPersistence, connectionLogging, connectionThrottle, healthMonitor, accessRules, metadata,
                   virtualIPType, virtualIPId);
          }
          else {
-            return new LoadBalancerCreate(name, protocol, port, nodes, algorithm, timeout, halfClosed,
+            return new CreateLoadBalancer(name, protocol, port, nodes, algorithm, timeout, halfClosed,
                   sessionPersistence, connectionLogging, connectionThrottle, healthMonitor, accessRules, metadata,
                   virtualIps);
          }
@@ -167,8 +167,8 @@ public class LoadBalancerCreate extends BaseLoadBalancer<NodeAdd, LoadBalancerCr
        * {@inheritDoc}
        */
       @Override
-      public Builder nodes(Iterable<NodeAdd> nodeAdds) {
-         this.nodes = ImmutableSet.<NodeAdd> copyOf(checkNotNull(nodeAdds, "nodes"));
+      public Builder nodes(Iterable<AddNode> addNodes) {
+         this.nodes = ImmutableSet.<AddNode> copyOf(checkNotNull(addNodes, "nodes"));
          return this;
       }
 
@@ -176,7 +176,7 @@ public class LoadBalancerCreate extends BaseLoadBalancer<NodeAdd, LoadBalancerCr
        * {@inheritDoc}
        */
       @Override
-      public Builder node(NodeAdd nodes) {
+      public Builder node(AddNode nodes) {
          this.nodes.add(checkNotNull(nodes, "nodes"));
          return this;
       }
@@ -217,7 +217,7 @@ public class LoadBalancerCreate extends BaseLoadBalancer<NodeAdd, LoadBalancerCr
        * {@inheritDoc}
        */
       @Override
-      public Builder from(LoadBalancerCreate in) {
+      public Builder from(CreateLoadBalancer in) {
          return Builder.class.cast(super.from(in)).virtualIPs(in.virtualIps);
       }
    }
