@@ -146,6 +146,14 @@ public interface Constants {
    public static final String PROPERTY_PROXY_PASSWORD = "jclouds.proxy-password";
 
    /**
+    * Boolean property. Default true.
+    * <p/>
+    * If a proxy server is configured, it will be used for all types of schemes.
+    * Set to false to not use a proxy server for sockets (such as ssh access).
+    */
+   public static final String PROPERTY_PROXY_FOR_SOCKETS = "jclouds.proxy-for-sockets";
+
+   /**
     * Integer property.
     * <p/>
     * Commands are retried, if the problem on the server side was a resolvable conflict. However,
