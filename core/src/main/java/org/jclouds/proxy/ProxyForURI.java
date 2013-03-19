@@ -20,6 +20,7 @@ package org.jclouds.proxy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.getLast;
+import static org.jclouds.Constants.PROPERTY_PROXY_FOR_SOCKETS;
 
 import java.net.Authenticator;
 import java.net.InetSocketAddress;
@@ -29,6 +30,7 @@ import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URI;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.domain.Credentials;
@@ -44,6 +46,10 @@ import com.google.inject.Inject;
 @Singleton
 public class ProxyForURI implements Function<URI, Proxy> {
    private final ProxyConfig config;
+
+   @Inject(optional = true)
+   @Named(PROPERTY_PROXY_FOR_SOCKETS)
+   private boolean useProxyForSockets = true;
 
    @VisibleForTesting
    @Inject
@@ -62,7 +68,9 @@ public class ProxyForURI implements Function<URI, Proxy> {
     */
    @Override
    public Proxy apply(URI endpoint) {
-      if (config.useSystem()) {
+      if (!useProxyForSockets && "socket".equals(endpoint.getScheme())) {
+         return Proxy.NO_PROXY;
+      } else if (config.useSystem()) {
          System.setProperty("java.net.useSystemProxies", "true");
          Iterable<Proxy> proxies = ProxySelector.getDefault().select(endpoint);
          return getLast(proxies);
