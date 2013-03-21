@@ -28,8 +28,8 @@ import com.google.common.base.Objects;
  * @author Everett Toews
  */
 public final class Protocol {
-   private String name;
-   private int port;
+   private final String name;
+   private final int port;
 
    @ConstructorProperties({ "name", "port" })
    protected Protocol(String name, int port) {

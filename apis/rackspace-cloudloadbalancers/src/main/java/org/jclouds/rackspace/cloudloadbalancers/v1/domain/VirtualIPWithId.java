@@ -30,8 +30,8 @@ import com.google.common.base.Objects.ToStringHelper;
  */
 public class VirtualIPWithId extends VirtualIP {
 
-   private int id;
-   private String address;
+   private final int id;
+   private final String address;
 
    public VirtualIPWithId(Type type, IPVersion ipVersion, int id, String address) {
       super(type, ipVersion);

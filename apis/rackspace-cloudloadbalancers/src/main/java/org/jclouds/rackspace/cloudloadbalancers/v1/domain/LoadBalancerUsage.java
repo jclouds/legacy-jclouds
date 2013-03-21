@@ -32,20 +32,20 @@ import com.google.common.base.Optional;
  * @author Everett Toews
  */
 public final class LoadBalancerUsage {
-   private int id;
-   private float averageNumConnections;
-   private float averageNumConnectionsSsl;
-   private int incomingTransferInBytes;
-   private int outgoingTransferInBytes;
-   private int incomingTransferSslInBytes;
-   private int outgoingTransferSslInBytes;
-   private int numVIPs;
-   private int numPolls;
-   private Date startTime;
-   private Date endTime;
-   private VirtualIP.Type vipType;
-   private String sslMode;
-   private Optional<String> eventType;
+   private final int id;
+   private final float averageNumConnections;
+   private final float averageNumConnectionsSsl;
+   private final int incomingTransferInBytes;
+   private final int outgoingTransferInBytes;
+   private final int incomingTransferSslInBytes;
+   private final int outgoingTransferSslInBytes;
+   private final int numVIPs;
+   private final int numPolls;
+   private final Date startTime;
+   private final Date endTime;
+   private final VirtualIP.Type vipType;
+   private final String sslMode;
+   private final Optional<String> eventType;
 
    @ConstructorProperties({ "id", "averageNumConnections", "averageNumConnectionsSsl", "incomingTransfer",
          "outgoingTransfer", "incomingTransferSsl", "outgoingTransferSsl", "numVips", "numPolls", "startTime",

@@ -28,9 +28,9 @@ import com.google.common.base.Objects;
  * @author Everett Toews
  */
 public final class LoadBalancerInfo {
-   private int loadBalancerId;
-   private String loadBalancerName;
-   private Iterable<LoadBalancerUsage> loadBalancerUsageRecords;
+   private final int loadBalancerId;
+   private final String loadBalancerName;
+   private final Iterable<LoadBalancerUsage> loadBalancerUsageRecords;
 
    @ConstructorProperties({ "loadBalancerId", "loadBalancerName", "loadBalancerUsageRecords" })
    protected LoadBalancerInfo(int id, String name, Iterable<LoadBalancerUsage> loadBalancerUsageRecords) {
