@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
+import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 /**
@@ -37,6 +38,10 @@ public class AzureBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
    @Override
    public void testGetIfMatch() throws InterruptedException {
       // this currently fails
+   }
+
+   public void testCreateBlobWithExpiry() throws InterruptedException {
+      throw new SkipException("Expires header unsupported: http://msdn.microsoft.com/en-us/library/windowsazure/dd179404.aspx#Subheading3");
    }
 
    @Override
