@@ -30,12 +30,12 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author Everett Toews
  */
 public class UpdateLoadBalancer {
-   private String name;
-   private String protocol;
-   private Integer port;
-   private Algorithm algorithm;
-   private Integer timeout;
-   private Boolean halfClosed;
+   private final String name;
+   private final String protocol;
+   private final Integer port;
+   private final Algorithm algorithm;
+   private final Integer timeout;
+   private final Boolean halfClosed;
    
    protected UpdateLoadBalancer(String name, String protocol, Integer port, Algorithm algorithm, Integer timeout,
          Boolean halfClosed) {

@@ -26,12 +26,12 @@ import com.google.common.base.Objects;
  * @author Everett Toews
  */
 public final class LoadBalancerStats {
-   private int connectTimeOut;
-   private int connectError;
-   private int connectFailure;
-   private int dataTimedOut;
-   private int keepAliveTimedOut;
-   private int maxConn;
+   private final int connectTimeOut;
+   private final int connectError;
+   private final int connectFailure;
+   private final int dataTimedOut;
+   private final int keepAliveTimedOut;
+   private final int maxConn;
 
    @ConstructorProperties({ "connectTimeOut", "connectError", "connectFailure", "dataTimedOut", "keepAliveTimedOut",
          "maxConn" })
