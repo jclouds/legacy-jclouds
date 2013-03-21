@@ -398,10 +398,11 @@ public class Pems {
    }
 
    private static String pem(byte[] encoded, String marker) {
+      String ls = System.getProperty("line.separator");
       StringBuilder builder = new StringBuilder();
-      builder.append(marker).append('\n');
-      builder.append(on('\n').join(fixedLength(64).split(base64().encode(encoded)))).append('\n');
-      builder.append(marker.replace("BEGIN", "END")).append('\n');
+      builder.append(marker).append(ls);
+      builder.append(on(ls).join(fixedLength(64).split(base64().encode(encoded)))).append(ls);
+      builder.append(marker.replace("BEGIN", "END")).append(ls);
       return builder.toString();
    }
 
