@@ -32,8 +32,8 @@ import com.google.common.collect.Sets;
  * @author Everett Toews
  */
 public class Metadata extends ForwardingMap<String, String> {
-   private Map<String, String> metadata = Maps.newHashMap();
-   private Map<String, Integer> keyToId = Maps.newHashMap();
+   private final Map<String, String> metadata = Maps.newHashMap();
+   private final Map<String, Integer> keyToId = Maps.newHashMap();
    
    public Metadata(Metadata metadata) {
       super();

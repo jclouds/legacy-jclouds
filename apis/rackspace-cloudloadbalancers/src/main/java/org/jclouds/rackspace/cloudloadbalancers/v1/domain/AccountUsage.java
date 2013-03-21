@@ -30,11 +30,11 @@ import com.google.common.base.Optional;
  * @author Everett Toews
  */
 public final class AccountUsage {
-   private int numPublicVIPs;
-   private int numServiceNetVIPs;
-   private int numLoadBalancers;
-   private Date startTime;
-   private Optional<Date> endTime;
+   private final int numPublicVIPs;
+   private final int numServiceNetVIPs;
+   private final int numLoadBalancers;
+   private final Date startTime;
+   private final Optional<Date> endTime;
 
    @ConstructorProperties({ "numPublicVips", "numServicenetVips", "numLoadBalancers", "startTime", "endTime" })
    protected AccountUsage(int numPublicVIPs, int numServiceNetVIPs, int numLoadBalancers, Date startTime, Date endTime) {
