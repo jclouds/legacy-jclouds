@@ -21,9 +21,10 @@ package org.jclouds.ultradns.ws;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.ultradns.ws.domain.Account;
-import org.jclouds.ultradns.ws.features.RoundRobinPoolApi;
 import org.jclouds.ultradns.ws.features.ResourceRecordApi;
+import org.jclouds.ultradns.ws.features.RoundRobinPoolApi;
 import org.jclouds.ultradns.ws.features.TaskApi;
+import org.jclouds.ultradns.ws.features.TrafficControllerPoolApi;
 import org.jclouds.ultradns.ws.features.ZoneApi;
 
 /**
@@ -63,6 +64,15 @@ public interface UltraDNSWSApi {
     */
    @Delegate
    RoundRobinPoolApi getRoundRobinPoolApiForZone(@PayloadParam("zoneName") String zoneName);
+
+   /**
+    * Provides synchronous access to Traffic Controller Pool features.
+    * 
+    * @param zoneName
+    *           zoneName including a trailing dot
+    */
+   @Delegate
+   TrafficControllerPoolApi getTrafficControllerPoolApiForZone(@PayloadParam("zoneName") String zoneName);
 
    /**
     * Provides synchronous access to Task features.
