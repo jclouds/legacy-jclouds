@@ -33,8 +33,8 @@ import com.google.common.collect.ImmutableList;
 /**
  * @author Adrian Cole
  */
-@Test(testName = "GetLoadBalancingPoolsByZoneResponseTest")
-public class GetLoadBalancingPoolsByZoneResponseTest extends BaseHandlerTest {
+@Test(testName = "GetRRLoadBalancingPoolsByZoneResponseTest")
+public class GetRRLoadBalancingPoolsByZoneResponseTest extends BaseHandlerTest {
 
    public void test() {
       InputStream is = getClass().getResourceAsStream("/rrpools.xml");
@@ -50,19 +50,19 @@ public class GetLoadBalancingPoolsByZoneResponseTest extends BaseHandlerTest {
    public FluentIterable<RoundRobinPool> expected() {
       return FluentIterable.from(ImmutableList.<RoundRobinPool> builder()
                            .add(RoundRobinPool.builder()
-                                      .zoneId("0000000000000001")
-                                      .id("000000000000002")
-                                      .name("app-uswest1.jclouds.org.")
-                                      .dname("app-uswest1.jclouds.org.").build())
+                                              .zoneId("0000000000000001")
+                                              .id("000000000000002")
+                                              .name("app-uswest1.jclouds.org.")
+                                              .dname("app-uswest1.jclouds.org.").build())
                            .add(RoundRobinPool.builder()
-                                      .zoneId("0000000000000001")
-                                      .id("000000000000003")
-                                      .name("app-uswest2.jclouds.org.")
-                                      .dname("app-uswest2.jclouds.org.").build())
+                                              .zoneId("0000000000000001")
+                                              .id("000000000000003")
+                                              .name("app-uswest2.jclouds.org.")
+                                              .dname("app-uswest2.jclouds.org.").build())
                            .add(RoundRobinPool.builder()
-                                      .zoneId("0000000000000001")
-                                      .id("000000000000004")
-                                      .name("app-euwest.jclouds.org.")
-                                      .dname("app-euwest.jclouds.org.").build()).build());
+                                              .zoneId("0000000000000001")
+                                              .id("000000000000004")
+                                              .name("app-euwest.jclouds.org.")
+                                              .dname("app-euwest.jclouds.org.").build()).build());
    }
 }
