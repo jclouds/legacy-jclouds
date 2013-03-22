@@ -103,7 +103,7 @@ public class ResourceRecordSet {
          private Weighted(String id, String name, String type, int weight, Optional<Integer> ttl, List<String> values,
                Optional<AliasTarget> aliasTarget) {
             super(id, name, type, ttl, values, aliasTarget);
-            this.weight = checkNotNull(weight, "weight");
+            this.weight = weight;
          }
 
          /**

@@ -20,7 +20,6 @@ package org.jclouds.route53.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.route53.domain.ResourceRecordSet;
 import org.jclouds.route53.domain.ResourceRecordSet.RecordSubset;
 import org.jclouds.route53.domain.ResourceRecordSet.RecordSubset.Latency;
@@ -30,7 +29,6 @@ import com.google.common.base.Function;
 
 /**
  * @author Adrian Cole
- * @see ParamParser
  */
 public class SerializeRRS implements Function<Object, String> {
    @Override
@@ -41,7 +39,7 @@ public class SerializeRRS implements Function<Object, String> {
       builder.append("<Type>").append(rrs.getType()).append("</Type>");
       if (rrs instanceof RecordSubset) {
          String id = RecordSubset.class.cast(rrs).getId();
-         builder.append("<ResourceRecordSubset>").append(id).append("</ResourceRecordSubset>");
+         builder.append("<SetIdentifier>").append(id).append("</SetIdentifier>");
       }
       if (rrs instanceof Weighted)
          builder.append("<Weight>").append(Weighted.class.cast(rrs).getWeight()).append("</Weight>");
