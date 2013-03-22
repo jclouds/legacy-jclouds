@@ -25,7 +25,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.ultradns.ws.UltraDNSWSApi;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiExpectTest;
-import org.jclouds.ultradns.ws.parse.GetLoadBalancingPoolsByZoneResponseTest;
+import org.jclouds.ultradns.ws.parse.GetRRLoadBalancingPoolsByZoneResponseTest;
 import org.jclouds.ultradns.ws.parse.GetResourceRecordsOfResourceRecordResponseTest;
 import org.testng.annotations.Test;
 
@@ -79,7 +79,7 @@ public class RoundRobinPoolApiExpectTest extends BaseUltraDNSWSApiExpectTest {
 
       assertEquals(
             success.getRoundRobinPoolApiForZone("jclouds.org.").list().toString(),
-            new GetLoadBalancingPoolsByZoneResponseTest().expected().toString());
+            new GetRRLoadBalancingPoolsByZoneResponseTest().expected().toString());
    }
 
    HttpRequest listRecords = HttpRequest.builder().method("POST")
@@ -108,7 +108,7 @@ public class RoundRobinPoolApiExpectTest extends BaseUltraDNSWSApiExpectTest {
 
    public void testDeleteWhenResponseIs2xx() {
       UltraDNSWSApi success = requestSendsResponse(delete, deleteResponse);
-      success.getZoneApi().delete("04053D8E57C7931F");
+      success.getRoundRobinPoolApiForZone("jclouds.org.").delete("04053D8E57C7931F");
    }
 
    HttpResponse poolDoesntExist = HttpResponse.builder().message("Server Epoolor").statusCode(500)
@@ -116,6 +116,6 @@ public class RoundRobinPoolApiExpectTest extends BaseUltraDNSWSApiExpectTest {
    
    public void testDeleteWhenResponseRRNotFound() {
       UltraDNSWSApi notFound = requestSendsResponse(delete, poolDoesntExist);
-      notFound.getZoneApi().delete("04053D8E57C7931F");
+      notFound.getRoundRobinPoolApiForZone("jclouds.org.").delete("04053D8E57C7931F");
    }
 }

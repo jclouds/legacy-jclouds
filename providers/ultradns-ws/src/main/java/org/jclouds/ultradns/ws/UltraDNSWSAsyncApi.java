@@ -28,9 +28,10 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.ultradns.ws.domain.Account;
-import org.jclouds.ultradns.ws.features.RoundRobinPoolAsyncApi;
 import org.jclouds.ultradns.ws.features.ResourceRecordAsyncApi;
+import org.jclouds.ultradns.ws.features.RoundRobinPoolAsyncApi;
 import org.jclouds.ultradns.ws.features.TaskAsyncApi;
+import org.jclouds.ultradns.ws.features.TrafficControllerPoolAsyncApi;
 import org.jclouds.ultradns.ws.features.ZoneAsyncApi;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
 import org.jclouds.ultradns.ws.xml.AccountHandler;
@@ -81,6 +82,15 @@ public interface UltraDNSWSAsyncApi {
     */
    @Delegate
    RoundRobinPoolAsyncApi getRoundRobinPoolApiForZone(@PayloadParam("zoneName") String zoneName);
+
+   /**
+    * Provides asynchronous access to Traffic Controller Pool features.
+    * 
+    * @param zoneName
+    *           zoneName including a trailing dot
+    */
+   @Delegate
+   TrafficControllerPoolAsyncApi getTrafficControllerPoolApiForZone(@PayloadParam("zoneName") String zoneName);
 
    /**
     * Provides asynchronous access to Task features.
