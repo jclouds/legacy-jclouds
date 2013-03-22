@@ -135,33 +135,59 @@ public class ResourceRecordSetApiLiveTest extends BaseRoute53ApiLiveTest {
    @Test
    public void testCreateAndDeleteBulkRecords() {
       String name = System.getProperty("user.name").replace('.', '-') + ".bulk.route53test.jclouds.org.";
+      try {
+         String zoneId = recreateZone(name);
+
+         ImmutableList<ResourceRecordSet> records = ImmutableList.<ResourceRecordSet> builder()
+               .add(ResourceRecordSet.builder().name("dom1." + name).type("TXT").add("\"somehow\" \" somewhere\"")
+                     .build())
+               .add(ResourceRecordSet.builder().name("dom2." + name).type("TXT").add("\"goodies\"").build()).build();
+
+         createAndDeleteRecordsInZone(records, zoneId);
+      } finally {
+         clearAndDeleteHostedZonesNamed(name);
+      }
+   }
+
+   @Test
+   public void testCreateAndDeleteWeightedRecords() {
+      String name = System.getProperty("user.name").replace('.', '-') + ".weight.route53test.jclouds.org.";
+      try {
+         String zoneId = recreateZone(name);
+
+         ImmutableList<ResourceRecordSet> records = ImmutableList.<ResourceRecordSet> builder()
+               .add(Weighted.builder().id("dom1").weight(1).name("dom." + name).type("CNAME").add("dom1." + name)
+                     .build())
+               .add(Weighted.builder().id("dom2").weight(1).name("dom." + name).type("CNAME").add("dom2." + name)
+                     .build()).build();
+
+         createAndDeleteRecordsInZone(records, zoneId);
+      } finally {
+         clearAndDeleteHostedZonesNamed(name);
+      }
+   }
+
+   private String recreateZone(String name) {
       clearAndDeleteHostedZonesNamed(name);
-
-      ImmutableList<ResourceRecordSet> records = ImmutableList.<ResourceRecordSet> builder()
-            .add(ResourceRecordSet.builder().name("dom1." + name).type("TXT").add("\"somehow\" \" somewhere\"").build())
-            .add(ResourceRecordSet.builder().name("dom2." + name).type("TXT").add("\"goodies\"").build()).build();
-
       String nonce = name + " @ " + new Date();
       String comment = name + " for " + JcloudsVersion.get();
       NewHostedZone newHostedZone = context.getApi().getHostedZoneApi()
             .createWithReferenceAndComment(name, nonce, comment);
-      String zoneId = newHostedZone.getZone().getId();
       getAnonymousLogger().info("created zone: " + newHostedZone);
-      try {
-         assertTrue(inSync.apply(newHostedZone.getChange()), "zone didn't sync " + newHostedZone);
-         sync(api(zoneId).apply(createAll(records)));
+      assertTrue(inSync.apply(newHostedZone.getChange()), "zone didn't sync " + newHostedZone);
+      return newHostedZone.getZone().getId();
+   }
 
-         checkAllRRs(zoneId);
+   private void createAndDeleteRecordsInZone(ImmutableList<ResourceRecordSet> records, String zoneId) {
+      sync(api(zoneId).apply(createAll(records)));
 
-         sync(api(zoneId).apply(deleteAll(records)));
+      checkAllRRs(zoneId);
 
-         PagedIterable<ResourceRecordSet> refreshed = refresh(zoneId);
-         assertTrue(refreshed.concat().filter(not(requiredRRTypes)).isEmpty(), "zone still has optional records: "
-               + refreshed);
+      sync(api(zoneId).apply(deleteAll(records)));
 
-      } finally {
-         clearAndDeleteHostedZonesNamed(name);
-      }
+      PagedIterable<ResourceRecordSet> refreshed = refresh(zoneId);
+      assertTrue(refreshed.concat().filter(not(requiredRRTypes)).isEmpty(), "zone still has optional records: "
+            + refreshed);
    }
 
    private void clearAndDeleteHostedZonesNamed(String name) {
