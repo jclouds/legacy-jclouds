@@ -61,17 +61,18 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
       context.getApi().getZoneApi().createInAccount(zoneName, account.getId());
    }
 
-   private void checkLBPool(RoundRobinPool pool) {
+   private void checkRRPool(RoundRobinPool pool) {
       checkNotNull(pool.getZoneId(), "ZoneId cannot be null for a RoundRobinPool %s", pool);
       checkNotNull(pool.getId(), "Id cannot be null for a RoundRobinPool %s", pool);
       checkNotNull(pool.getName(), "Name cannot be null for a RoundRobinPool %s", pool);
+      checkNotNull(pool.getDName(), "DName cannot be null for a RoundRobinPool %s", pool);
    }
 
    @Test
    public void testListRRPools() {
       for (Zone zone : context.getApi().getZoneApi().listByAccount(account.getId())) {
          for (RoundRobinPool pool : api(zone.getName()).list()) {
-            checkLBPool(pool);
+            checkRRPool(pool);
          }
       }
    }
