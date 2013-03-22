@@ -343,6 +343,16 @@ public class ResourceRecordSet {
       }
 
       /**
+       * replaces current values
+       * 
+       * @see ResourceRecordSet#getValues()
+       */
+      public Builder values(Iterable<String> values) {
+         this.values = ImmutableList.<String> builder().addAll(values);
+         return this;
+      }
+
+      /**
        * @see ResourceRecordSet#getValues()
        */
       public Builder addAll(Iterable<String> values) {
@@ -385,7 +395,7 @@ public class ResourceRecordSet {
          } else if (in instanceof Latency) {
             region(Latency.class.cast(in).region);
          }
-         return this.name(in.name).type(in.type).ttl(in.ttl.orNull()).addAll(in.values)
+         return this.name(in.name).type(in.type).ttl(in.ttl.orNull()).values(in.values)
                .aliasTarget(in.aliasTarget.orNull());
       }
    }
