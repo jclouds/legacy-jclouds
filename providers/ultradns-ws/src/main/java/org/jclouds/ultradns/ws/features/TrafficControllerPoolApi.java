@@ -20,6 +20,7 @@ package org.jclouds.ultradns.ws.features;
 
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
+import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
 
 import com.google.common.collect.FluentIterable;
 
@@ -36,4 +37,12 @@ public interface TrafficControllerPoolApi {
     *            if the zone doesn't exist
     */
    FluentIterable<TrafficControllerPool> list() throws ResourceNotFoundException;
+
+   /**
+    * Returns all records in the traffic controller pool.
+    * 
+    * @throws ResourceNotFoundException
+    *            if the pool doesn't exist
+    */
+   FluentIterable<TrafficControllerPoolRecord> listRecords(String poolId) throws ResourceNotFoundException;
 }

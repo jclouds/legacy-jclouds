@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Body>
+		<ns1:getPoolRecordsResponse
+			xmlns:ns1="http://webservice.api.ultra.neustar.com/v01/">
+			<PoolRecordsList xmlns:ns2="http://schema.ultraservice.neustar.com/v01/">
+				<ns2:PoolRecordData poolRecordID="0000000000000001"
+					poolId="0000000000000001" pointsTo="canary.jclouds.org." weight="2"
+					priority="2" recordType="CNAME" forceAnswer="Normal" probing="ENABLED"
+					status="OK" serving="Yes" description="canary app" />
+				<ns2:PoolRecordData poolRecordID="0000000000000002"
+					poolId="0000000000000001" pointsTo="prod.jclouds.org." weight="98"
+					priority="1" recordType="CNAME" forceAnswer="Normal" probing="ENABLED"
+					status="OK" serving="Yes" description="prod app" />
+			</PoolRecordsList>
+		</ns1:getPoolRecordsResponse>
+	</soap:Body>
+</soap:Envelope>
