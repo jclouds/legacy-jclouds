@@ -25,6 +25,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.ultradns.ws.UltraDNSWSApi;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiExpectTest;
 import org.jclouds.ultradns.ws.parse.GetTCLoadBalancingPoolsByZoneResponseTest;
+import org.jclouds.ultradns.ws.parse.GetTCPoolRecordsResponseTest;
 import org.testng.annotations.Test;
 
 /**
@@ -47,4 +48,21 @@ public class TrafficControllerPoolApiExpectTest extends BaseUltraDNSWSApiExpectT
       assertEquals(success.getTrafficControllerPoolApiForZone("jclouds.org.").list().toString(),
             new GetTCLoadBalancingPoolsByZoneResponseTest().expected().toString());
    }
+
+   HttpRequest listRecords = HttpRequest.builder().method("POST")
+         .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .payload(payloadFromResourceWithContentType("/list_tcrecords.xml", "application/xml")).build();
+
+   HttpResponse listRecordsResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResourceWithContentType("/tcrecords.xml", "application/xml")).build();
+
+   public void testListRecordsWhenResponseIs2xx() {
+      UltraDNSWSApi success = requestSendsResponse(listRecords, listRecordsResponse);
+
+      assertEquals(
+            success.getTrafficControllerPoolApiForZone("jclouds.org.").listRecords("04053D8E57C7931F").toString(),
+            new GetTCPoolRecordsResponseTest().expected().toString());
+   }
+
 }
