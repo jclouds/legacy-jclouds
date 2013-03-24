@@ -87,4 +87,24 @@ public interface TrafficControllerPoolAsyncApi {
    @Payload("<v01:deleteLBPool><transactionID /><lbPoolID>{lbPoolID}</lbPoolID><DeleteAll>Yes</DeleteAll><retainRecordId /></v01:deleteLBPool>")
    @Fallback(VoidOnNotFoundOr404.class)
    ListenableFuture<Void> delete(@PayloadParam("lbPoolID") String id);
+
+   /**
+    * @see TrafficControllerPoolApi#addRecordToPoolWithTTL
+    */
+   @Named("addPoolRecord")
+   @POST
+   @XMLResponseParser(IDHandler.PoolRecord.class)
+   @Payload("<v01:addPoolRecord><transactionID /><poolID>{poolID}</poolID><pointsTo>{pointsTo}</pointsTo><priority /><failOverDelay /><ttl>{ttl}</ttl><weight /><mode /><threshold /></v01:addPoolRecord>")
+   ListenableFuture<String> addRecordToPoolWithTTL(@PayloadParam("pointsTo") String pointsTo,
+         @PayloadParam("poolID") String lbPoolID, @PayloadParam("ttl") int ttl) throws ResourceAlreadyExistsException;
+
+   /**
+    * @see TrafficControllerPoolApi#deleteRecord(String)
+    */
+   @Named("deletePoolRecord")
+   @POST
+   @Payload("<v01:deletePoolRecord><transactionID /><poolRecordID>{poolRecordID}</poolRecordID><parentPoolId /><childPoolId /></v01:deletePoolRecord>")
+   @Fallback(VoidOnNotFoundOr404.class)
+   ListenableFuture<Void> deleteRecord(@PayloadParam("poolRecordID") String poolRecordID);
+
 }

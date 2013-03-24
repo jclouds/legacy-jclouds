@@ -48,6 +48,12 @@ public abstract class IDHandler extends ParseSax.HandlerForGeneratedRequestWithR
       }
    }
 
+   public static class PoolRecord extends IDHandler {
+      public PoolRecord() {
+         super("poolRecordID");
+      }
+   }
+
    private String idElement;
 
    private StringBuilder currentText = new StringBuilder();

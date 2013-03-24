@@ -20,7 +20,7 @@ package org.jclouds.ultradns.ws.features;
 
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
-import org.jclouds.ultradns.ws.domain.RoundRobinPool;
+import org.jclouds.ultradns.ws.domain.ResourceRecord;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
 
@@ -31,6 +31,15 @@ import com.google.common.collect.FluentIterable;
  * @author Adrian Cole
  */
 public interface TrafficControllerPoolApi {
+
+   /**
+    * Returns all traffic controller pools in the zone.
+    * 
+    * @throws ResourceNotFoundException
+    *            if the zone doesn't exist
+    */
+   FluentIterable<TrafficControllerPool> list() throws ResourceNotFoundException;
+
    /**
     * creates a traffic controller pool.
     * 
@@ -46,12 +55,12 @@ public interface TrafficControllerPoolApi {
    String createPoolForHostname(String name, String hostname) throws ResourceAlreadyExistsException;
 
    /**
-    * Returns all traffic controller pools in the zone.
+    * removes a pool and all its records and probes
     * 
-    * @throws ResourceNotFoundException
-    *            if the zone doesn't exist
+    * @param id
+    *           the {@link TrafficControllerPool#getId() id}
     */
-   FluentIterable<TrafficControllerPool> list() throws ResourceNotFoundException;
+   void delete(String id);
 
    /**
     * Returns all records in the traffic controller pool.
@@ -62,10 +71,27 @@ public interface TrafficControllerPoolApi {
    FluentIterable<TrafficControllerPoolRecord> listRecords(String poolId) throws ResourceNotFoundException;
 
    /**
-    * removes a pool and all its records and probes
+    * adds a new record to the pool
     * 
-    * @param id
-    *           the {@link RoundRobinPool#getId() id}
+    * @param pointsTo
+    *           the ipv4 address or hostname
+    * @param lbPoolID
+    *           the pool to add the record to.
+    * @param ttl
+    *           the {@link ResourceRecord#getTTL ttl} of the record
+    * @return the {@link TrafficControllerPoolRecord#getId() id} of the new
+    *         record
+    * @throws ResourceAlreadyExistsException
+    *            if a record already exists with the same attrs
     */
-   void delete(String id);
+   String addRecordToPoolWithTTL(String pointsTo, String lbPoolID, int ttl) throws ResourceAlreadyExistsException;
+
+   /**
+    * deletes a specific pooled resource record
+    * 
+    * @param poolRecordID
+    *           {@see TrafficControllerPoolRecord#getId()}
+    */
+   void deleteRecord(String poolRecordID);
+
 }
