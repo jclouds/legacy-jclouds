@@ -21,15 +21,19 @@ package org.jclouds.ultradns.ws.features;
 import javax.inject.Named;
 import javax.ws.rs.POST;
 
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.rest.ResourceNotFoundException;
+import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
+import org.jclouds.ultradns.ws.xml.IDHandler;
 import org.jclouds.ultradns.ws.xml.TrafficControllerPoolListHandler;
 import org.jclouds.ultradns.ws.xml.TrafficControllerPoolRecordListHandler;
 
@@ -47,6 +51,16 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface TrafficControllerPoolAsyncApi {
 
    /**
+    * @see RoundRobinPoolApi#createPoolForHostname
+    */
+   @Named("addTCLBPool")
+   @POST
+   @XMLResponseParser(IDHandler.TCPool.class)
+   @Payload("<v01:addTCLBPool><transactionID /><zoneName>{zoneName}</zoneName><hostName>{hostName}</hostName><description>{description}</description><poolRecordType>1</poolRecordType><failOver>Enabled</failOver><probing>Enabled</probing><maxActive>0</maxActive><rrGUID /></v01:addTCLBPool>")
+   ListenableFuture<String> createPoolForHostname(@PayloadParam("description") String name,
+         @PayloadParam("hostName") String hostname) throws ResourceAlreadyExistsException;
+
+   /**
     * @see TrafficControllerPoolApi#list()
     */
    @Named("getLoadBalancingPoolsByZone")
@@ -54,7 +68,7 @@ public interface TrafficControllerPoolAsyncApi {
    @XMLResponseParser(TrafficControllerPoolListHandler.class)
    @Payload("<v01:getLoadBalancingPoolsByZone><zoneName>{zoneName}</zoneName><lbPoolType>TC</lbPoolType></v01:getLoadBalancingPoolsByZone>")
    ListenableFuture<FluentIterable<TrafficControllerPool>> list() throws ResourceNotFoundException;
-   
+
    /**
     * @see TrafficControllerPoolApi#listRecords(String)
     */
@@ -65,4 +79,12 @@ public interface TrafficControllerPoolAsyncApi {
    ListenableFuture<FluentIterable<TrafficControllerPoolRecord>> listRecords(@PayloadParam("poolId") String poolId)
          throws ResourceNotFoundException;
 
+   /**
+    * @see TrafficControllerPoolApi#delete(String)
+    */
+   @Named("deleteLBPool")
+   @POST
+   @Payload("<v01:deleteLBPool><transactionID /><lbPoolID>{lbPoolID}</lbPoolID><DeleteAll>Yes</DeleteAll><retainRecordId /></v01:deleteLBPool>")
+   @Fallback(VoidOnNotFoundOr404.class)
+   ListenableFuture<Void> delete(@PayloadParam("lbPoolID") String id);
 }

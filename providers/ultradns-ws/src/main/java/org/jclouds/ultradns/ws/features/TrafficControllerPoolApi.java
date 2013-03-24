@@ -19,6 +19,8 @@
 package org.jclouds.ultradns.ws.features;
 
 import org.jclouds.rest.ResourceNotFoundException;
+import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
+import org.jclouds.ultradns.ws.domain.RoundRobinPool;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
 
@@ -29,6 +31,19 @@ import com.google.common.collect.FluentIterable;
  * @author Adrian Cole
  */
 public interface TrafficControllerPoolApi {
+   /**
+    * creates a traffic controller pool.
+    * 
+    * @param name
+    *           {@link TrafficControllerPool#getName() name} of the TC pool
+    * @param hostname
+    *           {@link TrafficControllerPool#getDName() dname} of the TC pool
+    *           {ex. www.jclouds.org.}
+    * @return the {@code guid} of the new record
+    * @throws ResourceAlreadyExistsException
+    *            if a pool already exists with the same attrs
+    */
+   String createPoolForHostname(String name, String hostname) throws ResourceAlreadyExistsException;
 
    /**
     * Returns all traffic controller pools in the zone.
@@ -45,4 +60,12 @@ public interface TrafficControllerPoolApi {
     *            if the pool doesn't exist
     */
    FluentIterable<TrafficControllerPoolRecord> listRecords(String poolId) throws ResourceNotFoundException;
+
+   /**
+    * removes a pool and all its records and probes
+    * 
+    * @param id
+    *           the {@link RoundRobinPool#getId() id}
+    */
+   void delete(String id);
 }
