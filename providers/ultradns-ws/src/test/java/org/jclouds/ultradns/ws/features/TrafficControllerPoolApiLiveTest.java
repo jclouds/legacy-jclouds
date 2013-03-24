@@ -19,17 +19,26 @@
 package org.jclouds.ultradns.ws.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.logging.Logger.getAnonymousLogger;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import org.jclouds.rest.ResourceNotFoundException;
+import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
 import org.jclouds.ultradns.ws.domain.Account;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord.Status;
 import org.jclouds.ultradns.ws.domain.Zone;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiLiveTest;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 
 /**
  * @author Adrian Cole
@@ -37,13 +46,16 @@ import org.testng.annotations.Test;
 @Test(groups = "live", singleThreaded = true, testName = "TrafficControllerPoolApiLiveTest")
 public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
+   private String zoneName = System.getProperty("user.name").replace('.', '-') + ".tcpool.ultradnstest.jclouds.org.";
    private Account account;
 
    @Override
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
+      context.getApi().getZoneApi().delete(zoneName);
       account = context.getApi().getCurrentAccount();
+      context.getApi().getZoneApi().createInAccount(zoneName, account.getId());
    }
 
    private void checkTCPool(TrafficControllerPool pool) {
@@ -90,7 +102,55 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
       api("AAAAAAAAAAAAAAAA").list();
    }
 
+   @Test
+   public void testDeleteWhenNotFound() {
+      api(zoneName).delete("06063D9C54C5AE09");
+   }
+
+   String hostname = "www.tcpool." + zoneName;
+   String poolId;
+
+   @Test
+   public void testCreatePool() {
+      poolId = api(zoneName).createPoolForHostname("pool", hostname);
+      getAnonymousLogger().info("created tc pool: " + poolId);
+      try {
+         api(zoneName).createPoolForHostname("pool", hostname);
+         fail();
+      } catch (ResourceAlreadyExistsException e) {
+
+      }
+      Optional<TrafficControllerPool> pool = getPoolById(poolId);
+      assertTrue(pool.isPresent());
+      assertEquals(pool.get().getName(), "pool");
+      assertEquals(pool.get().getDName(), hostname);
+      checkTCPool(pool.get());
+   }
+
+   @Test(dependsOnMethods = "testCreatePool")
+   public void testDeletePool() {
+      api(zoneName).delete(poolId);
+      assertFalse(getPoolById(poolId).isPresent());
+   }
+
+   protected Optional<TrafficControllerPool> getPoolById(final String poolId) {
+      return api(zoneName).list().firstMatch(new Predicate<TrafficControllerPool>() {
+         public boolean apply(TrafficControllerPool in) {
+            return in.getId().equals(poolId);
+         }
+      });
+   }
+
    private TrafficControllerPoolApi api(String zoneName) {
       return context.getApi().getTrafficControllerPoolApiForZone(zoneName);
+   }
+
+   @Override
+   @AfterClass(groups = { "integration", "live" })
+   protected void tearDownContext() {
+      if (poolId != null)
+         api(zoneName).delete(poolId);
+      context.getApi().getZoneApi().delete(zoneName);
+      super.tearDownContext();
    }
 }
