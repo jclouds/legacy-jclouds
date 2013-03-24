@@ -25,6 +25,7 @@ import org.jclouds.ultradns.ws.domain.PoolRecordSpec;
 import org.jclouds.ultradns.ws.domain.ResourceRecord;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
+import org.jclouds.ultradns.ws.domain.UpdatePoolRecord;
 
 import com.google.common.collect.FluentIterable;
 
@@ -102,11 +103,25 @@ public interface TrafficControllerPoolApi {
     * Retrieves information about the specified pool record
     * 
     * @param poolRecordID
-    *           {@see TrafficControllerPoolRecord#getId()}
+    *           {@link TrafficControllerPoolRecord#getId()}
     * @return null if not found
     */
    @Nullable
    PoolRecordSpec getRecordSpec(String poolRecordID);
+
+   /**
+    * This request updates an existing pool record.
+    * 
+    * @param poolRecordID
+    *           {@link TrafficControllerPoolRecord#getId()}
+    * @param update
+    *           what to update, usually primed via
+    *           {@link UpdatePoolRecord#pointingTo(PoolRecordSpec, String)} or
+    *           {@link org.jclouds.ultradns.ws.domain.UpdatePoolRecord.Builder#from(PoolRecordSpec)}
+    * @throws ResourceNotFoundException
+    *            if the record doesn't exist
+    */
+   void updateRecord(String poolRecordID, UpdatePoolRecord update) throws ResourceNotFoundException;
 
    /**
     * deletes a specific pooled resource record
