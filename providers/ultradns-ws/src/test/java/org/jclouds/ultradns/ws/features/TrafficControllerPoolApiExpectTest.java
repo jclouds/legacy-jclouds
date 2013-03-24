@@ -103,7 +103,7 @@ public class TrafficControllerPoolApiExpectTest extends BaseUltraDNSWSApiExpectT
    HttpResponse poolDoesntExist = HttpResponse.builder().message("Server Epoolor").statusCode(500)
          .payload(payloadFromResource("/lbpool_doesnt_exist.xml")).build();
    
-   public void testDeleteWhenResponseRRNotFound() {
+   public void testDeleteWhenResponseNotFound() {
       UltraDNSWSApi notFound = requestSendsResponse(delete, poolDoesntExist);
       notFound.getTrafficControllerPoolApiForZone("jclouds.org.").delete("04053D8E57C7931F");
    }
@@ -128,5 +128,26 @@ public class TrafficControllerPoolApiExpectTest extends BaseUltraDNSWSApiExpectT
    public void testCreateWhenResponseError1802() {
       UltraDNSWSApi already = requestSendsResponse(createRecord, recordAlreadyCreated);
       already.getTrafficControllerPoolApiForZone("jclouds.org.").addRecordToPoolWithTTL("1.2.3.4", "04053D8E57C7931F", 300);
+   }
+
+   HttpRequest deleteRecord = HttpRequest.builder().method("POST")
+         .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .payload(payloadFromResourceWithContentType("/delete_tcrecord.xml", "application/xml")).build();
+
+   HttpResponse deleteRecordResponse = HttpResponse.builder().statusCode(404)
+         .payload(payloadFromResourceWithContentType("/tcrecord_deleted.xml", "application/xml")).build();
+
+   public void testDeleteRecordWhenResponseIs2xx() {
+      UltraDNSWSApi success = requestSendsResponse(deleteRecord, deleteRecordResponse);
+      success.getTrafficControllerPoolApiForZone("jclouds.org.").deleteRecord("04053D8E57C7931F");
+   }
+
+   HttpResponse recordDoesntExist = HttpResponse.builder().message("Server Error").statusCode(500)
+         .payload(payloadFromResource("/tcrecord_doesnt_exist.xml")).build();
+   
+   public void testDeleteRecordWhenResponseNotFound() {
+      UltraDNSWSApi notFound = requestSendsResponse(deleteRecord, recordDoesntExist);
+      notFound.getTrafficControllerPoolApiForZone("jclouds.org.").deleteRecord("04053D8E57C7931F");
    }
 }

@@ -81,6 +81,7 @@ public class UltraDNSWSErrorHandler implements HttpErrorHandler {
       case 2103:
       case 2401:
       case 2911:
+      case 3101:
          return new ResourceNotFoundException(exception.getError().getDescription(), exception);
       case 1802:
       case 2111:
