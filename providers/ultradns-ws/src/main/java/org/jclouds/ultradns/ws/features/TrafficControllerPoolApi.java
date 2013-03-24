@@ -18,8 +18,10 @@
  */
 package org.jclouds.ultradns.ws.features;
 
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
+import org.jclouds.ultradns.ws.domain.PoolRecordSpec;
 import org.jclouds.ultradns.ws.domain.ResourceRecord;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
@@ -85,6 +87,16 @@ public interface TrafficControllerPoolApi {
     *            if a record already exists with the same attrs
     */
    String addRecordToPoolWithTTL(String pointsTo, String lbPoolID, int ttl) throws ResourceAlreadyExistsException;
+
+   /**
+    * Retrieves information about the specified pool record
+    * 
+    * @param poolRecordID
+    *           {@see TrafficControllerPoolRecord#getId()}
+    * @return null if not found
+    */
+   @Nullable
+   PoolRecordSpec getRecordSpec(String poolRecordID);
 
    /**
     * deletes a specific pooled resource record

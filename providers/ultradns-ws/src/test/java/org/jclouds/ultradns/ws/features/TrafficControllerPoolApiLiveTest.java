@@ -96,6 +96,19 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
       checkNotNull(record.getStatus(), "Status cannot be null for %s", record);
       assertTrue(record.getStatus() != Status.UNRECOGNIZED, "unrecognized status for " + record);
       checkNotNull(record.getDescription(), "Description cannot be null for %s", record);
+      return record;
+   }
+
+   static PoolRecordSpec checkPoolRecordSpec(PoolRecordSpec record) {
+      checkNotNull(record.getDescription(), "Description cannot be null for %s", record);
+      checkNotNull(record.getState(), "State cannot be null for %s", record);
+      // TODO: collect all possible states then consider enum
+      assertTrue(ImmutableSet.of("Normal", "Normal-NoTest").contains(record.getState()), "Unknown State for " + record);
+      assertTrue(record.getWeight() >= 0, "Weight must be unsigned for " + record);
+      assertTrue(record.getFailOverDelay() >= 0, "failOverDelay must be unsigned for " + record);
+      assertTrue(record.getThreshold() >= 0, "threshold must be unsigned for " + record);
+      assertTrue(record.getTTL() >= 0, "ttl must be unsigned for " + record);
+      return record;
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class, expectedExceptionsMessageRegExp = "Zone does not exist in the system.")
