@@ -89,6 +89,27 @@ public class TrafficControllerPoolApiExpectTest extends BaseUltraDNSWSApiExpectT
             new GetTCPoolRecordsResponseTest().expected().toString());
    }
 
+   HttpRequest getNameByDName = HttpRequest.builder().method("POST")
+         .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .payload(payloadFromResourceWithContentType("/get_tcpool_by_dname.xml", "application/xml")).build();
+
+   HttpResponse getNameByDNameResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResourceWithContentType("/tcpool_name.xml", "application/xml")).build();
+
+   public void testGetNameByDNameWhenResponseIs2xx() {
+      UltraDNSWSApi success = requestSendsResponse(getNameByDName, getNameByDNameResponse);
+      assertEquals(success.getTrafficControllerPoolApiForZone("jclouds.org.").getNameByDName("www.foo.com."), "foo");
+   }
+
+   HttpResponse poolDoesntExist = HttpResponse.builder().message("Server Epoolor").statusCode(500)
+         .payload(payloadFromResource("/lbpool_doesnt_exist.xml")).build();
+   
+   public void testGetNameByDNameWhenResponseNotFound() {
+      UltraDNSWSApi notFound = requestSendsResponse(getNameByDName, poolDoesntExist);
+      assertNull(notFound.getTrafficControllerPoolApiForZone("jclouds.org.").getNameByDName("www.foo.com."));
+   }
+
    HttpRequest delete = HttpRequest.builder().method("POST")
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
          .addHeader("Host", "ultra-api.ultradns.com:8443")
@@ -102,9 +123,6 @@ public class TrafficControllerPoolApiExpectTest extends BaseUltraDNSWSApiExpectT
       success.getTrafficControllerPoolApiForZone("jclouds.org.").delete("04053D8E57C7931F");
    }
 
-   HttpResponse poolDoesntExist = HttpResponse.builder().message("Server Epoolor").statusCode(500)
-         .payload(payloadFromResource("/lbpool_doesnt_exist.xml")).build();
-   
    public void testDeleteWhenResponseNotFound() {
       UltraDNSWSApi notFound = requestSendsResponse(delete, poolDoesntExist);
       notFound.getTrafficControllerPoolApiForZone("jclouds.org.").delete("04053D8E57C7931F");

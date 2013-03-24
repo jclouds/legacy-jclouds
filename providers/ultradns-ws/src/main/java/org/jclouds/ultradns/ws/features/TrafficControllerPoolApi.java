@@ -57,6 +57,16 @@ public interface TrafficControllerPoolApi {
    String createPoolForHostname(String name, String hostname) throws ResourceAlreadyExistsException;
 
    /**
+    * Retrieves the name of the specified pool by dname.
+    * 
+    * @param dname
+    *           {@see TrafficControllerPool#getDName()} ex. {@code jclouds.org.}
+    * @return null if not found
+    */
+   @Nullable
+   String getNameByDName(String dname);
+
+   /**
     * removes a pool and all its records and probes
     * 
     * @param id
