@@ -28,54 +28,54 @@ import org.jclouds.http.functions.ParseSax;
  * 
  * @author Adrian Cole
  */
-public abstract class IDHandler extends ParseSax.HandlerForGeneratedRequestWithResult<String> {
+public abstract class TextHandler extends ParseSax.HandlerForGeneratedRequestWithResult<String> {
 
-   public static class Guid extends IDHandler {
+   public static class Guid extends TextHandler {
       public Guid() {
          super("guid");
       }
    }
 
-   public static class RRPool extends IDHandler {
-      public RRPool() {
+   public static class RRPoolID extends TextHandler {
+      public RRPoolID() {
          super("RRPoolID");
       }
    }
 
-   public static class TCPool extends IDHandler {
-      public TCPool() {
+   public static class TCPoolID extends TextHandler {
+      public TCPoolID() {
          super("TCPoolID");
       }
    }
 
-   public static class PoolRecord extends IDHandler {
-      public PoolRecord() {
+   public static class PoolRecordID extends TextHandler {
+      public PoolRecordID() {
          super("poolRecordID");
       }
    }
 
-   private String idElement;
+   private String textElement;
 
    private StringBuilder currentText = new StringBuilder();
-   private String id = null;
+   private String text = null;
 
-   private IDHandler(String idElement) {
-      this.idElement = checkNotNull(idElement, "idElement");
+   private TextHandler(String textElement) {
+      this.textElement = checkNotNull(textElement, "textElement");
    }
 
    @Override
    public String getResult() {
       try {
-         return checkNotNull(id, "%s not present in the response", idElement);
+         return checkNotNull(text, "%s not present in the response", textElement);
       } finally {
-         id = null;
+         text = null;
       }
    }
 
    @Override
    public void endElement(String uri, String name, String qName) {
-      if (equalsOrSuffix(qName, idElement)) {
-         id = currentOrNull(currentText);
+      if (equalsOrSuffix(qName, textElement)) {
+         text = currentOrNull(currentText);
       }
       currentText = new StringBuilder();
    }

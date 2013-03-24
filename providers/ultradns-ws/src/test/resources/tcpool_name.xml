@@ -1,0 +1,10 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Body>
+		<ns1:getPoolForPoolHostNameResponse
+			xmlns:ns1="http://webservice.api.ultra.neustar.com/v01/">
+			<LBPoolData xmlns:ns2="http://schema.ultraservice.neustar.com/v01/">
+				<ns2:PoolData PoolName="foo" PoolType="TC" />
+			</LBPoolData>
+		</ns1:getPoolForPoolHostNameResponse>
+	</soap:Body>
+</soap:Envelope>

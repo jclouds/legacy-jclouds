@@ -23,19 +23,18 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.ultradns.ws.xml.TextHandler;
+import org.jclouds.ultradns.ws.xml.AttributeHandler;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
-@Test(testName = "RunTestResponseTest")
-public class RunTestResponseTest extends BaseHandlerTest {
+@Test(testName = "GetPoolForPoolHostNameResponseTest")
+public class GetPoolForPoolHostNameResponseTest extends BaseHandlerTest {
 
    public void test() {
-      InputStream is = getClass().getResourceAsStream("/taskid.xml");
-
-      TextHandler.Guid handler = injector.getInstance(TextHandler.Guid.class);
-      assertEquals(factory.create(handler).parse(is), "8d7a1725-4f4a-4b70-affa-f01dcce1526e");
+      InputStream is = getClass().getResourceAsStream("/tcpool_name.xml");
+      AttributeHandler.PoolName handler = injector.getInstance(AttributeHandler.PoolName.class);
+      assertEquals(factory.create(handler).parse(is), "foo");
    }
 }
