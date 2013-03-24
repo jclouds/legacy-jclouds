@@ -142,6 +142,18 @@ public class TrafficControllerPoolApiExpectTest extends BaseUltraDNSWSApiExpectT
       UltraDNSWSApi success = requestSendsResponse(createRecord, createRecordResponse);
       assertEquals(success.getTrafficControllerPoolApiForZone("jclouds.org.").addRecordToPoolWithTTL("1.2.3.4", "04053D8E57C7931F", 300), "06063DAC54F8D3D9");
    }
+   
+   HttpRequest createRecordWithWeight = HttpRequest.builder().method("POST")
+         .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .payload(payloadFromResourceWithContentType("/create_tcrecord_weight.xml", "application/xml")).build();
+
+   public void testCreateRecordWithWeightWhenResponseIs2xx() {
+      UltraDNSWSApi success = requestSendsResponse(createRecordWithWeight, createRecordResponse);
+      assertEquals(
+            success.getTrafficControllerPoolApiForZone("jclouds.org.").addRecordToPoolWithTTLAndWeight("1.2.3.4",
+                  "04053D8E57C7931F", 300, 0), "06063DAC54F8D3D9");
+   }
 
    HttpResponse recordAlreadyCreated = HttpResponse.builder().statusCode(500)
          .payload(payloadFromResourceWithContentType("/tcrecord_already_exists.xml", "application/xml")).build();

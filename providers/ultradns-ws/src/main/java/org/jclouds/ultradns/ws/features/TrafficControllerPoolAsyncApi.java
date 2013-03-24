@@ -116,6 +116,17 @@ public interface TrafficControllerPoolAsyncApi {
          @PayloadParam("poolID") String lbPoolID, @PayloadParam("ttl") int ttl) throws ResourceAlreadyExistsException;
 
    /**
+    * @see TrafficControllerPoolApi#addRecordToPoolWithTTLAndWeight
+    */
+   @Named("addPoolRecord")
+   @POST
+   @XMLResponseParser(TextHandler.PoolRecordID.class)
+   @Payload("<v01:addPoolRecord><transactionID /><poolID>{poolID}</poolID><pointsTo>{pointsTo}</pointsTo><priority /><failOverDelay /><ttl>{ttl}</ttl><weight>{weight}</weight><mode /><threshold /></v01:addPoolRecord>")
+   ListenableFuture<String> addRecordToPoolWithTTLAndWeight(@PayloadParam("pointsTo") String pointsTo,
+         @PayloadParam("poolID") String lbPoolID, @PayloadParam("ttl") int ttl, @PayloadParam("weight") int weight)
+         throws ResourceAlreadyExistsException;
+
+   /**
     * @see TrafficControllerPoolApi#getRecordSpec(String)
     */
    @Named("getPoolRecordSpec>")

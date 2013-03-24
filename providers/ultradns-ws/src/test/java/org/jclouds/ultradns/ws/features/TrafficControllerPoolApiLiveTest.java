@@ -189,25 +189,32 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
 
    @DataProvider(name = "records")
    public Object[][] createRecords() {
-      Object[][] records = new Object[2][3];
+      Object[][] records = new Object[2][4];
       records[0][0] = "1.2.3.4";
       records[0][1] = "A";
       records[0][2] = 60;
+      records[0][3] = Optional.of(98);
       records[1][0] = "5.6.7.8";
       records[1][1] = "A";
       records[1][2] = 60;
+      records[1][3] = Optional.of(2);
       return records;
    }
 
    @Test(dependsOnMethods = "testCreatePool", dataProvider = "records")
-   public TrafficControllerPoolRecord addRecordToPool(final String pointsTo, final String type, final int ttl) {
-      String recordId = api(zoneName).addRecordToPoolWithTTL(pointsTo, poolId, ttl);
+   public TrafficControllerPoolRecord addRecordToPool(String pointsTo, String type, int ttl, Optional<Integer> weight) {
+      String recordId;
+      if (weight.isPresent()) {
+         recordId = api(zoneName).addRecordToPoolWithTTLAndWeight(pointsTo, poolId, ttl, weight.get());
+      } else {
+         recordId = api(zoneName).addRecordToPoolWithTTL(pointsTo, poolId, ttl);
+      }
       getAnonymousLogger().info("created " + type + " record: " + recordId);
       TrafficControllerPoolRecord record = checkPoolRecordConsistent(zoneName, getRecordById(recordId).get());
       PoolRecordSpec recordSpec = checkPoolRecordSpec(api(zoneName).getRecordSpec(recordId));
       assertEquals(record.getPointsTo(), pointsTo);
       assertEquals(record.getType(), type);
-      assertEquals(record.getWeight(), 2);
+      assertEquals(record.getWeight(), weight.or(2).intValue());
       assertEquals(recordSpec.getTTL(), ttl);
       return record;
    }
@@ -217,7 +224,7 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
 
    @Test(dependsOnMethods = "testCreatePool")
    public void addCNAMERecordsToPool() {
-      cname1 = addRecordToPool("www.foo.com.", "CNAME", 30).getId();
+      cname1 = addRecordToPool("www.foo.com.", "CNAME", 30, Optional.<Integer> absent()).getId();
 
       try {
          api(zoneName).addRecordToPoolWithTTL("www.foo.com.", poolId, 30);
@@ -226,7 +233,7 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
 
       }
 
-      cname2 = addRecordToPool("www.bar.com.", "CNAME", 30).getId();
+      cname2 = addRecordToPool("www.bar.com.", "CNAME", 30, Optional.<Integer> absent()).getId();
    }
 
    @Test(dependsOnMethods = "addCNAMERecordsToPool")
