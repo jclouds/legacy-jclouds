@@ -1,0 +1,10 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Body>
+		<ns1:getPoolRecordSpecResponse
+			xmlns:ns1="http://webservice.api.ultra.neustar.com/v01/">
+			<PoolRecordSpecData xmlns:ns2="http://schema.ultraservice.neustar.com/v01/"
+				description="foo" recordState="Normal-NoTest" probing="DISABLED"
+				allFail="DISABLED" weight="2" failOverDelay="0" threshold="1" ttl="120" />
+		</ns1:getPoolRecordSpecResponse>
+	</soap:Body>
+</soap:Envelope>

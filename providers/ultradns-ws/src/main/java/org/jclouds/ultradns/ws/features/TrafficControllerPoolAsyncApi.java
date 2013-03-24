@@ -21,6 +21,7 @@ package org.jclouds.ultradns.ws.features;
 import javax.inject.Named;
 import javax.ws.rs.POST;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.annotations.Fallback;
@@ -30,10 +31,12 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
+import org.jclouds.ultradns.ws.domain.PoolRecordSpec;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
 import org.jclouds.ultradns.ws.xml.IDHandler;
+import org.jclouds.ultradns.ws.xml.PoolRecordSpecHandler;
 import org.jclouds.ultradns.ws.xml.TrafficControllerPoolListHandler;
 import org.jclouds.ultradns.ws.xml.TrafficControllerPoolRecordListHandler;
 
@@ -97,6 +100,16 @@ public interface TrafficControllerPoolAsyncApi {
    @Payload("<v01:addPoolRecord><transactionID /><poolID>{poolID}</poolID><pointsTo>{pointsTo}</pointsTo><priority /><failOverDelay /><ttl>{ttl}</ttl><weight /><mode /><threshold /></v01:addPoolRecord>")
    ListenableFuture<String> addRecordToPoolWithTTL(@PayloadParam("pointsTo") String pointsTo,
          @PayloadParam("poolID") String lbPoolID, @PayloadParam("ttl") int ttl) throws ResourceAlreadyExistsException;
+
+   /**
+    * @see TrafficControllerPoolApi#getRecordSpec(String)
+    */
+   @Named("getPoolRecordSpec>")
+   @POST
+   @Payload("<v01:getPoolRecordSpec><poolRecordId>{poolRecordId}</poolRecordId></v01:getPoolRecordSpec>")
+   @XMLResponseParser(PoolRecordSpecHandler.class)
+   @Fallback(NullOnNotFoundOr404.class)
+   ListenableFuture<PoolRecordSpec> getRecordSpec(@PayloadParam("poolRecordId") String poolRecordID);
 
    /**
     * @see TrafficControllerPoolApi#deleteRecord(String)
