@@ -35,6 +35,7 @@ import org.jclouds.ultradns.ws.domain.Zone;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiLiveTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
@@ -127,7 +128,80 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
       checkTCPool(pool.get());
    }
 
+   @DataProvider(name = "records")
+   public Object[][] createRecords() {
+      Object[][] records = new Object[2][2];
+      records[0][0] = "1.2.3.4";
+      records[0][1] = "A";
+      records[1][0] = "5.6.7.8";
+      records[1][1] = "A";
+      return records;
+   }
+
+   @Test(dependsOnMethods = "testCreatePool", dataProvider = "records")
+   public void addRecordsToPool(final String pointsTo, final String type) {
+      final String record = api(zoneName).addRecordToPoolWithTTL(pointsTo, poolId, 30);
+
+      getAnonymousLogger().info("created " + type + " record: " + record);
+
+      assertTrue(api(zoneName).listRecords(poolId).anyMatch(new Predicate<TrafficControllerPoolRecord>() {
+         public boolean apply(TrafficControllerPoolRecord in) {
+            return record.equals(in.getId()) && pointsTo.equals(in.getPointsTo()) && type.equals(in.getType());
+         }
+      }));
+   }
+
+   String cname1;
+   String cname2;
+
    @Test(dependsOnMethods = "testCreatePool")
+   public void addCNAMERecordsToPool() {
+      cname1 = api(zoneName).addRecordToPoolWithTTL("www.foo.com.", poolId, 30);
+
+      getAnonymousLogger().info("created CNAME record: " + cname1);
+
+      assertTrue(api(zoneName).listRecords(poolId).anyMatch(new Predicate<TrafficControllerPoolRecord>() {
+         public boolean apply(TrafficControllerPoolRecord in) {
+            return cname1.equals(in.getId()) && "www.foo.com.".equals(in.getPointsTo()) && "CNAME".equals(in.getType());
+         }
+      }));
+
+      try {
+         api(zoneName).addRecordToPoolWithTTL("www.foo.com.", poolId, 30);
+         fail();
+      } catch (ResourceAlreadyExistsException e) {
+
+      }
+
+      cname2 = api(zoneName).addRecordToPoolWithTTL("www.bar.com.", poolId, 30);
+
+      getAnonymousLogger().info("created CNAME record: " + cname2);
+
+      assertTrue(api(zoneName).listRecords(poolId).anyMatch(new Predicate<TrafficControllerPoolRecord>() {
+         public boolean apply(TrafficControllerPoolRecord in) {
+            return cname2.equals(in.getId()) && "www.bar.com.".equals(in.getPointsTo()) && "CNAME".equals(in.getType());
+         }
+      }));
+
+   }
+
+   @Test(dependsOnMethods = "addCNAMERecordsToPool")
+   public void testDeleteRecord() {
+      api(zoneName).deleteRecord(cname1);
+      assertTrue(api(zoneName).listRecords(poolId).anyMatch(new Predicate<TrafficControllerPoolRecord>() {
+         public boolean apply(TrafficControllerPoolRecord in) {
+            return cname2.equals(in.getId());
+         }
+      }));
+
+      assertFalse(api(zoneName).listRecords(poolId).anyMatch(new Predicate<TrafficControllerPoolRecord>() {
+         public boolean apply(TrafficControllerPoolRecord in) {
+            return cname1.equals(in.getId());
+         }
+      }));
+   }
+
+   @Test(dependsOnMethods = "testDeleteRecord")
    public void testDeletePool() {
       api(zoneName).delete(poolId);
       assertFalse(getPoolById(poolId).isPresent());
