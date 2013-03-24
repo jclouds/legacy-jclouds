@@ -25,15 +25,18 @@ import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
+import org.jclouds.ultradns.ws.binders.UpdatePoolRecordToXML;
 import org.jclouds.ultradns.ws.domain.PoolRecordSpec;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
+import org.jclouds.ultradns.ws.domain.UpdatePoolRecord;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
 import org.jclouds.ultradns.ws.xml.AttributeHandler;
 import org.jclouds.ultradns.ws.xml.PoolRecordSpecHandler;
@@ -121,6 +124,15 @@ public interface TrafficControllerPoolAsyncApi {
    @XMLResponseParser(PoolRecordSpecHandler.class)
    @Fallback(NullOnNotFoundOr404.class)
    ListenableFuture<PoolRecordSpec> getRecordSpec(@PayloadParam("poolRecordId") String poolRecordID);
+
+   /**
+    * @see TrafficControllerPoolApi#getRecordSpec(String)
+    */
+   @Named("updatePoolRecord>")
+   @POST
+   @MapBinder(UpdatePoolRecordToXML.class)
+   ListenableFuture<Void> updateRecord(@PayloadParam("poolRecordID") String poolRecordID,
+         @PayloadParam("update") UpdatePoolRecord update) throws ResourceNotFoundException;
 
    /**
     * @see TrafficControllerPoolApi#deleteRecord(String)

@@ -35,6 +35,7 @@ import org.jclouds.ultradns.ws.domain.PoolRecordSpec;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord.Status;
+import org.jclouds.ultradns.ws.domain.UpdatePoolRecord;
 import org.jclouds.ultradns.ws.domain.Zone;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiLiveTest;
 import org.testng.annotations.AfterClass;
@@ -152,6 +153,12 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
       assertNull(api(zoneName).getRecordSpec("06063D9C54C5AE09"));
    }
 
+   @Test(expectedExceptions = ResourceNotFoundException.class, expectedExceptionsMessageRegExp = "Pool Record does not exist.")
+   public void testUpdateRecordWhenNotFound() {
+      api(zoneName).updateRecord("06063D9C54C5AE09",
+            UpdatePoolRecord.builder().pointsTo("www.foo.com.").mode("Normal").build());
+   }
+
    String hostname = "www.tcpool." + zoneName;
    String poolId;
 
@@ -223,6 +230,24 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
    }
 
    @Test(dependsOnMethods = "addCNAMERecordsToPool")
+   public void testUpdateRecord() {
+      PoolRecordSpec spec = api(zoneName).getRecordSpec(cname2);
+      UpdatePoolRecord update = UpdatePoolRecord.builder().from(spec)
+                                                .pointsTo("www.baz.com.")
+                                                .weight(98)
+                                                .ttl(200).build();
+
+      api(zoneName).updateRecord(cname2, update);
+
+      TrafficControllerPoolRecord record = getRecordById(cname2).get();
+      assertEquals(record.getPointsTo(), "www.baz.com.");
+
+      spec = api(zoneName).getRecordSpec(cname2);
+      assertEquals(spec.getWeight(), 98);
+      assertEquals(spec.getTTL(), 200);
+   }
+
+   @Test(dependsOnMethods = "testUpdateRecord")
    public void testDeleteRecord() {
       api(zoneName).deleteRecord(cname1);
       assertFalse(getRecordById(cname1).isPresent());

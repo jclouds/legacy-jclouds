@@ -23,8 +23,10 @@ import static org.testng.Assert.assertNull;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ultradns.ws.UltraDNSWSApi;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
+import org.jclouds.ultradns.ws.domain.UpdatePoolRecord;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiExpectTest;
 import org.jclouds.ultradns.ws.parse.GetPoolRecordSpecResponseTest;
 import org.jclouds.ultradns.ws.parse.GetTCLoadBalancingPoolsByZoneResponseTest;
@@ -170,6 +172,33 @@ public class TrafficControllerPoolApiExpectTest extends BaseUltraDNSWSApiExpectT
    public void testGetRecordSpecWhenResponseNotFound() {
       UltraDNSWSApi notFound = requestSendsResponse(getRecordSpec, recordDoesntExist);
       assertNull(notFound.getTrafficControllerPoolApiForZone("jclouds.org.").getRecordSpec("04053D8E57C7931F"));
+   }
+
+   UpdatePoolRecord update = UpdatePoolRecord.builder()
+                                             .pointsTo("www.baz.com.")
+                                             .mode("Normal")
+                                             .weight(98)
+                                             .failOverDelay(0)
+                                             .threshold(1)
+                                             .ttl(200).build();
+
+   HttpRequest updateRecord = HttpRequest.builder().method("POST")
+         .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .payload(payloadFromResourceWithContentType("/update_poolrecord.xml", "application/xml")).build();
+
+   HttpResponse updateRecordResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResourceWithContentType("/poolrecord_updated.xml", "application/xml")).build();
+
+   public void testUpdateRecordWhenResponseIs2xx() {
+      UltraDNSWSApi success = requestSendsResponse(updateRecord, updateRecordResponse);
+      success.getTrafficControllerPoolApiForZone("jclouds.org.").updateRecord("04053D8E57C7931F", update);
+   }
+
+   @Test(expectedExceptions = ResourceNotFoundException.class, expectedExceptionsMessageRegExp = "Pool Record does not exist.")
+   public void testUpdateRecordWhenResponseNotFound() {
+      UltraDNSWSApi notFound = requestSendsResponse(updateRecord, recordDoesntExist);
+      notFound.getTrafficControllerPoolApiForZone("jclouds.org.").updateRecord("04053D8E57C7931F", update);
    }
 
    HttpRequest deleteRecord = HttpRequest.builder().method("POST")
