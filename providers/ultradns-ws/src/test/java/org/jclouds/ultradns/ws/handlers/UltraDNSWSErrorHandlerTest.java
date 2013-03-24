@@ -221,6 +221,27 @@ public class UltraDNSWSErrorHandlerTest {
       assertEquals(exception.getError().getCode(), 2912);
    }
 
+   @Test
+   public void testCode3101SetsResourceNotFoundException() throws IOException {
+      HttpRequest request = HttpRequest.builder().method("POST")
+            .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+            .addHeader("Host", "ultra-api.ultradns.com:8443").payload(payloadFromResource("/delete_tcrecord.xml")).build();
+      HttpCommand command = new HttpCommand(request);
+      HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
+            .payload(payloadFromResource("/tcrecord_doesnt_exist.xml")).build();
+
+      function.handleError(command, response);
+
+      assertEquals(command.getException().getClass(), ResourceNotFoundException.class);
+      assertEquals(command.getException().getMessage(), "Pool Record does not exist.");
+
+      UltraDNSWSResponseException exception = UltraDNSWSResponseException.class.cast(command.getException().getCause());
+
+      assertEquals(exception.getMessage(), "Error 3101: Pool Record does not exist.");
+      assertEquals(exception.getError().getDescription(), "Pool Record does not exist.");
+      assertEquals(exception.getError().getCode(), 3101);
+   }
+
    private Payload payloadFromResource(String resource) {
       try {
          return payloadFromStringWithContentType(toStringAndClose(getClass().getResourceAsStream(resource)),
