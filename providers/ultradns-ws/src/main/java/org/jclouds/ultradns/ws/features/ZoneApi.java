@@ -58,10 +58,9 @@ public interface ZoneApi {
    /**
     * Lists all zones in the specified account.
     * 
-    * @throws ResourceNotFoundException
-    *            if the account doesn't exist
+    * @returns empty if no zones, or account doesn't exist
     */
-   FluentIterable<Zone> listByAccount(String accountId) throws ResourceNotFoundException;
+   FluentIterable<Zone> listByAccount(String accountId);
 
    /**
     * Lists all zones in the specified account of type

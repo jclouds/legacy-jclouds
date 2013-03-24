@@ -82,9 +82,9 @@ public class ZoneApiLiveTest extends BaseUltraDNSWSApiLiveTest {
       }
    }
 
-   @Test(expectedExceptions = ResourceNotFoundException.class, expectedExceptionsMessageRegExp = "Account not found in the system. ID: AAAAAAAAAAAAAAAA")
+   @Test
    public void testListZonesByAccountWhenAccountIdNotFound() {
-      api().listByAccount("AAAAAAAAAAAAAAAA");
+      assertTrue(api().listByAccount("AAAAAAAAAAAAAAAA").isEmpty());
    }
 
    @Test

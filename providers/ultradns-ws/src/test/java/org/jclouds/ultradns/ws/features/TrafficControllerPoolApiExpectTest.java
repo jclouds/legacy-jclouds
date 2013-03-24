@@ -19,12 +19,14 @@
 package org.jclouds.ultradns.ws.features;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.ultradns.ws.UltraDNSWSApi;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiExpectTest;
+import org.jclouds.ultradns.ws.parse.GetPoolRecordSpecResponseTest;
 import org.jclouds.ultradns.ws.parse.GetTCLoadBalancingPoolsByZoneResponseTest;
 import org.jclouds.ultradns.ws.parse.GetTCPoolRecordsResponseTest;
 import org.testng.annotations.Test;
@@ -87,6 +89,27 @@ public class TrafficControllerPoolApiExpectTest extends BaseUltraDNSWSApiExpectT
             new GetTCPoolRecordsResponseTest().expected().toString());
    }
 
+   HttpRequest getNameByDName = HttpRequest.builder().method("POST")
+         .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .payload(payloadFromResourceWithContentType("/get_tcpool_by_dname.xml", "application/xml")).build();
+
+   HttpResponse getNameByDNameResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResourceWithContentType("/tcpool_name.xml", "application/xml")).build();
+
+   public void testGetNameByDNameWhenResponseIs2xx() {
+      UltraDNSWSApi success = requestSendsResponse(getNameByDName, getNameByDNameResponse);
+      assertEquals(success.getTrafficControllerPoolApiForZone("jclouds.org.").getNameByDName("www.foo.com."), "foo");
+   }
+
+   HttpResponse poolDoesntExist = HttpResponse.builder().message("Server Epoolor").statusCode(500)
+         .payload(payloadFromResource("/lbpool_doesnt_exist.xml")).build();
+   
+   public void testGetNameByDNameWhenResponseNotFound() {
+      UltraDNSWSApi notFound = requestSendsResponse(getNameByDName, poolDoesntExist);
+      assertNull(notFound.getTrafficControllerPoolApiForZone("jclouds.org.").getNameByDName("www.foo.com."));
+   }
+
    HttpRequest delete = HttpRequest.builder().method("POST")
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
          .addHeader("Host", "ultra-api.ultradns.com:8443")
@@ -100,10 +123,7 @@ public class TrafficControllerPoolApiExpectTest extends BaseUltraDNSWSApiExpectT
       success.getTrafficControllerPoolApiForZone("jclouds.org.").delete("04053D8E57C7931F");
    }
 
-   HttpResponse poolDoesntExist = HttpResponse.builder().message("Server Epoolor").statusCode(500)
-         .payload(payloadFromResource("/lbpool_doesnt_exist.xml")).build();
-   
-   public void testDeleteWhenResponseRRNotFound() {
+   public void testDeleteWhenResponseNotFound() {
       UltraDNSWSApi notFound = requestSendsResponse(delete, poolDoesntExist);
       notFound.getTrafficControllerPoolApiForZone("jclouds.org.").delete("04053D8E57C7931F");
    }
@@ -128,5 +148,45 @@ public class TrafficControllerPoolApiExpectTest extends BaseUltraDNSWSApiExpectT
    public void testCreateWhenResponseError1802() {
       UltraDNSWSApi already = requestSendsResponse(createRecord, recordAlreadyCreated);
       already.getTrafficControllerPoolApiForZone("jclouds.org.").addRecordToPoolWithTTL("1.2.3.4", "04053D8E57C7931F", 300);
+   }
+
+   HttpRequest getRecordSpec = HttpRequest.builder().method("POST")
+         .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .payload(payloadFromResourceWithContentType("/get_poolrecordspec.xml", "application/xml")).build();
+
+   HttpResponse getRecordSpecResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResourceWithContentType("/poolrecordspec.xml", "application/xml")).build();
+
+   public void testGetRecordSpecWhenResponseIs2xx() {
+      UltraDNSWSApi success = requestSendsResponse(getRecordSpec, getRecordSpecResponse);
+      assertEquals(success.getTrafficControllerPoolApiForZone("jclouds.org.").getRecordSpec("04053D8E57C7931F"),
+            new GetPoolRecordSpecResponseTest().expected());
+   }
+
+   HttpResponse recordDoesntExist = HttpResponse.builder().message("Server Error").statusCode(500)
+         .payload(payloadFromResource("/tcrecord_doesnt_exist.xml")).build();
+
+   public void testGetRecordSpecWhenResponseNotFound() {
+      UltraDNSWSApi notFound = requestSendsResponse(getRecordSpec, recordDoesntExist);
+      assertNull(notFound.getTrafficControllerPoolApiForZone("jclouds.org.").getRecordSpec("04053D8E57C7931F"));
+   }
+
+   HttpRequest deleteRecord = HttpRequest.builder().method("POST")
+         .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .payload(payloadFromResourceWithContentType("/delete_tcrecord.xml", "application/xml")).build();
+
+   HttpResponse deleteRecordResponse = HttpResponse.builder().statusCode(404)
+         .payload(payloadFromResourceWithContentType("/tcrecord_deleted.xml", "application/xml")).build();
+
+   public void testDeleteRecordWhenResponseIs2xx() {
+      UltraDNSWSApi success = requestSendsResponse(deleteRecord, deleteRecordResponse);
+      success.getTrafficControllerPoolApiForZone("jclouds.org.").deleteRecord("04053D8E57C7931F");
+   }
+
+   public void testDeleteRecordWhenResponseNotFound() {
+      UltraDNSWSApi notFound = requestSendsResponse(deleteRecord, recordDoesntExist);
+      notFound.getTrafficControllerPoolApiForZone("jclouds.org.").deleteRecord("04053D8E57C7931F");
    }
 }

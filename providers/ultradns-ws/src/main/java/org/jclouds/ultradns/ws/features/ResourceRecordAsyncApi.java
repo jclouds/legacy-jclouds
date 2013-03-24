@@ -35,7 +35,7 @@ import org.jclouds.ultradns.ws.binders.ZoneAndResourceRecordToXML;
 import org.jclouds.ultradns.ws.domain.ResourceRecord;
 import org.jclouds.ultradns.ws.domain.ResourceRecordMetadata;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
-import org.jclouds.ultradns.ws.xml.IDHandler;
+import org.jclouds.ultradns.ws.xml.TextHandler;
 import org.jclouds.ultradns.ws.xml.ResourceRecordListHandler;
 
 import com.google.common.collect.FluentIterable;
@@ -56,7 +56,7 @@ public interface ResourceRecordAsyncApi {
     */
    @Named("createResourceRecord")
    @POST
-   @XMLResponseParser(IDHandler.Guid.class)
+   @XMLResponseParser(TextHandler.Guid.class)
    @MapBinder(ZoneAndResourceRecordToXML.class)
    ListenableFuture<String> create(@PayloadParam("resourceRecord") ResourceRecord toCreate)
          throws ResourceAlreadyExistsException;
