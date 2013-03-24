@@ -23,6 +23,7 @@ import static org.testng.Assert.assertEquals;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.ultradns.ws.UltraDNSWSApi;
+import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiExpectTest;
 import org.jclouds.ultradns.ws.parse.GetTCLoadBalancingPoolsByZoneResponseTest;
 import org.jclouds.ultradns.ws.parse.GetTCPoolRecordsResponseTest;
@@ -33,6 +34,27 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit", testName = "TrafficControllerPoolApiExpectTest")
 public class TrafficControllerPoolApiExpectTest extends BaseUltraDNSWSApiExpectTest {
+   HttpRequest create = HttpRequest.builder().method("POST")
+         .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .payload(payloadFromResourceWithContentType("/create_tcpool.xml", "application/xml")).build();
+
+   HttpResponse createResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResourceWithContentType("/tcpool_created.xml", "application/xml")).build();
+
+   public void testCreateWhenResponseIs2xx() {
+      UltraDNSWSApi success = requestSendsResponse(create, createResponse);
+      assertEquals(success.getTrafficControllerPoolApiForZone("jclouds.org.").createPoolForHostname("www.jclouds.org.", "foo"), "060339AA0417567A");
+   }
+
+   HttpResponse alreadyCreated = HttpResponse.builder().statusCode(500)
+         .payload(payloadFromResourceWithContentType("/lbpool_already_exists.xml", "application/xml")).build();
+
+   @Test(expectedExceptions = ResourceAlreadyExistsException.class, expectedExceptionsMessageRegExp = "Pool already created for this host name : www.rrpool.adrianc.rrpool.ultradnstest.jclouds.org.")
+   public void testCreateWhenResponseError2912() {
+      UltraDNSWSApi already = requestSendsResponse(create, alreadyCreated);
+      already.getTrafficControllerPoolApiForZone("jclouds.org.").createPoolForHostname("www.jclouds.org.", "foo");
+   }
 
    HttpRequest list = HttpRequest.builder().method("POST")
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
@@ -65,4 +87,46 @@ public class TrafficControllerPoolApiExpectTest extends BaseUltraDNSWSApiExpectT
             new GetTCPoolRecordsResponseTest().expected().toString());
    }
 
+   HttpRequest delete = HttpRequest.builder().method("POST")
+         .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .payload(payloadFromResourceWithContentType("/delete_lbpool.xml", "application/xml")).build();
+
+   HttpResponse deleteResponse = HttpResponse.builder().statusCode(404)
+         .payload(payloadFromResourceWithContentType("/lbpool_deleted.xml", "application/xml")).build();
+
+   public void testDeleteWhenResponseIs2xx() {
+      UltraDNSWSApi success = requestSendsResponse(delete, deleteResponse);
+      success.getTrafficControllerPoolApiForZone("jclouds.org.").delete("04053D8E57C7931F");
+   }
+
+   HttpResponse poolDoesntExist = HttpResponse.builder().message("Server Epoolor").statusCode(500)
+         .payload(payloadFromResource("/lbpool_doesnt_exist.xml")).build();
+   
+   public void testDeleteWhenResponseRRNotFound() {
+      UltraDNSWSApi notFound = requestSendsResponse(delete, poolDoesntExist);
+      notFound.getTrafficControllerPoolApiForZone("jclouds.org.").delete("04053D8E57C7931F");
+   }
+   
+   HttpRequest createRecord = HttpRequest.builder().method("POST")
+         .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .payload(payloadFromResourceWithContentType("/create_tcrecord.xml", "application/xml")).build();
+
+   HttpResponse createRecordResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResourceWithContentType("/tcrecord_created.xml", "application/xml")).build();
+
+   public void testCreateRecordWhenResponseIs2xx() {
+      UltraDNSWSApi success = requestSendsResponse(createRecord, createRecordResponse);
+      assertEquals(success.getTrafficControllerPoolApiForZone("jclouds.org.").addRecordToPoolWithTTL("1.2.3.4", "04053D8E57C7931F", 300), "06063DAC54F8D3D9");
+   }
+
+   HttpResponse recordAlreadyCreated = HttpResponse.builder().statusCode(500)
+         .payload(payloadFromResourceWithContentType("/tcrecord_already_exists.xml", "application/xml")).build();
+
+   @Test(expectedExceptions = ResourceAlreadyExistsException.class, expectedExceptionsMessageRegExp = "Resource Record of type 1 with these attributes already exists in the system.")
+   public void testCreateWhenResponseError1802() {
+      UltraDNSWSApi already = requestSendsResponse(createRecord, recordAlreadyCreated);
+      already.getTrafficControllerPoolApiForZone("jclouds.org.").addRecordToPoolWithTTL("1.2.3.4", "04053D8E57C7931F", 300);
+   }
 }

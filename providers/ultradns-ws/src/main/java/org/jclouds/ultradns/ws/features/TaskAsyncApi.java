@@ -31,7 +31,7 @@ import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.ultradns.ws.domain.Task;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
-import org.jclouds.ultradns.ws.xml.GuidHandler;
+import org.jclouds.ultradns.ws.xml.IDHandler;
 import org.jclouds.ultradns.ws.xml.TaskHandler;
 import org.jclouds.ultradns.ws.xml.TaskListHandler;
 
@@ -52,7 +52,7 @@ public interface TaskAsyncApi {
     */
    @Named("runTest")
    @POST
-   @XMLResponseParser(GuidHandler.class)
+   @XMLResponseParser(IDHandler.Guid.class)
    @Payload("<v01:runTest><value>{value}</value></v01:runTest>")
    ListenableFuture<String> runTest(@PayloadParam("value") String value);
 

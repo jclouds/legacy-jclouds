@@ -1,0 +1,5 @@
+<env:Body>
+	<v01:addTCLBPoolResponse xmlns:web="http://webservice.api.ultra.neustar.com/">
+		<TCPoolID>060339AA0417567A</TCPoolID>
+	</v01:addTCLBPoolResponse>
+</env:Body>
