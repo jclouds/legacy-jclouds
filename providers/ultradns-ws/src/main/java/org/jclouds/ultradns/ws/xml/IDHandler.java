@@ -23,33 +23,59 @@ import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import org.jclouds.http.functions.ParseSax;
-import org.xml.sax.Attributes;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class GuidHandler extends ParseSax.HandlerForGeneratedRequestWithResult<String> {
+public abstract class IDHandler extends ParseSax.HandlerForGeneratedRequestWithResult<String> {
+
+   public static class Guid extends IDHandler {
+      public Guid() {
+         super("guid");
+      }
+   }
+
+   public static class RRPool extends IDHandler {
+      public RRPool() {
+         super("RRPoolID");
+      }
+   }
+
+   public static class TCPool extends IDHandler {
+      public TCPool() {
+         super("TCPoolID");
+      }
+   }
+
+   public static class PoolRecord extends IDHandler {
+      public PoolRecord() {
+         super("poolRecordID");
+      }
+   }
+
+   private String idElement;
+
    private StringBuilder currentText = new StringBuilder();
-   private String guid = null;
+   private String id = null;
+
+   private IDHandler(String idElement) {
+      this.idElement = checkNotNull(idElement, "idElement");
+   }
 
    @Override
    public String getResult() {
       try {
-         return checkNotNull(guid, "guid not present in the response");
+         return checkNotNull(id, "%s not present in the response", idElement);
       } finally {
-         guid = null;
+         id = null;
       }
    }
 
    @Override
-   public void startElement(String url, String name, String qName, Attributes attributes) {
-   }
-
-   @Override
    public void endElement(String uri, String name, String qName) {
-      if (equalsOrSuffix(qName, "guid")) {
-         guid = currentOrNull(currentText);
+      if (equalsOrSuffix(qName, idElement)) {
+         id = currentOrNull(currentText);
       }
       currentText = new StringBuilder();
    }

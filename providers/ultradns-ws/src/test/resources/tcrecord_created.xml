@@ -1,0 +1,1 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><ns1:addPoolRecordResponse xmlns:ns1="http://webservice.api.ultra.neustar.com/v01/"><poolRecordID xmlns:ns2="http://schema.ultraservice.neustar.com/v01/">06063DAC54F8D3D9</poolRecordID></ns1:addPoolRecordResponse></soap:Body></soap:Envelope>

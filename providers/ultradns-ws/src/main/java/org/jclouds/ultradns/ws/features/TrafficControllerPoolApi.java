@@ -19,6 +19,8 @@
 package org.jclouds.ultradns.ws.features;
 
 import org.jclouds.rest.ResourceNotFoundException;
+import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
+import org.jclouds.ultradns.ws.domain.ResourceRecord;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
 
@@ -39,10 +41,57 @@ public interface TrafficControllerPoolApi {
    FluentIterable<TrafficControllerPool> list() throws ResourceNotFoundException;
 
    /**
+    * creates a traffic controller pool.
+    * 
+    * @param name
+    *           {@link TrafficControllerPool#getName() name} of the TC pool
+    * @param hostname
+    *           {@link TrafficControllerPool#getDName() dname} of the TC pool
+    *           {ex. www.jclouds.org.}
+    * @return the {@code guid} of the new record
+    * @throws ResourceAlreadyExistsException
+    *            if a pool already exists with the same attrs
+    */
+   String createPoolForHostname(String name, String hostname) throws ResourceAlreadyExistsException;
+
+   /**
+    * removes a pool and all its records and probes
+    * 
+    * @param id
+    *           the {@link TrafficControllerPool#getId() id}
+    */
+   void delete(String id);
+
+   /**
     * Returns all records in the traffic controller pool.
     * 
     * @throws ResourceNotFoundException
     *            if the pool doesn't exist
     */
    FluentIterable<TrafficControllerPoolRecord> listRecords(String poolId) throws ResourceNotFoundException;
+
+   /**
+    * adds a new record to the pool
+    * 
+    * @param pointsTo
+    *           the ipv4 address or hostname
+    * @param lbPoolID
+    *           the pool to add the record to.
+    * @param ttl
+    *           the {@link ResourceRecord#getTTL ttl} of the record
+    * @return the {@link TrafficControllerPoolRecord#getId() id} of the new
+    *         record
+    * @throws ResourceAlreadyExistsException
+    *            if a record already exists with the same attrs
+    */
+   String addRecordToPoolWithTTL(String pointsTo, String lbPoolID, int ttl) throws ResourceAlreadyExistsException;
+
+   /**
+    * deletes a specific pooled resource record
+    * 
+    * @param poolRecordID
+    *           {@see TrafficControllerPoolRecord#getId()}
+    */
+   void deleteRecord(String poolRecordID);
+
 }
