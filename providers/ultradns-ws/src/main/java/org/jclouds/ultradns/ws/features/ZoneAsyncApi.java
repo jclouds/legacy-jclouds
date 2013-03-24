@@ -77,8 +77,7 @@ public interface ZoneAsyncApi {
    @POST
    @XMLResponseParser(ZoneListHandler.class)
    @Payload("<v01:getZonesOfAccount><accountId>{accountId}</accountId><zoneType>all</zoneType></v01:getZonesOfAccount>")
-   ListenableFuture<FluentIterable<Zone>> listByAccount(@PayloadParam("accountId") String accountId)
-         throws ResourceNotFoundException;
+   ListenableFuture<FluentIterable<Zone>> listByAccount(@PayloadParam("accountId") String accountId);
 
    /**
     * @see ZoneApi#listByAccountAndType(String, Type)
