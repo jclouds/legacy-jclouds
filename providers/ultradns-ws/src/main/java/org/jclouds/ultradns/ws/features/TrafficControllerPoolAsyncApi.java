@@ -35,8 +35,8 @@ import org.jclouds.ultradns.ws.domain.PoolRecordSpec;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
-import org.jclouds.ultradns.ws.xml.IDHandler;
 import org.jclouds.ultradns.ws.xml.PoolRecordSpecHandler;
+import org.jclouds.ultradns.ws.xml.TextHandler;
 import org.jclouds.ultradns.ws.xml.TrafficControllerPoolListHandler;
 import org.jclouds.ultradns.ws.xml.TrafficControllerPoolRecordListHandler;
 
@@ -58,7 +58,7 @@ public interface TrafficControllerPoolAsyncApi {
     */
    @Named("addTCLBPool")
    @POST
-   @XMLResponseParser(IDHandler.TCPool.class)
+   @XMLResponseParser(TextHandler.TCPoolID.class)
    @Payload("<v01:addTCLBPool><transactionID /><zoneName>{zoneName}</zoneName><hostName>{hostName}</hostName><description>{description}</description><poolRecordType>1</poolRecordType><failOver>Enabled</failOver><probing>Enabled</probing><maxActive>0</maxActive><rrGUID /></v01:addTCLBPool>")
    ListenableFuture<String> createPoolForHostname(@PayloadParam("description") String name,
          @PayloadParam("hostName") String hostname) throws ResourceAlreadyExistsException;
@@ -96,7 +96,7 @@ public interface TrafficControllerPoolAsyncApi {
     */
    @Named("addPoolRecord")
    @POST
-   @XMLResponseParser(IDHandler.PoolRecord.class)
+   @XMLResponseParser(TextHandler.PoolRecordID.class)
    @Payload("<v01:addPoolRecord><transactionID /><poolID>{poolID}</poolID><pointsTo>{pointsTo}</pointsTo><priority /><failOverDelay /><ttl>{ttl}</ttl><weight /><mode /><threshold /></v01:addPoolRecord>")
    ListenableFuture<String> addRecordToPoolWithTTL(@PayloadParam("pointsTo") String pointsTo,
          @PayloadParam("poolID") String lbPoolID, @PayloadParam("ttl") int ttl) throws ResourceAlreadyExistsException;
