@@ -33,8 +33,7 @@ import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsExcepti
 import org.jclouds.ultradns.ws.domain.ResourceRecord;
 import org.jclouds.ultradns.ws.domain.RoundRobinPool;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
-import org.jclouds.ultradns.ws.xml.GuidHandler;
-import org.jclouds.ultradns.ws.xml.RRPoolIDHandler;
+import org.jclouds.ultradns.ws.xml.IDHandler;
 import org.jclouds.ultradns.ws.xml.ResourceRecordListHandler;
 import org.jclouds.ultradns.ws.xml.RoundRobinPoolListHandler;
 
@@ -75,7 +74,7 @@ public interface RoundRobinPoolAsyncApi {
     */
    @Named("addRRLBPool")
    @POST
-   @XMLResponseParser(RRPoolIDHandler.class)
+   @XMLResponseParser(IDHandler.RRPool.class)
    @Payload("<v01:addRRLBPool><transactionID /><zoneName>{zoneName}</zoneName><hostName>{hostName}</hostName><description>{description}</description><poolRecordType>1</poolRecordType><rrGUID /></v01:addRRLBPool>")
    ListenableFuture<String> createAPoolForHostname(@PayloadParam("description") String name,
          @PayloadParam("hostName") String hostname) throws ResourceAlreadyExistsException;
@@ -85,7 +84,7 @@ public interface RoundRobinPoolAsyncApi {
     */
    @Named("addRecordToRRPool")
    @POST
-   @XMLResponseParser(GuidHandler.class)
+   @XMLResponseParser(IDHandler.Guid.class)
    @Payload("<v01:addRecordToRRPool><transactionID /><roundRobinRecord lbPoolID=\"{lbPoolID}\" info1Value=\"{address}\" ZoneName=\"{zoneName}\" Type=\"1\" TTL=\"{ttl}\"/></v01:addRecordToRRPool>")
    ListenableFuture<String> addARecordWithAddressAndTTL(@PayloadParam("lbPoolID") String lbPoolID,
          @PayloadParam("address") String ipv4Address, @PayloadParam("ttl") int ttl)
@@ -115,7 +114,7 @@ public interface RoundRobinPoolAsyncApi {
     */
    @Named("addRRLBPool")
    @POST
-   @XMLResponseParser(RRPoolIDHandler.class)
+   @XMLResponseParser(IDHandler.RRPool.class)
    @Payload("<v01:addRRLBPool><transactionID /><zoneName>{zoneName}</zoneName><hostName>{hostName}</hostName><description>{description}</description><poolRecordType>28</poolRecordType><rrGUID /></v01:addRRLBPool>")
    ListenableFuture<String> createAAAAPoolForHostname(@PayloadParam("description") String name,
          @PayloadParam("hostName") String hostname) throws ResourceAlreadyExistsException;
@@ -125,7 +124,7 @@ public interface RoundRobinPoolAsyncApi {
     */
    @Named("addRecordToRRPool")
    @POST
-   @XMLResponseParser(GuidHandler.class)
+   @XMLResponseParser(IDHandler.Guid.class)
    @Payload("<v01:addRecordToRRPool><transactionID /><roundRobinRecord lbPoolID=\"{lbPoolID}\" info1Value=\"{address}\" ZoneName=\"{zoneName}\" Type=\"28\" TTL=\"{ttl}\"/></v01:addRecordToRRPool>")
    ListenableFuture<String> addAAAARecordWithAddressAndTTL(@PayloadParam("lbPoolID") String lbPoolID,
          @PayloadParam("address") String ipv6Address, @PayloadParam("ttl") int ttl)
