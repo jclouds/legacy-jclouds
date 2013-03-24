@@ -23,12 +23,15 @@ import javax.ws.rs.POST;
 
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.annotations.Payload;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
+import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
 import org.jclouds.ultradns.ws.xml.TrafficControllerPoolListHandler;
+import org.jclouds.ultradns.ws.xml.TrafficControllerPoolRecordListHandler;
 
 import com.google.common.collect.FluentIterable;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -51,4 +54,15 @@ public interface TrafficControllerPoolAsyncApi {
    @XMLResponseParser(TrafficControllerPoolListHandler.class)
    @Payload("<v01:getLoadBalancingPoolsByZone><zoneName>{zoneName}</zoneName><lbPoolType>TC</lbPoolType></v01:getLoadBalancingPoolsByZone>")
    ListenableFuture<FluentIterable<TrafficControllerPool>> list() throws ResourceNotFoundException;
+   
+   /**
+    * @see TrafficControllerPoolApi#listRecords(String)
+    */
+   @Named("getPoolRecords")
+   @POST
+   @XMLResponseParser(TrafficControllerPoolRecordListHandler.class)
+   @Payload("<v01:getPoolRecords><poolId>{poolId}</poolId></v01:getPoolRecords>")
+   ListenableFuture<FluentIterable<TrafficControllerPoolRecord>> listRecords(@PayloadParam("poolId") String poolId)
+         throws ResourceNotFoundException;
+
 }

@@ -19,10 +19,13 @@
 package org.jclouds.ultradns.ws.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.testng.Assert.assertTrue;
 
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ultradns.ws.domain.Account;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
+import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
+import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord.Status;
 import org.jclouds.ultradns.ws.domain.Zone;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiLiveTest;
 import org.testng.annotations.BeforeClass;
@@ -44,10 +47,10 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
    }
 
    private void checkTCPool(TrafficControllerPool pool) {
-      checkNotNull(pool.getZoneId(), "ZoneId cannot be null for a TrafficControllerPool %s", pool);
-      checkNotNull(pool.getId(), "Id cannot be null for a TrafficControllerPool %s", pool);
-      checkNotNull(pool.getName(), "Name cannot be null for a TrafficControllerPool %s", pool);
-      checkNotNull(pool.getDName(), "DName cannot be null for a TrafficControllerPool %s", pool);
+      checkNotNull(pool.getZoneId(), "ZoneId cannot be null for  %s", pool);
+      checkNotNull(pool.getId(), "Id cannot be null for  %s", pool);
+      checkNotNull(pool.getName(), "Name cannot be null for  %s", pool);
+      checkNotNull(pool.getDName(), "DName cannot be null for  %s", pool);
    }
 
    @Test
@@ -57,6 +60,29 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
             checkTCPool(pool);
          }
       }
+   }
+
+   @Test
+   public void testListTCPoolRecords() {
+      for (Zone zone : context.getApi().getZoneApi().listByAccount(account.getId())) {
+         for (TrafficControllerPool pool : api(zone.getName()).list()) {
+            for (TrafficControllerPoolRecord record : api(zone.getName()).listRecords(pool.getId())) {
+               checkTrafficControllerPoolRecord(record);
+            }
+         }
+      }
+   }
+
+   static void checkTrafficControllerPoolRecord(TrafficControllerPoolRecord record) {
+      checkNotNull(record.getId(), "Id cannot be null for %s", record);
+      checkNotNull(record.getPoolId(), "PoolId cannot be null for %s", record);
+      checkNotNull(record.getPointsTo(), "PointsTo cannot be null for %s", record);
+      assertTrue(record.getWeight() >= 0, "Weight must be unsigned for " + record);
+      assertTrue(record.getPriority() >= 0, "Priority must be unsigned for " + record);
+      checkNotNull(record.getType(), "Type cannot be null for %s", record);
+      checkNotNull(record.getStatus(), "Status cannot be null for %s", record);
+      assertTrue(record.getStatus() != Status.UNRECOGNIZED, "unrecognized status for " + record);
+      checkNotNull(record.getDescription(), "Description cannot be null for %s", record);
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class, expectedExceptionsMessageRegExp = "Zone does not exist in the system.")
