@@ -35,6 +35,7 @@ import org.jclouds.ultradns.ws.domain.PoolRecordSpec;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
+import org.jclouds.ultradns.ws.xml.AttributeHandler;
 import org.jclouds.ultradns.ws.xml.PoolRecordSpecHandler;
 import org.jclouds.ultradns.ws.xml.TextHandler;
 import org.jclouds.ultradns.ws.xml.TrafficControllerPoolListHandler;
@@ -81,6 +82,16 @@ public interface TrafficControllerPoolAsyncApi {
    @Payload("<v01:getPoolRecords><poolId>{poolId}</poolId></v01:getPoolRecords>")
    ListenableFuture<FluentIterable<TrafficControllerPoolRecord>> listRecords(@PayloadParam("poolId") String poolId)
          throws ResourceNotFoundException;
+
+   /**
+    * @see TrafficControllerPoolApi#getByDName(String)
+    */
+   @Named("getPoolForPoolHostName>")
+   @POST
+   @Payload("<v01:getPoolForPoolHostName><hostName>{hostName}</hostName></v01:getPoolForPoolHostName>")
+   @XMLResponseParser(AttributeHandler.PoolName.class)
+   @Fallback(NullOnNotFoundOr404.class)
+   ListenableFuture<String> getNameByDName(@PayloadParam("hostName") String dname);
 
    /**
     * @see TrafficControllerPoolApi#delete(String)
