@@ -17,7 +17,7 @@
  * under the License.
  */
 package org.jclouds.ultradns.ws.handlers;
-
+import static org.jclouds.ultradns.ws.handlers.UltraDNSWSErrorHandler.ErrorCodes.*;
 import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
 import static org.jclouds.http.HttpUtils.releasePayload;
 
@@ -74,18 +74,60 @@ public class UltraDNSWSErrorHandler implements HttpErrorHandler {
       }
    }
 
+   /**
+    * there are 51002 potential codes. This defines the ones we are handling.
+    */
+   static final class ErrorCodes {
+      /**
+       * Cannot find task with guid.
+       */
+      static final int TASK_NOT_FOUND = 0;
+      /**
+       * Zone does not exist in the system.
+       */
+      static final int ZONE_NOT_FOUND = 1801;
+      /**
+       * Zone already exists in the system.
+       */
+      static final int ZONE_ALREADY_EXISTS = 1802;
+      /**
+       * No resource record with GUID found in the system.
+       */
+      static final int RESOURCE_RECORD_NOT_FOUND = 2103;
+      /**
+       * Resource record exists with the same name and type.
+       */
+      static final int RESOURCE_RECORD_ALREADY_EXISTS = 2111;
+      /**
+       * Account not found in the system.
+       */
+      static final int ACCOUNT_NOT_FOUND = 2401;
+      /**
+       * Pool does not exist in the system.
+       */
+      static final int POOL_NOT_FOUND = 2911;
+      /**
+       * Pool already created for the given rrGUID.
+       */
+      static final int POOL_ALREADY_EXISTS = 2912;
+      /**
+       * Pool Record does not exist.
+       */
+      static final int POOL_RECORD_NOT_FOUND = 3101;
+   }
+
    private Exception refineException(UltraDNSWSResponseException exception) {
       switch (exception.getError().getCode()) {
-      case 0:
-      case 1801:
-      case 2103:
-      case 2401:
-      case 2911:
-      case 3101:
+      case TASK_NOT_FOUND:
+      case ZONE_NOT_FOUND:
+      case RESOURCE_RECORD_NOT_FOUND:
+      case ACCOUNT_NOT_FOUND:
+      case POOL_NOT_FOUND:
+      case POOL_RECORD_NOT_FOUND:
          return new ResourceNotFoundException(exception.getError().getDescription(), exception);
-      case 1802:
-      case 2111:
-      case 2912:
+      case ZONE_ALREADY_EXISTS:
+      case RESOURCE_RECORD_ALREADY_EXISTS:
+      case POOL_ALREADY_EXISTS:
          return new ResourceAlreadyExistsException(exception.getError().getDescription(), exception);
       }
       return exception;
