@@ -46,9 +46,9 @@ public final class TrafficControllerPoolRecord {
       this.id = checkNotNull(id, "id");
       this.poolId = checkNotNull(poolId, "poolId for %s", id);
       this.pointsTo = checkNotNull(pointsTo, "pointsTo for %s", poolId);
-      checkArgument(weight >= 0, "weight of %s must be unsigned", id);
+      checkArgument(weight >= 0, "weight of %s must be >= 0", id);
       this.weight = weight;
-      checkArgument(priority >= 0, "priority of %s must be unsigned", id);
+      checkArgument(priority >= 0, "priority of %s must be >= 0", id);
       this.priority = priority;
       this.type = checkNotNull(type, "type for %s", poolId);
       this.forceAnswer = checkNotNull(forceAnswer, "forceAnswer for %s", poolId);

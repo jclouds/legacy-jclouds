@@ -27,6 +27,8 @@ import org.jclouds.ultradns.ws.UltraDNSWSError;
 import org.jclouds.ultradns.ws.xml.UltraWSExceptionHandler;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
+
 /**
  * @author Adrian Cole
  */
@@ -45,6 +47,6 @@ public class TaskNotFoundTest extends BaseHandlerTest {
    }
 
    public UltraDNSWSError expected() {
-      return UltraDNSWSError.fromCodeAndDescription(0, "Cannot find task with guid AAAAAAAAAAAAAAAA");
+      return UltraDNSWSError.fromCodeAndDescription(0, Optional.of("Cannot find task with guid AAAAAAAAAAAAAAAA"));
    }
 }

@@ -36,8 +36,6 @@ public interface TaskApi {
    String runTest(String value);
 
    /**
-    * Retrieves information about the specified task
-    * 
     * @param guid
     *           guid of the task to get information about.
     * @return null if not found

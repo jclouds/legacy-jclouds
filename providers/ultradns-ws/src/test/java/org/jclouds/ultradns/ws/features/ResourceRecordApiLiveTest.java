@@ -17,12 +17,12 @@
  * under the License.
  */
 package org.jclouds.ultradns.ws.features;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.equalTo;
+import static java.lang.String.format;
 import static java.util.logging.Logger.getAnonymousLogger;
 import static org.jclouds.ultradns.ws.domain.ResourceRecord.rrBuilder;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
@@ -72,20 +72,20 @@ public class ResourceRecordApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    }
 
    static void checkResourceRecord(ResourceRecord rr) {
-      checkNotNull(rr.getName(), "DName cannot be null for a ResourceRecord %s", rr);
-      checkNotNull(rr.getType(), "Type cannot be null for a ResourceRecord %s", rr);
-      assertTrue(rr.getType() > 0, "Type must be unsigned for a ResourceRecord " + rr);
-      checkNotNull(rr.getType(), "Type cannot be null for a ResourceRecord %s", rr);
-      checkNotNull(rr.getTTL(), "TTL cannot be null for a ResourceRecord %s", rr);
-      checkNotNull(rr.getRData(), "InfoValues cannot be null for a ResourceRecord %s", rr);
+      assertNotNull(rr.getName(), "DName cannot be null for " +  rr);
+      assertNotNull(rr.getType(), "Type cannot be null for " +  rr);
+      assertTrue(rr.getType() > 0, "Type must be unsigned for " + rr);
+      assertNotNull(rr.getType(), "Type cannot be null for " +  rr);
+      assertNotNull(rr.getTTL(), "TTL cannot be null for " +  rr);
+      assertNotNull(rr.getRData(), "InfoValues cannot be null for " +  rr);
    }
 
    static void checkResourceRecordMetadata(ResourceRecordMetadata rr) {
-      checkNotNull(rr.getZoneId(), "ZoneId cannot be null for a ResourceRecordMetadata %s", rr);
-      checkNotNull(rr.getGuid(), "Guid cannot be null for a ResourceRecordMetadata %s", rr);
-      checkNotNull(rr.getZoneName(), "ZoneName cannot be null for a ResourceRecordMetadata %s", rr);
-      checkNotNull(rr.getCreated(), "Created cannot be null for a ResourceRecordMetadata %s", rr);
-      checkNotNull(rr.getModified(), "Modified cannot be null for a ResourceRecordMetadata %s", rr);
+      assertNotNull(rr.getZoneId(), "ZoneId cannot be null for " +  rr);
+      assertNotNull(rr.getGuid(), "Guid cannot be null for " +  rr);
+      assertNotNull(rr.getZoneName(), "ZoneName cannot be null for " +  rr);
+      assertNotNull(rr.getCreated(), "Created cannot be null for " +  rr);
+      assertNotNull(rr.getModified(), "Modified cannot be null for " +  rr);
       checkResourceRecord(rr.getRecord());
    }
 
@@ -113,8 +113,7 @@ public class ResourceRecordApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    void logSummary() {
       getAnonymousLogger().info("zoneCount: " + zones);
       for (Entry<Integer, AtomicLong> entry : recordTypeCounts.asMap().entrySet())
-         getAnonymousLogger().info(
-               String.format("type: %s, count: %s", entry.getKey(), entry.getValue()));
+         getAnonymousLogger().info(format("type: %s, count: %s", entry.getKey(), entry.getValue()));
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class, expectedExceptionsMessageRegExp = "Zone does not exist in the system.")

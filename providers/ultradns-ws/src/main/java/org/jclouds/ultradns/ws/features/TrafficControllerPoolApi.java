@@ -22,9 +22,9 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
 import org.jclouds.ultradns.ws.domain.PoolRecordSpec;
-import org.jclouds.ultradns.ws.domain.ResourceRecord;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
+import org.jclouds.ultradns.ws.domain.UpdatePoolRecord;
 
 import com.google.common.collect.FluentIterable;
 
@@ -83,14 +83,14 @@ public interface TrafficControllerPoolApi {
    FluentIterable<TrafficControllerPoolRecord> listRecords(String poolId) throws ResourceNotFoundException;
 
    /**
-    * adds a new record to the pool
+    * adds a new record to the pool with default weight.
     * 
     * @param pointsTo
     *           the ipv4 address or hostname
     * @param lbPoolID
     *           the pool to add the record to.
     * @param ttl
-    *           the {@link ResourceRecord#getTTL ttl} of the record
+    *           the {@link PoolRecordSpec#getTTL ttl} of the record
     * @return the {@link TrafficControllerPoolRecord#getId() id} of the new
     *         record
     * @throws ResourceAlreadyExistsException
@@ -99,14 +99,45 @@ public interface TrafficControllerPoolApi {
    String addRecordToPoolWithTTL(String pointsTo, String lbPoolID, int ttl) throws ResourceAlreadyExistsException;
 
    /**
-    * Retrieves information about the specified pool record
+    * adds a new record to the pool with a specified weight.
     * 
+    * @param pointsTo
+    *           the ipv4 address or hostname
+    * @param lbPoolID
+    *           the pool to add the record to.
+    * @param ttl
+    *           the {@link PoolRecordSpec#getTTL ttl} of the record
+    * @param weight
+    *           the {@link PoolRecordSpec#getWeight() weight} of the record
+    * @return the {@link TrafficControllerPoolRecord#getId() id} of the new
+    *         record
+    * @throws ResourceAlreadyExistsException
+    *            if a record already exists with the same attrs
+    */
+   String addRecordToPoolWithTTLAndWeight(String pointsTo, String lbPoolID, int ttl, int weight)
+         throws ResourceAlreadyExistsException;
+
+   /**
     * @param poolRecordID
-    *           {@see TrafficControllerPoolRecord#getId()}
+    *           {@link TrafficControllerPoolRecord#getId()}
     * @return null if not found
     */
    @Nullable
    PoolRecordSpec getRecordSpec(String poolRecordID);
+
+   /**
+    * This request updates an existing pool record.
+    * 
+    * @param poolRecordID
+    *           {@link TrafficControllerPoolRecord#getId()}
+    * @param update
+    *           what to update, usually primed via
+    *           {@link UpdatePoolRecord#pointingTo(PoolRecordSpec, String)} or
+    *           {@link org.jclouds.ultradns.ws.domain.UpdatePoolRecord.Builder#from(PoolRecordSpec)}
+    * @throws ResourceNotFoundException
+    *            if the record doesn't exist
+    */
+   void updateRecord(String poolRecordID, UpdatePoolRecord update) throws ResourceNotFoundException;
 
    /**
     * deletes a specific pooled resource record
