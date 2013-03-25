@@ -47,7 +47,26 @@ public class UltraDNSWSErrorHandlerTest {
          UltraDNSWSErrorHandler.class);
 
    @Test
-   public void testCode0SetsResourceNotFoundException() throws IOException {
+   public void testCode0SetsUltraDNSWSResponseException() throws IOException {
+      HttpRequest request = HttpRequest.builder().method("POST")
+            .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+            .addHeader("Host", "ultra-api.ultradns.com:8443").payload(payloadFromResource("/list_tasks.xml")).build();
+      HttpCommand command = new HttpCommand(request);
+      HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
+            .payload(payloadFromResource("/server_fault.xml")).build();
+
+      function.handleError(command, response);
+
+      assertEquals(command.getException().getClass(), UltraDNSWSResponseException.class);
+      assertEquals(command.getException().getMessage(), "Error 0");
+
+      UltraDNSWSResponseException exception = UltraDNSWSResponseException.class.cast(command.getException());
+
+      assertEquals(exception.getError().getCode(), 0);
+   }
+
+   @Test
+   public void testCode0ForDescriptionMatchingCannotFindSetsResourceNotFoundException() throws IOException {
       HttpRequest request = HttpRequest.builder().method("POST")
             .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
             .addHeader("Host", "ultra-api.ultradns.com:8443").payload(payloadFromResource("/list_tasks.xml")).build();
@@ -63,7 +82,7 @@ public class UltraDNSWSErrorHandlerTest {
       UltraDNSWSResponseException exception = UltraDNSWSResponseException.class.cast(command.getException().getCause());
 
       assertEquals(exception.getMessage(), "Error 0: Cannot find task with guid AAAAAAAAAAAAAAAA");
-      assertEquals(exception.getError().getDescription(), "Cannot find task with guid AAAAAAAAAAAAAAAA");
+      assertEquals(exception.getError().getDescription().get(), "Cannot find task with guid AAAAAAAAAAAAAAAA");
       assertEquals(exception.getError().getCode(), 0);
    }
 
@@ -85,7 +104,7 @@ public class UltraDNSWSErrorHandlerTest {
       UltraDNSWSResponseException exception = UltraDNSWSResponseException.class.cast(command.getException().getCause());
 
       assertEquals(exception.getMessage(), "Error 2401: Account not found in the system. ID: AAAAAAAAAAAAAAAA");
-      assertEquals(exception.getError().getDescription(), "Account not found in the system. ID: AAAAAAAAAAAAAAAA");
+      assertEquals(exception.getError().getDescription().get(), "Account not found in the system. ID: AAAAAAAAAAAAAAAA");
       assertEquals(exception.getError().getCode(), 2401);
    }
 
@@ -106,7 +125,7 @@ public class UltraDNSWSErrorHandlerTest {
       UltraDNSWSResponseException exception = UltraDNSWSResponseException.class.cast(command.getException().getCause());
 
       assertEquals(exception.getMessage(), "Error 1801: Zone does not exist in the system.");
-      assertEquals(exception.getError().getDescription(), "Zone does not exist in the system.");
+      assertEquals(exception.getError().getDescription().get(), "Zone does not exist in the system.");
       assertEquals(exception.getError().getCode(), 1801);
    }
 
@@ -127,7 +146,7 @@ public class UltraDNSWSErrorHandlerTest {
       UltraDNSWSResponseException exception = UltraDNSWSResponseException.class.cast(command.getException().getCause());
 
       assertEquals(exception.getMessage(), "Error 2103: No Resource Record with GUID found in the system AAAAAAAAAAAAAAAA");
-      assertEquals(exception.getError().getDescription(), "No Resource Record with GUID found in the system AAAAAAAAAAAAAAAA");
+      assertEquals(exception.getError().getDescription().get(), "No Resource Record with GUID found in the system AAAAAAAAAAAAAAAA");
       assertEquals(exception.getError().getCode(), 2103);
    }
 
@@ -148,7 +167,7 @@ public class UltraDNSWSErrorHandlerTest {
       UltraDNSWSResponseException exception = UltraDNSWSResponseException.class.cast(command.getException().getCause());
 
       assertEquals(exception.getMessage(), "Error 1802: Zone already exists in the system.");
-      assertEquals(exception.getError().getDescription(), "Zone already exists in the system.");
+      assertEquals(exception.getError().getDescription().get(), "Zone already exists in the system.");
       assertEquals(exception.getError().getCode(), 1802);
    }
 
@@ -171,7 +190,7 @@ public class UltraDNSWSErrorHandlerTest {
 
       assertEquals(exception.getMessage(),
             "Error 2111: Resource Record of type 15 with these attributes already exists in the system.");
-      assertEquals(exception.getError().getDescription(),
+      assertEquals(exception.getError().getDescription().get(),
             "Resource Record of type 15 with these attributes already exists in the system.");
       assertEquals(exception.getError().getCode(), 2111);
    }
@@ -193,7 +212,7 @@ public class UltraDNSWSErrorHandlerTest {
       UltraDNSWSResponseException exception = UltraDNSWSResponseException.class.cast(command.getException().getCause());
 
       assertEquals(exception.getMessage(), "Error 2911: Pool does not exist in the system");
-      assertEquals(exception.getError().getDescription(), "Pool does not exist in the system");
+      assertEquals(exception.getError().getDescription().get(), "Pool does not exist in the system");
       assertEquals(exception.getError().getCode(), 2911);
    }
 
@@ -216,7 +235,7 @@ public class UltraDNSWSErrorHandlerTest {
 
       assertEquals(exception.getMessage(),
             "Error 2912: Pool already created for this host name : www.rrpool.adrianc.rrpool.ultradnstest.jclouds.org.");
-      assertEquals(exception.getError().getDescription(),
+      assertEquals(exception.getError().getDescription().get(),
             "Pool already created for this host name : www.rrpool.adrianc.rrpool.ultradnstest.jclouds.org.");
       assertEquals(exception.getError().getCode(), 2912);
    }
@@ -238,7 +257,7 @@ public class UltraDNSWSErrorHandlerTest {
       UltraDNSWSResponseException exception = UltraDNSWSResponseException.class.cast(command.getException().getCause());
 
       assertEquals(exception.getMessage(), "Error 3101: Pool Record does not exist.");
-      assertEquals(exception.getError().getDescription(), "Pool Record does not exist.");
+      assertEquals(exception.getError().getDescription().get(), "Pool Record does not exist.");
       assertEquals(exception.getError().getCode(), 3101);
    }
 

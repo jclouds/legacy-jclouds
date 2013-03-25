@@ -43,7 +43,7 @@ public final class Zone {
          DNSSECStatus dnssecStatus, Optional<String> primarySrc) {
       this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name for %s", id);
-      checkArgument(typeCode >= 0, "typeCode of %s must be unsigned", id);
+      checkArgument(typeCode >= 0, "typeCode of %s must be >= 0", id);
       this.typeCode = typeCode;
       this.type = checkNotNull(type, "type for %s", name);
       this.accountId = checkNotNull(accountId, "accountId for %s", name);

@@ -45,8 +45,6 @@ public interface ZoneApi {
    void createInAccount(String name, String accountId) throws ResourceAlreadyExistsException;
 
    /**
-    * Retrieves information about the specified zone
-    * 
     * @param name
     *           the fully-qualified name, including the trailing dot, of the
     *           zone to get information about.

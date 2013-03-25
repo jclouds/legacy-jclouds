@@ -24,6 +24,8 @@ import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.ultradns.ws.UltraDNSWSError;
 
+import com.google.common.base.Optional;
+
 /**
  * 
  * @author Adrian Cole
@@ -36,12 +38,7 @@ public class UltraWSExceptionHandler extends ParseSax.HandlerForGeneratedRequest
 
    @Override
    public UltraDNSWSError getResult() {
-      try {
-         return code != -1 ? UltraDNSWSError.fromCodeAndDescription(code, description) : null;
-      } finally {
-         code = -1;
-         description = null;
-      }
+      return code != -1 ? UltraDNSWSError.fromCodeAndDescription(code, Optional.fromNullable(description)) : null;
    }
 
    @Override

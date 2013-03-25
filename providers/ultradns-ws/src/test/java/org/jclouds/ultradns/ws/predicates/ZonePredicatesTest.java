@@ -18,7 +18,9 @@
  */
 package org.jclouds.ultradns.ws.predicates;
 
-import static org.jclouds.ultradns.ws.predicates.ZonePredicates.typeEquals;
+import static org.jclouds.ultradns.ws.predicates.ZonePredicates.typeEqualTo;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import org.jclouds.ultradns.ws.domain.Zone;
 import org.jclouds.ultradns.ws.domain.Zone.DNSSECStatus;
@@ -41,11 +43,11 @@ public class ZonePredicatesTest {
 
    @Test
    public void testTypeEqualsWhenEqual() {
-      assert typeEquals(Type.PRIMARY).apply(zone);
+      assertTrue(typeEqualTo(Type.PRIMARY).apply(zone));
    }
 
    @Test
    public void testTypeEqualsWhenNotEqual() {
-      assert !typeEquals(Type.SECONDARY).apply(zone);
+      assertFalse(typeEqualTo(Type.SECONDARY).apply(zone));
    }
 }

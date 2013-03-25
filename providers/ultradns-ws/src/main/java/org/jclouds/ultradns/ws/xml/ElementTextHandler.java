@@ -28,48 +28,44 @@ import org.jclouds.http.functions.ParseSax;
  * 
  * @author Adrian Cole
  */
-public abstract class TextHandler extends ParseSax.HandlerForGeneratedRequestWithResult<String> {
+public abstract class ElementTextHandler extends ParseSax.HandlerForGeneratedRequestWithResult<String> {
 
-   public static class Guid extends TextHandler {
+   public static class Guid extends ElementTextHandler {
       public Guid() {
          super("guid");
       }
    }
 
-   public static class RRPoolID extends TextHandler {
+   public static class RRPoolID extends ElementTextHandler {
       public RRPoolID() {
          super("RRPoolID");
       }
    }
 
-   public static class TCPoolID extends TextHandler {
+   public static class TCPoolID extends ElementTextHandler {
       public TCPoolID() {
          super("TCPoolID");
       }
    }
 
-   public static class PoolRecordID extends TextHandler {
+   public static class PoolRecordID extends ElementTextHandler {
       public PoolRecordID() {
          super("poolRecordID");
       }
    }
 
-   private String textElement;
+   private final String textElement;
 
    private StringBuilder currentText = new StringBuilder();
    private String text = null;
 
-   private TextHandler(String textElement) {
+   private ElementTextHandler(String textElement) {
       this.textElement = checkNotNull(textElement, "textElement");
    }
 
    @Override
    public String getResult() {
-      try {
-         return checkNotNull(text, "%s not present in the response", textElement);
-      } finally {
-         text = null;
-      }
+      return checkNotNull(text, "%s not present in the response", textElement);
    }
 
    @Override

@@ -18,12 +18,12 @@
  */
 package org.jclouds.ultradns.ws.features;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.logging.Logger.getAnonymousLogger;
 import static org.jclouds.ultradns.ws.predicates.TrafficControllerPoolPredicates.idEqualTo;
 import static org.jclouds.ultradns.ws.predicates.TrafficControllerPoolPredicates.recordIdEqualTo;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
@@ -35,6 +35,7 @@ import org.jclouds.ultradns.ws.domain.PoolRecordSpec;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord.Status;
+import org.jclouds.ultradns.ws.domain.UpdatePoolRecord;
 import org.jclouds.ultradns.ws.domain.Zone;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiLiveTest;
 import org.testng.annotations.AfterClass;
@@ -64,10 +65,10 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
    }
 
    private void checkTCPool(TrafficControllerPool pool) {
-      checkNotNull(pool.getZoneId(), "ZoneId cannot be null for  %s", pool);
-      checkNotNull(pool.getId(), "Id cannot be null for  %s", pool);
-      checkNotNull(pool.getName(), "Name cannot be null for  %s", pool);
-      checkNotNull(pool.getDName(), "DName cannot be null for  %s", pool);
+      assertNotNull(pool.getZoneId(), "ZoneId cannot be null " + pool);
+      assertNotNull(pool.getId(), "Id cannot be null " + pool);
+      assertNotNull(pool.getName(), "Name cannot be null " + pool);
+      assertNotNull(pool.getDName(), "DName cannot be null " + pool);
       assertEquals(api(zoneName).getNameByDName(pool.getDName()), pool.getName());
    }
 
@@ -103,21 +104,21 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
    }
 
    static TrafficControllerPoolRecord checkTrafficControllerPoolRecord(TrafficControllerPoolRecord record) {
-      checkNotNull(record.getId(), "Id cannot be null for %s", record);
-      checkNotNull(record.getPoolId(), "PoolId cannot be null for %s", record);
-      checkNotNull(record.getPointsTo(), "PointsTo cannot be null for %s", record);
+      assertNotNull(record.getId(), "Id cannot be null for " + record);
+      assertNotNull(record.getPoolId(), "PoolId cannot be null for " + record);
+      assertNotNull(record.getPointsTo(), "PointsTo cannot be null for " + record);
       assertTrue(record.getWeight() >= 0, "Weight must be unsigned for " + record);
       assertTrue(record.getPriority() >= 0, "Priority must be unsigned for " + record);
-      checkNotNull(record.getType(), "Type cannot be null for %s", record);
-      checkNotNull(record.getStatus(), "Status cannot be null for %s", record);
+      assertNotNull(record.getType(), "Type cannot be null for " + record);
+      assertNotNull(record.getStatus(), "Status cannot be null for " + record);
       assertTrue(record.getStatus() != Status.UNRECOGNIZED, "unrecognized status for " + record);
-      checkNotNull(record.getDescription(), "Description cannot be null for %s", record);
+      assertNotNull(record.getDescription(), "Description cannot be null for " + record);
       return record;
    }
 
    static PoolRecordSpec checkPoolRecordSpec(PoolRecordSpec record) {
-      checkNotNull(record.getDescription(), "Description cannot be null for %s", record);
-      checkNotNull(record.getState(), "State cannot be null for %s", record);
+      assertNotNull(record.getDescription(), "Description cannot be null for " + record);
+      assertNotNull(record.getState(), "State cannot be null for " + record);
       // TODO: collect all possible states then consider enum
       assertTrue(ImmutableSet.of("Normal", "Normal-NoTest").contains(record.getState()), "Unknown State for " + record);
       assertTrue(record.getWeight() >= 0, "Weight must be unsigned for " + record);
@@ -152,6 +153,12 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
       assertNull(api(zoneName).getRecordSpec("06063D9C54C5AE09"));
    }
 
+   @Test(expectedExceptions = ResourceNotFoundException.class, expectedExceptionsMessageRegExp = "Pool Record does not exist.")
+   public void testUpdateRecordWhenNotFound() {
+      api(zoneName).updateRecord("06063D9C54C5AE09",
+            UpdatePoolRecord.builder().pointsTo("www.foo.com.").mode("Normal").build());
+   }
+
    String hostname = "www.tcpool." + zoneName;
    String poolId;
 
@@ -182,25 +189,32 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
 
    @DataProvider(name = "records")
    public Object[][] createRecords() {
-      Object[][] records = new Object[2][3];
+      Object[][] records = new Object[2][4];
       records[0][0] = "1.2.3.4";
       records[0][1] = "A";
       records[0][2] = 60;
+      records[0][3] = Optional.of(98);
       records[1][0] = "5.6.7.8";
       records[1][1] = "A";
       records[1][2] = 60;
+      records[1][3] = Optional.of(2);
       return records;
    }
 
    @Test(dependsOnMethods = "testCreatePool", dataProvider = "records")
-   public TrafficControllerPoolRecord addRecordToPool(final String pointsTo, final String type, final int ttl) {
-      String recordId = api(zoneName).addRecordToPoolWithTTL(pointsTo, poolId, ttl);
+   public TrafficControllerPoolRecord addRecordToPool(String pointsTo, String type, int ttl, Optional<Integer> weight) {
+      String recordId;
+      if (weight.isPresent()) {
+         recordId = api(zoneName).addRecordToPoolWithTTLAndWeight(pointsTo, poolId, ttl, weight.get());
+      } else {
+         recordId = api(zoneName).addRecordToPoolWithTTL(pointsTo, poolId, ttl);
+      }
       getAnonymousLogger().info("created " + type + " record: " + recordId);
       TrafficControllerPoolRecord record = checkPoolRecordConsistent(zoneName, getRecordById(recordId).get());
       PoolRecordSpec recordSpec = checkPoolRecordSpec(api(zoneName).getRecordSpec(recordId));
       assertEquals(record.getPointsTo(), pointsTo);
       assertEquals(record.getType(), type);
-      assertEquals(record.getWeight(), 2);
+      assertEquals(record.getWeight(), weight.or(2).intValue());
       assertEquals(recordSpec.getTTL(), ttl);
       return record;
    }
@@ -210,7 +224,7 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
 
    @Test(dependsOnMethods = "testCreatePool")
    public void addCNAMERecordsToPool() {
-      cname1 = addRecordToPool("www.foo.com.", "CNAME", 30).getId();
+      cname1 = addRecordToPool("www.foo.com.", "CNAME", 30, Optional.<Integer> absent()).getId();
 
       try {
          api(zoneName).addRecordToPoolWithTTL("www.foo.com.", poolId, 30);
@@ -219,10 +233,28 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
 
       }
 
-      cname2 = addRecordToPool("www.bar.com.", "CNAME", 30).getId();
+      cname2 = addRecordToPool("www.bar.com.", "CNAME", 30, Optional.<Integer> absent()).getId();
    }
 
    @Test(dependsOnMethods = "addCNAMERecordsToPool")
+   public void testUpdateRecord() {
+      PoolRecordSpec spec = api(zoneName).getRecordSpec(cname2);
+      UpdatePoolRecord update = UpdatePoolRecord.builder().from(spec)
+                                                .pointsTo("www.baz.com.")
+                                                .weight(98)
+                                                .ttl(200).build();
+
+      api(zoneName).updateRecord(cname2, update);
+
+      TrafficControllerPoolRecord record = getRecordById(cname2).get();
+      assertEquals(record.getPointsTo(), "www.baz.com.");
+
+      spec = api(zoneName).getRecordSpec(cname2);
+      assertEquals(spec.getWeight(), 98);
+      assertEquals(spec.getTTL(), 200);
+   }
+
+   @Test(dependsOnMethods = "testUpdateRecord")
    public void testDeleteRecord() {
       api(zoneName).deleteRecord(cname1);
       assertFalse(getRecordById(cname1).isPresent());
