@@ -18,12 +18,12 @@
  */
 package org.jclouds.ultradns.ws.features;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.logging.Logger.getAnonymousLogger;
 import static org.jclouds.ultradns.ws.predicates.TrafficControllerPoolPredicates.idEqualTo;
 import static org.jclouds.ultradns.ws.predicates.TrafficControllerPoolPredicates.recordIdEqualTo;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
@@ -65,10 +65,10 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
    }
 
    private void checkTCPool(TrafficControllerPool pool) {
-      checkNotNull(pool.getZoneId(), "ZoneId cannot be null for  %s", pool);
-      checkNotNull(pool.getId(), "Id cannot be null for  %s", pool);
-      checkNotNull(pool.getName(), "Name cannot be null for  %s", pool);
-      checkNotNull(pool.getDName(), "DName cannot be null for  %s", pool);
+      assertNotNull(pool.getZoneId(), "ZoneId cannot be null " + pool);
+      assertNotNull(pool.getId(), "Id cannot be null " + pool);
+      assertNotNull(pool.getName(), "Name cannot be null " + pool);
+      assertNotNull(pool.getDName(), "DName cannot be null " + pool);
       assertEquals(api(zoneName).getNameByDName(pool.getDName()), pool.getName());
    }
 
@@ -104,21 +104,21 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
    }
 
    static TrafficControllerPoolRecord checkTrafficControllerPoolRecord(TrafficControllerPoolRecord record) {
-      checkNotNull(record.getId(), "Id cannot be null for %s", record);
-      checkNotNull(record.getPoolId(), "PoolId cannot be null for %s", record);
-      checkNotNull(record.getPointsTo(), "PointsTo cannot be null for %s", record);
+      assertNotNull(record.getId(), "Id cannot be null for " + record);
+      assertNotNull(record.getPoolId(), "PoolId cannot be null for " + record);
+      assertNotNull(record.getPointsTo(), "PointsTo cannot be null for " + record);
       assertTrue(record.getWeight() >= 0, "Weight must be unsigned for " + record);
       assertTrue(record.getPriority() >= 0, "Priority must be unsigned for " + record);
-      checkNotNull(record.getType(), "Type cannot be null for %s", record);
-      checkNotNull(record.getStatus(), "Status cannot be null for %s", record);
+      assertNotNull(record.getType(), "Type cannot be null for " + record);
+      assertNotNull(record.getStatus(), "Status cannot be null for " + record);
       assertTrue(record.getStatus() != Status.UNRECOGNIZED, "unrecognized status for " + record);
-      checkNotNull(record.getDescription(), "Description cannot be null for %s", record);
+      assertNotNull(record.getDescription(), "Description cannot be null for " + record);
       return record;
    }
 
    static PoolRecordSpec checkPoolRecordSpec(PoolRecordSpec record) {
-      checkNotNull(record.getDescription(), "Description cannot be null for %s", record);
-      checkNotNull(record.getState(), "State cannot be null for %s", record);
+      assertNotNull(record.getDescription(), "Description cannot be null for " + record);
+      assertNotNull(record.getState(), "State cannot be null for " + record);
       // TODO: collect all possible states then consider enum
       assertTrue(ImmutableSet.of("Normal", "Normal-NoTest").contains(record.getState()), "Unknown State for " + record);
       assertTrue(record.getWeight() >= 0, "Weight must be unsigned for " + record);

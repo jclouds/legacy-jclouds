@@ -18,8 +18,8 @@
  */
 package org.jclouds.ultradns.ws.features;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 
 import org.jclouds.ultradns.ws.domain.Task;
@@ -33,10 +33,10 @@ import org.testng.annotations.Test;
 public class TaskApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
    private void checkTask(Task task) {
-      checkNotNull(task.getGuid(), "Guid cannot be null for a Task %s", task);
-      checkNotNull(task.getStatusCode(), "StatusCode cannot be null for a Task %s", task);
-      checkNotNull(task.getMessage(), "While Message can be null for a Task, its Optional wrapper cannot %s", task);
-      checkNotNull(task.getResultUrl(), "While ResultUrl can be null for a Task, its Optional wrapper cannot %s", task);
+      assertNotNull(task.getGuid(), "Guid cannot be null for " + task);
+      assertNotNull(task.getStatusCode(), "StatusCode cannot be null for " + task);
+      assertNotNull(task.getMessage(), "While Message can be null, its Optional wrapper cannot " + task);
+      assertNotNull(task.getResultUrl(), "While ResultUrl can be null, its Optional wrapper cannot " + task);
    }
 
    @Test

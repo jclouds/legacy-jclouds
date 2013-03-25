@@ -32,15 +32,6 @@ import com.google.common.base.Predicate;
  */
 public class TrafficControllerPoolPredicates {
 
-   /**
-    * evaluates to true if the input {@link TrafficControllerPool} exists
-    * with {@link TrafficControllerPool#getId() id} corresponding to the
-    * {@code id} parameter.
-    * 
-    * @param id
-    *           the {@link TrafficControllerPool#getId() id} of the
-    *           desired pool record
-    */
    public static Predicate<TrafficControllerPool> idEqualTo(String id) {
       return new IdEqualToPredicate(id);
    }
@@ -54,9 +45,7 @@ public class TrafficControllerPoolPredicates {
 
       @Override
       public boolean apply(TrafficControllerPool input) {
-         if (input == null)
-            return false;
-         return id.equals(input.getId());
+         return input != null && id.equals(input.getId());
       }
 
       @Override
@@ -65,36 +54,25 @@ public class TrafficControllerPoolPredicates {
       }
    }
 
-   /**
-    * evaluates to true if the input {@link TrafficControllerPoolRecord} exists
-    * with {@link TrafficControllerPoolRecord#getId() id} corresponding to the
-    * {@code recordId} parameter.
-    * 
-    * @param recordId
-    *           the {@link TrafficControllerPoolRecord#getId() id} of the
-    *           desired pool record
-    */
    public static Predicate<TrafficControllerPoolRecord> recordIdEqualTo(String recordId) {
       return new RecordIdEqualToPredicate(recordId);
    }
 
    private static final class RecordIdEqualToPredicate implements Predicate<TrafficControllerPoolRecord> {
-      private final String id;
+      private final String recordId;
 
-      public RecordIdEqualToPredicate(String id) {
-         this.id = checkNotNull(id, "recordId");
+      public RecordIdEqualToPredicate(String recordId) {
+         this.recordId = checkNotNull(recordId, "recordId");
       }
 
       @Override
       public boolean apply(TrafficControllerPoolRecord input) {
-         if (input == null)
-            return false;
-         return id.equals(input.getId());
+         return input != null && recordId.equals(input.getId());
       }
 
       @Override
       public String toString() {
-         return "RecordIdEqualTo(" + id + ")";
+         return "RecordIdEqualTo(" + recordId + ")";
       }
    }
 }

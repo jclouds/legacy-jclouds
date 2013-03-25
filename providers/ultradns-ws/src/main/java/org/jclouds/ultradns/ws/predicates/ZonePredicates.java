@@ -32,22 +32,25 @@ import com.google.common.base.Predicate;
  */
 public class ZonePredicates {
 
-   /**
-    * matches zones of the given type
-    */
-   public static Predicate<Zone> typeEquals(final Type type) {
-      checkNotNull(type, "type must be defined");
+   public static Predicate<Zone> typeEqualTo(Type type) {
+      return new TypeEqualToPredicate(type);
+   }
 
-      return new Predicate<Zone>() {
-         @Override
-         public boolean apply(Zone zone) {
-            return type.equals(zone.getType());
-         }
+   private static final class TypeEqualToPredicate implements Predicate<Zone> {
+      private final Type type;
 
-         @Override
-         public String toString() {
-            return "typeEquals(" + type + ")";
-         }
-      };
+      public TypeEqualToPredicate(Type type) {
+         this.type = checkNotNull(type, "type");
+      }
+
+      @Override
+      public boolean apply(Zone input) {
+         return input != null && type.equals(input.getType());
+      }
+
+      @Override
+      public String toString() {
+         return "TypeEqualTo(" + type + ")";
+      }
    }
 }

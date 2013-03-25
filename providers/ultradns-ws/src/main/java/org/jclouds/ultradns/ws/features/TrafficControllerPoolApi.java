@@ -118,8 +118,6 @@ public interface TrafficControllerPoolApi {
          throws ResourceAlreadyExistsException;
 
    /**
-    * Retrieves information about the specified pool record
-    * 
     * @param poolRecordID
     *           {@link TrafficControllerPoolRecord#getId()}
     * @return null if not found
