@@ -65,6 +65,7 @@ import org.jclouds.trmk.vcloud_0_8.binders.BindInstantiateVAppTemplateParamsToXm
 import org.jclouds.trmk.vcloud_0_8.binders.BindNodeConfigurationToXmlPayload;
 import org.jclouds.trmk.vcloud_0_8.binders.BindVAppConfigurationToXmlPayload;
 import org.jclouds.trmk.vcloud_0_8.binders.OrgNameAndCatalogNameToEndpoint;
+import org.jclouds.trmk.vcloud_0_8.binders.OrgNameAndTasksListNameToEndpoint;
 import org.jclouds.trmk.vcloud_0_8.binders.OrgNameAndVDCNameToEndpoint;
 import org.jclouds.trmk.vcloud_0_8.binders.OrgNameCatalogNameItemNameToEndpoint;
 import org.jclouds.trmk.vcloud_0_8.binders.OrgNameCatalogNameVAppTemplateNameToEndpoint;
@@ -86,7 +87,6 @@ import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
 import org.jclouds.trmk.vcloud_0_8.domain.VDC;
 import org.jclouds.trmk.vcloud_0_8.endpoints.Org;
 import org.jclouds.trmk.vcloud_0_8.filters.SetVCloudTokenCookie;
-import org.jclouds.trmk.vcloud_0_8.functions.OrgNameAndTasksListNameToEndpoint;
 import org.jclouds.trmk.vcloud_0_8.functions.OrgNameToEndpoint;
 import org.jclouds.trmk.vcloud_0_8.functions.ParseTaskFromLocationHeader;
 import org.jclouds.trmk.vcloud_0_8.functions.VDCURIToInternetServicesEndpoint;
@@ -162,9 +162,9 @@ public interface TerremarkVCloudAsyncClient {
    @XMLResponseParser(TasksListHandler.class)
    @Fallback(NullOnNotFoundOr404.class)
    @Consumes(TASKSLIST_XML)
-   ListenableFuture<? extends TasksList> findTasksListInOrgNamed(
-         @Nullable @EndpointParam(parser = OrgNameAndTasksListNameToEndpoint.class) String orgName,
-         @Nullable @EndpointParam(parser = OrgNameAndTasksListNameToEndpoint.class) String tasksListName);
+   @MapBinder(OrgNameAndTasksListNameToEndpoint.class)
+   ListenableFuture<? extends TasksList> findTasksListInOrgNamed(@Nullable @PayloadParam("orgName") String orgName,
+         @Nullable @PayloadParam("tasksListName") String tasksListName);
 
    /**
     * @see TerremarkVCloudClient#getTask
