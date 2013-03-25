@@ -61,6 +61,8 @@ public class ImageForVCloudExpressVAppTemplate implements Function<VAppTemplate,
 
    @Override
    public Image apply(VAppTemplate from) {
+      if (from == null)
+         return null;
       ImageBuilder builder = new ImageBuilder();
       builder.ids(from.getHref().toASCIIString());
       builder.uri(from.getHref());
