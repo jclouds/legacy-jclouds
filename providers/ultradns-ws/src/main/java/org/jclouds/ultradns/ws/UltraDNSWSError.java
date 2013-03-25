@@ -17,24 +17,25 @@
  * under the License.
  */
 package org.jclouds.ultradns.ws;
-
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.lang.String.format;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 
 /**
  * @author Adrian Cole
  */
 public final class UltraDNSWSError {
-   public static UltraDNSWSError fromCodeAndDescription(int code, String description) {
+   public static UltraDNSWSError fromCodeAndDescription(int code, Optional<String> description) {
       return new UltraDNSWSError(code, description);
    }
 
    private final int code;
-   private final String description;
+   private final Optional<String> description;
 
-   private UltraDNSWSError(int code, String description) {
+   private UltraDNSWSError(int code, Optional<String> description) {
       this.code = code;
       this.description = checkNotNull(description, "description for code %s", code);
    }
@@ -49,7 +50,7 @@ public final class UltraDNSWSError {
    /**
     * The description of the error. ex {@code Zone does not exist in the system.}
     */
-   public String getDescription() {
+   public Optional<String> getDescription() {
       return description;
    }
 
@@ -70,6 +71,6 @@ public final class UltraDNSWSError {
 
    @Override
    public String toString() {
-      return String.format("Error %s: %s", code, description);
+      return description.isPresent() ? format("Error %s: %s", code, description.get()) : format("Error %s", code);
    }
 }

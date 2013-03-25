@@ -27,6 +27,8 @@ import org.jclouds.ultradns.ws.UltraDNSWSError;
 import org.jclouds.ultradns.ws.xml.UltraWSExceptionHandler;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
+
 /**
  * @author Adrian Cole
  */
@@ -45,7 +47,7 @@ public class UltraWSExceptionTest extends BaseHandlerTest {
    }
 
    public UltraDNSWSError expected() {
-      return UltraDNSWSError.fromCodeAndDescription(1801, "Zone does not exist in the system.");
+      return UltraDNSWSError.fromCodeAndDescription(1801, Optional.of("Zone does not exist in the system."));
    }
 
 }

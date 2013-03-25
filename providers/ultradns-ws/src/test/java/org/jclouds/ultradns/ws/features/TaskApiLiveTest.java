@@ -53,7 +53,7 @@ public class TaskApiLiveTest extends BaseUltraDNSWSApiLiveTest {
          assertEquals(got.getGuid(), task.getGuid());
          assertEquals(got.getStatusCode(), task.getStatusCode());
          assertEquals(got.getMessage(), task.getMessage());
-         assertEquals(got.getResultUrl(), task.getMessage());
+         assertEquals(got.getResultUrl(), task.getResultUrl());
       }
    }
 

@@ -78,10 +78,7 @@ public class UltraDNSWSErrorHandler implements HttpErrorHandler {
     * there are 51002 potential codes. This defines the ones we are handling.
     */
    static final class ErrorCodes {
-      /**
-       * Cannot find task with guid.
-       */
-      static final int TASK_NOT_FOUND = 0;
+      static final int UNKNOWN = 0;
       /**
        * Zone does not exist in the system.
        */
@@ -117,18 +114,23 @@ public class UltraDNSWSErrorHandler implements HttpErrorHandler {
    }
 
    private Exception refineException(UltraDNSWSResponseException exception) {
+      String message = exception.getError().getDescription().or(exception.getMessage());
       switch (exception.getError().getCode()) {
-      case TASK_NOT_FOUND:
+      case UNKNOWN:
+         if (!exception.getError().getDescription().isPresent())
+            return exception;
+         if (exception.getError().getDescription().get().indexOf("Cannot find") == -1)
+            return exception;
       case ZONE_NOT_FOUND:
       case RESOURCE_RECORD_NOT_FOUND:
       case ACCOUNT_NOT_FOUND:
       case POOL_NOT_FOUND:
       case POOL_RECORD_NOT_FOUND:
-         return new ResourceNotFoundException(exception.getError().getDescription(), exception);
+         return new ResourceNotFoundException(message, exception);
       case ZONE_ALREADY_EXISTS:
       case RESOURCE_RECORD_ALREADY_EXISTS:
       case POOL_ALREADY_EXISTS:
-         return new ResourceAlreadyExistsException(exception.getError().getDescription(), exception);
+         return new ResourceAlreadyExistsException(message, exception);
       }
       return exception;
    }
