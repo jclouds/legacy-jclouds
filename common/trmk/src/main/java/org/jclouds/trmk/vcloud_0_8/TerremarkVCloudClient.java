@@ -44,6 +44,8 @@ import org.jclouds.trmk.vcloud_0_8.options.AddNodeOptions;
 import org.jclouds.trmk.vcloud_0_8.options.CloneVAppOptions;
 import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions;
 
+import com.google.inject.Provides;
+
 /**
  * Provides access to VCloud resources via their REST API.
  * <p/>
@@ -129,6 +131,8 @@ public interface TerremarkVCloudClient {
     * 
     * @return a listing of all orgs that the current user has access to.
     */
+   @Provides
+   @org.jclouds.trmk.vcloud_0_8.endpoints.Org
    Map<String, ReferenceType> listOrgs();
 
    VApp instantiateVAppTemplateInVDC(URI vDC, URI template, String appName, InstantiateVAppTemplateOptions... options);
