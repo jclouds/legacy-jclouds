@@ -20,6 +20,7 @@ package org.jclouds.http.options;
 
 import java.util.Collection;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 
@@ -134,8 +135,9 @@ public class BaseHttpRequestOptions implements HttpRequestOptions {
 
    @Override
    public String toString() {
-      return "[formParameters=" + formParameters + ", headers=" + headers + ", pathSuffix=" + pathSuffix + ", payload="
-            + payload + ", queryParameters=" + queryParameters + "]";
+      return Objects.toStringHelper(this).omitNullValues().add("formParameters", formParameters)
+            .add("headers", headers).add("pathSuffix", pathSuffix).add("payload", payload)
+            .add("queryParameters", queryParameters).toString();
    }
 
 }
