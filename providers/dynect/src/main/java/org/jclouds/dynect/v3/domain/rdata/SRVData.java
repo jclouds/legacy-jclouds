@@ -60,8 +60,8 @@ public class SRVData extends ForwardingMap<String, Object> {
       this.delegate = ImmutableMap.<String, Object> builder()
             .put("priority", priority)
             .put("weight", weight)
-            .put("port", weight)
-            .put("target", weight)
+            .put("port", port)
+            .put("target", target)
             .build();
    }
 
