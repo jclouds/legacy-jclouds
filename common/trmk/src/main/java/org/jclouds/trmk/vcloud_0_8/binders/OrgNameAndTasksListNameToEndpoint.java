@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.trmk.vcloud_0_8.functions;
+package org.jclouds.trmk.vcloud_0_8.binders;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -27,11 +27,12 @@ import java.util.NoSuchElementException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.MapBinder;
 import org.jclouds.trmk.vcloud_0_8.domain.Org;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 import org.jclouds.trmk.vcloud_0_8.endpoints.TasksList;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 
@@ -40,7 +41,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class OrgNameAndTasksListNameToEndpoint implements Function<Object, URI> {
+public class OrgNameAndTasksListNameToEndpoint implements MapBinder {
    private final Supplier<Map<String, ? extends Org>> orgMap;
    private final Supplier<ReferenceType> defaultOrg;
    private final Supplier<ReferenceType> defaultTasksList;
@@ -54,21 +55,26 @@ public class OrgNameAndTasksListNameToEndpoint implements Function<Object, URI> 
    }
 
    @SuppressWarnings("unchecked")
-   public URI apply(Object from) {
-      Iterable<Object> orgTasksList = (Iterable<Object>) checkNotNull(from, "args");
-      Object org = Iterables.get(orgTasksList, 0);
-      Object tasksList = Iterables.get(orgTasksList, 1);
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
+      Object org = postParams.get("orgName");
+      Object tasksList = postParams.get("tasksListName");
       if (org == null && tasksList == null)
-         return defaultTasksList.get().getHref();
+         return (R) request.toBuilder().endpoint(defaultTasksList.get().getHref()).build();
       else if (org == null)
          org = defaultOrg.get().getName();
 
       try {
          Map<String, ReferenceType> tasksLists = checkNotNull(orgMap.get().get(org)).getTasksLists();
-         return tasksList == null ? Iterables.getLast(tasksLists.values()).getHref() : tasksLists.get(tasksList).getHref();
+         URI endpoint = tasksList == null ? Iterables.getLast(tasksLists.values()).getHref() : tasksLists.get(tasksList).getHref();
+         return (R) request.toBuilder().endpoint(endpoint).build();
       } catch (NullPointerException e) {
          throw new NoSuchElementException(org + "/" + tasksList + " not found in " + orgMap.get());
       }
    }
 
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      throw new IllegalStateException(getClass() + " needs parameters");
+   }
 }
