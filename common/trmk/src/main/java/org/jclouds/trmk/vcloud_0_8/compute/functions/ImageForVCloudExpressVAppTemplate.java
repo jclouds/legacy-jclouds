@@ -28,6 +28,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 import org.jclouds.trmk.vcloud_0_8.domain.Status;
 import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
@@ -60,7 +61,7 @@ public class ImageForVCloudExpressVAppTemplate implements Function<VAppTemplate,
    }
 
    @Override
-   public Image apply(VAppTemplate from) {
+   public Image apply(@Nullable VAppTemplate from) {
       if (from == null)
          return null;
       ImageBuilder builder = new ImageBuilder();
