@@ -18,6 +18,8 @@
  */
 package org.jclouds.trmk.vcloud_0_8.compute.functions;
 
+import static com.google.common.base.Predicates.notNull;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
@@ -29,7 +31,7 @@ import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
 import org.jclouds.trmk.vcloud_0_8.functions.AllCatalogItemsInOrg;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.FluentIterable;
 
 /**
  * @author Adrian Cole
@@ -54,7 +56,9 @@ public class ImagesInVCloudExpressOrg implements Function<Org, Iterable<? extend
    public Iterable<? extends Image> apply(Org from) {
       Iterable<? extends CatalogItem> catalogs = allCatalogItemsInOrg.apply(from);
       Iterable<? extends VAppTemplate> vAppTemplates = vAppTemplatesForCatalogItems.apply(catalogs);
-      return Iterables.transform(vAppTemplates, imageForVAppTemplateProvider.get().withParent(from));
+      return FluentIterable.from(vAppTemplates)
+                           .transform(imageForVAppTemplateProvider.get().withParent(from))
+                           .filter(notNull());
    }
 
 }
