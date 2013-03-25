@@ -37,7 +37,7 @@ public abstract class AttributeHandler extends ParseSax.HandlerForGeneratedReque
       }
    }
 
-   private String attributeName;
+   private final String attributeName;
    private String attribute = null;
 
    private AttributeHandler(String attributeName) {
@@ -46,11 +46,7 @@ public abstract class AttributeHandler extends ParseSax.HandlerForGeneratedReque
 
    @Override
    public String getResult() {
-      try {
-         return checkNotNull(attribute, "%s not present in the response", attributeName);
-      } finally {
-         attribute = null;
-      }
+      return checkNotNull(attribute, "%s not present in the response", attributeName);
    }
 
    @Override

@@ -40,7 +40,7 @@ import org.jclouds.ultradns.ws.domain.UpdatePoolRecord;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
 import org.jclouds.ultradns.ws.xml.AttributeHandler;
 import org.jclouds.ultradns.ws.xml.PoolRecordSpecHandler;
-import org.jclouds.ultradns.ws.xml.TextHandler;
+import org.jclouds.ultradns.ws.xml.ElementTextHandler;
 import org.jclouds.ultradns.ws.xml.TrafficControllerPoolListHandler;
 import org.jclouds.ultradns.ws.xml.TrafficControllerPoolRecordListHandler;
 
@@ -62,7 +62,7 @@ public interface TrafficControllerPoolAsyncApi {
     */
    @Named("addTCLBPool")
    @POST
-   @XMLResponseParser(TextHandler.TCPoolID.class)
+   @XMLResponseParser(ElementTextHandler.TCPoolID.class)
    @Payload("<v01:addTCLBPool><transactionID /><zoneName>{zoneName}</zoneName><hostName>{hostName}</hostName><description>{description}</description><poolRecordType>1</poolRecordType><failOver>Enabled</failOver><probing>Enabled</probing><maxActive>0</maxActive><rrGUID /></v01:addTCLBPool>")
    ListenableFuture<String> createPoolForHostname(@PayloadParam("description") String name,
          @PayloadParam("hostName") String hostname) throws ResourceAlreadyExistsException;
@@ -110,7 +110,7 @@ public interface TrafficControllerPoolAsyncApi {
     */
    @Named("addPoolRecord")
    @POST
-   @XMLResponseParser(TextHandler.PoolRecordID.class)
+   @XMLResponseParser(ElementTextHandler.PoolRecordID.class)
    @Payload("<v01:addPoolRecord><transactionID /><poolID>{poolID}</poolID><pointsTo>{pointsTo}</pointsTo><priority /><failOverDelay /><ttl>{ttl}</ttl><weight /><mode /><threshold /></v01:addPoolRecord>")
    ListenableFuture<String> addRecordToPoolWithTTL(@PayloadParam("pointsTo") String pointsTo,
          @PayloadParam("poolID") String lbPoolID, @PayloadParam("ttl") int ttl) throws ResourceAlreadyExistsException;
@@ -120,7 +120,7 @@ public interface TrafficControllerPoolAsyncApi {
     */
    @Named("addPoolRecord")
    @POST
-   @XMLResponseParser(TextHandler.PoolRecordID.class)
+   @XMLResponseParser(ElementTextHandler.PoolRecordID.class)
    @Payload("<v01:addPoolRecord><transactionID /><poolID>{poolID}</poolID><pointsTo>{pointsTo}</pointsTo><priority /><failOverDelay /><ttl>{ttl}</ttl><weight>{weight}</weight><mode /><threshold /></v01:addPoolRecord>")
    ListenableFuture<String> addRecordToPoolWithTTLAndWeight(@PayloadParam("pointsTo") String pointsTo,
          @PayloadParam("poolID") String lbPoolID, @PayloadParam("ttl") int ttl, @PayloadParam("weight") int weight)

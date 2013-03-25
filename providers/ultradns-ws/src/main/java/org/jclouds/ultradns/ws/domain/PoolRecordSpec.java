@@ -47,13 +47,13 @@ public final class PoolRecordSpec {
       this.probingEnabled = probingEnabled;
       this.allFailEnabled = allFailEnabled;
       this.weight = weight;
-      checkArgument(weight >= 0, "weight of %s must be unsigned", description);
+      checkArgument(weight >= 0, "weight of %s must be >= 0", description);
       this.failOverDelay = failOverDelay;
-      checkArgument(failOverDelay >= 0, "failOverDelay of %s must be unsigned", description);
+      checkArgument(failOverDelay >= 0, "failOverDelay of %s must be >= 0", description);
       this.threshold = threshold;
-      checkArgument(threshold >= 0, "threshold of %s must be unsigned", description);
+      checkArgument(threshold >= 0, "threshold of %s must be >= 0", description);
       this.ttl = ttl;
-      checkArgument(ttl >= 0, "ttl of %s must be unsigned", description);
+      checkArgument(ttl >= 0, "ttl of %s must be >= 0", description);
    }
 
    /**
@@ -114,8 +114,8 @@ public final class PoolRecordSpec {
 
    @Override
    public int hashCode() {
-      return Objects
-            .hashCode(description, state, probingEnabled, allFailEnabled, weight, failOverDelay, threshold, ttl);
+      return Objects.hashCode(description, state, probingEnabled, allFailEnabled, weight, failOverDelay, threshold,
+            ttl);
    }
 
    @Override

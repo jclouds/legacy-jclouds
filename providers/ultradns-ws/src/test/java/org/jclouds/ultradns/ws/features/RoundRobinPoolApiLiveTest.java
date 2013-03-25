@@ -18,12 +18,12 @@
  */
 package org.jclouds.ultradns.ws.features;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.equalTo;
 import static java.util.logging.Logger.getAnonymousLogger;
 import static org.jclouds.ultradns.ws.domain.ResourceRecord.rrBuilder;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
@@ -62,10 +62,10 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    }
 
    private void checkRRPool(RoundRobinPool pool) {
-      checkNotNull(pool.getZoneId(), "ZoneId cannot be null for a RoundRobinPool %s", pool);
-      checkNotNull(pool.getId(), "Id cannot be null for a RoundRobinPool %s", pool);
-      checkNotNull(pool.getName(), "Name cannot be null for a RoundRobinPool %s", pool);
-      checkNotNull(pool.getDName(), "DName cannot be null for a RoundRobinPool %s", pool);
+      assertNotNull(pool.getZoneId(), "ZoneId cannot be null for " + pool);
+      assertNotNull(pool.getId(), "Id cannot be null for " + pool);
+      assertNotNull(pool.getName(), "Name cannot be null for " + pool);
+      assertNotNull(pool.getDName(), "DName cannot be null for " + pool);
    }
 
    @Test

@@ -23,7 +23,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.ultradns.ws.xml.TextHandler;
+import org.jclouds.ultradns.ws.xml.ElementTextHandler;
 import org.testng.annotations.Test;
 
 /**
@@ -35,7 +35,7 @@ public class RunTestResponseTest extends BaseHandlerTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/taskid.xml");
 
-      TextHandler.Guid handler = injector.getInstance(TextHandler.Guid.class);
+      ElementTextHandler.Guid handler = injector.getInstance(ElementTextHandler.Guid.class);
       assertEquals(factory.create(handler).parse(is), "8d7a1725-4f4a-4b70-affa-f01dcce1526e");
    }
 }

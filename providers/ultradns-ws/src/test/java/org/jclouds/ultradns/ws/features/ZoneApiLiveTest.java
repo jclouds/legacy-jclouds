@@ -18,11 +18,11 @@
  */
 package org.jclouds.ultradns.ws.features;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.logging.Logger.getAnonymousLogger;
 import static org.jclouds.ultradns.ws.domain.Zone.Type.PRIMARY;
-import static org.jclouds.ultradns.ws.predicates.ZonePredicates.typeEquals;
+import static org.jclouds.ultradns.ws.predicates.ZonePredicates.typeEqualTo;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
@@ -55,17 +55,16 @@ public class ZoneApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    }
 
    private void checkZone(Zone zone) {
-      checkNotNull(zone.getId(), "Id cannot be null for a Zone %s", zone);
-      checkNotNull(zone.getName(), "Name cannot be null for a Zone %s", zone);
-      checkNotNull(zone.getType(), "Type cannot be null for a Zone %s", zone);
-      checkNotNull(zone.getTypeCode(), "TypeCode cannot be null for a Zone %s", zone);
+      assertNotNull(zone.getId(), "Id cannot be null for " + zone);
+      assertNotNull(zone.getName(), "Name cannot be null for " + zone);
+      assertNotNull(zone.getType(), "Type cannot be null for " + zone);
+      assertNotNull(zone.getTypeCode(), "TypeCode cannot be null for " + zone);
       assertEquals(zone.getTypeCode(), zone.getType().getCode());
-      checkNotNull(zone.getAccountId(), "AccountId cannot be null for a Zone %s", zone);
+      assertNotNull(zone.getAccountId(), "AccountId cannot be null for " + zone);
       assertEquals(zone.getAccountId(), account.getId());
-      checkNotNull(zone.getOwnerId(), "OwnerId cannot be null for a Zone %s", zone);
-      checkNotNull(zone.getDNSSECStatus(), "DNSSECStatus cannot be null for a Zone %s", zone);
-      checkNotNull(zone.getPrimarySrc(), "While PrimarySrc can be null for a Zone, its Optional wrapper cannot %s",
-            zone);
+      assertNotNull(zone.getOwnerId(), "OwnerId cannot be null for " + zone);
+      assertNotNull(zone.getDNSSECStatus(), "DNSSECStatus cannot be null for " + zone);
+      assertNotNull(zone.getPrimarySrc(), "While PrimarySrc can be null, its Optional wrapper cannot " + zone);
    }
 
    @Test
@@ -76,9 +75,9 @@ public class ZoneApiLiveTest extends BaseUltraDNSWSApiLiveTest {
          checkZone(zone);
       }
 
-      if (response.anyMatch(typeEquals(PRIMARY))) {
+      if (response.anyMatch(typeEqualTo(PRIMARY))) {
          assertEquals(api().listByAccountAndType(account.getId(), PRIMARY).toSet(), response
-               .filter(typeEquals(PRIMARY)).toSet());
+               .filter(typeEqualTo(PRIMARY)).toSet());
       }
    }
 
@@ -94,7 +93,7 @@ public class ZoneApiLiveTest extends BaseUltraDNSWSApiLiveTest {
          assertEquals(zoneProperties.getName(), zone.getName());
          assertEquals(zoneProperties.getType(), zone.getType());
          assertEquals(zoneProperties.getTypeCode(), zone.getTypeCode());
-         checkNotNull(zoneProperties.getModified(), "Modified cannot be null for a Zone %s", zone);
+         assertNotNull(zoneProperties.getModified(), "Modified cannot be null for " + zone);
          assertTrue(zoneProperties.getResourceRecordCount() >= 0,
                "ResourceRecordCount must be positive or zero for a Zone " + zone);
       }
@@ -134,7 +133,7 @@ public class ZoneApiLiveTest extends BaseUltraDNSWSApiLiveTest {
          assertEquals(newZone.getName(), name);
          assertEquals(newZone.getType(), Type.PRIMARY);
          assertEquals(newZone.getTypeCode(), Type.PRIMARY.getCode());
-         checkNotNull(newZone.getModified(), "Modified cannot be null for a Zone %s", newZone);
+         assertNotNull(newZone.getModified(), "Modified cannot be null for " + newZone);
          assertEquals(newZone.getResourceRecordCount(), 5);
       } finally {
          api().delete(name);
