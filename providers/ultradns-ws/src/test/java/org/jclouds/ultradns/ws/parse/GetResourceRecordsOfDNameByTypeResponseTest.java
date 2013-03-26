@@ -58,14 +58,16 @@ public class GetResourceRecordsOfDNameByTypeResponseTest extends BaseHandlerTest
             .zoneName("adrianc.rr.ultradnstest.jclouds.org.")
             .created(dateService.iso8601DateParse("2013-02-22T08:22:48.000Z"))
             .modified(dateService.iso8601DateParse("2013-02-22T08:22:49.000Z"))
-            .record(rrBuilder().type(6).name("adrianc.rr.ultradnstest.jclouds.org.").ttl(86400)
-                               .rdata("pdns75.ultradns.com.")
-                               .rdata("adrianc.netflix.com.")
-                               .rdata("2013022200")
-                               .rdata("86400")
-                               .rdata("86400")
-                               .rdata("86400")
-                               .rdata("86400").build()).build();
+            .record(rrBuilder().name("adrianc.rr.ultradnstest.jclouds.org.")
+                               .type(6)
+                               .ttl(86400)
+                               .infoValue("pdns75.ultradns.com.")
+                               .infoValue("adrianc.netflix.com.")
+                               .infoValue("2013022200")
+                               .infoValue("86400")
+                               .infoValue("86400")
+                               .infoValue("86400")
+                               .infoValue("86400").build()).build();
       return FluentIterable.from(ImmutableList.of(record));
    }
 }

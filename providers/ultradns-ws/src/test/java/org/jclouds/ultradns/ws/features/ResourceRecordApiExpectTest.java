@@ -45,8 +45,11 @@ public class ResourceRecordApiExpectTest extends BaseUltraDNSWSApiExpectTest {
    HttpResponse createResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResourceWithContentType("/rr_created.xml", "application/xml")).build();
 
-   ResourceRecord record = rrBuilder().name("mail.jclouds.org.").type(15).ttl(1800).rdata(10)
-         .rdata("maileast.jclouds.org.").build();
+   ResourceRecord record = rrBuilder().name("mail.jclouds.org.")
+                                      .type(15)
+                                      .ttl(1800)
+                                      .infoValue(10)
+                                      .infoValue("maileast.jclouds.org.").build();
 
    public void testCreateWhenResponseIs2xx() {
       UltraDNSWSApi success = requestSendsResponse(create, createResponse);

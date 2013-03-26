@@ -135,18 +135,32 @@ public class ResourceRecord {
       }
 
       /**
+       * adds to current values
+       * 
        * @see ResourceRecord#getRData()
        */
-      public Builder rdata(Object infoValue) {
+      public Builder infoValue(Object infoValue) {
          this.infoValues.add(infoValue.toString());
          return this;
       }
 
       /**
+       * replaces current values
+       * 
+       * @see ResourceRecord#getRData()
+       */
+      public Builder rdata(Object infoValue) {
+         this.infoValues = ImmutableList.<String> builder().add(infoValue.toString());
+         return this;
+      }
+
+      /**
+       * replaces current values
+       * 
        * @see ResourceRecord#getRData()
        */
       public Builder rdata(Iterable<?> infoValues) {
-         this.infoValues.addAll(transform(infoValues, toStringFunction()));
+         this.infoValues = ImmutableList.<String> builder().addAll(transform(infoValues, toStringFunction()));
          return this;
       }
 

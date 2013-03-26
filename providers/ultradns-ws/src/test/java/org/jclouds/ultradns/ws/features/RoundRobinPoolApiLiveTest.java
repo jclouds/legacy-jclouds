@@ -195,15 +195,21 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
       getAnonymousLogger().info("created AAAA record: " + aaaaRecord1);
 
       assertTrue(listRRs(aaaaPoolId).anyMatch(
-            equalTo(rrBuilder().name(hostname).type(28).ttl(1).rdata("2001:0DB8:85A3:0000:0000:8A2E:0370:7334")
-                  .build())));
+            equalTo(rrBuilder().name(hostname)
+                               .type(28)
+                               .ttl(1)
+                               .rdata("2001:0DB8:85A3:0000:0000:8A2E:0370:7334")
+                               .build())));
 
       aaaaRecord2 = api(zoneName).addAAAARecordWithAddressAndTTL(aaaaPoolId, "2002:0DB8:85A3:0000:0000:8A2E:0370:7334",
             1);
 
       assertTrue(listRRs(aaaaPoolId).anyMatch(
-            equalTo(rrBuilder().name(hostname).type(28).ttl(1).rdata("2002:0DB8:85A3:0000:0000:8A2E:0370:7334")
-                  .build())));
+            equalTo(rrBuilder().name(hostname)
+                               .type(28)
+                               .ttl(1)
+                               .rdata("2002:0DB8:85A3:0000:0000:8A2E:0370:7334")
+                               .build())));
 
       getAnonymousLogger().info("created AAAA record: " + aaaaRecord1);
       try {
