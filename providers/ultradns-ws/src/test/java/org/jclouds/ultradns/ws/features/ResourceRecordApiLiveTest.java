@@ -123,8 +123,7 @@ public class ResourceRecordApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
    @Test(expectedExceptions = ResourceNotFoundException.class, expectedExceptionsMessageRegExp = "No Resource Record with GUID found in the system")
    public void testUpdateWhenNotFound() {
-      api(zoneName).update("AAAAAAAAAAAAAAAA",
-            rrBuilder().name("mail." + zoneName).type(15).ttl(1800).rdata(10).rdata("maileast.jclouds.org.").build());
+      api(zoneName).update("AAAAAAAAAAAAAAAA", mx);
    }
 
    @Test
@@ -133,8 +132,11 @@ public class ResourceRecordApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    }
 
    String guid;
-   ResourceRecord mx = rrBuilder().name("mail." + zoneName).type(15).ttl(1800).rdata(10)
-         .rdata("maileast.jclouds.org.").build();
+   ResourceRecord mx = rrBuilder().name("mail." + zoneName)
+                                  .type(15)
+                                  .ttl(1800)
+                                  .infoValue(10)
+                                  .infoValue("maileast.jclouds.org.").build();
 
    @Test
    public void testCreateRecord() {
