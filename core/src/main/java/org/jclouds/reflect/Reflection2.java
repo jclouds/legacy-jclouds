@@ -289,13 +289,26 @@ public class Reflection2 {
                   if (raw == Object.class)
                      continue;
                   for (Method method : raw.getDeclaredMethods()) {
-                     method.setAccessible(true);
+                     if (!coreJavaClass(raw)) {
+                        method.setAccessible(true);
+                     }
                      builder.add(key.method(method));
                   }
                }
                return builder.build();
             }
          });
+
+   private static boolean coreJavaClass(Class<?> clazz) {
+      // treat null packages (e.g. for proxy objects) as "non-core"
+      Package clazzPackage = clazz.getPackage();
+      if (clazzPackage == null) {
+         return false;
+      }
+      String packageName = clazzPackage.getName();
+      return (packageName.startsWith("com.sun.") || packageName.startsWith("java.")
+              || packageName.startsWith("javax.") || packageName.startsWith("sun."));
+   }
 
    /**
     * ensures that exceptions are not doubly-wrapped
