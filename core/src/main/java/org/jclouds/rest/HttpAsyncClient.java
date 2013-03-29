@@ -46,7 +46,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 public interface HttpAsyncClient {
    /**
-    * @see HttpClient#post
+    * @see HttpClient#put
     */
    @PUT
    @ResponseParser(ParseETagHeader.class)
