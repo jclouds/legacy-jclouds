@@ -49,13 +49,13 @@ import com.google.common.base.Objects.ToStringHelper;
  * 
  * @author Adrian Cole
  */
-public class NodeRequest extends BaseNode<NodeRequest> {
+public class NodeAdd extends BaseNode<NodeAdd> {
 
    // for serialization only
-   NodeRequest() {
+   NodeAdd() {
    }
 
-   public NodeRequest(String address, int port, Condition condition, Type type, Integer weight) {
+   public NodeAdd(String address, int port, Condition condition, Type type, Integer weight) {
       super(address, port, condition, type, weight);
    }
 
@@ -79,16 +79,16 @@ public class NodeRequest extends BaseNode<NodeRequest> {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
 
-      NodeRequest that = NodeRequest.class.cast(obj);
+      NodeAdd that = NodeAdd.class.cast(obj);
       return Objects.equal(this.address, that.address)
             && Objects.equal(this.port, that.port);
    }
 
-   public static class Builder extends BaseNode.Builder<NodeRequest> {
+   public static class Builder extends BaseNode.Builder<NodeAdd> {
 
       @Override
-      public NodeRequest build() {
-         return new NodeRequest(address, port, condition, type, weight);
+      public NodeAdd build() {
+         return new NodeAdd(address, port, condition, type, weight);
       }
 
       /**
@@ -131,7 +131,7 @@ public class NodeRequest extends BaseNode<NodeRequest> {
          return Builder.class.cast(super.weight(weight));
       }
       @Override
-      public Builder from(NodeRequest in) {
+      public Builder from(NodeAdd in) {
          return Builder.class.cast(super.from(in));
       }
    }
