@@ -30,23 +30,23 @@ import com.google.common.base.Objects.ToStringHelper;
  * 
  * @author Dan Lo Bianco
  */
-public class NodeAttributes {
+public class NodeUpdate {
 
    protected Condition condition;
    protected Type type;
    protected Integer weight;
 
-   public NodeAttributes condition(Condition condition) {
+   public NodeUpdate condition(Condition condition) {
       this.condition = condition;
       return this;
    }
 
-   public NodeAttributes type(Type type) {
+   public NodeUpdate type(Type type) {
       this.type = type;
       return this;
    }
 
-   public NodeAttributes weight(Integer weight) {
+   public NodeUpdate weight(Integer weight) {
       this.weight = weight;
       return this;
    }
@@ -71,7 +71,7 @@ public class NodeAttributes {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
 
-      NodeAttributes that = NodeAttributes.class.cast(obj);
+      NodeUpdate that = NodeUpdate.class.cast(obj);
       return Objects.equal(this.condition, that.condition)
             && Objects.equal(this.type, that.type)
             && Objects.equal(this.weight, that.weight);
@@ -81,26 +81,26 @@ public class NodeAttributes {
       /**
        * @see BaseNode.Builder#condition(Condition)
        */
-      public static NodeAttributes condition(Condition condition) {
-         return new NodeAttributes().condition(condition);
+      public static NodeUpdate condition(Condition condition) {
+         return new NodeUpdate().condition(condition);
       }
 
       /**
        * @see BaseNode.Builder#type(Type)
        */
-      public static NodeAttributes type(Type type) {
-         return new NodeAttributes().type(type);
+      public static NodeUpdate type(Type type) {
+         return new NodeUpdate().type(type);
       }
 
       /**
        * @see BaseNode.Builder#weight(Integer)
        */
-      public static NodeAttributes weight(Integer weight) {
-         return new NodeAttributes().weight(weight);
+      public static NodeUpdate weight(Integer weight) {
+         return new NodeUpdate().weight(weight);
       }
    }
 
-   public static <T extends BaseNode<T>> NodeAttributes fromNode(T n) {
+   public static <T extends BaseNode<T>> NodeUpdate fromNode(T n) {
       return Builder.condition(n.getCondition()).type(n.getType()).weight(n.getWeight());
    }
 }

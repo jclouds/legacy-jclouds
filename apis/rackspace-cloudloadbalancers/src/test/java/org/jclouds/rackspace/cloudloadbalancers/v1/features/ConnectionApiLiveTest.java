@@ -27,8 +27,8 @@ import static org.testng.Assert.assertTrue;
 
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.ConnectionThrottle;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancer;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerRequest;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.NodeRequest;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerCreate;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.NodeAdd;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.VirtualIP.Type;
 import org.jclouds.rackspace.cloudloadbalancers.v1.internal.BaseCloudLoadBalancersApiLiveTest;
 import org.testng.annotations.AfterGroups;
@@ -45,12 +45,12 @@ public class ConnectionApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
    private String zone;
 
    public void testCreateLoadBalancer() {
-      NodeRequest nodeRequest = NodeRequest.builder().address("192.168.1.1").port(8080).build();
-      LoadBalancerRequest lbRequest = LoadBalancerRequest.builder()
-            .name(prefix+"-jclouds").protocol("HTTP").port(80).virtualIPType(Type.PUBLIC).node(nodeRequest).build(); 
+      NodeAdd nodeAdd = NodeAdd.builder().address("192.168.1.1").port(8080).build();
+      LoadBalancerCreate lbCreate = LoadBalancerCreate.builder()
+            .name(prefix+"-jclouds").protocol("HTTP").port(80).virtualIPType(Type.PUBLIC).node(nodeAdd).build(); 
 
       zone = Iterables.getFirst(clbApi.getConfiguredZones(), null);
-      lb = clbApi.getLoadBalancerApiForZone(zone).create(lbRequest);
+      lb = clbApi.getLoadBalancerApiForZone(zone).create(lbCreate);
       
       assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
    }
