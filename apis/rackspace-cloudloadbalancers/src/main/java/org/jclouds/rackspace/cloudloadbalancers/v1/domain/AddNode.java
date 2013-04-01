@@ -49,13 +49,13 @@ import com.google.common.base.Objects.ToStringHelper;
  * 
  * @author Adrian Cole
  */
-public class NodeAdd extends BaseNode<NodeAdd> {
+public class AddNode extends BaseNode<AddNode> {
 
    // for serialization only
-   NodeAdd() {
+   AddNode() {
    }
 
-   public NodeAdd(String address, int port, Condition condition, Type type, Integer weight) {
+   public AddNode(String address, int port, Condition condition, Type type, Integer weight) {
       super(address, port, condition, type, weight);
    }
 
@@ -79,18 +79,12 @@ public class NodeAdd extends BaseNode<NodeAdd> {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
 
-      NodeAdd that = NodeAdd.class.cast(obj);
+      AddNode that = AddNode.class.cast(obj);
       return Objects.equal(this.address, that.address)
             && Objects.equal(this.port, that.port);
    }
 
-   public static class Builder extends BaseNode.Builder<NodeAdd> {
-
-      @Override
-      public NodeAdd build() {
-         return new NodeAdd(address, port, condition, type, weight);
-      }
-
+   public static class Builder extends BaseNode.Builder<AddNode> {
       /**
        * {@inheritDoc}
        */
@@ -130,8 +124,14 @@ public class NodeAdd extends BaseNode<NodeAdd> {
       public Builder weight(Integer weight) {
          return Builder.class.cast(super.weight(weight));
       }
+
       @Override
-      public Builder from(NodeAdd in) {
+      public AddNode build() {
+         return new AddNode(address, port, condition, type, weight);
+      }
+      
+      @Override
+      public Builder from(AddNode in) {
          return Builder.class.cast(super.from(in));
       }
    }
