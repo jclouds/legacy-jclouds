@@ -64,10 +64,12 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
    private final ExecutorService userExecutor;
 
    protected final AsyncBlobStore connection;
+
    /** Maximum duration in milliseconds of a request. */
-   @Inject(optional = true)
-   @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
-   protected Long maxTime = Long.MAX_VALUE;
+   protected long maxTime = Long.MAX_VALUE;
+
+   /** Maximum times to retry an operation. */
+   protected int maxErrors = 3;
 
    @Inject
    DeleteAllKeysInList(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
@@ -77,6 +79,16 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
       this.userExecutor = userExecutor;
       this.connection = connection;
       this.retryHandler = retryHandler;
+   }
+
+   @Inject(optional = true)
+   void setMaxTime(@Named(Constants.PROPERTY_REQUEST_TIMEOUT) long maxTime) {
+      this.maxTime = maxTime;
+   }
+
+   @Inject(optional = true)
+   void setMaxErrors(@Named(Constants.PROPERTY_MAX_RETRIES) int maxErrors) {
+      this.maxErrors = maxErrors;
    }
 
    public void execute(String containerName) {
@@ -92,7 +104,6 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
          message += " recursively";
       logger.debug(message);
       Map<StorageMetadata, Exception> exceptions = Maps.newHashMap();
-      int maxErrors = 3; // TODO parameterize
       for (int numErrors = 0; numErrors < maxErrors; ) {
          // fetch partial directory listing
          PageSet<? extends StorageMetadata> listing;
