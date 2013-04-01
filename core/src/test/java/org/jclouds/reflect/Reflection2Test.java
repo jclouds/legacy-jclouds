@@ -20,15 +20,26 @@ package org.jclouds.reflect;
 
 import static com.google.common.base.Functions.toStringFunction;
 import static org.jclouds.reflect.Reflection2.constructors;
+import static org.jclouds.reflect.Reflection2.isGetter;
 import static org.jclouds.reflect.Reflection2.method;
 import static org.jclouds.reflect.Reflection2.methods;
+import static org.jclouds.reflect.Reflection2.methodsAnnotatedWith;
+import static org.jclouds.reflect.Reflection2.typeParameterOf;
 import static org.jclouds.reflect.Reflection2.typeToken;
+import static org.jclouds.reflect.Reflection2.getPropertyGetter;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.Iterables;
+import org.jclouds.domain.Location;
+import org.jclouds.management.annotations.ManagedAttribute;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -111,6 +122,29 @@ public class Reflection2Test {
       assertEquals(methodNames,
             ImmutableSet.builder().add("comparator", "last", "first", "subSet", "headSet", "tailSet")
                   .addAll(setMethods).build());
+   }
+
+   public void testIsGetter() {
+      assertTrue(isGetter(method(Location.class, "getId")));
+      assertTrue(isGetter(method(Location.class, "getScope")));
+      assertTrue(isGetter(method(Location.class, "getParent")));
+   }
+
+   public void testPropertyGetter() {
+      assertTrue(getPropertyGetter(Location.class, "id").isPresent());
+      assertTrue(getPropertyGetter(Location.class, "scope").isPresent());
+      assertTrue(getPropertyGetter(Location.class, "parent").isPresent());
+      assertFalse(getPropertyGetter(Location.class,"notfound").isPresent());
+   }
+
+   public void testMethodsAnnotatedWith() {
+      assertFalse(Iterables.isEmpty(methodsAnnotatedWith(Location.class, ManagedAttribute.class)));
+   }
+
+   public void testTypeParameterOf() {
+      assertEquals(String.class, typeParameterOf(new TypeToken<Iterable<String>>(){}.getType()));
+      assertEquals(String.class, typeParameterOf(new TypeToken<List<String>>(){}.getType()));
+      assertEquals(String.class, typeParameterOf(new TypeToken<Optional<String>>(){}.getType()));
    }
 
    static final Function<Invokable<?, ?>, String> invokableToName = new Function<Invokable<?, ?>, String>() {

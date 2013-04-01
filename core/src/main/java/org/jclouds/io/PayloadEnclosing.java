@@ -22,11 +22,14 @@ import java.io.File;
 import java.io.InputStream;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.management.annotations.ManagedAttribute;
+import org.jclouds.management.annotations.ManagedType;
 
 /**
  * 
  * @author Adrian Cole
  */
+@ManagedType
 public interface PayloadEnclosing {
 
    /**
@@ -48,6 +51,7 @@ public interface PayloadEnclosing {
    void setPayload(String data);
 
    @Nullable
+   @ManagedAttribute (description = "The enclosed payload")
    Payload getPayload();
 
 }

@@ -26,12 +26,15 @@ import org.jclouds.blobstore.domain.internal.StorageMetadataImpl;
 import org.jclouds.domain.ResourceMetadata;
 
 import com.google.inject.ImplementedBy;
+import org.jclouds.management.annotations.ManagedAttribute;
+import org.jclouds.management.annotations.ManagedType;
 
 /**
  * Identifies containers, files, etc.
  * 
  * @author Adrian Cole
  */
+@ManagedType
 @ImplementedBy(StorageMetadataImpl.class)
 public interface StorageMetadata extends ResourceMetadata<StorageType> {
 
@@ -49,6 +52,7 @@ public interface StorageMetadata extends ResourceMetadata<StorageType> {
     * @see org.jclouds.blobstore.attr.ContainerCapability#CONTAINER_METADATA
     */
    @Override
+   @ManagedAttribute(description = "The provider id")
    String getProviderId();
 
    /**
@@ -57,6 +61,7 @@ public interface StorageMetadata extends ResourceMetadata<StorageType> {
     * 
     */
    @Override
+   @ManagedAttribute(description = "The name of the resource")
    String getName();
 
    /**
@@ -85,6 +90,7 @@ public interface StorageMetadata extends ResourceMetadata<StorageType> {
    /**
     * Creation date of the resource, possibly null.
     */
+   @ManagedAttribute(description = "Creation Date")
    Date getCreationDate();
 
    /**
@@ -94,6 +100,7 @@ public interface StorageMetadata extends ResourceMetadata<StorageType> {
     * @see org.jclouds.blobstore.attr.ContainerCapability#BLOB_LAST_MODIFIED
     * @see org.jclouds.blobstore.attr.ContainerCapability#MILLISECOND_PRECISION
     */
+   @ManagedAttribute(description = "Last modification date")
    Date getLastModified();
 
 }

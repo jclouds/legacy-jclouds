@@ -56,6 +56,7 @@ import org.jclouds.apis.Apis;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.config.BindManagementToContext;
 import org.jclouds.config.BindNameToContext;
 import org.jclouds.config.BindPropertiesToExpandedValues;
 import org.jclouds.config.BindRestContextWithWildcardExtendsExplicitAndRawType;
@@ -69,6 +70,8 @@ import org.jclouds.lifecycle.Closer;
 import org.jclouds.lifecycle.config.LifeCycleModule;
 import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.management.internal.BaseManagementContext;
+import org.jclouds.management.ManagementContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.Providers;
 import org.jclouds.providers.config.BindProviderMetadataContextAndCredentials;
@@ -189,6 +192,7 @@ public class ContextBuilder {
    }
 
    protected Optional<String> name = Optional.absent();
+   protected Optional<ManagementContext> management = Optional.absent();
    protected Optional<ProviderMetadata> providerMetadata = Optional.absent();
    protected final String providerId;
    protected Optional<String> endpoint = Optional.absent();
@@ -235,6 +239,12 @@ public class ContextBuilder {
      this.name = Optional.of(checkNotNull(name, "name"));
      return this;
    }
+
+   public ContextBuilder management(ManagementContext managementContext) {
+      this.management = Optional.of(checkNotNull(managementContext, "managementContext"));
+      return this;
+   }
+
 
    /**
     * returns the current login credentials. jclouds will not cache this value. Use this when you need to change
@@ -322,7 +332,7 @@ public class ContextBuilder {
       // is used to be something readable.
       return buildInjector(name.or(String.valueOf(Objects.hashCode(providerMetadata.getId(),
             providerMetadata.getEndpoint(), providerMetadata.getApiMetadata().getVersion(), credentialsSupplier))),
-            providerMetadata, credentialsSupplier, modules);
+            providerMetadata, credentialsSupplier, management.or(BaseManagementContext.INSTANCE), modules);
    }
 
    protected Supplier<Credentials> buildCredentialsSupplier(Properties expanded) {
@@ -379,7 +389,7 @@ public class ContextBuilder {
       return Guice.createInjector(new BindPropertiesToExpandedValues(resolved)).getInstance(Properties.class);
    }
 
-   public static Injector buildInjector(String name, ProviderMetadata providerMetadata, Supplier<Credentials> creds, List<Module> inputModules) {
+   public static Injector buildInjector(String name, ProviderMetadata providerMetadata, Supplier<Credentials> creds, ManagementContext managementContext, List<Module> inputModules) {
       List<Module> modules = newArrayList();
       modules.addAll(inputModules);
       boolean restModuleSpecifiedByUser = restClientModulePresent(inputModules);
@@ -396,6 +406,7 @@ public class ContextBuilder {
       modules.add(new LifeCycleModule());
       modules.add(new BindProviderMetadataContextAndCredentials(providerMetadata, creds));
       modules.add(new BindNameToContext(name));
+      modules.add(new BindManagementToContext(managementContext));
       Injector returnVal = Guice.createInjector(Stage.PRODUCTION, modules);
       returnVal.getInstance(ExecutionList.class).execute();
       return returnVal;

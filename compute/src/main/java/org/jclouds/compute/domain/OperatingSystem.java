@@ -26,6 +26,8 @@ import org.jclouds.javax.annotation.Nullable;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import org.jclouds.management.annotations.ManagedAttribute;
+import org.jclouds.management.annotations.ManagedType;
 
 /**
  * Running Operating system
@@ -33,6 +35,7 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author Adrian Cole
  */
 @Beta
+@ManagedType
 public class OperatingSystem {
 
    public static Builder builder() {
@@ -148,6 +151,7 @@ public class OperatingSystem {
     * approach.
     */
    @Nullable
+   @ManagedAttribute( description = "The operating system family")
    public OsFamily getFamily() {
       return family;
    }
@@ -162,6 +166,7 @@ public class OperatingSystem {
     * @return operating system name or null if it couldn't be determined.
     */
    @Nullable
+   @ManagedAttribute( description = "The name of the operating system")
    public String getName() {
       return name;
    }
@@ -180,6 +185,7 @@ public class OperatingSystem {
     * @return operating system architecture or null if it couldn't be determined.
     */
    @Nullable
+   @ManagedAttribute( description = "The operating system architecture")
    public String getArch() {
       return arch;
    }
@@ -197,6 +203,7 @@ public class OperatingSystem {
     * @return operating system version or null if it couldn't be determined.
     */
    @Nullable
+   @ManagedAttribute( description = "The operating system version")
    public String getVersion() {
       return version;
    }
@@ -210,6 +217,7 @@ public class OperatingSystem {
     * 
     * @return operating system description
     */
+   @ManagedAttribute( description = "The operating system description")
    public String getDescription() {
       return description;
    }
@@ -218,6 +226,7 @@ public class OperatingSystem {
     * 
     * @return whether this operating system supports 64 bit computation.
     */
+   @ManagedAttribute( description = "Marks if operating system is 64bit")
    public boolean is64Bit() {
       return is64Bit;
    }

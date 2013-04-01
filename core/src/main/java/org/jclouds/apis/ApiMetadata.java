@@ -30,6 +30,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
+import org.jclouds.management.annotations.ManagedAttribute;
+import org.jclouds.management.annotations.ManagedType;
 
 /**
  * The ApiMetadata interface allows jclouds to provide a plugin framework for
@@ -39,6 +41,7 @@ import com.google.inject.Module;
  * @since 1.5
  */
 @Beta
+@ManagedType
 public interface ApiMetadata {
 
    public static interface Builder<B extends Builder<B>>{
@@ -147,12 +150,14 @@ public interface ApiMetadata {
     * 
     * @return the api's unique identifier (ex. vcloud, virtualbox)
     */
+   @ManagedAttribute(description = "The api id")
    String getId();
 
    /**
     * 
     * @return the name (display name) of the api (ex. EC2 Base API)
     */
+   @ManagedAttribute(description = "The api display name")
    String getName();
 
    /**
@@ -169,6 +174,7 @@ public interface ApiMetadata {
     * @return the name (display name) of an endpoint to this api (ex. Keystone
     *         url, vCloud Director URL).
     */
+   @ManagedAttribute(description = "The endpoint name")
    String getEndpointName();
    
    /**
@@ -176,6 +182,7 @@ public interface ApiMetadata {
     * @return the name (display name) of an identity on this api (ex. user,
     *         email, account, apikey, tenantId:username)
     */
+   @ManagedAttribute(description = "The identity name")
    String getIdentityName();
 
    /**
@@ -184,11 +191,13 @@ public interface ApiMetadata {
     * @return the name (display name) of a credential on this api, if it is
     *         required (ex. password, secret, rsaKey)
     */
+   @ManagedAttribute(description = "The credential name")
    Optional<String> getCredentialName();
 
    /**
     * Explicitly identifies the version of an api.
     */
+   @ManagedAttribute(description = "The api version")
    String getVersion();
 
    /**
@@ -199,6 +208,7 @@ public interface ApiMetadata {
     * the build version is {@code 4.1.8r75467}. Or a vcloud endpoint may be api
     * version {@code 1.0} while the build is {@code 1.5.0.0.124312}
     */
+   @ManagedAttribute(description = "The build version")
    Optional<String> getBuildVersion();
 
    /**
@@ -219,6 +229,7 @@ public interface ApiMetadata {
     * 
     * @return the api's default endpoint, if known.
     */
+   @ManagedAttribute(description = "The default endpoint")
    Optional<String> getDefaultEndpoint();
 
    /**
@@ -226,6 +237,7 @@ public interface ApiMetadata {
     * 
     * @return the login identity into a provider, if known.
     */
+   @ManagedAttribute(description = "The default identity")
    Optional<String> getDefaultIdentity();
 
    /**
@@ -236,6 +248,7 @@ public interface ApiMetadata {
     * @see #getDefaultIdentity
     * @see #getCredentialName
     */
+   @ManagedAttribute(description = "The default credential")
    Optional<String> getDefaultCredential();
 
    /**

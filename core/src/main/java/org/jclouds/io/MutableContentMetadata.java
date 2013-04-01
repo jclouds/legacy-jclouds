@@ -21,10 +21,12 @@ package org.jclouds.io;
 import java.util.Date;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.management.annotations.ManagedType;
 
 /**
  * @author Adrian Cole
  */
+@ManagedType
 public interface MutableContentMetadata extends ContentMetadata {
 
    void setContentLength(@Nullable Long contentLength);

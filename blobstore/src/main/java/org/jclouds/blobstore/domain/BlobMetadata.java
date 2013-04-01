@@ -25,12 +25,15 @@ import org.jclouds.io.ContentMetadata;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.inject.ImplementedBy;
+import org.jclouds.management.annotations.ManagedAttribute;
+import org.jclouds.management.annotations.ManagedType;
 
 /**
  * System and user Metadata for the {@link Blob}.
  * 
  * @author Adrian Cole
  */
+@ManagedType
 @ImplementedBy(BlobMetadataImpl.class)
 public interface BlobMetadata extends StorageMetadata {
    /**
@@ -46,7 +49,9 @@ public interface BlobMetadata extends StorageMetadata {
     * @return the container holding this blob
     */
    @Nullable
+   @ManagedAttribute(description = "The container holding the blob")
    String getContainer();
 
+   @ManagedAttribute(description = "The container metadata")
    ContentMetadata getContentMetadata();
 }

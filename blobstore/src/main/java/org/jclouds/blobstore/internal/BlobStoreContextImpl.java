@@ -20,10 +20,12 @@ package org.jclouds.blobstore.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.Context;
+import org.jclouds.management.annotations.Management;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobRequestSigner;
@@ -31,10 +33,11 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.attr.ConsistencyModel;
+import org.jclouds.blobstore.management.BlobStoreManagement;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.internal.BaseView;
 import org.jclouds.location.Provider;
-import org.jclouds.rest.RestContext;
+import org.jclouds.management.ManagementContext;
 import org.jclouds.rest.Utils;
 
 import com.google.common.io.Closeables;
@@ -52,6 +55,7 @@ public class BlobStoreContextImpl extends BaseView implements BlobStoreContext {
    private final ConsistencyModel consistencyModel;
    private final Utils utils;
    private final BlobRequestSigner blobRequestSigner;
+   private BlobStoreManagement blobStoreManagement;
 
    @Inject
    public BlobStoreContextImpl(@Provider Context backend, @Provider TypeToken<? extends Context> backendType,
@@ -66,6 +70,15 @@ public class BlobStoreContextImpl extends BaseView implements BlobStoreContext {
       this.blobStore = checkNotNull(blobStore, "blobStore");
       this.utils = checkNotNull(utils, "utils");
       this.blobRequestSigner = checkNotNull(blobRequestSigner, "blobRequestSigner");
+      this.blobStoreManagement = new BlobStoreManagement(this);
+   }
+
+   @PostConstruct
+   public void init() {
+      ManagementContext managementContext = unwrap().getManagementContext();
+      if (managementContext != null) {
+         managementContext.manage(blobStoreManagement);
+      }
    }
 
    @Override
@@ -121,6 +134,10 @@ public class BlobStoreContextImpl extends BaseView implements BlobStoreContext {
    @Override
    public void close() {
       Closeables.closeQuietly(delegate());
+      ManagementContext managementContext = unwrap().getManagementContext();
+      if (managementContext != null) {
+         managementContext.unmanage(blobStoreManagement);
+      }
    }
 
    public int hashCode() {

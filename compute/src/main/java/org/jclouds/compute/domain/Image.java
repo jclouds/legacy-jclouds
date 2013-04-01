@@ -23,12 +23,15 @@ import org.jclouds.domain.LoginCredentials;
 
 import com.google.common.annotations.Beta;
 import com.google.inject.ImplementedBy;
+import org.jclouds.management.annotations.ManagedAttribute;
+import org.jclouds.management.annotations.ManagedType;
 
 /**
  * Running Operating system
  * 
  * @author Adrian Cole
  */
+@ManagedType
 @ImplementedBy(ImageImpl.class)
 public interface Image extends ComputeMetadataIncludingStatus<Image.Status> {
 
@@ -60,16 +63,19 @@ public interface Image extends ComputeMetadataIncludingStatus<Image.Status> {
     * The operating system installed on this image
     */
    @Beta
+   @ManagedAttribute( description = "The Operating System of the Image")
    OperatingSystem getOperatingSystem();
 
    /**
     * Version of the image
     */
+   @ManagedAttribute( description = "The version of the Image")
    String getVersion();
 
    /**
     * Description of the image.
     */
+   @ManagedAttribute( description = "The description of the Image")
    String getDescription();
 
    /**

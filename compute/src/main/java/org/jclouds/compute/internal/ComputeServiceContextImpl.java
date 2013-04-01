@@ -20,17 +20,21 @@ package org.jclouds.compute.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.Context;
+import org.jclouds.management.annotations.Management;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.Utils;
+import org.jclouds.compute.management.ComputeServiceManagement;
 import org.jclouds.internal.BaseView;
 import org.jclouds.location.Provider;
 
 import com.google.common.reflect.TypeToken;
+import org.jclouds.management.ManagementContext;
 
 /**
  * @author Adrian Cole
@@ -39,6 +43,7 @@ import com.google.common.reflect.TypeToken;
 public class ComputeServiceContextImpl extends BaseView implements ComputeServiceContext {
    private final ComputeService computeService;
    private final Utils utils;
+   private final ComputeServiceManagement computeServiceManagement;
 
    @Inject
    public ComputeServiceContextImpl(@Provider Context backend, @Provider TypeToken<? extends Context> backendType,
@@ -46,16 +51,30 @@ public class ComputeServiceContextImpl extends BaseView implements ComputeServic
       super(backend, backendType);
       this.computeService = checkNotNull(computeService, "computeService");
       this.utils = checkNotNull(utils, "utils");
+      this.computeServiceManagement = new ComputeServiceManagement(this);
    }
-   
+
+   @PostConstruct
+   public void init() {
+      ManagementContext managementContext = unwrap().getManagementContext();
+      if (managementContext != null) {
+         managementContext.manage(computeServiceManagement);
+      }
+   }
+
    @Override
    public ComputeService getComputeService() {
       return computeService;
    }
 
+
    @Override
    public void close() {
       delegate().close();
+      ManagementContext managementContext = unwrap().getManagementContext();
+      if (managementContext != null) {
+         managementContext.unmanage(computeServiceManagement);
+      }
    }
 
    @Override

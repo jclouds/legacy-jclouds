@@ -22,10 +22,13 @@ import java.io.Closeable;
 import java.io.InputStream;
 
 import com.google.common.io.InputSupplier;
+import org.jclouds.management.annotations.ManagedAttribute;
+import org.jclouds.management.annotations.ManagedType;
 
 /**
  * @author Adrian Cole
  */
+@ManagedType
 public interface Payload extends InputSupplier<InputStream>, WriteTo, Closeable {
 
    /**
@@ -41,6 +44,7 @@ public interface Payload extends InputSupplier<InputStream>, WriteTo, Closeable 
    /**
     * Tells if the payload is capable of producing its data more than once.
     */
+   @ManagedAttribute(description = "Tells if the payload is capable of producing its data more than once")
    boolean isRepeatable();
 
    /**
@@ -48,6 +52,7 @@ public interface Payload extends InputSupplier<InputStream>, WriteTo, Closeable 
     */
    void release();
 
+   @ManagedAttribute(description = "Content Metadata")
    MutableContentMetadata getContentMetadata();
 
    void setContentMetadata(MutableContentMetadata in);

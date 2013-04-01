@@ -20,6 +20,7 @@ package org.jclouds;
 
 import static com.google.common.base.Suppliers.ofInstance;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -38,6 +39,7 @@ import org.jclouds.location.Provider;
 import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.management.internal.BaseManagementContext;
 import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -89,6 +91,16 @@ public class ContextBuilderTest {
     Context context = withNoName.build();
     assertEquals(context.getName(), "mytest");
   }
+
+   @Test
+   public void testManagementContext() {
+      ContextBuilder builder = testContextBuilder().endpoint("http://${jclouds.identity}.service.com").name("mytest")
+              .credentials("foo", "bar");
+      Context context = builder.build();
+      assertEquals(context, BaseManagementContext.INSTANCE.getContext("mytest"));
+      context.close();
+      assertNull(BaseManagementContext.INSTANCE.getContext("mytest"));
+   }
 
    @Test
    public void testProviderMetadataBoundWithCorrectEndpoint() {

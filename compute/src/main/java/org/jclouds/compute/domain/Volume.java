@@ -22,6 +22,8 @@ import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.inject.ImplementedBy;
+import org.jclouds.management.annotations.ManagedAttribute;
+import org.jclouds.management.annotations.ManagedType;
 
 /**
  * Describes what appears as a disk to an {@link OperatingSystem}
@@ -29,6 +31,7 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  */
 @ImplementedBy(VolumeImpl.class)
+@ManagedType
 public interface Volume {
 
    /**
@@ -56,11 +59,13 @@ public interface Volume {
     * 
     */
    @Nullable
+   @ManagedAttribute(description = "The id of the volume")
    String getId();
 
    /**
     * Describes the cardinal type of a volume; used to determine scope and exclusivity.
     */
+   @ManagedAttribute(description = "the type of the volum")
    Type getType();
 
    /**
@@ -68,6 +73,7 @@ public interface Volume {
     * 
     */
    @Nullable
+   @ManagedAttribute(description = "The volume size")
    Float getSize();
 
    /**
@@ -75,18 +81,21 @@ public interface Volume {
     * @return device this volume relates to on an operating system, if available
     */
    @Nullable
+   @ManagedAttribute(description = "The device")
    String getDevice();
 
    /**
     * 
     * @return true if this survives restarts
     */
+   @ManagedAttribute(description = "Marks if durable")
    boolean isDurable();
 
    /**
     * 
     * @return true if this is the boot device
     */
+   @ManagedAttribute(description = "Marks if bootable")
    boolean isBootDevice();
 
 }

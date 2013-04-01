@@ -18,16 +18,22 @@
  */
 package org.jclouds.osgi;
 
+import org.jclouds.management.JcloudsManagementCore;
+import org.jclouds.management.internal.BaseManagementContext;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
+import javax.management.MBeanServer;
+
 public class Activator implements BundleActivator {
 
    private ServiceTracker providerListenerTracker = null;
    private ServiceTracker apiListenerTracker = null;
+   private ServiceTracker mbeanServerTracker = null;
    private MetadataBundleListener bundleListener = new MetadataBundleListener();
+   private final JcloudsManagementCore jcloudsManagementCore = new JcloudsManagementCore();
 
    /**
     * Called when this bundle is started so the Framework can perform the bundle-specific activities necessary to start
@@ -84,8 +90,35 @@ public class Activator implements BundleActivator {
          }
       };
 
+      mbeanServerTracker = new ServiceTracker(context, MBeanServer.class.getName(), null) {
+
+         @Override
+         public Object addingService(ServiceReference reference) {
+            Object obj = super.addingService(reference);
+            if (MBeanServer.class.isAssignableFrom(obj.getClass())) {
+               BaseManagementContext.INSTANCE.bind((MBeanServer) obj);
+               BaseManagementContext.INSTANCE.manage(jcloudsManagementCore);
+            }
+            return obj;
+         }
+
+         @Override
+         public void modifiedService(ServiceReference reference, Object service) {
+            super.modifiedService(reference, service);
+         }
+
+         @Override
+         public void removedService(ServiceReference reference, Object service) {
+            if (MBeanServer.class.isAssignableFrom(service.getClass())) {
+               BaseManagementContext.INSTANCE.unbind((MBeanServer) service);
+            }
+            super.removedService(reference, service);
+         }
+      };
+
       providerListenerTracker.open();
       apiListenerTracker.open();
+      mbeanServerTracker.open();
    }
 
    /**
@@ -114,6 +147,9 @@ public class Activator implements BundleActivator {
       }
       if (providerListenerTracker != null) {
          providerListenerTracker.close();
+      }
+      if (mbeanServerTracker != null) {
+         mbeanServerTracker.close();
       }
    }
 }
