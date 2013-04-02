@@ -47,8 +47,8 @@ import org.jclouds.rackspace.cloudloadbalancers.v1.binders.BindMetadataToJsonPay
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.Metadata;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.Node;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.NodeUpdate;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.NodeAdd;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.UpdateNode;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.AddNode;
 import org.jclouds.rackspace.cloudloadbalancers.v1.functions.ParseMetadata;
 import org.jclouds.rackspace.cloudloadbalancers.v1.functions.ParseNode;
 import org.jclouds.rackspace.cloudloadbalancers.v1.functions.ParseNodes;
@@ -83,16 +83,16 @@ public interface NodeAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Fallback(NullOnNotFoundOr404.class)
    @Path("/nodes")
-   ListenableFuture<Set<Node>> add(@WrapWith("nodes") Iterable<NodeAdd> nodeAdds);
+   ListenableFuture<Set<Node>> add(@WrapWith("nodes") Iterable<AddNode> addNodes);
 
    /**
-    * @see NodeApi#update(int, NodeUpdate)
+    * @see NodeApi#update(int, UpdateNode)
     */
    @Named("node:update")
    @PUT
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/nodes/{id}")
-   ListenableFuture<Void> update(@PathParam("id") int id, @WrapWith("node") NodeUpdate nodeUpdate);
+   ListenableFuture<Void> update(@PathParam("id") int id, @WrapWith("node") UpdateNode updateNode);
    
    /**
     * @see NodeApi#list()

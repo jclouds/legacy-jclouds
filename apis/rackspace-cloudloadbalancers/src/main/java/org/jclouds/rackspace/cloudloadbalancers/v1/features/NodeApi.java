@@ -26,8 +26,8 @@ import org.jclouds.collect.PagedIterable;
 import org.jclouds.openstack.v2_0.options.PaginationOptions;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.Metadata;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.Node;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.NodeUpdate;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.NodeAdd;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.UpdateNode;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.AddNode;
 
 /**
  * Provides synchronous access to CloudLoadBalancers Node features.
@@ -38,14 +38,14 @@ import org.jclouds.rackspace.cloudloadbalancers.v1.domain.NodeAdd;
  */
 public interface NodeApi {
    /**
-    * Create a new node with the configuration defined by the request.
+    * Add a new node with the configuration defined by the request.
     */
-	Set<Node> add(Iterable<NodeAdd> nodeAdds);
+	Set<Node> add(Iterable<AddNode> addNodes);
 
    /**
     * Update the attributes of a node.
     */
-   void update(int id, NodeUpdate nodeUpdate);
+   void update(int id, UpdateNode updateNode);
 
    /**
     * List the nodes.

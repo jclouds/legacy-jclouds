@@ -44,8 +44,8 @@ import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.v2_0.options.PaginationOptions;
 import org.jclouds.rackspace.cloudloadbalancers.v1.binders.BindMetadataToJsonPayload;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancer;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerUpdate;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerCreate;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.UpdateLoadBalancer;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.CreateLoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.Metadata;
 import org.jclouds.rackspace.cloudloadbalancers.v1.functions.ParseLoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.v1.functions.ParseLoadBalancers;
@@ -72,7 +72,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface LoadBalancerAsyncApi {
 
    /**
-    * @see LoadBalancerApi#create(LoadBalancerCreate)
+    * @see LoadBalancerApi#create(CreateLoadBalancer)
     */
    @Named("lb:create")
    @POST
@@ -80,17 +80,17 @@ public interface LoadBalancerAsyncApi {
    @Consumes(MediaType.APPLICATION_JSON)
    @Fallback(NullOnNotFoundOr404.class)
    @Path("/loadbalancers")
-   ListenableFuture<LoadBalancer> create(@WrapWith("loadBalancer") LoadBalancerCreate lbCreate);
+   ListenableFuture<LoadBalancer> create(@WrapWith("loadBalancer") CreateLoadBalancer createLB);
 
    /**
-    * @see LoadBalancerApi#update(int, LoadBalancerUpdate)
+    * @see LoadBalancerApi#update(int, UpdateLoadBalancer)
     */
    @Named("lb:update")
    @PUT
    @ResponseParser(ParseLoadBalancer.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/loadbalancers/{id}")
-   ListenableFuture<Void> update(@PathParam("id") int id, @WrapWith("loadBalancer") LoadBalancerUpdate lbUpdate);
+   ListenableFuture<Void> update(@PathParam("id") int id, @WrapWith("loadBalancer") UpdateLoadBalancer updateLB);
 
    /**
     * @see LoadBalancerApi#list()
