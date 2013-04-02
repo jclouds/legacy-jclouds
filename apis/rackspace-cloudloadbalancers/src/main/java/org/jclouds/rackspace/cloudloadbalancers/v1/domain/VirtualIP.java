@@ -32,8 +32,8 @@ import com.google.common.base.Objects.ToStringHelper;
  */
 public class VirtualIP {
 
-   private Type type;
-   private IPVersion ipVersion;
+   private final Type type;
+   private final IPVersion ipVersion;
 
    /**
     * Use this method to easily create virtual IPs. Only public IPv6 virtual IPs can be created.
