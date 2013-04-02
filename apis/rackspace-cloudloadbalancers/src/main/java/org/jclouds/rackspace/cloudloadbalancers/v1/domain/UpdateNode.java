@@ -31,9 +31,9 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author Everett Toews
  */
 public class UpdateNode {
-   private Condition condition;
-   private Type type;
-   private Integer weight;
+   private final Condition condition;
+   private final Type type;
+   private final Integer weight;
    
    protected UpdateNode(Condition condition, Type type, Integer weight) {
       this.condition = condition;

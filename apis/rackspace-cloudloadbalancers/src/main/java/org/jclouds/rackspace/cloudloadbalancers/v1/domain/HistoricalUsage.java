@@ -30,9 +30,9 @@ import com.google.common.collect.Iterables;
  * @author Everett Toews
  */
 public final class HistoricalUsage {
-   private int accountId;
-   private Map<String, Iterable<AccountUsage>> accountUsage;
-   private Iterable<LoadBalancerInfo> loadBalancerUsages;
+   private final int accountId;
+   private final Map<String, Iterable<AccountUsage>> accountUsage;
+   private final Iterable<LoadBalancerInfo> loadBalancerUsages;
 
    @ConstructorProperties({ "accountId", "accountUsage", "loadBalancerUsages" })
    protected HistoricalUsage(int accountId, Map<String, Iterable<AccountUsage>> accountUsage,
