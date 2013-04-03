@@ -168,7 +168,7 @@ public class CreateLoadBalancer extends BaseLoadBalancer<AddNode, CreateLoadBala
        */
       @Override
       public Builder nodes(Iterable<AddNode> addNodes) {
-         this.nodes = ImmutableSet.<AddNode> copyOf(checkNotNull(addNodes, "nodes"));
+         this.nodes = ImmutableSet.<AddNode> copyOf(checkNotNull(addNodes, "addNodes"));
          return this;
       }
 
@@ -176,8 +176,8 @@ public class CreateLoadBalancer extends BaseLoadBalancer<AddNode, CreateLoadBala
        * {@inheritDoc}
        */
       @Override
-      public Builder node(AddNode nodes) {
-         this.nodes.add(checkNotNull(nodes, "nodes"));
+      public Builder node(AddNode node) {
+         this.nodes.add(checkNotNull(node, "node"));
          return this;
       }
 

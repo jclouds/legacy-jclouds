@@ -18,6 +18,7 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1.domain;
 
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.internal.BaseNode;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.internal.BaseNode.Condition;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.internal.BaseNode.Type;
@@ -35,7 +36,7 @@ public class UpdateNode {
    private final Type type;
    private final Integer weight;
    
-   protected UpdateNode(Condition condition, Type type, Integer weight) {
+   protected UpdateNode(@Nullable Condition condition, @Nullable Type type, @Nullable Integer weight) {
       this.condition = condition;
       this.type = type;
       this.weight = weight;

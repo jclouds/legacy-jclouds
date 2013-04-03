@@ -1,23 +1,24 @@
 /**
  * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
+ * contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
+ * regarding copyright ownership. jclouds licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1.domain;
 
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.internal.BaseLoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.internal.BaseLoadBalancer.Algorithm;
 
@@ -36,9 +37,9 @@ public class UpdateLoadBalancer {
    private final Algorithm algorithm;
    private final Integer timeout;
    private final Boolean halfClosed;
-   
-   protected UpdateLoadBalancer(String name, String protocol, Integer port, Algorithm algorithm, Integer timeout,
-         Boolean halfClosed) {
+
+   protected UpdateLoadBalancer(@Nullable String name, @Nullable String protocol, @Nullable Integer port,
+         @Nullable Algorithm algorithm, @Nullable Integer timeout, @Nullable Boolean halfClosed) {
       this.name = name;
       this.protocol = protocol;
       this.port = port;
@@ -154,7 +155,7 @@ public class UpdateLoadBalancer {
          this.halfClosed = halfClosed;
          return this;
       }
-      
+
       public UpdateLoadBalancer build() {
          return new UpdateLoadBalancer(name, protocol, port, algorithm, timeout, halfClosed);
       }

@@ -21,8 +21,8 @@ package org.jclouds.rackspace.cloudloadbalancers.v1.domain;
 import java.util.Map;
 
 import com.google.common.collect.ForwardingMap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Sets.newHashSet;
 
 /**
  * Key and value must be 256 characters or less. All UTF-8 characters are valid.
@@ -32,8 +32,8 @@ import com.google.common.collect.Sets;
  * @author Everett Toews
  */
 public class Metadata extends ForwardingMap<String, String> {
-   private final Map<String, String> metadata = Maps.newHashMap();
-   private final Map<String, Integer> keyToId = Maps.newHashMap();
+   private final Map<String, String> metadata = newHashMap();
+   private final Map<String, Integer> keyToId = newHashMap();
    
    public Metadata(Metadata metadata) {
       super();
@@ -58,6 +58,6 @@ public class Metadata extends ForwardingMap<String, String> {
    }
 
    public Iterable<Integer> getIds() {
-      return Sets.newHashSet(keyToId.values());
+      return newHashSet(keyToId.values());
    }
 }
