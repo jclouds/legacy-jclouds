@@ -55,7 +55,7 @@ public class BasePayloadSlicer implements PayloadSlicer {
       if (input.getRawContent() instanceof File) {
          returnVal = doSlice((File) input.getRawContent(), offset, length);
       } else if (input.getRawContent() instanceof String) {
-         returnVal = doSlice((byte[]) input.getRawContent(), offset, length);
+         returnVal = doSlice((String) input.getRawContent(), offset, length);
       } else if (input.getRawContent() instanceof byte[]) {
          returnVal = doSlice((byte[]) input.getRawContent(), offset, length);
       } else {
