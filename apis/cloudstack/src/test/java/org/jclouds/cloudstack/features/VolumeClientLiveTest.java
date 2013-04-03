@@ -164,6 +164,33 @@ public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
       client.getVolumeClient().deleteVolume(volume.getId());
    }
 
+   /** Test requires a custom disk offering to be available */
+   public void testCreateVolumeFromCustomDiskOffering() {
+      final int size = 1;
+      DiskOffering offering = null;
+      for (DiskOffering candidate : client.getOfferingClient().listDiskOfferings()) {
+         if (candidate.isCustomized()) {
+            offering = candidate;
+            break;
+         }
+      }
+      
+      assertNotNull("No custom disk offering found!", offering);
+      
+      AsyncCreateResponse job = client.getVolumeClient().createVolumeFromCustomDiskOfferingInZone(
+                prefix + "-jclouds-volume", offering.getId(), zoneId, size);
+      assertTrue(jobComplete.apply(job.getJobId()));
+      logger.info("created volume "+job.getId());
+      
+      Volume volume = findVolumeWithId(job.getId());
+      try {
+         checkVolume(volume);
+         assertEquals(volume.getSize(), size * 1024 * 1024 * 1024);
+      } finally {
+         client.getVolumeClient().deleteVolume(volume.getId());
+      }
+   }
+
    /** test requires that a VM exist */
    public void testCreateVolumeFromDiskofferingInZoneAndAttachVolumeToVirtualMachineAndDetachAndDelete() {
       logger.info("testCreateVolumeFromDiskofferingInZoneAndAttachVolumeToVirtualMachineAndDetachAndDelete");

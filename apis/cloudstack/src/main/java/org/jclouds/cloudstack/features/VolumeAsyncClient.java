@@ -90,6 +90,18 @@ public interface VolumeAsyncClient {
                                                                             @QueryParam("zoneid") String zoneId);
 
    /**
+    * @see VolumeClient#createVolumeFromCustomDiskOfferingInZone(String, String, String, int)
+    */
+   @GET
+   @QueryParams(keys = "command", values = "createVolume")
+   @Unwrap
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<AsyncCreateResponse> createVolumeFromCustomDiskOfferingInZone(@QueryParam("name") String name,
+                                                                            @QueryParam("diskofferingid") String diskOfferingId,
+                                                                            @QueryParam("zoneid") String zoneId,
+                                                                            @QueryParam("size") int size);
+
+   /**
     * @see VolumeClient#createVolumeFromSnapshotInZone(String, String, String)
     */
    @Named("createVolume")
