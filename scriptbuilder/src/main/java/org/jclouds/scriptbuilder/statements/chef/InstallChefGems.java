@@ -58,7 +58,7 @@ public class InstallChefGems implements Statement {
 
    private Optional<String> version;
 
-   public InstallChefGems(Optional<String> version) {
+   protected InstallChefGems(Optional<String> version) {
       this.version = version;
    }
 
