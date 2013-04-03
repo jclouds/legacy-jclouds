@@ -63,7 +63,6 @@ import org.jclouds.crypto.Crypto;
 import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.http.BaseJettyTest;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.io.InputSuppliers;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.io.WriteTo;
@@ -130,7 +129,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    public void testPutFileParallel() throws InterruptedException, IOException, TimeoutException {
 
       File payloadFile = File.createTempFile("testPutFileParallel", "png");
-      Files.copy(InputSuppliers.of(createTestInput()), payloadFile);
+      Files.copy(createTestInput(), payloadFile);
       payloadFile.deleteOnExit();
       
       final Payload testPayload = Payloads.newFilePayload(payloadFile);
@@ -607,13 +606,13 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       assertEquals(metadata.getContentMetadata().getContentMD5(), md5().hashString(TEST_STRING, UTF_8).asBytes());
    }
 
-   private InputStream createTestInput() throws IOException {
+   private File createTestInput() throws IOException {
       File file = File.createTempFile("testimg", "png");
       file.deleteOnExit();
       Random random = new Random();
       byte[] buffer = new byte[random.nextInt(2 * 1024 * 1024)];
       random.nextBytes(buffer);
       Files.copy(ByteStreams.newInputStreamSupplier(buffer), file);
-      return new FileInputStream(file);
+      return file;
    }
 }

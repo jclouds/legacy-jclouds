@@ -22,20 +22,20 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.IOException;
 
 import javax.inject.Singleton;
 
-import org.jclouds.io.InputSuppliers;
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadSlicer;
 import org.jclouds.io.payloads.BaseMutableContentMetadata;
+import org.jclouds.io.payloads.InputStreamPayload;
 import org.jclouds.io.payloads.InputStreamSupplierPayload;
 
 import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 
 /**
  * 
@@ -73,15 +73,16 @@ public class BasePayloadSlicer implements PayloadSlicer {
    }
 
    protected Payload doSlice(File content, long offset, long length) {
-      try {
-         return doSlice(new FileInputStream(content), offset, length);
-      } catch (FileNotFoundException e) {
-         throw Throwables.propagate(e);
-      }
+      return new InputStreamSupplierPayload(ByteStreams.slice(Files.newInputStreamSupplier(content), offset, length));
    }
 
    protected Payload doSlice(InputStream content, long offset, long length) {
-      return new InputStreamSupplierPayload(ByteStreams.slice(InputSuppliers.of(content), offset, length));
+      try {
+         ByteStreams.skipFully(content, offset);
+      } catch (IOException ioe) {
+         throw Throwables.propagate(ioe);
+      }
+      return new InputStreamPayload(ByteStreams.limit(content, length));
    }
 
    protected Payload doSlice(byte[] content, long offset, long length) {

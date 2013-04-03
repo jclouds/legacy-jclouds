@@ -20,7 +20,6 @@ package org.jclouds.io;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import com.google.common.annotations.Beta;
@@ -36,18 +35,6 @@ import com.google.common.io.InputSupplier;
 @Beta
 public class InputSuppliers {
    
-   public static InputSupplier<? extends InputStream> of(final InputStream in) {
-      checkNotNull(in, "in");
-      return new InputSupplier<InputStream>() {
-
-         @Override
-         public InputStream getInput() throws IOException {
-            return in;
-         }
-
-      };
-   }
-
    public static InputSupplier<? extends InputStream> of(String in) {
       byte[] bytes = checkNotNull(in, "in").getBytes(Charsets.UTF_8);
       return ByteStreams.newInputStreamSupplier(bytes);
