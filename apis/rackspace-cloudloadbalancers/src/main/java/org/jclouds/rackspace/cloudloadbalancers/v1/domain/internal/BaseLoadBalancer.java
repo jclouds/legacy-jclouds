@@ -29,7 +29,7 @@ import org.jclouds.rackspace.cloudloadbalancers.v1.domain.ConnectionThrottle;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.HealthMonitor;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.SessionPersistence;
-import org.jclouds.rackspace.cloudloadbalancers.v1.features.LoadBalancerApi;
+import org.jclouds.rackspace.cloudloadbalancers.v1.features.ReportApi;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -261,7 +261,7 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
       /**
        * Required. Protocol of the service which is being load balanced.
        * 
-       * @see LoadBalancerApi#listProtocols()
+       * @see ReportApi#listProtocols()
        */
       public Builder<N, T> protocol(String protocol) {
          this.protocol = protocol;
@@ -269,8 +269,8 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
       }
 
       /**
-       * Required if the protocol being used is not in LoadBalancerApi#listProtocols() or the protocol is in 
-       * LoadBalancerApi#listProtocols() but port=0. Port number for the service you are load balancing.
+       * Required if the protocol being used is not in {@link ReportApi#listProtocols()} or the protocol is in 
+       * {@link ReportApi#listProtocols()} but port=0. Port number for the service you are load balancing.
        */
       public Builder<N, T> port(@Nullable Integer port) {
          this.port = port;
