@@ -42,6 +42,18 @@ public interface VolumeClient {
     */
    AsyncCreateResponse createVolumeFromDiskOfferingInZone(String name, String diskOfferingId, String zoneId);
 
+
+   /**
+    * Create a volume with given name, size and diskOfferingId
+    *
+    * @param name           name of the volume
+    * @param diskOfferingId the ID of the disk offering (the offering should have the custom disk size flag set)
+    * @param zoneId         the ID of the availability zone
+    * @param size           the size of volume required (in GB)
+    * @return AsyncCreateResponse job response used to track creation
+    */
+   AsyncCreateResponse createVolumeFromCustomDiskOfferingInZone(String name, String diskOfferingId, String zoneId, int size);
+
    /**
     * Create a volume with given name and snapshotId
     *
