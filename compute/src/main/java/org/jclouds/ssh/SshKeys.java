@@ -50,14 +50,15 @@ import java.util.Map;
 
 import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.Pems;
-import org.jclouds.io.InputSuppliers;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Charsets;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
+import com.google.common.io.ByteStreams;
 import com.google.common.io.InputSupplier;
 
 /**
@@ -81,7 +82,8 @@ public class SshKeys {
     */
    public static RSAPublicKeySpec publicKeySpecFromOpenSSH(String idRsaPub) {
       try {
-         return publicKeySpecFromOpenSSH(InputSuppliers.of(idRsaPub));
+         return publicKeySpecFromOpenSSH(ByteStreams.newInputStreamSupplier(
+            idRsaPub.getBytes(Charsets.UTF_8)));
       } catch (IOException e) {
          throw propagate(e);
       }
