@@ -18,6 +18,7 @@
  */
 package org.jclouds.apis;
 
+import com.google.inject.Inject;
 import org.jclouds.Context;
 import org.jclouds.internal.BaseView;
 import org.jclouds.location.Provider;
@@ -29,6 +30,7 @@ import com.google.common.reflect.TypeToken;
  */
 public class Compute extends BaseView {
 
+   @Inject
    public Compute(@Provider Context ctx, @Provider TypeToken<? extends Context> inputType)  {
       super(ctx, inputType);
    }
