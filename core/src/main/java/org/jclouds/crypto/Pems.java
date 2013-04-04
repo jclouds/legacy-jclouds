@@ -53,14 +53,15 @@ import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Map;
 
-import org.jclouds.io.InputSuppliers;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteProcessor;
+import com.google.common.io.ByteStreams;
 import com.google.common.io.InputSupplier;
 
 /**
@@ -255,7 +256,8 @@ public class Pems {
     */
    public static KeySpec privateKeySpec(String pem) {
       try {
-         return privateKeySpec(InputSuppliers.of(pem));
+         return privateKeySpec(ByteStreams.newInputStreamSupplier(
+            pem.getBytes(Charsets.UTF_8)));
       } catch (IOException e) {
          throw propagate(e);
       }
@@ -314,7 +316,8 @@ public class Pems {
     * @see Pems#publicKeySpec(InputSupplier)
     */
    public static KeySpec publicKeySpec(String pem) throws IOException {
-      return publicKeySpec(InputSuppliers.of(pem));
+      return publicKeySpec(ByteStreams.newInputStreamSupplier(
+         pem.getBytes(Charsets.UTF_8)));
    }
 
    /**
@@ -364,7 +367,8 @@ public class Pems {
     * @see Pems#x509Certificate(InputSupplier, CertificateFactory)
     */
    public static X509Certificate x509Certificate(String pem) throws IOException, CertificateException {
-      return x509Certificate(InputSuppliers.of(pem), null);
+      return x509Certificate(ByteStreams.newInputStreamSupplier(
+         pem.getBytes(Charsets.UTF_8)), null);
    }
 
    /**
