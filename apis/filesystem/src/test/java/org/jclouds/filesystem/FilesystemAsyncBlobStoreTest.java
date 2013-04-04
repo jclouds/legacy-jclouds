@@ -52,7 +52,6 @@ import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jclouds.filesystem.util.Utils;
 import org.jclouds.filesystem.utils.TestUtils;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.io.InputSuppliers;
 import org.jclouds.io.Payload;
 import org.jclouds.io.payloads.PhantomPayload;
 import org.jclouds.io.payloads.StringPayload;
@@ -603,9 +602,7 @@ public class FilesystemAsyncBlobStoreTest {
         InputSupplier<FileInputStream> expectedFile =
                 Files.newInputStreamSupplier(new File(
                 TARGET_CONTAINER_NAME, blobKey));
-        InputSupplier<? extends InputStream> actualFile =
-                InputSuppliers.of(resultBlob.getPayload().getInput());
-        assertTrue(ByteStreams.equal(expectedFile, actualFile),
+        assertTrue(ByteStreams.equal(expectedFile, resultBlob.getPayload()),
                 "Blob payload differs from file content");
         // metadata are verified in the test for blobMetadata, so no need to
         // perform a complete test here
