@@ -1,0 +1,36 @@
+{
+   "queryasyncjobresultresponse" : 
+      {"accountid":"43e3d66f-c8a3-43b2-a3d0-3bbc2416da14",
+      "userid":"99458e63-725b-48ec-aedc-f8ccc11f5231",
+      "cmd":"com.cloud.api.commands.CreateVolumeCmd",
+      "jobstatus":1,
+      "jobprocstatus":0,
+      "jobresultcode":0,
+      "jobresulttype":"object",
+      "jobresult":{
+         "volume":{
+            "id":"f947c7b3-e079-4e7d-aacc-1509d1ae387a",
+            "name":"VolumeClientExpectTest-jclouds-volume",
+            "zoneid":"6f9a2921-b22a-4149-8b71-6ffc275a2177",
+            "zonename":"Basic1",
+            "type":"DATADISK",
+            "size":1073741824,
+            "created":"2013-02-05T13:41:14+0200",
+            "state":"Allocated",
+            "account":"admin",
+            "domainid":"99f4159b-c698-4bd9-b8c5-5ac462f101eb",
+            "domain":"ROOT",
+            "storagetype":"shared",
+            "hypervisor":"None",
+            "diskofferingid":"0473f5dd-bca5-4af4-a9b6-db9e8a88a2f6",
+            "diskofferingname":"Custom",
+            "diskofferingdisplaytext":"Custom Disk",
+            "storage":"none","destroyed":false,
+            "isextractable":true,
+            "tags":[]
+         }
+      },
+      "created":"2013-02-05T13:41:14+0200",
+      "jobid":"4ec82395-365a-4dad-8bd7-238c4f388702"
+   }
+}
