@@ -38,19 +38,19 @@ import com.google.common.io.Resources;
 @Test(groups = "unit", testName = "InstallRubyTest")
 public class InstallRubyTest {
 
-   @Test(expectedExceptions = UnsupportedOperationException.class,
-         expectedExceptionsMessageRegExp = "windows not yet implemented")
+   @Test(expectedExceptions = UnsupportedOperationException.class, expectedExceptionsMessageRegExp = "windows not yet implemented")
    public void installRubyInWindows() {
-      new InstallRuby().render(OsFamily.WINDOWS);
+      InstallRuby.builder().build().render(OsFamily.WINDOWS);
    }
 
    public void installRubyUnix() throws IOException {
-      assertEquals(new InstallRuby().render(OsFamily.UNIX), Resources.toString(
+      assertEquals(InstallRuby.builder().build().render(OsFamily.UNIX), Resources.toString(
             Resources.getResource("test_install_ruby." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8));
    }
 
    public void installRubyUnixInScriptBuilderSourcesSetupPublicCurl() throws IOException {
-      assertEquals(InitScript.builder().name("install_ruby").run(new InstallRuby()).build().render(OsFamily.UNIX),
+      assertEquals(
+            InitScript.builder().name("install_ruby").run(InstallRuby.builder().build()).build().render(OsFamily.UNIX),
             Resources.toString(
                   Resources.getResource("test_install_ruby_scriptbuilder." + ShellToken.SH.to(OsFamily.UNIX)),
                   Charsets.UTF_8));
