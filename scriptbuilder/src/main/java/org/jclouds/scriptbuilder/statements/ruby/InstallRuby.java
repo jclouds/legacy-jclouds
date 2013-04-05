@@ -30,7 +30,17 @@ import org.jclouds.scriptbuilder.domain.StatementList;
  */
 public class InstallRuby extends StatementList {
 
-   public InstallRuby() {
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+      public InstallRuby build() {
+         return new InstallRuby();
+      }
+   }
+
+   protected InstallRuby() {
       super(call("setupPublicCurl"), call("installRuby"));
    }
 
