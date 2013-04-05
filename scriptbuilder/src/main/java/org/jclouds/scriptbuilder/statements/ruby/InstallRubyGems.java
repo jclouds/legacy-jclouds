@@ -99,7 +99,7 @@ public class InstallRubyGems implements Statement {
    private Optional<String> updateSystemVersion;
    private boolean updateExistingGems;
 
-   public InstallRubyGems(Optional<String> version, boolean updateSystem, Optional<String> updateSystemVersion,
+   protected InstallRubyGems(Optional<String> version, boolean updateSystem, Optional<String> updateSystemVersion,
          boolean updateExistingGems) {
       this.version = checkNotNull(version, "version must be set");
       this.updateSystem = updateSystem;
