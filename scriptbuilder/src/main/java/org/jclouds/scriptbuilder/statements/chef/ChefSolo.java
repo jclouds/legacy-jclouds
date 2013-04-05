@@ -271,7 +271,7 @@ public class ChefSolo implements Statement {
    private RunList runlist;
    private final InstallChefGems installChefGems;
 
-   public ChefSolo(Optional<String> fileCachePath, Optional<String> rolePath, Optional<String> databagPath,
+   protected ChefSolo(Optional<String> fileCachePath, Optional<String> rolePath, Optional<String> databagPath,
          Optional<ImmutableList<String>> cookbookPath, Optional<String> cookbooksArchiveLocation,
          Optional<String> jsonAttributes, Optional<String> group, Optional<Integer> interval,
          Optional<String> logLevel, Optional<String> logFile, Optional<String> nodeName, Optional<Integer> splay,
