@@ -23,12 +23,15 @@ import static com.google.common.base.Objects.equal;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ComparisonChain;
+import org.jclouds.management.annotations.ManagedAttribute;
+import org.jclouds.management.annotations.ManagedType;
 
 /**
  * Processor (or CPU) as a part of {@link Hardware} of a {@link NodeMetadata}
  * 
  * @author Adrian Cole
  */
+@ManagedType
 public class Processor implements Comparable<Processor> {
    private final double cores;
    private final double speed;
@@ -51,6 +54,7 @@ public class Processor implements Comparable<Processor> {
    /**
     * Amount of virtual or physical cores provided
     */
+   @ManagedAttribute( description = "The number of cores")
    public double getCores() {
       return cores;
    }
@@ -59,6 +63,7 @@ public class Processor implements Comparable<Processor> {
     * Speed, not necessarily in ghz, but certainly relevant to other processors
     * in the same provider.
     */
+   @ManagedAttribute( description = "The Processor speed")
    public double getSpeed() {
       return speed;
    }

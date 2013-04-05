@@ -25,11 +25,14 @@ import org.jclouds.domain.ResourceMetadata;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.inject.ImplementedBy;
+import org.jclouds.management.annotations.ManagedAttribute;
+import org.jclouds.management.annotations.ManagedType;
 
 /**
  * @author Ivan Meredith
  * @author Adrian Cole
  */
+@ManagedType
 @ImplementedBy(ComputeMetadataImpl.class)
 public interface ComputeMetadata extends ResourceMetadata<ComputeType> {
    /**
@@ -60,6 +63,7 @@ public interface ComputeMetadata extends ResourceMetadata<ComputeType> {
     * 
     * @return unique id within your account on the provider
     */
+   @ManagedAttribute(description = "The id")
    public String getId();
 
    /**

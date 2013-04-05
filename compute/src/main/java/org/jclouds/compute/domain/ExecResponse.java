@@ -21,10 +21,13 @@ package org.jclouds.compute.domain;
 import org.jclouds.compute.config.CustomizationResponse;
 
 import com.google.common.base.Objects;
+import org.jclouds.management.annotations.ManagedAttribute;
+import org.jclouds.management.annotations.ManagedType;
 
 /**
  * @author Adrian Cole
  */
+@ManagedType
 public class ExecResponse implements CustomizationResponse {
 
    private final String output;
@@ -37,14 +40,17 @@ public class ExecResponse implements CustomizationResponse {
       this.exitStatus = exitStatus;
    }
 
+   @ManagedAttribute(description = "The standard error")
    public String getError() {
       return error;
    }
 
+   @ManagedAttribute(description = "The standard output")
    public String getOutput() {
       return output;
    }
 
+   @ManagedAttribute(description = "The exit status")
    public int getExitStatus() {
       return exitStatus;
    }

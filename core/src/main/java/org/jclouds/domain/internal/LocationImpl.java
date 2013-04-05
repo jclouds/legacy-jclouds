@@ -120,6 +120,14 @@ public class LocationImpl implements Location {
     * {@inheritDoc}
     */
    @Override
+   public String getParentId() {
+      return parent != null ? parent.getParentId() : null;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public Set<String> getIso3166Codes() {
       return iso3166Codes;
    }

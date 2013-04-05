@@ -18,6 +18,9 @@
  */
 package org.jclouds.compute.domain;
 
+import org.jclouds.management.annotations.ManagedAttribute;
+import org.jclouds.management.annotations.ManagedType;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import static com.google.common.base.CaseFormat.*;
@@ -28,6 +31,7 @@ import static com.google.common.base.CaseFormat.*;
  * 
  * @author Adrian Cole
  */
+@ManagedType
 public enum OsFamily {
    UNRECOGNIZED, AIX, ARCH, CENTOS, DARWIN, DEBIAN, ESX, FEDORA, FREEBSD, GENTOO, HPUX, LINUX, 
    /**
@@ -52,6 +56,7 @@ public enum OsFamily {
     */
    GCEL, SIGAR, SLACKWARE, SOLARIS, SUSE, TURBOLINUX, CLOUD_LINUX, UBUNTU, WINDOWS;
 
+   @ManagedAttribute
    public String value() {
       return UPPER_UNDERSCORE.to(LOWER_HYPHEN, name());
    }

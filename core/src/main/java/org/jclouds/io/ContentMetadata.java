@@ -31,10 +31,13 @@ import java.util.Set;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableSet;
+import org.jclouds.management.annotations.ManagedAttribute;
+import org.jclouds.management.annotations.ManagedType;
 
 /**
  * @author Adrian Cole
  */
+@ManagedType
 public interface ContentMetadata {
    public static final Set<String> HTTP_HEADERS = ImmutableSet.of(CONTENT_LENGTH, CONTENT_MD5, CONTENT_TYPE,
             CONTENT_DISPOSITION, CONTENT_ENCODING, CONTENT_LANGUAGE, EXPIRES);
@@ -54,6 +57,7 @@ public interface ContentMetadata {
     * @see org.jclouds.http.options.GetOptions
     */
    @Nullable
+   @ManagedAttribute(description = "The content length")
    Long getContentLength();
 
    /**
@@ -62,6 +66,7 @@ public interface ContentMetadata {
     * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html?sec19.5.1."/>
     */
    @Nullable
+   @ManagedAttribute(description = "Specifies presentational information")
    String getContentDisposition();
 
    /**
@@ -72,6 +77,7 @@ public interface ContentMetadata {
     * @see <a href= "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.11" />
     */
    @Nullable
+   @ManagedAttribute(description = "Content encoding")
    String getContentEncoding();
 
    /**
@@ -82,6 +88,7 @@ public interface ContentMetadata {
     * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17"/>
     */
    @Nullable
+   @ManagedAttribute(description = "Content type")
    String getContentType();
 
    @Nullable
@@ -103,6 +110,7 @@ public interface ContentMetadata {
     * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21"/>
     */
    @Nullable
+   @ManagedAttribute(description = "Expiration Date")
    Date getExpires();
 
   ContentMetadataBuilder toBuilder();

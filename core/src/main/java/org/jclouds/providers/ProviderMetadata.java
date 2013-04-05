@@ -26,6 +26,8 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Optional;
+import org.jclouds.management.annotations.ManagedAttribute;
+import org.jclouds.management.annotations.ManagedType;
 
 /**
  * The ProviderMetadata interface allows jclouds to provide a plugin framework
@@ -33,6 +35,7 @@ import com.google.common.base.Optional;
  * 
  * @author Jeremy Whitlock <jwhitlock@apache.org>, Adrian Cole
  */
+@ManagedType
 public interface ProviderMetadata {
   
    /**
@@ -122,12 +125,14 @@ public interface ProviderMetadata {
     * 
     * @return the provider's unique identifier (ex. aws-ec2, trystack-nova)
     */
+   @ManagedAttribute(description = "The provider id")
    public String getId();
 
    /**
     * 
     * @return the name (display name) of the provider (ex. GoGrid)
     */
+   @ManagedAttribute(description = "The display name")
    public String getName();
 
    /**
@@ -135,12 +140,14 @@ public interface ProviderMetadata {
     * @return the provider's api
     * @since 1.5
     */
+   @ManagedAttribute(description = "The api metadata")
    public ApiMetadata getApiMetadata();
 
    /**
     * @see ApiMetadata#getEndpoint
     * @return the url for the provider's api
     */
+   @ManagedAttribute(description = "The endpoint")
    public String getEndpoint();
 
    /**
@@ -156,12 +163,14 @@ public interface ProviderMetadata {
     * 
     * @return the url for the provider's console, or absent if one doesn't exist
     */
+   @ManagedAttribute(description = "The provider console uri")
    Optional<URI> getConsole();
 
    /**
     * 
     * @return the url for the provider's homepage, or absent if unknown
     */
+   @ManagedAttribute(description = "The home page")
    Optional<URI> getHomepage();
 
    /**
@@ -169,6 +178,7 @@ public interface ProviderMetadata {
     * @return ids of all known {@link ProviderMetadata providers} which have the
     *         same account as this.
     */
+   @ManagedAttribute(description = "Linked Services")
    Set<String> getLinkedServices();
 
    /**
@@ -176,5 +186,6 @@ public interface ProviderMetadata {
     * 
     * @return all known region/location ISO 3166 codes
     */
+   @ManagedAttribute(description = "ISO 3116 codes")
    Set<String> getIso3166Codes();
 }

@@ -18,6 +18,9 @@
  */
 package org.jclouds.domain;
 
+import org.jclouds.management.annotations.ManagedAttribute;
+import org.jclouds.management.annotations.ManagedType;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -26,6 +29,7 @@ import java.util.Set;
  * 
  * @author Adrian Cole
  */
+@ManagedType
 public interface Location {
 
    /**
@@ -38,17 +42,27 @@ public interface Location {
     * Unique ID provided by the provider (us-standard, miami, etc)
     * 
     */
+   @ManagedAttribute( description = "The id of the location")
    String getId();
 
    /**
     * Description of the location
     */
+   @ManagedAttribute( description = "The Location description")
    String getDescription();
 
    /**
     * The parent, or null, if top-level
     */
    Location getParent();
+
+   /**
+    * The id of the parent location.
+    * The method is used to avoid cycles cycles in the managed resource model.
+    * @return
+    */
+   @ManagedAttribute( description = "The id of the parent")
+   String getParentId();
 
    /**
     * @return immutable set of metadata relating to this location

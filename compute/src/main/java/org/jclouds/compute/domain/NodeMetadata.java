@@ -26,12 +26,15 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.inject.ImplementedBy;
+import org.jclouds.management.annotations.ManagedAttribute;
+import org.jclouds.management.annotations.ManagedType;
 
 /**
  * @author Adrian Cole
  * @author Ivan Meredith
  */
 @ImplementedBy(NodeMetadataImpl.class)
+@ManagedType
 public interface NodeMetadata extends ComputeMetadataIncludingStatus<NodeMetadata.Status> {
    
    public static enum Status {
@@ -70,6 +73,7 @@ public interface NodeMetadata extends ComputeMetadataIncludingStatus<NodeMetadat
     * 
     */
    @Nullable
+   @ManagedAttribute( description = "The hostname of the node")
    String getHostname();
 
    /**
@@ -80,6 +84,7 @@ public interface NodeMetadata extends ComputeMetadataIncludingStatus<NodeMetadat
     * 
     */
    @Nullable
+   @ManagedAttribute( description = "The group of the node")
    String getGroup();
 
    /**
@@ -87,6 +92,7 @@ public interface NodeMetadata extends ComputeMetadataIncludingStatus<NodeMetadat
     * The hardware this node is running, if possible to determine.
     */
    @Nullable
+   @ManagedAttribute( description = "The hardware of the node")
    Hardware getHardware();
 
    /**
@@ -94,6 +100,7 @@ public interface NodeMetadata extends ComputeMetadataIncludingStatus<NodeMetadat
     * The id of the image this node was created from, if possible to correlate.
     */
    @Nullable
+   @ManagedAttribute( description = "The id of the image the node is running")
    String getImageId();
 
    /**
@@ -101,11 +108,13 @@ public interface NodeMetadata extends ComputeMetadataIncludingStatus<NodeMetadat
     * The operating system this node is running, if possible to determine.
     */
    @Nullable
+   @ManagedAttribute( description = "The operating system the node is running")
    OperatingSystem getOperatingSystem();
 
    /**
     * @return the TCP port used for terminal connections. Generally, this is port 22 for ssh.
     */
+   @ManagedAttribute( description = "The login port of the node")
    int getLoginPort();
 
    /**
@@ -120,11 +129,13 @@ public interface NodeMetadata extends ComputeMetadataIncludingStatus<NodeMetadat
    /**
     * All public IP addresses, potentially including shared ips.
     */
+   @ManagedAttribute( description = "The set of public addresses assigned to the node")
    Set<String> getPublicAddresses();
 
    /**
     * All private IP addresses.
     */
+   @ManagedAttribute( description = "The set of private addresses assigned to the node")
    Set<String> getPrivateAddresses();
 
 }

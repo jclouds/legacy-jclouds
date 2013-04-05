@@ -28,6 +28,7 @@ import org.jclouds.Context;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.IntegrationTestClient;
+import org.jclouds.management.internal.BaseManagementContext;
 import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.config.BindProviderMetadataContextAndCredentials;
@@ -76,6 +77,7 @@ public class BindRestContextWithWildcardExtendsExplicitAndRawTypeTest {
    private Injector injectorFor(ProviderMetadata md) {
       return Guice.createInjector(
                new BindNameToContext("test"),
+               new BindManagementToContext(BaseManagementContext.INSTANCE),
                new BindProviderMetadataContextAndCredentials(md, ofInstance(new Credentials("user", "pass"))),
                new BindRestContextWithWildcardExtendsExplicitAndRawType(RestApiMetadata.class.cast(md
                                  .getApiMetadata())),

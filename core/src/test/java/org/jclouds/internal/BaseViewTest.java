@@ -26,6 +26,7 @@ import static org.testng.Assert.fail;
 
 import org.jclouds.domain.Credentials;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.management.internal.BaseManagementContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.Utils;
 import org.testng.annotations.Test;
@@ -44,7 +45,7 @@ public class BaseViewTest {
    private static class Water extends ContextImpl {
 
       protected Water() {
-         super("water", createMock(ProviderMetadata.class), creds, createMock(Utils.class), createMock(Closer.class));
+         super("water", createMock(ProviderMetadata.class), creds, BaseManagementContext.INSTANCE, createMock(Utils.class), createMock(Closer.class));
       }
 
       public void close() {
@@ -54,7 +55,7 @@ public class BaseViewTest {
    private static class PeanutButter extends ContextImpl {
 
       protected PeanutButter() {
-         super("peanutbutter", createMock(ProviderMetadata.class), creds, createMock(Utils.class), createMock(Closer.class));
+         super("peanutbutter", createMock(ProviderMetadata.class), creds, BaseManagementContext.INSTANCE, createMock(Utils.class), createMock(Closer.class));
       }
 
       public void close() {

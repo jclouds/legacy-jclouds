@@ -25,6 +25,8 @@ import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Predicate;
 import com.google.inject.ImplementedBy;
+import org.jclouds.management.annotations.ManagedAttribute;
+import org.jclouds.management.annotations.ManagedType;
 
 /**
  * Size of a node.
@@ -32,6 +34,7 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  */
 @ImplementedBy(HardwareImpl.class)
+@ManagedType
 public interface Hardware extends ComputeMetadata {
 
    /**
@@ -42,6 +45,7 @@ public interface Hardware extends ComputeMetadata {
    /**
     * Amount of RAM provided in MB (256M, 1740)
     */
+   @ManagedAttribute
    int getRam();
    
    /**
@@ -58,5 +62,6 @@ public interface Hardware extends ComputeMetadata {
     * @return hypervisor type, if this is a virtual machine and the type is known
     */
    @Nullable
+   @ManagedAttribute
    String getHypervisor();
 }

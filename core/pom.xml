@@ -44,7 +44,9 @@
           org.nnsoft.guice.rocoto*;version="[6.1,7)",
           *
         </jclouds.osgi.import>
-        <jclouds.osgi.export>org.jclouds*;version=${project.version};-noimport:=true</jclouds.osgi.export>
+        <jclouds.osgi.export>
+          org.jclouds*;version=${project.version};-noimport:=true
+        </jclouds.osgi.export>
         <jclouds.osgi.activator>org.jclouds.osgi.Activator</jclouds.osgi.activator>
     </properties>
 
@@ -100,12 +102,12 @@
             <version>4.2.0</version>
             <scope>provided</scope>
         </dependency>
-      <dependency>
-        <groupId>org.osgi</groupId>
-        <artifactId>org.osgi.compendium</artifactId>
-        <version>4.2.0</version>
-        <scope>provided</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <version>4.2.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

@@ -22,6 +22,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
 
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.management.ManagementContext;
+import org.jclouds.management.annotations.Management;
 import org.jclouds.annotations.Name;
 import org.jclouds.domain.Credentials;
 import org.jclouds.internal.ContextImpl;
@@ -48,9 +51,10 @@ public class RestContextImpl<S, A> extends ContextImpl implements RestContext<S,
 
    @Inject
    protected RestContextImpl(@Name String name, ProviderMetadata providerMetadata,
-         @Provider Supplier<Credentials> creds, Utils utils, Closer closer, Injector injector, TypeLiteral<S> syncApi,
+         @Provider Supplier<Credentials> creds, @Management ManagementContext managementContext, Utils utils, Closer closer,
+         Injector injector, TypeLiteral<S> syncApi,
          TypeLiteral<A> asyncApi) {
-      super(name, providerMetadata, creds, utils, closer);
+      super(name, providerMetadata, creds, managementContext, utils, closer);
       checkNotNull(injector, "injector");
       this.asyncApi = injector.getInstance(Key.get(checkNotNull(asyncApi, "asyncApi")));
       this.syncApi = injector.getInstance(Key.get(checkNotNull(syncApi, "syncApi")));

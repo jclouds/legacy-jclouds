@@ -22,6 +22,8 @@ import org.jclouds.io.PayloadEnclosing;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.collect.Multimap;
+import org.jclouds.management.annotations.ManagedAttribute;
+import org.jclouds.management.annotations.ManagedType;
 
 /**
  * Value type for an HTTP Blob service. Blobs are stored in containers and consist of a
@@ -30,6 +32,7 @@ import com.google.common.collect.Multimap;
  * 
  * @author Adrian Cole
  */
+@ManagedType
 public interface Blob extends PayloadEnclosing, Comparable<Blob> {
    /**
     * Allows you to construct blobs without knowing the implementation type
@@ -45,6 +48,7 @@ public interface Blob extends PayloadEnclosing, Comparable<Blob> {
    /**
     * @return System and User metadata relevant to this object.
     */
+   @ManagedAttribute(description = "The metadata related to the blob")
    MutableBlobMetadata getMetadata();
 
    /**

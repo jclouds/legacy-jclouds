@@ -27,9 +27,12 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.jclouds.Context;
+import org.jclouds.management.ManagementContext;
+import org.jclouds.management.annotations.Management;
 import org.jclouds.annotations.Name;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
@@ -55,16 +58,23 @@ public class ContextImpl implements Context {
    private final Utils utils;
    private final Closer closer;
    private final String name;
+   private final ManagementContext managementContext;
 
    @Inject
    protected ContextImpl(@Name String name, ProviderMetadata providerMetadata, @Provider Supplier<Credentials> creds,
-         Utils utils, Closer closer) {
+         @Management ManagementContext managementContext, Utils utils, Closer closer) {
       this.providerMetadata = checkNotNull(providerMetadata, "providerMetadata");
       this.creds = checkNotNull(creds, "creds");
       this.utils = checkNotNull(utils, "utils");
       this.closer = checkNotNull(closer, "closer");
       this.name = checkNotNull(name, "name");
+      this.managementContext = checkNotNull(managementContext, "managementContext");
     }
+
+   @PostConstruct
+   public void init() {
+      managementContext.register(this);
+   }
 
    /**
     * {@inheritDoc}
@@ -72,6 +82,7 @@ public class ContextImpl implements Context {
    @Override
    public void close() {
       closeQuietly(closer);
+      managementContext.unregister(this);
    }
 
    /**
@@ -109,6 +120,14 @@ public class ContextImpl implements Context {
    @Override
    public Utils utils() {
       return utils;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ManagementContext getManagementContext() {
+      return managementContext;
    }
 
    /**
@@ -182,6 +201,15 @@ public class ContextImpl implements Context {
    @Override
    public Location getParent() {
       return null;
+   }
+
+   /**
+    /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getParentId() {
+      return getParent() != null ? getParent().getId() : null;
    }
 
    /**

@@ -23,6 +23,9 @@ import java.io.Closeable;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.domain.Location;
 import org.jclouds.internal.ContextImpl;
+import org.jclouds.management.ManagementContext;
+import org.jclouds.management.annotations.ManagedAttribute;
+import org.jclouds.management.annotations.ManagedType;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.Utils;
 
@@ -39,6 +42,7 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(ContextImpl.class)
+@ManagedType
 public interface Context extends Location, Closeable {
 
   /**
@@ -47,18 +51,21 @@ public interface Context extends Location, Closeable {
    * multiple properties or have explicit knowledge of how the context was created.
    * @return
    */
+   @ManagedAttribute(description = "Context Identifier")
    String getName();
 
    /**
     * @return the providerMetadata used to create this context
     * @see ContextBuilder#newBuilder(org.jclouds.providers.ProviderMetadata)
     */
+   @ManagedAttribute(description = "The provider metadata")
    ProviderMetadata getProviderMetadata();
 
    /**
     * @return the current login user, access key, email, or whatever the 'identity' field was building the context.
     * @see ApiMetadata#getDefaultIdentity
     */
+   @ManagedAttribute(description = "The identity")
    String getIdentity();
 
    Utils getUtils();
@@ -67,6 +74,12 @@ public interface Context extends Location, Closeable {
     * @see #getUtils
     */
    Utils utils();
+
+   /**
+    * Returns the {@link ManagementContext} of the Context.
+    * It is used by backed Contexts, to export themselves.
+    */
+   ManagementContext getManagementContext();
 
    /**
     * Closes all connections, including executor service
