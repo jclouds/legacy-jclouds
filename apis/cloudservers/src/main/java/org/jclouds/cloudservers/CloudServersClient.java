@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudservers;
 
+import java.io.Closeable;
 import java.util.Set;
 import javax.ws.rs.PathParam;
 
@@ -44,7 +45,7 @@ import org.jclouds.cloudservers.options.RebuildServerOptions;
  * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
  * @author Adrian Cole
  */
-public interface CloudServersClient {
+public interface CloudServersClient extends Closeable {
    /**
     * All accounts, by default, have a preconfigured set of thresholds (or limits) to manage
     * capacity and prevent abuse of the system. The system recognizes two kinds of limits: rate

@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v2_0;
 
+import java.io.Closeable;
 import java.util.Set;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Zone;
@@ -56,7 +57,7 @@ import com.google.inject.Provides;
  *      />
  * @author Adrian Cole
  */
-public interface NovaApi {
+public interface NovaApi extends Closeable {
    /**
     * 
     * @return the Zone codes configured

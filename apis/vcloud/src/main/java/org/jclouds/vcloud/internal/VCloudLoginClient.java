@@ -18,9 +18,11 @@
  */
 package org.jclouds.vcloud.internal;
 
+import java.io.Closeable;
+
 import org.jclouds.vcloud.domain.VCloudSession;
 
-public interface VCloudLoginClient {
+public interface VCloudLoginClient extends Closeable {
 
    VCloudSession login();
 }

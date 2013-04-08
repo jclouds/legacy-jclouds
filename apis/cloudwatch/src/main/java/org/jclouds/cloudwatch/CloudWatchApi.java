@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudwatch;
 
+import java.io.Closeable;
 import java.util.Set;
 
 import org.jclouds.cloudwatch.features.MetricApi;
@@ -37,7 +38,7 @@ import com.google.inject.Provides;
  *      />
  * @author Adrian Cole
  */
-public interface CloudWatchApi {
+public interface CloudWatchApi extends Closeable {
    /**
     * 
     * @return the Region codes configured

@@ -20,6 +20,7 @@ package org.jclouds.atmos;
 
 import static com.google.common.net.HttpHeaders.EXPECT;
 
+import java.io.Closeable;
 import java.net.URI;
 
 import javax.inject.Named;
@@ -77,7 +78,7 @@ import com.google.inject.Provides;
  */
 @RequestFilters(SignRequest.class)
 @Path("/rest/namespace")
-public interface AtmosAsyncClient {
+public interface AtmosAsyncClient extends Closeable {
    /**
     * Creates a default implementation of AtmosObject
     */

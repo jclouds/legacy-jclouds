@@ -28,6 +28,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.fail;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -175,7 +176,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
    }
 
    @Path("/client/{jclouds.api-version}")
-   public static interface AsyncCallee {
+   public static interface AsyncCallee extends Closeable {
       @GET
       @Path("/{path}")
       ListenableFuture<Void> onePath(@PathParam("path") String path);
@@ -189,7 +190,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
    }
 
    @Endpoint(Localhost2.class)
-   public static interface Caller {
+   public static interface Caller extends Closeable {
 
       // tests that we can pull from suppliers
       @Provides
@@ -213,7 +214,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       public Callee getCalleeWithPath(@EndpointParam URI endpoint, @PathParam("wibble") String wibble);
    }
 
-   public static interface Callee {
+   public static interface Callee extends Closeable {
       void onePath(String path);
    }
 
@@ -221,7 +222,7 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       void onePath(String path);
    }
 
-   public static interface AsyncCaller {
+   public static interface AsyncCaller extends Closeable {
       @Provides
       @Localhost2
       URI getURI();

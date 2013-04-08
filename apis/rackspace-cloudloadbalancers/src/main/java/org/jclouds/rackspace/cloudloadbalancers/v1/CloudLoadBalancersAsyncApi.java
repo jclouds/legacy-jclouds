@@ -18,6 +18,7 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1;
 
+import java.io.Closeable;
 import java.util.Set;
 
 import javax.ws.rs.Path;
@@ -49,7 +50,7 @@ import com.google.inject.Provides;
  * @see CloudLoadBalancersApi
  * @author Adrian Cole
  */
-public interface CloudLoadBalancersAsyncApi {
+public interface CloudLoadBalancersAsyncApi extends Closeable {
    /**
     * @return the Zone codes configured
     */
