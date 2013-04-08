@@ -27,6 +27,7 @@ import static org.jclouds.reflect.Reflection2.method;
 import static org.jclouds.reflect.Reflection2.methods;
 import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
 
+import java.io.Closeable;
 import java.net.Proxy;
 import java.net.URI;
 import java.util.Map;
@@ -120,10 +121,25 @@ public class RestModule extends AbstractModule {
    public static void putInvokables(Class<?> sync, Class<?> async, Cache<Invokable<?, ?>, Invokable<?, ?>> cache) {
       for (Invokable<?, ?> invoked : methods(sync)) {
          Invokable<?, ?> delegatedMethod = method(async, invoked.getName(), getParameterTypes(invoked));
-         checkArgument(delegatedMethod.getExceptionTypes().equals(invoked.getExceptionTypes()),
+         checkArgument(
+               delegatedMethod.getExceptionTypes().equals(invoked.getExceptionTypes()) || isCloseable(delegatedMethod),
                "invoked %s has different typed exceptions than target %s", invoked, delegatedMethod);
          cache.put(invoked, delegatedMethod);
       }
+   }
+
+   /**
+    * In JDK7 Closeable.close is declared in AutoCloseable, which throws
+    * Exception vs IOException, so we have to be more lenient about exception
+    * type declarations.
+    * 
+    * <h4>note</h4>
+    * 
+    * This will be refactored out when we delete Async code in jclouds 1.7.
+    */
+   private static boolean isCloseable(Invokable<?, ?> delegatedMethod) {
+      return "close".equals(delegatedMethod.getName())
+            && Closeable.class.isAssignableFrom(delegatedMethod.getDeclaringClass());
    }
 
    /**
