@@ -22,6 +22,7 @@ import java.io.Closeable;
 
 import javax.inject.Named;
 import javax.ws.rs.POST;
+import java.util.Map;
 
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.Payload;
@@ -30,6 +31,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.ultradns.ws.domain.Account;
+import org.jclouds.ultradns.ws.domain.Region;
 import org.jclouds.ultradns.ws.features.ResourceRecordApi;
 import org.jclouds.ultradns.ws.features.RoundRobinPoolApi;
 import org.jclouds.ultradns.ws.features.TaskApi;
@@ -58,13 +60,22 @@ public interface UltraDNSWSApi extends Closeable {
    Account getCurrentAccount();
 
    /**
-    * Provides synchronous access to Zone features.
+    * Lists the directional regions available in the account.
+    */
+   @Named("getAvailableRegions")
+   @POST
+   @XMLResponseParser(RegionListHandler.class)
+   @Payload("<v01:getAvailableRegions/>")
+   Map<Integer, Region> getRegionsById();
+
+   /**
+    * Provides access to Zone features.
     */
    @Delegate
    ZoneApi getZoneApi();
 
    /**
-    * Provides synchronous access to Resource Record features.
+    * Provides access to Resource Record features.
     * 
     * @param zoneName
     *           zoneName including a trailing dot
@@ -73,7 +84,7 @@ public interface UltraDNSWSApi extends Closeable {
    ResourceRecordApi getResourceRecordApiForZone(@PayloadParam("zoneName") String zoneName);
 
    /**
-    * Provides synchronous access to Round Robin Pool features.
+    * Provides access to Round Robin Pool features.
     * 
     * @param zoneName
     *           zoneName including a trailing dot
@@ -82,7 +93,7 @@ public interface UltraDNSWSApi extends Closeable {
    RoundRobinPoolApi getRoundRobinPoolApiForZone(@PayloadParam("zoneName") String zoneName);
 
    /**
-    * Provides synchronous access to Traffic Controller Pool features.
+    * Provides access to Traffic Controller Pool features.
     * 
     * @param zoneName
     *           zoneName including a trailing dot
@@ -91,7 +102,7 @@ public interface UltraDNSWSApi extends Closeable {
    TrafficControllerPoolApi getTrafficControllerPoolApiForZone(@PayloadParam("zoneName") String zoneName);
 
    /**
-    * Provides synchronous access to Task features.
+    * Provides access to Task features.
     */
    @Delegate
    TaskApi getTaskApi();
