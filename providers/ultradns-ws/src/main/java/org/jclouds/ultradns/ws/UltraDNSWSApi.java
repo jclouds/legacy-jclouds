@@ -19,10 +19,10 @@
 package org.jclouds.ultradns.ws;
 
 import java.io.Closeable;
+import java.util.Map;
 
 import javax.inject.Named;
 import javax.ws.rs.POST;
-import java.util.Map;
 
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.Payload;
@@ -32,6 +32,7 @@ import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.ultradns.ws.domain.Account;
 import org.jclouds.ultradns.ws.domain.Region;
+import org.jclouds.ultradns.ws.features.DirectionalPoolApi;
 import org.jclouds.ultradns.ws.features.ResourceRecordApi;
 import org.jclouds.ultradns.ws.features.RoundRobinPoolApi;
 import org.jclouds.ultradns.ws.features.TaskApi;
@@ -39,6 +40,7 @@ import org.jclouds.ultradns.ws.features.TrafficControllerPoolApi;
 import org.jclouds.ultradns.ws.features.ZoneApi;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
 import org.jclouds.ultradns.ws.xml.AccountHandler;
+import org.jclouds.ultradns.ws.xml.RegionListHandler;
 
 /**
  * Provides access to Neustar UltraDNS via the SOAP API
@@ -100,6 +102,15 @@ public interface UltraDNSWSApi extends Closeable {
     */
    @Delegate
    TrafficControllerPoolApi getTrafficControllerPoolApiForZone(@PayloadParam("zoneName") String zoneName);
+
+   /**
+    * Provides access to Directional Pool features.
+    * 
+    * @param zoneName
+    *           zoneName including a trailing dot
+    */
+   @Delegate
+   DirectionalPoolApi getDirectionalPoolApiForZone(@PayloadParam("zoneName") String zoneName);
 
    /**
     * Provides access to Task features.
