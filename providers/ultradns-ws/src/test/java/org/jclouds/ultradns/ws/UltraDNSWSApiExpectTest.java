@@ -26,6 +26,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiExpectTest;
 import org.jclouds.ultradns.ws.parse.GetAccountsListOfUserResponseTest;
+import org.jclouds.ultradns.ws.parse.GetAvailableRegionsResponseTest;
 import org.testng.annotations.Test;
 
 /**
@@ -49,5 +50,22 @@ public class UltraDNSWSApiExpectTest extends BaseUltraDNSWSApiExpectTest {
       assertEquals(
             success.getCurrentAccount().toString(),
             new GetAccountsListOfUserResponseTest().expected().toString());
+   }
+
+   HttpRequest getRegionsById = HttpRequest.builder().method("POST")
+         .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .payload(payloadFromResourceWithContentType("/list_regions.xml", "application/xml")).build();
+
+   HttpResponse getRegionsByIdResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResourceWithContentType("/regions.xml", "application/xml")).build();
+
+   public void testGetRegionsByIdWhenResponseIs2xx() {
+
+      UltraDNSWSApi success = requestSendsResponse(getRegionsById, getRegionsByIdResponse);
+
+      assertEquals(
+            success.getRegionsById().toString(),
+            new GetAvailableRegionsResponseTest().expected().toString());
    }
 }
