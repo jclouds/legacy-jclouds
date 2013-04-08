@@ -30,6 +30,7 @@ import static org.jclouds.util.Optionals2.unwrapIfOptional;
 import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
 import static org.jclouds.util.Throwables2.propagateIfPossible;
 
+import java.io.Closeable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -44,6 +45,7 @@ import javax.inject.Inject;
 import javax.inject.Qualifier;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.lifecycle.Closer;
 import org.jclouds.reflect.FunctionalReflection;
 import org.jclouds.reflect.Invocation;
 import org.jclouds.reflect.InvocationSuccess;
@@ -129,12 +131,34 @@ public final class DelegatesToInvocationFunction<S, F extends Function<Invocatio
       }
    }
 
+   private static final Invokable<?, ?> CLOSE;
+
+   static {
+      try {
+         CLOSE = Invokable.from(Closeable.class.getMethod("close"));
+      } catch (SecurityException e) {
+         throw propagate(e);
+      } catch (NoSuchMethodException e) {
+         throw propagate(e);
+      }
+   }
+
    protected Object handle(Invocation invocation) {
-      if (invocation.getInvokable().isAnnotationPresent(Provides.class))
-         return lookupValueFromGuice(invocation.getInvokable());
-      else if (invocation.getInvokable().isAnnotationPresent(Delegate.class))
+      Invokable<?, ?> invokable = invocation.getInvokable();
+      if (CLOSE.equals(invokable)) {
+         try {
+            injector.getInstance(Closer.class).close();
+            return null;
+         } catch (Throwable e) {
+            throw propagate(e);
+         }
+      } else if (invokable.isAnnotationPresent(Provides.class)) {
+         return lookupValueFromGuice(invokable);
+      } else if (invokable.isAnnotationPresent(Delegate.class)) {
          return propagateContextToDelegate(invocation);
-      return methodInvoker.apply(invocation);
+      } else {
+         return methodInvoker.apply(invocation);
+      }
    }
 
    private final Injector injector;
