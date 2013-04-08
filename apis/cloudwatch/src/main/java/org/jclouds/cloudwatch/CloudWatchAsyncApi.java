@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudwatch;
 
+import java.io.Closeable;
 import java.util.Set;
 
 import org.jclouds.cloudwatch.features.MetricAsyncApi;
@@ -38,7 +39,7 @@ import com.google.inject.Provides;
  *      />
  * @author Adrian Cole
  */
-public interface CloudWatchAsyncApi {
+public interface CloudWatchAsyncApi extends Closeable {
    /**
     * 
     * @return the Region codes configured

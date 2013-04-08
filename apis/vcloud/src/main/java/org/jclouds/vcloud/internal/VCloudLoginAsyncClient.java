@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud.internal;
 
+import java.io.Closeable;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 
@@ -40,7 +42,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @Endpoint(org.jclouds.vcloud.endpoints.VCloudLogin.class)
 @RequestFilters(BasicAuthentication.class)
-public interface VCloudLoginAsyncClient {
+public interface VCloudLoginAsyncClient extends Closeable {
 
    /**
     * This request returns a token to use in subsequent requests. After 30 minutes of inactivity,

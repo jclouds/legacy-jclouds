@@ -18,6 +18,7 @@
  */
 package org.jclouds.elasticstack;
 
+import java.io.Closeable;
 import java.util.Set;
 import org.jclouds.elasticstack.domain.Drive;
 import org.jclouds.elasticstack.domain.DriveData;
@@ -35,7 +36,7 @@ import org.jclouds.io.Payload;
  * @see <a href="TODO: insert URL of elasticstack documentation" />
  * @author Adrian Cole
  */
-public interface ElasticStackClient {
+public interface ElasticStackClient extends Closeable {
    /**
     * list of server uuids in your account
     * 

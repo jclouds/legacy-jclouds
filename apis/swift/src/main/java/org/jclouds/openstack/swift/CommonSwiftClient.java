@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.swift;
 
+import java.io.Closeable;
 import java.util.Map;
 import java.util.Set;
 import org.jclouds.blobstore.domain.PageSet;
@@ -38,7 +39,7 @@ import com.google.inject.Provides;
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />
  * @author Adrian Cole
  */
-public interface CommonSwiftClient {
+public interface CommonSwiftClient extends Closeable {
    @Provides
    SwiftObject newSwiftObject();
 

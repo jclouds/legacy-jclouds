@@ -18,6 +18,8 @@
  */
 package org.jclouds.trmk.vcloud_0_8.internal;
 
+import java.io.Closeable;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 
@@ -40,7 +42,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @Endpoint(org.jclouds.trmk.vcloud_0_8.endpoints.VCloudLogin.class)
 @RequestFilters(BasicAuthentication.class)
-public interface TerremarkVCloudLoginAsyncClient {
+public interface TerremarkVCloudLoginAsyncClient extends Closeable {
 
    /**
     * This request returns a token to use in subsequent requests. After ten minutes of inactivity,

@@ -18,6 +18,8 @@
  */
 package org.jclouds.sts;
 
+import java.io.Closeable;
+
 import org.jclouds.aws.domain.SessionCredentials;
 import org.jclouds.sts.domain.User;
 import org.jclouds.sts.domain.UserAndSessionCredentials;
@@ -33,7 +35,7 @@ import org.jclouds.sts.options.SessionCredentialsOptions;
  * @see <a href="http://docs.amazonwebservices.com/STS/latest/APIReference" />
  * @author Adrian Cole
  */
-public interface STSApi {
+public interface STSApi extends Closeable {
    /**
     * Returns a set of temporary credentials for an AWS account or IAM user,
     * with a default timeout

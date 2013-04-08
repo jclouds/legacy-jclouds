@@ -18,6 +18,7 @@
  */
 package org.jclouds.sqs;
 
+import java.io.Closeable;
 import java.net.URI;
 import java.util.Set;
 
@@ -48,7 +49,7 @@ import com.google.inject.Provides;
 @Beta
 @RequestFilters(FormSigner.class)
 @VirtualHost
-public interface SQSAsyncApi {
+public interface SQSAsyncApi extends Closeable {
    /**
     * 
     * @return the Region codes configured

@@ -21,6 +21,7 @@ package org.jclouds.rest.annotationparsing;
 import static org.jclouds.providers.AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint;
 import static org.testng.Assert.assertEquals;
 
+import java.io.Closeable;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -50,7 +51,7 @@ import com.google.inject.name.Names;
 @Test(groups = "unit", testName = "ProvidesAnnotationExpectTest")
 public class ProvidesAnnotationExpectTest extends BaseRestClientExpectTest<ProvidesAnnotationExpectTest.ProvidingApi> {
 
-   static interface ProvidingApi {
+   static interface ProvidingApi extends Closeable {
       @Provides
       Set<String> set();
 
@@ -67,7 +68,7 @@ public class ProvidesAnnotationExpectTest extends BaseRestClientExpectTest<Provi
       Set<String> noSuchElementException();
    }
 
-   static interface ProvidingAsyncApi {
+   static interface ProvidingAsyncApi extends Closeable {
       @Provides
       Set<String> set();
 

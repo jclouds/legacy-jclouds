@@ -18,6 +18,8 @@
  */
 package org.jclouds.route53;
 
+import java.io.Closeable;
+
 import javax.ws.rs.PathParam;
 
 import org.jclouds.rest.annotations.Delegate;
@@ -34,7 +36,7 @@ import org.jclouds.route53.features.HostedZoneApi;
  *      />
  * @author Adrian Cole
  */
-public interface Route53Api {
+public interface Route53Api extends Closeable {
 
    /**
     * returns the current status of a change batch request.

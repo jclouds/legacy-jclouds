@@ -18,9 +18,10 @@
  */
 package org.jclouds.vcloud;
 
+import java.io.Closeable;
 import java.net.URI;
 import java.util.SortedMap;
-public interface VCloudVersionsClient {
+public interface VCloudVersionsClient extends Closeable {
 
    SortedMap<String, URI> getSupportedVersions();
 }
