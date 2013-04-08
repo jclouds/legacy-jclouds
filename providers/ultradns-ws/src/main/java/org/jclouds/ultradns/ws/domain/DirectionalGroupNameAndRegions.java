@@ -22,31 +22,43 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Set;
+
 import com.google.common.base.Objects;
+import com.google.common.collect.ForwardingSet;
+import com.google.common.collect.ImmutableSet;
 
 /**
+ * A region is a set of territory names.
+ * 
  * @author Adrian Cole
  */
-public class DirectionalGroup {
-   private final String id;
+public class DirectionalGroupNameAndRegions extends ForwardingSet<Region> {
+
    private final String name;
+   private final Set<Region> regions;
 
-   private DirectionalGroup(String id, String name) {
-      this.id = checkNotNull(id, "id");
+   private DirectionalGroupNameAndRegions(String name, Set<Region> regions) {
       this.name = checkNotNull(name, "name");
-   }
-
-   public String getId() {
-      return id;
+      this.regions = checkNotNull(regions, "regions of %s", name);
    }
 
    public String getName() {
       return name;
    }
 
+   public Set<Region> getRegions() {
+      return regions;
+   }
+
+   @Override
+   protected Set<Region> delegate() {
+      return regions;
+   }
+
    @Override
    public int hashCode() {
-      return Objects.hashCode(id, name);
+      return Objects.hashCode(name, regions);
    }
 
    @Override
@@ -55,13 +67,13 @@ public class DirectionalGroup {
          return true;
       if (obj == null || getClass() != obj.getClass())
          return false;
-      DirectionalGroup that = DirectionalGroup.class.cast(obj);
-      return equal(this.id, that.id) && equal(this.name, that.name);
+      DirectionalGroupNameAndRegions that = DirectionalGroupNameAndRegions.class.cast(obj);
+      return equal(this.name, that.name) && equal(this.regions, that.regions);
    }
 
    @Override
    public String toString() {
-      return toStringHelper("").omitNullValues().add("id", id).add("name", name).toString();
+      return toStringHelper("").add("name", name).add("regions", regions).toString();
    }
 
    public static Builder builder() {
@@ -73,31 +85,43 @@ public class DirectionalGroup {
    }
 
    public final static class Builder {
-      private String id;
       private String name;
+      private ImmutableSet.Builder<Region> regions = ImmutableSet.<Region> builder();
 
       /**
-       * @see DirectionalGroup#getId()
-       */
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-
-      /**
-       * @see DirectionalGroup#getName()
+       * @see DirectionalGroupNameAndRegions#getName()
        */
       public Builder name(String name) {
          this.name = name;
          return this;
       }
 
-      public DirectionalGroup build() {
-         return new DirectionalGroup(id, name);
+      /**
+       * adds to current regions
+       * 
+       * @see DirectionalGroupNameAndRegions#getRegions()
+       */
+      public Builder addRegion(Region region) {
+         this.regions.add(region);
+         return this;
       }
 
-      public Builder from(DirectionalGroup in) {
-         return id(in.id).name(in.name);
+      /**
+       * replaces current regions
+       * 
+       * @see DirectionalGroupNameAndRegions#getRegions()
+       */
+      public Builder regions(Iterable<Region> regions) {
+         this.regions = ImmutableSet.<Region> builder().addAll(regions);
+         return this;
+      }
+
+      public DirectionalGroupNameAndRegions build() {
+         return new DirectionalGroupNameAndRegions(name, regions.build());
+      }
+
+      public Builder from(DirectionalGroupNameAndRegions in) {
+         return name(in.getName()).regions(in.getRegions());
       }
    }
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Body>
+		<ns1:getAvailableGroupsResponse
+			xmlns:ns1="http://webservice.api.ultra.neustar.com/v01/">
+			<DirectionalDNSAvailableGroups
+				xmlns:ns2="http://schema.ultraservice.neustar.com/v01/">
+				<item>EU-foo.jclouds.org.</item>
+				<item>non-foo.jclouds.org.</item>
+			</DirectionalDNSAvailableGroups>
+		</ns1:getAvailableGroupsResponse>
+	</soap:Body>
+</soap:Envelope>

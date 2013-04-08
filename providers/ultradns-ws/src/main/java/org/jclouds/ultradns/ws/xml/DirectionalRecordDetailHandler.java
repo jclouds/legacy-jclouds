@@ -66,20 +66,17 @@ public class DirectionalRecordDetailHandler extends
       if (attributes.containsKey("GroupId")) {
          drd.group(DirectionalGroup.builder()
                                    .id(attributes.get("GroupId"))
-                                   .name(attributes.get("GroupName"))
-                                   .description(attributes.get("GroupDescription")).build());
+                                   .name(attributes.get("GroupName")).build());
       }
       if (attributes.containsKey("GeolocationGroupId")) {
          drd.geolocationGroup(DirectionalGroup.builder()
                                               .id(attributes.get("GeolocationGroupId"))
-                                              .name(attributes.get("GeolocationGroupName"))
-                                              .description(attributes.get("GeolocationGroupDescription")).build());
+                                              .name(attributes.get("GeolocationGroupName")).build());
       }
       if (attributes.containsKey("SourceIPGroupId")) {
          drd.sourceIpGroup(DirectionalGroup.builder()
                                            .id(attributes.get("SourceIPGroupId"))
-                                           .name(attributes.get("SourceIPGroupName"))
-                                           .description(attributes.get("SourceIPGroupDescription")).build());
+                                           .name(attributes.get("SourceIPGroupName")).build());
       }
       if (attributes.containsKey("recordType")) {
          dr.type(attributes.get("recordType"));

@@ -32,6 +32,7 @@ import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.ultradns.ws.domain.Account;
 import org.jclouds.ultradns.ws.domain.Region;
+import org.jclouds.ultradns.ws.features.DirectionalGroupApi;
 import org.jclouds.ultradns.ws.features.DirectionalPoolApi;
 import org.jclouds.ultradns.ws.features.ResourceRecordApi;
 import org.jclouds.ultradns.ws.features.RoundRobinPoolApi;
@@ -102,6 +103,15 @@ public interface UltraDNSWSApi extends Closeable {
     */
    @Delegate
    TrafficControllerPoolApi getTrafficControllerPoolApiForZone(@PayloadParam("zoneName") String zoneName);
+
+   /**
+    * Provides access to Account-Level Directional Group features.
+    * 
+    * @param accountId
+    *           id of the account where the groups live.
+    */
+   @Delegate
+   DirectionalGroupApi getDirectionalGroupApiForAccount(@PayloadParam("accountId") String accountId);
 
    /**
     * Provides access to Directional Pool features.

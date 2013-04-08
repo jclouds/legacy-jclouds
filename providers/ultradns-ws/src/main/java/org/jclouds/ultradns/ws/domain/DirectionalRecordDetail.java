@@ -62,14 +62,23 @@ public class DirectionalRecordDetail {
       return id;
    }
 
+   /**
+    * group containing all regions that you have not specifically configured in {@link #getGeolocationGroup()}
+    */
    public Optional<DirectionalGroup> getGroup() {
       return group;
    }
 
+   /**
+    * group containing territories.
+    */
    public Optional<DirectionalGroup> getGeolocationGroup() {
       return geolocationGroup;
    }
 
+   /**
+    * group containing IPV4 or IPV6 ranges. 
+    */
    public Optional<DirectionalGroup> getSourceIpGroup() {
       return sourceIpGroup;
    }
