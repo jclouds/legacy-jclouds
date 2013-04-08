@@ -17,7 +17,9 @@
  * under the License.
  */
 package org.jclouds.ultradns.ws.features;
-
+import static com.google.common.net.HttpHeaders.HOST;
+import static javax.ws.rs.HttpMethod.POST;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.http.HttpRequest;
@@ -34,12 +36,13 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "DirectionalPoolApiExpectTest")
 public class DirectionalPoolApiExpectTest extends BaseUltraDNSWSApiExpectTest {
 
-   HttpRequest list = HttpRequest.builder().method("POST")
+   HttpRequest list = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/list_directionalpools.xml", "application/xml")).build();
 
-   HttpResponse listResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse listResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
+
          .payload(payloadFromResourceWithContentType("/directionalpools.xml", "application/xml")).build();
    
    public void testListWhenResponseIs2xx() {
@@ -49,12 +52,13 @@ public class DirectionalPoolApiExpectTest extends BaseUltraDNSWSApiExpectTest {
             new GetDirectionalPoolsByZoneResponseTest().expected().toString());
    }
 
-   HttpRequest listRecords = HttpRequest.builder().method("POST")
+   HttpRequest listRecords = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/list_directionalrecords.xml", "application/xml")).build();
 
-   HttpResponse listRecordsResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse listRecordsResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
+
          .payload(payloadFromResourceWithContentType("/directionalrecords.xml", "application/xml")).build();
 
    public void testListRecordsWhenResponseIs2xx() {

@@ -93,7 +93,6 @@ public class DirectionalPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
                      allDirectionalGroups.add(group);
                      assertNotNull(group.getId(), "Id cannot be null " + group);
                      assertNotNull(group.getName(), "Name cannot be null " + group);
-                     assertNotNull(group.getDescription(), "Description cannot be null " + group);
                   }
                   assertEquals(rr.getZoneName(), zone.getName());
                   assertEquals(rr.getName(), pool.getName());
@@ -104,8 +103,7 @@ public class DirectionalPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
                      assertNull(rr.getSourceIpGroup().orNull(), "SourceIpGroup must be absent " + rr);
                      break;
                   case SOURCEIP:
-                     assertNotNull(rr.getSourceIpGroup().or(rr.getGroup()).orNull(),
-                           "SourceIpGroup or Group must be present " + rr);
+                     assertNotNull(rr.getSourceIpGroup().orNull(), "SourceIpGroup must be present " + rr);
                      assertNull(rr.getGeolocationGroup().orNull(), "GeolocationGroup must be absent " + rr);
                      break;
                   case MIXED:

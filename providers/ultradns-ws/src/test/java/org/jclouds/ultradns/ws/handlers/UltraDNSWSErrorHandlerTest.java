@@ -241,6 +241,30 @@ public class UltraDNSWSErrorHandlerTest {
    }
 
    @Test
+   public void testCode2142SetsResourceNotFoundException() throws IOException {
+      HttpRequest request = HttpRequest.builder().method(POST)
+                                                 .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+                                                 .addHeader(HOST, "ultra-api.ultradns.com:8443")
+                                                 .payload(payloadFromResource("/delete_lbpool.xml")).build();
+      HttpCommand command = new HttpCommand(request);
+      HttpResponse response = HttpResponse.builder()
+                                          .message(INTERNAL_SERVER_ERROR.getReasonPhrase())
+                                          .statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
+                                          .payload(payloadFromResource("/directionalpool_doesnt_exist.xml")).build();
+
+      function.handleError(command, response);
+
+      assertEquals(command.getException().getClass(), ResourceNotFoundException.class);
+      assertEquals(command.getException().getMessage(), "No Pool or Multiple pools of same type exists for the PoolName : foo.jclouds.org.");
+
+      UltraDNSWSResponseException exception = UltraDNSWSResponseException.class.cast(command.getException().getCause());
+
+      assertEquals(exception.getMessage(), "Error 2142: No Pool or Multiple pools of same type exists for the PoolName : foo.jclouds.org.");
+      assertEquals(exception.getError().getDescription().get(), "No Pool or Multiple pools of same type exists for the PoolName : foo.jclouds.org.");
+      assertEquals(exception.getError().getCode(), 2142);
+   }
+
+   @Test
    public void testCode2912SetsResourceAlreadyExistsException() throws IOException {
       HttpRequest request = HttpRequest.builder().method(POST)
                                                  .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
@@ -289,6 +313,30 @@ public class UltraDNSWSErrorHandlerTest {
       assertEquals(exception.getMessage(), "Error 3101: Pool Record does not exist.");
       assertEquals(exception.getError().getDescription().get(), "Pool Record does not exist.");
       assertEquals(exception.getError().getCode(), 3101);
+   }
+
+   @Test
+   public void testCode4003SetsResourceNotFoundException() throws IOException {
+      HttpRequest request = HttpRequest.builder().method(POST)
+                                                 .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+                                                 .addHeader(HOST, "ultra-api.ultradns.com:8443")
+                                                 .payload(payloadFromResource("/delete_tcrecord.xml")).build();
+      HttpCommand command = new HttpCommand(request);
+      HttpResponse response = HttpResponse.builder()
+                                          .message(INTERNAL_SERVER_ERROR.getReasonPhrase())
+                                          .statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
+                                          .payload(payloadFromResource("/directionalgroup_doesnt_exist.xml")).build();
+
+      function.handleError(command, response);
+
+      assertEquals(command.getException().getClass(), ResourceNotFoundException.class);
+      assertEquals(command.getException().getMessage(), "Group does not exist.");
+
+      UltraDNSWSResponseException exception = UltraDNSWSResponseException.class.cast(command.getException().getCause());
+
+      assertEquals(exception.getMessage(), "Error 4003: Group does not exist.");
+      assertEquals(exception.getError().getDescription().get(), "Group does not exist.");
+      assertEquals(exception.getError().getCode(), 4003);
    }
 
    private Payload payloadFromResource(String resource) {

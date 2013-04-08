@@ -52,9 +52,9 @@ public class UltraDNSWSApiExpectTest extends BaseUltraDNSWSApiExpectTest {
             new GetAccountsListOfUserResponseTest().expected().toString());
    }
 
-   HttpRequest getRegionsById = HttpRequest.builder().method("POST")
+   HttpRequest getRegionsById = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/list_regions.xml", "application/xml")).build();
 
    HttpResponse getRegionsByIdResponse = HttpResponse.builder().statusCode(200)
