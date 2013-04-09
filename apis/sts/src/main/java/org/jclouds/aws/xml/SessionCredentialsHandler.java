@@ -18,12 +18,13 @@
  */
 package org.jclouds.aws.xml;
 
+import static org.jclouds.util.SaxUtils.currentOrNull;
+
 import javax.inject.Inject;
 
 import org.jclouds.aws.domain.SessionCredentials;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.util.SaxUtils;
 
 /**
  * @see <a href=
@@ -55,13 +56,17 @@ public class SessionCredentialsHandler extends ParseSax.HandlerForGeneratedReque
    @Override
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("AccessKeyId")) {
-         builder.accessKeyId(SaxUtils.currentOrNull(currentText));
+         builder.accessKeyId(currentOrNull(currentText));
       } else if (qName.equals("SecretAccessKey")) {
-         builder.secretAccessKey(SaxUtils.currentOrNull(currentText));
+         builder.secretAccessKey(currentOrNull(currentText));
       } else if (qName.equals("SessionToken")) {
-         builder.sessionToken(SaxUtils.currentOrNull(currentText));
+         builder.sessionToken(currentOrNull(currentText));
       } else if (qName.equals("Expiration")) {
-         builder.expiration(dateService.iso8601DateParse(SaxUtils.currentOrNull(currentText)));
+         try {
+            builder.expiration(dateService.iso8601SecondsDateParse(currentOrNull(currentText)));
+         } catch (IllegalArgumentException e) {
+            builder.expiration(dateService.iso8601DateParse(currentOrNull(currentText)));
+         }
       }
       currentText = new StringBuilder();
    }

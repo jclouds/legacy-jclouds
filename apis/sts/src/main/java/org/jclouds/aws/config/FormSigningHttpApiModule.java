@@ -16,24 +16,44 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.route53;
+package org.jclouds.aws.config;
 
-import org.jclouds.View;
-import org.jclouds.rest.internal.BaseHttpApiMetadataTest;
-import org.testng.annotations.Test;
+import java.util.Date;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.TypeToken;
+import javax.inject.Singleton;
+
+import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.date.DateService;
+import org.jclouds.date.TimeStamp;
+import org.jclouds.rest.ConfiguresHttpApi;
+import org.jclouds.rest.RequestSigner;
+
+import com.google.inject.Provides;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "Route53ApiMetadataTest")
-public class Route53ApiMetadataTest extends BaseHttpApiMetadataTest {
+@ConfiguresHttpApi
+public abstract class FormSigningHttpApiModule<A> extends AWSHttpApiModule<A> {
+   protected FormSigningHttpApiModule() {
 
-   // no dns abstraction, yet
-   public Route53ApiMetadataTest() {
-      super(new Route53ApiMetadata(), ImmutableSet.<TypeToken<? extends View>> of());
    }
+
+   protected FormSigningHttpApiModule(Class<A> api) {
+      super(api);
+   }
+
+   @Provides
+   @TimeStamp
+   protected String provideTimeStamp(DateService dateService) {
+      return dateService.iso8601DateFormat(new Date(System.currentTimeMillis()));
+   }
+
+   @Provides
+   @Singleton
+   RequestSigner provideRequestSigner(FormSigner in) {
+      return in;
+   }
+
 }
