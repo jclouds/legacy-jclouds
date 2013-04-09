@@ -25,13 +25,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * designates the module configures a Client to a cloud.
+ * designates the module configures a top-level api which is annotated with http methods.
  * 
  * @author Adrian Cole
  * 
  */
 @Retention(RUNTIME)
 @Target(TYPE)
-public @interface ConfiguresRestContext {
+public @interface ConfiguresHttpApi {
 
 }

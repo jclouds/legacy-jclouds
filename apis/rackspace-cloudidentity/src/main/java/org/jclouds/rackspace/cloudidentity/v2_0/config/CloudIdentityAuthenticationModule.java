@@ -18,7 +18,7 @@
  */
 package org.jclouds.rackspace.cloudidentity.v2_0.config;
 
-import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
+import static org.jclouds.rest.config.BinderUtils.bindMappedHttpApi;
 
 import java.util.Map;
 
@@ -48,7 +48,7 @@ public class CloudIdentityAuthenticationModule extends KeystoneAuthenticationMod
    @Override
    protected void bindAuthenticationApi() {
       // AuthenticationApi is used directly for filters and retry handlers, so let's bind it explicitly
-      bindHttpApi(binder(), CloudIdentityAuthenticationApi.class,
+      bindMappedHttpApi(binder(), CloudIdentityAuthenticationApi.class,
             CloudIdentityAuthenticationAsyncApi.class);
       bind(AuthenticationApi.class).to(CloudIdentityAuthenticationApi.class).in(Scopes.SINGLETON);
       bind(AuthenticationAsyncApi.class).to(CloudIdentityAuthenticationAsyncApi.class).in(Scopes.SINGLETON);

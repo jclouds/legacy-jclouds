@@ -18,7 +18,7 @@
  */
 package org.jclouds.cloudstack.config;
 
-import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
+import static org.jclouds.rest.config.BinderUtils.bindMappedHttpApi;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -207,9 +207,9 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
       });
       bind(CredentialType.class).toProvider(CredentialTypeFromPropertyOrDefault.class);
       // session client is used directly for filters and retry handlers, so let's bind it explicitly
-      bindHttpApi(binder(), SessionClient.class, SessionAsyncClient.class);
-      bindHttpApi(binder(), CloudStackDomainClient.class, CloudStackDomainAsyncClient.class);
-      bindHttpApi(binder(), CloudStackGlobalClient.class, CloudStackGlobalAsyncClient.class);
+      bindMappedHttpApi(binder(), SessionClient.class, SessionAsyncClient.class);
+      bindMappedHttpApi(binder(), CloudStackDomainClient.class, CloudStackDomainAsyncClient.class);
+      bindMappedHttpApi(binder(), CloudStackGlobalClient.class, CloudStackGlobalAsyncClient.class);
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(InvalidateSessionAndRetryOn401AndLogoutOnClose.class);
       
       super.configure();

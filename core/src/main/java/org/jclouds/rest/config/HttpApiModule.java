@@ -19,71 +19,51 @@
 package org.jclouds.rest.config;
 
 import static org.jclouds.reflect.Types2.checkBound;
-import static org.jclouds.rest.config.BinderUtils.bindMappedHttpApi;
+import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
 
-import java.util.Map;
+import org.jclouds.reflect.Invocation;
+import org.jclouds.rest.ConfiguresHttpApi;
+import org.jclouds.rest.HttpAsyncClient;
+import org.jclouds.rest.HttpClient;
+import org.jclouds.rest.internal.InvokeHttpMethod;
 
-import org.jclouds.rest.ConfiguresRestClient;
-
-import com.google.common.collect.ImmutableMap;
+import com.google.common.base.Function;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author Adrian Cole
- * 
- * @deprecated will be removed in jclouds 1.7; use {@link HttpApiModule}
  */
-@Deprecated
-@ConfiguresRestClient
-public class RestClientModule<S, A> extends RestModule {
-   protected final TypeToken<S> syncClientType;
-   protected final TypeToken<A> asyncClientType;
-
-   private final MappedHttpInvocationModule invocationModule;
+@ConfiguresHttpApi
+public class HttpApiModule<A> extends RestModule {
+   protected final Class<A> api;
 
    /**
-    * Note that this ctor requires that you instantiate w/resolved generic params. For example, via
-    * a subclass of a bound type, or natural instantiation w/resolved type params.
+    * Note that this ctor requires that you instantiate w/resolved generic
+    * params. For example, via a subclass of a bound type, or natural
+    * instantiation w/resolved type params.
     */
-   protected RestClientModule(Map<Class<?>, Class<?>> sync2Async) {
-      this.invocationModule = new MappedHttpInvocationModule(sync2Async);
-      this.syncClientType = checkBound(new TypeToken<S>(getClass()) {
+   @SuppressWarnings("unchecked")
+   protected HttpApiModule() {
+      this.api = Class.class.cast(checkBound(new TypeToken<A>(getClass()) {
          private static final long serialVersionUID = 1L;
-      });
-      this.asyncClientType = checkBound(new TypeToken<A>(getClass()) {
-         private static final long serialVersionUID = 1L;
-      });
+      }).getRawType());
    }
 
-   /**
-    * @see #RestClientModule(Map)
-    */
-   protected RestClientModule() {
-      this(ImmutableMap.<Class<?>, Class<?>> of());
-   }
-
-   /**
-    * @see #RestClientModule(TypeToken, TypeToken, Map)
-    */
-   public RestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType) {
-      this(syncClientType, asyncClientType, ImmutableMap.<Class<?>, Class<?>> of());
-   }
-
-   /**
-    * only necessary when type params are not resolvable at runtime.
-    */
-   public RestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType, Map<Class<?>, Class<?>> sync2Async) {
-      this.invocationModule = new MappedHttpInvocationModule(sync2Async);
-      this.syncClientType = checkBound(syncClientType);
-      this.asyncClientType = checkBound(asyncClientType);
+   public HttpApiModule(Class<A> api) {
+     this.api = api;
    }
 
    @Override
    protected void configure() {
       super.configure();
-      install(invocationModule);
-      bindMappedHttpApi(binder(), syncClientType.getRawType(), asyncClientType.getRawType());
+      bind(new TypeLiteral<Function<Invocation, Object>>() {
+      }).to(InvokeHttpMethod.class);
+      bindHttpApi(binder(), api);
+      bindHttpApi(binder(), HttpClient.class);
+      // TODO: remove when references are gone
+      bindHttpApi(binder(), HttpAsyncClient.class);
       bindErrorHandlers();
       bindRetryHandlers();
    }

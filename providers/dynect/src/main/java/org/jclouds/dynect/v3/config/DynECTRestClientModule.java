@@ -19,7 +19,7 @@
 package org.jclouds.dynect.v3.config;
 
 import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
-import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
+import static org.jclouds.rest.config.BinderUtils.bindMappedHttpApi;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -106,7 +106,7 @@ public class DynECTRestClientModule extends RestClientModule<DynECTApi, DynECTAs
       bind(RedirectionRetryHandler.class).to(GetJobRedirectionRetryHandler.class);
       super.configure();
       // Bind apis that are used directly vs via DynECTApi
-      bindHttpApi(binder(), SessionApi.class, SessionAsyncApi.class);
+      bindMappedHttpApi(binder(), SessionApi.class, SessionAsyncApi.class);
 
       // dynect returns the following as a 200.
       // {"status": "failure", "data": {}, "job_id": 274509427, "msgs":

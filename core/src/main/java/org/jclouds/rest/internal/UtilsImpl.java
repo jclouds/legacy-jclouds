@@ -29,7 +29,6 @@ import org.jclouds.date.DateService;
 import org.jclouds.domain.Credentials;
 import org.jclouds.json.Json;
 import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.Utils;
 import org.jclouds.xml.XMLParser;
@@ -48,7 +47,7 @@ public class UtilsImpl implements Utils {
 
    private final Json json;
    private final HttpClient simpleClient;
-   private final HttpAsyncClient simpleAsyncClient;
+   private final org.jclouds.rest.HttpAsyncClient simpleAsyncClient;
    private final Crypto encryption;
    private final DateService date;
    private final ListeningExecutorService userExecutor;
@@ -60,7 +59,7 @@ public class UtilsImpl implements Utils {
    private XMLParser xml;
 
    @Inject
-   protected UtilsImpl(Injector injector, Json json, XMLParser xml, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
+   protected UtilsImpl(Injector injector, Json json, XMLParser xml, HttpClient simpleClient, org.jclouds.rest.HttpAsyncClient simpleAsyncClient,
          Crypto encryption, DateService date, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ListeningExecutorService ioExecutor, EventBus eventBus,
             Map<String, Credentials> credentialStore, LoggerFactory loggerFactory) {
@@ -79,7 +78,8 @@ public class UtilsImpl implements Utils {
    }
 
    @Override
-   public HttpAsyncClient asyncHttp() {
+   @Deprecated
+   public org.jclouds.rest.HttpAsyncClient asyncHttp() {
       return simpleAsyncClient;
    }
 
@@ -104,7 +104,8 @@ public class UtilsImpl implements Utils {
    }
 
    @Override
-   public HttpAsyncClient getHttpAsyncClient() {
+   @Deprecated
+   public org.jclouds.rest.HttpAsyncClient getHttpAsyncClient() {
       return simpleAsyncClient;
    }
 

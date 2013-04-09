@@ -20,10 +20,12 @@ package org.jclouds;
 
 import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.containsPattern;
 import static com.google.common.base.Predicates.instanceOf;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.base.Predicates.notNull;
+import static com.google.common.base.Predicates.or;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.addAll;
 import static com.google.common.collect.Iterables.any;
@@ -57,6 +59,7 @@ import org.jclouds.apis.Apis;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.config.BindApiContextWithWildcardExtendsExplicitAndRawType;
 import org.jclouds.config.BindNameToContext;
 import org.jclouds.config.BindPropertiesToExpandedValues;
 import org.jclouds.config.BindRestContextWithWildcardExtendsExplicitAndRawType;
@@ -75,9 +78,14 @@ import org.jclouds.providers.Providers;
 import org.jclouds.providers.config.BindProviderMetadataContextAndCredentials;
 import org.jclouds.providers.internal.UpdateProviderMetadataFromProperties;
 import org.jclouds.rest.ConfiguresCredentialStore;
+import org.jclouds.rest.ConfiguresHttpApi;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.HttpApiMetadata;
 import org.jclouds.rest.RestApiMetadata;
+import org.jclouds.rest.RestContext;
 import org.jclouds.rest.config.CredentialStoreModule;
+import org.jclouds.rest.config.HttpApiModule;
+import org.jclouds.rest.config.MappedHttpInvocationModule;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.config.RestModule;
 
@@ -382,9 +390,9 @@ public class ContextBuilder {
    public static Injector buildInjector(String name, ProviderMetadata providerMetadata, Supplier<Credentials> creds, List<Module> inputModules) {
       List<Module> modules = newArrayList();
       modules.addAll(inputModules);
-      boolean restModuleSpecifiedByUser = restClientModulePresent(inputModules);
-      Iterable<Module> defaultModules = ifSpecifiedByUserDontIncludeDefaultRestModule(
-               providerMetadata.getApiMetadata(), restModuleSpecifiedByUser);
+      boolean apiModuleSpecifiedByUser = apiModulePresent(inputModules);
+      Iterable<Module> defaultModules = ifSpecifiedByUserDontIncludeDefaultApiModule(
+               providerMetadata.getApiMetadata(), apiModuleSpecifiedByUser);
       addAll(modules, defaultModules);
       addClientModuleIfNotPresent(providerMetadata.getApiMetadata(), modules);
       addRestContextBinding(providerMetadata.getApiMetadata(), modules);
@@ -415,17 +423,24 @@ public class ContextBuilder {
    }
 
    static void addRestContextBinding(ApiMetadata apiMetadata, List<Module> modules) {
-      if (apiMetadata instanceof RestApiMetadata) {
+      if (apiMetadata instanceof HttpApiMetadata) {
+         try {
+            modules
+                  .add(new BindApiContextWithWildcardExtendsExplicitAndRawType(HttpApiMetadata.class.cast(apiMetadata)));
+         } catch (IllegalArgumentException e) {
+
+         }
+      } else if (apiMetadata instanceof RestApiMetadata) {
          try {
             modules.add(new BindRestContextWithWildcardExtendsExplicitAndRawType(RestApiMetadata.class
-                     .cast(apiMetadata)));
+                  .cast(apiMetadata)));
          } catch (IllegalArgumentException e) {
 
          }
       }
    }
 
-   static Iterable<Module> ifSpecifiedByUserDontIncludeDefaultRestModule(ApiMetadata apiMetadata,
+   static Iterable<Module> ifSpecifiedByUserDontIncludeDefaultApiModule(ApiMetadata apiMetadata,
             boolean restModuleSpecifiedByUser) {
       Iterable<Module> defaultModules = transform(apiMetadata.getDefaultModules(),
                new Function<Class<? extends Module>, Module>() {
@@ -443,7 +458,7 @@ public class ContextBuilder {
 
                });
       if (restModuleSpecifiedByUser)
-         defaultModules = filter(defaultModules, not(configuresRest));
+         defaultModules = filter(defaultModules, and(not(configuresApi), not(configuresRest)));
       return defaultModules;
    }
 
@@ -476,30 +491,40 @@ public class ContextBuilder {
 
    @VisibleForTesting
    static void addClientModuleIfNotPresent(ApiMetadata apiMetadata, List<Module> modules) {
-      if (!restClientModulePresent(modules)) {
+      if (!apiModulePresent(modules)) {
          addClientModule(apiMetadata, modules);
       }
    }
+   private static boolean apiModulePresent(List<Module> modules) {
+      return any(modules, or(configuresApi, configuresRest));
+   }
 
-   static Predicate<Module> configuresRest = new Predicate<Module>() {
+   private static Predicate<Module> configuresApi = new Predicate<Module>() {
+      public boolean apply(Module input) {
+         return input.getClass().isAnnotationPresent(ConfiguresHttpApi.class);
+      }
+
+   };
+
+   private static Predicate<Module> configuresRest = new Predicate<Module>() {
       public boolean apply(Module input) {
          return input.getClass().isAnnotationPresent(ConfiguresRestClient.class);
       }
 
    };
 
-   static boolean restClientModulePresent(List<Module> modules) {
-      return any(modules, configuresRest);
-   }
-
    @SuppressWarnings({ "unchecked", "rawtypes" })
    static void addClientModule(ApiMetadata apiMetadata, List<Module> modules) {
       // TODO: move this up
-      if (apiMetadata instanceof RestApiMetadata) {
+      if (apiMetadata instanceof HttpApiMetadata) {
+         HttpApiMetadata api = HttpApiMetadata.class.cast(apiMetadata);
+         modules.add(new HttpApiModule(api.getApi()));
+      } else if (apiMetadata instanceof RestApiMetadata) {
          RestApiMetadata rest = RestApiMetadata.class.cast(apiMetadata);
          modules.add(new RestClientModule(typeToken(rest.getApi()), typeToken(rest.getAsyncApi())));
       } else {
          modules.add(new RestModule());
+         modules.add(new MappedHttpInvocationModule());
       }
    }
 
