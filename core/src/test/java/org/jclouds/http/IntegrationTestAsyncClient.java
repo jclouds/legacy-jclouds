@@ -20,6 +20,7 @@ package org.jclouds.http;
 
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 
+import java.io.Closeable;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -61,7 +62,7 @@ import com.google.inject.Provides;
  * @see IntegrationTestClient
  * @author Adrian Cole
  */
-public interface IntegrationTestAsyncClient {
+public interface IntegrationTestAsyncClient extends Closeable {
    @Target({ ElementType.METHOD })
    @Retention(RetentionPolicy.RUNTIME)
    @HttpMethod("ROWDY")

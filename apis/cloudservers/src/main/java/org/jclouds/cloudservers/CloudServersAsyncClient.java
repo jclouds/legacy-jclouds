@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudservers;
 
+import java.io.Closeable;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -76,7 +77,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters({ AuthenticateRequest.class, AddTimestampQuery.class })
 @Endpoint(Compute.class)
-public interface CloudServersAsyncClient {
+public interface CloudServersAsyncClient extends Closeable {
 
    /**
     * @see CloudServersClient#getLimits

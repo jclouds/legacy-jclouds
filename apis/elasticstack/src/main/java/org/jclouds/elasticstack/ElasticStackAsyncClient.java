@@ -18,6 +18,7 @@
  */
 package org.jclouds.elasticstack;
 
+import java.io.Closeable;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
@@ -64,7 +65,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters(BasicAuthentication.class)
 @Consumes(MediaType.TEXT_PLAIN)
-public interface ElasticStackAsyncClient {
+public interface ElasticStackAsyncClient extends Closeable {
 
    /**
     * @see ElasticStackClient#listServers()

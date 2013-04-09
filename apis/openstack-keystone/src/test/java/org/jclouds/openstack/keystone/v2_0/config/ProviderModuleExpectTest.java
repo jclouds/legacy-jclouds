@@ -6,6 +6,7 @@ import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CRED
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERVICE_TYPE;
 import static org.testng.Assert.assertTrue;
 
+import java.io.Closeable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.net.URI;
@@ -62,12 +63,12 @@ public class ProviderModuleExpectTest extends BaseRestApiExpectTest<ProviderModu
       }
    }
 
-   static interface DNSApi {
+   static interface DNSApi extends Closeable {
       boolean zoneExists(@PathParam("zoneName") String zoneName);
    }
 
    @org.jclouds.rest.annotations.Endpoint(DNS.class)
-   static interface DNSAsyncApi {
+   static interface DNSAsyncApi extends Closeable {
       @HEAD
       @Path("/zones/{zoneName}")
       @Fallback(FalseOnNotFoundOr404.class)

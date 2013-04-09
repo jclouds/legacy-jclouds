@@ -18,6 +18,7 @@
  */
 package org.jclouds.trmk.vcloud_0_8.internal;
 
+import java.io.Closeable;
 import java.net.URI;
 import java.util.SortedMap;
 
@@ -36,7 +37,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
  * @author Adrian Cole
  */
-public interface TerremarkVCloudVersionsAsyncClient {
+public interface TerremarkVCloudVersionsAsyncClient extends Closeable {
 
    /**
     * Retrieve information for supported versions

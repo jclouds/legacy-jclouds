@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud;
 
+import java.io.Closeable;
+
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.vcloud.features.CatalogAsyncClient;
@@ -39,7 +41,7 @@ import org.jclouds.vcloud.filters.AddVCloudAuthorizationAndCookieToRequest;
  * @author Adrian Cole
  */
 @RequestFilters(AddVCloudAuthorizationAndCookieToRequest.class)
-public interface VCloudAsyncClient {
+public interface VCloudAsyncClient extends Closeable {
 
    /**
     * Provides asynchronous access to VApp Template features.

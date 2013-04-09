@@ -18,6 +18,7 @@
  */
 package org.jclouds.atmos;
 
+import java.io.Closeable;
 import java.net.URI;
 import org.jclouds.atmos.domain.AtmosObject;
 import org.jclouds.atmos.domain.BoundedSet;
@@ -38,7 +39,7 @@ import com.google.inject.Provides;
  * @see <a href="https://community.emc.com/community/labs/atmos_online" />
  * @author Adrian Cole
  */
-public interface AtmosClient {
+public interface AtmosClient extends Closeable {
    /**
     * Creates a default implementation of AtmosObject
     */

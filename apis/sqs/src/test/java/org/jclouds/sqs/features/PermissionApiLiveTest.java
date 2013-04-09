@@ -23,6 +23,7 @@ import static org.jclouds.providers.AnonymousProviderMetadata.forClientMappedToA
 import static org.jclouds.sqs.reference.SQSParameters.ACTION;
 import static org.testng.Assert.assertEquals;
 
+import java.io.Closeable;
 import java.net.URI;
 
 import javax.ws.rs.POST;
@@ -62,11 +63,11 @@ public class PermissionApiLiveTest extends BaseSQSApiLiveTest {
       recreateQueueInRegion(prefix, null);
    }
 
-      static interface AnonymousAttributesApi {
+   static interface AnonymousAttributesApi extends Closeable {
       String getQueueArn();
    }
 
-   static interface AnonymousAttributesAsyncApi {
+   static interface AnonymousAttributesAsyncApi extends Closeable {
       @POST
       @Path("/")
       @FormParams(keys = { ACTION, "AttributeName.1" }, values = { "GetQueueAttributes", "QueueArn" })

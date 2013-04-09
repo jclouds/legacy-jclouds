@@ -34,6 +34,7 @@ import static org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType.VAPPTEMPLATE_
 import static org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType.VAPP_XML;
 import static org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType.VDC_XML;
 
+import java.io.Closeable;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
@@ -124,7 +125,7 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @RequestFilters(SetVCloudTokenCookie.class)
-public interface TerremarkVCloudAsyncClient {
+public interface TerremarkVCloudAsyncClient extends Closeable {
 
    /**
     * @see TerremarkVCloudClient#getCatalogItemInOrg

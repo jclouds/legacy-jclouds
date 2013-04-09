@@ -18,9 +18,10 @@
  */
 package org.jclouds.trmk.vcloud_0_8.internal;
 
+import java.io.Closeable;
 import java.net.URI;
 import java.util.SortedMap;
-public interface TerremarkVCloudVersionsClient {
+public interface TerremarkVCloudVersionsClient extends Closeable {
 
    SortedMap<String, URI> getSupportedVersions();
 }

@@ -18,6 +18,8 @@
  */
 package org.jclouds.route53;
 
+import java.io.Closeable;
+
 import javax.inject.Named;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -48,7 +50,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(RestAuthentication.class)
 @VirtualHost
 @Path("/{jclouds.api-version}")
-public interface Route53AsyncApi {
+public interface Route53AsyncApi extends Closeable {
 
    /**
     * @see Route53Api#getChange()

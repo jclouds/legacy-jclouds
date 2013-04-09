@@ -23,6 +23,7 @@ import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static com.google.common.util.concurrent.Futures.transform;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
@@ -50,6 +51,7 @@ import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.lifecycle.Closer;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.blobstore.S3AsyncBlobStore;
 import org.jclouds.s3.blobstore.functions.BlobToObject;
@@ -100,6 +102,7 @@ public class StubS3AsyncClient implements S3AsyncClient {
    private final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs;
    private final ConcurrentMap<String, Location> containerToLocation;
    private final ListeningExecutorService userExecutor;
+   private final Closer closer;
 
    @Inject
    private StubS3AsyncClient(@Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
@@ -108,7 +111,7 @@ public class StubS3AsyncClient implements S3AsyncClient {
             S3Object.Factory objectProvider, Blob.Factory blobProvider,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, ObjectToBlob object2Blob, BlobToObject blob2Object,
             BlobToObjectMetadata blob2ObjectMetadata, BucketToContainerListOptions bucket2ContainerListOptions,
-            ResourceToBucketList resource2BucketList) {
+            ResourceToBucketList resource2BucketList, Closer closer) {
       this.userExecutor = userExecutor;
       this.containerToBlobs = containerToBlobs;
       this.containerToLocation = containerToLocation;
@@ -122,6 +125,7 @@ public class StubS3AsyncClient implements S3AsyncClient {
       this.blob2ObjectMetadata = checkNotNull(blob2ObjectMetadata, "blob2ObjectMetadata");
       this.bucket2ContainerListOptions = checkNotNull(bucket2ContainerListOptions, "bucket2ContainerListOptions");
       this.resource2BucketList = checkNotNull(resource2BucketList, "resource2BucketList");
+      this.closer = checkNotNull(closer, "closer");
    }
 
    public static final String TEST_ACL_ID = "1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c";
@@ -334,6 +338,11 @@ public class StubS3AsyncClient implements S3AsyncClient {
    @Override
    public ListenableFuture<Boolean> objectExists(String bucketName, String key) {
       return immediateFuture(containerToBlobs.get(bucketName).containsKey(key));
+   }
+
+   @Override
+   public void close() throws IOException {
+      closer.close();
    }
 
 }
