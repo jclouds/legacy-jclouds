@@ -52,7 +52,10 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 /**
  * 
  * @author Adrian Cole
+ * @deprecated will be removed in jclouds 1.7, as async interfaces are no longer
+ *             supported. Please use {@link org.jclouds.blobstore.BlobStore}
  */
+@Deprecated
 public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
 
    protected final BlobStoreContext context;

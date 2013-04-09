@@ -69,7 +69,10 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 /**
  * 
  * @author Adrian Cole
+ * @deprecated will be removed in jclouds 1.7, as async interfaces are no longer
+ *             supported. Please use {@link SwiftBlobStore}
  */
+@Deprecated
 @Singleton
 public class SwiftAsyncBlobStore extends BaseAsyncBlobStore {
    private final CommonSwiftClient sync;

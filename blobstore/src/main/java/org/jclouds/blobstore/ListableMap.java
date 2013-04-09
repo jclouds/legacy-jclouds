@@ -27,7 +27,9 @@ import org.jclouds.blobstore.domain.StorageMetadata;
  * 
  * @author Adrian Cole
  * 
+ * @deprecated will be removed in jclouds 1.7. Please use {@link BlobStore}
  */
+@Deprecated
 public interface ListableMap<K, V> extends Map<K, V> {
 
    /**

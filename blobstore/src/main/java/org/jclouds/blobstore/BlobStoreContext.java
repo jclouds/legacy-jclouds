@@ -53,7 +53,9 @@ public interface BlobStoreContext extends Closeable, View {
     * @param options
     *           allow you to specify a directory within the container, or whether to list
     *           recursively.
+    * @deprecated will be removed in jclouds 1.7. Please use {@link BlobStore}
     */
+   @Deprecated
    InputStreamMap createInputStreamMap(String container, ListContainerOptions options);
 
    /**
@@ -64,7 +66,9 @@ public interface BlobStoreContext extends Closeable, View {
     * 
     * @param container
     *           existing container you wish to read or modify
+    * @deprecated will be removed in jclouds 1.7. Please use {@link BlobStore}
     */
+   @Deprecated
    InputStreamMap createInputStreamMap(String container);
 
    /**
@@ -76,24 +80,33 @@ public interface BlobStoreContext extends Closeable, View {
     * @param options
     *           allow you to specify a directory within the container, or whether to list
     *           recursively.
+    * @deprecated will be removed in jclouds 1.7. Please use {@link BlobStore}
     */
+   @Deprecated
    BlobMap createBlobMap(String container, ListContainerOptions options);
 
    /**
-    * Creates a <code>Map<String,Blob></code> view of the specified container. Use this when you wan
-    * to control the content type, or manually specify length or size of blobs.
+    * Creates a <code>Map<String,Blob></code> view of the specified container.
+    * Use this when you wan to control the content type, or manually specify
+    * length or size of blobs.
     * 
     * Only root-level blobs will be visible.
     * 
     * @param container
     *           existing container you wish to read or modify
+    * @deprecated will be removed in jclouds 1.7. Please use {@link BlobStore}
     */
+   @Deprecated
    BlobMap createBlobMap(String container);
 
    /**
-    * @return a portable asynchronous interface for the BlobStore, which returns {@code Future}s for
-    *         each call.
+    * @return a portable asynchronous interface for the BlobStore, which returns
+    *         {@code Future}s for each call.
+    * @deprecated will be removed in jclouds 1.7, as async interfaces are no
+    *             longer supported. Please use
+    *             {@link #getBlobStore()}
     */
+   @Deprecated
    AsyncBlobStore getAsyncBlobStore();
 
    /**
@@ -104,7 +117,9 @@ public interface BlobStoreContext extends Closeable, View {
    /**
     * 
     * @return best guess at the consistency model used in this BlobStore.
+    * @deprecated will be removed in jclouds 1.7, as almost never correct.
     */
+   @Deprecated
    ConsistencyModel getConsistencyModel();
 
 
