@@ -55,7 +55,10 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 /**
  * 
  * @author Adrian Cole
+ * @deprecated will be removed in jclouds 1.7, as async interfaces are no longer
+ *             supported. Please use {@link CloudFilesBlobStore}
  */
+@Deprecated
 @Singleton
 public class CloudFilesAsyncBlobStore extends SwiftAsyncBlobStore {
    private final EnableCDNAndCache enableCDNAndCache;
