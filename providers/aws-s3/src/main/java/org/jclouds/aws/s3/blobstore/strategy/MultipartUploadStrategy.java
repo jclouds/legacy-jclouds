@@ -20,7 +20,6 @@ package org.jclouds.aws.s3.blobstore.strategy;
 
 import org.jclouds.aws.s3.blobstore.strategy.internal.SequentialMultipartUploadStrategy;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.options.PutOptions;
 
 import com.google.inject.ImplementedBy;
 
@@ -32,5 +31,5 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(SequentialMultipartUploadStrategy.class)
 public interface MultipartUploadStrategy extends MultipartUpload {
    
-   String execute(String container, Blob blob, PutOptions options);
+   String execute(String container, Blob blob);
 }
