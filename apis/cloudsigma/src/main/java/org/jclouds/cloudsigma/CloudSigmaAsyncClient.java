@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudsigma;
 
+import java.io.Closeable;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
@@ -75,7 +76,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters(BasicAuthentication.class)
 @Consumes(MediaType.TEXT_PLAIN)
-public interface CloudSigmaAsyncClient {
+public interface CloudSigmaAsyncClient extends Closeable {
 
    /**
     * @see CloudSigmaClient#listStandardDrives

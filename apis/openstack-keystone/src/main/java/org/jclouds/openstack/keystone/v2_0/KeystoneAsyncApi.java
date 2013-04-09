@@ -18,6 +18,8 @@
  */
 package org.jclouds.openstack.keystone.v2_0;
 
+import java.io.Closeable;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.core.MediaType;
@@ -44,7 +46,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://keystone.openstack.org/" />
  * @see KeystoneApi
  */
-public interface KeystoneAsyncApi {
+public interface KeystoneAsyncApi extends Closeable {
 
    /**
     * @see KeystoneApi#getApiMetadata()

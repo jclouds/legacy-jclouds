@@ -18,6 +18,8 @@
  */
 package org.jclouds.sts;
 
+import java.io.Closeable;
+
 import javax.inject.Named;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -47,7 +49,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters(FormSigner.class)
 @VirtualHost
-public interface STSAsyncApi {
+public interface STSAsyncApi extends Closeable {
 
    /**
     * @see STSApi#createTemporaryCredentials()

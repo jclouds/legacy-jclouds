@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudsigma;
 
+import java.io.Closeable;
 import java.util.Set;
 
 import org.jclouds.cloudsigma.domain.Drive;
@@ -38,7 +39,7 @@ import org.jclouds.cloudsigma.options.CloneDriveOptions;
  * @see <a href="TODO: insert URL of cloudsigma documentation" />
  * @author Adrian Cole
  */
-public interface CloudSigmaClient {
+public interface CloudSigmaClient extends Closeable {
 
    /**
     * Get profile info

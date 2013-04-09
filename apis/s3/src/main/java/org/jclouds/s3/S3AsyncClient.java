@@ -21,6 +21,7 @@ package org.jclouds.s3;
 import static com.google.common.net.HttpHeaders.EXPECT;
 import static org.jclouds.blobstore.attr.BlobScopes.CONTAINER;
 
+import java.io.Closeable;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -108,7 +109,7 @@ import com.google.inject.Provides;
  */
 @RequestFilters(RequestAuthorizeSignature.class)
 @BlobScope(CONTAINER)
-public interface S3AsyncClient {
+public interface S3AsyncClient extends Closeable {
    public static final String VERSION = "2006-03-01";
 
    /**

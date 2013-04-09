@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.cinder.v1;
 
+import java.io.Closeable;
 import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
@@ -39,7 +40,7 @@ import com.google.inject.Provides;
  * @see <a href="http://api.openstack.org/">API Doc</a>
  * @author Everett Toews
  */
-public interface CinderAsyncApi {
+public interface CinderAsyncApi extends Closeable {
    /**
     * @return the Zone codes configured
     */

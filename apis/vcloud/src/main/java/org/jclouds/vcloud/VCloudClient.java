@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud;
 
+import java.io.Closeable;
+
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.features.CatalogClient;
 import org.jclouds.vcloud.features.NetworkClient;
@@ -35,7 +37,7 @@ import org.jclouds.vcloud.features.VmClient;
  * @see <a href="http://communities.vmware.com/community/developer/forums/vcloudapi" />
  * @author Adrian Cole
  */
-public interface VCloudClient {
+public interface VCloudClient extends Closeable {
    /**
     * Provides asynchronous access to VApp Template features.
     * 
