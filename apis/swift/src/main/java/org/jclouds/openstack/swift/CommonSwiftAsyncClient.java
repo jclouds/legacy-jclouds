@@ -79,7 +79,10 @@ import com.google.inject.Provides;
  * @see CommonSwiftClient
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />
  * @author Adrian Cole
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(CommonSwiftClient.class)} as
+ *             {@link CommonSwiftAsyncClient} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 public interface CommonSwiftAsyncClient extends Closeable {
    @Provides
    SwiftObject newSwiftObject();

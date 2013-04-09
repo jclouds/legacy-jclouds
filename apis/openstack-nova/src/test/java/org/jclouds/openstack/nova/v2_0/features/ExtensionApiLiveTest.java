@@ -45,8 +45,8 @@ public class ExtensionApiLiveTest extends BaseNovaApiLiveTest {
     @Test(description = "GET /v${apiVersion}/{tenantId}/extensions")
     public void testListExtensions() throws Exception {
        for (String zoneId : zones) {
-          ExtensionApi api = this.api.getExtensionApiForZone(zoneId);
-          Set<? extends Extension> response = api.list();
+          ExtensionApi extensionApi = api.getExtensionApiForZone(zoneId);
+          Set<? extends Extension> response = extensionApi.list();
           assertNotNull(response);
           assertFalse(response.isEmpty());
            for (Extension extension : response) {
@@ -68,10 +68,10 @@ public class ExtensionApiLiveTest extends BaseNovaApiLiveTest {
     @Test(description = "GET /v${apiVersion}/{tenantId}/extensions/{alias}", dependsOnMethods = { "testListExtensions" })
     public void testGetExtensionByAlias() throws Exception {
        for (String zoneId : zones) {
-           ExtensionApi api = this.api.getExtensionApiForZone(zoneId);
-           Set<? extends Extension> response = api.list();
+           ExtensionApi extensionApi = api.getExtensionApiForZone(zoneId);
+           Set<? extends Extension> response = extensionApi.list();
            for (Extension extension : response) {
-              Extension details = api.get(extension.getId());
+              Extension details = extensionApi.get(extension.getId());
               assertNotNull(details);
               assertEquals(details.getId(), extension.getId());
               assertEquals(details.getName(), extension.getName());

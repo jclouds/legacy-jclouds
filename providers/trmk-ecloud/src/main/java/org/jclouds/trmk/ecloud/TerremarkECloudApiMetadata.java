@@ -7,7 +7,6 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.rest.RestContext;
 import org.jclouds.trmk.ecloud.compute.config.TerremarkECloudComputeServiceContextModule;
 import org.jclouds.trmk.ecloud.config.TerremarkECloudRestClientModule;
 import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudApiMetadata;
@@ -23,7 +22,12 @@ import com.google.inject.Module;
  */
 public class TerremarkECloudApiMetadata extends TerremarkVCloudApiMetadata {
 
-   public static final TypeToken<RestContext<TerremarkECloudClient, TerremarkECloudAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<TerremarkECloudClient, TerremarkECloudAsyncClient>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(TerremarkECloudClient.class)} as
+    *             {@link TerremarkECloudAsyncClient} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<TerremarkECloudClient, TerremarkECloudAsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<TerremarkECloudClient, TerremarkECloudAsyncClient>>() {
       private static final long serialVersionUID = 1L;
    };
    
@@ -49,6 +53,7 @@ public class TerremarkECloudApiMetadata extends TerremarkVCloudApiMetadata {
 
    public static class Builder extends TerremarkVCloudApiMetadata.Builder<Builder> {
 
+      @SuppressWarnings("deprecation")
       protected Builder() {
          super(TerremarkECloudClient.class, TerremarkECloudAsyncClient.class);
          id("trmk-ecloud")

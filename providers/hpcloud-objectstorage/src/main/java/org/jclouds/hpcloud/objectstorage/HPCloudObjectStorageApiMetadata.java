@@ -33,7 +33,6 @@ import org.jclouds.openstack.swift.blobstore.config.TemporaryUrlExtensionModule;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule.KeystoneStorageEndpointModule;
 import org.jclouds.openstack.swift.extensions.KeystoneTemporaryUrlKeyAsyncApi;
 import org.jclouds.openstack.swift.extensions.TemporaryUrlKeyApi;
-import org.jclouds.rest.RestContext;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
@@ -45,7 +44,12 @@ import com.google.inject.Module;
  */
 public class HPCloudObjectStorageApiMetadata extends SwiftKeystoneApiMetadata {
 
-   public static final TypeToken<RestContext<HPCloudObjectStorageApi, HPCloudObjectStorageAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<HPCloudObjectStorageApi, HPCloudObjectStorageAsyncApi>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(HPCloudObjectStorageApi.class)} as
+    *             {@link HPCloudObjectStorageAsyncApi} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<HPCloudObjectStorageApi, HPCloudObjectStorageAsyncApi>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<HPCloudObjectStorageApi, HPCloudObjectStorageAsyncApi>>() {
       private static final long serialVersionUID = 1L;
    };
 
@@ -68,6 +72,7 @@ public class HPCloudObjectStorageApiMetadata extends SwiftKeystoneApiMetadata {
    }
 
    public static class Builder extends SwiftKeystoneApiMetadata.Builder<Builder> {
+      @SuppressWarnings("deprecation")
       protected Builder(){
          super(HPCloudObjectStorageApi.class, HPCloudObjectStorageAsyncApi.class);
          id("hpcloud-objectstorage")

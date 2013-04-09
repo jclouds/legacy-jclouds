@@ -25,7 +25,6 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 import org.jclouds.sts.config.STSRestClientModule;
 
@@ -38,7 +37,12 @@ import com.google.common.reflect.TypeToken;
  */
 public class STSApiMetadata extends BaseRestApiMetadata {
 
-   public static final TypeToken<RestContext<? extends STSApi, ? extends STSAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<? extends STSApi, ? extends STSAsyncApi>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(STSApi.class)} as
+    *             {@link STSAsyncApi} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<STSApi, STSAsyncApi>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<STSApi, STSAsyncApi>>() {
       private static final long serialVersionUID = 1L;
    };
 
@@ -47,6 +51,7 @@ public class STSApiMetadata extends BaseRestApiMetadata {
       return new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
    }
 
+   @SuppressWarnings("deprecation")
    public STSApiMetadata() {
       this(new Builder(STSApi.class, STSAsyncApi.class));
    }

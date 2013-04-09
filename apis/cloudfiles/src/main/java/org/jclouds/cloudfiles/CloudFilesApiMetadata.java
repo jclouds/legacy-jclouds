@@ -29,7 +29,6 @@ import org.jclouds.cloudfiles.config.CloudFilesRestClientModule.StorageAndCDNMan
 import org.jclouds.openstack.swift.SwiftApiMetadata;
 import org.jclouds.openstack.swift.blobstore.SwiftBlobSigner;
 import org.jclouds.openstack.swift.blobstore.config.TemporaryUrlExtensionModule;
-import org.jclouds.rest.RestContext;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
@@ -43,7 +42,12 @@ import com.google.inject.TypeLiteral;
  */
 public class CloudFilesApiMetadata extends SwiftApiMetadata {
 
-   public static final TypeToken<RestContext<CloudFilesClient, CloudFilesAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudFilesClient, CloudFilesAsyncClient>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(CloudFilesClient.class)} as
+    *             {@link CloudFilesAsyncClient} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<CloudFilesClient, CloudFilesAsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<CloudFilesClient, CloudFilesAsyncClient>>() {
       private static final long serialVersionUID = 1L;
    };
 
@@ -66,6 +70,7 @@ public class CloudFilesApiMetadata extends SwiftApiMetadata {
    }
 
    public static class Builder extends SwiftApiMetadata.Builder<Builder> {
+      @SuppressWarnings("deprecation")
       protected Builder(){
          super(CloudFilesClient.class, CloudFilesAsyncClient.class);
          id("cloudfiles")

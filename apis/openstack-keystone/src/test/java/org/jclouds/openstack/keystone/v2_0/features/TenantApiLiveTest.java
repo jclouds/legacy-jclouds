@@ -37,15 +37,15 @@ import org.testng.annotations.Test;
 public class TenantApiLiveTest extends BaseKeystoneApiLiveTest {
 
    public void testTenants() {
-      TenantApi api = this.api.getTenantApi().get();
-      Set<? extends Tenant> result = api.list().concat().toSet();
+      TenantApi tenantApi = api.getTenantApi().get();
+      Set<? extends Tenant> result = tenantApi.list().concat().toSet();
       assertNotNull(result);
       assertFalse(result.isEmpty());
 
       for (Tenant tenant : result) {
          assertNotNull(tenant.getId());
 
-         Tenant aTenant = api.get(tenant.getId());
+         Tenant aTenant = tenantApi.get(tenant.getId());
          assertNotNull(aTenant, "get returned null for tenant: " + tenant);
 
          assertEquals(aTenant, tenant);
@@ -54,10 +54,10 @@ public class TenantApiLiveTest extends BaseKeystoneApiLiveTest {
 
    public void testTenantsByName() {
 
-      TenantApi api = this.api.getTenantApi().get();
+      TenantApi tenantApi = api.getTenantApi().get();
 
-      for (Tenant tenant : api.list().concat()) {
-         Tenant aTenant = api.getByName(tenant.getName());
+      for (Tenant tenant : tenantApi.list().concat()) {
+         Tenant aTenant = tenantApi.getByName(tenant.getName());
          assertNotNull(aTenant, "get returned null for tenant: " + tenant);
 
          assertEquals(aTenant, tenant);

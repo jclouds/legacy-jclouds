@@ -26,7 +26,6 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.cloudwatch.config.CloudWatchRestClientModule;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.reflect.TypeToken;
@@ -38,7 +37,12 @@ import com.google.common.reflect.TypeToken;
  */
 public class CloudWatchApiMetadata extends BaseRestApiMetadata {
 
-   public static final TypeToken<RestContext<CloudWatchApi, CloudWatchAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudWatchApi, CloudWatchAsyncApi>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(CloudWatchApi.class)} as
+    *             {@link CloudWatchAsyncApi} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<CloudWatchApi, CloudWatchAsyncApi>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<CloudWatchApi, CloudWatchAsyncApi>>() {
       private static final long serialVersionUID = 1L;
    };
 
@@ -47,6 +51,7 @@ public class CloudWatchApiMetadata extends BaseRestApiMetadata {
       return new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
    }
 
+   @SuppressWarnings("deprecation")
    public CloudWatchApiMetadata() {
       this(new Builder(CloudWatchApi.class, CloudWatchAsyncApi.class));
    }

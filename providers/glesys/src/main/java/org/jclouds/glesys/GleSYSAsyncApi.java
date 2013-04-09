@@ -34,7 +34,10 @@ import org.jclouds.rest.annotations.Delegate;
  * @see GleSYSApi
  * @see <a href="https://customer.glesys.com/api.php" />
  * @author Adrian Cole
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(GleSYSApi.class)} as
+ *             {@link GleSYSAsyncApi} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 public interface GleSYSAsyncApi extends Closeable {
 
    /**

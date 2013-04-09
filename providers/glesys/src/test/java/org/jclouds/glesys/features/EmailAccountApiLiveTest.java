@@ -63,7 +63,7 @@ public class EmailAccountApiLiveTest extends BaseGleSYSApiLiveTest {
 
       emailAccountCounter = retry(new Predicate<Integer>() {
          public boolean apply(Integer value) {
-            return emailAccountApi.listDomain(testDomain).size() == value;
+            return emailAccountApi.listDomain(testDomain).size() == value.intValue();
          }
       }, 180, 5, SECONDS);
 

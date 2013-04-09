@@ -73,7 +73,10 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see CloudSigmaClient
  * @see <a href="http://cloudsigma.com/en/platform-details/the-api" />
  * @author Adrian Cole
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(CloudSigmaClient.class)} as
+ *             {@link CloudSigmaAsyncClient} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 @RequestFilters(BasicAuthentication.class)
 @Consumes(MediaType.TEXT_PLAIN)
 public interface CloudSigmaAsyncClient extends Closeable {

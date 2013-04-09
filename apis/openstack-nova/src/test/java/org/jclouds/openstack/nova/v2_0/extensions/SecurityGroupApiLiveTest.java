@@ -43,27 +43,27 @@ public class SecurityGroupApiLiveTest extends BaseNovaApiLiveTest {
 
    public void list() throws Exception {
       for (String zoneId : api.getConfiguredZones()) {
-         SecurityGroupApi api = this.api.getSecurityGroupExtensionForZone(zoneId).get();
-         Set<? extends SecurityGroup> securityGroupsList = api.list().toSet();
+         SecurityGroupApi securityGroupApi = api.getSecurityGroupExtensionForZone(zoneId).get();
+         Set<? extends SecurityGroup> securityGroupsList = securityGroupApi.list().toSet();
          assertNotNull(securityGroupsList);
       }
    }
 
    public void createGetAndDeleteSecurityGroup() throws Exception {
       for (String zoneId : api.getConfiguredZones()) {
-         SecurityGroupApi api = this.api.getSecurityGroupExtensionForZone(zoneId).get();
+         SecurityGroupApi securityGroupApi = api.getSecurityGroupExtensionForZone(zoneId).get();
          SecurityGroup securityGroup = null;
          String id;
          try {
-            securityGroup = api
+            securityGroup = securityGroupApi
                      .createWithDescription(SECURITY_GROUP_NAME, "test security group");
             assertNotNull(securityGroup);
             id = securityGroup.getId();
-            SecurityGroup theGroup = api.get(id);
+            SecurityGroup theGroup = securityGroupApi.get(id);
             assertNotNull(theGroup);
          } finally {
             if (securityGroup != null) {
-               api.delete(securityGroup.getId());
+               securityGroupApi.delete(securityGroup.getId());
             }
          }
       }
@@ -71,29 +71,29 @@ public class SecurityGroupApiLiveTest extends BaseNovaApiLiveTest {
 
    public void createAndDeleteSecurityGroupRule() throws Exception {
       for (String zoneId : api.getConfiguredZones()) {
-         SecurityGroupApi api = this.api.getSecurityGroupExtensionForZone(zoneId).get();
+         SecurityGroupApi securityGroupApi = api.getSecurityGroupExtensionForZone(zoneId).get();
          SecurityGroup securityGroup = null;
 
          try {
-            securityGroup = api.createWithDescription(SECURITY_GROUP_NAME, "test security group");
+            securityGroup = securityGroupApi.createWithDescription(SECURITY_GROUP_NAME, "test security group");
             assertNotNull(securityGroup);
 
             for (int port : ImmutableSet.of(22, 8080)) {
-               SecurityGroupRule rule = api.createRuleAllowingCidrBlock(securityGroup.getId(), Ingress
+               SecurityGroupRule rule = securityGroupApi.createRuleAllowingCidrBlock(securityGroup.getId(), Ingress
                         .builder().ipProtocol(IpProtocol.TCP).fromPort(port).toPort(port).build(), "0.0.0.0/0");
                assertNotNull(rule);
 
-               SecurityGroupRule rule2 = api.createRuleAllowingSecurityGroupId(securityGroup.getId(),
+               SecurityGroupRule rule2 = securityGroupApi.createRuleAllowingSecurityGroupId(securityGroup.getId(),
                         Ingress.builder().ipProtocol(IpProtocol.TCP).fromPort(port).toPort(port).build(), securityGroup
                                  .getId());
 
                assertNotNull(rule2);
             }
-            securityGroup = api.get(securityGroup.getId());
+            securityGroup = securityGroupApi.get(securityGroup.getId());
 
          } finally {
             if (securityGroup != null) {
-               api.delete(securityGroup.getId());
+               securityGroupApi.delete(securityGroup.getId());
             }
          }
       }

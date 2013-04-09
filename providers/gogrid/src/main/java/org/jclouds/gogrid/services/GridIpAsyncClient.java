@@ -28,7 +28,6 @@ import java.util.Set;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.domain.Ip;
 import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
@@ -47,7 +46,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Oleksiy Yarmula
  */
 @RequestFilters(SharedKeyLiteAuthentication.class)
-@QueryParams(keys = VERSION, values = GoGridAsyncClient.VERSION)
+@QueryParams(keys = VERSION, values = "{jclouds.api-version}")
 public interface GridIpAsyncClient {
 
    /**

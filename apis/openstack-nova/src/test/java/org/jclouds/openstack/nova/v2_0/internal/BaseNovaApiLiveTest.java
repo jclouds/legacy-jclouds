@@ -62,10 +62,10 @@ public class BaseNovaApiLiveTest extends BaseApiLiveTest<NovaApi> {
       super.setup();
       zones = api.getConfiguredZones();
       for (String zone : zones){
-         ServerApi api = this.api.getServerApiForZone(zone);
-         for (Resource server : api.list().concat()){
+         ServerApi serverApi = api.getServerApiForZone(zone);
+         for (Resource server : serverApi.list().concat()){
             if (server.getName().equals(hostName))
-               api.delete(server.getId());
+               serverApi.delete(server.getId());
          }
       }
    }

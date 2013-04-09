@@ -49,7 +49,10 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see DynECTApi
  * @see <a href="https://manage.dynect.net/help/docs/api2/rest/" />
  * @author Adrian Cole
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(DynECTApi.class)} as
+ *             {@link DynECTAsyncApi} interface will be removed in jclouds 1.7.
  */
+
 public interface DynECTAsyncApi extends Closeable {
    /**
     * @see DynECTApi#getJob

@@ -61,12 +61,12 @@ public class BaseSQSApiLiveTest extends BaseApiLiveTest<SQSApi> {
    }
 
    protected String recreateQueueInRegion(String queueName, String region) {
-      QueueApi api = this.api.getQueueApiForRegion(region);
-      URI result = api.get(queueName);
+      QueueApi queueApi = api.getQueueApiForRegion(region);
+      URI result = queueApi.get(queueName);
       if (result != null) {
-         api.delete(result);
+         queueApi.delete(result);
       }
-      URI queue = api.create(queueName);
+      URI queue = queueApi.create(queueName);
       assertQueueInList(region, queue);
       queues.add(queue);
       return queueName;

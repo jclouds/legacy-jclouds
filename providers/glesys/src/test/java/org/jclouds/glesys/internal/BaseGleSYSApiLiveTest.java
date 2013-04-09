@@ -43,13 +43,13 @@ public class BaseGleSYSApiLiveTest extends BaseApiLiveTest<GleSYSApi> {
    }
 
    protected void createDomain(String domain) {
-      final DomainApi api = this.api.getDomainApi();
-      int before = api.list().size();
-      api.create(domain);
+      final DomainApi domainApi = api.getDomainApi();
+      int before = domainApi.list().size();
+      domainApi.create(domain);
 
       Predicate<Integer> result = retry(new Predicate<Integer>() {
          public boolean apply(Integer value) {
-            return api.list().size() == value;
+            return domainApi.list().size() == value.intValue();
          }
       }, 30, 1, SECONDS);
 

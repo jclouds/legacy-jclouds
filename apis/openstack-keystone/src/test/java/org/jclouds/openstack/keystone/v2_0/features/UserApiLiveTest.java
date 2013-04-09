@@ -40,12 +40,12 @@ public class UserApiLiveTest extends BaseKeystoneApiLiveTest {
 
    public void testUsers() {
 
-      UserApi api = this.api.getUserApi().get();
-      Set<? extends User> users = api.list().concat().toSet();
+      UserApi userApi = api.getUserApi().get();
+      Set<? extends User> users = userApi.list().concat().toSet();
       assertNotNull(users);
       assertFalse(users.isEmpty());
       for (User user : users) {
-         User aUser = api.get(user.getId());
+         User aUser = userApi.get(user.getId());
          assertEquals(aUser, user);
       }
 
@@ -53,12 +53,12 @@ public class UserApiLiveTest extends BaseKeystoneApiLiveTest {
 
    public void testUserRolesOnTenant() {
 
-      UserApi api = this.api.getUserApi().get();
-      Set<? extends Tenant> tenants = this.api.getTenantApi().get().list().concat().toSet();
+      UserApi userApi = api.getUserApi().get();
+      Set<? extends Tenant> tenants = api.getTenantApi().get().list().concat().toSet();
 
-      for (User user : api.list().concat()) {
+      for (User user : userApi.list().concat()) {
          for (Tenant tenant : tenants) {
-            Set<? extends Role> roles = api.listRolesOfUserOnTenant(user.getId(), tenant.getId());
+            Set<? extends Role> roles = userApi.listRolesOfUserOnTenant(user.getId(), tenant.getId());
             for (Role role : roles) {
                assertNotNull(role.getId());
             }
@@ -69,9 +69,9 @@ public class UserApiLiveTest extends BaseKeystoneApiLiveTest {
 
    public void testListRolesOfUser() {
 
-      UserApi api = this.api.getUserApi().get();
-      for (User user : api.list().concat()) {
-         Set<? extends Role> roles = api.listRolesOfUser(user.getId());
+      UserApi userApi = api.getUserApi().get();
+      for (User user : userApi.list().concat()) {
+         Set<? extends Role> roles = userApi.listRolesOfUser(user.getId());
          for (Role role : roles) {
             assertNotNull(role.getId());
          }
@@ -81,9 +81,9 @@ public class UserApiLiveTest extends BaseKeystoneApiLiveTest {
 
    public void testUsersByName() {
 
-      UserApi api = this.api.getUserApi().get();
-      for (User user : api.list().concat()) {
-         User aUser = api.getByName(user.getName());
+      UserApi userApi = api.getUserApi().get();
+      for (User user : userApi.list().concat()) {
+         User aUser = userApi.getByName(user.getName());
          assertEquals(aUser, user);
       }
 

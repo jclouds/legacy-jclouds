@@ -33,7 +33,10 @@ import org.jclouds.softlayer.features.VirtualGuestAsyncClient;
  * @see SoftLayerClient
  * @see <a href="http://sldn.softlayer.com/article/REST" />
  * @author Adrian Cole
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(SoftLayerClient.class)} as
+ *             {@link SoftLayerAsyncClient} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 public interface SoftLayerAsyncClient extends Closeable {
 
    /**

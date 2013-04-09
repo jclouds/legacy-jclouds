@@ -65,14 +65,14 @@ public class TokenApiLiveTest extends BaseKeystoneApiLiveTest {
 
    public void testToken() {
 
-      TokenApi api = this.api.getTokenApi().get();
-      assertTrue(api.isValid(token));
-      Token result = api.get(token);
+      TokenApi tokenApi = api.getTokenApi().get();
+      assertTrue(tokenApi.isValid(token));
+      Token result = tokenApi.get(token);
       assertNotNull(result);
       assertEquals(result.getId(), token);
       assertNotNull(result.getTenant());
 
-      User user = api.getUserOfToken(token);
+      User user = tokenApi.getUserOfToken(token);
       assertNotNull(user);
       assertNotNull(user.getId());
       assertNotNull(user.getName());
@@ -81,16 +81,16 @@ public class TokenApiLiveTest extends BaseKeystoneApiLiveTest {
 
    public void testInvalidToken() {
 
-      TokenApi api = this.api.getTokenApi().get();
-      assertFalse(api.isValid("thisisnotarealtoken!"));
-      assertNull(api.get("thisisnotarealtoken!"));
+      TokenApi tokenApi = api.getTokenApi().get();
+      assertFalse(tokenApi.isValid("thisisnotarealtoken!"));
+      assertNull(tokenApi.get("thisisnotarealtoken!"));
 
    }
 
    public void testTokenEndpoints() {
 
-      TokenApi api = this.api.getTokenApi().get();
-      Set<? extends Endpoint> endpoints = api.listEndpointsForToken(token);
+      TokenApi tokenApi = api.getTokenApi().get();
+      Set<? extends Endpoint> endpoints = tokenApi.listEndpointsForToken(token);
       assertNotNull(endpoints);
       assertFalse(endpoints.isEmpty());
 
@@ -98,8 +98,8 @@ public class TokenApiLiveTest extends BaseKeystoneApiLiveTest {
 
    public void testInvalidTokenEndpoints() {
 
-      TokenApi api = this.api.getTokenApi().get();
-      assertTrue(api.listEndpointsForToken("thisisnotarealtoken!").isEmpty());
+      TokenApi tokenApi = api.getTokenApi().get();
+      assertTrue(tokenApi.listEndpointsForToken("thisisnotarealtoken!").isEmpty());
 
    }
 }

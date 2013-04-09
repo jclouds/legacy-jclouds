@@ -49,7 +49,7 @@ public class ArchiveApiLiveTest extends BaseGleSYSApiLiveTest {
       archiveUser = identity.toLowerCase() + "_test9";
       archiveCounter = retry(new Predicate<Integer>() {
          public boolean apply(Integer value) {
-            return archiveApi.list().size() == value;
+            return archiveApi.list().size() == value.intValue();
          }
       }, 30, 1, SECONDS);
    }

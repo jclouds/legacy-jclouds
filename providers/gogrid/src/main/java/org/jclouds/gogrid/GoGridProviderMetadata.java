@@ -18,7 +18,6 @@
  */
 package org.jclouds.gogrid;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONE;
@@ -59,7 +58,6 @@ public class GoGridProviderMetadata extends BaseProviderMetadata {
       properties.setProperty(PROPERTY_ZONE + ".1." + ISO3166_CODES, "US-CA");
       properties.setProperty(PROPERTY_ZONE + ".2." + ISO3166_CODES, "US-VA");
       properties.setProperty(PROPERTY_ZONE + ".3." + ISO3166_CODES, "NL-NH");
-      properties.setProperty(PROPERTY_API_VERSION, GoGridAsyncClient.VERSION);
       properties.setProperty(TEMPLATE, "osFamily=UBUNTU,osVersionMatches=1[012].[01][04],imageNameMatches=.*w/ None.*,locationId=1");
       return properties;
    }
