@@ -31,7 +31,9 @@ import com.google.inject.ImplementedBy;
  * 
  * @author Adrian Cole
  * 
+ * @deprecated will be removed in jclouds 1.7. Please use {@link BlobStore}
  */
+@Deprecated
 @ImplementedBy(BlobMapImpl.class)
 public interface BlobMap extends ListableMap<String, Blob> {
 

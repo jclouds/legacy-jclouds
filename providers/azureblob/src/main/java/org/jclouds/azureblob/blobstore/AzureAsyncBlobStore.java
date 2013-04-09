@@ -67,7 +67,10 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Adrian Cole
+ * @deprecated will be removed in jclouds 1.7, as async interfaces are no longer
+ *             supported. Please use {@link AzureBlobStore}
  */
+@Deprecated
 @Singleton
 public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
    private final AzureBlobAsyncClient async;

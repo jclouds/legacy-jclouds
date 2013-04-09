@@ -38,7 +38,9 @@ import com.google.inject.ImplementedBy;
  * {@link #putFile(String, File)} or {@link S3ObjectMap} instead.
  * 
  * @author Adrian Cole
+ * @deprecated will be removed in jclouds 1.7. Please use {@link BlobStore}
  */
+@Deprecated
 @ImplementedBy(InputStreamMapImpl.class)
 public interface InputStreamMap extends ListableMap<String, InputStream> {
    public static interface Factory {

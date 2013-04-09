@@ -69,7 +69,10 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Adrian Cole
+ * @deprecated will be removed in jclouds 1.7, as async interfaces are no longer
+ *             supported. Please use {@link AtmosBlobStore}
  */
+@Deprecated
 @Singleton
 public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
    private final AtmosAsyncClient async;

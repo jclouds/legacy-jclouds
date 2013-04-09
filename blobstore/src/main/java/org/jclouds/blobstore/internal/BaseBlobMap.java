@@ -49,7 +49,9 @@ import com.google.common.collect.ImmutableSet;
  * 
  * 
  * @author Adrian Cole
+ * @deprecated will be removed in jclouds 1.7. Please use {@link BlobStore}
  */
+@Deprecated
 public abstract class BaseBlobMap<V> implements ListableMap<String, V> {
    protected final BlobStore blobstore;
    protected final String containerName;

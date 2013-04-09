@@ -73,7 +73,10 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 /**
  * 
  * @author Adrian Cole
+ * @deprecated will be removed in jclouds 1.7, as async interfaces are no longer
+ *             supported. Please use {@link S3BlobStore}
  */
+@Deprecated
 @Singleton
 public class S3AsyncBlobStore extends BaseAsyncBlobStore {
 
