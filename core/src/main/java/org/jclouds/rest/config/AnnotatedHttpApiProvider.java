@@ -18,7 +18,6 @@
  */
 package org.jclouds.rest.config;
 
-
 import java.lang.reflect.Proxy;
 
 import javax.inject.Inject;
@@ -28,8 +27,6 @@ import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.internal.DelegatesToInvocationFunction;
 
 import com.google.common.base.Function;
-import com.google.common.cache.Cache;
-import com.google.common.reflect.Invokable;
 import com.google.inject.Provider;
 
 /**
@@ -37,22 +34,20 @@ import com.google.inject.Provider;
  * @author Adrian Cole
  */
 @Singleton
-public class HttpApiProvider<S, A> implements Provider<S> {
-   private final Class<? super S> apiType;
-   private final DelegatesToInvocationFunction<S, Function<Invocation, Object>> httpInvoker;
+public class AnnotatedHttpApiProvider<A> implements Provider<A> {
+   private final Class<A> annotatedApiType;
+   private final DelegatesToInvocationFunction<A, Function<Invocation, Object>> httpInvoker;
 
    @Inject
-   private HttpApiProvider(Cache<Invokable<?, ?>, Invokable<?, ?>> invokables,
-         DelegatesToInvocationFunction<S, Function<Invocation, Object>> httpInvoker, Class<S> apiType, Class<A> asyncApiType) {
+   private AnnotatedHttpApiProvider(DelegatesToInvocationFunction<A, Function<Invocation, Object>> httpInvoker,
+         Class<A> annotatedApiType) {
       this.httpInvoker = httpInvoker;
-      this.apiType = apiType;
-      RestModule.putInvokables(apiType, asyncApiType, invokables);
+      this.annotatedApiType = annotatedApiType;
    }
 
    @SuppressWarnings("unchecked")
    @Override
-   @Singleton
-   public S get() {
-      return (S) Proxy.newProxyInstance(apiType.getClassLoader(), new Class<?>[] { apiType }, httpInvoker);
+   public A get() {
+      return (A) Proxy.newProxyInstance(annotatedApiType.getClassLoader(), new Class<?>[] { annotatedApiType }, httpInvoker);
    }
 }

@@ -18,12 +18,42 @@
  */
 package org.jclouds.http;
 
-import java.io.Closeable;
+import static com.google.common.util.concurrent.Futures.immediateFuture;
 
+import java.io.Closeable;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.inject.Singleton;
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.HttpMethod;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+
+import org.jclouds.Fallbacks.FalseOnNotFoundOr404;
+import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.io.Payload;
+import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.MapBinder;
+import org.jclouds.rest.annotations.PayloadParam;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.rest.binders.BindToJsonPayload;
+import org.jclouds.rest.binders.BindToStringPayload;
+import org.jclouds.util.Strings2;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Provides;
 
 /**
@@ -32,37 +62,144 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 public interface IntegrationTestClient extends Closeable {
-   String rowdy(String path);
+   @Target({ ElementType.METHOD })
+   @Retention(RetentionPolicy.RUNTIME)
+   @HttpMethod("ROWDY")
+   public @interface ROWDY {
+   }
 
-   boolean exists(String path);
+   @ROWDY
+   @Path("/objects/{id}")
+   String rowdy(@PathParam("id") String path);
 
-   String synch(String id);
+   @HEAD
+   @Path("/objects/{id}")
+   @Fallback(FalseOnNotFoundOr404.class)
+   boolean exists(@PathParam("id") String path);
 
-   String download(String id);
+   @GET
+   @Path("/objects/{id}")
+   String download(@PathParam("id") String id);
 
    HttpResponse invoke(HttpRequest request);
+   
+   @GET
+   @Path("/{path}")
+   String synch(@PathParam("path") String id);
 
-   String downloadException(String id, HttpRequestOptions options);
+   @GET
+   @Path("/objects/{id}")
+   @Fallback(FooOnException.class)
+   String downloadException(@PathParam("id") String id, HttpRequestOptions options);
 
-   String synchException(String id, String header);
+   static class FooOnException implements org.jclouds.Fallback<String> {
+      public ListenableFuture<String> create(Throwable t) throws Exception {
+         return immediateFuture("foo");
+      }
 
-   String upload(String id, String toPut);
+      public String createOrPropagate(Throwable t) throws Exception {
+         return "foo";
+      }
+   }
 
-   String post(String id, String toPut);
+   @GET
+   @Path("/objects/{id}")
+   @Fallback(FooOnException.class)
+   String synchException(@PathParam("id") String id, @HeaderParam("Range") String header);
 
-   String postAsInputStream(String id, String toPut);
+   @PUT
+   @Path("/objects/{id}")
+   String upload(@PathParam("id") String id, @BinderParam(BindToStringPayload.class) String toPut);
 
-   Multimap<String, String> postPayloadAndReturnHeaders(String id, Payload payload);
+   @POST
+   @Path("/objects/{id}")
+   String post(@PathParam("id") String id, @BinderParam(BindToStringPayload.class) String toPut);
 
-   String postJson(String id, String toPut);
+   @POST
+   @Path("/objects/{id}")
+   String postAsInputStream(@PathParam("id") String id,
+         @BinderParam(BindToInputStreamPayload.class) String toPut);
 
-   String downloadFilter(String id, String header);
+   static class BindToInputStreamPayload extends BindToStringPayload {
+      @Override
+      public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
+         request.setPayload(Strings2.toInputStream(payload.toString()));
+         request.getPayload().getContentMetadata().setContentLength((long) payload.toString().getBytes().length);
+         return request;
+      }
+   }
 
-   String download(String id, String header);
+   @Singleton
+   static class ResponsePayload implements Function<HttpResponse, Multimap<String, String>> {
 
-   String downloadAndParse(String id);
+      public Multimap<String, String> apply(HttpResponse from) {
+         return from.getHeaders();
+      }
 
-   void putNothing(String id);
+   }
+
+   @POST
+   @Path("/objects/{id}")
+   @ResponseParser(ResponsePayload.class)
+   Multimap<String, String> postPayloadAndReturnHeaders(@PathParam("id") String id, Payload payload);
+
+   @POST
+   @Path("/objects/{id}")
+   @MapBinder(BindToJsonPayload.class)
+   String postJson(@PathParam("id") String id, @PayloadParam("key") String toPut);
+
+   @GET
+   @Path("/objects/{id}")
+   @RequestFilters(Filter.class)
+   String downloadFilter(@PathParam("id") String id, @HeaderParam("filterme") String header);
+
+   static class Filter implements HttpRequestFilter {
+      public HttpRequest filter(HttpRequest request) throws HttpException {
+         if (request.getHeaders().containsKey("filterme")) {
+            request = request.toBuilder().replaceHeader("test", "test").build();
+         }
+         return request;
+      }
+   }
+
+   @GET
+   @Path("/objects/{id}")
+   String download(@PathParam("id") String id, @HeaderParam("test") String header);
+
+   @GET
+   @Path("/objects/{id}")
+   @XMLResponseParser(BarHandler.class)
+   String downloadAndParse(@PathParam("id") String id);
+
+   public static class BarHandler extends ParseSax.HandlerWithResult<String> {
+
+      private String bar = null;
+      private StringBuilder currentText = new StringBuilder();
+
+      @Override
+      public void endElement(String uri, String name, String qName) {
+         if (qName.equals("bar")) {
+            bar = currentText.toString();
+         }
+         currentText = new StringBuilder();
+      }
+
+      @Override
+      public void characters(char ch[], int start, int length) {
+         currentText.append(ch, start, length);
+
+      }
+
+      @Override
+      public String getResult() {
+         return bar;
+      }
+
+   }
+
+   @PUT
+   @Path("/objects/{id}")
+   void putNothing(@PathParam("id") String id);
 
    @Provides
    StringBuilder newStringBuilder();

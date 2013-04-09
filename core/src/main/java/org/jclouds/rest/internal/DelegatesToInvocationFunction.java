@@ -39,7 +39,6 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Qualifier;
@@ -78,7 +77,7 @@ import com.google.inject.util.Types;
  *           The function that implements this dynamic proxy
  */
 @Beta
-public final class DelegatesToInvocationFunction<S, F extends Function<Invocation, Object>> implements
+public class DelegatesToInvocationFunction<S, F extends Function<Invocation, Object>> implements
       InvocationHandler {
 
    private static final Object[] NO_ARGS = {};
@@ -161,20 +160,18 @@ public final class DelegatesToInvocationFunction<S, F extends Function<Invocatio
       }
    }
 
-   private final Injector injector;
-   private final TypeToken<S> ownerType;
-   private final SetCaller setCaller;
-   private final Map<Class<?>, Class<?>> syncToAsync;
-   private final Function<InvocationSuccess, Optional<Object>> optionalConverter;
-   private final F methodInvoker;
+   protected final Injector injector;
+   protected final TypeToken<S> ownerType;
+   protected final SetCaller setCaller;
+   protected final Function<InvocationSuccess, Optional<Object>> optionalConverter;
+   protected final F methodInvoker;
 
    @Inject
-   DelegatesToInvocationFunction(Injector injector, SetCaller setCaller, Map<Class<?>, Class<?>> syncToAsync,
+   DelegatesToInvocationFunction(Injector injector, SetCaller setCaller, 
          Class<S> ownerType, Function<InvocationSuccess, Optional<Object>> optionalConverter, F methodInvoker) {
       this.injector = checkNotNull(injector, "injector");
       this.ownerType = typeToken(checkNotNull(ownerType, "ownerType"));
       this.setCaller = checkNotNull(setCaller, "setCaller");
-      this.syncToAsync = checkNotNull(syncToAsync, "syncToAsync");
       this.optionalConverter = checkNotNull(optionalConverter, "optionalConverter");
       this.methodInvoker = checkNotNull(methodInvoker, "methodInvoker");
    }
@@ -200,20 +197,12 @@ public final class DelegatesToInvocationFunction<S, F extends Function<Invocatio
    /**
     * attempts to guess the generic type params for the delegate's invocation function based on the supplied type
     */
-   private Key<?> methodInvokerFor(Class<?> returnType) {
+   protected Key<?> methodInvokerFor(Class<?> returnType) {
       switch (methodInvoker.getClass().getTypeParameters().length) {
       case 0:
          return Key.get(methodInvoker.getClass());
       case 1:
          return Key.get(Types.newParameterizedType(methodInvoker.getClass(), returnType));
-      case 2:
-         if (syncToAsync.containsValue(returnType))
-            return Key.get(Types.newParameterizedType(methodInvoker.getClass(), returnType, returnType));
-         return Key.get(Types.newParameterizedType(
-               methodInvoker.getClass(),
-               returnType,
-               checkNotNull(syncToAsync.get(returnType), "need async type of %s for %s", returnType,
-                     methodInvoker.getClass())));
       }
       throw new IllegalArgumentException(returnType + " has too many type parameters");
    }

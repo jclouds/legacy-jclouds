@@ -43,7 +43,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class RestModuleTest {
+public class MappedHttpInvocationModuleTest {
    static interface Sync {
       String get();
    }
@@ -54,7 +54,7 @@ public class RestModuleTest {
 
    public void testPutInvokablesWhenInterfacesMatch() {
       Cache<Invokable<?, ?>, Invokable<?, ?>> cache = CacheBuilder.newBuilder().build();
-      RestModule.putInvokables(Sync.class, Async.class, cache);
+      MappedHttpInvocationModule.putInvokables(Sync.class, Async.class, cache);
 
       assertEquals(cache.size(), 1);
 
@@ -78,7 +78,7 @@ public class RestModuleTest {
    @Test(expectedExceptions = IllegalArgumentException.class, expectedExceptionsMessageRegExp = ".* has different typed exceptions than target .*")
    public void testPutInvokablesWhenInterfacesMatchExceptExceptions() {
       Cache<Invokable<?, ?>, Invokable<?, ?>> cache = CacheBuilder.newBuilder().build();
-      RestModule.putInvokables(Sync.class, AsyncWithException.class, cache);
+      MappedHttpInvocationModule.putInvokables(Sync.class, AsyncWithException.class, cache);
    }
 
    private static interface AsyncWithMisnamedMethod {
@@ -88,7 +88,7 @@ public class RestModuleTest {
    @Test(expectedExceptions = IllegalArgumentException.class, expectedExceptionsMessageRegExp = "no such method .*")
    public void testPutInvokablesWhenTargetMethodNotFound() {
       Cache<Invokable<?, ?>, Invokable<?, ?>> cache = CacheBuilder.newBuilder().build();
-      RestModule.putInvokables(Sync.class, AsyncWithMisnamedMethod.class, cache);
+      MappedHttpInvocationModule.putInvokables(Sync.class, AsyncWithMisnamedMethod.class, cache);
    }
 
    static final Predicate<Entry<Invokable<?, ?>, Invokable<?, ?>>> isHttpInvokable = new Predicate<Map.Entry<Invokable<?, ?>, Invokable<?, ?>>>() {
@@ -99,7 +99,7 @@ public class RestModuleTest {
    };
 
    public void testSeedKnownSync2AsyncIncludesHttpClientByDefault() {
-      Map<Invokable<?, ?>, Invokable<?, ?>> cache = RestModule.seedKnownSync2AsyncInvokables(
+      Map<Invokable<?, ?>, Invokable<?, ?>> cache = MappedHttpInvocationModule.seedKnownSync2AsyncInvokables(
             ImmutableMap.<Class<?>, Class<?>> of()).asMap();
 
       assertEquals(cache.size(), 6);
@@ -107,7 +107,7 @@ public class RestModuleTest {
    }
 
    public void testSeedKnownSync2AsyncInvokablesInterfacesMatch() {
-      Map<Invokable<?, ?>, Invokable<?, ?>> cache = RestModule.seedKnownSync2AsyncInvokables(
+      Map<Invokable<?, ?>, Invokable<?, ?>> cache = MappedHttpInvocationModule.seedKnownSync2AsyncInvokables(
             ImmutableMap.<Class<?>, Class<?>> of(Sync.class, Async.class)).asMap();
 
       assertEquals(cache.size(), 7);

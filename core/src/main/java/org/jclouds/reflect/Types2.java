@@ -16,44 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.rest;
+package org.jclouds.reflect;
 
-import org.jclouds.apis.ApiMetadata;
+import static com.google.common.base.Preconditions.checkState;
+
+import java.lang.reflect.TypeVariable;
 
 import com.google.common.annotations.Beta;
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.reflect.TypeToken;
 
 /**
- * 
- * @author Adrian Cole
- * @since 1.5
- * 
- * @deprecated please use {@link HttpApiMetadata} as
- *             async interface will be removed in jclouds 1.7.
+ * @since 1.7
  */
-@Deprecated
 @Beta
-public interface RestApiMetadata extends ApiMetadata {
+public class Types2 {
 
-   public static interface Builder<T extends Builder<T>> extends ApiMetadata.Builder<T> {
-
-      /**
-       * @see ApiMetadata#getApi()
-       * @see ApiMetadata#getAsyncApi()
-       */
-      T javaApi(Class<?> api, Class<?> asyncApi);
+   /**
+    * Helpful when you are capturing the type inside a constructor.
+    * 
+    * @throws IllegalStateException
+    *            if the type is an instanceof {@link TypeVariable}
+    */
+   public static <T> TypeToken<T> checkBound(TypeToken<T> type) throws IllegalStateException {
+      checkState(!(type.getType() instanceof TypeVariable<?>),
+            "unbound type variable: %s, use ctor that explicitly assigns this", type);
+      return type;
    }
-
-   /**
-    * 
-    * @return the type of the api which blocks on all requests
-    */
-   Class<?> getApi();
-
-   /**
-    * 
-    * @return the type of the api, which is the same as {@link #getApi}, except
-    *         all methods return {@link ListenableFuture}
-    */
-   Class<?> getAsyncApi();
 }

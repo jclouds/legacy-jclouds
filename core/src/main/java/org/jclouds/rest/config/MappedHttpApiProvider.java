@@ -18,37 +18,43 @@
  */
 package org.jclouds.rest.config;
 
+
 import java.lang.reflect.Proxy;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.reflect.Invocation;
-import org.jclouds.rest.internal.DelegatesToInvocationFunction;
+import org.jclouds.rest.internal.DelegatesToPotentiallyMappedInvocationFunction;
 
 import com.google.common.base.Function;
+import com.google.common.cache.Cache;
+import com.google.common.reflect.Invokable;
 import com.google.inject.Provider;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author Adrian Cole
+ * @deprecated will be removed in jclouds 1.7; use {@link AnnotatedHttpApiProvider}
  */
+@Deprecated
 @Singleton
-public class AsyncHttpApiProvider<A> implements Provider<A> {
-   private final Class<? super A> asyncApiType;
-   private final DelegatesToInvocationFunction<A, Function<Invocation, Object>> httpInvoker;
+public class MappedHttpApiProvider<S, A> implements Provider<S> {
+   private final Class<? super S> apiType;
+   private final DelegatesToPotentiallyMappedInvocationFunction<S, Function<Invocation, Object>> httpInvoker;
 
    @Inject
-   private AsyncHttpApiProvider(DelegatesToInvocationFunction<A, Function<Invocation, Object>> httpInvoker,
-         TypeLiteral<A> asyncApiType) {
+   private MappedHttpApiProvider(Cache<Invokable<?, ?>, Invokable<?, ?>> invokables,
+         DelegatesToPotentiallyMappedInvocationFunction<S, Function<Invocation, Object>> httpInvoker, Class<S> apiType, Class<A> asyncApiType) {
       this.httpInvoker = httpInvoker;
-      this.asyncApiType = asyncApiType.getRawType();
+      this.apiType = apiType;
+      MappedHttpInvocationModule.putInvokables(apiType, asyncApiType, invokables);
    }
 
    @SuppressWarnings("unchecked")
    @Override
-   public A get() {
-      return (A) Proxy.newProxyInstance(asyncApiType.getClassLoader(), new Class<?>[] { asyncApiType }, httpInvoker);
+   @Singleton
+   public S get() {
+      return (S) Proxy.newProxyInstance(apiType.getClassLoader(), new Class<?>[] { apiType }, httpInvoker);
    }
 }

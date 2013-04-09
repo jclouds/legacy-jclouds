@@ -28,7 +28,7 @@ import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
-import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
+import static org.jclouds.rest.config.BinderUtils.bindMappedHttpApi;
 import static org.jclouds.util.Predicates2.retry;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_FENCEMODE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED;
@@ -206,8 +206,8 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
       bind(new TypeLiteral<Function<VAppTemplate, Envelope>>() {
       }).to(new TypeLiteral<ValidateVAppTemplateAndReturnEnvelopeOrThrowIllegalArgumentException>() {
       });
-      bindHttpApi(binder(), VCloudVersionsClient.class, VCloudVersionsAsyncClient.class);
-      bindHttpApi(binder(), VCloudLoginClient.class, VCloudLoginAsyncClient.class);
+      bindMappedHttpApi(binder(), VCloudVersionsClient.class, VCloudVersionsAsyncClient.class);
+      bindMappedHttpApi(binder(), VCloudLoginClient.class, VCloudLoginAsyncClient.class);
    }
 
    protected void bindCacheLoaders() {

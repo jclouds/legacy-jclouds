@@ -21,42 +21,35 @@ package org.jclouds.rest;
 import java.net.URI;
 
 import org.jclouds.rest.internal.BaseHttpApiMetadata;
-import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.annotations.Beta;
 
 /**
- * Useful in creating arbitrary clients.
+ * Useful in creating arbitrary http apis.
  * 
  * @author Adrian Cole
- * @deprecated please use {@link AnonymousHttpApiMetadata} as
- *             async interface will be removed in jclouds 1.7.
  */
 @Beta
-public class AnonymousRestApiMetadata extends BaseRestApiMetadata {
+public class AnonymousHttpApiMetadata<A> extends BaseHttpApiMetadata<A> {
 
-   public static AnonymousRestApiMetadata forClientMappedToAsyncClient(Class<?> client, Class<?> asyncClient) {
-      return new AnonymousRestApiMetadata(client, asyncClient);
+   public static <A> AnonymousHttpApiMetadata<A> forApi(Class<A> httpApi) {
+      return new Builder<A>(httpApi).build();
    }
 
    @Override
-   public Builder toBuilder() {
-      return new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
+   public Builder<A> toBuilder() {
+      return new Builder<A>(getApi()).fromApiMetadata(this);
    }
 
-   public AnonymousRestApiMetadata(Class<?> client, Class<?> asyncClient) {
-      super(new Builder(client, asyncClient));
-   }
-
-   protected AnonymousRestApiMetadata(Builder builder) {
+   private AnonymousHttpApiMetadata(Builder<A> builder) {
       super(builder);
    }
 
-   public static final class Builder extends BaseRestApiMetadata.Builder<Builder> {
+   private static final class Builder<A> extends BaseHttpApiMetadata.Builder<A, Builder<A>> {
 
-      public Builder(Class<?> client, Class<?> asyncClient) {
-         super(client, asyncClient);
-         id(client.getSimpleName())
+      private Builder(Class<A> api) {
+         super(api);
+         id(api.getSimpleName())
          .identityName("unused")
          .defaultIdentity("foo")
          .version("1")
@@ -64,12 +57,12 @@ public class AnonymousRestApiMetadata extends BaseRestApiMetadata {
       }
 
       @Override
-      public AnonymousRestApiMetadata build() {
-         return new AnonymousRestApiMetadata(this);
+      public AnonymousHttpApiMetadata<A> build() {
+         return new AnonymousHttpApiMetadata<A>(this);
       }
 
       @Override
-      protected Builder self() {
+      protected Builder<A> self() {
          return this;
       }
    }

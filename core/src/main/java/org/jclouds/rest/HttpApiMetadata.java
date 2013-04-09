@@ -21,39 +21,27 @@ package org.jclouds.rest;
 import org.jclouds.apis.ApiMetadata;
 
 import com.google.common.annotations.Beta;
-import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * 
  * @author Adrian Cole
- * @since 1.5
- * 
- * @deprecated please use {@link HttpApiMetadata} as
- *             async interface will be removed in jclouds 1.7.
+ * @since 1.6
+ * @see ConfiguresHttpApi
  */
-@Deprecated
 @Beta
-public interface RestApiMetadata extends ApiMetadata {
+public interface HttpApiMetadata<A> extends ApiMetadata {
 
-   public static interface Builder<T extends Builder<T>> extends ApiMetadata.Builder<T> {
+   public static interface Builder<A, T extends Builder<A, T>> extends ApiMetadata.Builder<T> {
 
       /**
        * @see ApiMetadata#getApi()
-       * @see ApiMetadata#getAsyncApi()
        */
-      T javaApi(Class<?> api, Class<?> asyncApi);
+      T javaApi(Class<A> api);
    }
 
    /**
     * 
-    * @return the type of the api which blocks on all requests
+    * @return the type of the api which has http annotations on its methods.
     */
-   Class<?> getApi();
-
-   /**
-    * 
-    * @return the type of the api, which is the same as {@link #getApi}, except
-    *         all methods return {@link ListenableFuture}
-    */
-   Class<?> getAsyncApi();
+   Class<A> getApi();
 }
