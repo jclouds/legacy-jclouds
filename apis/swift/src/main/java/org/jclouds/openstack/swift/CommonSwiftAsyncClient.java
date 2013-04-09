@@ -20,6 +20,7 @@ package org.jclouds.openstack.swift;
 
 import static com.google.common.net.HttpHeaders.EXPECT;
 
+import java.io.Closeable;
 import java.util.Map;
 import java.util.Set;
 
@@ -79,7 +80,7 @@ import com.google.inject.Provides;
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />
  * @author Adrian Cole
  */
-public interface CommonSwiftAsyncClient {
+public interface CommonSwiftAsyncClient extends Closeable {
    @Provides
    SwiftObject newSwiftObject();
 

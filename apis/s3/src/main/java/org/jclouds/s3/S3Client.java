@@ -18,6 +18,7 @@
  */
 package org.jclouds.s3;
 
+import java.io.Closeable;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -49,7 +50,7 @@ import com.google.inject.Provides;
  * @author James Murty
  * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/RESTAPI.html" />
  */
-public interface S3Client {
+public interface S3Client extends Closeable {
 
    /**
     * Creates a default implementation of S3Object

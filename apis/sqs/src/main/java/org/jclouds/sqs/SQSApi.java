@@ -18,6 +18,7 @@
  */
 package org.jclouds.sqs;
 
+import java.io.Closeable;
 import java.net.URI;
 import java.util.Set;
 import org.jclouds.javax.annotation.Nullable;
@@ -40,7 +41,7 @@ import com.google.inject.Provides;
  * @see SQSAsyncApi
  */
 @Beta
-public interface SQSApi {
+public interface SQSApi extends Closeable {
    
    /**
     * 

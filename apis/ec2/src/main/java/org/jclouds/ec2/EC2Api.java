@@ -18,6 +18,7 @@
  */
 package org.jclouds.ec2;
 
+import java.io.Closeable;
 import java.util.Set;
 import org.jclouds.ec2.features.SubnetApi;
 import org.jclouds.ec2.features.TagApi;
@@ -50,7 +51,7 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  * @see EC2AsyncApi
  */
-public interface EC2Api {
+public interface EC2Api extends Closeable {
    /**
     * 
     * @return the Region codes configured

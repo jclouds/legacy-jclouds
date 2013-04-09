@@ -45,6 +45,7 @@ import static org.jclouds.Constants.PROPERTY_PROVIDER;
 import static org.jclouds.reflect.Reflection2.typeToken;
 import static org.jclouds.util.Throwables2.propagateAuthorizationOrOriginalException;
 
+import java.io.Closeable;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -609,6 +610,20 @@ public class ContextBuilder {
          throw new IllegalArgumentException(String.format("api %s not assignable from %s; context: %s", apiMetadata,
                   contextType, apiMetadata.getContext()));
       return (C) buildInjector().getInstance(Key.get(TypeLiteral.get(returnType.getType())));
+   }
+
+   /**
+    * This will return the top-level interface for the api or provider.
+    * 
+    * Ex. 
+    * <pre>
+    * api = ContextBuilder.newBuilder("openstack-nova")
+    *                     ... 
+    *                     .buildApi(NovaApi.class);
+    *</pre>
+    */
+   public <A extends Closeable> A buildApi(Class<A> api) {
+      return buildInjector().getInstance(api);
    }
 
    public ApiMetadata getApiMetadata() {

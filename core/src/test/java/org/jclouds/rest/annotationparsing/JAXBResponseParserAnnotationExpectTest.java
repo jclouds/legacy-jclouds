@@ -22,6 +22,8 @@ import static org.jclouds.providers.AnonymousProviderMetadata.forClientMappedToA
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.io.Closeable;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -68,7 +70,7 @@ public class JAXBResponseParserAnnotationExpectTest extends
 
    }
 
-   public interface TestJAXBApi {
+   public interface TestJAXBApi extends Closeable {
       public TestJAXBDomain jaxbGetWithAnnotation();
 
       public Object jaxbGetWithAnnotationAndCustomClass();
@@ -78,7 +80,7 @@ public class JAXBResponseParserAnnotationExpectTest extends
       public String jaxbGetWithTransformer();
    }
 
-   public interface TestJAXBAsyncApi {
+   public interface TestJAXBAsyncApi extends Closeable {
       @GET
       @Path("/jaxb/annotation")
       @JAXBResponseParser
