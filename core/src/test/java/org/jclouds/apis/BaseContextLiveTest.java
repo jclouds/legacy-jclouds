@@ -52,6 +52,7 @@ public abstract class BaseContextLiveTest<C extends Context> {
    protected String identity;
    protected String credential;
    protected String endpoint;
+   protected String apiVersion;
 
    protected Properties setupProperties() {
       Properties overrides = new Properties();
@@ -60,7 +61,7 @@ public abstract class BaseContextLiveTest<C extends Context> {
       identity = setIfTestSystemPropertyPresent(overrides,  provider + ".identity");
       credential = setIfTestSystemPropertyPresent(overrides,  provider + ".credential");
       endpoint = setIfTestSystemPropertyPresent(overrides,  provider + ".endpoint");
-      setIfTestSystemPropertyPresent(overrides,  provider + ".api-version");
+      apiVersion = setIfTestSystemPropertyPresent(overrides,  provider + ".api-version");
       setIfTestSystemPropertyPresent(overrides,  provider + ".build-version");
       return overrides;
    }
