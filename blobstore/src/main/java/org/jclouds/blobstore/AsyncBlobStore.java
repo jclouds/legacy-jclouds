@@ -37,8 +37,11 @@ import com.google.common.util.concurrent.ListenableFuture;
 /**
  * Provides hooks needed to run a blob store asynchronously
  * 
- * @see AsyncBlobStore
+ * @see BlobStore
+ * @deprecated will be removed in jclouds 1.7, as async interfaces are no longer
+ *             supported. Please use {@link org.jclouds.blobstore.BlobStore}
  */
+@Deprecated
 public interface AsyncBlobStore {
    /**
     * @see BlobStore#getContext

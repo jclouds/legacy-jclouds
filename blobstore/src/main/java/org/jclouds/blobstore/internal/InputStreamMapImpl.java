@@ -61,7 +61,9 @@ import com.google.common.base.Throwables;
  * @see BlobStore
  * @see InputStreamMap
  * @see BaseBlobMap
+ * @deprecated will be removed in jclouds 1.7. Please use {@link BlobStore}
  */
+@Deprecated
 public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements InputStreamMap {
 
    @Inject
