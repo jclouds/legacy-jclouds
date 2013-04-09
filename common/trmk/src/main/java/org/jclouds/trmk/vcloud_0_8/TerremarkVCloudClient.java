@@ -18,6 +18,7 @@
  */
 package org.jclouds.trmk.vcloud_0_8;
 
+import java.io.Closeable;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
@@ -55,7 +56,7 @@ import com.google.inject.Provides;
  *      />
  * @author Adrian Cole
  */
-public interface TerremarkVCloudClient {
+public interface TerremarkVCloudClient extends Closeable {
    Catalog getCatalog(URI catalogId);
 
    /**

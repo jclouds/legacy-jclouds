@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
 
@@ -47,6 +48,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.http.options.GetOptions;
+import org.jclouds.lifecycle.Closer;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
@@ -69,13 +71,14 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
    private final ListOptionsToBlobStoreListOptions container2ContainerListOptions;
    private final ResourceMetadataListToDirectoryEntryList resource2ObjectList;
    private final ListeningExecutorService userExecutor;
+   private final Closer closer;
 
    @Inject
    private StubAtmosAsyncClient(LocalAsyncBlobStore blobStore, AtmosObject.Factory objectProvider,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, ObjectToBlob object2Blob, BlobToObject blob2Object,
             BlobMetadataToObject blob2ObjectInfo, ListOptionsToBlobStoreListOptions container2ContainerListOptions,
             @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
-            ResourceMetadataListToDirectoryEntryList resource2ContainerList) {
+            ResourceMetadataListToDirectoryEntryList resource2ContainerList, Closer closer) {
       this.blobStore = blobStore;
       this.objectProvider = objectProvider;
       this.httpGetOptionsConverter = httpGetOptionsConverter;
@@ -86,6 +89,7 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
                "container2ContainerListOptions");
       this.resource2ObjectList = checkNotNull(resource2ContainerList, "resource2ContainerList");
       this.userExecutor = userExecutor;
+      this.closer = checkNotNull(closer, "closer");
    }
 
    @Override
@@ -245,4 +249,8 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
       throw new UnsupportedOperationException();
    }
 
+   @Override
+   public void close() throws IOException {
+      closer.close();
+   }
 }

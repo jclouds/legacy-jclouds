@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud;
 
+import java.io.Closeable;
 import java.net.URI;
 import java.util.SortedMap;
 
@@ -36,7 +37,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
  * @author Adrian Cole
  */
-public interface VCloudVersionsAsyncClient {
+public interface VCloudVersionsAsyncClient extends Closeable {
 
    /**
     * Retrieve information for supported versions

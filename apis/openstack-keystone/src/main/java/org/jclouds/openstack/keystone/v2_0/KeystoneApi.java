@@ -18,6 +18,8 @@
  */
 package org.jclouds.openstack.keystone.v2_0;
 
+import java.io.Closeable;
+
 import org.jclouds.openstack.keystone.v2_0.domain.ApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.features.ServiceApi;
 import org.jclouds.openstack.keystone.v2_0.features.TenantApi;
@@ -36,7 +38,7 @@ import com.google.common.base.Optional;
  * @see <a href="http://keystone.openstack.org/" />
  * @see KeystoneAsyncApi
  */
-public interface KeystoneApi {
+public interface KeystoneApi extends Closeable {
 
    /**
     * Discover API version information, links to documentation (PDF, HTML, WADL), and supported media types

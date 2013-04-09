@@ -18,6 +18,8 @@
  */
 package org.jclouds.http;
 
+import java.io.Closeable;
+
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.io.Payload;
 
@@ -29,7 +31,7 @@ import com.google.inject.Provides;
  * 
  * @author Adrian Cole
  */
-public interface IntegrationTestClient {
+public interface IntegrationTestClient extends Closeable {
    String rowdy(String path);
 
    boolean exists(String path);

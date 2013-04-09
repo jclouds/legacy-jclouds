@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static com.google.common.util.concurrent.Futures.transform;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +41,7 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.http.options.GetOptions;
+import org.jclouds.lifecycle.Closer;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.SwiftAsyncClient;
 import org.jclouds.openstack.swift.blobstore.functions.BlobToObject;
@@ -77,6 +79,7 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
    private final ListContainerOptionsToBlobStoreListContainerOptions container2ContainerListOptions;
    private final ResourceToObjectList resource2ObjectList;
    private final ListeningExecutorService userExecutor;
+   private final Closer closer;
 
    @Inject
    private StubSwiftAsyncClient(@Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
@@ -84,7 +87,7 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
             SwiftObject.Factory objectProvider, HttpGetOptionsListToGetOptions httpGetOptionsConverter,
             ObjectToBlob object2Blob, BlobToObject blob2Object, ResourceToObjectInfo blob2ObjectInfo,
             ListContainerOptionsToBlobStoreListContainerOptions container2ContainerListOptions,
-            ResourceToObjectList resource2ContainerList) {
+            ResourceToObjectList resource2ContainerList, Closer closer) {
       this.userExecutor = userExecutor;
       this.blobStore = blobStore;
       this.objectProvider = objectProvider;
@@ -95,6 +98,7 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
       this.container2ContainerListOptions = checkNotNull(container2ContainerListOptions,
                "container2ContainerListOptions");
       this.resource2ObjectList = checkNotNull(resource2ContainerList, "resource2ContainerList");
+      this.closer = checkNotNull(closer, "closer");
    }
 
    public ListenableFuture<Boolean> containerExists(final String container) {
@@ -216,5 +220,10 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
    @Override
    public ListenableFuture<Boolean> objectExists(String bucketName, String key) {
       return blobStore.blobExists(bucketName, key);
+   }
+
+   @Override
+   public void close() throws IOException {
+      closer.close();
    }
 }

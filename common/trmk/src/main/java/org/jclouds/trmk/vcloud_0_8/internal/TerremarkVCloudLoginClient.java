@@ -18,9 +18,11 @@
  */
 package org.jclouds.trmk.vcloud_0_8.internal;
 
+import java.io.Closeable;
+
 import org.jclouds.trmk.vcloud_0_8.domain.VCloudSession;
 
-public interface TerremarkVCloudLoginClient {
+public interface TerremarkVCloudLoginClient extends Closeable {
 
    VCloudSession login();
 }

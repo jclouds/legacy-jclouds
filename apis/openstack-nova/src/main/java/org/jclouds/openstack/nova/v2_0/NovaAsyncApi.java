@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v2_0;
 
+import java.io.Closeable;
 import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
@@ -57,7 +58,7 @@ import com.google.inject.Provides;
  *      />
  * @author Adrian Cole
  */
-public interface NovaAsyncApi {
+public interface NovaAsyncApi extends Closeable {
 
    /**
     * 
