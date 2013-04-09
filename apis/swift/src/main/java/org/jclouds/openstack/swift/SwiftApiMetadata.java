@@ -32,7 +32,6 @@ import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
 import org.jclouds.openstack.swift.blobstore.config.TemporaryUrlExtensionModule.SwiftTemporaryUrlExtensionModule;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule.StorageEndpointModule;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
@@ -46,7 +45,12 @@ import com.google.inject.Module;
  */
 public class SwiftApiMetadata extends BaseRestApiMetadata {
 
-   public static final TypeToken<RestContext<? extends SwiftClient, ? extends SwiftAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<? extends SwiftClient, ? extends SwiftAsyncClient>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(SwiftClient.class)} as
+    *             {@link SwiftAsyncClient} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<? extends SwiftClient, ? extends SwiftAsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<? extends SwiftClient, ? extends SwiftAsyncClient>>() {
       private static final long serialVersionUID = 1L;
    };
 
@@ -75,6 +79,7 @@ public class SwiftApiMetadata extends BaseRestApiMetadata {
    }
 
    public static abstract class Builder<T extends Builder<T>> extends BaseRestApiMetadata.Builder<T> {
+      @SuppressWarnings("deprecation")
       protected Builder() {
          this(SwiftClient.class, SwiftAsyncClient.class);
       }

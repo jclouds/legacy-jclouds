@@ -38,11 +38,14 @@ import org.jclouds.rest.annotations.Delegate;
  * <p/>
  * 
  * @author Adrian Cole
- * @see CloudStackDomainClient
+ * @see CloudStackGlobalClient
  * @see <a href=
  *      "http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_Global_Admin.html"
  *      />
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(CloudStackGlobalClient.class)} as
+ *             {@link CloudStackGlobalAsyncClient} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 public interface CloudStackGlobalAsyncClient extends CloudStackDomainAsyncClient {
 
    /**

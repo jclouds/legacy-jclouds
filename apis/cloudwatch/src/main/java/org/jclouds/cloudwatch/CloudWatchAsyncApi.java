@@ -38,7 +38,10 @@ import com.google.inject.Provides;
  *      href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference"
  *      />
  * @author Adrian Cole
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(CloudWatchApi.class)} as
+ *             {@link CloudWatchAsyncApi} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 public interface CloudWatchAsyncApi extends Closeable {
    /**
     * 

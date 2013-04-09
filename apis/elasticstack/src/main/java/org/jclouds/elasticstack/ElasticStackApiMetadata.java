@@ -28,7 +28,6 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.elasticstack.compute.config.ElasticStackComputeServiceContextModule;
 import org.jclouds.elasticstack.config.ElasticStackRestClientModule;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
@@ -42,7 +41,12 @@ import com.google.inject.Module;
  */
 public class ElasticStackApiMetadata extends BaseRestApiMetadata {
 
-   public static final TypeToken<RestContext<ElasticStackClient, ElasticStackAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<ElasticStackClient, ElasticStackAsyncClient>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(ElasticStackClient.class)} as
+    *             {@link ElasticStackAsyncClient} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<ElasticStackClient, ElasticStackAsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<ElasticStackClient, ElasticStackAsyncClient>>() {
       private static final long serialVersionUID = 1L;
    };
    
@@ -71,6 +75,7 @@ public class ElasticStackApiMetadata extends BaseRestApiMetadata {
 
    public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
+      @SuppressWarnings("deprecation")
       protected Builder() {
          super(ElasticStackClient.class, ElasticStackAsyncClient.class);
          id("elasticstack")

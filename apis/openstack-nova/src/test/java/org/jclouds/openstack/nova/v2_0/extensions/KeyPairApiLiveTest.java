@@ -36,8 +36,8 @@ public class KeyPairApiLiveTest extends BaseNovaApiLiveTest {
 
    public void testListKeyPairs() throws Exception {
       for (String zoneId : api.getConfiguredZones()) {
-         KeyPairApi api = this.api.getKeyPairExtensionForZone(zoneId).get();
-         FluentIterable<? extends KeyPair> keyPairsList = api.list();
+         KeyPairApi keyPairApi = api.getKeyPairExtensionForZone(zoneId).get();
+         FluentIterable<? extends KeyPair> keyPairsList = keyPairApi.list();
          assertNotNull(keyPairsList);
       }
    }
@@ -45,14 +45,14 @@ public class KeyPairApiLiveTest extends BaseNovaApiLiveTest {
    public void testCreateAndDeleteKeyPair() throws Exception {
       final String KEYPAIR_NAME = "testkp";
       for (String zoneId : api.getConfiguredZones()) {
-         KeyPairApi api = this.api.getKeyPairExtensionForZone(zoneId).get();
+         KeyPairApi keyPairApi = api.getKeyPairExtensionForZone(zoneId).get();
          KeyPair keyPair = null;
          try {
-            keyPair = api.create(KEYPAIR_NAME);
+            keyPair = keyPairApi.create(KEYPAIR_NAME);
             assertNotNull(keyPair);
          } finally {
             if (keyPair != null) {
-               api.delete(KEYPAIR_NAME);
+               keyPairApi.delete(KEYPAIR_NAME);
             }
          }
       }
@@ -63,14 +63,14 @@ public class KeyPairApiLiveTest extends BaseNovaApiLiveTest {
       final String PUBLIC_KEY = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCrrBREFxz3002l1HuXz0+UOdJQ/mOYD5DiJwwB/TOybwIKQJPOxJWA9gBoo4k9dthTKBTaEYbzrll7iZcp59E80S6mNiAr3mUgi+x5Y8uyXeJ2Ws+h6peVyFVUu9epkwpcTd1GVfdcVWsTajwDz9+lxCDhl0RZKDFoT0scTxbj/w== nova@nv-aw2az2-api0002";
 
       for (String zoneId : api.getConfiguredZones()) {
-         KeyPairApi api = this.api.getKeyPairExtensionForZone(zoneId).get();
+         KeyPairApi keyPairApi = api.getKeyPairExtensionForZone(zoneId).get();
          KeyPair keyPair = null;
          try {
-            keyPair = api.createWithPublicKey(KEYPAIR_NAME, PUBLIC_KEY);
+            keyPair = keyPairApi.createWithPublicKey(KEYPAIR_NAME, PUBLIC_KEY);
             assertNotNull(keyPair);
          } finally {
             if (keyPair != null) {
-               api.delete(KEYPAIR_NAME);
+               keyPairApi.delete(KEYPAIR_NAME);
             }
          }
       }

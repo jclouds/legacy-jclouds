@@ -25,7 +25,6 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.rest.RestContext;
 import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudApiMetadata;
 import org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceContextModule;
 import org.jclouds.trmk.vcloudexpress.config.TerremarkVCloudExpressRestClientModule;
@@ -41,7 +40,12 @@ import com.google.inject.Module;
  */
 public class TerremarkVCloudExpressApiMetadata extends TerremarkVCloudApiMetadata {
 
-   public static final TypeToken<RestContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(TerremarkVCloudExpressClient.class)} as
+    *             {@link TerremarkVCloudExpressAsyncClient} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient>>() {
       private static final long serialVersionUID = 1L;
    };
    
@@ -67,6 +71,7 @@ public class TerremarkVCloudExpressApiMetadata extends TerremarkVCloudApiMetadat
 
    public static class Builder extends TerremarkVCloudApiMetadata.Builder<Builder> {
 
+      @SuppressWarnings("deprecation")
       protected Builder() {
          super(TerremarkVCloudExpressClient.class, TerremarkVCloudExpressAsyncClient.class);
          id("trmk-vcloudexpress")

@@ -45,7 +45,10 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adam Lowe
  * @see <a href="http://keystone.openstack.org/" />
  * @see KeystoneApi
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(KeystoneApi.class)} as
+ *             {@link KeystoneAsyncApi} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 public interface KeystoneAsyncApi extends Closeable {
 
    /**

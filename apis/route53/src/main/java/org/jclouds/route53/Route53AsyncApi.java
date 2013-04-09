@@ -46,7 +46,10 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://docs.amazonwebservices.com/Route53/latest/APIReference"
  *      />
  * @author Adrian Cole
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(Route53Api.class)} as
+ *             {@link Route53AsyncApi} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 @RequestFilters(RestAuthentication.class)
 @VirtualHost
 @Path("/{jclouds.api-version}")

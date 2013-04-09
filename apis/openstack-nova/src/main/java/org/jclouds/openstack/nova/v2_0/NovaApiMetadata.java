@@ -38,7 +38,6 @@ import org.jclouds.openstack.nova.v2_0.compute.config.NovaComputeServiceContextM
 import org.jclouds.openstack.nova.v2_0.config.NovaParserModule;
 import org.jclouds.openstack.nova.v2_0.config.NovaRestClientModule;
 import org.jclouds.openstack.v2_0.ServiceType;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
@@ -52,7 +51,12 @@ import com.google.inject.Module;
  */
 public class NovaApiMetadata extends BaseRestApiMetadata {
 
-   public static final TypeToken<RestContext<NovaApi, NovaAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<NovaApi, NovaAsyncApi>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(NovaApi.class)} as
+    *             {@link NovaAsyncApi} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<NovaApi, NovaAsyncApi>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<NovaApi, NovaAsyncApi>>() {
       private static final long serialVersionUID = 1L;
    };
 
@@ -88,6 +92,7 @@ public class NovaApiMetadata extends BaseRestApiMetadata {
 
    public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
+      @SuppressWarnings("deprecation")
       protected Builder() {
          super(NovaApi.class, NovaAsyncApi.class);
           id("openstack-nova")

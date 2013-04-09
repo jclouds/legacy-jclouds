@@ -33,7 +33,6 @@ import org.jclouds.openstack.keystone.v2_0.config.KeystoneRestClientModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneRestClientModule.KeystoneAdminURLModule;
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityAuthenticationModule;
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityCredentialTypes;
-import org.jclouds.rest.RestContext;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
@@ -46,7 +45,12 @@ import com.google.inject.Module;
  */
 public class CloudIdentityApiMetadata extends KeystoneApiMetadata {
    
-   public static final TypeToken<RestContext<KeystoneApi, KeystoneAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<KeystoneApi, KeystoneAsyncApi>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(KeystoneApi.class)} as
+    *             {@link KeystoneAsyncApi} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<KeystoneApi, KeystoneAsyncApi>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<KeystoneApi, KeystoneAsyncApi>>() {
       private static final long serialVersionUID = 1L;
    };
 
@@ -70,6 +74,7 @@ public class CloudIdentityApiMetadata extends KeystoneApiMetadata {
    }
 
    public static class Builder extends KeystoneApiMetadata.Builder<Builder> {
+      @SuppressWarnings("deprecation")
       protected Builder(){
          super(KeystoneApi.class, KeystoneAsyncApi.class);
          id("rackspace-cloudidentity")

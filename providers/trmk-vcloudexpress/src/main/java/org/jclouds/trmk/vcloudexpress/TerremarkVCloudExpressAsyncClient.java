@@ -63,7 +63,10 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
  * @author Adrian Cole
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(TerremarkVCloudExpressClient.class)} as
+ *             {@link TerremarkVCloudExpressAsyncClient} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 @RequestFilters(SetVCloudTokenCookie.class)
 public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncClient {
    /**

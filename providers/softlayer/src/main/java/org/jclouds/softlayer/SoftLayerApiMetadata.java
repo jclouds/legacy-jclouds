@@ -25,7 +25,6 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 import org.jclouds.softlayer.compute.config.SoftLayerComputeServiceContextModule;
 import org.jclouds.softlayer.config.SoftLayerRestClientModule;
@@ -41,7 +40,12 @@ import com.google.inject.Module;
  */
 public class SoftLayerApiMetadata extends BaseRestApiMetadata {
 
-   public static final TypeToken<RestContext<SoftLayerClient, SoftLayerAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<SoftLayerClient, SoftLayerAsyncClient>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(SoftLayerClient.class)} as
+    *             {@link SoftLayerAsyncClient} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<SoftLayerClient, SoftLayerAsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<SoftLayerClient, SoftLayerAsyncClient>>() {
       private static final long serialVersionUID = 1L;
    };
    
@@ -67,6 +71,7 @@ public class SoftLayerApiMetadata extends BaseRestApiMetadata {
 
    public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
+      @SuppressWarnings("deprecation")
       protected Builder() {
          super(SoftLayerClient.class, SoftLayerAsyncClient.class);
          id("softlayer")

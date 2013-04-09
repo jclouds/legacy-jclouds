@@ -26,7 +26,10 @@ import org.jclouds.rest.annotations.Delegate;
  * Provides asynchronous access to EC2 services.
  * 
  * @author Adam Lowe
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(NovaEC2Client.class)} as
+ *             {@link NovaEC2AsyncClient} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 public interface NovaEC2AsyncClient extends EC2AsyncClient {
    /**
     * {@inheritDoc}

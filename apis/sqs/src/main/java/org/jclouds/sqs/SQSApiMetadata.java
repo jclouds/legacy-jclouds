@@ -27,7 +27,6 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 import org.jclouds.sqs.config.SQSRestClientModule;
 
@@ -42,7 +41,12 @@ import com.google.inject.Module;
  */
 public class SQSApiMetadata extends BaseRestApiMetadata {
    
-   public static final TypeToken<RestContext<SQSApi, SQSAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<SQSApi, SQSAsyncApi>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(SQSApi.class)} as
+    *             {@link SQSAsyncApi} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<SQSApi, SQSAsyncApi>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<SQSApi, SQSAsyncApi>>() {
       private static final long serialVersionUID = 1L;
    };
 
@@ -51,6 +55,7 @@ public class SQSApiMetadata extends BaseRestApiMetadata {
       return new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
    }
 
+   @SuppressWarnings("deprecation")
    public SQSApiMetadata() {
       this(new Builder(SQSApi.class, SQSAsyncApi.class));
    }

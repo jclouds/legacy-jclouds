@@ -87,9 +87,9 @@ public class BulkMessageApiLiveTest extends BaseSQSApiLiveTest {
    @Test(dependsOnMethods = "testSendMessages")
    public void testChangeMessageVisibility() {
       for (URI queue : queues) {
-         MessageApi api = this.api.getMessageApiForQueue(queue);
+         MessageApi messageApi = api.getMessageApiForQueue(queue);
          
-         Set<Message> messages = collectMessages(api);
+         Set<Message> messages = collectMessages(messageApi);
 
          receiptHandles = Iterables.transform(messages, new Function<Message, String>() {
             @Override
@@ -99,14 +99,14 @@ public class BulkMessageApiLiveTest extends BaseSQSApiLiveTest {
          });
 
          // hidden message, so we can't see it
-         assertNull(api.receive());
+         assertNull(messageApi.receive());
 
          // this should unhide it
-         BatchResult<String> acks = api.changeVisibility(receiptHandles, 0);
+         BatchResult<String> acks = messageApi.changeVisibility(receiptHandles, 0);
          assertEquals(acks.size(), messages.size(), "error changing visibility " + acks);
 
          // so we can see it again
-         assertEquals(collectMessages(api).size(), messages.size());
+         assertEquals(collectMessages(messageApi).size(), messages.size());
       }
    }
 

@@ -22,11 +22,8 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 import org.jclouds.ultradns.ws.config.UltraDNSWSRestClientModule;
-
-import com.google.common.reflect.TypeToken;
 
 /**
  * Implementation of {@link ApiMetadata} for Neustar's UltraDNSWS api.
@@ -34,10 +31,6 @@ import com.google.common.reflect.TypeToken;
  * @author Adrian Cole
  */
 public class UltraDNSWSApiMetadata extends BaseRestApiMetadata {
-
-   public static final TypeToken<RestContext<UltraDNSWSApi, UltraDNSWSAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<UltraDNSWSApi, UltraDNSWSAsyncApi>>() {
-      private static final long serialVersionUID = 1L;
-   };
 
    @Override
    public Builder toBuilder() {

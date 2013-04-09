@@ -53,12 +53,12 @@ public class DomainApiLiveTest extends BaseGleSYSApiLiveTest {
       domainApi = api.getDomainApi();
       domainCounter = retry(new Predicate<Integer>() {
          public boolean apply(Integer value) {
-            return domainApi.list().size() == value;
+            return domainApi.list().size() == value.intValue();
          }
       }, 30, 1, SECONDS);
       recordCounter = retry(new Predicate<Integer>() {
          public boolean apply(Integer value) {
-            return domainApi.listRecords(testDomain).size() == value;
+            return domainApi.listRecords(testDomain).size() == value.intValue();
          }
       }, 30, 1, SECONDS);
 

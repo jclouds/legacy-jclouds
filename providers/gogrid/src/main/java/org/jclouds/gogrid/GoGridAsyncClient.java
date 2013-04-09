@@ -29,9 +29,11 @@ import org.jclouds.rest.annotations.Delegate;
 
 /**
  * @author Oleksiy Yarmula
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(GoGridClient.class)} as
+ *             {@link GoGridAsyncClient} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 public interface GoGridAsyncClient extends Closeable {
-   public static final String VERSION = "1.5";
 
    /**
     * @see GoGridClient#getServerServices()
