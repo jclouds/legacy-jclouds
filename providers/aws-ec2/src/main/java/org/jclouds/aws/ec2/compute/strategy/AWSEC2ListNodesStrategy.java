@@ -22,16 +22,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.notNull;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.toArray;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.ec2.AWSEC2AsyncClient;
+import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
 import org.jclouds.aws.ec2.functions.SpotInstanceRequestToAWSRunningInstance;
@@ -42,6 +44,8 @@ import org.jclouds.location.Region;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Inject;
@@ -53,11 +57,11 @@ import com.google.inject.Inject;
 @Singleton
 public class AWSEC2ListNodesStrategy extends EC2ListNodesStrategy {
 
-   protected final AWSEC2AsyncClient client;
+   protected final AWSEC2Client client;
    protected final SpotInstanceRequestToAWSRunningInstance spotConverter;
 
    @Inject
-   protected AWSEC2ListNodesStrategy(AWSEC2AsyncClient client, @Region Supplier<Set<String>> regions,
+   protected AWSEC2ListNodesStrategy(AWSEC2Client client, @Region Supplier<Set<String>> regions,
             Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
             @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
             SpotInstanceRequestToAWSRunningInstance spotConverter) {
@@ -68,15 +72,42 @@ public class AWSEC2ListNodesStrategy extends EC2ListNodesStrategy {
 
    @Override
    protected Iterable<? extends RunningInstance> pollRunningInstances() {
-      Iterable<? extends AWSRunningInstance> spots = filter(transform(concat(transformParallel(regions.get(),
-               new Function<String, ListenableFuture<? extends Set<SpotInstanceRequest>>>() {
-                  @Override
-                  public ListenableFuture<? extends Set<SpotInstanceRequest>> apply(String from) {
-                     return client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(from);
-                  }
-
-               }, userExecutor, maxTime, logger, "reservations")), spotConverter), notNull());
+      Iterable<? extends AWSRunningInstance> spots = filter(transform(concat(transform(regions.get(),
+                                                                                       allSpotInstancesInRegion())),
+                                                                      spotConverter), notNull());
 
       return concat(super.pollRunningInstances(), spots);
    }
+
+   @Override
+   protected Iterable<? extends RunningInstance> pollRunningInstancesByRegionsAndIds(final Multimap<String,String> idsByRegions) {
+      Iterable<? extends AWSRunningInstance> spots = filter(transform(concat(transform(idsByRegions.keySet(),
+                                                                                       spotInstancesByIdInRegion(idsByRegions))),
+
+                                                                      spotConverter), notNull());
+
+      return concat(super.pollRunningInstancesByRegionsAndIds(idsByRegions), spots);
+   }
+
+   protected Function<String, Set<SpotInstanceRequest>> allSpotInstancesInRegion() {
+      return new Function<String, Set<SpotInstanceRequest>>() {
+
+         @Override
+         public Set<SpotInstanceRequest> apply(String from) {
+            return client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(from);
+         }
+      };
+   }
+
+   protected Function<String, Set<SpotInstanceRequest>> spotInstancesByIdInRegion(final Multimap<String,String> idsByRegions) {
+      return new Function<String, Set<SpotInstanceRequest>>() {
+
+         @Override
+         public Set<SpotInstanceRequest> apply(String from) {
+            return client.getSpotInstanceServices()
+               .describeSpotInstanceRequestsInRegion(from, toArray(idsByRegions.get(from), String.class));
+         }
+      };
+   }
+
 }

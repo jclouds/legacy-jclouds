@@ -58,7 +58,13 @@ public class NovaComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       super.testListNodes();
    }
 
-   @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails" })
+   @Test(enabled = true, dependsOnMethods = "testSuspendResume")
+   @Override
+   public void testListNodesByIds() throws Exception {
+      super.testListNodesByIds();
+   }
+
+   @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails", "testListNodesByIds" })
    @Override
    public void testDestroyNodes() {
       super.testDestroyNodes();

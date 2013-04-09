@@ -146,4 +146,5 @@ public interface ComputeServiceAdapter<N, H, I, L> {
 
    Iterable<N> listNodes();
 
+   Iterable<N> listNodesByIds(Iterable<String> ids);
 }

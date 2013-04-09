@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.compute.strategy;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.Iterables.contains;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.get;
 import static org.jclouds.cloudstack.options.DeployVirtualMachineOptions.Builder.displayName;
@@ -69,6 +70,7 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.primitives.Ints;
@@ -232,6 +234,17 @@ public class CloudStackComputeServiceAdapter implements
    @Override
    public Iterable<VirtualMachine> listNodes() {
       return client.getVirtualMachineClient().listVirtualMachines();
+   }
+
+   @Override
+   public Iterable<VirtualMachine> listNodesByIds(final Iterable<String> ids) {
+      return filter(listNodes(), new Predicate<VirtualMachine>() {
+
+            @Override
+            public boolean apply(VirtualMachine vm) {
+               return contains(ids, vm.getId());
+            }
+         });
    }
 
    @Override

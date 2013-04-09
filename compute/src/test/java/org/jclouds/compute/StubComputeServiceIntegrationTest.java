@@ -526,7 +526,12 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
       super.testListNodes();
    }
 
-   @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails" })
+   @Test(enabled = true, dependsOnMethods = "testSuspendResume")
+   public void testListNodesByIds() throws Exception {
+      super.testListNodesByIds();
+   }
+
+   @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails", "testListNodesByIds" })
    public void testDestroyNodes() {
       super.testDestroyNodes();
    }
