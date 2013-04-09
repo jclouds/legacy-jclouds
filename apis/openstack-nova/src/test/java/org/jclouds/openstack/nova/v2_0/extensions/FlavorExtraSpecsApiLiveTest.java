@@ -52,22 +52,22 @@ public class FlavorExtraSpecsApiLiveTest extends BaseNovaApiLiveTest {
 
    @BeforeClass(groups = {"integration", "live"})
    @Override
-   public void setupContext() {
-      super.setupContext();
-      zone = Iterables.getLast(novaContext.getApi().getConfiguredZones(), "nova");
-      flavorApi = novaContext.getApi().getFlavorApiForZone(zone);
-      apiOption = novaContext.getApi().getFlavorExtraSpecsExtensionForZone(zone);
+   public void setup() {
+      super.setup();
+      zone = Iterables.getLast(api.getConfiguredZones(), "nova");
+      flavorApi = api.getFlavorApiForZone(zone);
+      apiOption = api.getFlavorExtraSpecsExtensionForZone(zone);
    }
 
    @AfterClass(groups = { "integration", "live" })
    @Override
-   protected void tearDownContext() {
+   protected void tearDown() {
       if (apiOption.isPresent() && testFlavor != null) {
          for(String key : testSpecs.keySet()) {
             assertTrue(apiOption.get().deleteMetadataKey(testFlavor.getId(), key));
          }
       }
-      super.tearDownContext();
+      super.tearDown();
    }
 
    public void testCreateExtraSpecs() {

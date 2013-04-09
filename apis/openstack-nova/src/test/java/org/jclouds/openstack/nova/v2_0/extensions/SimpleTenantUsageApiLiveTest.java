@@ -37,8 +37,8 @@ import com.google.common.base.Optional;
 public class SimpleTenantUsageApiLiveTest extends BaseNovaApiLiveTest {
 
    public void testList() throws Exception {
-      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
-         Optional<? extends SimpleTenantUsageApi> optApi = novaContext.getApi().getSimpleTenantUsageExtensionForZone(zoneId);
+      for (String zoneId : api.getConfiguredZones()) {
+         Optional<? extends SimpleTenantUsageApi> optApi = api.getSimpleTenantUsageExtensionForZone(zoneId);
          if (optApi.isPresent() && identity.endsWith(":admin")) {
             SimpleTenantUsageApi api = optApi.get();
             Set<? extends SimpleTenantUsage> usages = api.list().toSet();

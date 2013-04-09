@@ -46,11 +46,11 @@ public class ServerWithSecurityGroupsApiLiveTest extends BaseNovaApiLiveTest {
 
    @BeforeGroups(groups = {"integration", "live"})
    @Override
-   public void setupContext() {
-      super.setupContext();
-      zone = Iterables.getLast(novaContext.getApi().getConfiguredZones(), "nova");
-      serverApi = novaContext.getApi().getServerApiForZone(zone);
-      apiOption = novaContext.getApi().getServerWithSecurityGroupsExtensionForZone(zone);
+   public void setup() {
+      super.setup();
+      zone = Iterables.getLast(api.getConfiguredZones(), "nova");
+      serverApi = api.getServerApiForZone(zone);
+      apiOption = api.getServerWithSecurityGroupsExtensionForZone(zone);
    }
 
    public void testGetServer() {

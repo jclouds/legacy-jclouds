@@ -62,13 +62,13 @@ public class AdminActionsApiLiveTest extends BaseNovaApiLiveTest {
 
    @BeforeClass(groups = {"integration", "live"})
    @Override
-   public void setupContext() {
-      super.setupContext();
-      zone = Iterables.getLast(novaContext.getApi().getConfiguredZones(), "nova");
-      serverApi = novaContext.getApi().getServerApiForZone(zone);
-      extensionApi = novaContext.getApi().getExtensionApiForZone(zone);
-      imageApi = novaContext.getApi().getImageApiForZone(zone);
-      apiOption = novaContext.getApi().getServerAdminExtensionForZone(zone);
+   public void setup() {
+      super.setup();
+      zone = Iterables.getLast(api.getConfiguredZones(), "nova");
+      serverApi = api.getServerApiForZone(zone);
+      extensionApi = api.getExtensionApiForZone(zone);
+      imageApi = api.getImageApiForZone(zone);
+      apiOption = api.getServerAdminExtensionForZone(zone);
       if (apiOption.isPresent()) {
          testServerId = createServerInZone(zone).getId();
       }
@@ -76,16 +76,16 @@ public class AdminActionsApiLiveTest extends BaseNovaApiLiveTest {
 
    @AfterClass(groups = { "integration", "live" })
    @Override
-   protected void tearDownContext() {
+   protected void tearDown() {
       if (apiOption.isPresent()) {
          if (testServerId != null) {
-            assertTrue(novaContext.getApi().getServerApiForZone(zone).delete(testServerId));
+            assertTrue(api.getServerApiForZone(zone).delete(testServerId));
          }
          if (backupImageId != null) {
             imageApi.delete(backupImageId);
          }
       }
-      super.tearDownContext();
+      super.tearDown();
    }
 
    protected void skipOnAdminExtensionAbsent() {

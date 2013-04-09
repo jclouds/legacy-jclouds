@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
 public class KeystoneApiLiveTest extends BaseKeystoneApiLiveTest {
 
    public void testGetApiMetaData() {
-      ApiMetadata result = keystoneContext.getApi().getApiMetadata();
+      ApiMetadata result = api.getApiMetadata();
       assertNotNull(result);
       assertNotNull(result.getId());
       assertNotNull(result.getStatus());

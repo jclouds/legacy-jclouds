@@ -58,8 +58,8 @@ public class PermissionApiLiveTest extends BaseSQSApiLiveTest {
 
    @BeforeClass(groups = { "integration", "live" })
    @Override
-   public void setupContext() {
-      super.setupContext();
+   public void setup() {
+      super.setup();
       recreateQueueInRegion(prefix, null);
    }
 
@@ -77,17 +77,17 @@ public class PermissionApiLiveTest extends BaseSQSApiLiveTest {
 
    public void testAddAnonymousPermission() throws InterruptedException {
       for (URI queue : queues) {
-         QueueAttributes attributes = api().getQueueApi().getAttributes(queue);
+         QueueAttributes attributes = api.getQueueApi().getAttributes(queue);
          assertNoPermissions(queue);
 
          String accountToAuthorize = getOwner(queue);
-         api().getPermissionApiForQueue(queue).addPermissionToAccount("fubar", Action.GET_QUEUE_ATTRIBUTES,
+         api.getPermissionApiForQueue(queue).addPermissionToAccount("fubar", Action.GET_QUEUE_ATTRIBUTES,
                accountToAuthorize);
 
          String policyForAuthorizationByAccount = assertPolicyPresent(queue);
 
          String policyForAnonymous = policyForAuthorizationByAccount.replace("\"" + accountToAuthorize + "\"", "\"*\"");
-         api().getQueueApi().setAttribute(queue, "Policy", policyForAnonymous);
+         api.getQueueApi().setAttribute(queue, "Policy", policyForAnonymous);
 
          assertEquals(getAnonymousAttributesApi(queue).getQueueArn(), attributes.getQueueArn());
       }
@@ -96,18 +96,17 @@ public class PermissionApiLiveTest extends BaseSQSApiLiveTest {
    @Test(dependsOnMethods = "testAddAnonymousPermission")
    public void testRemovePermission() throws InterruptedException {
       for (URI queue : queues) {
-         api().getPermissionApiForQueue(queue).remove("fubar");
+         api.getPermissionApiForQueue(queue).remove("fubar");
          assertNoPermissions(queue);
       }
    }
 
    private AnonymousAttributesApi getAnonymousAttributesApi(URI queue) {
-      return ContextBuilder
-            .newBuilder(
+      return ContextBuilder.newBuilder(
                   forClientMappedToAsyncClientOnEndpoint(AnonymousAttributesApi.class,
                         AnonymousAttributesAsyncApi.class, queue.toASCIIString()))
             .modules(ImmutableSet.<Module> of(new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor())))
-            .buildInjector().getInstance(AnonymousAttributesApi.class);
+            .buildApi(AnonymousAttributesApi.class);
    }
 
 }

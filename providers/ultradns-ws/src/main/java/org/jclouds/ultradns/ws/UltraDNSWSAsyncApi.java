@@ -18,6 +18,8 @@
  */
 package org.jclouds.ultradns.ws;
 
+import java.io.Closeable;
+
 import javax.inject.Named;
 import javax.ws.rs.POST;
 
@@ -48,7 +50,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters(SOAPWrapWithPasswordAuth.class)
 @VirtualHost
-public interface UltraDNSWSAsyncApi {
+public interface UltraDNSWSAsyncApi extends Closeable {
 
    /**
     * @see UltraDNSWSApi#getCurrentAccount()

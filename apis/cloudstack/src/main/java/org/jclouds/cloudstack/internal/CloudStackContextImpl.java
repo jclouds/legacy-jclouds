@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.Context;
+import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.CloudStackDomainAsyncClient;
 import org.jclouds.cloudstack.CloudStackDomainClient;
@@ -31,7 +32,6 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.Utils;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.location.Provider;
-import org.jclouds.rest.RestContext;
 
 import com.google.common.reflect.TypeToken;
 
@@ -40,26 +40,43 @@ import com.google.common.reflect.TypeToken;
  */
 @Singleton
 public class CloudStackContextImpl extends ComputeServiceContextImpl implements CloudStackContext {
-   private final RestContext<CloudStackDomainClient, CloudStackDomainAsyncClient> domainContext;
-   private final RestContext<CloudStackGlobalClient, CloudStackGlobalAsyncClient> globalContext;
+   private final CloudStackClient client;
+   private final org.jclouds.rest.RestContext<CloudStackDomainClient, CloudStackDomainAsyncClient> domainContext;
+   private final org.jclouds.rest.RestContext<CloudStackGlobalClient, CloudStackGlobalAsyncClient> globalContext;
 
    @Inject
-   public CloudStackContextImpl(@Provider Context backend, @Provider TypeToken<? extends Context> backendType,
-            ComputeService computeService, Utils utils,
-            RestContext<CloudStackDomainClient, CloudStackDomainAsyncClient> domainContext,
-            RestContext<CloudStackGlobalClient, CloudStackGlobalAsyncClient> globalContext) {
+   CloudStackContextImpl(@Provider Context backend, @Provider TypeToken<? extends Context> backendType,
+         ComputeService computeService, Utils utils, CloudStackClient client,
+         org.jclouds.rest.RestContext<CloudStackDomainClient, CloudStackDomainAsyncClient> domainContext,
+         org.jclouds.rest.RestContext<CloudStackGlobalClient, CloudStackGlobalAsyncClient> globalContext) {
       super(backend, backendType, computeService, utils);
+      this.client = client;
       this.domainContext = domainContext;
       this.globalContext = globalContext;
    }
 
    @Override
-   public RestContext<CloudStackDomainClient, CloudStackDomainAsyncClient> getDomainContext() {
+   public CloudStackClient getApi() {
+      return client;
+   }
+
+   @Override
+   public CloudStackDomainClient getDomainApi() {
+      return domainContext.getApi();
+   }
+
+   @Override
+   public CloudStackGlobalClient getGlobalApi() {
+      return globalContext.getApi();
+   }
+
+   @Override
+   public org.jclouds.rest.RestContext<CloudStackDomainClient, CloudStackDomainAsyncClient> getDomainContext() {
       return domainContext;
    }
 
    @Override
-   public RestContext<CloudStackGlobalClient, CloudStackGlobalAsyncClient> getGlobalContext() {
+   public org.jclouds.rest.RestContext<CloudStackGlobalClient, CloudStackGlobalAsyncClient> getGlobalContext() {
       return globalContext;
    }
 }

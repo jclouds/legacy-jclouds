@@ -29,10 +29,8 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.domain.Credentials;
-import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.trmk.vcloud_0_8.domain.VApp;
-import org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClient;
 import org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClient;
 import org.testng.annotations.Test;
 
@@ -96,8 +94,8 @@ public class TerremarkVCloudExpressComputeServiceLiveTest extends BaseComputeSer
          assertEquals(node.getType(), ComputeType.NODE);
          NodeMetadata allData = client.getNodeMetadata(node.getId());
          System.out.println(allData.getHardware());
-         RestContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient> tmContext = view.unwrap();
-         VApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(null, null, allData.getName());
+         TerremarkVCloudExpressClient api = view.utils().injector().getInstance(TerremarkVCloudExpressClient.class);
+         VApp vApp = api.findVAppInOrgVDCNamed(null, null, allData.getName());
          assertEquals(vApp.getName(), allData.getName());
       }
    }

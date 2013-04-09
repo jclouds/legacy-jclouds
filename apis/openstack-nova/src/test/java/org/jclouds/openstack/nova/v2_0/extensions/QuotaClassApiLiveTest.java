@@ -41,10 +41,10 @@ public class QuotaClassApiLiveTest extends BaseNovaApiLiveTest {
 
    @BeforeClass(groups = {"integration", "live"})
    @Override
-   public void setupContext() {
-      super.setupContext();
-      zone = Iterables.getLast(novaContext.getApi().getConfiguredZones(), "nova");
-      apiOption = novaContext.getApi().getQuotaClassExtensionForZone(zone);
+   public void setup() {
+      super.setup();
+      zone = Iterables.getLast(api.getConfiguredZones(), "nova");
+      apiOption = api.getQuotaClassExtensionForZone(zone);
    }
 
    public void testUpdateAndGetQuotaClass() {

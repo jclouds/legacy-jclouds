@@ -28,11 +28,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.jclouds.apis.BaseContextLiveTest;
-import org.jclouds.rest.RestContext;
+import org.jclouds.apis.BaseApiLiveTest;
 import org.jclouds.sqs.SQSApi;
-import org.jclouds.sqs.SQSApiMetadata;
-import org.jclouds.sqs.SQSAsyncApi;
 import org.jclouds.sqs.domain.Message;
 import org.jclouds.sqs.features.QueueApi;
 import org.testng.annotations.AfterClass;
@@ -41,7 +38,6 @@ import org.testng.annotations.Test;
 import com.google.common.base.Splitter;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Sets;
-import com.google.common.reflect.TypeToken;
 import com.google.common.util.concurrent.Atomics;
 import com.google.common.util.concurrent.Uninterruptibles;
 
@@ -50,7 +46,7 @@ import com.google.common.util.concurrent.Uninterruptibles;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, SQSAsyncApi>> {
+public class BaseSQSApiLiveTest extends BaseApiLiveTest<SQSApi> {
 
    protected String prefix = System.getProperty("user.name") + "-sqs";
 
@@ -65,7 +61,7 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
    }
 
    protected String recreateQueueInRegion(String queueName, String region) {
-      QueueApi api = api().getQueueApiForRegion(region);
+      QueueApi api = this.api.getQueueApiForRegion(region);
       URI result = api.get(queueName);
       if (result != null) {
          api.delete(result);
@@ -76,16 +72,11 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
       return queueName;
    }
 
-   @Override
-   protected TypeToken<RestContext<SQSApi, SQSAsyncApi>> contextType() {
-      return SQSApiMetadata.CONTEXT_TOKEN;
-   }
-
    protected String assertPolicyPresent(final URI queue) {
       final AtomicReference<String> policy = Atomics.newReference();
       assertEventually(new Runnable() {
          public void run() {
-            String policyForAuthorizationByAccount = api().getQueueApi().getAttribute(queue, "Policy");
+            String policyForAuthorizationByAccount = api.getQueueApi().getAttribute(queue, "Policy");
 
             assertNotNull(policyForAuthorizationByAccount);
             policy.set(policyForAuthorizationByAccount);
@@ -97,7 +88,7 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
    protected void assertNoPermissions(final URI queue) {
       assertEventually(new Runnable() {
          public void run() {
-            String policy = api().getQueueApi().getAttribute(queue, "Policy");
+            String policy = api.getQueueApi().getAttribute(queue, "Policy");
             assertTrue(policy == null || policy.indexOf("\"Statement\":[]") != -1, policy);
          }
       });
@@ -106,7 +97,7 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
    protected void assertNoMessages(final URI queue) {
       assertEventually(new Runnable() {
          public void run() {
-            Message message = api().getMessageApiForQueue(queue).receive();
+            Message message = api.getMessageApiForQueue(queue).receive();
             assertNull(message, "message: " + message + " left in queue " + queue);
          }
       });
@@ -116,7 +107,7 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
       final URI finalQ = queue;
       assertEventually(new Runnable() {
          public void run() {
-            FluentIterable<URI> result = api().getQueueApiForRegion(region).list();
+            FluentIterable<URI> result = api.getQueueApiForRegion(region).list();
             assertNotNull(result);
             assert result.size() >= 1 : result;
             assertTrue(result.contains(finalQ), finalQ + " not in " + result);
@@ -152,15 +143,10 @@ public class BaseSQSApiLiveTest extends BaseContextLiveTest<RestContext<SQSApi, 
 
    @Override
    @AfterClass(groups = "live")
-   protected void tearDownContext() {
+   protected void tearDown() {
       for (URI queue : queues) {
-         api().getQueueApi().delete(queue);
+         api.getQueueApi().delete(queue);
       }
-      super.tearDownContext();
+      super.tearDown();
    }
-
-   protected SQSApi api() {
-      return context.getApi();
-   }
-
 }

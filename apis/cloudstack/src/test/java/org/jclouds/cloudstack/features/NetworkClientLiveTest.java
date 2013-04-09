@@ -114,7 +114,7 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
 
       Network network = null;
       try {
-         network = domainAdminContext.getApi()
+         network = domainAdminClient
                .getNetworkClient()
                // startIP/endIP/netmask/gateway must be specified together
                .createNetworkInZone(zone.getId(), offering.getId(), name, name,

@@ -18,28 +18,17 @@
  */
 package org.jclouds.ultradns.ws.internal;
 
-import org.jclouds.apis.BaseContextLiveTest;
-import org.jclouds.ultradns.ws.UltraDNSWSApiMetadata;
-import org.jclouds.ultradns.ws.UltraDNSWSAsyncApi;
+import org.jclouds.apis.BaseApiLiveTest;
 import org.jclouds.ultradns.ws.UltraDNSWSApi;
-import org.jclouds.rest.RestContext;
 import org.testng.annotations.Test;
-
-import com.google.common.reflect.TypeToken;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class BaseUltraDNSWSApiLiveTest extends BaseContextLiveTest<RestContext<UltraDNSWSApi, UltraDNSWSAsyncApi>> {
-
+public class BaseUltraDNSWSApiLiveTest extends BaseApiLiveTest<UltraDNSWSApi> {
    public BaseUltraDNSWSApiLiveTest() {
       provider = "ultradns-ws";
-   }
-
-   @Override
-   protected TypeToken<RestContext<UltraDNSWSApi, UltraDNSWSAsyncApi>> contextType() {
-      return UltraDNSWSApiMetadata.CONTEXT_TOKEN;
    }
 }

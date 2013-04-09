@@ -60,21 +60,21 @@ public class BaseGleSYSApiWithAServerLiveTest extends BaseGleSYSApiLiveTest {
 
    @BeforeClass(groups = { "integration", "live" })
    @Override
-   public void setupContext() {
+   public void setup() {
       assertNull(serverId, "This method should be called EXACTLY once per run");
-      super.setupContext();
+      super.setup();
       serverStatusChecker = createServer(hostName);
    }
 
    @AfterClass(groups = { "integration", "live" })
    @Override
-   public void tearDownContext() {
-      gleContext.getApi().getServerApi().destroy(serverId, DestroyServerOptions.Builder.discardIp());
-      super.tearDownContext();
+   public void tearDown() {
+      api.getServerApi().destroy(serverId, DestroyServerOptions.Builder.discardIp());
+      super.tearDown();
    }
 
    protected void createDomain(String domain) {
-      final DomainApi api = gleContext.getApi().getDomainApi();
+      final DomainApi api = this.api.getDomainApi();
       int before = api.list().size();
       api.create(domain);
       Predicate<Integer> result = retry(new Predicate<Integer>() {
@@ -86,7 +86,7 @@ public class BaseGleSYSApiWithAServerLiveTest extends BaseGleSYSApiLiveTest {
    }
 
    protected Predicate<State> createServer(String hostName) {
-      final ServerApi api = gleContext.getApi().getServerApi();
+      final ServerApi api = this.api.getServerApi();
 
       ServerDetails testServer = api.createWithHostnameAndRootPassword(
             ServerSpec.builder().datacenter("Falkenberg").platform("OpenVZ").templateName("Ubuntu 10.04 LTS 32-bit")

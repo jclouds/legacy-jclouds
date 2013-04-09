@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
+import org.jclouds.apis.BaseApiLiveTest;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.gogrid.domain.Ip;
@@ -54,8 +54,6 @@ import org.jclouds.gogrid.predicates.LoadBalancerLatestJobCompleted;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.predicates.SocketOpen;
-import org.jclouds.rest.RestContext;
-import org.jclouds.ssh.SshClient;
 import org.testng.SkipException;
 import org.testng.TestException;
 import org.testng.annotations.AfterTest;
@@ -66,6 +64,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.net.HostAndPort;
+import com.google.inject.Guice;
 
 /**
  * End to end live test for GoGrid
@@ -75,13 +74,11 @@ import com.google.common.net.HostAndPort;
  * @author Oleksiy Yarmula
  */
 @Test(enabled = false, groups = "live", singleThreaded = true, testName = "GoGridLiveTestDisabled")
-public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
+public class GoGridLiveTestDisabled extends BaseApiLiveTest<GoGridClient> {
 
    public GoGridLiveTestDisabled() {
       provider = "gogrid";
    }
-
-   private GoGridClient client;
 
    private Predicate<Server> serverLatestJobCompleted;
    private Predicate<LoadBalancer> loadBalancerLatestJobCompleted;
@@ -91,17 +88,13 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
    private List<String> serversToDeleteAfterTheTests = Lists.newArrayList();
    private List<String> loadBalancersToDeleteAfterTest = Lists.newArrayList();
 
-   private RestContext<GoGridClient, GoGridAsyncClient> gocontext;
 
    @BeforeGroups(groups = { "integration", "live" })
    @Override
-   public void setupContext() {
-      super.setupContext();
-      gocontext = view.unwrap();
-
-      client = gocontext.getApi();      
-      serverLatestJobCompleted = retry(new ServerLatestJobCompleted(client.getJobServices()), 800, 20, SECONDS);
-      loadBalancerLatestJobCompleted = retry(new LoadBalancerLatestJobCompleted(client.getJobServices()), 800, 20,
+   public void setup() {
+      super.setup();
+      serverLatestJobCompleted = retry(new ServerLatestJobCompleted(api.getJobServices()), 800, 20, SECONDS);
+      loadBalancerLatestJobCompleted = retry(new LoadBalancerLatestJobCompleted(api.getJobServices()), 800, 20,
             SECONDS);
    }
 
@@ -110,10 +103,10 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
       final String nameOfServer = "Description" + String.valueOf(new Date().getTime()).substring(6);
       serversToDeleteAfterTheTests.add(nameOfServer);
 
-      Set<Ip> availableIps = client.getIpServices().getUnassignedPublicIpList();
+      Set<Ip> availableIps = api.getIpServices().getUnassignedPublicIpList();
       Ip availableIp = Iterables.getLast(availableIps);
 
-      String ram = Iterables.get(client.getServerServices().getRamSizes(), 0).getName();
+      String ram = Iterables.get(api.getServerServices().getRamSizes(), 0).getName();
       StringBuilder builder = new StringBuilder();
 
       for (int i = 0; i < 500; i++)
@@ -121,13 +114,13 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
 
       String description = builder.toString();
 
-      Server createdServer = client.getServerServices().addServer(nameOfServer,
+      Server createdServer = api.getServerServices().addServer(nameOfServer,
                "GSI-f8979644-e646-4711-ad58-d98a5fa3612c", ram, availableIp.getIp(),
                new AddServerOptions().withDescription(description));
       assertNotNull(createdServer);
       assert serverLatestJobCompleted.apply(createdServer);
 
-      assertEquals(Iterables.getLast(client.getServerServices().getServersByName(nameOfServer)).getDescription(),
+      assertEquals(Iterables.getLast(api.getServerServices().getServersByName(nameOfServer)).getDescription(),
                description);
 
    }
@@ -137,49 +130,49 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
     */
    @Test(enabled = true)
    public void testServerLifecycle() {
-      int serverCountBeforeTest = client.getServerServices().getServerList().size();
+      int serverCountBeforeTest = api.getServerServices().getServerList().size();
 
       final String nameOfServer = "Server" + String.valueOf(new Date().getTime()).substring(6);
       serversToDeleteAfterTheTests.add(nameOfServer);
 
-      Set<Ip> availableIps = client.getIpServices().getUnassignedPublicIpList();
+      Set<Ip> availableIps = api.getIpServices().getUnassignedPublicIpList();
       Ip availableIp = Iterables.getLast(availableIps);
 
-      String ram = Iterables.get(client.getServerServices().getRamSizes(), 0).getName();
+      String ram = Iterables.get(api.getServerServices().getRamSizes(), 0).getName();
 
-      Server createdServer = client.getServerServices().addServer(nameOfServer,
+      Server createdServer = api.getServerServices().addServer(nameOfServer,
                "GSI-f8979644-e646-4711-ad58-d98a5fa3612c", ram, availableIp.getIp());
       assertNotNull(createdServer);
       assert serverLatestJobCompleted.apply(createdServer);
 
       // get server by name
-      Set<Server> response = client.getServerServices().getServersByName(nameOfServer);
+      Set<Server> response = api.getServerServices().getServersByName(nameOfServer);
       assert (response.size() == 1);
 
       // restart the server
-      client.getServerServices().power(nameOfServer, PowerCommand.RESTART);
+      api.getServerServices().power(nameOfServer, PowerCommand.RESTART);
 
-      Set<Job> jobs = client.getJobServices().getJobsForObjectName(nameOfServer);
+      Set<Job> jobs = api.getJobServices().getJobsForObjectName(nameOfServer);
       assert ("RestartVirtualServer".equals(Iterables.getLast(jobs).getCommand().getName()));
 
       assert serverLatestJobCompleted.apply(createdServer);
 
-      int serverCountAfterAddingOneServer = client.getServerServices().getServerList().size();
+      int serverCountAfterAddingOneServer = api.getServerServices().getServerList().size();
       assert serverCountAfterAddingOneServer == serverCountBeforeTest + 1 : "There should be +1 increase in the number of servers since the test started";
 
       // delete the server
-      client.getServerServices().deleteByName(nameOfServer);
+      api.getServerServices().deleteByName(nameOfServer);
 
-      jobs = client.getJobServices().getJobsForObjectName(nameOfServer);
+      jobs = api.getJobServices().getJobsForObjectName(nameOfServer);
       assert ("DeleteVirtualServer".equals(Iterables.getLast(jobs).getCommand().getName()));
 
       assert serverLatestJobCompleted.apply(createdServer);
 
-      int serverCountAfterDeletingTheServer = client.getServerServices().getServerList().size();
+      int serverCountAfterDeletingTheServer = api.getServerServices().getServerList().size();
       assert serverCountAfterDeletingTheServer == serverCountBeforeTest : "There should be the same # of servers as since the test started";
 
       // make sure that IP is put back to "unassigned"
-      assert client.getIpServices().getUnassignedIpList().contains(availableIp);
+      assert api.getIpServices().getUnassignedIpList().contains(availableIp);
    }
 
    /**
@@ -191,24 +184,24 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
       final String nameOfServer = "Server" + String.valueOf(new Date().getTime()).substring(6);
       serversToDeleteAfterTheTests.add(nameOfServer);
 
-      Set<Ip> availableIps = client.getIpServices().getUnassignedPublicIpList();
+      Set<Ip> availableIps = api.getIpServices().getUnassignedPublicIpList();
 
-      String ram = Iterables.get(client.getServerServices().getRamSizes(), 0).getName();
+      String ram = Iterables.get(api.getServerServices().getRamSizes(), 0).getName();
 
-      Server createdServer = client.getServerServices().addServer(nameOfServer,
+      Server createdServer = api.getServerServices().addServer(nameOfServer,
                "GSI-f8979644-e646-4711-ad58-d98a5fa3612c", ram, Iterables.getLast(availableIps).getIp());
 
       assert serverLatestJobCompleted.apply(createdServer);
 
       // restart the server
-      client.getServerServices().power(nameOfServer, PowerCommand.RESTART);
+      api.getServerServices().power(nameOfServer, PowerCommand.RESTART);
 
-      Set<Job> jobs = client.getJobServices().getJobsForObjectName(nameOfServer);
+      Set<Job> jobs = api.getJobServices().getJobsForObjectName(nameOfServer);
 
       Job latestJob = Iterables.getLast(jobs);
       Long latestJobId = latestJob.getId();
 
-      Job latestJobFetched = Iterables.getOnlyElement(client.getJobServices().getJobsById(latestJobId));
+      Job latestJobFetched = Iterables.getOnlyElement(api.getJobServices().getJobsById(latestJobId));
 
       assert latestJob.equals(latestJobFetched) : "Job and its representation found by ID don't match";
 
@@ -218,13 +211,13 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
          idsOfAllJobs[i++] = job.getId();
       }
 
-      Set<Job> jobsFetched = client.getJobServices().getJobsById(idsOfAllJobs);
+      Set<Job> jobsFetched = api.getJobServices().getJobsById(idsOfAllJobs);
       assert jobsFetched.size() == jobs.size() : format(
                "Number of jobs fetched by ids doesn't match the number of jobs "
                         + "requested. Requested/expected: %d. Found: %d.", jobs.size(), jobsFetched.size());
 
       // delete the server
-      client.getServerServices().deleteByName(nameOfServer);
+      api.getServerServices().deleteByName(nameOfServer);
    }
 
    /**
@@ -232,12 +225,12 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
     */
    @Test(enabled = true)
    public void testLoadBalancerLifecycle() {
-      int lbCountBeforeTest = client.getLoadBalancerServices().getLoadBalancerList().size();
+      int lbCountBeforeTest = api.getLoadBalancerServices().getLoadBalancerList().size();
 
       final String nameOfLoadBalancer = "LoadBalancer" + String.valueOf(new Date().getTime()).substring(6);
       loadBalancersToDeleteAfterTest.add(nameOfLoadBalancer);
 
-      Set<Ip> availableIps = client.getIpServices().getUnassignedPublicIpList();
+      Set<Ip> availableIps = api.getIpServices().getUnassignedPublicIpList();
 
       if (availableIps.size() < 4)
          throw new SkipException("Not enough available IPs (4 needed) to run the test");
@@ -249,7 +242,7 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
 
       AddLoadBalancerOptions options = new AddLoadBalancerOptions.Builder().create(LoadBalancerType.LEAST_CONNECTED,
                LoadBalancerPersistenceType.SOURCE_ADDRESS);
-      LoadBalancer createdLoadBalancer = client.getLoadBalancerServices().addLoadBalancer(nameOfLoadBalancer,
+      LoadBalancer createdLoadBalancer = api.getLoadBalancerServices().addLoadBalancer(nameOfLoadBalancer,
                IpPortPair.builder().ip(vip).port(80).build(), Arrays.asList(IpPortPair.builder().ip(realIp1).port(80).build(),
                IpPortPair.builder().ip(realIp2).port(80).build()),
                options);
@@ -257,7 +250,7 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
       assert loadBalancerLatestJobCompleted.apply(createdLoadBalancer);
 
       // get load balancer by name
-      Set<LoadBalancer> response = client.getLoadBalancerServices().getLoadBalancersByName(nameOfLoadBalancer);
+      Set<LoadBalancer> response = api.getLoadBalancerServices().getLoadBalancersByName(nameOfLoadBalancer);
       assert (response.size() == 1);
       createdLoadBalancer = Iterables.getOnlyElement(response);
       assertNotNull(createdLoadBalancer.getRealIpList());
@@ -265,25 +258,25 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
       assertNotNull(createdLoadBalancer.getVirtualIp());
       assertEquals(createdLoadBalancer.getVirtualIp().getIp().getIp(), vip.getIp());
 
-      LoadBalancer editedLoadBalancer = client.getLoadBalancerServices().editLoadBalancerNamed(nameOfLoadBalancer,
+      LoadBalancer editedLoadBalancer = api.getLoadBalancerServices().editLoadBalancerNamed(nameOfLoadBalancer,
                Arrays.asList(IpPortPair.builder().ip(realIp3).port(8181).build()));
       assert loadBalancerLatestJobCompleted.apply(editedLoadBalancer);
       assertNotNull(editedLoadBalancer.getRealIpList());
       assertEquals(editedLoadBalancer.getRealIpList().size(), 1);
       assertEquals(Iterables.getOnlyElement(editedLoadBalancer.getRealIpList()).getIp().getIp(), realIp3.getIp());
 
-      int lbCountAfterAddingOneServer = client.getLoadBalancerServices().getLoadBalancerList().size();
+      int lbCountAfterAddingOneServer = api.getLoadBalancerServices().getLoadBalancerList().size();
       assert lbCountAfterAddingOneServer == lbCountBeforeTest + 1 : "There should be +1 increase in the number of load balancers since the test started";
 
       // delete the load balancer
-      client.getLoadBalancerServices().deleteByName(nameOfLoadBalancer);
+      api.getLoadBalancerServices().deleteByName(nameOfLoadBalancer);
 
-      Set<Job> jobs = client.getJobServices().getJobsForObjectName(nameOfLoadBalancer);
+      Set<Job> jobs = api.getJobServices().getJobsForObjectName(nameOfLoadBalancer);
       assert ("DeleteLoadBalancer".equals(Iterables.getLast(jobs).getCommand().getName()));
 
       assert loadBalancerLatestJobCompleted.apply(createdLoadBalancer);
 
-      int lbCountAfterDeletingTheServer = client.getLoadBalancerServices().getLoadBalancerList().size();
+      int lbCountAfterDeletingTheServer = api.getLoadBalancerServices().getLoadBalancerList().size();
       assert lbCountAfterDeletingTheServer == lbCountBeforeTest : "There should be the same # of load balancers as since the test started";
    }
 
@@ -293,7 +286,7 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
    @Test(enabled = true)
    public void testImageLifecycle() {
       GetImageListOptions options = GetImageListOptions.Builder.publicDatabaseServers();
-      Set<ServerImage> images = client.getImageServices().getImageList(options);
+      Set<ServerImage> images = api.getImageServices().getImageList(options);
 
       Predicate<ServerImage> isDatabaseServer = new Predicate<ServerImage>() {
          @Override
@@ -306,11 +299,11 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
 
       ServerImage image = Iterables.getLast(images);
       ServerImage imageFromServer = Iterables
-               .getOnlyElement(client.getImageServices().getImagesByName(image.getName()));
+               .getOnlyElement(api.getImageServices().getImagesByName(image.getName()));
       assertEquals(image, imageFromServer);
 
       try {
-         client.getImageServices().editImageDescription(image.getName(), "newDescription");
+         api.getImageServices().editImageDescription(image.getName(), "newDescription");
          throw new TestException("An exception hasn't been thrown where expected; expected GoGridResponseException");
       } catch (GoGridResponseException e) {
          // expected situation - check and proceed
@@ -324,46 +317,39 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
       final String nameOfServer = "Server" + String.valueOf(new Date().getTime()).substring(6);
       serversToDeleteAfterTheTests.add(nameOfServer);
 
-      Set<Ip> availableIps = client.getIpServices().getUnassignedIpList();
+      Set<Ip> availableIps = api.getIpServices().getUnassignedIpList();
       Ip availableIp = Iterables.getLast(availableIps);
 
-      Server createdServer = client.getServerServices().addServer(nameOfServer,
+      Server createdServer = api.getServerServices().addServer(nameOfServer,
                "GSI-f8979644-e646-4711-ad58-d98a5fa3612c", "1", availableIp.getIp());
       assertNotNull(createdServer);
       assert serverLatestJobCompleted.apply(createdServer);
 
       // get server by name
-      Set<Server> response = client.getServerServices().getServersByName(nameOfServer);
+      Set<Server> response = api.getServerServices().getServersByName(nameOfServer);
       assert (response.size() == 1);
       createdServer = Iterables.getOnlyElement(response);
 
-      Map<String, Credentials> credsMap = client.getServerServices().getServerCredentialsList();
+      Map<String, Credentials> credsMap = api.getServerServices().getServerCredentialsList();
       LoginCredentials instanceCredentials = LoginCredentials.fromCredentials(credsMap.get(createdServer.getName()));
       assertNotNull(instanceCredentials);
 
       HostAndPort socket = HostAndPort.fromParts(createdServer.getIp().getIp(), 22);
-      SocketOpen socketOpen = context.utils().injector().getInstance(SocketOpen.class);
+      SocketOpen socketOpen = Guice.createInjector().getInstance(SocketOpen.class);
       Predicate<HostAndPort> socketTester = retry(socketOpen, 180, 5, SECONDS);
       socketTester.apply(socket);
 
-      SshClient sshClient = gocontext.utils().injector().getInstance(SshClient.Factory.class).create(socket, instanceCredentials);
-      sshClient.connect();
-      String output = sshClient.exec("df").getOutput();
-      assertTrue(output.contains("Filesystem"),
-               "The output should've contained filesystem information, but it didn't. Output: " + output);
-      sshClient.disconnect();
-
       // check that the get credentials call is the same as this
-      assertEquals(client.getServerServices().getServerCredentials(createdServer.getId()), instanceCredentials);
+      assertEquals(api.getServerServices().getServerCredentials(createdServer.getId()), instanceCredentials);
 
       try {
-         assertEquals(client.getServerServices().getServerCredentials(Long.MAX_VALUE), null);
+         assertEquals(api.getServerServices().getServerCredentials(Long.MAX_VALUE), null);
       } catch (AssertionError e) {
          e.printStackTrace();
       }
 
       // delete the server
-      client.getServerServices().deleteByName(nameOfServer);
+      api.getServerServices().deleteByName(nameOfServer);
    }
 
    /**
@@ -373,19 +359,17 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
    public void cleanup() {
       for (String serverName : serversToDeleteAfterTheTests) {
          try {
-            client.getServerServices().deleteByName(serverName);
+            api.getServerServices().deleteByName(serverName);
          } catch (Exception e) {
             // it's already been deleted - proceed
          }
       }
       for (String loadBalancerName : loadBalancersToDeleteAfterTest) {
          try {
-            client.getLoadBalancerServices().deleteByName(loadBalancerName);
+            api.getLoadBalancerServices().deleteByName(loadBalancerName);
          } catch (Exception e) {
             // it's already been deleted - proceed
          }
       }
-
    }
-
 }

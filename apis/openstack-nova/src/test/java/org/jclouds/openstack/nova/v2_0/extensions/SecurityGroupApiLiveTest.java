@@ -42,16 +42,16 @@ public class SecurityGroupApiLiveTest extends BaseNovaApiLiveTest {
    public static final String SECURITY_GROUP_NAME = "testsg";
 
    public void list() throws Exception {
-      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
-         SecurityGroupApi api = novaContext.getApi().getSecurityGroupExtensionForZone(zoneId).get();
+      for (String zoneId : api.getConfiguredZones()) {
+         SecurityGroupApi api = this.api.getSecurityGroupExtensionForZone(zoneId).get();
          Set<? extends SecurityGroup> securityGroupsList = api.list().toSet();
          assertNotNull(securityGroupsList);
       }
    }
 
    public void createGetAndDeleteSecurityGroup() throws Exception {
-      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
-         SecurityGroupApi api = novaContext.getApi().getSecurityGroupExtensionForZone(zoneId).get();
+      for (String zoneId : api.getConfiguredZones()) {
+         SecurityGroupApi api = this.api.getSecurityGroupExtensionForZone(zoneId).get();
          SecurityGroup securityGroup = null;
          String id;
          try {
@@ -70,8 +70,8 @@ public class SecurityGroupApiLiveTest extends BaseNovaApiLiveTest {
    }
 
    public void createAndDeleteSecurityGroupRule() throws Exception {
-      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
-         SecurityGroupApi api = novaContext.getApi().getSecurityGroupExtensionForZone(zoneId).get();
+      for (String zoneId : api.getConfiguredZones()) {
+         SecurityGroupApi api = this.api.getSecurityGroupExtensionForZone(zoneId).get();
          SecurityGroup securityGroup = null;
 
          try {

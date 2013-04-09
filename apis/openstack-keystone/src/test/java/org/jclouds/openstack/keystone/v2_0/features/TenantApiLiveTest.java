@@ -37,7 +37,7 @@ import org.testng.annotations.Test;
 public class TenantApiLiveTest extends BaseKeystoneApiLiveTest {
 
    public void testTenants() {
-      TenantApi api = keystoneContext.getApi().getTenantApi().get();
+      TenantApi api = this.api.getTenantApi().get();
       Set<? extends Tenant> result = api.list().concat().toSet();
       assertNotNull(result);
       assertFalse(result.isEmpty());
@@ -54,7 +54,7 @@ public class TenantApiLiveTest extends BaseKeystoneApiLiveTest {
 
    public void testTenantsByName() {
 
-      TenantApi api = keystoneContext.getApi().getTenantApi().get();
+      TenantApi api = this.api.getTenantApi().get();
 
       for (Tenant tenant : api.list().concat()) {
          Tenant aTenant = api.getByName(tenant.getName());

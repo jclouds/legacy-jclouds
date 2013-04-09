@@ -19,7 +19,8 @@
 
 package org.jclouds.aws.ec2.compute.extensions;
 
-import org.jclouds.aws.ec2.AWSEC2AsyncClient;
+import static com.google.common.collect.Iterables.transform;
+
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.compute.domain.Image;
@@ -27,11 +28,9 @@ import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.extensions.internal.BaseImageExtensionLiveTest;
 import org.jclouds.ec2.compute.functions.EC2ImageParser;
 import org.jclouds.ec2.options.DescribeImagesOptions;
-import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Iterables;
 import com.google.inject.Module;
 
 /**
@@ -49,14 +48,14 @@ public class AWSEC2ImageExtensionLiveTest extends BaseImageExtensionLiveTest {
 
    @Override
    protected Iterable<? extends Image> listImages() {
-      RestContext<AWSEC2Client, AWSEC2AsyncClient> unwrapped = view.unwrap();
+      AWSEC2Client client = view.utils().getInjector().getInstance(AWSEC2Client.class);
       String[] parts = AWSUtils.parseHandle(imageId);
       String region = parts[0];
       String imageId = parts[1];
       EC2ImageParser parser = view.utils().getInjector().getInstance(EC2ImageParser.class);
-      return Iterables.transform(
-               unwrapped.getApi().getAMIServices()
-                        .describeImagesInRegion(region, new DescribeImagesOptions().imageIds(imageId)), parser);
+      return transform(
+            client.getAMIServices().describeImagesInRegion(region, new DescribeImagesOptions().imageIds(imageId)),
+            parser);
    }
 
    @Override

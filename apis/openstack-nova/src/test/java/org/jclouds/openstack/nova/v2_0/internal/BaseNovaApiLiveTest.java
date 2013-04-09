@@ -21,10 +21,9 @@ package org.jclouds.openstack.nova.v2_0.internal;
 import java.util.Properties;
 import java.util.Set;
 
-import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
+import org.jclouds.apis.BaseApiLiveTest;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
-import org.jclouds.openstack.nova.v2_0.NovaAsyncApi;
 import org.jclouds.openstack.nova.v2_0.config.NovaProperties;
 import org.jclouds.openstack.nova.v2_0.domain.Flavor;
 import org.jclouds.openstack.nova.v2_0.domain.Server;
@@ -34,7 +33,6 @@ import org.jclouds.openstack.nova.v2_0.features.FlavorApi;
 import org.jclouds.openstack.nova.v2_0.features.ImageApi;
 import org.jclouds.openstack.nova.v2_0.features.ServerApi;
 import org.jclouds.openstack.v2_0.domain.Resource;
-import org.jclouds.rest.RestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -49,7 +47,7 @@ import com.google.common.collect.Ordering;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class BaseNovaApiLiveTest extends BaseComputeServiceContextLiveTest {
+public class BaseNovaApiLiveTest extends BaseApiLiveTest<NovaApi> {
    protected String hostName = System.getProperty("user.name").replace('.','-').toLowerCase();
 
    public BaseNovaApiLiveTest() {
@@ -57,16 +55,14 @@ public class BaseNovaApiLiveTest extends BaseComputeServiceContextLiveTest {
    }
 
    protected Set<String> zones;
-   protected RestContext<NovaApi, NovaAsyncApi> novaContext;
 
    @BeforeClass(groups = { "integration", "live" })
    @Override
-   public void setupContext() {
-      super.setupContext();
-      novaContext = view.unwrap();
-      zones = novaContext.getApi().getConfiguredZones();
+   public void setup() {
+      super.setup();
+      zones = api.getConfiguredZones();
       for (String zone : zones){
-         ServerApi api = novaContext.getApi().getServerApiForZone(zone);
+         ServerApi api = this.api.getServerApiForZone(zone);
          for (Resource server : api.list().concat()){
             if (server.getName().equals(hostName))
                api.delete(server.getId());
@@ -83,7 +79,7 @@ public class BaseNovaApiLiveTest extends BaseComputeServiceContextLiveTest {
    }
    
    protected Server createServerInZone(String zoneId) {
-      ServerApi serverApi = novaContext.getApi().getServerApiForZone(zoneId);
+      ServerApi serverApi = api.getServerApiForZone(zoneId);
       ServerCreated server = serverApi.create(hostName, imageIdForZone(zoneId), flavorRefForZone(zoneId));
       blockUntilServerInState(server.getId(), serverApi, Status.ACTIVE);
       return serverApi.get(server.getId());
@@ -108,12 +104,12 @@ public class BaseNovaApiLiveTest extends BaseComputeServiceContextLiveTest {
    }
    
    protected String imageIdForZone(String zoneId) {
-      ImageApi imageApi = novaContext.getApi().getImageApiForZone(zoneId);
+      ImageApi imageApi = api.getImageApiForZone(zoneId);
       return Iterables.getLast(imageApi.list().concat()).getId();
    }
 
    protected String flavorRefForZone(String zoneId) {
-      FlavorApi flavorApi = novaContext.getApi().getFlavorApiForZone(zoneId);
+      FlavorApi flavorApi = api.getFlavorApiForZone(zoneId);
       return DEFAULT_FLAVOR_ORDERING.min(flavorApi.listInDetail().concat()).getId();
    }
 
