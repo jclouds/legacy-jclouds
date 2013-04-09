@@ -49,9 +49,9 @@ public class ZoneApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
    @Override
    @BeforeClass(groups = { "integration", "live" })
-   public void setupContext() {
-      super.setupContext();
-      account = context.getApi().getCurrentAccount();
+   public void setup() {
+      super.setup();
+      account = api.getCurrentAccount();
    }
 
    private void checkZone(Zone zone) {
@@ -141,6 +141,6 @@ public class ZoneApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    }
 
    protected ZoneApi api() {
-      return context.getApi().getZoneApi();
+      return api.getZoneApi();
    }
 }

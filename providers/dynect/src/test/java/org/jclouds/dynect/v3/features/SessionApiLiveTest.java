@@ -50,14 +50,14 @@ public class SessionApiLiveTest extends BaseDynECTApiLiveTest {
    }
 
    protected SessionApi api() {
-      return context.getApi().getSessionApi();
+      return api.getSessionApi();
    }
    
    @AfterClass(groups = { "integration", "live" })
    @Override
-   protected void tearDownContext() {
+   protected void tearDown() {
       if (session != null)
          api().logout(session.getToken());
-      super.tearDownContext();
+      super.tearDown();
    }
 }

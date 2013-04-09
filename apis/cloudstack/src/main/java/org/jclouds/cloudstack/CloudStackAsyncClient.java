@@ -50,7 +50,10 @@ import org.jclouds.rest.annotations.Delegate;
  * @author Adrian Cole
  * @see CloudStackClient
  * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(CloudStackClient.class)} as
+ *             {@link CloudStackAsyncClient} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 public interface CloudStackAsyncClient {
 
    /**

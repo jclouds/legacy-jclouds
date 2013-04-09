@@ -33,7 +33,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
-import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.binders.BindIdsToQueryParams;
 import org.jclouds.gogrid.binders.BindNamesToQueryParams;
 import org.jclouds.gogrid.domain.Option;
@@ -56,7 +55,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Oleksiy Yarmula
  */
 @RequestFilters(SharedKeyLiteAuthentication.class)
-@QueryParams(keys = VERSION, values = GoGridAsyncClient.VERSION)
+@QueryParams(keys = VERSION, values = "{jclouds.api-version}")
 public interface GridImageAsyncClient {
 
    /**

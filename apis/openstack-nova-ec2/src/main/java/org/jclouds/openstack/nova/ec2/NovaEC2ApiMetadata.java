@@ -33,7 +33,6 @@ import org.jclouds.ec2.compute.config.EC2ResolveImagesModule;
 import org.jclouds.openstack.nova.ec2.config.HyphenToNullIso8601Module;
 import org.jclouds.openstack.nova.ec2.config.NovaEC2ComputeServiceContextModule;
 import org.jclouds.openstack.nova.ec2.config.NovaEC2RestClientModule;
-import org.jclouds.rest.RestContext;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
@@ -46,7 +45,12 @@ import com.google.inject.Module;
  */
 public class NovaEC2ApiMetadata extends EC2ApiMetadata {
 
-   public static final TypeToken<RestContext<NovaEC2Client, NovaEC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<NovaEC2Client, NovaEC2AsyncClient>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(NovaEC2Client.class)} as
+    *             {@link NovaEC2AsyncClient} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<NovaEC2Client, NovaEC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<NovaEC2Client, NovaEC2AsyncClient>>() {
       private static final long serialVersionUID = 1L;
    };
 
@@ -81,6 +85,7 @@ public class NovaEC2ApiMetadata extends EC2ApiMetadata {
    }
 
    public static class Builder extends EC2ApiMetadata.Builder<Builder> {
+      @SuppressWarnings("deprecation")
       protected Builder(){
          super(NovaEC2Client.class, NovaEC2AsyncClient.class);
          id("openstack-nova-ec2")

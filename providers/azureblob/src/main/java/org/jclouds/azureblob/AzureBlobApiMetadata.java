@@ -28,7 +28,6 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.azureblob.blobstore.config.AzureBlobStoreContextModule;
 import org.jclouds.azureblob.config.AzureBlobRestClientModule;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
@@ -42,7 +41,12 @@ import com.google.inject.Module;
  */
 public class AzureBlobApiMetadata extends BaseRestApiMetadata {
 
-   public static final TypeToken<RestContext<AzureBlobClient, AzureBlobAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<AzureBlobClient, AzureBlobAsyncClient>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(AzureBlobClient.class)} as
+    *             {@link AzureBlobAsyncClient} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<AzureBlobClient, AzureBlobAsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<AzureBlobClient, AzureBlobAsyncClient>>() {
       private static final long serialVersionUID = 1L;
    };
    
@@ -70,6 +74,7 @@ public class AzureBlobApiMetadata extends BaseRestApiMetadata {
    }
    
    public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
+      @SuppressWarnings("deprecation")
       protected Builder(){
          super(AzureBlobClient.class, AzureBlobAsyncClient.class);
          id("azureblob")

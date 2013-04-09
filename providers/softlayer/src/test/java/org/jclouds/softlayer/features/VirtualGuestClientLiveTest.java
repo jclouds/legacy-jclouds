@@ -27,9 +27,11 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
+import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
 
+import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.compute.functions.ProductItems;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductItemPrice;
@@ -37,7 +39,6 @@ import org.jclouds.softlayer.domain.ProductOrder;
 import org.jclouds.softlayer.domain.ProductOrderReceipt;
 import org.jclouds.softlayer.domain.ProductPackage;
 import org.jclouds.softlayer.domain.VirtualGuest;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;
@@ -45,7 +46,9 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.inject.Injector;
 import com.google.inject.Key;
+import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -58,21 +61,13 @@ public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
 
    private static final String TEST_HOSTNAME_PREFIX = "livetest";
 
-   @BeforeGroups(groups = { "live" })
-   public void setupContext() {
-      super.setupContext();
-      client = socontext.getApi().getVirtualGuestClient();
-   }
-
-   private VirtualGuestClient client;
-
    @Test
    public void testListVirtualGuests() throws Exception {
-      Set<VirtualGuest> response = client.listVirtualGuests();
+      Set<VirtualGuest> response = api().listVirtualGuests();
       assert null != response;
       assertTrue(response.size() >= 0);
       for (VirtualGuest vg : response) {
-         VirtualGuest newDetails = client.getVirtualGuest(vg.getId());
+         VirtualGuest newDetails = api().getVirtualGuest(vg.getId());
          assertEquals(vg.getId(), newDetails.getId());
          checkVirtualGuest(vg);
       }
@@ -85,17 +80,17 @@ public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
 
       // TODO: Should also check if there are active transactions before trying to cancel.
       // objectMask: virtualGuests.activeTransaction
-      for (VirtualGuest guest : client.listVirtualGuests()) {
+      for (VirtualGuest guest : api().listVirtualGuests()) {
          if (guest.getHostname().startsWith(TEST_HOSTNAME_PREFIX)) {
             if (guest.getBillingItemId() != -1) {
-               client.cancelService(guest.getBillingItemId());
+               api().cancelService(guest.getBillingItemId());
             }
          }
       }
 
-      int pkgId = Iterables.find(socontext.getApi().getAccountClient().getActivePackages(),
+      int pkgId = Iterables.find(api.getAccountClient().getActivePackages(),
                named(ProductPackageClientLiveTest.CLOUD_SERVER_PACKAGE_NAME)).getId();
-      ProductPackage productPackage = socontext.getApi().getProductPackageClient().getProductPackage(pkgId);
+      ProductPackage productPackage = api.getProductPackageClient().getProductPackage(pkgId);
 
       Iterable<ProductItem> ramItems = Iterables.filter(productPackage.getItems(), Predicates.and(categoryCode("ram"),
                capacity(2.0f)));
@@ -116,8 +111,7 @@ public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
                osToProductItem.get("Ubuntu Linux 8 LTS Hardy Heron - Minimal Install (64 bit)"));
 
       Builder<ProductItemPrice> prices = ImmutableSet.builder();
-      prices.addAll(view.utils().injector().getInstance(Key.get(new TypeLiteral<Iterable<ProductItemPrice>>() {
-      })));
+      prices.addAll(defaultPrices);
       prices.add(ramPrice);
       prices.add(cpuPrice);
       prices.add(osPrice);
@@ -128,14 +122,28 @@ public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
       ProductOrder order = ProductOrder.builder().packageId(pkgId).quantity(1).useHourlyPricing(true).prices(
                prices.build()).virtualGuests(guest).build();
 
-      ProductOrderReceipt receipt = socontext.getApi().getVirtualGuestClient().orderVirtualGuest(order);
+      ProductOrderReceipt receipt = api().orderVirtualGuest(order);
       ProductOrder order2 = receipt.getOrderDetails();
       VirtualGuest result = Iterables.get(order2.getVirtualGuests(), 0);
 
-      ProductOrder order3 = socontext.getApi().getVirtualGuestClient().getOrderTemplate(result.getId());
+      ProductOrder order3 = api().getOrderTemplate(result.getId());
 
       assertEquals(order.getPrices(), order3.getPrices());
       assertNotNull(receipt);
+   }
+
+   private Iterable<ProductItemPrice> defaultPrices;
+
+   @Override
+   protected SoftLayerClient create(Properties props, Iterable<Module> modules) {
+      Injector injector = newBuilder().modules(modules).overrides(props).buildInjector();
+      defaultPrices = injector.getInstance(Key.get(new TypeLiteral<Iterable<ProductItemPrice>>() {
+      }));
+      return injector.getInstance(SoftLayerClient.class);
+   }
+
+   private VirtualGuestClient api() {
+      return api.getVirtualGuestClient();
    }
 
    private void checkVirtualGuest(VirtualGuest vg) {

@@ -31,7 +31,7 @@ import com.google.common.base.Optional;
 public class WindowsApiLiveTest extends BaseEC2ApiLiveTest {
 
    protected WindowsApi api() {
-      Optional<? extends WindowsApi> windowsOption = context.getApi().getWindowsApi();
+      Optional<? extends WindowsApi> windowsOption = api.getWindowsApi();
       if (!windowsOption.isPresent())
          throw new SkipException("windows api not present");
       return windowsOption.get();

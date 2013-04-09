@@ -46,40 +46,40 @@ public class ContentCachingApiLiveTest extends BaseCloudLoadBalancersApiLiveTest
       CreateLoadBalancer createLB = CreateLoadBalancer.builder()
             .name(prefix+"-jclouds").protocol("HTTP").port(80).virtualIPType(Type.PUBLIC).node(addNode).build(); 
 
-      zone = Iterables.getFirst(clbApi.getConfiguredZones(), null);
-      lb = clbApi.getLoadBalancerApiForZone(zone).create(createLB);
+      zone = Iterables.getFirst(api.getConfiguredZones(), null);
+      lb = api.getLoadBalancerApiForZone(zone).create(createLB);
       
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
+      assertTrue(awaitAvailable(api.getLoadBalancerApiForZone(zone)).apply(lb));
    }
    
    @Test(dependsOnMethods = "testCreateLoadBalancer")
    public void testEnableAndIsContentCaching() throws Exception {
-      clbApi.getContentCachingApiForZoneAndLoadBalancer(zone, lb.getId()).enable();
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
+      api.getContentCachingApiForZoneAndLoadBalancer(zone, lb.getId()).enable();
+      assertTrue(awaitAvailable(api.getLoadBalancerApiForZone(zone)).apply(lb));
       
       boolean isContentCaching = 
-            clbApi.getContentCachingApiForZoneAndLoadBalancer(zone, lb.getId()).isContentCaching();
+            api.getContentCachingApiForZoneAndLoadBalancer(zone, lb.getId()).isContentCaching();
       
       assertTrue(isContentCaching);
    }
    
    @Test(dependsOnMethods = "testEnableAndIsContentCaching")
    public void testDisableAndIsContentCaching() throws Exception {
-      clbApi.getContentCachingApiForZoneAndLoadBalancer(zone, lb.getId()).disable();
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
+      api.getContentCachingApiForZoneAndLoadBalancer(zone, lb.getId()).disable();
+      assertTrue(awaitAvailable(api.getLoadBalancerApiForZone(zone)).apply(lb));
       
       boolean isContentCaching = 
-            clbApi.getContentCachingApiForZoneAndLoadBalancer(zone, lb.getId()).isContentCaching();
+            api.getContentCachingApiForZoneAndLoadBalancer(zone, lb.getId()).isContentCaching();
       
       assertFalse(isContentCaching);
    }
 
    @Override
    @AfterGroups(groups = "live")
-   protected void tearDownContext() {
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
-      clbApi.getLoadBalancerApiForZone(zone).delete(lb.getId());
-      assertTrue(awaitDeleted(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
-      super.tearDownContext();
+   protected void tearDown() {
+      assertTrue(awaitAvailable(api.getLoadBalancerApiForZone(zone)).apply(lb));
+      api.getLoadBalancerApiForZone(zone).delete(lb.getId());
+      assertTrue(awaitDeleted(api.getLoadBalancerApiForZone(zone)).apply(lb));
+      super.tearDown();
    }
 }

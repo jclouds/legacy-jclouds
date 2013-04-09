@@ -18,6 +18,8 @@
  */
 package org.jclouds.ultradns.ws;
 
+import java.io.Closeable;
+
 import javax.inject.Named;
 import javax.ws.rs.POST;
 
@@ -45,10 +47,13 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01?wsdl" />
  * @see <a href="https://www.ultradns.net/api/NUS_API_XML_SOAP.pdf" />
  * @author Adrian Cole
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(UltraDNSWSApi.class)} as
+ *             {@link UltraDNSWSAsyncApi} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 @RequestFilters(SOAPWrapWithPasswordAuth.class)
 @VirtualHost
-public interface UltraDNSWSAsyncApi {
+public interface UltraDNSWSAsyncApi extends Closeable {
 
    /**
     * @see UltraDNSWSApi#getCurrentAccount()

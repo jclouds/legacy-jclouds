@@ -51,7 +51,7 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    protected void deleteNetworksInZoneWithVlanId(String zoneId, String vlanId) {
-      Set<Network> networks = domainAdminContext.getApi().getNetworkClient().listNetworks(
+      Set<Network> networks = domainAdminClient.getNetworkClient().listNetworks(
          ListNetworksOptions.Builder
             .isDefault(false)
             .isSystem(false)
@@ -63,7 +63,7 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
       URI broadcastUri = URI.create("vlan://" + vlanId);
       for (Network net : networks) {
          if (broadcastUri.equals(net.getBroadcastURI())) {
-            String jobId = domainAdminContext.getApi().getNetworkClient().deleteNetwork(net.getId());
+            String jobId = domainAdminClient.getNetworkClient().deleteNetwork(net.getId());
             adminJobComplete.apply(jobId);
          }
       }
@@ -96,7 +96,7 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
             cloudStackContext.getApi().getOfferingClient().listNetworkOfferings(specifyVLAN(true).zoneId(zoneId)), 0).getId();
 
          // create an arbitrary network
-         network = domainAdminContext.getApi()
+         network = domainAdminClient
             .getNetworkClient()
                // startIP/endIP/netmask/gateway must be specified together
             .createNetworkInZone(zoneId, offeringId, group, group,
@@ -117,7 +117,7 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
          if (nodes != null)
             view.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
          if (network != null)
-            domainAdminContext.getApi().getNetworkClient().deleteNetwork(network.getId());
+            domainAdminClient.getNetworkClient().deleteNetwork(network.getId());
       }
    }
 

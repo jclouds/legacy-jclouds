@@ -39,7 +39,10 @@ import com.google.inject.Provides;
  * @see CinderApi
  * @see <a href="http://api.openstack.org/">API Doc</a>
  * @author Everett Toews
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(CinderApi.class)} as
+ *             {@link CinderAsyncApi} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 public interface CinderAsyncApi extends Closeable {
    /**
     * @return the Zone codes configured

@@ -51,20 +51,20 @@ public class HostAggregateApiLiveTest extends BaseNovaApiLiveTest {
 
    @BeforeClass(groups = {"integration", "live"})
    @Override
-   public void setupContext() {
-      super.setupContext();
-      String zone = Iterables.getLast(novaContext.getApi().getConfiguredZones(), "nova");
-      apiOption = novaContext.getApi().getHostAggregateExtensionForZone(zone);
-      hostAdminOption = novaContext.getApi().getHostAdministrationExtensionForZone(zone);
+   public void setup() {
+      super.setup();
+      String zone = Iterables.getLast(api.getConfiguredZones(), "nova");
+      apiOption = api.getHostAggregateExtensionForZone(zone);
+      hostAdminOption = api.getHostAdministrationExtensionForZone(zone);
    }
 
    @AfterClass(groups = { "integration", "live" })
    @Override
-   protected void tearDownContext() {
+   protected void tearDown() {
       if (testAggregate != null) {
          assertTrue(apiOption.get().delete(testAggregate.getId()));
       }
-      super.tearDownContext();
+      super.tearDown();
    }
 
    public void testCreateAggregate() {

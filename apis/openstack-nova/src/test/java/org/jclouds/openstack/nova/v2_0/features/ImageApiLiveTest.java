@@ -41,8 +41,8 @@ public class ImageApiLiveTest extends BaseNovaApiLiveTest {
    @Test(description = "GET /v${apiVersion}/{tenantId}/images")
    public void testListImages() throws Exception {
       for (String zoneId : zones) {
-         ImageApi api = novaContext.getApi().getImageApiForZone(zoneId);
-         Set<? extends Resource> response = api.list().concat().toSet();
+         ImageApi imageApi = api.getImageApiForZone(zoneId);
+         Set<? extends Resource> response = imageApi.list().concat().toSet();
          assertNotNull(response);
          assertFalse(response.isEmpty());
          for (Resource image : response) {
@@ -55,9 +55,9 @@ public class ImageApiLiveTest extends BaseNovaApiLiveTest {
 
    @Test(description = "GET /v${apiVersion}/{tenantId}/images/detail")
    public void testListImagesInDetail() throws Exception {
-      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
-         ImageApi api = novaContext.getApi().getImageApiForZone(zoneId);
-         Set<? extends Image> response = api.listInDetail().concat().toSet();
+      for (String zoneId : api.getConfiguredZones()) {
+         ImageApi imageApi = api.getImageApiForZone(zoneId);
+         Set<? extends Image> response = imageApi.listInDetail().concat().toSet();
          assertNotNull(response);
          assertFalse(response.isEmpty());
          for (Image image : response) {
@@ -79,11 +79,11 @@ public class ImageApiLiveTest extends BaseNovaApiLiveTest {
 
    @Test(description = "GET /v${apiVersion}/{tenantId}/images/{id}", dependsOnMethods = { "testListImagesInDetail" })
    public void testGetImageById() throws Exception {
-      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
-         ImageApi api = novaContext.getApi().getImageApiForZone(zoneId);
-         Set<? extends Image> response = api.listInDetail().concat().toSet();
+      for (String zoneId : api.getConfiguredZones()) {
+         ImageApi imageApi = api.getImageApiForZone(zoneId);
+         Set<? extends Image> response = imageApi.listInDetail().concat().toSet();
          for (Image image : response) {
-            Image details = api.get(image.getId());
+            Image details = imageApi.get(image.getId());
             assertNotNull(details);
             assertEquals(details.getId(), image.getId());
             assertEquals(details.getName(), image.getName());

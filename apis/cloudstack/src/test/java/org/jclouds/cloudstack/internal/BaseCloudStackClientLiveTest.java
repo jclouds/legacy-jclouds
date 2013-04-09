@@ -21,6 +21,9 @@ package org.jclouds.cloudstack.internal;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.get;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.cloudstack.domain.Account.Type.ADMIN;
+import static org.jclouds.cloudstack.domain.Account.Type.DOMAIN_ADMIN;
+import static org.jclouds.cloudstack.domain.Account.Type.USER;
 import static org.jclouds.reflect.Reflection2.typeToken;
 import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
@@ -30,17 +33,15 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.CloudStackContext;
-import org.jclouds.cloudstack.CloudStackDomainAsyncClient;
 import org.jclouds.cloudstack.CloudStackDomainClient;
-import org.jclouds.cloudstack.CloudStackGlobalAsyncClient;
 import org.jclouds.cloudstack.CloudStackGlobalClient;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.cloudstack.features.AccountClient;
 import org.jclouds.cloudstack.functions.ReuseOrAssociateNewPublicIPAddress;
 import org.jclouds.cloudstack.options.ListTemplatesOptions;
 import org.jclouds.cloudstack.predicates.CorrectHypervisorForZone;
@@ -55,7 +56,6 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.internal.BaseGenericComputeServiceContextLiveTest;
 import org.jclouds.predicates.SocketOpen;
-import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.SkipException;
@@ -151,7 +151,7 @@ public class BaseCloudStackClientLiveTest extends BaseGenericComputeServiceConte
    protected String prefix = System.getProperty("user.name");
 
    protected ComputeService computeClient;
-   protected RestContext<CloudStackClient, CloudStackAsyncClient> cloudStackContext;
+   protected CloudStackContext cloudStackContext;
    protected CloudStackClient client;
    protected CloudStackClient adminClient;
    protected User user;
@@ -171,13 +171,11 @@ public class BaseCloudStackClientLiveTest extends BaseGenericComputeServiceConte
 
    protected boolean domainAdminEnabled;
    protected CloudStackContext domainAdminComputeContext;
-   protected RestContext<CloudStackDomainClient, CloudStackDomainAsyncClient> domainAdminContext;
    protected CloudStackDomainClient domainAdminClient;
    protected User domainAdminUser;
 
    protected boolean globalAdminEnabled;
    protected CloudStackContext globalAdminComputeContext;
-   protected RestContext<CloudStackGlobalClient, CloudStackGlobalAsyncClient> globalAdminContext;
    protected CloudStackGlobalClient globalAdminClient;
    protected User globalAdminUser;
    
@@ -200,26 +198,25 @@ public class BaseCloudStackClientLiveTest extends BaseGenericComputeServiceConte
    public void setupContext() {
       super.setupContext();
       computeClient = view.getComputeService();
-      cloudStackContext = view.unwrap();
+      cloudStackContext = CloudStackContext.class.cast(view);
       client = cloudStackContext.getApi();
-      user = verifyCurrentUserIsOfType(cloudStackContext, Account.Type.USER);
+      user = verifyCurrentUserIsOfType(identity, client.getAccountClient(), USER);
 
       domainAdminEnabled = setupDomainAdminProperties() != null;
       if (domainAdminEnabled) {
          domainAdminComputeContext = createView(setupDomainAdminProperties(), setupModules());
-         domainAdminContext = domainAdminComputeContext.getDomainContext();
-         domainAdminClient = domainAdminContext.getApi();
-         domainAdminUser = verifyCurrentUserIsOfType(domainAdminContext, Account.Type.DOMAIN_ADMIN);
-         adminClient = domainAdminContext.getApi();
+         domainAdminClient = domainAdminComputeContext.getDomainApi();
+         domainAdminUser = verifyCurrentUserIsOfType(domainAdminIdentity, domainAdminClient.getAccountClient(),
+               DOMAIN_ADMIN);
+         adminClient = domainAdminClient;
       }
 
       globalAdminEnabled = setupGlobalAdminProperties() != null;
       if (globalAdminEnabled) {
          globalAdminComputeContext = createView(setupGlobalAdminProperties(), setupModules());
-         globalAdminContext = globalAdminComputeContext.getGlobalContext();
-         globalAdminClient = globalAdminContext.getApi();
-         globalAdminUser = verifyCurrentUserIsOfType(globalAdminContext, Account.Type.ADMIN);
-         adminClient = globalAdminContext.getApi();
+         globalAdminClient = globalAdminComputeContext.getGlobalApi();
+         globalAdminUser = verifyCurrentUserIsOfType(globalAdminIdentity, globalAdminClient.getAccountClient(), ADMIN);
+         adminClient = globalAdminClient;
       }
 
       injector = cloudStackContext.utils().injector();
@@ -250,10 +247,9 @@ public class BaseCloudStackClientLiveTest extends BaseGenericComputeServiceConte
       return new SshjSshClientModule();
    }
    
-   protected static User verifyCurrentUserIsOfType(
-         RestContext<? extends CloudStackClient, ? extends CloudStackAsyncClient> context, Account.Type type) {
-      Iterable<User> users = Iterables.concat(context.getApi().getAccountClient().listAccounts());
-      Predicate<User> apiKeyMatches = UserPredicates.apiKeyEquals(context.getIdentity());
+   private static User verifyCurrentUserIsOfType(String identity, AccountClient accountClient, Account.Type type) {
+      Iterable<User> users = Iterables.concat(accountClient.listAccounts());
+      Predicate<User> apiKeyMatches = UserPredicates.apiKeyEquals(identity);
       User currentUser;
       try {
          currentUser = Iterables.find(users, apiKeyMatches);

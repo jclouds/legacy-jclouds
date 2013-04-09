@@ -45,7 +45,10 @@ import com.google.inject.Provides;
  *      href="http://docs.amazonwebservices.com/AWSSimpleQueueService/2011-10-01/APIReference/Welcome.html">SQS
  *      documentation</a>
  * @author Adrian Cole
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(SQSApi.class)} as
+ *             {@link SQSAsyncApi} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 @Beta
 @RequestFilters(FormSigner.class)
 @VirtualHost

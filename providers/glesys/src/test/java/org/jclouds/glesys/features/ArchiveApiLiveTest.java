@@ -42,34 +42,34 @@ import com.google.common.base.Predicate;
 public class ArchiveApiLiveTest extends BaseGleSYSApiLiveTest {
 
    @BeforeClass(groups = { "integration", "live" })
-   public void setupContext() {
-      super.setupContext();
+   public void setup() {
+      super.setup();
       
-      api = gleContext.getApi().getArchiveApi();
-      archiveUser = gleContext.getIdentity().toLowerCase() + "_test9";
+      archiveApi = api.getArchiveApi();
+      archiveUser = identity.toLowerCase() + "_test9";
       archiveCounter = retry(new Predicate<Integer>() {
          public boolean apply(Integer value) {
-            return api.list().size() == value;
+            return archiveApi.list().size() == value.intValue();
          }
       }, 30, 1, SECONDS);
    }
    
    @AfterClass(groups = { "integration", "live" })
-   protected void tearDownContext() {
-      int before = api.list().size();
-      api.delete(archiveUser);
+   protected void tearDown() {
+      int before = archiveApi.list().size();
+      archiveApi.delete(archiveUser);
       assertTrue(archiveCounter.apply(before - 1));
 
-      super.tearDownContext();
+      super.tearDown();
    }
 
-   private ArchiveApi api;
+   private ArchiveApi archiveApi;
    private String archiveUser;
    private Predicate<Integer> archiveCounter;
 
    @Test
    public void testAllowedArguments() throws Exception {
-      ArchiveAllowedArguments args = api.getAllowedArguments();
+      ArchiveAllowedArguments args = archiveApi.getAllowedArguments();
       assertNotNull(args);
       assertNotNull(args.getSizes());
       assertTrue(args.getSizes().size() > 0);
@@ -82,36 +82,36 @@ public class ArchiveApiLiveTest extends BaseGleSYSApiLiveTest {
    @Test
    public void testCreateArchive() throws Exception {
       try {
-         api.delete(archiveUser);
+         archiveApi.delete(archiveUser);
       } catch(Exception ex) {
       }
       
-      int before = api.list().size();
+      int before = archiveApi.list().size();
       
-      api.createWithCredentialsAndSize(archiveUser, "password", 10);
+      archiveApi.createWithCredentialsAndSize(archiveUser, "password", 10);
 
       assertTrue(archiveCounter.apply(before + 1));
    }
 
    @Test(dependsOnMethods = "testCreateArchive")
    public void testArchiveDetails() throws Exception {
-      Archive details = api.get(archiveUser);
+      Archive details = archiveApi.get(archiveUser);
       assertEquals(details.getUsername(), archiveUser);
    }
 
    @Test(dependsOnMethods = "testCreateArchive")
    public void testChangePassword() throws Exception {
-      api.changePassword(archiveUser, "newpassword");      
+      archiveApi.changePassword(archiveUser, "newpassword");      
       // TODO assert something useful!
    }
 
    @Test(dependsOnMethods = "testCreateArchive")
    public void testResizeArchive() throws Exception {
-      api.resize(archiveUser, 20);
+      archiveApi.resize(archiveUser, 20);
 
       assertTrue(retry(new Predicate<String>() {
          public boolean apply(String value) {
-            return api.get(archiveUser) != null && value.equals(api.get(archiveUser).getTotalSize());
+            return archiveApi.get(archiveUser) != null && value.equals(archiveApi.get(archiveUser).getTotalSize());
          }
       }, 30, 1, SECONDS).apply("20 GB"));
    }

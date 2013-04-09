@@ -31,7 +31,6 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
 import org.jclouds.vcloud.config.VCloudRestClientModule;
@@ -48,7 +47,12 @@ import com.google.inject.Module;
  */
 public class VCloudApiMetadata extends BaseRestApiMetadata {
 
-   public static final TypeToken<RestContext<VCloudClient, VCloudAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<VCloudClient, VCloudAsyncClient>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(VCloudClient.class)} as
+    *             {@link VCloudAsyncClient} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<VCloudClient, VCloudAsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<VCloudClient, VCloudAsyncClient>>() {
       private static final long serialVersionUID = 1L;
    };
    
@@ -87,6 +91,7 @@ public class VCloudApiMetadata extends BaseRestApiMetadata {
 
    public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
+      @SuppressWarnings("deprecation")
       protected Builder() {
          super(VCloudClient.class, VCloudAsyncClient.class);
           id("vcloud")

@@ -61,7 +61,6 @@ import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.jclouds.ContextBuilder;
 import org.jclouds.providers.AnonymousProviderMetadata;
-import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Optional;
@@ -87,7 +86,6 @@ public abstract class BaseJettyTest {
    protected Injector injector;
    private AtomicInteger cycle = new AtomicInteger(0);
    private Server server2;
-   protected RestContext<IntegrationTestClient, IntegrationTestAsyncClient> context;
    protected int testPort;
    protected String md5;
    static final Pattern actionPattern = Pattern.compile("/objects/(.*)/action/([a-z]*);?(.*)");
@@ -170,8 +168,7 @@ public abstract class BaseJettyTest {
 
       Properties properties = new Properties();
       addConnectionProperties(properties);
-      context = newBuilder(testPort, properties, createConnectionModule()).build();
-      client = context.getApi();
+      client = newBuilder(testPort, properties, createConnectionModule()).buildApi(IntegrationTestClient.class);
       assert client != null;
 
       assert client.newStringBuilder() != null;
@@ -279,7 +276,7 @@ public abstract class BaseJettyTest {
 
    @AfterClass
    public void tearDownJetty() throws Exception {
-      closeQuietly(context);
+      closeQuietly(client);
       if (server2 != null)
          server2.stop();
       server.stop();

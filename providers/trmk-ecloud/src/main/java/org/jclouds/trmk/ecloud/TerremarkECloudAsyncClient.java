@@ -91,7 +91,10 @@ import com.google.common.util.concurrent.ListenableFuture;
  *      "http://support.theenterprisecloud.com/kb/default.asp?id=645&Lang=1&SID="
  *      />
  * @author Adrian Cole
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(TerremarkECloudClient.class)} as
+ *             {@link TerremarkECloudAsyncClient} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 @RequestFilters(SetVCloudTokenCookie.class)
 public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    /**

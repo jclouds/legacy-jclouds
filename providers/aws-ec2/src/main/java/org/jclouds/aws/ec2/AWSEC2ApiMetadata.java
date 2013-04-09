@@ -28,7 +28,6 @@ import org.jclouds.aws.ec2.compute.config.AWSEC2ComputeServiceContextModule;
 import org.jclouds.aws.ec2.config.AWSEC2RestClientModule;
 import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.compute.config.EC2ResolveImagesModule;
-import org.jclouds.rest.RestContext;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
@@ -40,8 +39,13 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class AWSEC2ApiMetadata extends EC2ApiMetadata {
-   
-   public static final TypeToken<RestContext<AWSEC2Client, AWSEC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<AWSEC2Client, AWSEC2AsyncClient>>() {
+
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(AWSEC2Client.class)} as
+    *             {@link AWSEC2AsyncClient} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<AWSEC2Client, AWSEC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<AWSEC2Client, AWSEC2AsyncClient>>() {
       private static final long serialVersionUID = 1L;
    };
 
@@ -69,10 +73,11 @@ public class AWSEC2ApiMetadata extends EC2ApiMetadata {
    }
 
    public static class Builder extends EC2ApiMetadata.Builder<Builder> {
+      @SuppressWarnings("deprecation")
       protected Builder(){
          super(AWSEC2Client.class, AWSEC2AsyncClient.class);
          id("aws-ec2")
-         .version(AWSEC2AsyncClient.VERSION)
+         .version("2012-06-01")
          .name("Amazon-specific EC2 API")
          .view(AWSEC2ComputeServiceContext.class)
          .context(CONTEXT_TOKEN)

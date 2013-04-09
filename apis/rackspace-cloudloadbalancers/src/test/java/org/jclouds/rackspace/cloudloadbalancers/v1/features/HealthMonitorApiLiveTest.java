@@ -48,41 +48,41 @@ public class HealthMonitorApiLiveTest extends BaseCloudLoadBalancersApiLiveTest 
       CreateLoadBalancer createLB = CreateLoadBalancer.builder()
             .name(prefix+"-jclouds").protocol("HTTP").port(80).virtualIPType(Type.PUBLIC).node(addNode).build(); 
 
-      zone = Iterables.getFirst(clbApi.getConfiguredZones(), null);
-      lb = clbApi.getLoadBalancerApiForZone(zone).create(createLB);
+      zone = Iterables.getFirst(api.getConfiguredZones(), null);
+      lb = api.getLoadBalancerApiForZone(zone).create(createLB);
       
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
+      assertTrue(awaitAvailable(api.getLoadBalancerApiForZone(zone)).apply(lb));
    }
 
    @Test(dependsOnMethods = "testCreateLoadBalancer")
    public void testCreateAndGetHealthMonitor() throws Exception {
-      clbApi.getHealthMonitorApiForZoneAndLoadBalancer(zone, lb.getId()).createOrUpdate(
+      api.getHealthMonitorApiForZoneAndLoadBalancer(zone, lb.getId()).createOrUpdate(
             HealthMonitorApiExpectTest.getConnectHealthMonitor());
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
+      assertTrue(awaitAvailable(api.getLoadBalancerApiForZone(zone)).apply(lb));
       
       HealthMonitor healthMonitor = 
-            clbApi.getHealthMonitorApiForZoneAndLoadBalancer(zone, lb.getId()).get();
+            api.getHealthMonitorApiForZoneAndLoadBalancer(zone, lb.getId()).get();
 
       assertEquals(healthMonitor, HealthMonitorApiExpectTest.getConnectHealthMonitor());
    }
    
    @Test(dependsOnMethods = "testCreateAndGetHealthMonitor")
    public void testRemoveAndGetHealthMonitor() throws Exception {
-      assertTrue(clbApi.getHealthMonitorApiForZoneAndLoadBalancer(zone, lb.getId()).delete());
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
+      assertTrue(api.getHealthMonitorApiForZoneAndLoadBalancer(zone, lb.getId()).delete());
+      assertTrue(awaitAvailable(api.getLoadBalancerApiForZone(zone)).apply(lb));
       
       HealthMonitor healthMonitor = 
-            clbApi.getHealthMonitorApiForZoneAndLoadBalancer(zone, lb.getId()).get();
+            api.getHealthMonitorApiForZoneAndLoadBalancer(zone, lb.getId()).get();
       
       assertNull(healthMonitor);
    }
 
    @Override
    @AfterGroups(groups = "live")
-   protected void tearDownContext() {
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
-      clbApi.getLoadBalancerApiForZone(zone).delete(lb.getId());
-      assertTrue(awaitDeleted(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
-      super.tearDownContext();
+   protected void tearDown() {
+      assertTrue(awaitAvailable(api.getLoadBalancerApiForZone(zone)).apply(lb));
+      api.getLoadBalancerApiForZone(zone).delete(lb.getId());
+      assertTrue(awaitDeleted(api.getLoadBalancerApiForZone(zone)).apply(lb));
+      super.tearDown();
    }
 }

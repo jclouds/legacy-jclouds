@@ -93,7 +93,7 @@ public class TerremarkECloudClientMockTest {
    }
 
    /**
-    * there's no built-in way to defer evaluation of a response body, hence this
+    * there's no built-in way to defer evaluation of a response header, hence this
     * method, which allows us to send back links to the mock server.
     */
    private AtomicReference<URL> setURLReplacingDispatcher(MockWebServer server) {

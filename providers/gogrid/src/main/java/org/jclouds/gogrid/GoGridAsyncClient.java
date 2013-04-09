@@ -18,6 +18,8 @@
  */
 package org.jclouds.gogrid;
 
+import java.io.Closeable;
+
 import org.jclouds.gogrid.services.GridImageAsyncClient;
 import org.jclouds.gogrid.services.GridIpAsyncClient;
 import org.jclouds.gogrid.services.GridJobAsyncClient;
@@ -27,9 +29,11 @@ import org.jclouds.rest.annotations.Delegate;
 
 /**
  * @author Oleksiy Yarmula
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(GoGridClient.class)} as
+ *             {@link GoGridAsyncClient} interface will be removed in jclouds 1.7.
  */
-public interface GoGridAsyncClient {
-   public static final String VERSION = "1.5";
+@Deprecated
+public interface GoGridAsyncClient extends Closeable {
 
    /**
     * @see GoGridClient#getServerServices()
