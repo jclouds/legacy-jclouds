@@ -38,7 +38,7 @@ import com.google.common.net.HostAndPort;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "TerremarkVCloudExpressClientLiveTest")
-public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTest<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient> {
+public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTest {
 
    @Override
    protected SshClient getConnectionFor(HostAndPort socket) {
@@ -49,6 +49,6 @@ public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTes
    @Override
    protected Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIpForSSH(VApp vApp) {
       return new TerremarkVCloudExpressInternetServiceAndPublicIpAddressSupplier(
-            TerremarkVCloudExpressClient.class.cast(connection)).getNewInternetServiceAndIp(vApp, 22, Protocol.TCP);
+            TerremarkVCloudExpressClient.class.cast(api)).getNewInternetServiceAndIp(vApp, 22, Protocol.TCP);
    }
 }

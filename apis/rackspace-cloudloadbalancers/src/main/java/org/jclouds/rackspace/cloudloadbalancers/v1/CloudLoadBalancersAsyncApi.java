@@ -49,7 +49,10 @@ import com.google.inject.Provides;
  * 
  * @see CloudLoadBalancersApi
  * @author Adrian Cole
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(CloudLoadBalancersApi.class)} as
+ *             {@link CloudLoadBalancersAsyncApi} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 public interface CloudLoadBalancersAsyncApi extends Closeable {
    /**
     * @return the Zone codes configured

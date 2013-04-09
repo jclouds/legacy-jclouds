@@ -303,6 +303,6 @@ public class MetricApiLiveTest extends BaseCloudWatchApiLiveTest {
    }
 
    protected MetricApi api() {
-      return context.getApi().getMetricApiForRegion(null);
+      return api.getMetricApiForRegion(null);
    }
 }

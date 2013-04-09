@@ -199,7 +199,7 @@ public class RecordApiLiveTest extends BaseDynECTApiLiveTest {
       checkNotNull(job, "unable to create zone %s", zoneFQDN);
       getAnonymousLogger().info("created zone: " + job);
       assertEquals(job.getStatus(), Status.SUCCESS);
-      assertEquals(context.getApi().getJob(job.getId()), job);
+      assertEquals(api.getJob(job.getId()), job);
       Zone zone = zoneApi().publish(zoneFQDN);
       checkNotNull(zone, "unable to publish zone %s", zoneFQDN);
       getAnonymousLogger().info("published zone: " + zone);
@@ -229,7 +229,7 @@ public class RecordApiLiveTest extends BaseDynECTApiLiveTest {
       checkNotNull(job, "unable to create record %s", record);
       getAnonymousLogger().info("created record: " + job);
       assertEquals(job.getStatus(), Status.SUCCESS);
-      assertEquals(context.getApi().getJob(job.getId()), job);
+      assertEquals(api.getJob(job.getId()), job);
       zoneApi().publish(zoneFQDN);
    }
 
@@ -265,22 +265,22 @@ public class RecordApiLiveTest extends BaseDynECTApiLiveTest {
       checkNotNull(job, "unable to delete record %s", id);
       getAnonymousLogger().info("deleted record: " + job);
       assertEquals(job.getStatus(), Status.SUCCESS);
-      assertEquals(context.getApi().getJob(job.getId()), job);
+      assertEquals(api.getJob(job.getId()), job);
       zoneApi().publish(zoneFQDN);
    }
 
    protected RecordApi api(String zoneFQDN) {
-      return context.getApi().getRecordApiForZone(zoneFQDN);
+      return api.getRecordApiForZone(zoneFQDN);
    }
 
    protected ZoneApi zoneApi() {
-      return context.getApi().getZoneApi();
+      return api.getZoneApi();
    }
 
    @Override
    @AfterClass(groups = "live", alwaysRun = true)
-   protected void tearDownContext() {
+   protected void tearDown() {
       zoneApi().delete(zoneFQDN);
-      super.tearDownContext();
+      super.tearDown();
    }
 }

@@ -26,7 +26,6 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.aws.s3.blobstore.AWSS3BlobStoreContext;
 import org.jclouds.aws.s3.blobstore.config.AWSS3BlobStoreContextModule;
 import org.jclouds.aws.s3.config.AWSS3RestClientModule;
-import org.jclouds.rest.RestContext;
 import org.jclouds.s3.S3ApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
@@ -40,7 +39,12 @@ import com.google.inject.Module;
  */
 public class AWSS3ApiMetadata extends S3ApiMetadata {
    
-   public static final TypeToken<RestContext<AWSS3Client, AWSS3AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<AWSS3Client, AWSS3AsyncClient>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(AWSS3Client.class)} as
+    *             {@link AWSS3AsyncClient} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<AWSS3Client, AWSS3AsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<AWSS3Client, AWSS3AsyncClient>>() {
       private static final long serialVersionUID = 1L;
    };
 
@@ -63,6 +67,7 @@ public class AWSS3ApiMetadata extends S3ApiMetadata {
    }
 
    public static class Builder extends S3ApiMetadata.Builder<Builder> {
+      @SuppressWarnings("deprecation")
       protected Builder(){
          super(AWSS3Client.class, AWSS3AsyncClient.class);
          id("aws-s3")

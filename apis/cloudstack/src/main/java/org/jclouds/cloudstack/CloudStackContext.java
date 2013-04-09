@@ -20,7 +20,6 @@ package org.jclouds.cloudstack;
 
 import org.jclouds.cloudstack.internal.CloudStackContextImpl;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.rest.RestContext;
 
 import com.google.inject.ImplementedBy;
 
@@ -33,8 +32,24 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(CloudStackContextImpl.class)
 public interface CloudStackContext extends ComputeServiceContext {
 
-   RestContext<CloudStackDomainClient, CloudStackDomainAsyncClient> getDomainContext();
+   CloudStackClient getApi();
 
-   RestContext<CloudStackGlobalClient, CloudStackGlobalAsyncClient> getGlobalContext();
+   /**
+    * @deprecated please use {@link #getDomainApi()} as
+    *             async interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   org.jclouds.rest.RestContext<CloudStackDomainClient, CloudStackDomainAsyncClient> getDomainContext();
+
+   CloudStackDomainClient getDomainApi();
+
+   /**
+    * @deprecated please use {@link #getGlobalApi()} as
+    *             async interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   org.jclouds.rest.RestContext<CloudStackGlobalClient, CloudStackGlobalAsyncClient> getGlobalContext();
+
+   CloudStackGlobalClient getGlobalApi();
 
 }

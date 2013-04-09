@@ -75,7 +75,7 @@ public class ZoneApiLiveTest extends BaseDynECTApiLiveTest {
       checkNotNull(job, "unable to create zone %s", fqdn);
       getAnonymousLogger().info("created zone: " + job);
       assertEquals(job.getStatus(), Status.SUCCESS);
-      assertEquals(context.getApi().getJob(job.getId()), job);
+      assertEquals(api.getJob(job.getId()), job);
    }
 
    @Test(dependsOnMethods = "testCreateZone")
@@ -90,7 +90,7 @@ public class ZoneApiLiveTest extends BaseDynECTApiLiveTest {
    public void testFreezeZone() {
       Job job = api().freeze(fqdn);
       assertEquals(job.getStatus(), Status.SUCCESS);
-      assertEquals(context.getApi().getJob(job.getId()), job);
+      assertEquals(api.getJob(job.getId()), job);
       // TODO: determine how to prove it is frozen
    }
 
@@ -98,7 +98,7 @@ public class ZoneApiLiveTest extends BaseDynECTApiLiveTest {
    public void testThawZone() {
       Job job = api().thaw(fqdn);
       assertEquals(job.getStatus(), Status.SUCCESS);
-      assertEquals(context.getApi().getJob(job.getId()), job);
+      assertEquals(api.getJob(job.getId()), job);
       // TODO: determine how to prove it is thawed
    }
 
@@ -106,25 +106,25 @@ public class ZoneApiLiveTest extends BaseDynECTApiLiveTest {
    public void testDeleteZoneChanges() {
       Job job = api().deleteChanges(fqdn);
       assertEquals(job.getStatus(), Status.SUCCESS);
-      assertEquals(context.getApi().getJob(job.getId()), job);
+      assertEquals(api.getJob(job.getId()), job);
    }
 
    @Test(dependsOnMethods = "testDeleteZoneChanges")
    public void testDeleteZone() {
       Job job = api().delete(fqdn);
       assertEquals(job.getStatus(), Status.SUCCESS);
-      assertEquals(context.getApi().getJob(job.getId()), job);
+      assertEquals(api.getJob(job.getId()), job);
       assertNull(api().get(fqdn), "job " + job + " didn't delete zone" + fqdn);
    }
 
    protected ZoneApi api() {
-      return context.getApi().getZoneApi();
+      return api.getZoneApi();
    }
 
    @Override
    @AfterClass(groups = "live", alwaysRun = true)
-   protected void tearDownContext() {
+   protected void tearDown() {
       api().delete(fqdn);
-      super.tearDownContext();
+      super.tearDown();
    }
 }

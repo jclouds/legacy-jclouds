@@ -25,7 +25,6 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 import org.jclouds.route53.config.Route53RestClientModule;
 
@@ -38,7 +37,12 @@ import com.google.common.reflect.TypeToken;
  */
 public class Route53ApiMetadata extends BaseRestApiMetadata {
 
-   public static final TypeToken<RestContext<? extends Route53Api, ? extends Route53AsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<? extends Route53Api, ? extends Route53AsyncApi>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(Route53Api.class)} as
+    *             {@link Route53AsyncApi} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<? extends Route53Api, ? extends Route53AsyncApi>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<? extends Route53Api, ? extends Route53AsyncApi>>() {
       private static final long serialVersionUID = 1L;
    };
 
@@ -47,6 +51,7 @@ public class Route53ApiMetadata extends BaseRestApiMetadata {
       return new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
    }
 
+   @SuppressWarnings("deprecation")
    public Route53ApiMetadata() {
       this(new Builder(Route53Api.class, Route53AsyncApi.class));
    }

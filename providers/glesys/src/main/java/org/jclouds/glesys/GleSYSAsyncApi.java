@@ -18,6 +18,8 @@
  */
 package org.jclouds.glesys;
 
+import java.io.Closeable;
+
 import org.jclouds.glesys.features.ArchiveAsyncApi;
 import org.jclouds.glesys.features.DomainAsyncApi;
 import org.jclouds.glesys.features.EmailAccountAsyncApi;
@@ -32,8 +34,11 @@ import org.jclouds.rest.annotations.Delegate;
  * @see GleSYSApi
  * @see <a href="https://customer.glesys.com/api.php" />
  * @author Adrian Cole
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(GleSYSApi.class)} as
+ *             {@link GleSYSAsyncApi} interface will be removed in jclouds 1.7.
  */
-public interface GleSYSAsyncApi {
+@Deprecated
+public interface GleSYSAsyncApi extends Closeable {
 
    /**
     * Provides asynchronous access to Server features.

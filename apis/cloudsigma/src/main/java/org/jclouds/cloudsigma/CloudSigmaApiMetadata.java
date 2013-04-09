@@ -28,7 +28,6 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.cloudsigma.compute.config.CloudSigmaComputeServiceContextModule;
 import org.jclouds.cloudsigma.config.CloudSigmaRestClientModule;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
@@ -42,7 +41,12 @@ import com.google.inject.Module;
  */
 public class CloudSigmaApiMetadata extends BaseRestApiMetadata {
 
-   public static final TypeToken<RestContext<CloudSigmaClient, CloudSigmaAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudSigmaClient, CloudSigmaAsyncClient>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(CloudSigmaClient.class)} as
+    *             {@link CloudSigmaAsyncClient} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<CloudSigmaClient, CloudSigmaAsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<CloudSigmaClient, CloudSigmaAsyncClient>>() {
       private static final long serialVersionUID = 1L;
    };
    
@@ -72,6 +76,7 @@ public class CloudSigmaApiMetadata extends BaseRestApiMetadata {
 
    public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
+      @SuppressWarnings("deprecation")
       protected Builder() {
          super(CloudSigmaClient.class, CloudSigmaAsyncClient.class);
          id("cloudsigma")

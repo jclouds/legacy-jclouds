@@ -27,7 +27,6 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.glesys.compute.config.GleSYSComputeServiceContextModule;
 import org.jclouds.glesys.config.GleSYSRestClientModule;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
@@ -41,7 +40,12 @@ import com.google.inject.Module;
  */
 public class GleSYSApiMetadata extends BaseRestApiMetadata {
 
-   public static final TypeToken<RestContext<GleSYSApi, GleSYSAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<GleSYSApi, GleSYSAsyncApi>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(GleSYSApi.class)} as
+    *             {@link GleSYSAsyncApi} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<GleSYSApi, GleSYSAsyncApi>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<GleSYSApi, GleSYSAsyncApi>>() {
       private static final long serialVersionUID = 1L;
    };
    
@@ -67,6 +71,7 @@ public class GleSYSApiMetadata extends BaseRestApiMetadata {
 
    public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
+      @SuppressWarnings("deprecation")
       protected Builder() {
          super(GleSYSApi.class, GleSYSAsyncApi.class);
          id("glesys")

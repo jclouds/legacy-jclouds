@@ -32,16 +32,12 @@ public class UltraDNSWSApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
    @Test
    protected void testGetCurrentAccount() {
-      Account account = api().getCurrentAccount();
+      Account account = api.getCurrentAccount();
       checkAccount(account);
    }
 
    private void checkAccount(Account account) {
       assertNotNull(account.getId(), "Id cannot be null for " + account);
       assertNotNull(account.getName(), "Name cannot be null for " + account);
-   }
-
-   protected UltraDNSWSApi api() {
-      return context.getApi();
    }
 }

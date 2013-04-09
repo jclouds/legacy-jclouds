@@ -46,8 +46,8 @@ public class ErrorPageApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
 
    @Override
    @BeforeGroups(groups = { "live" })
-   public void setupContext() {
-      super.setupContext();
+   public void setup() {
+      super.setup();
 
       contentExpected = ErrorPageApiExpectTest.getContentExpected();
       contentEscaped = ErrorPageApiExpectTest.getContentEscaped();
@@ -58,38 +58,38 @@ public class ErrorPageApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
       CreateLoadBalancer createLB = CreateLoadBalancer.builder()
             .name(prefix+"-jclouds").protocol("HTTP").port(80).virtualIPType(Type.PUBLIC).node(addNode).build(); 
 
-      zone = Iterables.getFirst(clbApi.getConfiguredZones(), null);
-      lb = clbApi.getLoadBalancerApiForZone(zone).create(createLB);
+      zone = Iterables.getFirst(api.getConfiguredZones(), null);
+      lb = api.getLoadBalancerApiForZone(zone).create(createLB);
       
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
+      assertTrue(awaitAvailable(api.getLoadBalancerApiForZone(zone)).apply(lb));
    }
 
    @Test(dependsOnMethods = "testCreateLoadBalancer")
    public void testCreateAndGetErrorPage() throws Exception {
-      clbApi.getErrorPageApiForZoneAndLoadBalancer(zone, lb.getId()).create(contentEscaped);
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
+      api.getErrorPageApiForZoneAndLoadBalancer(zone, lb.getId()).create(contentEscaped);
+      assertTrue(awaitAvailable(api.getLoadBalancerApiForZone(zone)).apply(lb));
       
-      String content = clbApi.getErrorPageApiForZoneAndLoadBalancer(zone, lb.getId()).get();
+      String content = api.getErrorPageApiForZoneAndLoadBalancer(zone, lb.getId()).get();
 
       assertEquals(content, contentExpected);
    }
    
    @Test(dependsOnMethods = "testCreateAndGetErrorPage")
    public void testRemoveAndGetErrorPage() throws Exception {
-      assertTrue(clbApi.getErrorPageApiForZoneAndLoadBalancer(zone, lb.getId()).delete());
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
+      assertTrue(api.getErrorPageApiForZoneAndLoadBalancer(zone, lb.getId()).delete());
+      assertTrue(awaitAvailable(api.getLoadBalancerApiForZone(zone)).apply(lb));
       
-      String content = clbApi.getErrorPageApiForZoneAndLoadBalancer(zone, lb.getId()).get();
+      String content = api.getErrorPageApiForZoneAndLoadBalancer(zone, lb.getId()).get();
       
       assertTrue(content.contains("Service Unavailable"));
    }
 
    @Override
    @AfterGroups(groups = "live")
-   protected void tearDownContext() {
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
-      clbApi.getLoadBalancerApiForZone(zone).delete(lb.getId());
-      assertTrue(awaitDeleted(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
-      super.tearDownContext();
+   protected void tearDown() {
+      assertTrue(awaitAvailable(api.getLoadBalancerApiForZone(zone)).apply(lb));
+      api.getLoadBalancerApiForZone(zone).delete(lb.getId());
+      assertTrue(awaitDeleted(api.getLoadBalancerApiForZone(zone)).apply(lb));
+      super.tearDown();
    }
 }

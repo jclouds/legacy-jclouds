@@ -94,7 +94,7 @@ public class ResourceRecordSetApiLiveTest extends BaseRoute53ApiLiveTest {
    }
 
    private void checkAllRRs(String zoneId) {
-      HostedZone zone = context.getApi().getHostedZoneApi().get(zoneId).getZone();
+      HostedZone zone = api.getHostedZoneApi().get(zoneId).getZone();
       List<ResourceRecordSet> records = api(zone.getId()).list().concat().toList();
       assertEquals(zone.getResourceRecordSetCount(), records.size());
 
@@ -171,7 +171,7 @@ public class ResourceRecordSetApiLiveTest extends BaseRoute53ApiLiveTest {
       clearAndDeleteHostedZonesNamed(name);
       String nonce = name + " @ " + new Date();
       String comment = name + " for " + JcloudsVersion.get();
-      NewHostedZone newHostedZone = context.getApi().getHostedZoneApi()
+      NewHostedZone newHostedZone = api.getHostedZoneApi()
             .createWithReferenceAndComment(name, nonce, comment);
       getAnonymousLogger().info("created zone: " + newHostedZone);
       assertTrue(inSync.apply(newHostedZone.getChange()), "zone didn't sync " + newHostedZone);
@@ -191,12 +191,12 @@ public class ResourceRecordSetApiLiveTest extends BaseRoute53ApiLiveTest {
    }
 
    private void clearAndDeleteHostedZonesNamed(String name) {
-      for (HostedZone zone : context.getApi().getHostedZoneApi().list().concat().filter(nameEquals(name))) {
+      for (HostedZone zone : api.getHostedZoneApi().list().concat().filter(nameEquals(name))) {
          getAnonymousLogger().info("clearing and deleting zone: " + zone);
          Set<ResourceRecordSet> remaining = refresh(zone.getId()).concat().filter(not(requiredRRTypes)).toSet();
          if (!remaining.isEmpty())
             sync(api(zone.getId()).apply(deleteAll(remaining)));
-         sync(context.getApi().getHostedZoneApi().delete(zone.getId()));
+         sync(api.getHostedZoneApi().delete(zone.getId()));
       }
    }
 
@@ -209,13 +209,13 @@ public class ResourceRecordSetApiLiveTest extends BaseRoute53ApiLiveTest {
    }
 
    private PagedIterable<HostedZone> zones() {
-      PagedIterable<HostedZone> zones = context.getApi().getHostedZoneApi().list();
+      PagedIterable<HostedZone> zones = api.getHostedZoneApi().list();
       if (zones.get(0).isEmpty())
-         throw new SkipException("no zones in context: " + context);
+         throw new SkipException("no zones in context: " + identity);
       return zones;
    }
 
    private ResourceRecordSetApi api(String zoneId) {
-      return context.getApi().getResourceRecordSetApiForHostedZone(zoneId);
+      return api.getResourceRecordSetApiForHostedZone(zoneId);
    }
 }

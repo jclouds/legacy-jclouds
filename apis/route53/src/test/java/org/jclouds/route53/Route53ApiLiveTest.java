@@ -31,10 +31,6 @@ public class Route53ApiLiveTest extends BaseRoute53ApiLiveTest {
 
    @Test
    protected void testGetChangeReturnsNullOnNotFound() {
-      assertNull(api().getChange("FOOOBAR"));
-   }
-
-   protected Route53Api api() {
-      return context.getApi();
+      assertNull(api.getChange("FOOOBAR"));
    }
 }

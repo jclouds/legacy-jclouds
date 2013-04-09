@@ -60,7 +60,10 @@ import com.google.inject.Provides;
  *      href="https://api-docs.hpcloud.com/hpcloud-object-storage/1.0/content/ch_object-storage-dev-overview.html">HP
  *      Cloud Object Storage API</a>
  * @author Jeremy Daggett
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(HPCloudObjectStorageApi.class)} as
+ *             {@link HPCloudObjectStorageAsyncApi} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 @RequestFilters(AuthenticateRequest.class)
 @Endpoint(Storage.class)
 public interface HPCloudObjectStorageAsyncApi extends CommonSwiftAsyncClient {

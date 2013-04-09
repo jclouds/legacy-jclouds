@@ -47,8 +47,8 @@ public class FloatingIPApiLiveTest extends BaseNovaApiLiveTest {
 
    @Test
    public void testListFloatingIPs() throws Exception {
-      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
-         Optional<? extends FloatingIPApi> apiOption = novaContext.getApi().getFloatingIPExtensionForZone(zoneId);
+      for (String zoneId : api.getConfiguredZones()) {
+         Optional<? extends FloatingIPApi> apiOption = api.getFloatingIPExtensionForZone(zoneId);
          if (!apiOption.isPresent())
             continue;
          FloatingIPApi api = apiOption.get();
@@ -69,8 +69,8 @@ public class FloatingIPApiLiveTest extends BaseNovaApiLiveTest {
 
    @Test
    public void testAllocateAndDecreateFloatingIPs() throws Exception {
-      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
-         Optional<? extends FloatingIPApi> apiOption = novaContext.getApi().getFloatingIPExtensionForZone(zoneId);
+      for (String zoneId : api.getConfiguredZones()) {
+         Optional<? extends FloatingIPApi> apiOption = api.getFloatingIPExtensionForZone(zoneId);
          if (!apiOption.isPresent())
             continue;
          FloatingIPApi api = apiOption.get();
@@ -100,12 +100,12 @@ public class FloatingIPApiLiveTest extends BaseNovaApiLiveTest {
 
    @Test
    public void testAddAndRemoveFloatingIp() throws Exception {
-      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
-         Optional<? extends FloatingIPApi> apiOption = novaContext.getApi().getFloatingIPExtensionForZone(zoneId);
+      for (String zoneId : api.getConfiguredZones()) {
+         Optional<? extends FloatingIPApi> apiOption = api.getFloatingIPExtensionForZone(zoneId);
          if (!apiOption.isPresent())
             continue;
          FloatingIPApi api = apiOption.get();
-         ServerApi serverApi = novaContext.getApi().getServerApiForZone(zoneId);
+         ServerApi serverApi = this.api.getServerApiForZone(zoneId);
          Server server = createServerInZone(zoneId);
          FloatingIP floatingIP = api.create();
          assertNotNull(floatingIP);

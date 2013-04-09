@@ -52,60 +52,60 @@ public class VirtualIPApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
       CreateLoadBalancer createLB = CreateLoadBalancer.builder()
             .name(prefix+"-jclouds").protocol("HTTP").port(80).virtualIPType(Type.PUBLIC).node(addNode).build(); 
 
-      zone = Iterables.getFirst(clbApi.getConfiguredZones(), null);
-      lb = clbApi.getLoadBalancerApiForZone(zone).create(createLB);
+      zone = Iterables.getFirst(api.getConfiguredZones(), null);
+      lb = api.getLoadBalancerApiForZone(zone).create(createLB);
       
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
+      assertTrue(awaitAvailable(api.getLoadBalancerApiForZone(zone)).apply(lb));
    }
 
    @Test(dependsOnMethods = "testCreateLoadBalancer")
    public void testCreateVirtualIPs() throws Exception {
-      clbApi.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).create(VirtualIP.publicIPv6());
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
-      clbApi.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).create(VirtualIP.publicIPv6());
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
-      clbApi.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).create(VirtualIP.publicIPv6());
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
+      api.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).create(VirtualIP.publicIPv6());
+      assertTrue(awaitAvailable(api.getLoadBalancerApiForZone(zone)).apply(lb));
+      api.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).create(VirtualIP.publicIPv6());
+      assertTrue(awaitAvailable(api.getLoadBalancerApiForZone(zone)).apply(lb));
+      api.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).create(VirtualIP.publicIPv6());
+      assertTrue(awaitAvailable(api.getLoadBalancerApiForZone(zone)).apply(lb));
 
-      Iterable<VirtualIPWithId> actualVirtualIPs = clbApi.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).list();
+      Iterable<VirtualIPWithId> actualVirtualIPs = api.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).list();
 
       assertEquals(Iterators.size(actualVirtualIPs.iterator()), 5);
    }
    
    @Test(dependsOnMethods = "testCreateVirtualIPs")
    public void testRemoveSingleVirtualIP() throws Exception {
-      Iterable<VirtualIPWithId> actualVirtualIPs = clbApi.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).list();
+      Iterable<VirtualIPWithId> actualVirtualIPs = api.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).list();
       VirtualIPWithId removedVirtualIP = Iterables.getFirst(actualVirtualIPs, null);
       
-      assertTrue(clbApi.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).delete(removedVirtualIP.getId()));
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
+      assertTrue(api.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).delete(removedVirtualIP.getId()));
+      assertTrue(awaitAvailable(api.getLoadBalancerApiForZone(zone)).apply(lb));
       
-      actualVirtualIPs = clbApi.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).list();
+      actualVirtualIPs = api.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).list();
 
       assertEquals(Iterators.size(actualVirtualIPs.iterator()), 4);
    }
    
    @Test(dependsOnMethods = "testRemoveSingleVirtualIP")
    public void testRemoveManyVirtualIPs() throws Exception {
-      Iterable<VirtualIPWithId> actualVirtualIPs = clbApi.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).list();
+      Iterable<VirtualIPWithId> actualVirtualIPs = api.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).list();
       VirtualIPWithId removedVirtualIP1 = Iterables.getFirst(actualVirtualIPs, null);
       VirtualIPWithId removedVirtualIP2 = Iterables.getLast(actualVirtualIPs);
       List<Integer> removedVirtualIPIds = ImmutableList.<Integer> of(removedVirtualIP1.getId(), removedVirtualIP2.getId());
       
-      assertTrue(clbApi.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).delete(removedVirtualIPIds));
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
+      assertTrue(api.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).delete(removedVirtualIPIds));
+      assertTrue(awaitAvailable(api.getLoadBalancerApiForZone(zone)).apply(lb));
       
-      actualVirtualIPs = clbApi.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).list();
+      actualVirtualIPs = api.getVirtualIPApiForZoneAndLoadBalancer(zone, lb.getId()).list();
 
       assertEquals(Iterators.size(actualVirtualIPs.iterator()), 2);
    }
 
    @Override
    @AfterGroups(groups = "live")
-   protected void tearDownContext() {
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
-      clbApi.getLoadBalancerApiForZone(zone).delete(lb.getId());
-      assertTrue(awaitDeleted(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
-      super.tearDownContext();
+   protected void tearDown() {
+      assertTrue(awaitAvailable(api.getLoadBalancerApiForZone(zone)).apply(lb));
+      api.getLoadBalancerApiForZone(zone).delete(lb.getId());
+      assertTrue(awaitDeleted(api.getLoadBalancerApiForZone(zone)).apply(lb));
+      super.tearDown();
    }
 }

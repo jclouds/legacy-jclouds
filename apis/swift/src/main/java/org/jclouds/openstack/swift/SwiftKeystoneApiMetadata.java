@@ -32,7 +32,6 @@ import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
 import org.jclouds.openstack.swift.blobstore.config.TemporaryUrlExtensionModule.SwiftKeystoneTemporaryUrlExtensionModule;
 import org.jclouds.openstack.swift.config.SwiftKeystoneRestClientModule;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule.KeystoneStorageEndpointModule;
-import org.jclouds.rest.RestContext;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
@@ -45,7 +44,12 @@ import com.google.inject.Module;
  */
 public class SwiftKeystoneApiMetadata extends SwiftApiMetadata {
 
-   public static final TypeToken<RestContext<SwiftKeystoneClient, SwiftKeystoneAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<SwiftKeystoneClient, SwiftKeystoneAsyncClient>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(SwiftKeystoneClient.class)} as
+    *             {@link SwiftKeystoneAsyncClient} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<SwiftKeystoneClient, SwiftKeystoneAsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<SwiftKeystoneClient, SwiftKeystoneAsyncClient>>() {
       private static final long serialVersionUID = 1L;
    };
 

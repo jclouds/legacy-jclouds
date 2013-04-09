@@ -64,7 +64,10 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see CloudFilesClient
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />
  * @author Adrian Cole
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(CloudFilesClient.class)} as
+ *             {@link CloudFilesAsyncClient} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 @RequestFilters(AuthenticateRequest.class)
 @Endpoint(Storage.class)
 public interface CloudFilesAsyncClient extends SwiftAsyncClient {

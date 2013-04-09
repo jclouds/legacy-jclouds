@@ -155,6 +155,6 @@ public class DomainDomainClientExpectTest extends BaseCloudStackExpectTest<Domai
 
    @Override
    protected DomainDomainClient clientFrom(CloudStackContext context) {
-      return context.getDomainContext().getApi().getDomainClient();
+      return context.getDomainApi().getDomainClient();
    }
 }

@@ -23,14 +23,11 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Properties;
 
-import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.integration.internal.BaseContainerIntegrationTest;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
-import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;
 import org.jclouds.openstack.swift.options.CreateContainerOptions;
-import org.jclouds.rest.RestContext;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -56,19 +53,19 @@ public class SwiftContainerIntegrationLiveTest extends BaseContainerIntegrationT
 
    @Test(groups = "live")
    public void testSetGetContainerMetadata() throws InterruptedException {
-      BlobStore blobStore = view.getBlobStore();
-      RestContext<CommonSwiftClient, CommonSwiftAsyncClient> swift = blobStore.getContext().unwrap();
+      CommonSwiftClient swift = view.utils().injector().getInstance(CommonSwiftClient.class);
+
       String containerName = getContainerName();
       
-      assertTrue(swift.getApi().createContainer(containerName));
+      assertTrue(swift.createContainer(containerName));
       
       ImmutableMap<String, String> metadata = ImmutableMap.<String, String> of(
             "key1", "value1",
             "key2", "value2"); 
 
-      assertTrue(swift.getApi().setContainerMetadata(containerName, metadata));
+      assertTrue(swift.setContainerMetadata(containerName, metadata));
 
-      ContainerMetadata containerMetadata = swift.getApi().getContainerMetadata(containerName);
+      ContainerMetadata containerMetadata = swift.getContainerMetadata(containerName);
       
       assertEquals(containerMetadata.getMetadata().get("key1"), "value1");
       assertEquals(containerMetadata.getMetadata().get("key2"), "value2");
@@ -76,8 +73,8 @@ public class SwiftContainerIntegrationLiveTest extends BaseContainerIntegrationT
 
    @Test(groups = "live")
    public void testCreateDeleteContainerMetadata() throws InterruptedException {
-      BlobStore blobStore = view.getBlobStore();
-      RestContext<CommonSwiftClient, CommonSwiftAsyncClient> swift = blobStore.getContext().unwrap();
+      CommonSwiftClient swift = view.utils().injector().getInstance(CommonSwiftClient.class);
+
       String containerName = getContainerName();
       CreateContainerOptions options = CreateContainerOptions.Builder
          .withPublicAccess()
@@ -86,18 +83,18 @@ public class SwiftContainerIntegrationLiveTest extends BaseContainerIntegrationT
             "key2", "value2",
             "key3", "value3")); 
 
-      assertTrue(swift.getApi().createContainer(containerName, options));
+      assertTrue(swift.createContainer(containerName, options));
       
-      ContainerMetadata containerMetadata = swift.getApi().getContainerMetadata(containerName);
+      ContainerMetadata containerMetadata = swift.getContainerMetadata(containerName);
       
       assertEquals(containerMetadata.getMetadata().size(), 3);
       assertEquals(containerMetadata.getMetadata().get("key1"), "value1");
       assertEquals(containerMetadata.getMetadata().get("key2"), "value2");
       assertEquals(containerMetadata.getMetadata().get("key3"), "value3");
 
-      assertTrue(swift.getApi().deleteContainerMetadata(containerName, ImmutableList.<String> of("key2","key3")));
+      assertTrue(swift.deleteContainerMetadata(containerName, ImmutableList.<String> of("key2","key3")));
 
-      containerMetadata = swift.getApi().getContainerMetadata(containerName);
+      containerMetadata = swift.getContainerMetadata(containerName);
       
       assertEquals(containerMetadata.getMetadata().size(), 1);
       assertEquals(containerMetadata.getMetadata().get("key1"), "value1");

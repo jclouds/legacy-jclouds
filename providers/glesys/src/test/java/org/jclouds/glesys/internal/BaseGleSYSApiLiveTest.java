@@ -22,12 +22,9 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertTrue;
 
-import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
+import org.jclouds.apis.BaseApiLiveTest;
 import org.jclouds.glesys.GleSYSApi;
-import org.jclouds.glesys.GleSYSAsyncApi;
 import org.jclouds.glesys.features.DomainApi;
-import org.jclouds.rest.RestContext;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -38,30 +35,21 @@ import com.google.common.base.Predicate;
  * @author Adrian Cole, Adam Lowe
  */
 @Test(groups = "live")
-public class BaseGleSYSApiLiveTest extends BaseComputeServiceContextLiveTest {
+public class BaseGleSYSApiLiveTest extends BaseApiLiveTest<GleSYSApi> {
    protected String hostName = System.getProperty("user.name").replace('.','-').toLowerCase();
-
-   protected RestContext<GleSYSApi, GleSYSAsyncApi> gleContext;
 
    public BaseGleSYSApiLiveTest() {
       provider = "glesys";
    }
 
-   @BeforeClass(groups = { "integration", "live" })
-   @Override
-   public void setupContext() {
-      super.setupContext();
-      gleContext = view.unwrap();
-   }
-
    protected void createDomain(String domain) {
-      final DomainApi api = gleContext.getApi().getDomainApi();
-      int before = api.list().size();
-      api.create(domain);
+      final DomainApi domainApi = api.getDomainApi();
+      int before = domainApi.list().size();
+      domainApi.create(domain);
 
       Predicate<Integer> result = retry(new Predicate<Integer>() {
          public boolean apply(Integer value) {
-            return api.list().size() == value;
+            return domainApi.list().size() == value.intValue();
          }
       }, 30, 1, SECONDS);
 

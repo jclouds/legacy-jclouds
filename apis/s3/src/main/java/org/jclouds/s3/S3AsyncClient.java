@@ -104,9 +104,13 @@ import com.google.inject.Provides;
  *
  * @author Adrian Cole
  * @author James Murty
- * @see S3Client
+ * @see AWSS3Client
  * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/RESTAPI.html" />
+ * @deprecated please use
+ *             {@code org.jclouds.ContextBuilder#buildApi(S3Client.class)}
+ *             as {@link S3AsyncClient} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 @RequestFilters(RequestAuthorizeSignature.class)
 @BlobScope(CONTAINER)
 public interface S3AsyncClient extends Closeable {

@@ -26,7 +26,6 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.cloudstack.compute.config.CloudStackComputeServiceContextModule;
 import org.jclouds.cloudstack.config.CloudStackParserModule;
 import org.jclouds.cloudstack.config.CloudStackRestClientModule;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
@@ -39,7 +38,12 @@ import com.google.inject.Module;
  */
 public class CloudStackApiMetadata extends BaseRestApiMetadata {
    
-   public static final TypeToken<RestContext<CloudStackClient, CloudStackAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudStackClient, CloudStackAsyncClient>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(CloudStackClient.class)} as
+    *             {@link CloudStackAsyncClient} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<CloudStackClient, CloudStackAsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<CloudStackClient, CloudStackAsyncClient>>() {
       private static final long serialVersionUID = 1L;
    };
    
@@ -65,6 +69,7 @@ public class CloudStackApiMetadata extends BaseRestApiMetadata {
 
    public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
+      @SuppressWarnings("deprecation")
       protected Builder() {
          super(CloudStackClient.class, CloudStackAsyncClient.class);
          id("cloudstack")

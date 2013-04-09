@@ -32,7 +32,10 @@ import com.google.inject.ImplementedBy;
  * 
  * @author Adrian Cole
  * 
+ * @deprecated please use {@link org.jclouds.ContextBuilder#buildApi()} as
+ *             async interface will be removed in jclouds 1.7.
  */
+@Deprecated
 @ImplementedBy(RestContextImpl.class)
 public interface RestContext<S, A> extends Context {
 
@@ -40,7 +43,10 @@ public interface RestContext<S, A> extends Context {
     * low-level api to the cloud. Threadsafe implementations will return a singleton.
     * 
     * @return a connection to the cloud where all methods return {@link Future}s
+    * @deprecated please use {@link org.jclouds.ContextBuilder#buildApi()} as
+    *             async interface will be removed in jclouds 1.7.
     */
+   @Deprecated
    A getAsyncApi();
 
    /**

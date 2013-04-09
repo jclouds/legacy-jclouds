@@ -18,6 +18,8 @@
  */
 package org.jclouds.ultradns.ws;
 
+import java.io.Closeable;
+
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.ultradns.ws.domain.Account;
@@ -35,7 +37,7 @@ import org.jclouds.ultradns.ws.features.ZoneApi;
  * @see <a href="https://www.ultradns.net/api/NUS_API_XML_SOAP.pdf" />
  * @author Adrian Cole
  */
-public interface UltraDNSWSApi {
+public interface UltraDNSWSApi extends Closeable {
    /**
     * Returns the account of the current user.
     */

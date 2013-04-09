@@ -18,11 +18,8 @@
  */
 package org.jclouds.softlayer.features;
 
-import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
-import org.jclouds.rest.RestContext;
-import org.jclouds.softlayer.SoftLayerAsyncClient;
+import org.jclouds.apis.BaseApiLiveTest;
 import org.jclouds.softlayer.SoftLayerClient;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 /**
@@ -31,19 +28,9 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class BaseSoftLayerClientLiveTest extends BaseComputeServiceContextLiveTest {
+public class BaseSoftLayerClientLiveTest extends BaseApiLiveTest<SoftLayerClient> {
 
    public BaseSoftLayerClientLiveTest() {
       this.provider = "softlayer";
    }
-
-   protected RestContext<SoftLayerClient, SoftLayerAsyncClient> socontext;
-
-   @BeforeGroups(groups = { "integration", "live" })
-   @Override
-   public void setupContext() {
-      super.setupContext();
-      socontext = view.unwrap();
-   }
-
 }

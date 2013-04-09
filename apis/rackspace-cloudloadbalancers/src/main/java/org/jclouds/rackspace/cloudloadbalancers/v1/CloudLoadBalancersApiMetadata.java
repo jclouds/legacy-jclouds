@@ -32,7 +32,6 @@ import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityAuthenticati
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityCredentialTypes;
 import org.jclouds.rackspace.cloudloadbalancers.v1.config.CloudLoadBalancersRestClientModule;
 import org.jclouds.rackspace.cloudloadbalancers.v1.loadbalancer.config.CloudLoadBalancersLoadBalancerContextModule;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
@@ -45,8 +44,12 @@ import com.google.inject.Module;
  */
 public class CloudLoadBalancersApiMetadata extends BaseRestApiMetadata {
 
-   public static final TypeToken<RestContext<CloudLoadBalancersApi, CloudLoadBalancersAsyncApi>> CONTEXT_TOKEN = 
-         new TypeToken<RestContext<CloudLoadBalancersApi, CloudLoadBalancersAsyncApi>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(CloudLoadBalancersApi.class)} as
+    *             {@link CloudLoadBalancersAsyncApi} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<CloudLoadBalancersApi, CloudLoadBalancersAsyncApi>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<CloudLoadBalancersApi, CloudLoadBalancersAsyncApi>>() {
       private static final long serialVersionUID = 1L;
    };
 
@@ -72,6 +75,7 @@ public class CloudLoadBalancersApiMetadata extends BaseRestApiMetadata {
 
    public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
+      @SuppressWarnings("deprecation")
       protected Builder() {
          super(CloudLoadBalancersApi.class, CloudLoadBalancersAsyncApi.class);
          id("rackspace-cloudloadbalancers")
