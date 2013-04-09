@@ -49,7 +49,8 @@ public class BaseRoute53ApiLiveTest extends BaseApiLiveTest<Route53Api> {
       super.setup();
       inSync = retry(new Predicate<Change>() {
          public boolean apply(Change input) {
-            return api.getChange(input.getId()).getStatus() == INSYNC;
+            Change change = api.getChange(input.getId());
+            return change != null && change.getStatus() == INSYNC;
          }
       }, 600, 1, 5, SECONDS);
    }

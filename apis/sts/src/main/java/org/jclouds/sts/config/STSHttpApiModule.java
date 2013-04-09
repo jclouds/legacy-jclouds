@@ -18,23 +18,16 @@
  */
 package org.jclouds.sts.config;
 
-import static org.jclouds.reflect.Reflection2.typeToken;
-
-import org.jclouds.aws.config.FormSigningRestClientModule;
-import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.aws.config.FormSigningHttpApiModule;
+import org.jclouds.rest.ConfiguresHttpApi;
 import org.jclouds.sts.STSApi;
-import org.jclouds.sts.STSAsyncApi;
 
 /**
  * Configures the STS connection.
  * 
  * @author Adrian Cole
  */
-@ConfiguresRestClient
-public class STSRestClientModule extends FormSigningRestClientModule<STSApi, STSAsyncApi> {
-
-   public STSRestClientModule() {
-      super(typeToken(STSApi.class), typeToken(STSAsyncApi.class));
-   }
+@ConfiguresHttpApi
+public class STSHttpApiModule extends FormSigningHttpApiModule<STSApi> {
 
 }

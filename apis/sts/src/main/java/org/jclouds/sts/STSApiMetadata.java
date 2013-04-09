@@ -25,35 +25,23 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.rest.internal.BaseRestApiMetadata;
-import org.jclouds.sts.config.STSRestClientModule;
-
-import com.google.common.reflect.TypeToken;
+import org.jclouds.rest.internal.BaseHttpApiMetadata;
+import org.jclouds.sts.config.STSHttpApiModule;
 
 /**
  * Implementation of {@link ApiMetadata} for Amazon's STS api.
  * 
  * @author Adrian Cole
  */
-public class STSApiMetadata extends BaseRestApiMetadata {
-
-   /**
-    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(STSApi.class)} as
-    *             {@link STSAsyncApi} interface will be removed in jclouds 1.7.
-    */
-   @Deprecated
-   public static final TypeToken<org.jclouds.rest.RestContext<STSApi, STSAsyncApi>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<STSApi, STSAsyncApi>>() {
-      private static final long serialVersionUID = 1L;
-   };
+public class STSApiMetadata extends BaseHttpApiMetadata<STSApi> {
 
    @Override
    public Builder toBuilder() {
-      return new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
+      return new Builder().fromApiMetadata(this);
    }
 
-   @SuppressWarnings("deprecation")
    public STSApiMetadata() {
-      this(new Builder(STSApi.class, STSAsyncApi.class));
+      this(new Builder());
    }
 
    protected STSApiMetadata(Builder builder) {
@@ -61,16 +49,15 @@ public class STSApiMetadata extends BaseRestApiMetadata {
    }
 
    public static Properties defaultProperties() {
-      Properties properties = BaseRestApiMetadata.defaultProperties();
+      Properties properties = BaseHttpApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
       properties.setProperty(PROPERTY_HEADER_TAG, "amz");
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
+   public static class Builder extends BaseHttpApiMetadata.Builder<STSApi, Builder> {
 
-      protected Builder(Class<?> api, Class<?> asyncApi) {
-         super(api, asyncApi);
+      protected Builder() {
          id("sts")
          .name("Amazon STS Api")
          .identityName("Access Key ID")
@@ -79,7 +66,7 @@ public class STSApiMetadata extends BaseRestApiMetadata {
          .documentation(URI.create("http://docs.amazonwebservices.com/STS/latest/APIReference/"))
          .defaultEndpoint("https://sts.amazonaws.com")
          .defaultProperties(STSApiMetadata.defaultProperties())
-         .defaultModule(STSRestClientModule.class);
+         .defaultModule(STSHttpApiModule.class);
       }
 
       @Override

@@ -18,32 +18,23 @@
  */
 package org.jclouds.route53.config;
 
-import static org.jclouds.reflect.Reflection2.typeToken;
-
 import java.util.Date;
-import java.util.Map;
 
 import javax.inject.Singleton;
 
-import org.jclouds.aws.config.AWSRestClientModule;
+import org.jclouds.aws.config.AWSHttpApiModule;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
-import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.ConfiguresHttpApi;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.route53.Route53Api;
-import org.jclouds.route53.Route53AsyncApi;
-import org.jclouds.route53.features.ResourceRecordSetApi;
-import org.jclouds.route53.features.ResourceRecordSetAsyncApi;
-import org.jclouds.route53.features.HostedZoneApi;
-import org.jclouds.route53.features.HostedZoneAsyncApi;
 import org.jclouds.route53.filters.RestAuthentication;
 import org.jclouds.route53.handlers.Route53ErrorHandler;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.inject.Provides;
 
 /**
@@ -51,14 +42,9 @@ import com.google.inject.Provides;
  * 
  * @author Adrian Cole
  */
-@ConfiguresRestClient
-public class Route53RestClientModule extends AWSRestClientModule<Route53Api, Route53AsyncApi> {
-   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(HostedZoneApi.class, HostedZoneAsyncApi.class)
-         .put(ResourceRecordSetApi.class, ResourceRecordSetAsyncApi.class).build();
-
-   public Route53RestClientModule() {
-      super(typeToken(Route53Api.class), typeToken(Route53AsyncApi.class), DELEGATE_MAP);
+@ConfiguresHttpApi
+public class Route53HttpApiModule extends AWSHttpApiModule<Route53Api> {
+   public Route53HttpApiModule() {
    }
    
    @Provides
