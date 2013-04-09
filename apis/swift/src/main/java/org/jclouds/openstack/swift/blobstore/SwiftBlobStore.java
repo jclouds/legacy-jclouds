@@ -211,7 +211,7 @@ public class SwiftBlobStore extends BaseBlobStore {
    @Override
    public String putBlob(String container, Blob blob, PutOptions options) {
       if (options.isMultipart()) {
-        return multipartUploadStrategy.get().execute(container, blob, options, blob2Object);
+        return multipartUploadStrategy.get().execute(container, blob);
       } else {
         return putBlob(container, blob);
       }
