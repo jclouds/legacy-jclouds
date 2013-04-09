@@ -18,6 +18,8 @@
  */
 package org.jclouds.gogrid;
 
+import java.io.Closeable;
+
 import org.jclouds.gogrid.services.GridImageAsyncClient;
 import org.jclouds.gogrid.services.GridIpAsyncClient;
 import org.jclouds.gogrid.services.GridJobAsyncClient;
@@ -28,7 +30,7 @@ import org.jclouds.rest.annotations.Delegate;
 /**
  * @author Oleksiy Yarmula
  */
-public interface GoGridAsyncClient {
+public interface GoGridAsyncClient extends Closeable {
    public static final String VERSION = "1.5";
 
    /**

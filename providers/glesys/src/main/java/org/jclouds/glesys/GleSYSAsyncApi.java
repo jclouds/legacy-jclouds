@@ -18,6 +18,8 @@
  */
 package org.jclouds.glesys;
 
+import java.io.Closeable;
+
 import org.jclouds.glesys.features.ArchiveAsyncApi;
 import org.jclouds.glesys.features.DomainAsyncApi;
 import org.jclouds.glesys.features.EmailAccountAsyncApi;
@@ -33,7 +35,7 @@ import org.jclouds.rest.annotations.Delegate;
  * @see <a href="https://customer.glesys.com/api.php" />
  * @author Adrian Cole
  */
-public interface GleSYSAsyncApi {
+public interface GleSYSAsyncApi extends Closeable {
 
    /**
     * Provides asynchronous access to Server features.

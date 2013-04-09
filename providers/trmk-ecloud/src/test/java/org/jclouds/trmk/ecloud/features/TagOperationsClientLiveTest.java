@@ -33,12 +33,12 @@ import org.testng.annotations.Test;
 public class TagOperationsClientLiveTest extends BaseTerremarkECloudClientLiveTest {
    @Test
    public void testListTagsInOrg() throws Exception {
-      for (ReferenceType response : connection.listOrgs().values()) {
-         ECloudOrg org = connection.getOrg(response.getHref());
+      for (ReferenceType response : api().listOrgs().values()) {
+         ECloudOrg org = api().getOrg(response.getHref());
          assertNotNull(response);
          assertNotNull(response.getName());
          assertNotNull(response.getHref());
-         assertEquals(connection.getTagOperationsClient().getTagNameToUsageCountInOrg(org.getHref()), connection
+         assertEquals(api().getTagOperationsClient().getTagNameToUsageCountInOrg(org.getHref()), api()
                .getTagOperationsClient().getTagNameToUsageCount(org.getTags().getHref()));
       }
    }

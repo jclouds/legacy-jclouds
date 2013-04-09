@@ -18,6 +18,8 @@
  */
 package org.jclouds.gogrid.compute;
 
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.getLast;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.compute.predicates.NodePredicates.inGroup;
@@ -28,17 +30,14 @@ import static org.testng.Assert.assertNotNull;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
-import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
-import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.google.inject.Module;
 
 /**
@@ -71,26 +70,25 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public void testResizeRam() throws Exception {
       String group = this.group + "ram";
-      RestContext<GoGridClient, GoGridAsyncClient> providerContext = view.unwrap();
+      GoGridClient api = view.utils().injector().getInstance(GoGridClient.class);
       try {
          client.destroyNodesMatching(inGroup(group));
       } catch (Exception e) {
 
       }
-      Predicate<Server> serverLatestJobCompleted = retry(new ServerLatestJobCompleted(providerContext.getApi()
+      Predicate<Server> serverLatestJobCompleted = retry(new ServerLatestJobCompleted(api
             .getJobServices()), 800, 20, SECONDS);
 
-      String ram = Iterables.get(providerContext.getApi().getServerServices().getRamSizes(), 1).getName();
+      String ram = get(api.getServerServices().getRamSizes(), 1).getName();
       try {
          NodeMetadata node = getOnlyElement(client.createNodesInGroup(group, 1));
 
-         Server updatedServer = providerContext.getApi().getServerServices().editServerRam(Long.valueOf(node.getId()), ram);
+         Server updatedServer = api.getServerServices().editServerRam(Long.valueOf(node.getId()), ram);
          assertNotNull(updatedServer);
          assert serverLatestJobCompleted.apply(updatedServer);
 
-         assertEquals(
-               Iterables.getLast(providerContext.getApi().getServerServices().getServersById(Long.valueOf(node.getId())))
-                     .getRam().getName(), ram);
+         assertEquals(getLast(api.getServerServices().getServersById(Long.valueOf(node.getId()))).getRam().getName(),
+               ram);
 
       } finally {
          client.destroyNodesMatching(inGroup(group));

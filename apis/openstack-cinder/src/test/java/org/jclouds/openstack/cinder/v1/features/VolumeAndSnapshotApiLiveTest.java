@@ -57,16 +57,16 @@ public class VolumeAndSnapshotApiLiveTest extends BaseCinderApiLiveTest {
 
    @BeforeClass(groups = {"integration", "live"})
    @Override
-   public void setupContext() {
-      super.setupContext();
-      zone = Iterables.getLast(cinder.getApi().getConfiguredZones(), "nova");
-      volumeApi = cinder.getApi().getVolumeApiForZone(zone);
-      snapshotApi = cinder.getApi().getSnapshotApiForZone(zone);
+   public void setup() {
+      super.setup();
+      zone = Iterables.getLast(api.getConfiguredZones(), "nova");
+      volumeApi = api.getVolumeApiForZone(zone);
+      snapshotApi = api.getSnapshotApiForZone(zone);
    }
 
    @AfterClass(groups = { "integration", "live" })
    @Override
-   protected void tearDownContext() {
+   protected void tearDown() {
       if (testSnapshot != null) {
          assertTrue(snapshotApi.delete(testSnapshot.getId()));
          assertTrue(SnapshotPredicates.awaitDeleted(snapshotApi).apply(testSnapshot));
@@ -77,7 +77,7 @@ public class VolumeAndSnapshotApiLiveTest extends BaseCinderApiLiveTest {
          assertTrue(VolumePredicates.awaitDeleted(volumeApi).apply(testVolume));
       }
 
-      super.tearDownContext();
+      super.tearDown();
    }
 
    public void testCreateVolume() {

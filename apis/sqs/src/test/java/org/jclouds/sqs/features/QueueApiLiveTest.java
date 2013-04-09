@@ -50,7 +50,7 @@ public class QueueApiLiveTest extends BaseSQSApiLiveTest {
    }
 
    protected void listQueuesInRegion(String region) throws InterruptedException {
-      FluentIterable<URI> allResults = api().getQueueApiForRegion(region).list();
+      FluentIterable<URI> allResults = api.getQueueApiForRegion(region).list();
       assertNotNull(allResults);
       if (allResults.size() >= 1) {
          URI queue = getLast(allResults);
@@ -60,7 +60,7 @@ public class QueueApiLiveTest extends BaseSQSApiLiveTest {
    
    @Test
    public void testGracefulNoQueue() throws InterruptedException {
-      assertNull(api().getQueueApi().get(UUID.randomUUID().toString()));
+      assertNull(api.getQueueApi().get(UUID.randomUUID().toString()));
    }
    
    @Test
@@ -72,37 +72,37 @@ public class QueueApiLiveTest extends BaseSQSApiLiveTest {
    @Test(dependsOnMethods = "testCanRecreateQueueGracefully")
    public void testCreateQueueWhenAlreadyExistsReturnsURI() {
       for (URI queue : queues) {
-         assertEquals(api().getQueueApi().create(prefix), queue);
+         assertEquals(api.getQueueApi().create(prefix), queue);
       }
    }
    
    @Test(dependsOnMethods = "testCanRecreateQueueGracefully")
    public void testGet() {
       for (URI queue : queues) {
-         assertEquals(api().getQueueApi().get(prefix), queue);
+         assertEquals(api.getQueueApi().get(prefix), queue);
       }
    }
 
    @Test(dependsOnMethods = "testCanRecreateQueueGracefully")
    public void testGetInAccount() {
       for (URI queue : queues) {
-         assertEquals(api().getQueueApi().getInAccount(prefix, getOwner(queue)), queue);
+         assertEquals(api.getQueueApi().getInAccount(prefix, getOwner(queue)), queue);
       }
    }
    
    @Test(dependsOnMethods = "testCanRecreateQueueGracefully")
    public void testGetQueueAttributes() {
       for (URI queue : queues) {
-         Map<String, String> attributes = api().getQueueApi().getAttributes(queue, ImmutableSet.of("All"));
-         assertEquals(api().getQueueApi().getAttributes(queue, attributes.keySet()), attributes);
+         Map<String, String> attributes = api.getQueueApi().getAttributes(queue, ImmutableSet.of("All"));
+         assertEquals(api.getQueueApi().getAttributes(queue, attributes.keySet()), attributes);
       }
    }
 
    @Test(dependsOnMethods = "testGetQueueAttributes")
    public void testSetQueueAttribute() {
       for (URI queue : queues) {
-         api().getQueueApi().setAttribute(queue, "MaximumMessageSize", "1024");
-         assertEquals(api().getQueueApi().getAttributes(queue).getMaximumMessageSize(), 1024);
+         api.getQueueApi().setAttribute(queue, "MaximumMessageSize", "1024");
+         assertEquals(api.getQueueApi().getAttributes(queue).getMaximumMessageSize(), 1024);
       }
    }
 }

@@ -28,7 +28,6 @@ import org.jclouds.aws.s3.AWSS3Client;
 import org.jclouds.aws.s3.predicates.validators.AWSS3BucketNameValidator;
 import org.jclouds.location.Region;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestContext;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.config.S3RestClientModule;
@@ -72,15 +71,4 @@ public class AWSS3RestClientModule extends S3RestClientModule<AWSS3Client, AWSS3
    S3AsyncClient provide(AWSS3AsyncClient in) {
       return in;
    }
-
-   /**
-    * so that we can inject RestContext<S3Client, S3AsyncClient>
-    */
-   @SuppressWarnings({ "unchecked", "rawtypes" })
-   @Singleton
-   @Provides
-   RestContext<S3Client, S3AsyncClient> provideBaseContext(RestContext<AWSS3Client, AWSS3AsyncClient> in) {
-      return (RestContext) in;
-   }
-
 }

@@ -54,6 +54,6 @@ public class TagSecurityGroupLiveTest extends BaseTagApiLiveTest {
    }
 
    private AWSSecurityGroupClient securityGroupApi() {
-      return AWSEC2Client.class.cast(context.getApi()).getSecurityGroupServices();
+      return AWSEC2Client.class.cast(api).getSecurityGroupServices();
    }
 }

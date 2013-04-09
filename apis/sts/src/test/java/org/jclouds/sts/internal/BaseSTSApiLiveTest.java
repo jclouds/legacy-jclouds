@@ -18,30 +18,17 @@
  */
 package org.jclouds.sts.internal;
 
-import org.jclouds.apis.BaseContextLiveTest;
-import org.jclouds.sts.STSApiMetadata;
-import org.jclouds.sts.STSAsyncApi;
+import org.jclouds.apis.BaseApiLiveTest;
 import org.jclouds.sts.STSApi;
-import org.jclouds.rest.RestContext;
 import org.testng.annotations.Test;
-
-import com.google.common.reflect.TypeToken;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class BaseSTSApiLiveTest extends
-         BaseContextLiveTest<RestContext<? extends STSApi, ? extends STSAsyncApi>> {
-
+public class BaseSTSApiLiveTest extends BaseApiLiveTest<STSApi> {
    public BaseSTSApiLiveTest() {
       provider = "sts";
    }
-
-   @Override
-   protected TypeToken<RestContext<? extends STSApi, ? extends STSAsyncApi>> contextType() {
-      return STSApiMetadata.CONTEXT_TOKEN;
-   }
-
 }

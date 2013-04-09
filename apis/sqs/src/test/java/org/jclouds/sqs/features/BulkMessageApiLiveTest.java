@@ -63,14 +63,14 @@ public class BulkMessageApiLiveTest extends BaseSQSApiLiveTest {
 
    @BeforeClass(groups = { "integration", "live" })
    @Override
-   public void setupContext() {
-      super.setupContext();
+   public void setup() {
+      super.setup();
       recreateQueueInRegion(prefix, null);
    }
 
    public void testSendMessages() {
       for (URI queue : queues) {
-         BatchResult<? extends MessageIdAndMD5> acks = api().getMessageApiForQueue(queue).send(idPayload);
+         BatchResult<? extends MessageIdAndMD5> acks = api.getMessageApiForQueue(queue).send(idPayload);
 
          assertEquals(acks.size(), idPayload.size(), "error sending " + acks);
          assertEquals(acks.keySet(), idPayload.keySet());
@@ -87,7 +87,7 @@ public class BulkMessageApiLiveTest extends BaseSQSApiLiveTest {
    @Test(dependsOnMethods = "testSendMessages")
    public void testChangeMessageVisibility() {
       for (URI queue : queues) {
-         MessageApi api = api().getMessageApiForQueue(queue);
+         MessageApi api = this.api.getMessageApiForQueue(queue);
          
          Set<Message> messages = collectMessages(api);
 
@@ -117,7 +117,7 @@ public class BulkMessageApiLiveTest extends BaseSQSApiLiveTest {
    @Test(dependsOnMethods = "testChangeMessageVisibility")
    public void testDeleteMessage() throws InterruptedException {
       for (URI queue : queues) {
-         BatchResult<String> acks = api().getMessageApiForQueue(queue).delete(receiptHandles);
+         BatchResult<String> acks = api.getMessageApiForQueue(queue).delete(receiptHandles);
          assertEquals(acks.size(), Iterables.size(receiptHandles), "error deleting messages " + acks);
          assertNoMessages(queue);
       }

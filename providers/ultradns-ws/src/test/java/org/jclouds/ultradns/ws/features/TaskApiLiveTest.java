@@ -76,6 +76,6 @@ public class TaskApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    }
 
    protected TaskApi api() {
-      return context.getApi().getTaskApi();
+      return api.getTaskApi();
    }
 }

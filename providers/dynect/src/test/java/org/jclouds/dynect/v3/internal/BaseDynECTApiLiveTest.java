@@ -18,24 +18,13 @@
  */
 package org.jclouds.dynect.v3.internal;
 
-import org.jclouds.apis.BaseContextLiveTest;
+import org.jclouds.apis.BaseApiLiveTest;
 import org.jclouds.dynect.v3.DynECTApi;
-import org.jclouds.dynect.v3.DynECTApiMetadata;
-import org.jclouds.dynect.v3.DynECTAsyncApi;
-import org.jclouds.rest.RestContext;
 import org.testng.annotations.Test;
 
-import com.google.common.reflect.TypeToken;
-
 @Test(groups = "live")
-public class BaseDynECTApiLiveTest extends BaseContextLiveTest<RestContext<DynECTApi, DynECTAsyncApi>> {
-
+public class BaseDynECTApiLiveTest extends BaseApiLiveTest<DynECTApi> {
    public BaseDynECTApiLiveTest() {
       provider = "dynect";
-   }
-
-   @Override
-   protected TypeToken<RestContext<DynECTApi, DynECTAsyncApi>> contextType() {
-      return DynECTApiMetadata.CONTEXT_TOKEN;
    }
 }

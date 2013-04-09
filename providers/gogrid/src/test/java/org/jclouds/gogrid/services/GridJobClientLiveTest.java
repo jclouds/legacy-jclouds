@@ -37,14 +37,14 @@ import com.google.common.collect.Iterables;
 public class GridJobClientLiveTest extends BaseGoGridClientLiveTest {
 
    public void testListJobs() throws Exception {
-      Set<Job> response = restContext.getApi().getJobServices().getJobList(GetJobListOptions.Builder.maxItems(10));
+      Set<Job> response = api.getJobServices().getJobList(GetJobListOptions.Builder.maxItems(10));
       assert null != response;
       assert response.size() <= 10 : response;
       for (Job job : response) {
          assert job.getId() >= 0 : job;
          checkJob(job);
 
-         Job query = Iterables.getOnlyElement(restContext.getApi().getJobServices().getJobsById(job.getId()));
+         Job query = Iterables.getOnlyElement(api.getJobServices().getJobsById(job.getId()));
          assertEquals(query.getId(), job.getId());
 
          checkJob(query);

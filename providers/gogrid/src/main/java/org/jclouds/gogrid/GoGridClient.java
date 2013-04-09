@@ -18,6 +18,8 @@
  */
 package org.jclouds.gogrid;
 
+import java.io.Closeable;
+
 import org.jclouds.gogrid.services.GridImageClient;
 import org.jclouds.gogrid.services.GridIpClient;
 import org.jclouds.gogrid.services.GridJobClient;
@@ -28,7 +30,7 @@ import org.jclouds.rest.annotations.Delegate;
 /**
  * @author Oleksiy Yarmula
  */
-public interface GoGridClient {
+public interface GoGridClient extends Closeable {
 
    /**
     * Services with methods, related to managing servers

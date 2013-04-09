@@ -95,6 +95,6 @@ public class HostedZoneApiLiveTest extends BaseRoute53ApiLiveTest {
    }
 
    protected HostedZoneApi api() {
-      return context.getApi().getHostedZoneApi();
+      return api.getHostedZoneApi();
    }
 }

@@ -21,22 +21,16 @@ package org.jclouds.rackspace.cloudloadbalancers.v1.internal;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import org.jclouds.apis.BaseContextLiveTest;
+import org.jclouds.apis.BaseApiLiveTest;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.rackspace.cloudloadbalancers.v1.CloudLoadBalancersApi;
-import org.jclouds.rackspace.cloudloadbalancers.v1.CloudLoadBalancersApiMetadata;
-import org.jclouds.rackspace.cloudloadbalancers.v1.CloudLoadBalancersAsyncApi;
-import org.jclouds.rest.RestContext;
 import org.testng.annotations.BeforeGroups;
-
-import com.google.common.reflect.TypeToken;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class BaseCloudLoadBalancersApiLiveTest extends BaseContextLiveTest<RestContext<CloudLoadBalancersApi, CloudLoadBalancersAsyncApi>> {
-   protected CloudLoadBalancersApi clbApi;
+public class BaseCloudLoadBalancersApiLiveTest extends BaseApiLiveTest<CloudLoadBalancersApi> {
 
    public BaseCloudLoadBalancersApiLiveTest() {
       provider = "rackspace-cloudloadbalancers";
@@ -44,12 +38,9 @@ public class BaseCloudLoadBalancersApiLiveTest extends BaseContextLiveTest<RestC
 
    @BeforeGroups(groups = { "integration", "live" })
    @Override
-   public void setupContext() {
-      super.setupContext();
-
-      clbApi = context.getApi();
-      
-      Logger.getAnonymousLogger().info("running against zones " + clbApi.getConfiguredZones());
+   public void setup() {
+      super.setup();
+      Logger.getAnonymousLogger().info("running against zones " + api.getConfiguredZones());
    }
 
    @Override
@@ -57,10 +48,5 @@ public class BaseCloudLoadBalancersApiLiveTest extends BaseContextLiveTest<RestC
       Properties props = super.setupProperties();
       setIfTestSystemPropertyPresent(props, KeystoneProperties.CREDENTIAL_TYPE);
       return props;
-   }
-   
-   @Override
-   protected TypeToken<RestContext<CloudLoadBalancersApi, CloudLoadBalancersAsyncApi>> contextType() {
-      return CloudLoadBalancersApiMetadata.CONTEXT_TOKEN;
    }
 }

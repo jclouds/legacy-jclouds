@@ -18,6 +18,8 @@
  */
 package org.jclouds.dynect.v3;
 
+import java.io.Closeable;
+
 import javax.ws.rs.PathParam;
 
 import org.jclouds.dynect.v3.domain.Job;
@@ -36,7 +38,7 @@ import org.jclouds.rest.annotations.Delegate;
  *      />
  * @author Adrian Cole
  */
-public interface DynECTApi {
+public interface DynECTApi extends Closeable {
    /**
     * returns the current status of a job.
     * 

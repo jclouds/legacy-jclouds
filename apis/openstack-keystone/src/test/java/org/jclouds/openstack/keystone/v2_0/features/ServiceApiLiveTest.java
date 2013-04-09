@@ -36,7 +36,7 @@ import org.testng.annotations.Test;
 public class ServiceApiLiveTest extends BaseKeystoneApiLiveTest {
 
    public void testTenants() {
-      ServiceApi api = keystoneContext.getApi().getServiceApi();
+      ServiceApi api = this.api.getServiceApi();
       Set<? extends Tenant> result = api.listTenants();
       assertNotNull(result);
       assertFalse(result.isEmpty());

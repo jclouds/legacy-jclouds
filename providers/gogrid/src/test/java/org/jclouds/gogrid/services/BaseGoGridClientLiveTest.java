@@ -18,11 +18,8 @@
  */
 package org.jclouds.gogrid.services;
 
-import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
-import org.jclouds.gogrid.GoGridAsyncClient;
+import org.jclouds.apis.BaseApiLiveTest;
 import org.jclouds.gogrid.GoGridClient;
-import org.jclouds.rest.RestContext;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 /**
@@ -31,20 +28,8 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "BaseGoGridClientLiveTest")
-public class BaseGoGridClientLiveTest extends BaseComputeServiceContextLiveTest {
-
+public class BaseGoGridClientLiveTest extends BaseApiLiveTest<GoGridClient> {
    public BaseGoGridClientLiveTest() {
       provider = "gogrid";
    }
-
-   protected RestContext<GoGridClient, GoGridAsyncClient> restContext;
-
-   @BeforeGroups(groups = { "integration", "live" })
-   @Override
-   public void setupContext() {
-      super.setupContext();
-      restContext = view.unwrap();
-   }
-
-
 }

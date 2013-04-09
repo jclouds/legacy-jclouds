@@ -24,18 +24,21 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
 
+import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.http.HttpRequest;
+import org.jclouds.openstack.keystone.v2_0.KeystoneApi;
 import org.jclouds.openstack.keystone.v2_0.domain.Endpoint;
 import org.jclouds.openstack.keystone.v2_0.domain.Token;
 import org.jclouds.openstack.keystone.v2_0.domain.User;
 import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.openstack.keystone.v2_0.internal.BaseKeystoneApiLiveTest;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
+import com.google.inject.Injector;
+import com.google.inject.Module;
 
 /**
  * Tests TokenApi
@@ -46,18 +49,23 @@ import com.google.common.collect.Iterables;
 public class TokenApiLiveTest extends BaseKeystoneApiLiveTest {
 
    protected String token;
+   
+   @Override
+   protected KeystoneApi create(Properties props, Iterable<Module> modules) {
+      Injector injector = newBuilder().modules(modules).overrides(props).buildInjector();
+      grabToken(injector.getInstance(AuthenticateRequest.class));
+      return injector.getInstance(KeystoneApi.class);
+   }
 
    // Get the token currently in use (there's currently no listTokens())
-   @BeforeMethod
-   public void grabToken() {
-      AuthenticateRequest ar = keystoneContext.getUtils().getInjector().getInstance(AuthenticateRequest.class);
-      HttpRequest test = ar.filter(HttpRequest.builder().method("GET").endpoint(context.getProviderMetadata().getEndpoint()).build());
+   private void grabToken(AuthenticateRequest ar) {
+      HttpRequest test = ar.filter(HttpRequest.builder().method("GET").endpoint(endpoint).build());
       token = Iterables.getOnlyElement(test.getHeaders().get("X-Auth-Token"));
    }
 
    public void testToken() {
 
-      TokenApi api = keystoneContext.getApi().getTokenApi().get();
+      TokenApi api = this.api.getTokenApi().get();
       assertTrue(api.isValid(token));
       Token result = api.get(token);
       assertNotNull(result);
@@ -73,7 +81,7 @@ public class TokenApiLiveTest extends BaseKeystoneApiLiveTest {
 
    public void testInvalidToken() {
 
-      TokenApi api = keystoneContext.getApi().getTokenApi().get();
+      TokenApi api = this.api.getTokenApi().get();
       assertFalse(api.isValid("thisisnotarealtoken!"));
       assertNull(api.get("thisisnotarealtoken!"));
 
@@ -81,7 +89,7 @@ public class TokenApiLiveTest extends BaseKeystoneApiLiveTest {
 
    public void testTokenEndpoints() {
 
-      TokenApi api = keystoneContext.getApi().getTokenApi().get();
+      TokenApi api = this.api.getTokenApi().get();
       Set<? extends Endpoint> endpoints = api.listEndpointsForToken(token);
       assertNotNull(endpoints);
       assertFalse(endpoints.isEmpty());
@@ -90,7 +98,7 @@ public class TokenApiLiveTest extends BaseKeystoneApiLiveTest {
 
    public void testInvalidTokenEndpoints() {
 
-      TokenApi api = keystoneContext.getApi().getTokenApi().get();
+      TokenApi api = this.api.getTokenApi().get();
       assertTrue(api.listEndpointsForToken("thisisnotarealtoken!").isEmpty());
 
    }

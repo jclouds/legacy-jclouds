@@ -119,8 +119,8 @@ public abstract class BaseTagApiLiveTest extends BaseEC2ApiLiveTest {
 
    @Override
    @BeforeClass(groups = "live")
-   public void setupContext() {
-      super.setupContext();
+   public void setup() {
+      super.setup();
       resource = checkNotNull(createResourceForTagging(System.getProperty("user.name") + "-tag"), "resource");
    }
 
@@ -146,16 +146,16 @@ public abstract class BaseTagApiLiveTest extends BaseEC2ApiLiveTest {
    protected abstract void cleanupResource(Resource resource);
    
    protected TagApi api() {
-      Optional<? extends TagApi> tagOption = context.getApi().getTagApi();
+      Optional<? extends TagApi> tagOption = api.getTagApi();
       if (!tagOption.isPresent())
          throw new SkipException("tag api not present");
       return tagOption.get();
    }
    
    @AfterClass(groups = "live")
-   protected void tearDownContext() {
+   protected void tearDown() {
       if (resource != null)
          cleanupResource(resource);
-      super.tearDownContext();
+      super.tearDown();
    }
 }

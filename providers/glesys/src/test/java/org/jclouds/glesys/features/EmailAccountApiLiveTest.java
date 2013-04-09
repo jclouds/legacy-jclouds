@@ -53,17 +53,17 @@ public class EmailAccountApiLiveTest extends BaseGleSYSApiLiveTest {
 
    @BeforeClass(groups = { "integration", "live" })
    @Override
-   public void setupContext() {
-      super.setupContext();
+   public void setup() {
+      super.setup();
       testDomain = hostName + ".test.jclouds.org";
-      api = gleContext.getApi().getEmailAccountApi();
+      emailAccountApi = api.getEmailAccountApi();
       deleteAll();
 
       createDomain(testDomain);
 
       emailAccountCounter = retry(new Predicate<Integer>() {
          public boolean apply(Integer value) {
-            return api.listDomain(testDomain).size() == value;
+            return emailAccountApi.listDomain(testDomain).size() == value;
          }
       }, 180, 5, SECONDS);
 
@@ -73,61 +73,61 @@ public class EmailAccountApiLiveTest extends BaseGleSYSApiLiveTest {
 
    @AfterClass(groups = { "integration", "live" })
    @Override
-   public void tearDownContext() {
+   public void tearDown() {
       deleteAll();
-      super.tearDownContext();
+      super.tearDown();
    }
 
    private void deleteAll() {
-      api.delete("test@" + testDomain);
-      api.delete("test1@" + testDomain);
+      emailAccountApi.delete("test@" + testDomain);
+      emailAccountApi.delete("test1@" + testDomain);
    }
 
-   private EmailAccountApi api;
+   private EmailAccountApi emailAccountApi;
    private String testDomain;
    private Predicate<Integer> emailAccountCounter;
 
    @Test
    public void testCreateEmail() {
-      api.createWithPassword("test@" + testDomain, "password", CreateAccountOptions.Builder.antiVirus(true)
+      emailAccountApi.createWithPassword("test@" + testDomain, "password", CreateAccountOptions.Builder.antiVirus(true)
                .autorespond(true).autorespondMessage("out of office"));
 
       assertTrue(emailAccountCounter.apply(1));
 
-      api.createWithPassword("test1@" + testDomain, "password");
+      emailAccountApi.createWithPassword("test1@" + testDomain, "password");
 
       assertTrue(emailAccountCounter.apply(2));
    }
 
    @Test(dependsOnMethods = "testCreateEmail")
    public void testAliases() {
-      assertTrue(api.listAliasesInDomain(testDomain).isEmpty());
+      assertTrue(emailAccountApi.listAliasesInDomain(testDomain).isEmpty());
 
-      EmailAlias alias = api.createAlias("test2@" + testDomain, "test@" + testDomain);
+      EmailAlias alias = emailAccountApi.createAlias("test2@" + testDomain, "test@" + testDomain);
       assertEquals(alias.getAlias(), "test2@" + testDomain);
       assertEquals(alias.getForwardTo(), "test@" + testDomain);
 
-      EmailAlias aliasFromList = Iterables.getOnlyElement(api.listAliasesInDomain(testDomain));
+      EmailAlias aliasFromList = Iterables.getOnlyElement(emailAccountApi.listAliasesInDomain(testDomain));
       assertEquals(aliasFromList, alias);
 
-      EmailOverview overview = api.getOverview();
+      EmailOverview overview = emailAccountApi.getOverview();
       assertEquals(1, overview.getSummary().getAliases());
 
-      alias = api.updateAlias("test2@" + testDomain, "test1@" + testDomain);
-      overview = api.getOverview();
+      alias = emailAccountApi.updateAlias("test2@" + testDomain, "test1@" + testDomain);
+      overview = emailAccountApi.getOverview();
       assertEquals(1, overview.getSummary().getAliases());
 
-      aliasFromList = Iterables.getOnlyElement(api.listAliasesInDomain(testDomain));
+      aliasFromList = Iterables.getOnlyElement(emailAccountApi.listAliasesInDomain(testDomain));
       assertEquals(aliasFromList, alias);
 
-      api.delete("test2@" + testDomain);
-      overview = api.getOverview();
+      emailAccountApi.delete("test2@" + testDomain);
+      overview = emailAccountApi.getOverview();
       assertEquals(0, overview.getSummary().getAliases());
    }
 
    @Test(dependsOnMethods = "testCreateEmail")
    public void testOverview() throws Exception {
-      EmailOverview overview = api.getOverview();
+      EmailOverview overview = emailAccountApi.getOverview();
       assertNotNull(overview.getSummary());
       assertTrue(overview.getSummary().getAccounts() > 0);
       assertTrue(overview.getSummary().getAliases() > -1);
@@ -142,22 +142,22 @@ public class EmailAccountApiLiveTest extends BaseGleSYSApiLiveTest {
 
    @Test(dependsOnMethods = "testCreateEmail")
    public void testListAccounts() throws Exception {
-      FluentIterable<EmailAccount> accounts = api.listDomain(testDomain);
+      FluentIterable<EmailAccount> accounts = emailAccountApi.listDomain(testDomain);
       assertTrue(accounts.size() >= 1);
    }
 
    @Test(dependsOnMethods = "testCreateEmail")
    public void testUpdateAccount() throws Exception {
-      FluentIterable<EmailAccount> accounts = api.listDomain(testDomain);
+      FluentIterable<EmailAccount> accounts = emailAccountApi.listDomain(testDomain);
       for (EmailAccount account : accounts) {
          if (account.getAccount().equals("test@" + testDomain)) {
             assertTrue(account.isAntiVirus());
          }
       }
 
-      api.update("test@" + testDomain, UpdateAccountOptions.Builder.antiVirus(false));
+      emailAccountApi.update("test@" + testDomain, UpdateAccountOptions.Builder.antiVirus(false));
 
-      accounts = api.listDomain(testDomain);
+      accounts = emailAccountApi.listDomain(testDomain);
       for (EmailAccount account : accounts) {
          if (account.getAccount().equals("test@" + testDomain)) {
             assertFalse(account.isAntiVirus());

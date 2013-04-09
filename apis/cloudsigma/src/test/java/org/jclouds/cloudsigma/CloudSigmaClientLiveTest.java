@@ -47,7 +47,6 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.predicates.SocketOpen;
-import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterGroups;
@@ -78,7 +77,6 @@ public class CloudSigmaClientLiveTest extends BaseComputeServiceContextLiveTest 
    protected int maxDriveImageTime = 300;
    protected String vncPassword = "Il0veVNC";
    protected CloudSigmaClient client;
-   protected RestContext<CloudSigmaClient, CloudSigmaAsyncClient> cloudSigmaContext;
    protected Predicate<HostAndPort> socketTester;
 
    protected Predicate<DriveInfo> driveNotClaimed;
@@ -88,9 +86,8 @@ public class CloudSigmaClientLiveTest extends BaseComputeServiceContextLiveTest 
    @Override
    public void setupContext() {
       super.setupContext();
-      cloudSigmaContext = view.unwrap();
 
-      client = cloudSigmaContext.getApi();
+      client = view.utils().injector().getInstance(CloudSigmaClient.class);
       driveNotClaimed = retry(Predicates.not(new DriveClaimed(client)), maxDriveImageTime, 1, SECONDS);
       SocketOpen socketOpten = context.utils().injector().getInstance(SocketOpen.class);
       socketTester = retry(socketOpten, maxDriveImageTime, 1, SECONDS);

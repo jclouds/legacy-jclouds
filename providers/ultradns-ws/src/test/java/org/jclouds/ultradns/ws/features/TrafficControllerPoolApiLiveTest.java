@@ -57,11 +57,11 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
 
    @Override
    @BeforeClass(groups = { "integration", "live" })
-   public void setupContext() {
-      super.setupContext();
-      context.getApi().getZoneApi().delete(zoneName);
-      account = context.getApi().getCurrentAccount();
-      context.getApi().getZoneApi().createInAccount(zoneName, account.getId());
+   public void setup() {
+      super.setup();
+      api.getZoneApi().delete(zoneName);
+      account = api.getCurrentAccount();
+      api.getZoneApi().createInAccount(zoneName, account.getId());
    }
 
    private void checkTCPool(TrafficControllerPool pool) {
@@ -74,7 +74,7 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
 
    @Test
    public void testListTCPools() {
-      for (Zone zone : context.getApi().getZoneApi().listByAccount(account.getId())) {
+      for (Zone zone : api.getZoneApi().listByAccount(account.getId())) {
          for (TrafficControllerPool pool : api(zone.getName()).list()) {
             checkTCPool(pool);
          }
@@ -83,7 +83,7 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
 
    @Test
    public void testListTCPoolRecords() {
-      for (Zone zone : context.getApi().getZoneApi().listByAccount(account.getId())) {
+      for (Zone zone : api.getZoneApi().listByAccount(account.getId())) {
          for (TrafficControllerPool pool : api(zone.getName()).list()) {
             for (TrafficControllerPoolRecord record : api(zone.getName()).listRecords(pool.getId())) {
                checkPoolRecordConsistent(zone.getName(), record);
@@ -276,15 +276,15 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
    }
 
    private TrafficControllerPoolApi api(String zoneName) {
-      return context.getApi().getTrafficControllerPoolApiForZone(zoneName);
+      return api.getTrafficControllerPoolApiForZone(zoneName);
    }
 
    @Override
    @AfterClass(groups = { "integration", "live" })
-   protected void tearDownContext() {
+   protected void tearDown() {
       if (poolId != null)
          api(zoneName).delete(poolId);
-      context.getApi().getZoneApi().delete(zoneName);
-      super.tearDownContext();
+      api.getZoneApi().delete(zoneName);
+      super.tearDown();
    }
 }

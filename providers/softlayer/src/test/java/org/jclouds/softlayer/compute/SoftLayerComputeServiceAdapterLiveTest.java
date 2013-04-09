@@ -21,38 +21,50 @@ package org.jclouds.softlayer.compute;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
+import java.util.Properties;
 import java.util.Random;
 
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
 import org.jclouds.softlayer.compute.strategy.SoftLayerComputeServiceAdapter;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.VirtualGuest;
 import org.jclouds.softlayer.features.BaseSoftLayerClientLiveTest;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.ssh.SshClient.Factory;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.net.HostAndPort;
 import com.google.common.net.InetAddresses;
+import com.google.inject.Injector;
+import com.google.inject.Module;
 
 @Test(groups = "live", singleThreaded = true, testName = "SoftLayerComputeServiceAdapterLiveTest")
 public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientLiveTest {
 
    private SoftLayerComputeServiceAdapter adapter;
+   private TemplateBuilder templateBuilder;
+   private Factory sshFactory;
    private NodeAndInitialCredentials<VirtualGuest> guest;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupContext() {
-      super.setupContext();
-      adapter = view.utils().injector().getInstance(SoftLayerComputeServiceAdapter.class);
+   @Override
+   protected SoftLayerClient create(Properties props, Iterable<Module> modules) {
+      Injector injector = newBuilder().modules(modules).overrides(props).buildInjector();
+      adapter = injector.getInstance(SoftLayerComputeServiceAdapter.class);
+      templateBuilder = injector.getInstance(TemplateBuilder.class);
+      sshFactory = injector.getInstance(SshClient.Factory.class);
+      return injector.getInstance(SoftLayerClient.class);
    }
 
    @Test
@@ -67,8 +79,8 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials() {
       String group = "foo";
       String name = "node" + new Random().nextInt();
-      Template template = view.getComputeService().templateBuilder().build();
 
+      Template template = templateBuilder.build();
       // test passing custom options
       template.getOptions().as(SoftLayerTemplateOptions.class).domainName("me.org");
 
@@ -82,7 +94,7 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    }
 
    protected void doConnectViaSsh(VirtualGuest guest, LoginCredentials creds) {
-      SshClient ssh = view.utils().sshFactory().create(HostAndPort.fromParts(guest.getPrimaryIpAddress(), 22), creds);
+      SshClient ssh = sshFactory.create(HostAndPort.fromParts(guest.getPrimaryIpAddress(), 22), creds);
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");
@@ -108,9 +120,14 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    }
 
    @AfterGroups(groups = "live")
-   protected void tearDownContext() {
+   protected void tearDown() {
       if (guest != null)
          adapter.destroyNode(guest.getNodeId() + "");
-      super.tearDownContext();
+      super.tearDown();
+   }
+
+   @Override
+   protected Iterable<Module> setupModules() {
+      return ImmutableSet.<Module> of(getLoggingModule(), new SshjSshClientModule());
    }
 }

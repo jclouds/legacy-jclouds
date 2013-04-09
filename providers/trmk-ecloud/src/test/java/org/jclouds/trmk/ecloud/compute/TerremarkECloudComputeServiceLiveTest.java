@@ -30,9 +30,7 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
-import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
-import org.jclouds.trmk.ecloud.TerremarkECloudAsyncClient;
 import org.jclouds.trmk.ecloud.TerremarkECloudClient;
 import org.jclouds.trmk.vcloud_0_8.domain.VApp;
 import org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants;
@@ -104,8 +102,8 @@ public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiv
          assert node.getLocation() != null;
          assertEquals(node.getType(), ComputeType.NODE);
          NodeMetadata allData = client.getNodeMetadata(node.getId());
-         RestContext<TerremarkECloudClient, TerremarkECloudAsyncClient> tmContext = view.unwrap();
-         VApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(allData.getLocation().getParent().getDescription(),
+         TerremarkECloudClient api = view.utils().injector().getInstance(TerremarkECloudClient.class);
+         VApp vApp = api.findVAppInOrgVDCNamed(allData.getLocation().getParent().getDescription(),
                allData.getLocation().getDescription(), allData.getName());
          assertEquals(vApp.getName(), allData.getName());
       }
