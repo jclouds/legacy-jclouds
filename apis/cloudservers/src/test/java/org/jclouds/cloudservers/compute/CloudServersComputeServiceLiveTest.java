@@ -73,7 +73,13 @@ public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTe
       super.testListNodes();
    }
 
-   @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails" })
+   @Test(enabled = true, dependsOnMethods = "testSuspendResume")
+   @Override
+   public void testListNodesByIds() throws Exception {
+      super.testListNodesByIds();
+   }
+
+   @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails", "listNodesByIds" })
    @Override
    public void testDestroyNodes() {
       super.testDestroyNodes();

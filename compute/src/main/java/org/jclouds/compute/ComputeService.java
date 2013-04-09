@@ -99,10 +99,15 @@ public interface ComputeService {
    Image getImage(String id);
 
    /**
-    * all nodes available to the current user by id. If possible, the returned set will include
+    * @return all nodes available to the current user. If possible, the returned set will include
     * {@link NodeMetadata} objects.
     */
    Set<? extends ComputeMetadata> listNodes();
+
+   /**
+    * @return all nodes with one of the provided ids available to the current user.
+    */
+   Set<? extends NodeMetadata> listNodesByIds(Iterable<String> ids);
 
    /**
     * The list locations command returns all the valid locations for nodes. A location has a scope,
