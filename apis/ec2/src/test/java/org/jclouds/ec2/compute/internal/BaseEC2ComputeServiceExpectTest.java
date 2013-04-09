@@ -59,6 +59,8 @@ public abstract class BaseEC2ComputeServiceExpectTest extends BaseEC2ComputeServ
    protected HttpResponse runInstancesResponse;
    protected HttpRequest describeInstanceRequest;
    protected HttpResponse describeInstanceResponse;
+   protected HttpRequest describeInstanceMultiIdsRequest;
+   protected HttpResponse describeInstanceMultiIdsResponse;
    protected HttpRequest describeImageRequest;
 
    public BaseEC2ComputeServiceExpectTest() {
@@ -189,6 +191,20 @@ public abstract class BaseEC2ComputeServiceExpectTest extends BaseEC2ComputeServ
                HttpResponse.builder().statusCode(200)
                            .payload(payloadFromResourceWithContentType(
                                  "/describe_instances_running-1.xml", MediaType.APPLICATION_XML)).build();
+
+      describeInstanceMultiIdsRequest = 
+               formSigner.filter(HttpRequest.builder()
+                          .method("POST")
+                          .endpoint("https://ec2." + region + ".amazonaws.com/")
+                          .addHeader("Host", "ec2." + region + ".amazonaws.com")
+                          .addFormParam("Action", "DescribeInstances")
+                          .addFormParam("InstanceId.1", "i-2baa5550")
+                          .addFormParam("InstanceId.2", "i-abcd1234").build());
+      
+      describeInstanceMultiIdsResponse = 
+               HttpResponse.builder().statusCode(200)
+                           .payload(payloadFromResourceWithContentType(
+                                 "/describe_instances_multiple.xml", MediaType.APPLICATION_XML)).build();
 
       //TODO: duplicate.. shouldn't need this
       describeImageRequest = 

@@ -20,6 +20,11 @@ package org.jclouds.compute.strategy.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.toArray;
+import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.compute.predicates.NodePredicates.all;
+import static org.jclouds.compute.predicates.NodePredicates.withIds;
 import static org.jclouds.compute.util.ComputeServiceUtils.formatStatus;
 
 import java.util.Map;
@@ -55,6 +60,7 @@ import org.jclouds.logging.Logger;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 
 /**
@@ -111,8 +117,13 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements CreateNodeW
    }
 
    @Override
+   public Iterable<? extends NodeMetadata> listNodesByIds(Iterable<String> ids) {
+      return FluentIterable.from(listDetailsOnNodesMatching(all())).filter(withIds(toArray(ids, String.class))).toSet();
+   }
+
+   @Override
    public Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(Predicate<ComputeMetadata> filter) {
-      return Iterables.filter(Iterables.transform(client.listNodes(), nodeMetadataAdapter), filter);
+      return filter(transform(client.listNodes(), nodeMetadataAdapter), filter);
    }
    
    @Override

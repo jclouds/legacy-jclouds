@@ -20,10 +20,15 @@ package org.jclouds.ec2.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.and;
+import static com.google.common.base.Predicates.in;
 import static com.google.common.base.Predicates.notNull;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.toArray;
 import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Multimaps.filterKeys;
+import static com.google.common.collect.Multimaps.index;
+import static com.google.common.collect.Multimaps.transformValues;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
 import java.util.Set;
@@ -33,12 +38,13 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
+import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.ListNodesStrategy;
-import org.jclouds.ec2.EC2AsyncClient;
+import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.location.Region;
@@ -48,6 +54,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Inject;
@@ -67,13 +75,13 @@ public class EC2ListNodesStrategy implements ListNodesStrategy {
    @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
    protected static Long maxTime;
 
-   protected final EC2AsyncClient client;
+   protected final EC2Client client;
    protected final Supplier<Set<String>> regions;
    protected final Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata;
    protected final ListeningExecutorService userExecutor;
 
    @Inject
-   protected EC2ListNodesStrategy(EC2AsyncClient client, @Region Supplier<Set<String>> regions,
+   protected EC2ListNodesStrategy(EC2Client client, @Region Supplier<Set<String>> regions,
             Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
             @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
       this.client =  checkNotNull(client, "client");
@@ -88,6 +96,22 @@ public class EC2ListNodesStrategy implements ListNodesStrategy {
    }
 
    @Override
+   public Set<? extends NodeMetadata> listNodesByIds(Iterable<String> ids) {
+      Multimap<String, String> idsByHandles = index(ids, splitHandle(1));
+      Multimap<String, String> idsByRegions = transformValues(idsByHandles, splitHandle(0));
+      Multimap<String, String> idsByConfiguredRegions = filterKeys(idsByRegions, in(regions.get()));
+
+      if (idsByConfiguredRegions.isEmpty()) {
+         return ImmutableSet.of();
+      }
+      
+      Iterable<? extends RunningInstance> instances = pollRunningInstancesByRegionsAndIds(idsByConfiguredRegions);
+      Iterable<? extends NodeMetadata> nodes = transform(filter(instances, notNull()),
+                                                         runningInstanceToNodeMetadata);
+      return ImmutableSet.copyOf(nodes);
+   }
+
+   @Override
    public Set<? extends NodeMetadata> listDetailsOnNodesMatching(Predicate<ComputeMetadata> filter) {
       Iterable<? extends RunningInstance> instances = pollRunningInstances();
       Iterable<? extends NodeMetadata> nodes = filter(transform(filter(instances, notNull()),
@@ -96,15 +120,50 @@ public class EC2ListNodesStrategy implements ListNodesStrategy {
    }
 
    protected Iterable<? extends RunningInstance> pollRunningInstances() {
-      Iterable<? extends Set<? extends Reservation<? extends RunningInstance>>> reservations = transformParallel(
-               regions.get(), new Function<String, ListenableFuture<? extends Set<? extends Reservation<? extends RunningInstance>>>>() {
-
-                  @Override
-                  public ListenableFuture<? extends Set<? extends Reservation<? extends RunningInstance>>> apply(String from) {
-                     return client.getInstanceServices().describeInstancesInRegion(from);
-                  }
-
-               }, userExecutor, maxTime, logger, "reservations");
+      Iterable<? extends Set<? extends Reservation<? extends RunningInstance>>> reservations
+         = transform(regions.get(), allInstancesInRegion());
+      
       return concat(concat(reservations));
+   }
+
+   protected Iterable<? extends RunningInstance> pollRunningInstancesByRegionsAndIds(final Multimap<String,String> idsByRegions) {
+      Iterable<? extends Set<? extends Reservation<? extends RunningInstance>>> reservations
+         = transform(idsByRegions.keySet(), instancesByIdInRegion(idsByRegions));
+      
+      return concat(concat(reservations));
+   }
+
+   protected Function<String, String> splitHandle(final int pos) {
+      return new Function<String, String>() {
+
+         @Override
+         public String apply(String handle) {
+            return AWSUtils.parseHandle(handle)[pos];
+         }
+      };
+   }
+
+   protected Function<String, Set<? extends Reservation<? extends RunningInstance>>> allInstancesInRegion() {
+      return new Function<String, Set<? extends Reservation<? extends RunningInstance>>>() {
+         
+         @Override
+         public Set<? extends Reservation<? extends RunningInstance>> apply(String from) {
+            return client.getInstanceServices().describeInstancesInRegion(from);
+         }
+         
+      };
+   }
+
+   protected Function<String, Set<? extends Reservation<? extends RunningInstance>>>
+                                                                  instancesByIdInRegion(final Multimap<String,String> idsByRegions) {
+      return new Function<String, Set<? extends Reservation<? extends RunningInstance>>>() {
+                 
+         @Override
+         public Set<? extends Reservation<? extends RunningInstance>> apply(String from) {
+            return client.getInstanceServices()
+               .describeInstancesInRegion(from, toArray(idsByRegions.get(from), String.class));
+         }
+         
+      };
    }
 }

@@ -20,6 +20,8 @@ package org.jclouds.cloudsigma.compute;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.contains;
+import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
 import javax.annotation.Resource;
@@ -62,6 +64,7 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
@@ -197,6 +200,17 @@ public class CloudSigmaComputeServiceAdapter implements
       return (Iterable<ServerInfo>) client.listServerInfo();
    }
    
+   @Override
+   public Iterable<ServerInfo> listNodesByIds(final Iterable<String> ids) {
+      return filter(listNodes(), new Predicate<ServerInfo>() {
+
+            @Override
+            public boolean apply(ServerInfo server) {
+               return contains(ids, server.getUuid());
+            }
+         });
+   }
+
    @Override
    public Iterable<Location> listLocations() {
       // Not using the adapter to determine locations
