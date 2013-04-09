@@ -18,6 +18,9 @@
  */
 package org.jclouds.compute.stub.config;
 
+import static com.google.common.base.Predicates.in;
+import static com.google.common.collect.Iterables.find;
+import static com.google.common.collect.Maps.filterKeys;
 import static org.jclouds.compute.util.ComputeServiceUtils.formatStatus;
 
 import java.util.Map;
@@ -53,6 +56,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
@@ -161,12 +166,17 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
    
    @Override
    public Image getImage(String id) {
-      return Iterables.find(listImages(), ImagePredicates.idEquals(id), null);
+      return find(listImages(), ImagePredicates.idEquals(id), null);
    }
    
    @Override
    public Iterable<NodeMetadata> listNodes() {
       return nodes.values();
+   }
+
+   @Override
+   public Iterable<NodeMetadata> listNodesByIds(Iterable<String> ids) {
+      return filterKeys(nodes, in(ImmutableSet.copyOf(ids))).values();
    }
 
    @SuppressWarnings("unchecked")

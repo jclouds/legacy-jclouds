@@ -345,6 +345,18 @@ public class BaseComputeService implements ComputeService {
     * {@inheritDoc}
     */
    @Override
+   public Set<? extends NodeMetadata> listNodesByIds(Iterable<String> ids) {
+      checkNotNull(ids, "ids");
+      logger.trace(">> listing node with ids(%s)", ids);
+      Set<NodeMetadata> set = ImmutableSet.copyOf(listNodesStrategy.listNodesByIds(ids));
+      logger.trace("<< list(%d)", set.size());
+      return set;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public Set<? extends NodeMetadata> listNodesDetailsMatching(Predicate<ComputeMetadata> filter) {
       checkNotNull(filter, "filter");
       logger.trace(">> listing node details matching(%s)", filter);

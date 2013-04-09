@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Predicates.and;
+import static com.google.common.collect.Iterables.contains;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.get;
@@ -186,7 +187,7 @@ public class SoftLayerComputeServiceAdapter implements
    // cheat until we have a getProductItem command
    @Override
    public ProductItem getImage(final String id) {
-      return Iterables.find(listImages(), new Predicate<ProductItem>(){
+      return find(listImages(), new Predicate<ProductItem>(){
 
          @Override
          public boolean apply(ProductItem input) {
@@ -198,7 +199,7 @@ public class SoftLayerComputeServiceAdapter implements
    
    @Override
    public Iterable<VirtualGuest> listNodes() {
-      return Iterables.filter(client.getVirtualGuestClient().listVirtualGuests(), new Predicate<VirtualGuest>() {
+      return filter(client.getVirtualGuestClient().listVirtualGuests(), new Predicate<VirtualGuest>() {
 
          @Override
          public boolean apply(VirtualGuest arg0) {
@@ -210,6 +211,17 @@ public class SoftLayerComputeServiceAdapter implements
          }
 
       });
+   }
+
+   @Override
+   public Iterable<VirtualGuest> listNodesByIds(final Iterable<String> ids) {
+      return filter(listNodes(), new Predicate<VirtualGuest>() {
+
+            @Override
+            public boolean apply(VirtualGuest server) {
+               return contains(ids, server.getId());
+            }
+         });
    }
 
    @Override

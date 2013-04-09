@@ -19,6 +19,8 @@
 package org.jclouds.servermanager.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.contains;
+import static com.google.common.collect.Iterables.filter;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -32,7 +34,9 @@ import org.jclouds.servermanager.Image;
 import org.jclouds.servermanager.Server;
 import org.jclouds.servermanager.ServerManager;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 /**
  * defines the connection between the {@link ServerManager} implementation and the jclouds
@@ -77,6 +81,17 @@ public class ServerManagerComputeServiceAdapter implements ComputeServiceAdapter
    @Override
    public Iterable<Server> listNodes() {
       return client.listServers();
+   }
+
+   @Override
+   public Iterable<Server> listNodesByIds(final Iterable<String> ids) {
+      return filter(listNodes(), new Predicate<Server>() {
+
+            @Override
+            public boolean apply(Server server) {
+               return contains(ids, Integer.toString(server.id));
+            }
+         });
    }
    
    @Override

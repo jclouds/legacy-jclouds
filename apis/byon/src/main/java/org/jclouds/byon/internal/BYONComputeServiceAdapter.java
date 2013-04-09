@@ -19,6 +19,11 @@
 package org.jclouds.byon.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.in;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Maps.filterKeys;
 
 import java.util.Set;
 
@@ -44,6 +49,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 /**
  * 
@@ -80,14 +86,19 @@ public class BYONComputeServiceAdapter implements JCloudsNativeComputeServiceAda
 
    @Override
    public Iterable<NodeMetadata> listNodes() {
-      return Iterables.transform(nodes.get().asMap().values(), converter);
+      return transform(nodes.get().asMap().values(), converter);
+   }
+
+   @Override
+   public Iterable<NodeMetadata> listNodesByIds(Iterable<String> ids) {
+      return transform(filterKeys(nodes.get().asMap(), in(ImmutableSet.copyOf(ids))).values(), converter);
    }
 
    @Override
    public Iterable<Location> listLocations() {
       Builder<Location> locations = ImmutableSet.builder();
-      Location provider = Iterables.getOnlyElement(locationSupplier.get());
-      Set<String> zones = ImmutableSet.copyOf(Iterables.filter(Iterables.transform(nodes.get().asMap().values(),
+      Location provider = getOnlyElement(locationSupplier.get());
+      Set<String> zones = ImmutableSet.copyOf(filter(transform(nodes.get().asMap().values(),
                new Function<Node, String>() {
 
                   @Override

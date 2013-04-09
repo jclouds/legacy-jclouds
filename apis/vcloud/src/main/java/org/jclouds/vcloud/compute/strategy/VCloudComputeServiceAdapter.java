@@ -19,6 +19,8 @@
 package org.jclouds.vcloud.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.contains;
+import static com.google.common.collect.Iterables.filter;
 
 import java.net.URI;
 import java.util.Map;
@@ -100,7 +102,7 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
    }
 
    private Iterable<VAppTemplate> supportedTemplates() {
-      return Iterables.filter(templates.get(), new Predicate<VAppTemplate>() {
+      return filter(templates.get(), new Predicate<VAppTemplate>() {
 
          @Override
          public boolean apply(VAppTemplate from) {
@@ -143,6 +145,17 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
          }
       }
       return nodes.build();
+   }
+
+   @Override
+   public Iterable<VApp> listNodesByIds(final Iterable<String> ids) {
+      return filter(listNodes(), new Predicate<VApp>() {
+
+            @Override
+            public boolean apply(VApp vm) {
+               return contains(ids, vm.getHref().toASCIIString());
+            }
+         });
    }
 
    @VisibleForTesting
