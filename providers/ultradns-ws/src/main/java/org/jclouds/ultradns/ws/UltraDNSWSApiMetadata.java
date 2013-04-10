@@ -22,38 +22,37 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.rest.internal.BaseRestApiMetadata;
-import org.jclouds.ultradns.ws.config.UltraDNSWSRestClientModule;
+import org.jclouds.rest.internal.BaseHttpApiMetadata;
+import org.jclouds.ultradns.ws.config.UltraDNSWSHttpApiModule;
 
 /**
  * Implementation of {@link ApiMetadata} for Neustar's UltraDNSWS api.
  * 
  * @author Adrian Cole
  */
-public class UltraDNSWSApiMetadata extends BaseRestApiMetadata {
+public class UltraDNSWSApiMetadata extends BaseHttpApiMetadata<UltraDNSWSApi> {
 
    @Override
    public Builder toBuilder() {
-      return new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
+      return new Builder().fromApiMetadata(this);
    }
 
    public UltraDNSWSApiMetadata() {
-      this(new Builder(UltraDNSWSApi.class, UltraDNSWSAsyncApi.class));
+      this(new Builder());
    }
 
    protected UltraDNSWSApiMetadata(Builder builder) {
-      super(Builder.class.cast(builder));
+      super(builder);
    }
 
    public static Properties defaultProperties() {
-      Properties properties = BaseRestApiMetadata.defaultProperties();
+      Properties properties = BaseHttpApiMetadata.defaultProperties();
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
+   public static class Builder extends BaseHttpApiMetadata.Builder<UltraDNSWSApi, Builder> {
 
-      protected Builder(Class<?> api, Class<?> asyncApi) {
-         super(api, asyncApi);
+      protected Builder() {
          id("ultradns-ws")
          .name("Neustar UltraDNS WS Api")
          .identityName("Username")
@@ -62,7 +61,7 @@ public class UltraDNSWSApiMetadata extends BaseRestApiMetadata {
          .documentation(URI.create("https://portal.ultradns.com/static/docs/NUS_API_XML_SOAP.pdf"))
          .defaultEndpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
          .defaultProperties(UltraDNSWSApiMetadata.defaultProperties())
-         .defaultModule(UltraDNSWSRestClientModule.class);
+         .defaultModule(UltraDNSWSHttpApiModule.class);
       }
 
       @Override
