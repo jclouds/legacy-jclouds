@@ -34,7 +34,7 @@ import org.jclouds.openstack.keystone.v2_0.config.KeystoneRestClientModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneRestClientModule.KeystoneAdminURLModule;
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityAuthenticationModule;
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityCredentialTypes;
-import org.jclouds.rackspace.cloudidentity.v2_0.config.MappedCloudIdentityAuthenticationApiModule;
+import org.jclouds.rackspace.cloudidentity.v2_0.config.SyncToAsyncCloudIdentityAuthenticationApiModule;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
@@ -89,7 +89,7 @@ public class CloudIdentityApiMetadata extends KeystoneApiMetadata {
          .context(CONTEXT_TOKEN)
          .documentation(URI.create("http://docs.rackspace.com/auth/api/v2.0/auth-api-devguide/"))
          .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
-                                     .add(MappedCloudIdentityAuthenticationApiModule.class)
+                                     .add(SyncToAsyncCloudIdentityAuthenticationApiModule.class)
                                      .add(CloudIdentityAuthenticationModule.class)
                                      .add(KeystoneAdminURLModule.class)
                                      .add(KeystoneParserModule.class)

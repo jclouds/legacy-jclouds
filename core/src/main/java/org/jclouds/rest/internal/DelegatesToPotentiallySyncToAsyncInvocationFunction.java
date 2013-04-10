@@ -47,12 +47,12 @@ import com.google.inject.util.Types;
  */
 @Deprecated
 @Beta
-public final class DelegatesToPotentiallyMappedInvocationFunction<S, F extends Function<Invocation, Object>> extends
+public final class DelegatesToPotentiallySyncToAsyncInvocationFunction<S, F extends Function<Invocation, Object>> extends
       DelegatesToInvocationFunction<S, F> {
    private final Map<Class<?>, Class<?>> syncToAsync;
 
    @Inject
-   DelegatesToPotentiallyMappedInvocationFunction(Injector injector, SetCaller setCaller, Class<S> ownerType,
+   DelegatesToPotentiallySyncToAsyncInvocationFunction(Injector injector, SetCaller setCaller, Class<S> ownerType,
          Function<InvocationSuccess, Optional<Object>> optionalConverter, F methodInvoker,
          Map<Class<?>, Class<?>> syncToAsync) {
       super(injector, setCaller, ownerType, optionalConverter, methodInvoker);

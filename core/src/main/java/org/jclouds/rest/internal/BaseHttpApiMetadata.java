@@ -84,14 +84,14 @@ public abstract class BaseHttpApiMetadata<A> extends BaseApiMetadata implements 
       }
 
       private void init() {
-         javaApi(api)
+         api(api)
          .name(api.getSimpleName())
          .context(contextToken(typeToken(api)))
          .defaultProperties(BaseHttpApiMetadata.defaultProperties());
       }
 
       @Override
-      public T javaApi(Class<A> api) {
+      public T api(Class<A> api) {
          this.api = checkNotNull(api, "api");
          return self();
       }
@@ -101,7 +101,7 @@ public abstract class BaseHttpApiMetadata<A> extends BaseApiMetadata implements 
       public T fromApiMetadata(ApiMetadata in) {
          if (in instanceof HttpApiMetadata) {
             HttpApiMetadata<?> http = HttpApiMetadata.class.cast(in);
-            javaApi(Class.class.cast(http.getApi()));
+            api(Class.class.cast(http.getApi()));
          }
          super.fromApiMetadata(in);
          return self();

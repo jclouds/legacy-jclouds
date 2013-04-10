@@ -19,7 +19,7 @@
 package org.jclouds.rest.config;
 
 import static org.jclouds.reflect.Types2.checkBound;
-import static org.jclouds.rest.config.BinderUtils.bindMappedHttpApi;
+import static org.jclouds.rest.config.BinderUtils.bindSyncToAsyncHttpApi;
 
 import java.util.Map;
 
@@ -40,14 +40,14 @@ public class RestClientModule<S, A> extends RestModule {
    protected final TypeToken<S> syncClientType;
    protected final TypeToken<A> asyncClientType;
 
-   private final MappedHttpInvocationModule invocationModule;
+   private final SyncToAsyncHttpInvocationModule invocationModule;
 
    /**
     * Note that this ctor requires that you instantiate w/resolved generic params. For example, via
     * a subclass of a bound type, or natural instantiation w/resolved type params.
     */
    protected RestClientModule(Map<Class<?>, Class<?>> sync2Async) {
-      this.invocationModule = new MappedHttpInvocationModule(sync2Async);
+      this.invocationModule = new SyncToAsyncHttpInvocationModule(sync2Async);
       this.syncClientType = checkBound(new TypeToken<S>(getClass()) {
          private static final long serialVersionUID = 1L;
       });
@@ -74,7 +74,7 @@ public class RestClientModule<S, A> extends RestModule {
     * only necessary when type params are not resolvable at runtime.
     */
    public RestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType, Map<Class<?>, Class<?>> sync2Async) {
-      this.invocationModule = new MappedHttpInvocationModule(sync2Async);
+      this.invocationModule = new SyncToAsyncHttpInvocationModule(sync2Async);
       this.syncClientType = checkBound(syncClientType);
       this.asyncClientType = checkBound(asyncClientType);
    }
@@ -83,7 +83,7 @@ public class RestClientModule<S, A> extends RestModule {
    protected void configure() {
       super.configure();
       install(invocationModule);
-      bindMappedHttpApi(binder(), syncClientType.getRawType(), asyncClientType.getRawType());
+      bindSyncToAsyncHttpApi(binder(), syncClientType.getRawType(), asyncClientType.getRawType());
       bindErrorHandlers();
       bindRetryHandlers();
    }

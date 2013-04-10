@@ -47,10 +47,9 @@ public class BinderUtils {
       bindAnnotatedHttpApiProvider(binder, api);
    }
    
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "serial" })
    private static <T> void bindAnnotatedHttpApiProvider(Binder binder, Class<T> annotated) {
       TypeToken<AnnotatedHttpApiProvider<T>> token = new TypeToken<AnnotatedHttpApiProvider<T>>() {
-         private static final long serialVersionUID = 1L;
       }.where(new TypeParameter<T>() {
       }, annotated);
       binder.bind(annotated).toProvider(TypeLiteral.class.cast(TypeLiteral.get(token.getType())));
@@ -75,10 +74,10 @@ public class BinderUtils {
     *             longer supported.
     */
    @Deprecated
-   public static <S, A> void bindMappedHttpApi(Binder binder, Class<S> sync, Class<A> async) {
+   public static <S, A> void bindSyncToAsyncHttpApi(Binder binder, Class<S> sync, Class<A> async) {
       bindClass(binder, sync);
       bindClass(binder, async);
-      bindAnnotatedMappedHttpApiProvider(binder, async);
+      bindAnnotatedSyncToAsyncHttpApiProvider(binder, async);
       bindHttpApiProvider(binder, sync, async);
    }
 
@@ -87,10 +86,9 @@ public class BinderUtils {
     *             longer supported.
     */
    @Deprecated
-   @SuppressWarnings("unchecked")
-   private static <T> void bindAnnotatedMappedHttpApiProvider(Binder binder, Class<T> annotated) {
-      TypeToken<AnnotatedMappedHttpApiProvider<T>> token = new TypeToken<AnnotatedMappedHttpApiProvider<T>>() {
-         private static final long serialVersionUID = 1L;
+   @SuppressWarnings({ "unchecked", "serial" })
+   private static <T> void bindAnnotatedSyncToAsyncHttpApiProvider(Binder binder, Class<T> annotated) {
+      TypeToken<AnnotatedSyncToAsyncHttpApiProvider<T>> token = new TypeToken<AnnotatedSyncToAsyncHttpApiProvider<T>>() {
       }.where(new TypeParameter<T>() {
       }, annotated);
       binder.bind(annotated).toProvider(TypeLiteral.class.cast(TypeLiteral.get(token.getType())));
@@ -102,10 +100,9 @@ public class BinderUtils {
     *             longer supported.
     */
    @Deprecated
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "serial" })
    private static <S, A> void bindHttpApiProvider(Binder binder, Class<S> sync, Class<A> async) {
-      TypeToken<MappedHttpApiProvider<S, A>> token = new TypeToken<MappedHttpApiProvider<S, A>>() {
-         private static final long serialVersionUID = 1L;
+      TypeToken<SyncToAsyncHttpApiProvider<S, A>> token = new TypeToken<SyncToAsyncHttpApiProvider<S, A>>() {
       }.where(new TypeParameter<S>() {
       }, sync).where(new TypeParameter<A>() {
       }, async);
@@ -143,20 +140,18 @@ public class BinderUtils {
     *             longer supported.
     */
    @Deprecated
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "serial" })
    private static <S, A> void bindCallGetOnFutures(Binder binder, Class<S> sync, Class<A> async) {
       TypeToken<CallGetOnFuturesProvider<S, A>> token = new TypeToken<CallGetOnFuturesProvider<S, A>>() {
-         private static final long serialVersionUID = 1L;
       }.where(new TypeParameter<S>() {
       }, sync).where(new TypeParameter<A>() {
       }, async);
       binder.bind(sync).toProvider(TypeLiteral.class.cast(TypeLiteral.get(token.getType())));
    }
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "serial" })
    private static <K> void bindClass(Binder binder, Class<K> sync) {
       binder.bind(TypeLiteral.class.cast(TypeLiteral.get(new TypeToken<Class<K>>() {
-         private static final long serialVersionUID = 1L;
       }.where(new TypeParameter<K>() {
       }, sync).getType()))).toInstance(sync);
    }

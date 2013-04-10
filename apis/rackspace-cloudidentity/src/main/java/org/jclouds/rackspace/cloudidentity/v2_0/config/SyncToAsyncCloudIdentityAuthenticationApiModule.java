@@ -18,7 +18,7 @@
  */
 package org.jclouds.rackspace.cloudidentity.v2_0.config;
 
-import static org.jclouds.rest.config.BinderUtils.bindMappedHttpApi;
+import static org.jclouds.rest.config.BinderUtils.bindSyncToAsyncHttpApi;
 
 import org.jclouds.openstack.keystone.v2_0.AuthenticationApi;
 import org.jclouds.openstack.keystone.v2_0.AuthenticationAsyncApi;
@@ -36,13 +36,13 @@ import com.google.inject.Provides;
  *             {@link CloudIdentityAuthenticationApiModule}
  */
 @Deprecated
-public class MappedCloudIdentityAuthenticationApiModule extends AbstractModule {
+public class SyncToAsyncCloudIdentityAuthenticationApiModule extends AbstractModule {
 
    @Override
    protected void configure() {
       // AuthenticationApi is used directly for filters and retry handlers, so
       // let's bind it explicitly
-      bindMappedHttpApi(binder(), CloudIdentityAuthenticationApi.class, CloudIdentityAuthenticationAsyncApi.class);
+      bindSyncToAsyncHttpApi(binder(), CloudIdentityAuthenticationApi.class, CloudIdentityAuthenticationAsyncApi.class);
    }
 
    @Provides
