@@ -24,7 +24,7 @@
     <parent>
         <artifactId>jclouds-project</artifactId>
         <groupId>org.jclouds</groupId>
-        <version>1.5.10-SNAPSHOT</version>
+        <version>1.5.10</version>
         <relativePath>../project/pom.xml</relativePath>
     </parent>
     <artifactId>jclouds-core</artifactId>
@@ -36,7 +36,7 @@
         <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk</connection>
         <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/trunk</developerConnection>
         <url>http://jclouds.googlecode.com/svn/trunk</url>
-      <tag>HEAD</tag>
+      <tag>jclouds-1.5.10</tag>
   </scm>
 
     <properties>
