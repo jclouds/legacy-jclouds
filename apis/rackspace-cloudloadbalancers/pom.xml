@@ -37,8 +37,8 @@
     <test.rackspace-cloudloadbalancers.endpoint>https://identity.api.rackspacecloud.com/v2.0/</test.rackspace-cloudloadbalancers.endpoint>
     <test.rackspace-cloudloadbalancers.api-version>1</test.rackspace-cloudloadbalancers.api-version>
     <test.rackspace-cloudloadbalancers.build-version />
-    <test.rackspace-cloudloadbalancers.identity>${test.rackspace.identity}</test.rackspace-cloudloadbalancers.identity>
-    <test.rackspace-cloudloadbalancers.credential>${test.rackspace.credential}</test.rackspace-cloudloadbalancers.credential>
+    <test.rackspace-cloudloadbalancers.identity>${test.rackspace-us.identity}</test.rackspace-cloudloadbalancers.identity>
+    <test.rackspace-cloudloadbalancers.credential>${test.rackspace-us.credential}</test.rackspace-cloudloadbalancers.credential>
 
     <jclouds.osgi.export>org.jclouds.rackspace.cloudloadbalancers*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>

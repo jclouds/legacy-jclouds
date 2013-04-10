@@ -28,30 +28,21 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.loadbalancer.LoadBalancerServiceContext;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.ZoneModule;
 import org.jclouds.rackspace.cloudidentity.v2_0.ServiceType;
+import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityAuthenticationApiModule;
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityAuthenticationModule;
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityCredentialTypes;
-import org.jclouds.rackspace.cloudloadbalancers.v1.config.CloudLoadBalancersRestClientModule;
+import org.jclouds.rackspace.cloudloadbalancers.v1.config.CloudLoadBalancersHttpApiModule;
 import org.jclouds.rackspace.cloudloadbalancers.v1.loadbalancer.config.CloudLoadBalancersLoadBalancerContextModule;
-import org.jclouds.rest.internal.BaseRestApiMetadata;
+import org.jclouds.rest.internal.BaseHttpApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 /**
  * Implementation of {@link ApiMetadata} for CloudLoadBalancers 1.0 API
  * 
  * @author Adrian Cole
  */
-public class CloudLoadBalancersApiMetadata extends BaseRestApiMetadata {
-
-   /**
-    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(CloudLoadBalancersApi.class)} as
-    *             {@link CloudLoadBalancersAsyncApi} interface will be removed in jclouds 1.7.
-    */
-   @Deprecated
-   public static final TypeToken<org.jclouds.rest.RestContext<CloudLoadBalancersApi, CloudLoadBalancersAsyncApi>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<CloudLoadBalancersApi, CloudLoadBalancersAsyncApi>>() {
-      private static final long serialVersionUID = 1L;
-   };
+public class CloudLoadBalancersApiMetadata extends BaseHttpApiMetadata<CloudLoadBalancersApi> {
 
    @Override
    public Builder toBuilder() {
@@ -67,17 +58,15 @@ public class CloudLoadBalancersApiMetadata extends BaseRestApiMetadata {
    }
 
    public static Properties defaultProperties() {
-      Properties properties = BaseRestApiMetadata.defaultProperties();
+      Properties properties = BaseHttpApiMetadata.defaultProperties();
       properties.setProperty(SERVICE_TYPE, ServiceType.LOAD_BALANCERS);
       properties.setProperty(CREDENTIAL_TYPE, CloudIdentityCredentialTypes.API_KEY_CREDENTIALS);
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
+   public static class Builder extends BaseHttpApiMetadata.Builder<CloudLoadBalancersApi, Builder> {
 
-      @SuppressWarnings("deprecation")
       protected Builder() {
-         super(CloudLoadBalancersApi.class, CloudLoadBalancersAsyncApi.class);
          id("rackspace-cloudloadbalancers")
                .name("Rackspace Cloud Load Balancers API")
                .identityName("Username")
@@ -87,12 +76,12 @@ public class CloudLoadBalancersApiMetadata extends BaseRestApiMetadata {
                .defaultEndpoint("https://identity.api.rackspacecloud.com/v2.0/")
                .defaultProperties(CloudLoadBalancersApiMetadata.defaultProperties())
                .view(typeToken(LoadBalancerServiceContext.class))
-               .defaultModules(
-                     ImmutableSet.<Class<? extends Module>> of(
-                           CloudIdentityAuthenticationModule.class,
-                           ZoneModule.class,
-                           CloudLoadBalancersRestClientModule.class,
-                           CloudLoadBalancersLoadBalancerContextModule.class));
+               .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                            .add(CloudIdentityAuthenticationApiModule.class)
+                            .add(CloudIdentityAuthenticationModule.class)
+                            .add(ZoneModule.class)
+                            .add(CloudLoadBalancersHttpApiModule.class)
+                            .add(CloudLoadBalancersLoadBalancerContextModule.class).build());
       }
 
       @Override

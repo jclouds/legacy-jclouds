@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.collect.IterableWithMarker;
-import org.jclouds.collect.internal.CallerArg0ToPagedIterable;
+import org.jclouds.collect.internal.Arg0ToPagedIterable;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.json.Json;
 import org.jclouds.openstack.keystone.v2_0.domain.PaginatedCollection;
@@ -38,6 +38,7 @@ import org.jclouds.rackspace.cloudloadbalancers.v1.features.ReportApi;
 import org.jclouds.rackspace.cloudloadbalancers.v1.functions.ParseLoadBalancerUsages.LoadBalancerUsages;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -61,7 +62,7 @@ public class ParseLoadBalancerUsages extends ParseJson<LoadBalancerUsages> {
       }
    }
 
-   public static class ToPagedIterable extends CallerArg0ToPagedIterable<LoadBalancerUsage, ToPagedIterable> {
+   public static class ToPagedIterable extends Arg0ToPagedIterable.FromCaller<LoadBalancerUsage, ToPagedIterable> {
 
       private final CloudLoadBalancersApi api;
 
@@ -71,7 +72,8 @@ public class ParseLoadBalancerUsages extends ParseJson<LoadBalancerUsages> {
       }
 
       @Override
-      protected Function<Object, IterableWithMarker<LoadBalancerUsage>> markerToNextForCallingArg0(final String zone) {
+      protected Function<Object, IterableWithMarker<LoadBalancerUsage>> markerToNextForArg0(Optional<Object> arg0) {
+         String zone = arg0.isPresent() ? arg0.get().toString() : null;
          final ReportApi reportApi = api.getReportApiForZone(zone);
          
          return new Function<Object, IterableWithMarker<LoadBalancerUsage>>() {
