@@ -24,7 +24,7 @@ import java.lang.reflect.Proxy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.rest.internal.DelegatesToPotentiallyMappedInvocationFunction;
+import org.jclouds.rest.internal.DelegatesToPotentiallySyncToAsyncInvocationFunction;
 import org.jclouds.rest.internal.InvokeAndCallGetOnFutures;
 
 import com.google.common.cache.Cache;
@@ -40,15 +40,15 @@ import com.google.inject.Provider;
 public class CallGetOnFuturesProvider<S, A> implements Provider<S> {
 
    private final Class<? super S> apiType;
-   private final DelegatesToPotentiallyMappedInvocationFunction<S, InvokeAndCallGetOnFutures<A>> syncInvoker;
+   private final DelegatesToPotentiallySyncToAsyncInvocationFunction<S, InvokeAndCallGetOnFutures<A>> syncInvoker;
 
    @Inject
    private CallGetOnFuturesProvider(Cache<Invokable<?, ?>, Invokable<?, ?>> invokables,
-         DelegatesToPotentiallyMappedInvocationFunction<S, InvokeAndCallGetOnFutures<A>> syncInvoker, Class<S> apiType,
+         DelegatesToPotentiallySyncToAsyncInvocationFunction<S, InvokeAndCallGetOnFutures<A>> syncInvoker, Class<S> apiType,
          Class<A> asyncApiType) {
       this.syncInvoker = syncInvoker;
       this.apiType = apiType;
-      MappedHttpInvocationModule.putInvokables(apiType, asyncApiType, invokables);
+      SyncToAsyncHttpInvocationModule.putInvokables(apiType, asyncApiType, invokables);
    }
 
    @SuppressWarnings("unchecked")

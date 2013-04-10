@@ -18,7 +18,7 @@
  */
 package org.jclouds.openstack.swift.blobstore.config;
 
-import static org.jclouds.rest.config.BinderUtils.bindMappedHttpApi;
+import static org.jclouds.rest.config.BinderUtils.bindSyncToAsyncHttpApi;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
 import java.util.concurrent.TimeUnit;
@@ -70,7 +70,7 @@ public abstract class TemporaryUrlExtensionModule<A extends CommonSwiftAsyncClie
          TemporaryUrlExtensionModule<SwiftKeystoneAsyncClient> {
 
       protected void bindTemporaryUrlKeyApi() {
-         bindMappedHttpApi(binder(), TemporaryUrlKeyApi.class, KeystoneTemporaryUrlKeyAsyncApi.class);
+         bindSyncToAsyncHttpApi(binder(), TemporaryUrlKeyApi.class, KeystoneTemporaryUrlKeyAsyncApi.class);
       }
 
       @Override
@@ -115,7 +115,7 @@ public abstract class TemporaryUrlExtensionModule<A extends CommonSwiftAsyncClie
    protected abstract void bindRequestSigner();
 
    protected void bindTemporaryUrlKeyApi() {
-      bindMappedHttpApi(binder(), TemporaryUrlKeyApi.class, TemporaryUrlKeyAsyncApi.class);
+      bindSyncToAsyncHttpApi(binder(), TemporaryUrlKeyApi.class, TemporaryUrlKeyAsyncApi.class);
    }
 
 }
