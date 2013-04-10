@@ -19,13 +19,12 @@
 package org.jclouds.dynect.v3.config;
 
 import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
-import static org.jclouds.rest.config.BinderUtils.bindMappedHttpApi;
+import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URI;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,13 +35,7 @@ import javax.net.ssl.SSLContext;
 import org.jclouds.Constants;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.dynect.v3.DynECTApi;
-import org.jclouds.dynect.v3.DynECTAsyncApi;
-import org.jclouds.dynect.v3.features.RecordApi;
-import org.jclouds.dynect.v3.features.RecordAsyncApi;
 import org.jclouds.dynect.v3.features.SessionApi;
-import org.jclouds.dynect.v3.features.SessionAsyncApi;
-import org.jclouds.dynect.v3.features.ZoneApi;
-import org.jclouds.dynect.v3.features.ZoneAsyncApi;
 import org.jclouds.dynect.v3.filters.SessionManager;
 import org.jclouds.dynect.v3.handlers.DynECTErrorHandler;
 import org.jclouds.dynect.v3.handlers.GetJobRedirectionRetryHandler;
@@ -60,12 +53,11 @@ import org.jclouds.http.handlers.RedirectionRetryHandler;
 import org.jclouds.http.internal.HttpWire;
 import org.jclouds.http.internal.JavaUrlHttpCommandExecutorService;
 import org.jclouds.io.ContentMetadataCodec;
-import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.config.RestClientModule;
+import org.jclouds.rest.ConfiguresHttpApi;
+import org.jclouds.rest.config.HttpApiModule;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
@@ -73,18 +65,12 @@ import com.google.common.util.concurrent.ListeningExecutorService;
  * 
  * @author Adrian Cole
  */
-@ConfiguresRestClient
+@ConfiguresHttpApi
 // only one job at a time or error "This session already has a job running"
 @SingleThreaded
-public class DynECTRestClientModule extends RestClientModule<DynECTApi, DynECTAsyncApi> {
+public class DynECTHttpApiModule extends HttpApiModule<DynECTApi> {
 
-   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
-         .put(SessionApi.class, SessionAsyncApi.class)
-         .put(ZoneApi.class, ZoneAsyncApi.class)
-         .put(RecordApi.class, RecordAsyncApi.class).build();
-
-   public DynECTRestClientModule() {
-      super(DELEGATE_MAP);
+   public DynECTHttpApiModule() {
    }
 
    @Override
@@ -105,16 +91,15 @@ public class DynECTRestClientModule extends RestClientModule<DynECTApi, DynECTAs
       bind(SessionManager.class);
       bind(RedirectionRetryHandler.class).to(GetJobRedirectionRetryHandler.class);
       super.configure();
-      // Bind apis that are used directly vs via DynECTApi
-      bindMappedHttpApi(binder(), SessionApi.class, SessionAsyncApi.class);
-
-      // dynect returns the following as a 200.
-      // {"status": "failure", "data": {}, "job_id": 274509427, "msgs":
-      // [{"INFO": "token: This session already has a job running", "SOURCE":
-      // "API-B", "ERR_CD": "OPERATION_FAILED", "LVL": "ERROR"}]}
+      // for authentication filters
+      bindHttpApi(binder(), SessionApi.class);
       bind(JavaUrlHttpCommandExecutorService.class).to(SillyRabbit200sAreForSuccess.class);
    }
 
+   // dynect returns the following as a 200.
+   // {"status": "failure", "data": {}, "job_id": 274509427, "msgs":
+   // [{"INFO": "token: This session already has a job running", "SOURCE":
+   // "API-B", "ERR_CD": "OPERATION_FAILED", "LVL": "ERROR"}]}
    @Singleton
    private static class SillyRabbit200sAreForSuccess extends JavaUrlHttpCommandExecutorService {
 
@@ -129,8 +114,11 @@ public class DynECTRestClientModule extends RestClientModule<DynECTApi, DynECTAs
                untrustedSSLContextProvider, proxyForURI);
       }
 
+      /**
+       * synchronized to prevent multiple callers from overlapping requests on the same session
+       */
       @Override
-      protected HttpResponse invoke(HttpURLConnection connection) throws IOException, InterruptedException {
+      synchronized protected HttpResponse invoke(HttpURLConnection connection) throws IOException, InterruptedException {
          HttpResponse response = super.invoke(connection);
          if (response.getStatusCode() == 200) {
             byte[] data = closeClientButKeepContentStream(response);
