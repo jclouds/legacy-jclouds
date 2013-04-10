@@ -93,7 +93,7 @@ public class ResourceRecordMetadata {
 
    @Override
    public String toString() {
-      return toStringHelper("").omitNullValues().add("zoneId", zoneId).add("guid", guid).add("zoneName", zoneName)
+      return toStringHelper(this).omitNullValues().add("zoneId", zoneId).add("guid", guid).add("zoneName", zoneName)
             .add("created", created).add("modified", modified).add("record", record).toString();
    }
 
