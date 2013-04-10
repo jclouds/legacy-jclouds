@@ -129,7 +129,7 @@ public class BinderUtils {
     *             longer supported.
     */
    @Deprecated
-   public static <S, A> void bindMappedApi(Binder binder, Class<S> sync, Class<A> async) {
+   public static <S, A> void bindSyncToAsyncApi(Binder binder, Class<S> sync, Class<A> async) {
       bindClass(binder, sync);
       bindClass(binder, async);
       bindCallGetOnFutures(binder, sync, async);
