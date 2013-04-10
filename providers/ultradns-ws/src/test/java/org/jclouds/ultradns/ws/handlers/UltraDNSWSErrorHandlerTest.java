@@ -17,8 +17,10 @@
  * under the License.
  */
 package org.jclouds.ultradns.ws.handlers;
-
 import static com.google.common.base.Throwables.propagate;
+import static com.google.common.net.HttpHeaders.HOST;
+import static javax.ws.rs.HttpMethod.POST;
+import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static org.jclouds.rest.internal.BaseRestApiExpectTest.payloadFromStringWithContentType;
 import static org.jclouds.util.Strings2.toStringAndClose;
 import static org.testng.Assert.assertEquals;
@@ -36,7 +38,6 @@ import org.jclouds.ultradns.ws.UltraDNSWSResponseException;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
-
 /**
  * 
  * @author Adrian Cole
@@ -48,12 +49,15 @@ public class UltraDNSWSErrorHandlerTest {
 
    @Test
    public void testCode0SetsUltraDNSWSResponseException() throws IOException {
-      HttpRequest request = HttpRequest.builder().method("POST")
-            .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-            .addHeader("Host", "ultra-api.ultradns.com:8443").payload(payloadFromResource("/list_tasks.xml")).build();
+      HttpRequest request = HttpRequest.builder().method(POST)
+                                                 .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+                                                 .addHeader(HOST, "ultra-api.ultradns.com:8443")
+                                                 .payload(payloadFromResource("/list_tasks.xml")).build();
       HttpCommand command = new HttpCommand(request);
-      HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
-            .payload(payloadFromResource("/server_fault.xml")).build();
+      HttpResponse response = HttpResponse.builder()
+                                          .message(INTERNAL_SERVER_ERROR.getReasonPhrase())
+                                          .statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
+                                          .payload(payloadFromResource("/server_fault.xml")).build();
 
       function.handleError(command, response);
 
@@ -67,12 +71,15 @@ public class UltraDNSWSErrorHandlerTest {
 
    @Test
    public void testCode0ForDescriptionMatchingCannotFindSetsResourceNotFoundException() throws IOException {
-      HttpRequest request = HttpRequest.builder().method("POST")
-            .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-            .addHeader("Host", "ultra-api.ultradns.com:8443").payload(payloadFromResource("/list_tasks.xml")).build();
+      HttpRequest request = HttpRequest.builder().method(POST)
+                                                 .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+                                                 .addHeader(HOST, "ultra-api.ultradns.com:8443")
+                                                 .payload(payloadFromResource("/list_tasks.xml")).build();
       HttpCommand command = new HttpCommand(request);
-      HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
-            .payload(payloadFromResource("/task_doesnt_exist.xml")).build();
+      HttpResponse response = HttpResponse.builder()
+                                          .message(INTERNAL_SERVER_ERROR.getReasonPhrase())
+                                          .statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
+                                          .payload(payloadFromResource("/task_doesnt_exist.xml")).build();
 
       function.handleError(command, response);
 
@@ -88,13 +95,15 @@ public class UltraDNSWSErrorHandlerTest {
 
    @Test
    public void testCode2401SetsResourceNotFoundException() throws IOException {
-      HttpRequest request = HttpRequest.builder().method("POST")
-            .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-            .addHeader("Host", "ultra-api.ultradns.com:8443")
-            .payload(payloadFromResource("/list_zones_by_account.xml")).build();
+      HttpRequest request = HttpRequest.builder().method(POST)
+                                                 .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+                                                 .addHeader(HOST, "ultra-api.ultradns.com:8443")
+                                                 .payload(payloadFromResource("/list_zones_by_account.xml")).build();
       HttpCommand command = new HttpCommand(request);
-      HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
-            .payload(payloadFromResource("/account_doesnt_exist.xml")).build();
+      HttpResponse response = HttpResponse.builder()
+                                          .message(INTERNAL_SERVER_ERROR.getReasonPhrase())
+                                          .statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
+                                          .payload(payloadFromResource("/account_doesnt_exist.xml")).build();
 
       function.handleError(command, response);
 
@@ -110,12 +119,15 @@ public class UltraDNSWSErrorHandlerTest {
 
    @Test
    public void testCode1801SetsResourceNotFoundException() throws IOException {
-      HttpRequest request = HttpRequest.builder().method("POST")
-            .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-            .addHeader("Host", "ultra-api.ultradns.com:8443").payload(payloadFromResource("/get_zone.xml")).build();
+      HttpRequest request = HttpRequest.builder().method(POST)
+                                                 .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+                                                 .addHeader(HOST, "ultra-api.ultradns.com:8443")
+                                                 .payload(payloadFromResource("/get_zone.xml")).build();
       HttpCommand command = new HttpCommand(request);
-      HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
-            .payload(payloadFromResource("/zone_doesnt_exist.xml")).build();
+      HttpResponse response = HttpResponse.builder()
+                                          .message(INTERNAL_SERVER_ERROR.getReasonPhrase())
+                                          .statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
+                                          .payload(payloadFromResource("/zone_doesnt_exist.xml")).build();
 
       function.handleError(command, response);
 
@@ -131,12 +143,15 @@ public class UltraDNSWSErrorHandlerTest {
 
    @Test
    public void testCode2103SetsResourceNotFoundException() throws IOException {
-      HttpRequest request = HttpRequest.builder().method("POST")
-            .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-            .addHeader("Host", "ultra-api.ultradns.com:8443").payload(payloadFromResource("/delete_rr.xml")).build();
+      HttpRequest request = HttpRequest.builder().method(POST)
+                                                 .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+                                                 .addHeader(HOST, "ultra-api.ultradns.com:8443")
+                                                 .payload(payloadFromResource("/delete_rr.xml")).build();
       HttpCommand command = new HttpCommand(request);
-      HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
-            .payload(payloadFromResource("/rr_doesnt_exist.xml")).build();
+      HttpResponse response = HttpResponse.builder()
+                                          .message(INTERNAL_SERVER_ERROR.getReasonPhrase())
+                                          .statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
+                                          .payload(payloadFromResource("/rr_doesnt_exist.xml")).build();
 
       function.handleError(command, response);
 
@@ -152,12 +167,15 @@ public class UltraDNSWSErrorHandlerTest {
 
    @Test
    public void testCode1802SetsResourceAlreadyExistsException() throws IOException {
-      HttpRequest request = HttpRequest.builder().method("POST")
-            .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-            .addHeader("Host", "ultra-api.ultradns.com:8443").payload(payloadFromResource("/create_zone.xml")).build();
+      HttpRequest request = HttpRequest.builder().method(POST)
+                                                 .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+                                                 .addHeader(HOST, "ultra-api.ultradns.com:8443")
+                                                 .payload(payloadFromResource("/create_zone.xml")).build();
       HttpCommand command = new HttpCommand(request);
-      HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
-            .payload(payloadFromResource("/zone_already_exists.xml")).build();
+      HttpResponse response = HttpResponse.builder()
+                                          .message(INTERNAL_SERVER_ERROR.getReasonPhrase())
+                                          .statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
+                                          .payload(payloadFromResource("/zone_already_exists.xml")).build();
 
       function.handleError(command, response);
 
@@ -173,12 +191,15 @@ public class UltraDNSWSErrorHandlerTest {
 
    @Test
    public void testCode2111SetsResourceAlreadyExistsException() throws IOException {
-      HttpRequest request = HttpRequest.builder().method("POST")
-            .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-            .addHeader("Host", "ultra-api.ultradns.com:8443").payload(payloadFromResource("/create_rr.xml")).build();
+      HttpRequest request = HttpRequest.builder().method(POST)
+                                                 .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+                                                 .addHeader(HOST, "ultra-api.ultradns.com:8443")
+                                                 .payload(payloadFromResource("/create_rr.xml")).build();
       HttpCommand command = new HttpCommand(request);
-      HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
-            .payload(payloadFromResource("/rr_already_exists.xml")).build();
+      HttpResponse response = HttpResponse.builder()
+                                          .message(INTERNAL_SERVER_ERROR.getReasonPhrase())
+                                          .statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
+                                          .payload(payloadFromResource("/rr_already_exists.xml")).build();
 
       function.handleError(command, response);
 
@@ -197,12 +218,15 @@ public class UltraDNSWSErrorHandlerTest {
 
    @Test
    public void testCode2911SetsResourceNotFoundException() throws IOException {
-      HttpRequest request = HttpRequest.builder().method("POST")
-            .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-            .addHeader("Host", "ultra-api.ultradns.com:8443").payload(payloadFromResource("/delete_lbpool.xml")).build();
+      HttpRequest request = HttpRequest.builder().method(POST)
+                                                 .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+                                                 .addHeader(HOST, "ultra-api.ultradns.com:8443")
+                                                 .payload(payloadFromResource("/delete_lbpool.xml")).build();
       HttpCommand command = new HttpCommand(request);
-      HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
-            .payload(payloadFromResource("/lbpool_doesnt_exist.xml")).build();
+      HttpResponse response = HttpResponse.builder()
+                                          .message(INTERNAL_SERVER_ERROR.getReasonPhrase())
+                                          .statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
+                                          .payload(payloadFromResource("/lbpool_doesnt_exist.xml")).build();
 
       function.handleError(command, response);
 
@@ -218,12 +242,15 @@ public class UltraDNSWSErrorHandlerTest {
 
    @Test
    public void testCode2912SetsResourceAlreadyExistsException() throws IOException {
-      HttpRequest request = HttpRequest.builder().method("POST")
-            .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-            .addHeader("Host", "ultra-api.ultradns.com:8443").payload(payloadFromResource("/create_rrpool_a.xml")).build();
+      HttpRequest request = HttpRequest.builder().method(POST)
+                                                 .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+                                                 .addHeader(HOST, "ultra-api.ultradns.com:8443")
+                                                 .payload(payloadFromResource("/create_rrpool_a.xml")).build();
       HttpCommand command = new HttpCommand(request);
-      HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
-            .payload(payloadFromResource("/lbpool_already_exists.xml")).build();
+      HttpResponse response = HttpResponse.builder()
+                                          .message(INTERNAL_SERVER_ERROR.getReasonPhrase())
+                                          .statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
+                                          .payload(payloadFromResource("/lbpool_already_exists.xml")).build();
 
       function.handleError(command, response);
 
@@ -242,12 +269,15 @@ public class UltraDNSWSErrorHandlerTest {
 
    @Test
    public void testCode3101SetsResourceNotFoundException() throws IOException {
-      HttpRequest request = HttpRequest.builder().method("POST")
-            .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-            .addHeader("Host", "ultra-api.ultradns.com:8443").payload(payloadFromResource("/delete_tcrecord.xml")).build();
+      HttpRequest request = HttpRequest.builder().method(POST)
+                                                 .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+                                                 .addHeader(HOST, "ultra-api.ultradns.com:8443")
+                                                 .payload(payloadFromResource("/delete_tcrecord.xml")).build();
       HttpCommand command = new HttpCommand(request);
-      HttpResponse response = HttpResponse.builder().message("Server Error").statusCode(500)
-            .payload(payloadFromResource("/tcrecord_doesnt_exist.xml")).build();
+      HttpResponse response = HttpResponse.builder()
+                                          .message(INTERNAL_SERVER_ERROR.getReasonPhrase())
+                                          .statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
+                                          .payload(payloadFromResource("/tcrecord_doesnt_exist.xml")).build();
 
       function.handleError(command, response);
 

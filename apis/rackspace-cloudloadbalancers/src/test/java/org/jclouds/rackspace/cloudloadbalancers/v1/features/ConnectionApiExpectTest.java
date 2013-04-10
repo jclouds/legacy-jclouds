@@ -17,19 +17,20 @@
  * under the License.
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1.features;
-
+import static com.google.common.net.HttpHeaders.ACCEPT;
+import static javax.ws.rs.HttpMethod.DELETE;
+import static javax.ws.rs.HttpMethod.PUT;
+import static javax.ws.rs.core.MediaType.WILDCARD;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
-
-import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.cloudloadbalancers.v1.CloudLoadBalancersApi;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.ConnectionThrottle;
-import org.jclouds.rackspace.cloudloadbalancers.v1.features.ConnectionApi;
 import org.jclouds.rackspace.cloudloadbalancers.v1.internal.BaseCloudLoadBalancerApiExpectTest;
 import org.testng.annotations.Test;
 
@@ -44,7 +45,7 @@ public class ConnectionApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/connectionthrottle-get.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/connectionthrottle-get.json")).build()
       ).getConnectionApiForZoneAndLoadBalancer("DFW", 2000);
 
       ConnectionThrottle connectionThrottle = api.getConnectionThrottle();
@@ -57,7 +58,7 @@ public class ConnectionApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/connectionthrottle-get-deleted.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/connectionthrottle-get-deleted.json")).build()
       ).getConnectionApiForZoneAndLoadBalancer("DFW", 2000);
 
       ConnectionThrottle connectionThrottle = api.getConnectionThrottle();
@@ -69,8 +70,8 @@ public class ConnectionApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
       ConnectionApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("PUT").endpoint(endpoint).payload(payloadFromResource("/connectionthrottle-create.json")).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(PUT).endpoint(endpoint).payload(payloadFromResource("/connectionthrottle-create.json")).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getConnectionApiForZoneAndLoadBalancer("DFW", 2000);
       
       api.createOrUpdateConnectionThrottle(getConnectionThrottle());
@@ -90,8 +91,8 @@ public class ConnectionApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
       ConnectionApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("DELETE").endpoint(endpoint).replaceHeader("Accept", MediaType.WILDCARD).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(DELETE).endpoint(endpoint).replaceHeader(ACCEPT, WILDCARD).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getConnectionApiForZoneAndLoadBalancer("DFW", 2000);
 
       assertTrue(api.deleteConnectionThrottle());
@@ -103,7 +104,7 @@ public class ConnectionApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/connectionlogging-enable.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/connectionlogging-enable.json")).build()
       ).getConnectionApiForZoneAndLoadBalancer("DFW", 2000);
       
       assertTrue(api.isConnectionLogging());
@@ -114,8 +115,8 @@ public class ConnectionApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
       ConnectionApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("PUT").endpoint(endpoint).payload(payloadFromResource("/connectionlogging-enable.json")).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(PUT).endpoint(endpoint).payload(payloadFromResource("/connectionlogging-enable.json")).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getConnectionApiForZoneAndLoadBalancer("DFW", 2000);
       
       api.enableConnectionLogging();
@@ -126,8 +127,8 @@ public class ConnectionApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
       ConnectionApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("PUT").endpoint(endpoint).payload(payloadFromResource("/connectionlogging-disable.json")).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(PUT).endpoint(endpoint).payload(payloadFromResource("/connectionlogging-disable.json")).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getConnectionApiForZoneAndLoadBalancer("DFW", 2000);
       
       api.disableConnectionLogging();

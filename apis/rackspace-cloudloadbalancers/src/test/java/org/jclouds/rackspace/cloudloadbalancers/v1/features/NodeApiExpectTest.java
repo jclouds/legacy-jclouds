@@ -17,22 +17,25 @@
  * under the License.
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1.features;
-
+import static com.google.common.net.HttpHeaders.ACCEPT;
+import static javax.ws.rs.HttpMethod.DELETE;
+import static javax.ws.rs.HttpMethod.POST;
+import static javax.ws.rs.HttpMethod.PUT;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.WILDCARD;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.Set;
 
-import javax.ws.rs.core.MediaType;
-
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.cloudloadbalancers.v1.CloudLoadBalancersApi;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.AddNode;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.Metadata;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.Node;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.UpdateNode;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.AddNode;
-import org.jclouds.rackspace.cloudloadbalancers.v1.features.NodeApi;
 import org.jclouds.rackspace.cloudloadbalancers.v1.internal.BaseCloudLoadBalancerApiExpectTest;
 import org.testng.annotations.Test;
 
@@ -51,7 +54,7 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/nodes-list.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/nodes-list.json")).build()
       ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
 
       Set<Node> nodes = api.list().concat().toSet();
@@ -64,7 +67,7 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/node-get.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/node-get.json")).build()
       ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
 
       Node node = api.get(410);
@@ -77,11 +80,11 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET()
-                  .method("POST")
-                  .payload(payloadFromResourceWithContentType("/nodes-add.json", MediaType.APPLICATION_JSON))
+                  .method(POST)
+                  .payload(payloadFromResourceWithContentType("/nodes-add.json", APPLICATION_JSON))
                   .endpoint(endpoint)
                   .build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/nodes-list.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/nodes-list.json")).build()
       ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
 
       AddNode addNode1 = AddNode.builder()
@@ -117,8 +120,8 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
       NodeApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("PUT").payload(payloadFromResource("/node-update.json")).endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(PUT).payload(payloadFromResource("/node-update.json")).endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
 
       UpdateNode updateNode = UpdateNode.builder()
@@ -135,8 +138,8 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
       NodeApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("DELETE").replaceHeader("Accept", MediaType.WILDCARD).endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(DELETE).replaceHeader(ACCEPT, WILDCARD).endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
 
       api.remove(410);
@@ -147,8 +150,8 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
       NodeApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("DELETE").replaceHeader("Accept", MediaType.WILDCARD).endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(DELETE).replaceHeader(ACCEPT, WILDCARD).endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
       
       Set<Integer> nodeIds = ImmutableSortedSet.<Integer> of(410, 411);
@@ -162,7 +165,7 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/metadata-list.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/metadata-list.json")).build()
       ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
 
       Metadata metadata = api.getMetadata(410);
@@ -175,10 +178,10 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET()
-               .method("POST")
+               .method(POST)
                .endpoint(endpoint)
-               .payload(payloadFromResourceWithContentType("/metadata-create.json", MediaType.APPLICATION_JSON)).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/metadata-list.json")).build()
+               .payload(payloadFromResourceWithContentType("/metadata-create.json", APPLICATION_JSON)).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/metadata-list.json")).build()
       ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
          
       Metadata metadata = api.createMetadata(410, getExpectedMetadata());
@@ -190,8 +193,8 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
       NodeApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("DELETE").endpoint(endpoint).replaceHeader("Accept", MediaType.WILDCARD).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(DELETE).endpoint(endpoint).replaceHeader(ACCEPT, WILDCARD).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
 
       assertTrue(api.deleteMetadatum(410, 23));
@@ -202,8 +205,8 @@ public class NodeApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<CloudL
       NodeApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("DELETE").endpoint(endpoint).replaceHeader("Accept", MediaType.WILDCARD).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(DELETE).endpoint(endpoint).replaceHeader(ACCEPT, WILDCARD).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getNodeApiForZoneAndLoadBalancer("DFW", 2000);
       
       

@@ -17,7 +17,12 @@
  * under the License.
  */
 package org.jclouds.route53.features;
-
+import static com.google.common.net.HttpHeaders.DATE;
+import static com.google.common.net.HttpHeaders.HOST;
+import static javax.ws.rs.HttpMethod.GET;
+import static javax.ws.rs.HttpMethod.POST;
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.http.HttpRequest;
@@ -41,14 +46,14 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "unit", testName = "ResourceResourceRecordSetApiExpectTest")
 public class ResourceRecordSetApiExpectTest extends BaseRoute53ApiExpectTest {
 
-   HttpRequest create = HttpRequest.builder().method("POST")
+   HttpRequest create = HttpRequest.builder().method(POST)
          .endpoint("https://route53.amazonaws.com/2012-02-29/hostedzone/Z1PA6795UKMFR9/rrset")
-         .addHeader("Host", "route53.amazonaws.com")
-         .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
+         .addHeader(HOST, "route53.amazonaws.com")
+         .addHeader(DATE, "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization", authForDate)
          .payload(payloadFromResourceWithContentType("/create_rrs_request.xml", "application/xml")).build();
    
-   HttpResponse jobResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse jobResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/change.xml", "text/xml")).build();
 
    public void testCreateWhenResponseIs2xx() {
@@ -57,10 +62,10 @@ public class ResourceRecordSetApiExpectTest extends BaseRoute53ApiExpectTest {
             new GetChangeResponseTest().expected().toString());
    }
 
-   HttpRequest apply = HttpRequest.builder().method("POST")
+   HttpRequest apply = HttpRequest.builder().method(POST)
          .endpoint("https://route53.amazonaws.com/2012-02-29/hostedzone/Z1PA6795UKMFR9/rrset")
-         .addHeader("Host", "route53.amazonaws.com")
-         .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
+         .addHeader(HOST, "route53.amazonaws.com")
+         .addHeader(DATE, "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization", authForDate)
          .payload(payloadFromResourceWithContentType("/batch_rrs_request.xml", "application/xml")).build();
 
@@ -76,7 +81,7 @@ public class ResourceRecordSetApiExpectTest extends BaseRoute53ApiExpectTest {
 
    @Test(expectedExceptions = InvalidChangeBatchException.class, expectedExceptionsMessageRegExp = "\\[Tried to create resource record set duplicate.example.com. type A, but it already exists, Tried to delete resource record set noexist.example.com. type A, but it was not found\\]")
    public void testApplyWhenResponseIs4xx() {
-      HttpResponse batchErrorFound = HttpResponse.builder().statusCode(400)
+      HttpResponse batchErrorFound = HttpResponse.builder().statusCode(BAD_REQUEST.getStatusCode())
             .payload(payloadFromResourceWithContentType("/invalid_change_batch.xml", "application/xml")).build();
 
       Route53Api fails = requestSendsResponse(apply, batchErrorFound);
@@ -87,19 +92,19 @@ public class ResourceRecordSetApiExpectTest extends BaseRoute53ApiExpectTest {
                        .build());
    }
 
-   HttpRequest list = HttpRequest.builder().method("GET")
+   HttpRequest list = HttpRequest.builder().method(GET)
          .endpoint("https://route53.amazonaws.com/2012-02-29/hostedzone/Z1PA6795UKMFR9/rrset")
-         .addHeader("Host", "route53.amazonaws.com")
-         .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
+         .addHeader(HOST, "route53.amazonaws.com")
+         .addHeader(DATE, "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization", authForDate).build();
 
-   HttpResponse listResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse listResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/rrsets.xml", "text/xml")).build();
    
    public void testListWhenResponseIs2xx() {
       Route53Api success = requestSendsResponse(list, listResponse);
-      assertEquals(success.getResourceRecordSetApiForHostedZone("Z1PA6795UKMFR9").list().get(0).toString(), new ListResourceRecordSetsResponseTest().expected()
-            .toString());
+      assertEquals(success.getResourceRecordSetApiForHostedZone("Z1PA6795UKMFR9").list().get(0).toString(),
+            new ListResourceRecordSetsResponseTest().expected().toString());
    }
 
    // TODO: this should really be an empty set
@@ -109,10 +114,10 @@ public class ResourceRecordSetApiExpectTest extends BaseRoute53ApiExpectTest {
       assertEquals(fail.getResourceRecordSetApiForHostedZone("Z1PA6795UKMFR9").list().get(0).toSet(), ImmutableSet.of());
    }
 
-   HttpRequest listAt = HttpRequest.builder().method("GET")
+   HttpRequest listAt = HttpRequest.builder().method(GET)
          .endpoint("https://route53.amazonaws.com/2012-02-29/hostedzone/Z1PA6795UKMFR9/rrset?name=testdoc2.example.com")
-         .addHeader("Host", "route53.amazonaws.com")
-         .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
+         .addHeader(HOST, "route53.amazonaws.com")
+         .addHeader(DATE, "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization", authForDate).build();
 
    public void testListAtWhenResponseIs2xx() {
@@ -122,10 +127,10 @@ public class ResourceRecordSetApiExpectTest extends BaseRoute53ApiExpectTest {
             new ListResourceRecordSetsResponseTest().expected().toString());
    }
 
-   HttpRequest listAtNameAndType = HttpRequest.builder().method("GET")
+   HttpRequest listAtNameAndType = HttpRequest.builder().method(GET)
          .endpoint("https://route53.amazonaws.com/2012-02-29/hostedzone/Z1PA6795UKMFR9/rrset?name=testdoc2.example.com&type=NS")
-         .addHeader("Host", "route53.amazonaws.com")
-         .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
+         .addHeader(HOST, "route53.amazonaws.com")
+         .addHeader(DATE, "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization", authForDate).build();
    
    public void testListAtNameAndTypeWhenResponseIs2xx() {
@@ -136,24 +141,28 @@ public class ResourceRecordSetApiExpectTest extends BaseRoute53ApiExpectTest {
    }
    
    public void testList2PagesWhenResponseIs2xx() {
-      HttpResponse noMore = HttpResponse.builder().statusCode(200)
+      HttpResponse noMore = HttpResponse.builder().statusCode(OK.getStatusCode())
             .payload(payloadFromStringWithContentType("<ListResourceRecordSetsResponse />", "text/xml")).build();
 
       Route53Api success = requestsSendResponses(list, listResponse, listAtNameAndType, noMore);
-      assertEquals(success.getResourceRecordSetApiForHostedZone("Z1PA6795UKMFR9").list().concat().toSet(), new ListResourceRecordSetsResponseTest().expected()
-            .toSet());
+      assertEquals(success.getResourceRecordSetApiForHostedZone("Z1PA6795UKMFR9").list().concat().toSet(),
+            new ListResourceRecordSetsResponseTest().expected().toSet());
    }
 
-   HttpRequest delete = HttpRequest.builder().method("POST")
+   HttpRequest delete = HttpRequest.builder().method(POST)
          .endpoint("https://route53.amazonaws.com/2012-02-29/hostedzone/Z1PA6795UKMFR9/rrset")
-         .addHeader("Host", "route53.amazonaws.com")
-         .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
+         .addHeader(HOST, "route53.amazonaws.com")
+         .addHeader(DATE, "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization", authForDate)
          .payload(payloadFromResourceWithContentType("/delete_rrs_request.xml", "application/xml")).build();
 
    public void testDeleteWhenResponseIs2xx() {
       Route53Api success = requestSendsResponse(delete, jobResponse);
-      assertEquals(success.getResourceRecordSetApiForHostedZone("Z1PA6795UKMFR9").create(ResourceRecordSet.builder().name("jclouds.org.").type("TXT").ttl(0).add("my texts").build()).toString(),
+      assertEquals(success.getResourceRecordSetApiForHostedZone("Z1PA6795UKMFR9").create(ResourceRecordSet.builder()
+                                                                                                          .name("jclouds.org.")
+                                                                                                          .type("TXT")
+                                                                                                          .ttl(0)
+                                                                                                          .add("my texts").build()).toString(),
             new GetChangeResponseTest().expected().toString());
    }
 }
