@@ -17,7 +17,10 @@
  * under the License.
  */
 package org.jclouds.ultradns.ws.features;
-
+import static com.google.common.net.HttpHeaders.HOST;
+import static javax.ws.rs.HttpMethod.POST;
+import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
@@ -28,18 +31,17 @@ import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiExpectTest;
 import org.jclouds.ultradns.ws.parse.GetAllTasksResponseTest;
 import org.jclouds.ultradns.ws.parse.GetStatusForTaskResponseResponseTest;
 import org.testng.annotations.Test;
-
 /**
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "TaskApiExpectTest")
 public class TaskApiExpectTest extends BaseUltraDNSWSApiExpectTest {
-   HttpRequest runTest = HttpRequest.builder().method("POST")
+   HttpRequest runTest = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/run_test.xml", "application/xml")).build();
 
-   HttpResponse runTestResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse runTestResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/taskid.xml", "application/xml")).build();
 
    public void testRunTestWhenResponseIs2xx() {
@@ -48,12 +50,12 @@ public class TaskApiExpectTest extends BaseUltraDNSWSApiExpectTest {
       assertEquals(success.getTaskApi().runTest("foo").toString(), "8d7a1725-4f4a-4b70-affa-f01dcce1526e");
    }
 
-   HttpRequest get = HttpRequest.builder().method("POST")
+   HttpRequest get = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/get_task.xml", "application/xml")).build();
 
-   HttpResponse getResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse getResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/task.xml", "application/xml")).build();
 
    public void testGetWhenResponseIs2xx() {
@@ -64,7 +66,7 @@ public class TaskApiExpectTest extends BaseUltraDNSWSApiExpectTest {
             new GetStatusForTaskResponseResponseTest().expected().toString());
    }
    
-   HttpResponse taskDoesntExist = HttpResponse.builder().message("Server Error").statusCode(500)
+   HttpResponse taskDoesntExist = HttpResponse.builder().message("Server Error").statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
          .payload(payloadFromResource("/task_doesnt_exist.xml")).build();
    
    public void testGetWhenResponseError2401() {
@@ -72,12 +74,12 @@ public class TaskApiExpectTest extends BaseUltraDNSWSApiExpectTest {
       assertNull(notFound.getTaskApi().get("0b40c7dd-748d-4c49-8506-26f0c7d2ea9c"));
    }
 
-   HttpRequest clear = HttpRequest.builder().method("POST")
+   HttpRequest clear = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/clear_task.xml", "application/xml")).build();
 
-   HttpResponse clearResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse clearResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/task.xml", "application/xml")).build();
 
    public void testClearWhenResponseIs2xx() {
@@ -90,12 +92,12 @@ public class TaskApiExpectTest extends BaseUltraDNSWSApiExpectTest {
       notFound.getTaskApi().clear("0b40c7dd-748d-4c49-8506-26f0c7d2ea9c");
    }
    
-   HttpRequest list = HttpRequest.builder().method("POST")
+   HttpRequest list = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/list_tasks.xml", "application/xml")).build();
 
-   HttpResponse listResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse listResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/tasks.xml", "application/xml")).build();
 
    public void testListWhenResponseIs2xx() {

@@ -17,7 +17,10 @@
  * under the License.
  */
 package org.jclouds.ultradns.ws.features;
-
+import static com.google.common.net.HttpHeaders.HOST;
+import static javax.ws.rs.HttpMethod.POST;
+import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
@@ -31,18 +34,17 @@ import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiExpectTest;
 import org.jclouds.ultradns.ws.parse.GetGeneralPropertiesForZoneResponseTest;
 import org.jclouds.ultradns.ws.parse.GetZonesOfAccountResponseTest;
 import org.testng.annotations.Test;
-
 /**
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ZoneApiExpectTest")
 public class ZoneApiExpectTest extends BaseUltraDNSWSApiExpectTest {
-   HttpRequest create = HttpRequest.builder().method("POST")
+   HttpRequest create = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/create_zone.xml", "application/xml")).build();
 
-   HttpResponse createResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse createResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/zone_created.xml", "application/xml")).build();
 
    public void testCreateWhenResponseIs2xx() {
@@ -50,7 +52,7 @@ public class ZoneApiExpectTest extends BaseUltraDNSWSApiExpectTest {
       success.getZoneApi().createInAccount("jclouds.org.", "AAAAAAAAAAAAAAAA");
    }
 
-   HttpResponse alreadyCreated = HttpResponse.builder().statusCode(500)
+   HttpResponse alreadyCreated = HttpResponse.builder().statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
          .payload(payloadFromResourceWithContentType("/zone_already_exists.xml", "application/xml")).build();
 
    @Test(expectedExceptions = ResourceAlreadyExistsException.class, expectedExceptionsMessageRegExp = "Zone already exists in the system.")
@@ -59,12 +61,12 @@ public class ZoneApiExpectTest extends BaseUltraDNSWSApiExpectTest {
       already.getZoneApi().createInAccount("jclouds.org.", "AAAAAAAAAAAAAAAA");
    }
 
-   HttpRequest get = HttpRequest.builder().method("POST")
+   HttpRequest get = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/get_zone.xml", "application/xml")).build();
 
-   HttpResponse getResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse getResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/zoneproperties.xml", "application/xml")).build();
 
    public void testGetWhenResponseIs2xx() {
@@ -75,7 +77,7 @@ public class ZoneApiExpectTest extends BaseUltraDNSWSApiExpectTest {
             new GetGeneralPropertiesForZoneResponseTest().expected().toString());
    }
    
-   HttpResponse zoneDoesntExist = HttpResponse.builder().message("Server Error").statusCode(500)
+   HttpResponse zoneDoesntExist = HttpResponse.builder().message("Server Error").statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
          .payload(payloadFromResource("/zone_doesnt_exist.xml")).build();
    
    public void testGetWhenResponseError2401() {
@@ -83,12 +85,12 @@ public class ZoneApiExpectTest extends BaseUltraDNSWSApiExpectTest {
       assertNull(notFound.getZoneApi().get("jclouds.org."));
    }
    
-   HttpRequest listByAccount = HttpRequest.builder().method("POST")
+   HttpRequest listByAccount = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/list_zones_by_account.xml", "application/xml")).build();
 
-   HttpResponse listByAccountResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse listByAccountResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/zones.xml", "application/xml")).build();
 
    public void testListByAccountWhenResponseIs2xx() {
@@ -99,7 +101,7 @@ public class ZoneApiExpectTest extends BaseUltraDNSWSApiExpectTest {
             new GetZonesOfAccountResponseTest().expected().toString());
    }
    
-   HttpResponse accountDoesntExist = HttpResponse.builder().message("Server Error").statusCode(500)
+   HttpResponse accountDoesntExist = HttpResponse.builder().message("Server Error").statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
          .payload(payloadFromResource("/account_doesnt_exist.xml")).build();
    
    @Test(expectedExceptions = ResourceNotFoundException.class, expectedExceptionsMessageRegExp = "Account not found in the system. ID: AAAAAAAAAAAAAAAA")
@@ -108,9 +110,9 @@ public class ZoneApiExpectTest extends BaseUltraDNSWSApiExpectTest {
       notFound.getZoneApi().listByAccount("AAAAAAAAAAAAAAAA");
    }
      
-   HttpRequest listByAccountAndType = HttpRequest.builder().method("POST")
+   HttpRequest listByAccountAndType = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/list_zones_by_account_and_type.xml", "application/xml")).build();
 
    public void testListByAccountAndTypeWhenResponseIs2xx() {
@@ -127,9 +129,9 @@ public class ZoneApiExpectTest extends BaseUltraDNSWSApiExpectTest {
       notFound.getZoneApi().listByAccountAndType("AAAAAAAAAAAAAAAA", Type.PRIMARY);
    }
 
-   HttpRequest delete = HttpRequest.builder().method("POST")
+   HttpRequest delete = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/delete_zone.xml", "application/xml")).build();
 
    HttpResponse deleteResponse = HttpResponse.builder().statusCode(404)

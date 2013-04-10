@@ -17,18 +17,20 @@
  * under the License.
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1.features;
-
+import static com.google.common.net.HttpHeaders.ACCEPT;
+import static javax.ws.rs.HttpMethod.DELETE;
+import static javax.ws.rs.HttpMethod.PUT;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.WILDCARD;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URI;
 
-import javax.ws.rs.core.MediaType;
-
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.cloudloadbalancers.v1.CloudLoadBalancersApi;
-import org.jclouds.rackspace.cloudloadbalancers.v1.features.ErrorPageApi;
 import org.jclouds.rackspace.cloudloadbalancers.v1.internal.BaseCloudLoadBalancerApiExpectTest;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
@@ -55,8 +57,8 @@ public class ErrorPageApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<C
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
             HttpResponse.builder()
-               .statusCode(200)
-               .payload(payloadFromStringWithContentType("{\"errorpage\":{\"content\":\"" + contentEscaped + "\"}}", MediaType.APPLICATION_JSON))
+               .statusCode(OK.getStatusCode())
+               .payload(payloadFromStringWithContentType("{\"errorpage\":{\"content\":\"" + contentEscaped + "\"}}", APPLICATION_JSON))
                .build()
       ).getErrorPageApiForZoneAndLoadBalancer("DFW", 2000);
 
@@ -70,12 +72,12 @@ public class ErrorPageApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<C
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET()
-               .method("PUT")
+               .method(PUT)
                .endpoint(endpoint)
-               .replaceHeader("Accept", MediaType.WILDCARD)
-               .payload(payloadFromStringWithContentType("{\"errorpage\":{\"content\":\"" + contentEscaped + "\"}}", MediaType.APPLICATION_JSON))
+               .replaceHeader(ACCEPT, WILDCARD)
+               .payload(payloadFromStringWithContentType("{\"errorpage\":{\"content\":\"" + contentEscaped + "\"}}", APPLICATION_JSON))
                .build(),
-            HttpResponse.builder().statusCode(200).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getErrorPageApiForZoneAndLoadBalancer("DFW", 2000);
       
       api.create(contentEscaped);
@@ -86,8 +88,8 @@ public class ErrorPageApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<C
       ErrorPageApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("DELETE").endpoint(endpoint).replaceHeader("Accept", MediaType.WILDCARD).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(DELETE).endpoint(endpoint).replaceHeader(ACCEPT, WILDCARD).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getErrorPageApiForZoneAndLoadBalancer("DFW", 2000);
 
       assertTrue(api.delete());

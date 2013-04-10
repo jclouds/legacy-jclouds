@@ -17,14 +17,14 @@
  * under the License.
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1.features;
-
+import static javax.ws.rs.HttpMethod.PUT;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.cloudloadbalancers.v1.CloudLoadBalancersApi;
-import org.jclouds.rackspace.cloudloadbalancers.v1.features.ContentCachingApi;
 import org.jclouds.rackspace.cloudloadbalancers.v1.internal.BaseCloudLoadBalancerApiExpectTest;
 import org.testng.annotations.Test;
 
@@ -39,7 +39,7 @@ public class ContentCachingApiExpectTest extends BaseCloudLoadBalancerApiExpectT
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/contentcaching-enable.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/contentcaching-enable.json")).build()
       ).getContentCachingApiForZoneAndLoadBalancer("DFW", 2000);
       
       assertTrue(api.isContentCaching());
@@ -50,8 +50,8 @@ public class ContentCachingApiExpectTest extends BaseCloudLoadBalancerApiExpectT
       ContentCachingApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("PUT").endpoint(endpoint).payload(payloadFromResource("/contentcaching-enable.json")).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(PUT).endpoint(endpoint).payload(payloadFromResource("/contentcaching-enable.json")).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getContentCachingApiForZoneAndLoadBalancer("DFW", 2000);
       
       api.enable();
@@ -62,8 +62,8 @@ public class ContentCachingApiExpectTest extends BaseCloudLoadBalancerApiExpectT
       ContentCachingApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("PUT").endpoint(endpoint).payload(payloadFromResource("/contentcaching-disable.json")).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(PUT).endpoint(endpoint).payload(payloadFromResource("/contentcaching-disable.json")).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getContentCachingApiForZoneAndLoadBalancer("DFW", 2000);
       
       api.disable();
