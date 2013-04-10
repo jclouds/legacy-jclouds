@@ -37,7 +37,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.config.InvocationConfig;
-import org.jclouds.rest.internal.InvokeMappedHttpMethod.InvokeAndTransform;
+import org.jclouds.rest.internal.InvokeSyncToAsyncHttpMethod.InvokeAndTransform;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -96,7 +96,7 @@ public class InvokeMappedHttpMethodTest {
    @SuppressWarnings("rawtypes")
    private org.jclouds.Fallback fallback;
    private InvocationConfig config;
-   private InvokeMappedHttpMethod invokeHttpMethod;
+   private InvokeSyncToAsyncHttpMethod invokeHttpMethod;
 
    private ListenableFuture<HttpResponse> future;
 
@@ -108,7 +108,7 @@ public class InvokeMappedHttpMethodTest {
       fallback = createMock(org.jclouds.Fallback.class);
       config = createMock(InvocationConfig.class);
       future = createMock(ListenableFuture.class);
-      invokeHttpMethod = new InvokeMappedHttpMethod(sync2async, toRequest, http, transformerForRequest, timeLimiter, config,
+      invokeHttpMethod = new InvokeSyncToAsyncHttpMethod(sync2async, toRequest, http, transformerForRequest, timeLimiter, config,
             userThreads);
       expect(config.getCommandName(asyncGet)).andReturn("ns:get");
       expect(config.getFallback(asyncGet)).andReturn(fallback);

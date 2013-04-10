@@ -18,43 +18,43 @@
  */
 package org.jclouds.rest.config;
 
-
 import java.lang.reflect.Proxy;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.reflect.Invocation;
-import org.jclouds.rest.internal.DelegatesToPotentiallyMappedInvocationFunction;
+import org.jclouds.rest.internal.DelegatesToInvocationFunction;
+import org.jclouds.rest.internal.DelegatesToPotentiallySyncToAsyncInvocationFunction;
 
 import com.google.common.base.Function;
-import com.google.common.cache.Cache;
-import com.google.common.reflect.Invokable;
 import com.google.inject.Provider;
+import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author Adrian Cole
- * @deprecated will be removed in jclouds 1.7; use {@link AnnotatedHttpApiProvider}
+ * @deprecated please use {@link DelegatesToInvocationFunction} as async
+ *             interface will be removed in jclouds 1.7.
  */
 @Deprecated
 @Singleton
-public class MappedHttpApiProvider<S, A> implements Provider<S> {
-   private final Class<? super S> apiType;
-   private final DelegatesToPotentiallyMappedInvocationFunction<S, Function<Invocation, Object>> httpInvoker;
+public class AnnotatedSyncToAsyncHttpApiProvider<A> implements Provider<A> {
+   private final Class<? super A> annotatedApiType;
+   private final DelegatesToPotentiallySyncToAsyncInvocationFunction<A, Function<Invocation, Object>> httpInvoker;
 
    @Inject
-   private MappedHttpApiProvider(Cache<Invokable<?, ?>, Invokable<?, ?>> invokables,
-         DelegatesToPotentiallyMappedInvocationFunction<S, Function<Invocation, Object>> httpInvoker, Class<S> apiType, Class<A> asyncApiType) {
+   private AnnotatedSyncToAsyncHttpApiProvider(
+         DelegatesToPotentiallySyncToAsyncInvocationFunction<A, Function<Invocation, Object>> httpInvoker,
+         TypeLiteral<A> annotatedApiType) {
       this.httpInvoker = httpInvoker;
-      this.apiType = apiType;
-      MappedHttpInvocationModule.putInvokables(apiType, asyncApiType, invokables);
+      this.annotatedApiType = annotatedApiType.getRawType();
    }
 
    @SuppressWarnings("unchecked")
    @Override
-   @Singleton
-   public S get() {
-      return (S) Proxy.newProxyInstance(apiType.getClassLoader(), new Class<?>[] { apiType }, httpInvoker);
+   public A get() {
+      return (A) Proxy.newProxyInstance(annotatedApiType.getClassLoader(), new Class<?>[] { annotatedApiType },
+            httpInvoker);
    }
 }

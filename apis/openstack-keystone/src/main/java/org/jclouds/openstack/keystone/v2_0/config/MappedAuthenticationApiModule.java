@@ -18,7 +18,7 @@
  */
 package org.jclouds.openstack.keystone.v2_0.config;
 
-import static org.jclouds.rest.config.BinderUtils.bindMappedHttpApi;
+import static org.jclouds.rest.config.BinderUtils.bindSyncToAsyncHttpApi;
 
 import org.jclouds.openstack.keystone.v2_0.AuthenticationApi;
 import org.jclouds.openstack.keystone.v2_0.AuthenticationAsyncApi;
@@ -37,7 +37,7 @@ public class MappedAuthenticationApiModule extends AbstractModule  {
    @Override
    protected void configure() {
       // AuthenticationApi is used directly for filters and retry handlers, so let's bind it explicitly
-      bindMappedHttpApi(binder(), AuthenticationApi.class, AuthenticationAsyncApi.class);
+      bindSyncToAsyncHttpApi(binder(), AuthenticationApi.class, AuthenticationAsyncApi.class);
    }
 
 }

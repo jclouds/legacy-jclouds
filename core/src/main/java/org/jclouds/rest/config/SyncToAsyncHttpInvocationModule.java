@@ -34,9 +34,9 @@ import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.internal.DelegatesToInvocationFunction;
-import org.jclouds.rest.internal.DelegatesToPotentiallyMappedInvocationFunction;
+import org.jclouds.rest.internal.DelegatesToPotentiallySyncToAsyncInvocationFunction;
 import org.jclouds.rest.internal.InvokeAndCallGetOnFutures;
-import org.jclouds.rest.internal.InvokeMappedHttpMethod;
+import org.jclouds.rest.internal.InvokeSyncToAsyncHttpMethod;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -55,14 +55,14 @@ import com.google.inject.TypeLiteral;
  * @deprecated will be removed in jclouds 1.7; use {@link HttpApiModule}
  */
 @Deprecated
-public class MappedHttpInvocationModule extends AbstractModule {
+public class SyncToAsyncHttpInvocationModule extends AbstractModule {
    protected final Map<Class<?>, Class<?>> sync2Async;
 
-   public MappedHttpInvocationModule() {
+   public SyncToAsyncHttpInvocationModule() {
       this(ImmutableMap.<Class<?>, Class<?>> of());
    }
 
-   public MappedHttpInvocationModule(Map<Class<?>, Class<?>> sync2Async) {
+   public SyncToAsyncHttpInvocationModule(Map<Class<?>, Class<?>> sync2Async) {
       this.sync2Async = sync2Async;
    }
 
@@ -71,8 +71,8 @@ public class MappedHttpInvocationModule extends AbstractModule {
       bind(new TypeLiteral<Map<Class<?>, Class<?>>>() {
       }).toInstance(sync2Async);
       bind(new TypeLiteral<Function<Invocation, Object>>() {
-      }).to(InvokeMappedHttpMethod.class);
-      org.jclouds.rest.config.BinderUtils.bindMappedHttpApi(binder(), HttpClient.class, HttpAsyncClient.class);
+      }).to(InvokeSyncToAsyncHttpMethod.class);
+      BinderUtils.bindSyncToAsyncHttpApi(binder(), HttpClient.class, HttpAsyncClient.class);
    }
 
    /**
@@ -88,7 +88,7 @@ public class MappedHttpInvocationModule extends AbstractModule {
     * function view of above
     * 
     * @see InvokeAndCallGetOnFutures
-    * @see InvokeMappedHttpMethod
+    * @see InvokeSyncToAsyncHttpMethod
     */
    @Provides
    @Singleton
