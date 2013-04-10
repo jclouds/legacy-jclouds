@@ -30,6 +30,7 @@ import org.jclouds.openstack.cinder.v1.config.CinderRestClientModule;
 import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.ZoneModule;
+import org.jclouds.openstack.keystone.v2_0.config.MappedAuthenticationApiModule;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
@@ -88,6 +89,7 @@ public class CinderApiMetadata extends BaseRestApiMetadata {
          .defaultEndpoint("http://localhost:5000/v2.0/")
          .defaultProperties(CinderApiMetadata.defaultProperties())
          .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                     .add(MappedAuthenticationApiModule.class)
                                      .add(KeystoneAuthenticationModule.class)
                                      .add(ZoneModule.class)
                                      .add(CinderParserModule.class)

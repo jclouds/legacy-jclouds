@@ -26,6 +26,7 @@ import java.util.Properties;
 
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.ZoneModule;
+import org.jclouds.openstack.keystone.v2_0.config.MappedAuthenticationApiModule;
 import org.jclouds.openstack.nova.v2_0.NovaApiMetadata;
 import org.jclouds.openstack.nova.v2_0.config.NovaParserModule;
 import org.jclouds.openstack.nova.v2_0.config.NovaRestClientModule;
@@ -75,6 +76,7 @@ public class TryStackNovaProviderMetadata extends BaseProviderMetadata {
                .apiMetadata(
                      new NovaApiMetadata().toBuilder()
                                           .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                                 .add(MappedAuthenticationApiModule.class)
                                                  .add(KeystoneAuthenticationModule.class)
                                                  .add(ZoneModule.class)
                                                  .add(NovaParserModule.class)
