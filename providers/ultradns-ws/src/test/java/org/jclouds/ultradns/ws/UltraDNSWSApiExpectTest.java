@@ -17,7 +17,9 @@
  * under the License.
  */
 package org.jclouds.ultradns.ws;
-
+import static com.google.common.net.HttpHeaders.HOST;
+import static javax.ws.rs.HttpMethod.POST;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.http.HttpRequest;
@@ -32,12 +34,12 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "UltraDNSWSApiExpectTest")
 public class UltraDNSWSApiExpectTest extends BaseUltraDNSWSApiExpectTest {
 
-   HttpRequest getCurrentAccount = HttpRequest.builder().method("POST")
+   HttpRequest getCurrentAccount = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/get_current_account.xml", "application/xml")).build();
 
-   HttpResponse getCurrentAccountResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse getCurrentAccountResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/account.xml", "application/xml")).build();
 
    public void testGetCurrentAccountWhenResponseIs2xx() {

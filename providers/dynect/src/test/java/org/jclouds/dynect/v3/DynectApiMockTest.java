@@ -19,6 +19,7 @@
 package org.jclouds.dynect.v3;
 
 import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.jclouds.Constants.PROPERTY_MAX_RETRIES;
 
 import java.io.IOException;
@@ -35,7 +36,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 import com.google.mockwebserver.MockResponse;
 import com.google.mockwebserver.MockWebServer;
-
 /**
  * 
  * @author Adrian Cole
@@ -64,8 +64,8 @@ public class DynectApiMockTest {
    @Test(expectedExceptions = JobStillRunningException.class, expectedExceptionsMessageRegExp = "This session already has a job running")
    public void test200OnFailureThrowsExceptionWithoutRetryWhenJobRunning() throws IOException, InterruptedException {
       MockWebServer server = new MockWebServer();
-      server.enqueue(new MockResponse().setResponseCode(200).setBody(session));
-      server.enqueue(new MockResponse().setResponseCode(200).setBody(running));
+      server.enqueue(new MockResponse().setResponseCode(OK.getStatusCode()).setBody(session));
+      server.enqueue(new MockResponse().setResponseCode(OK.getStatusCode()).setBody(running));
       server.play();
 
       DynECTApi api = mockDynectApi(server.getUrl("/").toString());
@@ -83,8 +83,8 @@ public class DynectApiMockTest {
    public void test200OnFailureThrowsExceptionWithoutRetryWhenOperationBlocked() throws IOException,
          InterruptedException {
       MockWebServer server = new MockWebServer();
-      server.enqueue(new MockResponse().setResponseCode(200).setBody(session));
-      server.enqueue(new MockResponse().setResponseCode(200).setBody(taskBlocking));
+      server.enqueue(new MockResponse().setResponseCode(OK.getStatusCode()).setBody(session));
+      server.enqueue(new MockResponse().setResponseCode(OK.getStatusCode()).setBody(taskBlocking));
       server.play();
 
       DynECTApi api = mockDynectApi(server.getUrl("/").toString());
@@ -101,8 +101,8 @@ public class DynectApiMockTest {
    @Test(expectedExceptions = TargetExistsException.class, expectedExceptionsMessageRegExp = "Name already exists")
    public void test200OnFailureThrowsExceptionWithoutRetryOnNameExists() throws IOException, InterruptedException {
       MockWebServer server = new MockWebServer();
-      server.enqueue(new MockResponse().setResponseCode(200).setBody(session));
-      server.enqueue(new MockResponse().setResponseCode(200).setBody(targetExists));
+      server.enqueue(new MockResponse().setResponseCode(OK.getStatusCode()).setBody(session));
+      server.enqueue(new MockResponse().setResponseCode(OK.getStatusCode()).setBody(targetExists));
       server.play();
 
       DynECTApi api = mockDynectApi(server.getUrl("/").toString());

@@ -17,8 +17,9 @@
  * under the License.
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1.internal;
-
-import javax.ws.rs.core.MediaType;
+import static com.google.common.net.HttpHeaders.ACCEPT;
+import static javax.ws.rs.HttpMethod.GET;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -53,8 +54,8 @@ public class BaseCloudLoadBalancerApiExpectTest<T> extends BaseRestApiExpectTest
 
    protected HttpRequest.Builder<?> authenticatedGET() {
       return HttpRequest.builder()
-            .method("GET")
-            .addHeader("Accept", MediaType.APPLICATION_JSON)
+            .method(GET)
+            .addHeader(ACCEPT, APPLICATION_JSON)
             .addHeader("X-Auth-Token", authToken);
    }
 }

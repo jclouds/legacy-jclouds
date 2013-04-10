@@ -17,7 +17,12 @@
  * under the License.
  */
 package org.jclouds.aws.handlers;
-
+import static javax.ws.rs.HttpMethod.GET;
+import static javax.ws.rs.HttpMethod.POST;
+import static javax.ws.rs.HttpMethod.PUT;
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
+import static javax.ws.rs.core.Response.Status.CONFLICT;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -51,46 +56,46 @@ public class ParseAWSErrorFromXmlContentTest {
 
    @Test
    public void test400WithNotFoundSetsResourceNotFoundException() {
-      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
+      assertCodeMakes(GET, URI.create("https://amazonaws.com/foo"), BAD_REQUEST.getStatusCode(), "",
                "<Error><Code>Monster.NotFound</Code></Error>", ResourceNotFoundException.class);
    }
    
    @Test
    public void test400WithCloudBridgeNotFoundSetsResourceNotFoundException() {
-      assertCodeMakes("POST", URI.create("https://api.greenqloud.com/"), 400, "",
+      assertCodeMakes(POST, URI.create("https://api.greenqloud.com/"), BAD_REQUEST.getStatusCode(), "",
                "<Error><Code>Client.InvalidInstanceID.NotFound</Code></Error>", ResourceNotFoundException.class);
    }
    
    @Test
    public void test400WithInvalidIdIllegalArgumentException() {
-      assertCodeMakes("POST", URI.create("https://ec2.us-east-1.amazonaws.com"), 400, "HTTP/1.1 400", "",
+      assertCodeMakes(POST, URI.create("https://ec2.us-east-1.amazonaws.com"), BAD_REQUEST.getStatusCode(), "HTTP/1.1 400", "",
                "Invalid id: \"asdaasdsa\" (expecting \"ami-...\")", IllegalArgumentException.class);
    }
 
    @Test
    public void test400WithLoadBalancerNotFoundSetsResourceNotFoundException() {
-      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
+      assertCodeMakes(GET, URI.create("https://amazonaws.com/foo"), BAD_REQUEST.getStatusCode(), "",
                "<Error><Code>LoadBalancerNotFound</Code></Error>", ResourceNotFoundException.class);
    }
    
    @Test
    public void test400WithSecurityGroupNotFoundForProjectSetsResourceNotFoundException() {
-      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
+      assertCodeMakes(GET, URI.create("https://amazonaws.com/foo"), BAD_REQUEST.getStatusCode(), "",
                "<Error><Code>SecurityGroupNotFoundForProject</Code></Error>", ResourceNotFoundException.class);
    }
 
    @Test
    public void test400WithUnsupportedCodeMakesUnsupportedOperationException() {
-      assertCodeMakes("POST", URI.create("https://ec2.us-west-1.amazonaws.com/"), 400, "",
+      assertCodeMakes(POST, URI.create("https://ec2.us-west-1.amazonaws.com/"), BAD_REQUEST.getStatusCode(), "",
                "<Error><Code>UnsupportedOperation</Code></Error>", UnsupportedOperationException.class);
    }
    
    @Test
    public void test400WithAddressLimitExceededCodeMakesInsufficientResourcesException() {
       assertCodeMakes(
-               "POST",
+               POST,
                URI.create("https://ec2.us-east-1.amazonaws.com/"),
-               400,
+               BAD_REQUEST.getStatusCode(),
                "",
                "<Response><Errors><Error><Code>AddressLimitExceeded</Code><Message>Too many addresses allocated</Message></Error></Errors><RequestID>c14f531a-cc35-4b48-8149-2655c7e6dc76</RequestID></Response>",
                InsufficientResourcesException.class);
@@ -98,25 +103,25 @@ public class ParseAWSErrorFromXmlContentTest {
 
    @Test
    public void test400WithInUseCodeSetsIllegalStateException() {
-      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
+      assertCodeMakes(GET, URI.create("https://amazonaws.com/foo"), BAD_REQUEST.getStatusCode(), "",
                "<Error><Code>InvalidPlacementGroup.InUse</Code></Error>", IllegalStateException.class);
    }
 
    @Test
    public void test400WithUnknownSetsResourceNotFoundException() {
-      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
+      assertCodeMakes(GET, URI.create("https://amazonaws.com/foo"), BAD_REQUEST.getStatusCode(), "",
                "<Error><Code>InvalidPlacementGroup.Unknown</Code></Error>", ResourceNotFoundException.class);
    }
 
    @Test
    public void test400WithIncorrectStateSetsIllegalStateException() {
-      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
+      assertCodeMakes(GET, URI.create("https://amazonaws.com/foo"), BAD_REQUEST.getStatusCode(), "",
                "<Error><Code>IncorrectState</Code></Error>", IllegalStateException.class);
    }
 
    @Test
    public void test400WithInUseSetsIllegalStateException() {
-      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "", "text/plain",
+      assertCodeMakes(GET, URI.create("https://amazonaws.com/foo"), BAD_REQUEST.getStatusCode(), "", TEXT_PLAIN,
                "The placement group 'jclouds#adriancoleec2cccluster#us-east-1' is in use and may not be deleted.",
                IllegalStateException.class);
    }
@@ -124,9 +129,9 @@ public class ParseAWSErrorFromXmlContentTest {
    @Test
    public void test409SetsIllegalStateException() {
       assertCodeMakes(
-               "PUT",
+               PUT,
                URI.create("https://adriancole-blobstore011.s3.amazonaws.com/"),
-               409,
+               CONFLICT.getStatusCode(),
                "",
                "<Error><Code>OperationAborted</Code><Message>A conflicting conditional operation is currently in progress against this resource. Please try again.</Message><RequestId>F716E81C3D814E59</RequestId><HostId>SDprHxWzG/YXzanVnV7VTz/wP+6fRt1dS+q00kH1rz248YOOSddkFiTXF04XtqNO</HostId></Error>",
                IllegalStateException.class);
@@ -134,19 +139,19 @@ public class ParseAWSErrorFromXmlContentTest {
 
    @Test
    public void test400WithInvalidGroupDuplicateIllegalStateException() {
-      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "Bad Request", "application/unknown",
+      assertCodeMakes(GET, URI.create("https://amazonaws.com/foo"), BAD_REQUEST.getStatusCode(), BAD_REQUEST.getReasonPhrase(), "application/unknown",
                "<Error><Code>InvalidGroup.Duplicate</Code></Error>", IllegalStateException.class);
    }
 
    @Test
    public void test400WithInvalidKeyPairGroupDuplicateIllegalStateException() {
-      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "Bad Request", "application/unknown",
+      assertCodeMakes(GET, URI.create("https://amazonaws.com/foo"), BAD_REQUEST.getStatusCode(), BAD_REQUEST.getReasonPhrase(), "application/unknown",
                "<Error><Code>InvalidKeyPair.Duplicate</Code></Error>", IllegalStateException.class);
    }
 
    @Test
    public void test400WithTextPlainIllegalArgumentException() {
-      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "Bad Request", "text/plain",
+      assertCodeMakes(GET, URI.create("https://amazonaws.com/foo"), BAD_REQUEST.getStatusCode(), BAD_REQUEST.getReasonPhrase(), TEXT_PLAIN,
                "Failure: 400 Bad Request\nFailed to bind the following fields\nMonitoring.Enabled = true\n\n\n",
                IllegalArgumentException.class);
    }
@@ -154,9 +159,9 @@ public class ParseAWSErrorFromXmlContentTest {
    @Test
    public void test400WithGroupAlreadyExistsEucalyptusIllegalStateException() {
       assertCodeMakes(
-               "GET",
+               GET,
                URI.create("https://amazonaws.com/foo"),
-               400,
+               BAD_REQUEST.getStatusCode(),
                "",
                "<?xml version=\"1.0\"?><Response><Errors><Error><Code>Groups</Code><Message>\nError adding network group: group named jclouds#eucrun#Eucalyptus already exists\nError adding network group: group named jclouds#eucrun#Eucalyptus already exists</Message></Error></Errors><RequestID>e0133975-3bc5-456d-9753-1d61b27e07e9</RequestID></Response>",
                IllegalStateException.class);
@@ -164,13 +169,13 @@ public class ParseAWSErrorFromXmlContentTest {
 
    @Test
    public void test400WithAuthFailureSetsAuthorizationException() {
-      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
+      assertCodeMakes(GET, URI.create("https://amazonaws.com/foo"), BAD_REQUEST.getStatusCode(), "",
                "<Error><Code>AuthFailure</Code></Error>", AuthorizationException.class);
    }
 
    @Test
    public void test400WithCloudBridgeAuthFailureSetsAuthorizationException() {
-      assertCodeMakes("POST", URI.create("https://api.greenqloud.com/"), 400, "",
+      assertCodeMakes(POST, URI.create("https://api.greenqloud.com/"), BAD_REQUEST.getStatusCode(), "",
                "<Error><Code>Client.AuthFailure</Code></Error>", AuthorizationException.class);
    }
 

@@ -18,6 +18,10 @@
  */
 package org.jclouds.route53;
 
+import static com.google.common.net.HttpHeaders.DATE;
+import static com.google.common.net.HttpHeaders.HOST;
+import static javax.ws.rs.HttpMethod.GET;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
@@ -33,15 +37,14 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "Route53ApiExpectTest")
 public class Route53ApiExpectTest extends BaseRoute53ApiExpectTest {
 
-   HttpRequest getChange = HttpRequest.builder().method("GET")
+   HttpRequest getChange = HttpRequest.builder().method(GET)
          .endpoint("https://route53.amazonaws.com/2012-02-29/change/C2682N5HXP0BZ4")
-         .addHeader("Host", "route53.amazonaws.com")
-         .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
+         .addHeader(HOST, "route53.amazonaws.com")
+         .addHeader(DATE, "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization", authForDate)
-
          .build();
 
-   HttpResponse getChangeResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse getChangeResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/change.xml", "text/xml")).build();
 
    public void testGetChangeWhenResponseIs2xx() {
