@@ -33,24 +33,34 @@ public interface ServiceType {
     * Object Storage (Swift)
     */
    public static final String OBJECT_STORE = "object-store";
+   
    /**
     * Compute (Nova)
     */
    public static final String COMPUTE = "compute";
+   
    /**
     * Image Service (Glance)
     */
    public static final String IMAGE = "image";
+   
    /**
     * Identity Service (Keystone)
     */
    public static final String IDENTITY = "identity";
+   
    /**
     * Network Service (Quantum)
     */
    public static final String NETWORK = "network";
+   
    /**
     * Block Storage (Cinder)
     */
    public static final String BLOCK_STORAGE = "volume";
+   
+   /**
+    * Database Service (RedDwarf)
+    */
+   public static final String DATABASE_SERVICE = "databases";
 }
