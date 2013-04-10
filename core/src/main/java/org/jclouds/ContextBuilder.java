@@ -427,14 +427,14 @@ public class ContextBuilder {
          try {
             modules
                   .add(new BindApiContextWithWildcardExtendsExplicitAndRawType(HttpApiMetadata.class.cast(apiMetadata)));
-         } catch (IllegalArgumentException e) {
+         } catch (IllegalArgumentException ignored) {
 
          }
       } else if (apiMetadata instanceof RestApiMetadata) {
          try {
             modules.add(new BindRestContextWithWildcardExtendsExplicitAndRawType(RestApiMetadata.class
                   .cast(apiMetadata)));
-         } catch (IllegalArgumentException e) {
+         } catch (IllegalArgumentException ignored) {
 
          }
       }
