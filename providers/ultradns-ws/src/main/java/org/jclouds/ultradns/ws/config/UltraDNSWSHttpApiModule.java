@@ -18,48 +18,24 @@
  */
 package org.jclouds.ultradns.ws.config;
 
-import java.util.Map;
-
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
-import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.config.RestClientModule;
+import org.jclouds.rest.ConfiguresHttpApi;
+import org.jclouds.rest.config.HttpApiModule;
 import org.jclouds.ultradns.ws.UltraDNSWSApi;
-import org.jclouds.ultradns.ws.UltraDNSWSAsyncApi;
-import org.jclouds.ultradns.ws.features.ResourceRecordApi;
-import org.jclouds.ultradns.ws.features.ResourceRecordAsyncApi;
-import org.jclouds.ultradns.ws.features.RoundRobinPoolApi;
-import org.jclouds.ultradns.ws.features.RoundRobinPoolAsyncApi;
-import org.jclouds.ultradns.ws.features.TaskApi;
-import org.jclouds.ultradns.ws.features.TaskAsyncApi;
-import org.jclouds.ultradns.ws.features.TrafficControllerPoolApi;
-import org.jclouds.ultradns.ws.features.TrafficControllerPoolAsyncApi;
-import org.jclouds.ultradns.ws.features.ZoneApi;
-import org.jclouds.ultradns.ws.features.ZoneAsyncApi;
 import org.jclouds.ultradns.ws.handlers.UltraDNSWSErrorHandler;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Configures the UltraDNSWS connection.
  * 
  * @author Adrian Cole
  */
-@ConfiguresRestClient
-public class UltraDNSWSRestClientModule extends RestClientModule<UltraDNSWSApi, UltraDNSWSAsyncApi> {
-
-   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
-         .put(ZoneApi.class, ZoneAsyncApi.class)
-         .put(ResourceRecordApi.class, ResourceRecordAsyncApi.class)
-         .put(RoundRobinPoolApi.class, RoundRobinPoolAsyncApi.class)
-         .put(TrafficControllerPoolApi.class, TrafficControllerPoolAsyncApi.class)
-         .put(TaskApi.class, TaskAsyncApi.class).build();
-
-   public UltraDNSWSRestClientModule() {
-      super(DELEGATE_MAP);
+@ConfiguresHttpApi
+public class UltraDNSWSHttpApiModule extends HttpApiModule<UltraDNSWSApi> {
+   public UltraDNSWSHttpApiModule() {
    }
 
    @Override

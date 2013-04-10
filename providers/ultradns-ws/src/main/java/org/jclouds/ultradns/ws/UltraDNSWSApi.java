@@ -20,27 +20,41 @@ package org.jclouds.ultradns.ws;
 
 import java.io.Closeable;
 
+import javax.inject.Named;
+import javax.ws.rs.POST;
+
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.VirtualHost;
+import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.ultradns.ws.domain.Account;
 import org.jclouds.ultradns.ws.features.ResourceRecordApi;
 import org.jclouds.ultradns.ws.features.RoundRobinPoolApi;
 import org.jclouds.ultradns.ws.features.TaskApi;
 import org.jclouds.ultradns.ws.features.TrafficControllerPoolApi;
 import org.jclouds.ultradns.ws.features.ZoneApi;
+import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
+import org.jclouds.ultradns.ws.xml.AccountHandler;
 
 /**
  * Provides access to Neustar UltraDNS via the SOAP API
  * <p/>
  * 
- * @see UltraDNSWSAsyncApi
  * @see <a href="https://www.ultradns.net/api/NUS_API_XML_SOAP.pdf" />
  * @author Adrian Cole
  */
+@RequestFilters(SOAPWrapWithPasswordAuth.class)
+@VirtualHost
 public interface UltraDNSWSApi extends Closeable {
    /**
     * Returns the account of the current user.
     */
+   @Named("getAccountsListOfUser")
+   @POST
+   @XMLResponseParser(AccountHandler.class)
+   @Payload("<v01:getAccountsListOfUser/>")
    Account getCurrentAccount();
 
    /**
