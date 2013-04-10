@@ -17,8 +17,8 @@
  * under the License.
  */
 package org.jclouds.dynect.v3.handlers;
-
 import static com.google.common.net.HttpHeaders.LOCATION;
+import static javax.ws.rs.HttpMethod.GET;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import javax.inject.Inject;
@@ -55,7 +55,7 @@ public class GetJobRedirectionRetryHandler extends RedirectionRetryHandler {
       String location = response.getFirstHeaderOrNull(LOCATION);
       if (location != null && location.indexOf("Job") != -1) {
          HttpRequest getRequest = command.getCurrentRequest().toBuilder()
-                                                             .method("GET")
+                                                             .method(GET)
                                                              .payload((Payload) null).build();
          command.setCurrentRequest(getRequest);
       }

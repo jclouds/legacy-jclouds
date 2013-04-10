@@ -17,10 +17,13 @@
  * under the License.
  */
 package org.jclouds.dynect.v3.features;
-
 import static com.google.common.net.HttpHeaders.ACCEPT;
 import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
+import static javax.ws.rs.HttpMethod.DELETE;
+import static javax.ws.rs.HttpMethod.GET;
+import static javax.ws.rs.HttpMethod.POST;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.jclouds.dynect.v3.domain.RecordId.recordIdBuilder;
 import static org.jclouds.dynect.v3.domain.rdata.AData.a;
 import static org.testng.Assert.assertEquals;
@@ -55,13 +58,13 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit", testName = "RecordApiExpectTest")
 public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
-   HttpRequest getSOA = HttpRequest.builder().method("GET")
+   HttpRequest getSOA = HttpRequest.builder().method(GET)
                                    .endpoint("https://api2.dynect.net/REST/SOARecord/jclouds.org/jclouds.org/50976579")
                                    .addHeader("API-Version", "3.3.8")
                                    .addHeader(CONTENT_TYPE, APPLICATION_JSON)
                                    .addHeader("Auth-Token", authToken).build();   
 
-   HttpResponse soaResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse soaResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/get_record_soa.json", APPLICATION_JSON)).build();
 
    RecordId soaId = recordIdBuilder()
@@ -81,13 +84,13 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
       assertNull(fail.getRecordApiForZone("jclouds.org").get(soaId));
    }
 
-   HttpRequest getAAAA = HttpRequest.builder().method("GET")
+   HttpRequest getAAAA = HttpRequest.builder().method(GET)
          .endpoint("https://api2.dynect.net/REST/AAAARecord/jclouds.org/jclouds.org/50976579")
          .addHeader("API-Version", "3.3.8")
          .addHeader(CONTENT_TYPE, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken).build();
    
-   HttpResponse aaaaResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse aaaaResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/get_record_aaaa.json", APPLICATION_JSON)).build();
 
    RecordId aaaaId = recordIdBuilder()
@@ -107,13 +110,13 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
       assertNull(fail.getRecordApiForZone("jclouds.org").getAAAA(aaaaId.getFQDN(), aaaaId.getId()));
    }
 
-   HttpRequest getA = HttpRequest.builder().method("GET")
+   HttpRequest getA = HttpRequest.builder().method(GET)
          .endpoint("https://api2.dynect.net/REST/ARecord/jclouds.org/jclouds.org/50976579")
          .addHeader("API-Version", "3.3.8")
          .addHeader(CONTENT_TYPE, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken).build();   
    
-   HttpResponse aResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse aResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/get_record_a.json", APPLICATION_JSON)).build();
 
    RecordId aId = recordIdBuilder()
@@ -133,13 +136,13 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
       assertNull(fail.getRecordApiForZone("jclouds.org").getA(aId.getFQDN(), aId.getId()));
    }
 
-   HttpRequest getCNAME = HttpRequest.builder().method("GET")
+   HttpRequest getCNAME = HttpRequest.builder().method(GET)
          .endpoint("https://api2.dynect.net/REST/CNAMERecord/jclouds.org/jclouds.org/50976579")
          .addHeader("API-Version", "3.3.8")
          .addHeader(CONTENT_TYPE, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken).build();   
    
-   HttpResponse cnameResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse cnameResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/get_record_cname.json", APPLICATION_JSON)).build();
 
    RecordId cnameId = recordIdBuilder()
@@ -159,13 +162,13 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
       assertNull(fail.getRecordApiForZone("jclouds.org").getCNAME(cnameId.getFQDN(), cnameId.getId()));
    }
 
-   HttpRequest getMX = HttpRequest.builder().method("GET")
+   HttpRequest getMX = HttpRequest.builder().method(GET)
          .endpoint("https://api2.dynect.net/REST/MXRecord/jclouds.org/jclouds.org/50976579")
          .addHeader("API-Version", "3.3.8")
          .addHeader(CONTENT_TYPE, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken).build();   
    
-   HttpResponse mxResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse mxResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/get_record_mx.json", APPLICATION_JSON)).build();
 
    RecordId mxId = recordIdBuilder()
@@ -185,13 +188,13 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
       assertNull(fail.getRecordApiForZone("jclouds.org").getMX(mxId.getFQDN(), mxId.getId()));
    }
 
-   HttpRequest getNS = HttpRequest.builder().method("GET")
+   HttpRequest getNS = HttpRequest.builder().method(GET)
          .endpoint("https://api2.dynect.net/REST/NSRecord/jclouds.org/jclouds.org/50976579")
          .addHeader("API-Version", "3.3.8")
          .addHeader(CONTENT_TYPE, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken).build();   
    
-   HttpResponse nsResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse nsResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/get_record_ns.json", APPLICATION_JSON)).build();
 
    RecordId nsId = recordIdBuilder()
@@ -211,13 +214,13 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
       assertNull(fail.getRecordApiForZone("jclouds.org").getNS(nsId.getFQDN(), nsId.getId()));
    }
 
-   HttpRequest getPTR = HttpRequest.builder().method("GET")
+   HttpRequest getPTR = HttpRequest.builder().method(GET)
          .endpoint("https://api2.dynect.net/REST/PTRRecord/jclouds.org/jclouds.org/50976579")
          .addHeader("API-Version", "3.3.8")
          .addHeader(CONTENT_TYPE, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken).build();   
    
-   HttpResponse ptrResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse ptrResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/get_record_ptr.json", APPLICATION_JSON)).build();
 
    RecordId ptrId = recordIdBuilder()
@@ -248,13 +251,13 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
       assertNull(fail.getRecordApiForZone("jclouds.org").getSOA(soaId.getFQDN(), soaId.getId()));
    }
 
-   HttpRequest getSPF = HttpRequest.builder().method("GET")
+   HttpRequest getSPF = HttpRequest.builder().method(GET)
          .endpoint("https://api2.dynect.net/REST/SPFRecord/jclouds.org/jclouds.org/50976579")
          .addHeader("API-Version", "3.3.8")
          .addHeader(CONTENT_TYPE, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken).build();   
    
-   HttpResponse spfResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse spfResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/get_record_spf.json", APPLICATION_JSON)).build();
 
    RecordId spfId = recordIdBuilder()
@@ -269,13 +272,13 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
                    new GetSPFRecordResponseTest().expected().toString());
    }
 
-   HttpRequest getSRV = HttpRequest.builder().method("GET")
+   HttpRequest getSRV = HttpRequest.builder().method(GET)
          .endpoint("https://api2.dynect.net/REST/SRVRecord/jclouds.org/jclouds.org/50976579")
          .addHeader("API-Version", "3.3.8")
          .addHeader(CONTENT_TYPE, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken).build();   
    
-   HttpResponse srvResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse srvResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/get_record_srv.json", APPLICATION_JSON)).build();
 
    RecordId srvId = recordIdBuilder()
@@ -290,13 +293,13 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
                    new GetSRVRecordResponseTest().expected().toString());
    }
 
-   HttpRequest getSSHFP = HttpRequest.builder().method("GET")
+   HttpRequest getSSHFP = HttpRequest.builder().method(GET)
          .endpoint("https://api2.dynect.net/REST/SSHFPRecord/jclouds.org/jclouds.org/50976579")
          .addHeader("API-Version", "3.3.8")
          .addHeader(CONTENT_TYPE, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken).build();   
    
-   HttpResponse sshfpResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse sshfpResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/get_record_sshfp.json", APPLICATION_JSON)).build();
 
    RecordId sshfpId = recordIdBuilder()
@@ -311,13 +314,13 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
                    new GetSSHFPRecordResponseTest().expected().toString());
    }
 
-   HttpRequest getTXT = HttpRequest.builder().method("GET")
+   HttpRequest getTXT = HttpRequest.builder().method(GET)
          .endpoint("https://api2.dynect.net/REST/TXTRecord/jclouds.org/jclouds.org/50976579")
          .addHeader("API-Version", "3.3.8")
          .addHeader(CONTENT_TYPE, APPLICATION_JSON)
          .addHeader("Auth-Token", authToken).build();   
    
-   HttpResponse txtResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse txtResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/get_record_txt.json", APPLICATION_JSON)).build();
 
    RecordId txtId = recordIdBuilder()
@@ -337,13 +340,13 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
       assertNull(fail.getRecordApiForZone("jclouds.org").getTXT(txtId.getFQDN(), txtId.getId()));
    }
 
-   HttpRequest list = HttpRequest.builder().method("GET")
+   HttpRequest list = HttpRequest.builder().method(GET)
                                  .endpoint("https://api2.dynect.net/REST/AllRecord/jclouds.org")
                                  .addHeader("API-Version", "3.3.8")
                                  .addHeader(CONTENT_TYPE, APPLICATION_JSON)
                                  .addHeader("Auth-Token", authToken).build();   
 
-   HttpResponse listResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse listResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/list_records.json", APPLICATION_JSON)).build();
 
    public void testListWhenResponseIs2xx() {
@@ -352,7 +355,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
                    new ListRecordsResponseTest().expected().toString());
    }
 
-   HttpRequest listByFQDN = HttpRequest.builder().method("GET")
+   HttpRequest listByFQDN = HttpRequest.builder().method(GET)
          .endpoint("https://api2.dynect.net/REST/AllRecord/jclouds.org/www.foo.com")
          .addHeader("API-Version", "3.3.8")
          .addHeader(CONTENT_TYPE, APPLICATION_JSON)
@@ -369,7 +372,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
       assertTrue(fail.getRecordApiForZone("jclouds.org").listByFQDN("www.foo.com").isEmpty());
    }
 
-   HttpRequest listByFQDNAndType = HttpRequest.builder().method("GET")
+   HttpRequest listByFQDNAndType = HttpRequest.builder().method(GET)
                                               .endpoint("https://api2.dynect.net/REST/ARecord/jclouds.org/www.foo.com")
                                               .addHeader("API-Version", "3.3.8")
                                               .addHeader(CONTENT_TYPE, APPLICATION_JSON)
@@ -386,7 +389,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
        assertTrue(fail.getRecordApiForZone("jclouds.org").listByFQDNAndType("www.foo.com", "A").isEmpty());
     }
 
-   HttpRequest create = HttpRequest.builder().method("POST")
+   HttpRequest create = HttpRequest.builder().method(POST)
          .endpoint("https://api2.dynect.net/REST/ARecord/jclouds.org/www.jclouds.org")
          .addHeader("API-Version", "3.3.8")
          .addHeader(ACCEPT, APPLICATION_JSON)
@@ -394,7 +397,7 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
          .payload(stringPayload("{\"rdata\":{\"address\":\"1.1.1.1\"},\"ttl\":86400}"))
          .build();   
 
-   HttpResponse createResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse createResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/new_record.json", APPLICATION_JSON)).build();
 
    public void testCreateWhenResponseIs2xx() {
@@ -408,14 +411,14 @@ public class RecordApiExpectTest extends BaseDynECTApiExpectTest {
       assertEquals(success.getRecordApiForZone("jclouds.org").scheduleCreate(record), Job.success(285372440l));
    }
 
-   HttpRequest delete = HttpRequest.builder().method("DELETE")
+   HttpRequest delete = HttpRequest.builder().method(DELETE)
                                              .endpoint("https://api2.dynect.net/REST/ARecord/jclouds.org/www.jclouds.org/285372440")
                                              .addHeader("API-Version", "3.3.8")
                                              .addHeader(ACCEPT, APPLICATION_JSON)
                                              .addHeader(CONTENT_TYPE, APPLICATION_JSON)
                                              .addHeader("Auth-Token", authToken).build();  
 
-   HttpResponse deleteResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse deleteResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/delete_record.json", APPLICATION_JSON)).build();
 
    RecordId id = recordIdBuilder()
