@@ -18,25 +18,58 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1.features;
 
+import javax.inject.Named;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.Fallbacks.FalseOnNotFoundOr404;
+import org.jclouds.Fallbacks.FalseOnNotFoundOr422;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
+import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.ConnectionThrottle;
+import org.jclouds.rackspace.cloudloadbalancers.v1.functions.ParseNestedBoolean;
+import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.Payload;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.annotations.WrapWith;
 
 /**
  * Connection management features.
  * <p/>
  * 
- * @see ConnectionAsyncApi
  * @author Everett Toews
  */
+@RequestFilters(AuthenticateRequest.class)
 public interface ConnectionApi {
    /**
     * The connection throttling feature imposes limits on the number of connections per IP address to help mitigate 
     * malicious or abusive traffic to your applications.
     */
-   void createOrUpdateConnectionThrottle(ConnectionThrottle connectionThrottle);
+   @Named("connectionthrottle:create")
+   @PUT
+   @Consumes(MediaType.APPLICATION_JSON) 
+   @Fallback(VoidOnNotFoundOr404.class)
+   @Path("/connectionthrottle")
+   void createOrUpdateConnectionThrottle(
+         @WrapWith("connectionThrottle") ConnectionThrottle connectionThrottle);
 
    /**
     * Get connection throttle.
     */
+   @Named("connectionthrottle:get")
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @SelectJson("connectionThrottle")
+   @Fallback(NullOnNotFoundOr404.class)
+   @Path("/connectionthrottle")
    ConnectionThrottle getConnectionThrottle();
    
    /**
@@ -44,20 +77,45 @@ public interface ConnectionApi {
     * 
     * @return true on a successful delete, false if the connection throttle was not found.
     */
+   @Named("connectionthrottle:delete")
+   @DELETE
+   @Fallback(FalseOnNotFoundOr422.class)
+   @Path("/connectionthrottle")
+   @Consumes("*/*")
    boolean deleteConnectionThrottle();
    
    /**
     * Determine if the load balancer is logging connections.
     */
+   @Named("connectionlogging:state")
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ResponseParser(ParseNestedBoolean.class)
+   @Fallback(FalseOnNotFoundOr404.class)
+   @Path("/connectionlogging")
    boolean isConnectionLogging();
    
    /**
     * Enable logging connections.
     */
+   @Named("connectionlogging:state")
+   @PUT
+   @Produces(MediaType.APPLICATION_JSON)
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Fallback(VoidOnNotFoundOr404.class)
+   @Payload("{\"connectionLogging\":{\"enabled\":true}}")
+   @Path("/connectionlogging")
    void enableConnectionLogging();
    
    /**
     * Disable logging connections.
     */
+   @Named("connectionlogging:state")
+   @PUT
+   @Produces(MediaType.APPLICATION_JSON)
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Fallback(VoidOnNotFoundOr404.class)
+   @Payload("{\"connectionLogging\":{\"enabled\":false}}")
+   @Path("/connectionlogging")
    void disableConnectionLogging();
 }
