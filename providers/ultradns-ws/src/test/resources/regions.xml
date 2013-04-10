@@ -1,0 +1,14 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Body>
+		<ns1:getAvailableRegionsResponse
+			xmlns:ns1="http://webservice.api.ultra.neustar.com/v01/">
+			<DirectionalDNSAvailableRegionList
+				xmlns:ns2="http://schema.ultraservice.neustar.com/v01/">
+				<ns2:Region TerritoryName="Anonymous Proxy" RegionName="Anonymous Proxy (A1)"
+					RegionID="14" />
+				<ns2:Region TerritoryName="Antarctica;Bouvet Island;French Southern Territories"
+					RegionName="Antarctica" RegionID="3" />
+			</DirectionalDNSAvailableRegionList>
+		</ns1:getAvailableRegionsResponse>
+	</soap:Body>
+</soap:Envelope>
