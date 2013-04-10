@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Body>
+		<ns1:getDirectionalDNSRecordsForAcctLvlGroupResponse
+			xmlns:ns1="http://webservice.api.ultra.neustar.com/v01/">
+			<DirectionalDNSRecordDetailList
+				xmlns:ns2="http://schema.ultraservice.neustar.com/v01/">
+				<ns2:DirectionalDNSRecordDetail
+					DirPoolRecordId="06023D94130C8F89" ZoneName="netflix.com."
+					DName="ccs-int-eu.netflix.com.">
+					<ns2:DirectionalDNSRecord recordType="CNAME"
+						TTL="3600" noResponseRecord="false">
+						<ns2:InfoValues
+							Info1Value="ccs-int-frontend-1181536117.eu-west-1.elb.amazonaws.com." />
+					</ns2:DirectionalDNSRecord>
+				</ns2:DirectionalDNSRecordDetail>
+				<ns2:DirectionalDNSRecordDetail
+					DirPoolRecordId="06023D94130C8F61" ZoneName="netflix.com." DName="ccs-int.netflix.com.">
+					<ns2:DirectionalDNSRecord recordType="CNAME"
+						TTL="3600" noResponseRecord="false">
+						<ns2:InfoValues
+							Info1Value="ccs-int-frontend-1181536117.eu-west-1.elb.amazonaws.com." />
+					</ns2:DirectionalDNSRecord>
+				</ns2:DirectionalDNSRecordDetail>
+				<ns2:DirectionalDNSRecordDetail
+					DirPoolRecordId="06023D161000DE02" ZoneName="netflix.com."
+					DName="nrdpv6.nccp.netflix.com.">
+					<ns2:DirectionalDNSRecord recordType="CNAME"
+						TTL="3600" noResponseRecord="false">
+						<ns2:InfoValues
+							Info1Value="dualstack.nccp-wildcard-nccp-netflix-com-1840524669.eu-west-1.elb.amazonaws.com." />
+					</ns2:DirectionalDNSRecord>
+				</ns2:DirectionalDNSRecordDetail>
+			</DirectionalDNSRecordDetailList>
+		</ns1:getDirectionalDNSRecordsForAcctLvlGroupResponse>
+	</soap:Body>
+</soap:Envelope>

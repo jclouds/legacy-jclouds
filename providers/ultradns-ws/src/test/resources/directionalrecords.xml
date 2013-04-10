@@ -1,0 +1,19 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Body>
+		<getDirectionalDNSRecordsForHostResponse
+			xmlns:ns1="http://webservice.api.ultra.neustar.com/v01/">
+			<DirectionalDNSRecordDetailList
+				ZoneName="directional-example.com." DName="chaos.directional-example.com.">
+				<DirectionalDNSRecordDetail
+					GeolocationGroupName="Geolocation field" GeolocationGroupId="06093C2D10CB1CB2"
+					SourceIPGroupName="172.16.1.0/24" SourceIPGroupId="06093C2D10CB1CB4"
+					TerritoriesCount="8" DirPoolRecordId="06093C2D10CB1CB1">
+					<DirectionalDNSRecord recordType="A" TTL="60"
+						noResponseRecord="false">
+						<InfoValues Info1Value="172.16.1.1" />
+					</DirectionalDNSRecord>
+				</DirectionalDNSRecordDetail>
+			</DirectionalDNSRecordDetailList>
+		</getDirectionalDNSRecordsForHostResponse>
+	</soap:Body>
+</soap:Envelope>
