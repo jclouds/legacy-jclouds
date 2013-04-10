@@ -58,7 +58,7 @@ import com.google.common.util.concurrent.UncheckedTimeoutException;
  * @deprecated will be replaced in jclouds 1.7 with {@link InvokeHttpMethod}, as async interfaces are no longer supported.
  */
 @Deprecated
-public class InvokeMappedHttpMethod implements Function<Invocation, Object> {
+public class InvokeSyncToAsyncHttpMethod implements Function<Invocation, Object> {
 
    @Resource
    private Logger logger = Logger.NULL;
@@ -73,7 +73,7 @@ public class InvokeMappedHttpMethod implements Function<Invocation, Object> {
 
    @Inject
    @VisibleForTesting
-   InvokeMappedHttpMethod(Function<Invocation, Invocation> sync2async, Function<Invocation, HttpRequest> annotationProcessor,
+   InvokeSyncToAsyncHttpMethod(Function<Invocation, Invocation> sync2async, Function<Invocation, HttpRequest> annotationProcessor,
          HttpCommandExecutorService http, Function<HttpRequest, Function<HttpResponse, ?>> transformerForRequest,
          TimeLimiter timeLimiter, InvocationConfig config,
          @Named(PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
@@ -261,7 +261,7 @@ public class InvokeMappedHttpMethod implements Function<Invocation, Object> {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      InvokeMappedHttpMethod that = InvokeMappedHttpMethod.class.cast(o);
+      InvokeSyncToAsyncHttpMethod that = InvokeSyncToAsyncHttpMethod.class.cast(o);
       return equal(this.annotationProcessor, that.annotationProcessor);
    }
 

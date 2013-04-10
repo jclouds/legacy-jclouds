@@ -34,7 +34,7 @@ import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityAuthenticationModule;
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityCredentialTypes;
-import org.jclouds.rackspace.cloudidentity.v2_0.config.MappedCloudIdentityAuthenticationApiModule;
+import org.jclouds.rackspace.cloudidentity.v2_0.config.SyncToAsyncCloudIdentityAuthenticationApiModule;
 import org.jclouds.rackspace.cloudservers.us.config.CloudServersUSComputeServiceContextModule;
 
 import com.google.common.collect.ImmutableSet;
@@ -86,7 +86,7 @@ public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
                   .endpointName("identity service url ending in /v2.0/")
                   .documentation(URI.create("http://docs.rackspace.com/loadbalancers/api/v1.0/clb-devguide/content/index.html"))
                   .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
-                                              .add(MappedCloudIdentityAuthenticationApiModule.class)
+                                              .add(SyncToAsyncCloudIdentityAuthenticationApiModule.class)
                                               .add(CloudIdentityAuthenticationModule.class)
                                               .add(ZoneModule.class)
                                               .add(NovaParserModule.class)

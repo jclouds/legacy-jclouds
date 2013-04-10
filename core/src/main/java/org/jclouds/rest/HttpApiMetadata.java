@@ -36,12 +36,12 @@ public interface HttpApiMetadata<A> extends ApiMetadata {
       /**
        * @see ApiMetadata#getApi()
        */
-      T javaApi(Class<A> api);
+      T api(Class<A> api);
    }
 
    /**
     * 
-    * @return the type of the api which has http annotations on its methods.
+    * @return the type of the java api which has http annotations on its methods.
     */
    Class<A> getApi();
 }

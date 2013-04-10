@@ -85,7 +85,7 @@ import org.jclouds.rest.RestApiMetadata;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.config.CredentialStoreModule;
 import org.jclouds.rest.config.HttpApiModule;
-import org.jclouds.rest.config.MappedHttpInvocationModule;
+import org.jclouds.rest.config.SyncToAsyncHttpInvocationModule;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.config.RestModule;
 
@@ -524,7 +524,7 @@ public class ContextBuilder {
          modules.add(new RestClientModule(typeToken(rest.getApi()), typeToken(rest.getAsyncApi())));
       } else {
          modules.add(new RestModule());
-         modules.add(new MappedHttpInvocationModule());
+         modules.add(new SyncToAsyncHttpInvocationModule());
       }
    }
 
