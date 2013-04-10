@@ -17,9 +17,11 @@
  * under the License.
  */
 package org.jclouds.dynect.v3.features;
-
 import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
+import static javax.ws.rs.HttpMethod.DELETE;
+import static javax.ws.rs.HttpMethod.GET;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
@@ -31,7 +33,6 @@ import org.jclouds.dynect.v3.parse.CreateSessionResponseTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
-
 /**
  * @author Adrian Cole
  */
@@ -47,13 +48,13 @@ public class SessionApiExpectTest extends BaseDynECTApiExpectTest {
                    new CreateSessionResponseTest().expected().toString());
    }
 
-   HttpRequest isValid = HttpRequest.builder().method("GET")
+   HttpRequest isValid = HttpRequest.builder().method(GET)
                                     .endpoint("https://api2.dynect.net/REST/Session")
                                     .addHeader("API-Version", "3.3.8")
                                     .addHeader(CONTENT_TYPE, APPLICATION_JSON)
                                     .addHeader("Auth-Token", authToken).build();
 
-   HttpResponse validResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse validResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/session_valid.json", APPLICATION_JSON)).build();
 
    HttpResponse invalidResponse = HttpResponse.builder().statusCode(400)
@@ -69,13 +70,13 @@ public class SessionApiExpectTest extends BaseDynECTApiExpectTest {
       assertFalse(apiWhenInvalid.getSessionApi().isValid(authToken));
    }
 
-   HttpRequest logout = HttpRequest.builder().method("DELETE")
+   HttpRequest logout = HttpRequest.builder().method(DELETE)
                                    .endpoint("https://api2.dynect.net/REST/Session")
                                    .addHeader("API-Version", "3.3.8")
                                    .addHeader(CONTENT_TYPE, APPLICATION_JSON)
                                    .addHeader("Auth-Token", authToken).build();
 
-   HttpResponse logoutResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse logoutResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/logout.json", APPLICATION_JSON)).build();
 
    public void testLogout() {
