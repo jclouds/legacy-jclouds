@@ -17,7 +17,9 @@
  * under the License.
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1.features;
-
+import static javax.ws.rs.HttpMethod.DELETE;
+import static javax.ws.rs.HttpMethod.PUT;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
@@ -26,7 +28,6 @@ import java.net.URI;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.cloudloadbalancers.v1.CloudLoadBalancersApi;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.SessionPersistence;
-import org.jclouds.rackspace.cloudloadbalancers.v1.features.SessionPersistenceApi;
 import org.jclouds.rackspace.cloudloadbalancers.v1.internal.BaseCloudLoadBalancerApiExpectTest;
 import org.testng.annotations.Test;
 
@@ -41,7 +42,7 @@ public class SessionPersistenceApiExpectTest extends BaseCloudLoadBalancerApiExp
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/sessionpersistence-get.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/sessionpersistence-get.json")).build()
       ).getSessionPersistenceApiForZoneAndLoadBalancer("DFW", 2000);
 
       SessionPersistence sessionPersistence = api.get();
@@ -54,7 +55,7 @@ public class SessionPersistenceApiExpectTest extends BaseCloudLoadBalancerApiExp
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/sessionpersistence-get-deleted.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/sessionpersistence-get-deleted.json")).build()
       ).getSessionPersistenceApiForZoneAndLoadBalancer("DFW", 2000);
 
       SessionPersistence sessionPersistence = api.get();
@@ -66,8 +67,8 @@ public class SessionPersistenceApiExpectTest extends BaseCloudLoadBalancerApiExp
       SessionPersistenceApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("PUT").endpoint(endpoint).payload(payloadFromResource("/sessionpersistence-create.json")).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(PUT).endpoint(endpoint).payload(payloadFromResource("/sessionpersistence-create.json")).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getSessionPersistenceApiForZoneAndLoadBalancer("DFW", 2000);
       
       api.create(SessionPersistence.HTTP_COOKIE);
@@ -78,8 +79,8 @@ public class SessionPersistenceApiExpectTest extends BaseCloudLoadBalancerApiExp
       SessionPersistenceApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("DELETE").endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(DELETE).endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getSessionPersistenceApiForZoneAndLoadBalancer("DFW", 2000);
       
       api.delete();

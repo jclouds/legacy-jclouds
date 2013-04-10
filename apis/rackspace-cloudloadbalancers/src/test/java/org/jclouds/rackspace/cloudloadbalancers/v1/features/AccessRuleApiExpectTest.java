@@ -17,20 +17,21 @@
  * under the License.
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1.features;
-
+import static com.google.common.net.HttpHeaders.ACCEPT;
+import static javax.ws.rs.HttpMethod.DELETE;
+import static javax.ws.rs.HttpMethod.POST;
+import static javax.ws.rs.core.MediaType.WILDCARD;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.List;
 
-import javax.ws.rs.core.MediaType;
-
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.cloudloadbalancers.v1.CloudLoadBalancersApi;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.AccessRule;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.AccessRuleWithId;
-import org.jclouds.rackspace.cloudloadbalancers.v1.features.AccessRuleApi;
 import org.jclouds.rackspace.cloudloadbalancers.v1.internal.BaseCloudLoadBalancerApiExpectTest;
 import org.testng.annotations.Test;
 
@@ -47,7 +48,7 @@ public class AccessRuleApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/accesslist-list.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/accesslist-list.json")).build()
       ).getAccessRuleApiForZoneAndLoadBalancer("DFW", 2000);
 
       Iterable<AccessRuleWithId> accessList = api.list();
@@ -59,8 +60,8 @@ public class AccessRuleApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
       AccessRuleApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("POST").endpoint(endpoint).payload(payloadFromResource("/accesslist-create.json")).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(POST).endpoint(endpoint).payload(payloadFromResource("/accesslist-create.json")).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getAccessRuleApiForZoneAndLoadBalancer("DFW", 2000);
    
       AccessRule accessRule1 = AccessRule.deny("206.160.163.21");
@@ -76,8 +77,8 @@ public class AccessRuleApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
       AccessRuleApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("DELETE").endpoint(endpoint).replaceHeader("Accept", MediaType.WILDCARD).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(DELETE).endpoint(endpoint).replaceHeader(ACCEPT, WILDCARD).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getAccessRuleApiForZoneAndLoadBalancer("DFW", 2000);
 
       assertTrue(api.delete(23));
@@ -88,8 +89,8 @@ public class AccessRuleApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
       AccessRuleApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("DELETE").endpoint(endpoint).replaceHeader("Accept", MediaType.WILDCARD).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(DELETE).endpoint(endpoint).replaceHeader(ACCEPT, WILDCARD).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getAccessRuleApiForZoneAndLoadBalancer("DFW", 2000);
 
       List<Integer> accessRuleIds = ImmutableList.<Integer> of(23, 24);
@@ -101,8 +102,8 @@ public class AccessRuleApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<
       AccessRuleApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("DELETE").endpoint(endpoint).replaceHeader("Accept", MediaType.WILDCARD).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(DELETE).endpoint(endpoint).replaceHeader(ACCEPT, WILDCARD).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getAccessRuleApiForZoneAndLoadBalancer("DFW", 2000);
 
       assertTrue(api.deleteAll());
