@@ -19,7 +19,7 @@
 package org.jclouds.route53;
 
 import org.jclouds.View;
-import org.jclouds.rest.internal.BaseRestApiMetadataTest;
+import org.jclouds.rest.internal.BaseHttpApiMetadataTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -30,9 +30,9 @@ import com.google.common.reflect.TypeToken;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "Route53ApiMetadataTest")
-public class Route53ApiMetadataTest extends BaseRestApiMetadataTest {
+public class Route53ApiMetadataTest extends BaseHttpApiMetadataTest {
 
-   // no tenant abstraction, yet
+   // no dns abstraction, yet
    public Route53ApiMetadataTest() {
       super(new Route53ApiMetadata(), ImmutableSet.<TypeToken<? extends View>> of());
    }

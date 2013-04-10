@@ -32,6 +32,7 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.config.HttpApiModule;
 import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.collect.ImmutableSet;
@@ -42,7 +43,10 @@ import com.google.inject.Provides;
 /**
  * 
  * @author Adrian Cole
+ * 
+ * @deprecated will be removed in jclouds 1.7; use {@link AWSHttpApiModule}
  */
+@Deprecated
 @ConfiguresRestClient
 public abstract class AWSRestClientModule<S, A> extends RestClientModule<S, A> {
 

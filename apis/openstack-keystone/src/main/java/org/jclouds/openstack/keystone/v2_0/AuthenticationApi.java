@@ -18,47 +18,88 @@
  */
 package org.jclouds.openstack.keystone.v2_0;
 
+import java.io.Closeable;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.openstack.keystone.v2_0.binders.BindAuthToJsonPayload;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiAccessKeyCredentials;
 import org.jclouds.openstack.keystone.v2_0.domain.PasswordCredentials;
+import org.jclouds.rest.annotations.MapBinder;
+import org.jclouds.rest.annotations.PayloadParam;
+import org.jclouds.rest.annotations.SelectJson;
+
+import com.google.inject.name.Named;
 
 /**
  * Provides synchronous access to the KeyStone Service API.
  * <p/>
  * 
- * @see AuthenticationAsyncApi
- * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Service_API_Api_Operations.html"
+ * @see <a href=
+ *      "http://docs.openstack.org/api/openstack-identity-service/2.0/content/Service_API_Api_Operations.html"
  *      />
  * @author Adrian Cole
  */
-public interface AuthenticationApi {
+public interface AuthenticationApi extends Closeable {
 
    /**
     * Authenticate to generate a token.
     * 
     * @return access with token
     */
-   Access authenticateWithTenantNameAndCredentials(@Nullable String tenantId, PasswordCredentials passwordCredentials);
+   @Named("authenticate")
+   @POST
+   @SelectJson("access")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/tokens")
+   @MapBinder(BindAuthToJsonPayload.class)
+   Access authenticateWithTenantNameAndCredentials(@Nullable @PayloadParam("tenantName") String tenantName,
+         PasswordCredentials passwordCredentials);
 
    /**
     * Authenticate to generate a token.
     * 
     * @return access with token
     */
-   Access authenticateWithTenantIdAndCredentials(@Nullable String tenantId, PasswordCredentials passwordCredentials);
+   @Named("authenticate")
+   @POST
+   @SelectJson("access")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/tokens")
+   @MapBinder(BindAuthToJsonPayload.class)
+   Access authenticateWithTenantIdAndCredentials(@Nullable @PayloadParam("tenantId") String tenantId,
+         PasswordCredentials passwordCredentials);
 
    /**
     * Authenticate to generate a token.
     * 
     * @return access with token
     */
-   Access authenticateWithTenantNameAndCredentials(@Nullable String tenantId, ApiAccessKeyCredentials passwordCredentials);
-   
+   @Named("authenticate")
+   @POST
+   @SelectJson("access")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/tokens")
+   @MapBinder(BindAuthToJsonPayload.class)
+   Access authenticateWithTenantNameAndCredentials(@Nullable @PayloadParam("tenantName") String tenantName,
+         ApiAccessKeyCredentials apiAccessKeyCredentials);
+
    /**
     * Authenticate to generate a token.
     * 
     * @return access with token
     */
-   Access authenticateWithTenantIdAndCredentials(@Nullable String tenantId, ApiAccessKeyCredentials passwordCredentials);
+   @Named("authenticate")
+   @POST
+   @SelectJson("access")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/tokens")
+   @MapBinder(BindAuthToJsonPayload.class)
+   Access authenticateWithTenantIdAndCredentials(@Nullable @PayloadParam("tenantId") String tenantId,
+         ApiAccessKeyCredentials apiAccessKeyCredentials);
 }

@@ -29,6 +29,7 @@ import java.util.Properties;
 
 import org.jclouds.hpcloud.compute.config.HPCloudComputeServiceContextModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
+import org.jclouds.openstack.keystone.v2_0.config.MappedAuthenticationApiModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.ZoneModule;
 import org.jclouds.openstack.nova.v2_0.NovaApiMetadata;
 import org.jclouds.openstack.nova.v2_0.config.NovaParserModule;
@@ -84,6 +85,7 @@ public class HPCloudComputeProviderMetadata extends BaseProviderMetadata {
                   .endpointName("identity service url ending in /v2.0/")
                   .defaultEndpoint("https://region-a.geo-1.identity.hpcloudsvc.com:35357/v2.0/")
                   .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                              .add(MappedAuthenticationApiModule.class)
                                               .add(KeystoneAuthenticationModule.class)
                                               .add(ZoneModule.class)
                                               .add(NovaParserModule.class)

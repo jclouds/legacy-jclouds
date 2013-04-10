@@ -20,6 +20,8 @@ package org.jclouds.ultradns.ws.predicates;
 
 import static org.jclouds.ultradns.ws.predicates.TrafficControllerPoolPredicates.idEqualTo;
 import static org.jclouds.ultradns.ws.predicates.TrafficControllerPoolPredicates.recordIdEqualTo;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
@@ -43,12 +45,12 @@ public class TrafficControllerPoolPredicatesTest {
 
    @Test
    public void testIdEqualToWhenEqual() {
-      assert idEqualTo("000000000000002").apply(pool);
+      assertTrue(idEqualTo("000000000000002").apply(pool));
    }
 
    @Test
    public void testIdEqualToWhenNotEqual() {
-      assert !idEqualTo("000000000000003").apply(pool);
+      assertFalse(idEqualTo("000000000000003").apply(pool));
    }
 
    TrafficControllerPoolRecord record = TrafficControllerPoolRecord.builder()
@@ -66,11 +68,11 @@ public class TrafficControllerPoolPredicatesTest {
 
    @Test
    public void testRecordIdEqualToWhenEqual() {
-      assert recordIdEqualTo("0000000000000001").apply(record);
+      assertTrue(recordIdEqualTo("0000000000000001").apply(record));
    }
 
    @Test
    public void testRecordIdEqualToWhenNotEqual() {
-      assert !recordIdEqualTo("0000000000000002").apply(record);
+      assertFalse(recordIdEqualTo("0000000000000002").apply(record));
    }
 }

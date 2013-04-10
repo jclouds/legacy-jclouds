@@ -42,9 +42,9 @@ public class ResourceRecord {
 
    private ResourceRecord(String dName, int type, int ttl, List<String> infoValues) {
       this.dName = checkNotNull(dName, "dName");
-      checkArgument(type >= 0, "type of %s must be unsigned", dName);
+      checkArgument(type >= 0, "type of %s must be >= 0", dName);
       this.type = type;
-      checkArgument(ttl >= 0, "ttl of %s must be unsigned", dName);
+      checkArgument(ttl >= 0, "ttl of %s must be >= 0", dName);
       this.ttl = ttl;
       this.infoValues = checkNotNull(infoValues, "infoValues of %s", dName);
    }

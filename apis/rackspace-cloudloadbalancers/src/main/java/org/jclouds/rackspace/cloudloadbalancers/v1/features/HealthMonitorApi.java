@@ -18,7 +18,23 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1.features;
 
+import javax.inject.Named;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.Fallbacks.FalseOnNotFoundOr422;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
+import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.HealthMonitor;
+import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.annotations.WrapWith;
 
 /**
  * The load balancing service includes a health monitoring operation which periodically checks your back-end nodes to 
@@ -31,18 +47,29 @@ import org.jclouds.rackspace.cloudloadbalancers.v1.domain.HealthMonitor;
  * failover for effectively routing traffic in case the primary node fails. This is an additional feature that will 
  * ensure you remain up in case your primary node fails.
  * <p/>
- * @see HealthMonitorAsyncApi
  * @author Everett Toews
  */
+@RequestFilters(AuthenticateRequest.class)
 public interface HealthMonitorApi {
    /**
     * Create or update a health monitor.
     */
-   void createOrUpdate(HealthMonitor healthMonitor);
+   @Named("healthmonitor:create")
+   @PUT
+   @Consumes(MediaType.APPLICATION_JSON) 
+   @Fallback(VoidOnNotFoundOr404.class)
+   @Path("/healthmonitor")
+   void createOrUpdate(@WrapWith("healthMonitor") HealthMonitor healthMonitor);
 
    /**
     * Get health monitor.
     */
+   @Named("healthmonitor:get")
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @SelectJson("healthMonitor")
+   @Fallback(NullOnNotFoundOr404.class)
+   @Path("/healthmonitor")
    HealthMonitor get();
    
    /**
@@ -50,5 +77,10 @@ public interface HealthMonitorApi {
     * 
     * @return true on a successful delete, false if the health monitor was not found
     */
+   @Named("healthmonitor:delete")
+   @DELETE
+   @Fallback(FalseOnNotFoundOr422.class)
+   @Path("/healthmonitor")
+   @Consumes("*/*")
    boolean delete();
 }

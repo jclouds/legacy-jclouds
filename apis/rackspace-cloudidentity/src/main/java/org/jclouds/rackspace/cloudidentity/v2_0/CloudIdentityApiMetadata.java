@@ -1,4 +1,3 @@
-package org.jclouds.rackspace.cloudidentity.v2_0;
 /**
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
@@ -17,6 +16,8 @@ package org.jclouds.rackspace.cloudidentity.v2_0;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.jclouds.rackspace.cloudidentity.v2_0;
+
 
 
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
@@ -33,6 +34,7 @@ import org.jclouds.openstack.keystone.v2_0.config.KeystoneRestClientModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneRestClientModule.KeystoneAdminURLModule;
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityAuthenticationModule;
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityCredentialTypes;
+import org.jclouds.rackspace.cloudidentity.v2_0.config.SyncToAsyncCloudIdentityAuthenticationApiModule;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
@@ -87,6 +89,7 @@ public class CloudIdentityApiMetadata extends KeystoneApiMetadata {
          .context(CONTEXT_TOKEN)
          .documentation(URI.create("http://docs.rackspace.com/auth/api/v2.0/auth-api-devguide/"))
          .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                     .add(SyncToAsyncCloudIdentityAuthenticationApiModule.class)
                                      .add(CloudIdentityAuthenticationModule.class)
                                      .add(KeystoneAdminURLModule.class)
                                      .add(KeystoneParserModule.class)
