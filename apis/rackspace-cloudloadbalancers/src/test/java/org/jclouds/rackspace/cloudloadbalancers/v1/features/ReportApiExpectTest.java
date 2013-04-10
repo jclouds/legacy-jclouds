@@ -17,7 +17,7 @@
  * under the License.
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1.features;
-
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
@@ -31,7 +31,6 @@ import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerStats;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancerUsage;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.Protocol;
-import org.jclouds.rackspace.cloudloadbalancers.v1.features.ReportApi;
 import org.jclouds.rackspace.cloudloadbalancers.v1.functions.DateParser;
 import org.jclouds.rackspace.cloudloadbalancers.v1.internal.BaseCloudLoadBalancerApiExpectTest;
 import org.testng.annotations.Test;
@@ -62,7 +61,7 @@ public class ReportApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<Clou
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/report-billable-list.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/report-billable-list.json")).build()
       ).getReportApiForZone("DFW");
             
       FluentIterable<LoadBalancer> loadBalancers = api.listBillableLoadBalancers(aWeekAgo, today).concat();
@@ -88,7 +87,7 @@ public class ReportApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<Clou
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/report-historical-get.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/report-historical-get.json")).build()
       ).getReportApiForZone("DFW");
 
       HistoricalUsage historicalUsage = api.getHistoricalUsage(aWeekAgo, today);
@@ -116,7 +115,7 @@ public class ReportApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<Clou
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/report-loadbalancerusage-list.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/report-loadbalancerusage-list.json")).build()
       ).getReportApiForZone("DFW");
 
       FluentIterable<LoadBalancerUsage> loadBalancerUsages = api.listLoadBalancerUsage(2000, aWeekAgo, today).concat();
@@ -130,7 +129,7 @@ public class ReportApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<Clou
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/report-loadbalancerusage-list.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/report-loadbalancerusage-list.json")).build()
       ).getReportApiForZone("DFW");
             
       FluentIterable<LoadBalancerUsage> loadBalancerUsages = api.listCurrentLoadBalancerUsage(2000).concat();
@@ -144,7 +143,7 @@ public class ReportApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<Clou
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/report-loadbalancerstats-get.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/report-loadbalancerstats-get.json")).build()
       ).getReportApiForZone("DFW");
             
       LoadBalancerStats loadBalancerStats = api.getLoadBalancerStats(2000);
@@ -163,7 +162,7 @@ public class ReportApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<Clou
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/report-protocols-list.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/report-protocols-list.json")).build()
       ).getReportApiForZone("DFW");
             
       Iterable<Protocol> protocols = api.listProtocols();
@@ -177,7 +176,7 @@ public class ReportApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<Clou
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/report-algorithms-list.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/report-algorithms-list.json")).build()
       ).getReportApiForZone("DFW");
             
       Iterable<String> algorithms = api.listAlgorithms();

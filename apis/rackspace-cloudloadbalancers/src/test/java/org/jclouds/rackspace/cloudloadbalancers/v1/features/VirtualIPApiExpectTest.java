@@ -17,19 +17,20 @@
  * under the License.
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1.features;
-
+import static com.google.common.net.HttpHeaders.ACCEPT;
+import static javax.ws.rs.HttpMethod.DELETE;
+import static javax.ws.rs.HttpMethod.POST;
+import static javax.ws.rs.core.MediaType.WILDCARD;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 import java.util.List;
 
-import javax.ws.rs.core.MediaType;
-
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.cloudloadbalancers.v1.CloudLoadBalancersApi;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.VirtualIP;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.VirtualIPWithId;
-import org.jclouds.rackspace.cloudloadbalancers.v1.features.VirtualIPApi;
 import org.jclouds.rackspace.cloudloadbalancers.v1.internal.BaseCloudLoadBalancerApiExpectTest;
 import org.testng.annotations.Test;
 
@@ -46,7 +47,7 @@ public class VirtualIPApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<C
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/virtualips-list.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/virtualips-list.json")).build()
       ).getVirtualIPApiForZoneAndLoadBalancer("DFW", 2000);
 
       Iterable<VirtualIPWithId> virtualIPs = api.list();
@@ -58,8 +59,8 @@ public class VirtualIPApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<C
       VirtualIPApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("POST").endpoint(endpoint).payload(payloadFromResource("/virtualips-create.json")).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/virtualips-create-response.json")).build()
+            authenticatedGET().method(POST).endpoint(endpoint).payload(payloadFromResource("/virtualips-create.json")).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/virtualips-create-response.json")).build()
       ).getVirtualIPApiForZoneAndLoadBalancer("DFW", 2000);
          
       api.create(VirtualIP.publicIPv6());
@@ -70,8 +71,8 @@ public class VirtualIPApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<C
       VirtualIPApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("DELETE").endpoint(endpoint).replaceHeader("Accept", MediaType.WILDCARD).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(DELETE).endpoint(endpoint).replaceHeader(ACCEPT, WILDCARD).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getVirtualIPApiForZoneAndLoadBalancer("DFW", 2000);
 
       api.delete(23);
@@ -82,8 +83,8 @@ public class VirtualIPApiExpectTest extends BaseCloudLoadBalancerApiExpectTest<C
       VirtualIPApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("DELETE").endpoint(endpoint).replaceHeader("Accept", MediaType.WILDCARD).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(DELETE).endpoint(endpoint).replaceHeader(ACCEPT, WILDCARD).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getVirtualIPApiForZoneAndLoadBalancer("DFW", 2000);
 
       List<Integer> virtualIPIds = ImmutableList.<Integer> of(23, 24);

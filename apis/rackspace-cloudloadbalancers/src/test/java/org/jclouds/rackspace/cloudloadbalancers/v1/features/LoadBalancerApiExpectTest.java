@@ -17,25 +17,29 @@
  * under the License.
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1.features;
-
+import static com.google.common.net.HttpHeaders.ACCEPT;
+import static javax.ws.rs.HttpMethod.DELETE;
+import static javax.ws.rs.HttpMethod.POST;
+import static javax.ws.rs.HttpMethod.PUT;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.WILDCARD;
+import static javax.ws.rs.core.Response.Status.ACCEPTED;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.Set;
 
-import javax.ws.rs.core.MediaType;
-
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.cloudloadbalancers.v1.CloudLoadBalancersApi;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancer;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.UpdateLoadBalancer;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.CreateLoadBalancer;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.Metadata;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.AddNode;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.CreateLoadBalancer;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancer;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.Metadata;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.Node;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.UpdateLoadBalancer;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.VirtualIP;
-import org.jclouds.rackspace.cloudloadbalancers.v1.features.LoadBalancerApi;
 import org.jclouds.rackspace.cloudloadbalancers.v1.functions.ParseLoadBalancerTest;
 import org.jclouds.rackspace.cloudloadbalancers.v1.functions.ParseLoadBalancersTest;
 import org.jclouds.rackspace.cloudloadbalancers.v1.internal.BaseCloudLoadBalancerApiExpectTest;
@@ -56,7 +60,7 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/loadbalancers-list.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/loadbalancers-list.json")).build()
       ).getLoadBalancerApiForZone("DFW");
 
       Set<LoadBalancer> loadBalancers = api.list().concat().toSet();
@@ -69,7 +73,7 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/loadbalancer-get.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/loadbalancer-get.json")).build()
       ).getLoadBalancerApiForZone("DFW");
 
       LoadBalancer loadBalancer = api.get(2000);
@@ -82,11 +86,11 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET()
-                  .method("POST")
+                  .method(POST)
                   .payload(payloadFromResource("/loadbalancer-create.json"))
                   .endpoint(endpoint)
                   .build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/loadbalancer-get.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/loadbalancer-get.json")).build()
       ).getLoadBalancerApiForZone("DFW");
 
       AddNode addNode1 = AddNode.builder()
@@ -122,8 +126,8 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
       LoadBalancerApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("PUT").payload(payloadFromResource("/loadbalancer-update.json")).endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(202).payload("").build()
+            authenticatedGET().method(PUT).payload(payloadFromResource("/loadbalancer-update.json")).endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(ACCEPTED.getStatusCode()).payload("").build()
       ).getLoadBalancerApiForZone("DFW");
 
       UpdateLoadBalancer updateLB = UpdateLoadBalancer.builder()
@@ -142,11 +146,11 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET()
-                  .method("DELETE")
-                  .replaceHeader("Accept", MediaType.WILDCARD)
+                  .method(DELETE)
+                  .replaceHeader(ACCEPT, WILDCARD)
                   .endpoint(endpoint)
                   .build(),
-            HttpResponse.builder().statusCode(202).payload("").build()
+            HttpResponse.builder().statusCode(ACCEPTED.getStatusCode()).payload("").build()
       ).getLoadBalancerApiForZone("DFW");
       
       api.delete(2000);
@@ -158,7 +162,7 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET().endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/metadata-list.json")).build()
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/metadata-list.json")).build()
       ).getLoadBalancerApiForZone("DFW");
 
       Metadata metadata = api.getMetadata(2000);
@@ -171,10 +175,10 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
             authenticatedGET()
-               .method("POST")
+               .method(POST)
                .endpoint(endpoint)
-               .payload(payloadFromResourceWithContentType("/metadata-create.json", MediaType.APPLICATION_JSON)).build(),
-            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/metadata-list.json")).build()
+               .payload(payloadFromResourceWithContentType("/metadata-create.json", APPLICATION_JSON)).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/metadata-list.json")).build()
       ).getLoadBalancerApiForZone("DFW");
          
       Metadata metadata = api.createMetadata(2000, getExpectedMetadata());
@@ -186,8 +190,8 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
       LoadBalancerApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("DELETE").endpoint(endpoint).replaceHeader("Accept", MediaType.WILDCARD).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(DELETE).endpoint(endpoint).replaceHeader(ACCEPT, WILDCARD).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getLoadBalancerApiForZone("DFW");
 
       assertTrue(api.deleteMetadatum(2000, 23));
@@ -198,8 +202,8 @@ public class LoadBalancerApiExpectTest extends BaseCloudLoadBalancerApiExpectTes
       LoadBalancerApi api = requestsSendResponses(
             rackspaceAuthWithUsernameAndApiKey,
             responseWithAccess, 
-            authenticatedGET().method("DELETE").endpoint(endpoint).replaceHeader("Accept", MediaType.WILDCARD).build(),
-            HttpResponse.builder().statusCode(200).build()
+            authenticatedGET().method(DELETE).endpoint(endpoint).replaceHeader(ACCEPT, WILDCARD).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).build()
       ).getLoadBalancerApiForZone("DFW");
       
       

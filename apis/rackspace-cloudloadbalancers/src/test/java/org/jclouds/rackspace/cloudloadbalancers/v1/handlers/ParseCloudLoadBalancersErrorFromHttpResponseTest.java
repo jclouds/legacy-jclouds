@@ -17,11 +17,12 @@
  * under the License.
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1.handlers;
+import static javax.ws.rs.HttpMethod.GET;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 import java.net.URI;
 
 import org.jclouds.http.handlers.BaseHttpErrorHandlerTest;
-import org.jclouds.rackspace.cloudloadbalancers.v1.handlers.ParseCloudLoadBalancersErrorFromHttpResponse;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
@@ -33,11 +34,11 @@ import org.testng.annotations.Test;
 public class ParseCloudLoadBalancersErrorFromHttpResponseTest extends
          BaseHttpErrorHandlerTest<ParseCloudLoadBalancersErrorFromHttpResponse> {
    @Test
-   public void test404NotFound() {
+   public void testNotFound() {
       assertCodeMakes(
-               "GET",
+               GET,
                URI.create("https://ord.loadbalancers.api.rackspacecloud.com/v1.0/1234/loadbalancers/2000"),
-               404,
+               NOT_FOUND.getStatusCode(),
                "Not Found",
                "<itemNotFound code=\"404\" xmlns=\"http://docs.openstack.org/loadbalancers/api/v1.0\">\n    <message>Object not Found</message>\n</itemNotFound>",
                ResourceNotFoundException.class, "loadbalancers 2000 not found");
