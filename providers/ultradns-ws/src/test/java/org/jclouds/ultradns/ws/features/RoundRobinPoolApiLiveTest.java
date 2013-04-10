@@ -54,11 +54,11 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
    @Override
    @BeforeClass(groups = { "integration", "live" })
-   public void setupContext() {
-      super.setupContext();
-      context.getApi().getZoneApi().delete(zoneName);
-      account = context.getApi().getCurrentAccount();
-      context.getApi().getZoneApi().createInAccount(zoneName, account.getId());
+   public void setup() {
+      super.setup();
+      api.getZoneApi().delete(zoneName);
+      account = api.getCurrentAccount();
+      api.getZoneApi().createInAccount(zoneName, account.getId());
    }
 
    private void checkRRPool(RoundRobinPool pool) {
@@ -70,7 +70,7 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
    @Test
    public void testListRRPools() {
-      for (Zone zone : context.getApi().getZoneApi().listByAccount(account.getId())) {
+      for (Zone zone : api.getZoneApi().listByAccount(account.getId())) {
          for (RoundRobinPool pool : api(zone.getName()).list()) {
             checkRRPool(pool);
          }
@@ -79,7 +79,7 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
    @Test
    public void testListRRPoolRecords() {
-      for (Zone zone : context.getApi().getZoneApi().listByAccount(account.getId())) {
+      for (Zone zone : api.getZoneApi().listByAccount(account.getId())) {
          for (RoundRobinPool pool : api(zone.getName()).list()) {
             for (ResourceRecordMetadata record : api(zone.getName()).listRecords(pool.getId())) {
                ResourceRecordApiLiveTest.checkResourceRecordMetadata(record);
@@ -239,17 +239,17 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    }
 
    private RoundRobinPoolApi api(String zoneName) {
-      return context.getApi().getRoundRobinPoolApiForZone(zoneName);
+      return api.getRoundRobinPoolApiForZone(zoneName);
    }
 
    @Override
    @AfterClass(groups = { "integration", "live" })
-   protected void tearDownContext() {
+   protected void tearDown() {
       if (aPoolId != null)
          api(zoneName).delete(aPoolId);
       if (aaaaPoolId != null)
          api(zoneName).delete(aaaaPoolId);
-      context.getApi().getZoneApi().delete(zoneName);
-      super.tearDownContext();
+      api.getZoneApi().delete(zoneName);
+      super.tearDown();
    }
 }

@@ -77,7 +77,6 @@ import org.jclouds.providers.internal.UpdateProviderMetadataFromProperties;
 import org.jclouds.rest.ConfiguresCredentialStore;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestApiMetadata;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.config.CredentialStoreModule;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.config.RestModule;
@@ -110,14 +109,14 @@ import com.google.inject.TypeLiteral;
  * that api.
  * 
  * <br/>
- * ex. to build a {@link RestContext} on a particular endpoint using the typed
+ * ex. to build a {@code Api} on a particular endpoint using the typed
  * interface
  * 
  * <pre>
- * context = ContextBuilder.newBuilder(new NovaApiMetadata())
- *                         .endpoint("http://10.10.10.10:5000/v2.0")
- *                         .credentials(user, pass)
- *                         .build(NovaApiMetadata.CONTEXT_TOKEN)
+ * api = ContextBuilder.newBuilder(new NovaApiMetadata())
+ *                     .endpoint("http://10.10.10.10:5000/v2.0")
+ *                     .credentials(user, pass)
+ *                     .buildApi(NovaApi.class);
  * </pre>
  * 
  * <br/>
@@ -623,7 +622,15 @@ public class ContextBuilder {
     *</pre>
     */
    public <A extends Closeable> A buildApi(Class<A> api) {
-      return buildInjector().getInstance(api);
+      return buildApi(typeToken(api));
+   }
+
+   /**
+    * like {@link #buildApi(Class)} but permits a type-token for convenience.
+    */
+   @SuppressWarnings("unchecked")
+   public <A extends Closeable> A buildApi(TypeToken<A> apiType) {
+      return (A) buildInjector().getInstance(Key.get(TypeLiteral.get(apiType.getType())));
    }
 
    public ApiMetadata getApiMetadata() {

@@ -28,13 +28,16 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
-public class BaseTerremarkECloudClientLiveTest extends
-         BaseTerremarkClientLiveTest<TerremarkECloudClient, TerremarkECloudAsyncClient> {
+public class BaseTerremarkECloudClientLiveTest extends BaseTerremarkClientLiveTest {
    @Override
    protected Properties setupProperties() {
       Properties props = super.setupProperties();
       props.setProperty(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_VDC,
             ".* - " + System.getProperty("test.trmk-ecloud.datacenter", "MIA"));
       return props;
+   }
+
+   protected TerremarkECloudClient api() {
+      return TerremarkECloudClient.class.cast(api);
    }
 }

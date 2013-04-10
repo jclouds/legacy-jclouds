@@ -54,7 +54,7 @@ public class DynectApiMockTest {
                            .endpoint(uri)
                            .overrides(overrides)
                            .modules(modules)
-                           .build(DynECTApiMetadata.CONTEXT_TOKEN).getApi();
+                           .buildApi(DynECTApi.class);
    }
 
    String session = "{\"status\": \"success\", \"data\": {\"token\": \"FFFFFFFFFF\", \"version\": \"3.3.8\"}, \"job_id\": 254417252, \"msgs\": [{\"INFO\": \"login: Login successful\", \"SOURCE\": \"BLL\", \"ERR_CD\": null, \"LVL\": \"INFO\"}]}";

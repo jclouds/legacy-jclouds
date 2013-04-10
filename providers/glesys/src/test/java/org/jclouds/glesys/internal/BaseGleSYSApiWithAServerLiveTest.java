@@ -60,35 +60,35 @@ public class BaseGleSYSApiWithAServerLiveTest extends BaseGleSYSApiLiveTest {
 
    @BeforeClass(groups = { "integration", "live" })
    @Override
-   public void setupContext() {
+   public void setup() {
       assertNull(serverId, "This method should be called EXACTLY once per run");
-      super.setupContext();
+      super.setup();
       serverStatusChecker = createServer(hostName);
    }
 
    @AfterClass(groups = { "integration", "live" })
    @Override
-   public void tearDownContext() {
-      gleContext.getApi().getServerApi().destroy(serverId, DestroyServerOptions.Builder.discardIp());
-      super.tearDownContext();
+   public void tearDown() {
+      api.getServerApi().destroy(serverId, DestroyServerOptions.Builder.discardIp());
+      super.tearDown();
    }
 
    protected void createDomain(String domain) {
-      final DomainApi api = gleContext.getApi().getDomainApi();
-      int before = api.list().size();
-      api.create(domain);
+      final DomainApi domainApi = api.getDomainApi();
+      int before = domainApi.list().size();
+      domainApi.create(domain);
       Predicate<Integer> result = retry(new Predicate<Integer>() {
          public boolean apply(Integer value) {
-            return api.list().size() == value;
+            return domainApi.list().size() == value.intValue();
          }
       }, 30, 1, SECONDS);
       assertTrue(result.apply(before + 1));
    }
 
    protected Predicate<State> createServer(String hostName) {
-      final ServerApi api = gleContext.getApi().getServerApi();
+      final ServerApi serverApi = api.getServerApi();
 
-      ServerDetails testServer = api.createWithHostnameAndRootPassword(
+      ServerDetails testServer = serverApi.createWithHostnameAndRootPassword(
             ServerSpec.builder().datacenter("Falkenberg").platform("OpenVZ").templateName("Ubuntu 10.04 LTS 32-bit")
                   .diskSizeGB(5).memorySizeMB(512).cpuCores(1).transferGB(50).build(), hostName, UUID.randomUUID()
                   .toString().replace("-",""));
@@ -97,7 +97,7 @@ public class BaseGleSYSApiWithAServerLiveTest extends BaseGleSYSApiLiveTest {
       assertEquals(testServer.getHostname(), hostName);
       assertFalse(testServer.getIps().isEmpty());
 
-      Predicate<State> statusChecker = statusChecker(api, testServer.getId());
+      Predicate<State> statusChecker = statusChecker(serverApi, testServer.getId());
       assertTrue(statusChecker.apply(Server.State.RUNNING));
       serverId = testServer.getId();
       return statusChecker;

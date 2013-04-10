@@ -45,8 +45,8 @@ public class MessageApiLiveTest extends BaseSQSApiLiveTest {
 
    @BeforeClass(groups = { "integration", "live" })
    @Override
-   public void setupContext() {
-      super.setupContext();
+   public void setup() {
+      super.setup();
       recreateQueueInRegion(prefix, null);
    }
 
@@ -55,14 +55,14 @@ public class MessageApiLiveTest extends BaseSQSApiLiveTest {
 
    public void testSendMessage() {
       for (URI queue : queues) {
-         assertEquals(api().getMessageApiForQueue(queue).send(message).getMD5(), md5);
+         assertEquals(api(queue).send(message).getMD5(), md5);
       }
    }
 
    @Test(dependsOnMethods = "testSendMessage")
    public void testReceiveMessageWithoutHidingMessage() {
       for (URI queue : queues) {
-         assertEquals(api().getMessageApiForQueue(queue).receive(attribute("All").visibilityTimeout(0)).getMD5(), md5);
+         assertEquals(api(queue).receive(attribute("All").visibilityTimeout(0)).getMD5(), md5);
       }
    }
 
@@ -71,24 +71,27 @@ public class MessageApiLiveTest extends BaseSQSApiLiveTest {
    @Test(dependsOnMethods = "testReceiveMessageWithoutHidingMessage")
    public void testChangeMessageVisibility() {
       for (URI queue : queues) {
-         MessageApi api = api().getMessageApiForQueue(queue);
+         MessageApi messageApi = api(queue);
          // start hiding it at 5 seconds
-         receiptHandle = api.receive(attribute("None").visibilityTimeout(5)).getReceiptHandle();
+         receiptHandle = messageApi.receive(attribute("None").visibilityTimeout(5)).getReceiptHandle();
          // hidden message, so we can't see it
-         assertNull(api.receive());
+         assertNull(messageApi.receive());
          // this should unhide it
-         api.changeVisibility(receiptHandle, 0);
+         messageApi.changeVisibility(receiptHandle, 0);
          // so we can see it again
-         assertEquals(api.receive(attribute("All").visibilityTimeout(0)).getMD5(), md5);
+         assertEquals(messageApi.receive(attribute("All").visibilityTimeout(0)).getMD5(), md5);
       }
    }
 
    @Test(dependsOnMethods = "testChangeMessageVisibility")
    public void testDeleteMessage() throws InterruptedException {
       for (URI queue : queues) {
-         api().getMessageApiForQueue(queue).delete(receiptHandle);
+         api(queue).delete(receiptHandle);
          assertNoMessages(queue);
       }
    }
 
+   private MessageApi api(URI queue) {
+      return api.getMessageApiForQueue(queue);
+   }
 }

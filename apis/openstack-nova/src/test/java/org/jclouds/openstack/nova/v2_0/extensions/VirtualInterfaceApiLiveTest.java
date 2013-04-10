@@ -44,10 +44,10 @@ public class VirtualInterfaceApiLiveTest extends BaseNovaApiLiveTest {
 
    @BeforeClass(groups = {"integration", "live"})
    @Override
-   public void setupContext() {
-      super.setupContext();
-      zone = Iterables.getLast(novaContext.getApi().getConfiguredZones(), "nova");
-      apiOption = novaContext.getApi().getVirtualInterfaceExtensionForZone(zone);
+   public void setup() {
+      super.setup();
+      zone = Iterables.getLast(api.getConfiguredZones(), "nova");
+      apiOption = api.getVirtualInterfaceExtensionForZone(zone);
    }
 
    public void testListVirtualInterfaces() {
@@ -62,7 +62,7 @@ public class VirtualInterfaceApiLiveTest extends BaseNovaApiLiveTest {
             }
          } finally {
             if (testServer != null) {
-               novaContext.getApi().getServerApiForZone(zone).delete(testServer.getId());
+               api.getServerApiForZone(zone).delete(testServer.getId());
             }
          }
    }

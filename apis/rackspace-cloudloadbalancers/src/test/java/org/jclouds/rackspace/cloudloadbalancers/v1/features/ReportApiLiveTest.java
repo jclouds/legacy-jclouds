@@ -56,10 +56,10 @@ public class ReportApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
       CreateLoadBalancer createLB = CreateLoadBalancer.builder()
             .name(prefix+"-jclouds").protocol("HTTP").port(80).virtualIPType(Type.PUBLIC).node(addNode).build(); 
 
-      zone = Iterables.getFirst(clbApi.getConfiguredZones(), null);
-      lb = clbApi.getLoadBalancerApiForZone(zone).create(createLB);
+      zone = Iterables.getFirst(api.getConfiguredZones(), null);
+      lb = api.getLoadBalancerApiForZone(zone).create(createLB);
       
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
+      assertTrue(awaitAvailable(api.getLoadBalancerApiForZone(zone)).apply(lb));
    }
 
    @Test(dependsOnMethods = "testCreateLoadBalancer")
@@ -69,20 +69,20 @@ public class ReportApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
       Date yesterday = calendar.getTime();
       Date today = new Date();
 
-      FluentIterable<LoadBalancer> loadBalancers = clbApi.getReportApiForZone(zone).listBillableLoadBalancers(yesterday, today).concat();
+      FluentIterable<LoadBalancer> loadBalancers = api.getReportApiForZone(zone).listBillableLoadBalancers(yesterday, today).concat();
       assertNotNull(loadBalancers);
       
-      HistoricalUsage historicalUsage = clbApi.getReportApiForZone(zone).getHistoricalUsage(yesterday, today);
+      HistoricalUsage historicalUsage = api.getReportApiForZone(zone).getHistoricalUsage(yesterday, today);
       assertNotEquals(historicalUsage.getAccountId(), 0);
 
-      FluentIterable<LoadBalancerUsage> loadBalancerUsages = clbApi.getReportApiForZone(zone).listLoadBalancerUsage(lb.getId(), yesterday, today).concat();
+      FluentIterable<LoadBalancerUsage> loadBalancerUsages = api.getReportApiForZone(zone).listLoadBalancerUsage(lb.getId(), yesterday, today).concat();
       assertNotNull(loadBalancerUsages);
 
-      loadBalancerUsages = clbApi.getReportApiForZone(zone).listCurrentLoadBalancerUsage(lb.getId()).concat();
+      loadBalancerUsages = api.getReportApiForZone(zone).listCurrentLoadBalancerUsage(lb.getId()).concat();
       assertNotNull(loadBalancerUsages);
       
       try {
-         LoadBalancerStats loadBalancerStats = clbApi.getReportApiForZone(zone).getLoadBalancerStats(lb.getId());
+         LoadBalancerStats loadBalancerStats = api.getReportApiForZone(zone).getLoadBalancerStats(lb.getId());
          assertNotNull(loadBalancerStats);
       }
       catch (HttpResponseException e) {
@@ -92,19 +92,19 @@ public class ReportApiLiveTest extends BaseCloudLoadBalancersApiLiveTest {
          }
       }
       
-      Iterable<Protocol> protocols = clbApi.getReportApiForZone(zone).listProtocols();
+      Iterable<Protocol> protocols = api.getReportApiForZone(zone).listProtocols();
       assertTrue(!Iterables.isEmpty(protocols));
 
-      Iterable<String> algorithms = clbApi.getReportApiForZone(zone).listAlgorithms();
+      Iterable<String> algorithms = api.getReportApiForZone(zone).listAlgorithms();
       assertTrue(!Iterables.isEmpty(algorithms));
    }
 
    @Override
    @AfterGroups(groups = "live")
-   protected void tearDownContext() {
-      assertTrue(awaitAvailable(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
-      clbApi.getLoadBalancerApiForZone(zone).delete(lb.getId());
-      assertTrue(awaitDeleted(clbApi.getLoadBalancerApiForZone(zone)).apply(lb));
-      super.tearDownContext();
+   protected void tearDown() {
+      assertTrue(awaitAvailable(api.getLoadBalancerApiForZone(zone)).apply(lb));
+      api.getLoadBalancerApiForZone(zone).delete(lb.getId());
+      assertTrue(awaitDeleted(api.getLoadBalancerApiForZone(zone)).apply(lb));
+      super.tearDown();
    }
 }

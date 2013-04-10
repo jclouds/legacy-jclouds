@@ -44,7 +44,6 @@ import org.jclouds.elasticstack.predicates.DriveClaimed;
 import org.jclouds.elasticstack.util.Servers;
 import org.jclouds.io.Payloads;
 import org.jclouds.predicates.SocketOpen;
-import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.util.Strings2;
@@ -76,7 +75,6 @@ public class ElasticStackClientLiveTest extends BaseComputeServiceContextLiveTes
    protected int maxDriveImageTime = 360;
    protected String vncPassword = "Il0veVNC";
    protected ElasticStackClient client;
-   protected RestContext<ElasticStackClient, ElasticStackAsyncClient> cloudStackContext;
    protected Predicate<HostAndPort> socketTester;
    protected Predicate<DriveInfo> driveNotClaimed;
    protected String imageId;
@@ -87,7 +85,7 @@ public class ElasticStackClientLiveTest extends BaseComputeServiceContextLiveTes
       super.setupContext();
       imageId = view.getComputeService().templateBuilder().build().getImage().getId();
          
-      client = view.unwrap(ElasticStackApiMetadata.CONTEXT_TOKEN).getApi();
+      client = view.utils().injector().getInstance(ElasticStackClient.class);
       driveNotClaimed = retry(Predicates.not(new DriveClaimed(client)), maxDriveImageTime, 1, SECONDS);
       SocketOpen socketOpen = context.utils().injector().getInstance(SocketOpen.class);
       socketTester = retry(socketOpen, maxDriveImageTime, 1, SECONDS);

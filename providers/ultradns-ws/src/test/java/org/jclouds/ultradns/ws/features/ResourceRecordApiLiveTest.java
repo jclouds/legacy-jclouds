@@ -57,18 +57,18 @@ public class ResourceRecordApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
    @Override
    @BeforeClass(groups = { "integration", "live" })
-   public void setupContext() {
-      super.setupContext();
-      context.getApi().getZoneApi().delete(zoneName);
-      account = context.getApi().getCurrentAccount();
-      context.getApi().getZoneApi().createInAccount(zoneName, account.getId());
+   public void setup() {
+      super.setup();
+      api.getZoneApi().delete(zoneName);
+      account = api.getCurrentAccount();
+      api.getZoneApi().createInAccount(zoneName, account.getId());
    }
 
    @Override
    @AfterClass(groups = { "integration", "live" })
-   protected void tearDownContext() {
-      context.getApi().getZoneApi().delete(zoneName);
-      super.tearDownContext();
+   protected void tearDown() {
+      api.getZoneApi().delete(zoneName);
+      super.tearDown();
    }
 
    static void checkResourceRecord(ResourceRecord rr) {
@@ -93,7 +93,7 @@ public class ResourceRecordApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
    @Test
    public void testListResourceRecords() {
-      for (Zone zone : context.getApi().getZoneApi().listByAccount(account.getId())) {
+      for (Zone zone : api.getZoneApi().listByAccount(account.getId())) {
          zones.incrementAndGet();
          for (ResourceRecordMetadata rr : api(zone.getName()).list()) {
             recordTypeCounts.getUnchecked(rr.getRecord().getType()).incrementAndGet();
@@ -190,6 +190,6 @@ public class ResourceRecordApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    }
 
    private ResourceRecordApi api(String zoneName) {
-      return context.getApi().getResourceRecordApiForZone(zoneName);
+      return api.getResourceRecordApiForZone(zoneName);
    }
 }

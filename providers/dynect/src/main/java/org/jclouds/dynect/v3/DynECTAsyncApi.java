@@ -20,6 +20,8 @@ package org.jclouds.dynect.v3;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
+import java.io.Closeable;
+
 import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -47,8 +49,11 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see DynECTApi
  * @see <a href="https://manage.dynect.net/help/docs/api2/rest/" />
  * @author Adrian Cole
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(DynECTApi.class)} as
+ *             {@link DynECTAsyncApi} interface will be removed in jclouds 1.7.
  */
-public interface DynECTAsyncApi {
+
+public interface DynECTAsyncApi extends Closeable {
    /**
     * @see DynECTApi#getJob
     */

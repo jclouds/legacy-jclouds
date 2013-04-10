@@ -30,7 +30,6 @@ import org.jclouds.openstack.keystone.v2_0.config.KeystoneParserModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneRestClientModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneRestClientModule.KeystoneAdminURLModule;
 import org.jclouds.openstack.v2_0.ServiceType;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
@@ -44,7 +43,12 @@ import com.google.inject.Module;
  */
 public class KeystoneApiMetadata extends BaseRestApiMetadata {
    
-   public static final TypeToken<RestContext<? extends KeystoneApi,? extends  KeystoneAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<? extends KeystoneApi,? extends  KeystoneAsyncApi>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(KeystoneApi.class)} as
+    *             {@link KeystoneAsyncApi} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<KeystoneApi, KeystoneAsyncApi>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<KeystoneApi, KeystoneAsyncApi>>() {
       private static final long serialVersionUID = 1L;
    };
 
@@ -69,6 +73,7 @@ public class KeystoneApiMetadata extends BaseRestApiMetadata {
    }
 
    public static abstract class Builder<T extends Builder<T>> extends BaseRestApiMetadata.Builder<T> {
+      @SuppressWarnings("deprecation")
       protected Builder() {
          this(KeystoneApi.class, KeystoneAsyncApi.class);
       }

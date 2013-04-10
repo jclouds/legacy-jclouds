@@ -63,14 +63,14 @@ public class BulkMessageApiLiveTest extends BaseSQSApiLiveTest {
 
    @BeforeClass(groups = { "integration", "live" })
    @Override
-   public void setupContext() {
-      super.setupContext();
+   public void setup() {
+      super.setup();
       recreateQueueInRegion(prefix, null);
    }
 
    public void testSendMessages() {
       for (URI queue : queues) {
-         BatchResult<? extends MessageIdAndMD5> acks = api().getMessageApiForQueue(queue).send(idPayload);
+         BatchResult<? extends MessageIdAndMD5> acks = api.getMessageApiForQueue(queue).send(idPayload);
 
          assertEquals(acks.size(), idPayload.size(), "error sending " + acks);
          assertEquals(acks.keySet(), idPayload.keySet());
@@ -87,9 +87,9 @@ public class BulkMessageApiLiveTest extends BaseSQSApiLiveTest {
    @Test(dependsOnMethods = "testSendMessages")
    public void testChangeMessageVisibility() {
       for (URI queue : queues) {
-         MessageApi api = api().getMessageApiForQueue(queue);
+         MessageApi messageApi = api.getMessageApiForQueue(queue);
          
-         Set<Message> messages = collectMessages(api);
+         Set<Message> messages = collectMessages(messageApi);
 
          receiptHandles = Iterables.transform(messages, new Function<Message, String>() {
             @Override
@@ -99,14 +99,14 @@ public class BulkMessageApiLiveTest extends BaseSQSApiLiveTest {
          });
 
          // hidden message, so we can't see it
-         assertNull(api.receive());
+         assertNull(messageApi.receive());
 
          // this should unhide it
-         BatchResult<String> acks = api.changeVisibility(receiptHandles, 0);
+         BatchResult<String> acks = messageApi.changeVisibility(receiptHandles, 0);
          assertEquals(acks.size(), messages.size(), "error changing visibility " + acks);
 
          // so we can see it again
-         assertEquals(collectMessages(api).size(), messages.size());
+         assertEquals(collectMessages(messageApi).size(), messages.size());
       }
    }
 
@@ -117,7 +117,7 @@ public class BulkMessageApiLiveTest extends BaseSQSApiLiveTest {
    @Test(dependsOnMethods = "testChangeMessageVisibility")
    public void testDeleteMessage() throws InterruptedException {
       for (URI queue : queues) {
-         BatchResult<String> acks = api().getMessageApiForQueue(queue).delete(receiptHandles);
+         BatchResult<String> acks = api.getMessageApiForQueue(queue).delete(receiptHandles);
          assertEquals(acks.size(), Iterables.size(receiptHandles), "error deleting messages " + acks);
          assertNoMessages(queue);
       }

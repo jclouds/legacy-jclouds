@@ -24,11 +24,9 @@ import java.util.Properties;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.dynect.v3.config.DynECTParserModule;
 import org.jclouds.dynect.v3.config.DynECTRestClientModule;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 
 /**
@@ -39,10 +37,6 @@ import com.google.inject.Module;
 public class DynECTApiMetadata extends BaseRestApiMetadata {
    
    public static final String ANONYMOUS_IDENTITY = "ANONYMOUS";
-
-   public static final TypeToken<RestContext<DynECTApi, DynECTAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<DynECTApi, DynECTAsyncApi>>() {
-      private static final long serialVersionUID = 1L;
-   };
 
    @Override
    public Builder toBuilder() {

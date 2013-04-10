@@ -32,9 +32,11 @@ import org.jclouds.rest.annotations.Delegate;
  * Provides asynchronous access to EC2 services.
  * 
  * @author Adrian Cole
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(EC2Client.class)} as
+ *             {@link EC2AsyncClient} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 public interface EC2AsyncClient extends EC2AsyncApi {
-   public static final String VERSION = "2010-06-15";
 
    /**
     * Provides asynchronous access to AMI services.

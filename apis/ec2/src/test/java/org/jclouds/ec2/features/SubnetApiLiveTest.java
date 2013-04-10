@@ -77,7 +77,7 @@ public class SubnetApiLiveTest extends BaseEC2ApiLiveTest {
     }
 
     private SubnetApi api() {
-        Optional<? extends SubnetApi> subnetOption = context.getApi().getSubnetApi();
+        Optional<? extends SubnetApi> subnetOption = api.getSubnetApi();
         if (!subnetOption.isPresent())
             throw new SkipException("subnet api not present");
         return subnetOption.get();

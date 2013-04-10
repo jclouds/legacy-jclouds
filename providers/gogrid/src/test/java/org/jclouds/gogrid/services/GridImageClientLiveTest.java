@@ -51,13 +51,13 @@ import com.google.common.collect.Iterables;
 public class GridImageClientLiveTest extends BaseGoGridClientLiveTest {
 
    public void testListImages() throws Exception {
-      Set<ServerImage> response = restContext.getApi().getImageServices().getImageList();
+      Set<ServerImage> response = api.getImageServices().getImageList();
       assert null != response;
       for (ServerImage image : response) {
          assert image.getId() >= 0 : image;
          checkImage(image);
 
-         ServerImage query = Iterables.getOnlyElement(restContext.getApi().getImageServices()
+         ServerImage query = Iterables.getOnlyElement(api.getImageServices()
                .getImagesById(image.getId()));
          assertEquals(query.getId(), image.getId());
 
@@ -86,21 +86,20 @@ public class GridImageClientLiveTest extends BaseGoGridClientLiveTest {
 
    @Test
    public void testSaveServerToImage() throws IOException {
-      Predicate<Server> serverLatestJobCompleted = retry(new ServerLatestJobCompleted(restContext.getApi()
+      Predicate<Server> serverLatestJobCompleted = retry(new ServerLatestJobCompleted(api
             .getJobServices()), 800, 20, SECONDS);
 
       final String nameOfServer = "Server" + String.valueOf(new Date().getTime()).substring(6);
       ServerImage image = null;
       try {
-         Set<Ip> availableIps = restContext.getApi().getIpServices().getUnassignedPublicIpList();
+         Set<Ip> availableIps = api.getIpServices().getUnassignedPublicIpList();
          Ip availableIp = Iterables.getLast(availableIps);
 
-         Server createdServer = restContext.getApi().getServerServices()
+         Server createdServer = api.getServerServices()
                .addServer(nameOfServer, "5489", "1", availableIp.getIp());
          assertNotNull(createdServer);
          assert serverLatestJobCompleted.apply(createdServer);
-         image = restContext
-               .getApi()
+         image = api
                .getImageServices()
                .saveImageFromServer("friendlyName", createdServer.getName(),
                      SaveImageOptions.Builder.withDescription("description"));
@@ -111,7 +110,7 @@ public class GridImageClientLiveTest extends BaseGoGridClientLiveTest {
 
          assertEventuallyImageStateEquals(image, ServerImageState.AVAILABLE);
          
-         restContext.getApi().getImageServices().deleteById(image.getId());
+         api.getImageServices().deleteById(image.getId());
 
          assertEventuallyImageStateEquals(image, ServerImageState.TRASH);
          
@@ -119,13 +118,13 @@ public class GridImageClientLiveTest extends BaseGoGridClientLiveTest {
       } finally {
          if (image != null)
             try {
-               restContext.getApi().getImageServices().deleteById(image.getId());
+               api.getImageServices().deleteById(image.getId());
             } catch (Exception e) {
                // not failing so that we can ensure server below deletes
                e.printStackTrace();
             }
          // delete the server
-         restContext.getApi().getServerServices().deleteByName(nameOfServer);
+         api.getServerServices().deleteByName(nameOfServer);
       }
 
    }
@@ -133,7 +132,7 @@ public class GridImageClientLiveTest extends BaseGoGridClientLiveTest {
    protected void assertEventuallyImageStateEquals(ServerImage image, final ServerImageState state) {
       assertTrue(retry(new Predicate<ServerImage>() {
          public boolean apply(ServerImage input) {
-            return Iterables.getOnlyElement(restContext.getApi().getImageServices().getImagesById(input.getId()))
+            return Iterables.getOnlyElement(api.getImageServices().getImagesById(input.getId()))
                   .getState() == state;
          }
       }, 600, 1, SECONDS).apply(image));

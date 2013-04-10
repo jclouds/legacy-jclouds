@@ -19,13 +19,15 @@
 package org.jclouds.apis;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.Closeables.closeQuietly;
+import static org.jclouds.Constants.PROPERTY_RELAX_HOSTNAME;
+import static org.jclouds.Constants.PROPERTY_TRUST_ALL_CERTS;
 
+import java.io.Closeable;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import org.jclouds.Constants;
-import org.jclouds.Context;
 import org.jclouds.ContextBuilder;
 import org.jclouds.logging.LoggingModules;
 import org.jclouds.logging.config.LoggingModule;
@@ -35,7 +37,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.io.Closeables;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 
@@ -43,11 +44,11 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public abstract class BaseContextLiveTest<C extends Context> {
+public abstract class BaseApiLiveTest<A extends Closeable> {
    protected String prefix = System.getProperty("user.name");
    protected String provider;
 
-   protected volatile C context;
+   protected volatile A api;
 
    protected String identity;
    protected String credential;
@@ -56,8 +57,8 @@ public abstract class BaseContextLiveTest<C extends Context> {
 
    protected Properties setupProperties() {
       Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
+      overrides.setProperty(PROPERTY_TRUST_ALL_CERTS, "true");
+      overrides.setProperty(PROPERTY_RELAX_HOSTNAME, "true");
       identity = setIfTestSystemPropertyPresent(overrides,  provider + ".identity");
       credential = setIfTestSystemPropertyPresent(overrides,  provider + ".credential");
       endpoint = setIfTestSystemPropertyPresent(overrides,  provider + ".endpoint");
@@ -76,13 +77,13 @@ public abstract class BaseContextLiveTest<C extends Context> {
    }
 
    @BeforeClass(groups = { "integration", "live" })
-   public void setupContext() {
-      initializeContext();
+   public void setup() {
+      initialize();
    }
 
-   protected void initializeContext() {
-      Closeables.closeQuietly(context);
-      context = createContext(setupProperties(), setupModules());
+   protected void initialize() {
+      closeQuietly(api);
+      api = create(setupProperties(), setupModules());
    }
 
    protected Iterable<Module> setupModules() {
@@ -109,22 +110,22 @@ public abstract class BaseContextLiveTest<C extends Context> {
     */
    protected ApiMetadata createApiMetadata() {
       try {
-         return (ApiMetadata) Apis.withId(provider);
+         return Apis.withId(provider);
       } catch (NoSuchElementException e) {
          return null;
       }
    }
-   
-   protected abstract TypeToken<C> contextType();
-   
-   protected C createContext(Properties props, Iterable<Module> modules) {
-      return newBuilder().modules(modules).overrides(props).build(contextType());
+
+   @SuppressWarnings("serial")
+   protected A create(Properties props, Iterable<Module> modules) {
+      return newBuilder().modules(modules).overrides(props).buildApi(new TypeToken<A>(getClass()) {
+      });
    }
 
    protected ContextBuilder newBuilder() {
       if (provider != null)
          try {
-            return (ContextBuilder) ContextBuilder.newBuilder(provider);
+            return ContextBuilder.newBuilder(provider);
          } catch (NoSuchElementException e){
             Logger.getAnonymousLogger()
                   .warning("provider ["
@@ -141,7 +142,7 @@ public abstract class BaseContextLiveTest<C extends Context> {
    }
    
    @AfterClass(groups = { "integration", "live" })
-   protected void tearDownContext() {
-      Closeables.closeQuietly(context);
+   protected void tearDown() {
+      closeQuietly(api);
    }
 }

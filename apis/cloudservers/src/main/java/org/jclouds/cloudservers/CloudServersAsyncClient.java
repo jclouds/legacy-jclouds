@@ -74,7 +74,10 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see CloudServersClient
  * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
  * @author Adrian Cole
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(CloudServersClient.class)} as
+ *             {@link CloudServersAsyncClient} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 @RequestFilters({ AuthenticateRequest.class, AddTimestampQuery.class })
 @Endpoint(Compute.class)
 public interface CloudServersAsyncClient extends Closeable {

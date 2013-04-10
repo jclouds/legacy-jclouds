@@ -18,7 +18,6 @@
  */
 package org.jclouds.s3;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_RELAX_HOSTNAME;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
@@ -32,7 +31,6 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 import org.jclouds.s3.blobstore.S3BlobStoreContext;
 import org.jclouds.s3.blobstore.config.S3BlobStoreContextModule;
@@ -62,7 +60,12 @@ import com.google.inject.Module;
  */
 public class S3ApiMetadata extends BaseRestApiMetadata {
    
-   public static final TypeToken<RestContext<? extends S3Client,? extends  S3AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<? extends S3Client,? extends  S3AsyncClient>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildClient(S3Client.class)} as
+    *             {@link S3AsyncClient} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<? extends S3Client, ? extends S3AsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<? extends S3Client, ? extends S3AsyncClient>>() {
       private static final long serialVersionUID = 1L;
    };
 
@@ -81,7 +84,6 @@ public class S3ApiMetadata extends BaseRestApiMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = BaseRestApiMetadata.defaultProperties();
-      properties.setProperty(PROPERTY_API_VERSION, S3AsyncClient.VERSION);
       properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
       properties.setProperty(PROPERTY_HEADER_TAG, S3Headers.DEFAULT_AMAZON_HEADERTAG);
       properties.setProperty(PROPERTY_S3_SERVICE_PATH, "/");
@@ -93,6 +95,7 @@ public class S3ApiMetadata extends BaseRestApiMetadata {
    }
    
    public static abstract class Builder<T extends Builder<T>> extends BaseRestApiMetadata.Builder<T> {
+      @SuppressWarnings("deprecation")
       protected Builder() {
          this(S3Client.class, S3AsyncClient.class);
       }
@@ -105,7 +108,7 @@ public class S3ApiMetadata extends BaseRestApiMetadata {
          .credentialName("Secret Access Key")
          .defaultEndpoint("https://s3.amazonaws.com")
          .documentation(URI.create("http://docs.amazonwebservices.com/AmazonS3/latest/API"))
-         .version(S3AsyncClient.VERSION)
+         .version("2006-03-01")
          .defaultProperties(S3ApiMetadata.defaultProperties())
          .context(CONTEXT_TOKEN)
          .view(typeToken(S3BlobStoreContext.class))

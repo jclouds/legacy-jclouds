@@ -42,16 +42,16 @@ public class VolumeTypeApiLiveTest extends BaseCinderApiLiveTest {
 
    @BeforeGroups(groups = {"integration", "live"})
    @Override
-   public void setupContext() {
-      super.setupContext();
-      zone = Iterables.getLast(cinder.getApi().getConfiguredZones(), "nova");
-      volumeTypeApi = cinder.getApi().getVolumeTypeApiForZone(zone);
+   public void setup() {
+      super.setup();
+      zone = Iterables.getLast(api.getConfiguredZones(), "nova");
+      volumeTypeApi = api.getVolumeTypeApiForZone(zone);
    }
 
    @AfterClass(groups = { "integration", "live" })
    @Override
-   protected void tearDownContext() {
-      super.tearDownContext();
+   protected void tearDown() {
+      super.tearDown();
    }
 
    public void testListAndGetVolumeTypes() {
