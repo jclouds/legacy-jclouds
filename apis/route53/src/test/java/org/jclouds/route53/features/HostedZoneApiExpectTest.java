@@ -17,7 +17,11 @@
  * under the License.
  */
 package org.jclouds.route53.features;
-
+import static com.google.common.net.HttpHeaders.DATE;
+import static com.google.common.net.HttpHeaders.HOST;
+import static javax.ws.rs.HttpMethod.GET;
+import static javax.ws.rs.HttpMethod.POST;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
@@ -39,17 +43,17 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", testName = "HostedZoneApiExpectTest")
 public class HostedZoneApiExpectTest extends BaseRoute53ApiExpectTest {
-   HttpRequest createWithReference = HttpRequest.builder().method("POST")
+   HttpRequest createWithReference = HttpRequest.builder().method(POST)
          .endpoint("https://route53.amazonaws.com/2012-02-29/hostedzone")
-         .addHeader("Host", "route53.amazonaws.com")
-         .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
+         .addHeader(HOST, "route53.amazonaws.com")
+         .addHeader(DATE, "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization", authForDate)
          .payload(
                payloadFromStringWithContentType(
                      "<CreateHostedZoneRequest xmlns=\"https://route53.amazonaws.com/doc/2012-02-29/\"><Name>jclouds.org.</Name><CallerReference>expect</CallerReference></CreateHostedZoneRequest>",
                      "application/xml")).build();
    
-   HttpResponse createResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse createResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/new_zone.xml", "text/xml")).build();
 
    public void testCreateWithReferenceWhenResponseIs2xx() {
@@ -58,10 +62,10 @@ public class HostedZoneApiExpectTest extends BaseRoute53ApiExpectTest {
             new CreateHostedZoneResponseTest().expected().toString());
    }
 
-   HttpRequest createWithReferenceAndComment = HttpRequest.builder().method("POST")
+   HttpRequest createWithReferenceAndComment = HttpRequest.builder().method(POST)
          .endpoint("https://route53.amazonaws.com/2012-02-29/hostedzone")
-         .addHeader("Host", "route53.amazonaws.com")
-         .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
+         .addHeader(HOST, "route53.amazonaws.com")
+         .addHeader(DATE, "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization", authForDate)
          .payload(
                payloadFromStringWithContentType(
@@ -74,14 +78,14 @@ public class HostedZoneApiExpectTest extends BaseRoute53ApiExpectTest {
             new CreateHostedZoneResponseTest().expected().toString());
    }
 
-   HttpRequest get = HttpRequest.builder().method("GET")
+   HttpRequest get = HttpRequest.builder().method(GET)
          .endpoint("https://route53.amazonaws.com/2012-02-29/hostedzone/Z1XTHCPEFRWV1X")
-         .addHeader("Host", "route53.amazonaws.com")
-         .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
+         .addHeader(HOST, "route53.amazonaws.com")
+         .addHeader(DATE, "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization", authForDate)
          .build();
    
-   HttpResponse getResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse getResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/hosted_zone.xml", "text/xml")).build();
 
    public void testGetWhenResponseIs2xx() {
@@ -95,14 +99,14 @@ public class HostedZoneApiExpectTest extends BaseRoute53ApiExpectTest {
       assertNull(fail.getHostedZoneApi().get("Z1XTHCPEFRWV1X"));
    }
 
-   HttpRequest list = HttpRequest.builder().method("GET")
+   HttpRequest list = HttpRequest.builder().method(GET)
          .endpoint("https://route53.amazonaws.com/2012-02-29/hostedzone")
-         .addHeader("Host", "route53.amazonaws.com")
-         .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
+         .addHeader(HOST, "route53.amazonaws.com")
+         .addHeader(DATE, "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization", authForDate)
          .build();
 
-   HttpResponse listResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse listResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/hosted_zones.xml", "text/xml")).build();
    
    public void testListWhenResponseIs2xx() {
@@ -118,10 +122,10 @@ public class HostedZoneApiExpectTest extends BaseRoute53ApiExpectTest {
       assertEquals(fail.getHostedZoneApi().list().get(0).toSet(), ImmutableSet.of());
    }
    
-   HttpRequest listAt = HttpRequest.builder().method("GET")
+   HttpRequest listAt = HttpRequest.builder().method(GET)
          .endpoint("https://route53.amazonaws.com/2012-02-29/hostedzone?marker=Z333333YYYYYYY")
-         .addHeader("Host", "route53.amazonaws.com")
-         .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
+         .addHeader(HOST, "route53.amazonaws.com")
+         .addHeader(DATE, "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization", authForDate)
          .build();
    
@@ -132,7 +136,7 @@ public class HostedZoneApiExpectTest extends BaseRoute53ApiExpectTest {
    }
    
    public void testList2PagesWhenResponseIs2xx() {
-      HttpResponse noMore = HttpResponse.builder().statusCode(200)
+      HttpResponse noMore = HttpResponse.builder().statusCode(OK.getStatusCode())
             .payload(payloadFromStringWithContentType("<ListHostedZonesResponse />", "text/xml")).build();
 
       Route53Api success = requestsSendResponses(list, listResponse, listAt, noMore);
@@ -142,12 +146,12 @@ public class HostedZoneApiExpectTest extends BaseRoute53ApiExpectTest {
 
    HttpRequest delete = HttpRequest.builder().method("DELETE")
          .endpoint("https://route53.amazonaws.com/2012-02-29/hostedzone/Z1XTHCPEFRWV1X")
-         .addHeader("Host", "route53.amazonaws.com")
-         .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
+         .addHeader(HOST, "route53.amazonaws.com")
+         .addHeader(DATE, "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization", authForDate)
          .build();
    
-   HttpResponse deleteResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse deleteResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/change.xml", "text/xml")).build();
 
    public void testDeleteWhenResponseIs2xx() {
