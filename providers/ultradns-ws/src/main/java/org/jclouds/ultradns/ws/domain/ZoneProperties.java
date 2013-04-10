@@ -41,7 +41,7 @@ public final class ZoneProperties {
 
    private ZoneProperties(String name, Type type, int typeCode, Date modified, int resourceRecordCount) {
       this.name = checkNotNull(name, "name");
-      checkArgument(typeCode >= 0, "typeCode of %s must be unsigned", name);
+      checkArgument(typeCode >= 0, "typeCode of %s must be >= 0", name);
       this.typeCode = typeCode;
       this.type = checkNotNull(type, "type for %s", name);
       this.modified = checkNotNull(modified, "modified for %s", name);

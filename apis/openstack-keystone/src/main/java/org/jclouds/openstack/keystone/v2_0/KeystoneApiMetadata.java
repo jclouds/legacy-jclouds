@@ -29,6 +29,7 @@ import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneParserModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneRestClientModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneRestClientModule.KeystoneAdminURLModule;
+import org.jclouds.openstack.keystone.v2_0.config.MappedAuthenticationApiModule;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
@@ -90,6 +91,7 @@ public class KeystoneApiMetadata extends BaseRestApiMetadata {
          .defaultEndpoint("http://localhost:5000/v${jclouds.api-version}/")
          .defaultProperties(KeystoneApiMetadata.defaultProperties())
          .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                     .add(MappedAuthenticationApiModule.class)
                                      .add(KeystoneAuthenticationModule.class)
                                      .add(KeystoneAdminURLModule.class)
                                      .add(KeystoneParserModule.class)

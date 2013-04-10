@@ -20,22 +20,35 @@ package org.jclouds.route53;
 
 import java.io.Closeable;
 
+import javax.inject.Named;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.VirtualHost;
+import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.route53.domain.Change;
-import org.jclouds.route53.features.ResourceRecordSetApi;
 import org.jclouds.route53.features.HostedZoneApi;
+import org.jclouds.route53.features.ResourceRecordSetApi;
+import org.jclouds.route53.filters.RestAuthentication;
+import org.jclouds.route53.xml.ChangeHandler;
 
 /**
  * Provides access to Amazon Route53 via the Query API
  * <p/>
  * 
- * @see Route53AsyncApi
  * @see <a href="http://docs.amazonwebservices.com/Route53/latest/APIReference"
  *      />
  * @author Adrian Cole
  */
+@RequestFilters(RestAuthentication.class)
+@VirtualHost
+@Path("/{jclouds.api-version}")
 public interface Route53Api extends Closeable {
 
    /**
@@ -45,17 +58,24 @@ public interface Route53Api extends Closeable {
     *           The ID of the change batch request.
     * @return null, if not found
     */
-   Change getChange(String changeID);
+   @Named("GetChange")
+   @GET
+   @Path("/change/{changeId}")
+   @XMLResponseParser(ChangeHandler.class)
+   @Fallback(NullOnNotFoundOr404.class)
+   @Nullable
+   Change getChange(@PathParam("changeId") String changeID);
 
    /**
-    * Provides synchronous access to Zone features.
+    * Provides access to Zone features.
     */
    @Delegate
    HostedZoneApi getHostedZoneApi();
    
    /**
-    * Provides synchronous access to record set features.
+    * Provides access to record set features.
     */
    @Delegate
+   @Path("/hostedzone/{zoneId}")
    ResourceRecordSetApi getResourceRecordSetApiForHostedZone(@PathParam("zoneId") String zoneId);
 }

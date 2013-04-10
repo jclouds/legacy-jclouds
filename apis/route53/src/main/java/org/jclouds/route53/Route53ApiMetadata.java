@@ -25,35 +25,23 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.rest.internal.BaseRestApiMetadata;
-import org.jclouds.route53.config.Route53RestClientModule;
-
-import com.google.common.reflect.TypeToken;
+import org.jclouds.rest.internal.BaseHttpApiMetadata;
+import org.jclouds.route53.config.Route53HttpApiModule;
 
 /**
  * Implementation of {@link ApiMetadata} for Amazon's Route53 api.
  * 
  * @author Adrian Cole
  */
-public class Route53ApiMetadata extends BaseRestApiMetadata {
-
-   /**
-    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(Route53Api.class)} as
-    *             {@link Route53AsyncApi} interface will be removed in jclouds 1.7.
-    */
-   @Deprecated
-   public static final TypeToken<org.jclouds.rest.RestContext<? extends Route53Api, ? extends Route53AsyncApi>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<? extends Route53Api, ? extends Route53AsyncApi>>() {
-      private static final long serialVersionUID = 1L;
-   };
+public class Route53ApiMetadata extends BaseHttpApiMetadata<Route53Api> {
 
    @Override
    public Builder toBuilder() {
-      return new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
+      return new Builder().fromApiMetadata(this);
    }
 
-   @SuppressWarnings("deprecation")
    public Route53ApiMetadata() {
-      this(new Builder(Route53Api.class, Route53AsyncApi.class));
+      this(new Builder());
    }
 
    protected Route53ApiMetadata(Builder builder) {
@@ -61,16 +49,15 @@ public class Route53ApiMetadata extends BaseRestApiMetadata {
    }
 
    public static Properties defaultProperties() {
-      Properties properties = BaseRestApiMetadata.defaultProperties();
+      Properties properties = BaseHttpApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
       properties.setProperty(PROPERTY_HEADER_TAG, "amz");
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
+   public static class Builder extends BaseHttpApiMetadata.Builder<Route53Api, Builder> {
 
-      protected Builder(Class<?> api, Class<?> asyncApi) {
-         super(api, asyncApi);
+      protected Builder() {
          id("route53")
          .name("Amazon Route 53 Api")
          .identityName("Access Key ID")
@@ -79,7 +66,7 @@ public class Route53ApiMetadata extends BaseRestApiMetadata {
          .documentation(URI.create("http://docs.aws.amazon.com/Route53/latest/APIReference/"))
          .defaultEndpoint("https://route53.amazonaws.com")
          .defaultProperties(Route53ApiMetadata.defaultProperties())
-         .defaultModule(Route53RestClientModule.class);
+         .defaultModule(Route53HttpApiModule.class);
       }
 
       @Override

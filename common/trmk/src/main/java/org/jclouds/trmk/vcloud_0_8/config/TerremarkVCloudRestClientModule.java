@@ -26,7 +26,7 @@ import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
-import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
+import static org.jclouds.rest.config.BinderUtils.bindSyncToAsyncHttpApi;
 import static org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED;
 import static org.jclouds.util.Predicates2.retry;
 
@@ -134,8 +134,8 @@ public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A
       bind(new TypeLiteral<Function<org.jclouds.trmk.vcloud_0_8.domain.Org, Iterable<? extends CatalogItem>>>() {
       }).to(new TypeLiteral<AllCatalogItemsInOrg>() {
       });
-      bindHttpApi(binder(), TerremarkVCloudVersionsClient.class, TerremarkVCloudVersionsAsyncClient.class);
-      bindHttpApi(binder(), TerremarkVCloudLoginClient.class, TerremarkVCloudLoginAsyncClient.class);
+      bindSyncToAsyncHttpApi(binder(), TerremarkVCloudVersionsClient.class, TerremarkVCloudVersionsAsyncClient.class);
+      bindSyncToAsyncHttpApi(binder(), TerremarkVCloudLoginClient.class, TerremarkVCloudLoginAsyncClient.class);
    }
 
    @Provides

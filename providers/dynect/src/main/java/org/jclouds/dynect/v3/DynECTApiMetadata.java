@@ -23,8 +23,8 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.dynect.v3.config.DynECTParserModule;
-import org.jclouds.dynect.v3.config.DynECTRestClientModule;
-import org.jclouds.rest.internal.BaseRestApiMetadata;
+import org.jclouds.dynect.v3.config.DynECTHttpApiModule;
+import org.jclouds.rest.internal.BaseHttpApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
@@ -34,10 +34,8 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class DynECTApiMetadata extends BaseRestApiMetadata {
+public class DynECTApiMetadata extends BaseHttpApiMetadata<DynECTApi> {
    
-   public static final String ANONYMOUS_IDENTITY = "ANONYMOUS";
-
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
@@ -52,27 +50,24 @@ public class DynECTApiMetadata extends BaseRestApiMetadata {
    }
 
    public static Properties defaultProperties() {
-      Properties properties = BaseRestApiMetadata.defaultProperties();
+      Properties properties = BaseHttpApiMetadata.defaultProperties();
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
+   public static class Builder extends BaseHttpApiMetadata.Builder<DynECTApi, Builder> {
 
       protected Builder() {
-         super(DynECTApi.class, DynECTAsyncApi.class);
           id("dynect")
          .name("DynECT API2")
-         .identityName("Username (or " + ANONYMOUS_IDENTITY + " if anonymous)")
-         .defaultIdentity(ANONYMOUS_IDENTITY)
-         .credentialName("Password")
-         .defaultCredential(ANONYMOUS_IDENTITY)
+         .identityName("${customer}:${userName}")
+         .credentialName("${password}")
          .documentation(URI.create("https://manage.dynect.net/help/docs/api2/rest/"))
          .version("3.3.8")
          .defaultEndpoint("https://api2.dynect.net/REST")
          .defaultProperties(DynECTApiMetadata.defaultProperties())
          .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
                                      .add(DynECTParserModule.class)
-                                     .add(DynECTRestClientModule.class).build());
+                                     .add(DynECTHttpApiModule.class).build());
       }
       
       @Override

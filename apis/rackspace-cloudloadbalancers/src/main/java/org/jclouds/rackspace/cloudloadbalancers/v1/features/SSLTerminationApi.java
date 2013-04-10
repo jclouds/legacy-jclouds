@@ -18,7 +18,23 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1.features;
 
+import javax.inject.Named;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.Fallbacks.FalseOnNotFoundOr422;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
+import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.SSLTermination;
+import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.annotations.WrapWith;
 
 /**
  * The SSL Termination feature allows a load balancer user to terminate SSL traffic at the load balancer layer versus 
@@ -50,9 +66,9 @@ import org.jclouds.rackspace.cloudloadbalancers.v1.domain.SSLTermination;
  * be secure.</li>
  * </ol>
  *
- * @see SSLTerminationAsyncApi
  * @author Everett Toews
  */
+@RequestFilters(AuthenticateRequest.class)
 public interface SSLTerminationApi {
    /**
     * Create or update SSL termination.
@@ -71,11 +87,22 @@ public interface SSLTerminationApi {
     * If a user wants to replace the existing SSL configuration, a new certificate, privatekey, and securePort 
     * combination must be provided instead of, or in addition to, the optional/editable attributes.
     */
-   void createOrUpdate(SSLTermination sslTermination);
+   @Named("ssltermination:create")
+   @PUT
+   @Consumes(MediaType.APPLICATION_JSON) 
+   @Fallback(VoidOnNotFoundOr404.class)
+   @Path("/ssltermination")
+   void createOrUpdate(@WrapWith("sslTermination") SSLTermination sslTermination);
 
    /**
     * Get SSL termination info.
     */
+   @Named("ssltermination:get")
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @SelectJson("sslTermination")
+   @Fallback(NullOnNotFoundOr404.class)
+   @Path("/ssltermination")
    SSLTermination get();
    
    /**
@@ -83,5 +110,10 @@ public interface SSLTerminationApi {
     * 
     * @return true on a successful delete, false if the SSL termination was not found
     */
+   @Named("ssltermination:delete")
+   @DELETE
+   @Fallback(FalseOnNotFoundOr422.class)
+   @Path("/ssltermination")
+   @Consumes("*/*")
    boolean delete();
 }

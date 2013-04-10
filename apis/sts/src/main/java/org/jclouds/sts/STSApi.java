@@ -20,32 +20,55 @@ package org.jclouds.sts;
 
 import java.io.Closeable;
 
+import javax.inject.Named;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+
 import org.jclouds.aws.domain.SessionCredentials;
+import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.aws.xml.SessionCredentialsHandler;
+import org.jclouds.rest.annotations.FormParams;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.VirtualHost;
+import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.sts.domain.User;
 import org.jclouds.sts.domain.UserAndSessionCredentials;
 import org.jclouds.sts.options.AssumeRoleOptions;
 import org.jclouds.sts.options.FederatedUserOptions;
 import org.jclouds.sts.options.SessionCredentialsOptions;
+import org.jclouds.sts.xml.UserAndSessionCredentialsHandler;
 
 /**
  * Provides access to Amazon STS via the Query API
  * <p/>
  * 
- * @see STSAsyncApi
  * @see <a href="http://docs.amazonwebservices.com/STS/latest/APIReference" />
  * @author Adrian Cole
  */
+@RequestFilters(FormSigner.class)
+@VirtualHost
 public interface STSApi extends Closeable {
    /**
     * Returns a set of temporary credentials for an AWS account or IAM user,
     * with a default timeout
     */
+   @Named("GetSessionToken")
+   @POST
+   @Path("/")
+   @XMLResponseParser(SessionCredentialsHandler.class)
+   @FormParams(keys = "Action", values = "GetSessionToken")
    SessionCredentials createTemporaryCredentials();
 
    /**
     * like {@link #createTemporaryCredentials()}, except you can modify the
     * timeout and other parameters.
     */
+   @Named("GetSessionToken")
+   @POST
+   @Path("/")
+   @XMLResponseParser(SessionCredentialsHandler.class)
+   @FormParams(keys = "Action", values = "GetSessionToken")
    SessionCredentials createTemporaryCredentials(SessionCredentialsOptions options);
 
    /**
@@ -58,13 +81,25 @@ public interface STSApi extends Closeable {
     *           The Amazon Resource Name (ARN) of the role that the caller is
     *           assuming.
     */
-   UserAndSessionCredentials assumeRole(String roleArn, String sessionName);
+   @Named("AssumeRole")
+   @POST
+   @Path("/")
+   @XMLResponseParser(UserAndSessionCredentialsHandler.class)
+   @FormParams(keys = "Action", values = "AssumeRole")
+   UserAndSessionCredentials assumeRole(@FormParam("RoleArn") String roleArn,
+         @FormParam("RoleSessionName") String sessionName);
    
    /**
     * like {@link #assumeRole(String, String)}, except you can modify the
     * timeout and other parameters.
     */
-   UserAndSessionCredentials assumeRole(String roleArn, String sessionName, AssumeRoleOptions options);
+   @Named("AssumeRole")
+   @POST
+   @Path("/")
+   @XMLResponseParser(UserAndSessionCredentialsHandler.class)
+   @FormParams(keys = "Action", values = "AssumeRole")
+   UserAndSessionCredentials assumeRole(@FormParam("RoleArn") String roleArn,
+         @FormParam("RoleSessionName") String sessionName, AssumeRoleOptions options);
    
    /**
     * Returns a set of temporary credentials for a federated user with the user
@@ -74,12 +109,21 @@ public interface STSApi extends Closeable {
     *           The name of the federated user, included as part of
     *           {@link User#getId}.
     */
-   UserAndSessionCredentials createFederatedUser(String userName);
+   @Named("GetFederationToken")
+   @POST
+   @Path("/")
+   @XMLResponseParser(UserAndSessionCredentialsHandler.class)
+   @FormParams(keys = "Action", values = "GetFederationToken")
+   UserAndSessionCredentials createFederatedUser(@FormParam("Name") String userName);
    
    /**
     * like {@link #createFederatedUser(String)}, except you can modify the
     * timeout and other parameters.
     */
-   UserAndSessionCredentials createFederatedUser(String userName, FederatedUserOptions options);
-
+   @Named("GetFederationToken")
+   @POST
+   @Path("/")
+   @XMLResponseParser(UserAndSessionCredentialsHandler.class)
+   @FormParams(keys = "Action", values = "GetFederationToken")
+   UserAndSessionCredentials createFederatedUser(@FormParam("Name") String userName, FederatedUserOptions options);
 }

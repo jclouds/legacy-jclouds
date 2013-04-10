@@ -18,10 +18,9 @@
  */
 package org.jclouds.rest.config;
 
-import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
+import static org.jclouds.reflect.Types2.checkBound;
+import static org.jclouds.rest.config.BinderUtils.bindSyncToAsyncHttpApi;
 
-import java.lang.reflect.TypeVariable;
 import java.util.Map;
 
 import org.jclouds.rest.ConfiguresRestClient;
@@ -32,33 +31,29 @@ import com.google.common.reflect.TypeToken;
 /**
  * 
  * @author Adrian Cole
+ * 
+ * @deprecated will be removed in jclouds 1.7; use {@link HttpApiModule}
  */
+@Deprecated
 @ConfiguresRestClient
 public class RestClientModule<S, A> extends RestModule {
    protected final TypeToken<S> syncClientType;
    protected final TypeToken<A> asyncClientType;
+
+   private final SyncToAsyncHttpInvocationModule invocationModule;
 
    /**
     * Note that this ctor requires that you instantiate w/resolved generic params. For example, via
     * a subclass of a bound type, or natural instantiation w/resolved type params.
     */
    protected RestClientModule(Map<Class<?>, Class<?>> sync2Async) {
-      super(sync2Async);
+      this.invocationModule = new SyncToAsyncHttpInvocationModule(sync2Async);
       this.syncClientType = checkBound(new TypeToken<S>(getClass()) {
          private static final long serialVersionUID = 1L;
       });
       this.asyncClientType = checkBound(new TypeToken<A>(getClass()) {
          private static final long serialVersionUID = 1L;
       });
-   }
-   
-   /**
-    * @throws IllegalStateException if the type is an instanceof {@link TypeVariable}
-    */
-   private static <T> TypeToken<T> checkBound(TypeToken<T> type) throws IllegalStateException {
-      checkState(!(type.getType() instanceof TypeVariable<?>),
-               "unbound type variable: %s, use ctor that explicitly assigns this", type);
-      return type;
    }
 
    /**
@@ -79,7 +74,7 @@ public class RestClientModule<S, A> extends RestModule {
     * only necessary when type params are not resolvable at runtime.
     */
    public RestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType, Map<Class<?>, Class<?>> sync2Async) {
-      super(sync2Async);
+      this.invocationModule = new SyncToAsyncHttpInvocationModule(sync2Async);
       this.syncClientType = checkBound(syncClientType);
       this.asyncClientType = checkBound(asyncClientType);
    }
@@ -87,7 +82,8 @@ public class RestClientModule<S, A> extends RestModule {
    @Override
    protected void configure() {
       super.configure();
-      bindHttpApi(binder(), syncClientType.getRawType(), asyncClientType.getRawType());
+      install(invocationModule);
+      bindSyncToAsyncHttpApi(binder(), syncClientType.getRawType(), asyncClientType.getRawType());
       bindErrorHandlers();
       bindRetryHandlers();
    }

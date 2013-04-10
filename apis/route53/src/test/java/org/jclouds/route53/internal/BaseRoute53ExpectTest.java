@@ -22,9 +22,9 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.ConfiguresHttpApi;
 import org.jclouds.rest.internal.BaseRestApiExpectTest;
-import org.jclouds.route53.config.Route53RestClientModule;
+import org.jclouds.route53.config.Route53HttpApiModule;
 
 import com.google.inject.Module;
 /**
@@ -37,8 +37,8 @@ public class BaseRoute53ExpectTest<T> extends BaseRestApiExpectTest<T> {
       provider = "route53";
    }
    
-   @ConfiguresRestClient
-   private static final class TestRoute53RestClientModule extends Route53RestClientModule {
+   @ConfiguresHttpApi
+   private static final class TestRoute53HttpApiModule extends Route53HttpApiModule {
 
       @Override
       protected String provideTimeStamp(final DateService dateService) {
@@ -51,6 +51,6 @@ public class BaseRoute53ExpectTest<T> extends BaseRestApiExpectTest<T> {
 
    @Override
    protected Module createModule() {
-      return new TestRoute53RestClientModule();
+      return new TestRoute53HttpApiModule();
    }
 }

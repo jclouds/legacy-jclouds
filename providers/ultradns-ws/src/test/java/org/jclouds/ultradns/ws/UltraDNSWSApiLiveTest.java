@@ -18,7 +18,7 @@
  */
 package org.jclouds.ultradns.ws;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.testng.Assert.assertNotNull;
 
 import org.jclouds.ultradns.ws.domain.Account;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiLiveTest;
@@ -37,7 +37,7 @@ public class UltraDNSWSApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    }
 
    private void checkAccount(Account account) {
-      checkNotNull(account.getId(), "Id cannot be null for an Account.");
-      checkNotNull(account.getName(), "Name cannot be null for Account %s", account);
+      assertNotNull(account.getId(), "Id cannot be null for " + account);
+      assertNotNull(account.getName(), "Name cannot be null for " + account);
    }
 }

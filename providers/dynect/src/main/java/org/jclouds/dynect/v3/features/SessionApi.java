@@ -18,21 +18,46 @@
  */
 package org.jclouds.dynect.v3.features;
 
+import javax.inject.Named;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+
+import org.jclouds.dynect.v3.DynECTFallbacks.FalseOn400;
 import org.jclouds.dynect.v3.domain.Session;
 import org.jclouds.dynect.v3.domain.SessionCredentials;
+import org.jclouds.dynect.v3.filters.AlwaysAddContentType;
+import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.Headers;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.binders.BindToJsonPayload;
 
 /**
- * @see SessionAsyncApi
  * @see <a
  *      href="https://manage.dynect.net/help/docs/api2/rest/resources/Session.html"
  *      />
  * @author Adrian Cole
  */
+@Headers(keys = "API-Version", values = "{jclouds.api-version}")
+@Path("/Session")
+@RequestFilters(AlwaysAddContentType.class)
 public interface SessionApi {
 
-   Session login(SessionCredentials credentials);
+   @Named("POST:Session")
+   @POST
+   @SelectJson("data")
+   Session login(@BinderParam(BindToJsonPayload.class) SessionCredentials credentials);
 
-   boolean isValid(String token);
+   @Named("GET:Session")
+   @GET
+   @Fallback(FalseOn400.class)
+   boolean isValid(@HeaderParam("Auth-Token") String token);
 
-   void logout(String token);
+   @Named("DELETE:Session")
+   @DELETE
+   void logout(@HeaderParam("Auth-Token") String token);
 }

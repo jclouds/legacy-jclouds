@@ -43,11 +43,10 @@ import org.jclouds.rest.annotations.EndpointParam;
 import com.google.inject.Provides;
 
 /**
- * Provides synchronous access to Rackspace Cloud Load Balancers.
+ * Provides access to Rackspace Cloud Load Balancers.
  * <p/>
  * 
- * @see CloudLoadBalancersAsyncApi 
- * @author Adrian Cole
+ * @author Everett Toews
  */
 public interface CloudLoadBalancersApi extends Closeable {
    /**
@@ -58,14 +57,14 @@ public interface CloudLoadBalancersApi extends Closeable {
    Set<String> getConfiguredZones();
 
    /**
-    * Provides synchronous access to Load Balancer features.
+    * Provides access to Load Balancer features.
     */
    @Delegate
    LoadBalancerApi getLoadBalancerApiForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
    
    /**
-    * Provides synchronous access to Node features.
+    * Provides access to Node features.
     */
    @Delegate
    @Path("/loadbalancers/{lbId}")
@@ -73,7 +72,7 @@ public interface CloudLoadBalancersApi extends Closeable {
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 
    /**
-    * Provides synchronous access to Access Rule features.
+    * Provides access to Access Rule features.
     */
    @Delegate
    @Path("/loadbalancers/{lbId}")
@@ -81,7 +80,7 @@ public interface CloudLoadBalancersApi extends Closeable {
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 
    /**
-    * Provides synchronous access to Virtual IP features.
+    * Provides access to Virtual IP features.
     */
    @Delegate
    @Path("/loadbalancers/{lbId}")
@@ -89,7 +88,7 @@ public interface CloudLoadBalancersApi extends Closeable {
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 
    /**
-    * Provides synchronous access to Connection features.
+    * Provides access to Connection features.
     */
    @Delegate
    @Path("/loadbalancers/{lbId}")
@@ -97,7 +96,7 @@ public interface CloudLoadBalancersApi extends Closeable {
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 
    /**
-    * Provides synchronous access to Health Monitor features.
+    * Provides access to Health Monitor features.
     */
    @Delegate
    @Path("/loadbalancers/{lbId}")
@@ -105,7 +104,7 @@ public interface CloudLoadBalancersApi extends Closeable {
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 
    /**
-    * Provides synchronous access to Session Persistence features.
+    * Provides access to Session Persistence features.
     */
    @Delegate
    @Path("/loadbalancers/{lbId}")
@@ -113,7 +112,7 @@ public interface CloudLoadBalancersApi extends Closeable {
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 
    /**
-    * Provides synchronous access to Content Caching features.
+    * Provides access to Content Caching features.
     */
    @Delegate
    @Path("/loadbalancers/{lbId}")
@@ -121,7 +120,7 @@ public interface CloudLoadBalancersApi extends Closeable {
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 
    /**
-    * Provides synchronous access to SSL Termination features.
+    * Provides access to SSL Termination features.
     */
    @Delegate
    @Path("/loadbalancers/{lbId}")
@@ -129,7 +128,7 @@ public interface CloudLoadBalancersApi extends Closeable {
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 
    /**
-    * Provides synchronous access to Error Page features.
+    * Provides access to Error Page features.
     */
    @Delegate
    @Path("/loadbalancers/{lbId}")
@@ -137,7 +136,7 @@ public interface CloudLoadBalancersApi extends Closeable {
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone, @PathParam("lbId") int lbId);
 
    /**
-    * Provides synchronous access to Report features.
+    * Provides access to Report features.
     */
    @Delegate
    ReportApi getReportApiForZone(

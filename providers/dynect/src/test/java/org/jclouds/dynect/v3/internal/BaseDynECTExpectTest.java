@@ -22,13 +22,13 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.OK;
 
-import org.jclouds.dynect.v3.config.DynECTRestClientModule;
+import org.jclouds.dynect.v3.config.DynECTHttpApiModule;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.config.SSLModule;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
-import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.ConfiguresHttpApi;
 import org.jclouds.rest.internal.BaseRestApiExpectTest;
 
 import com.google.inject.Module;
@@ -47,11 +47,11 @@ public class BaseDynECTExpectTest<T> extends BaseRestApiExpectTest<T> {
 
    @Override
    protected Module createModule() {
-      return new TestDynECTRestClientModule();
+      return new TestDynECTHttpApiModule();
    }
 
-   @ConfiguresRestClient
-   private static final class TestDynECTRestClientModule extends DynECTRestClientModule {
+   @ConfiguresHttpApi
+   private static final class TestDynECTHttpApiModule extends DynECTHttpApiModule {
       @Override
       protected void configure() {
          install(new SSLModule());

@@ -19,7 +19,6 @@
 package org.jclouds.openstack.keystone.v2_0.config;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.jclouds.rest.config.BinderUtils.bindHttpApi;
 import static org.jclouds.util.Suppliers2.getLastValueInMap;
 
 import java.net.URI;
@@ -47,8 +46,6 @@ import org.jclouds.location.suppliers.derived.RegionIdsFromRegionIdToURIKeySet;
 import org.jclouds.location.suppliers.derived.ZoneIdsFromZoneIdToURIKeySet;
 import org.jclouds.location.suppliers.implicit.FirstRegion;
 import org.jclouds.location.suppliers.implicit.FirstZone;
-import org.jclouds.openstack.keystone.v2_0.AuthenticationApi;
-import org.jclouds.openstack.keystone.v2_0.AuthenticationAsyncApi;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.Endpoint;
 import org.jclouds.openstack.keystone.v2_0.functions.AuthenticateApiAccessKeyCredentials;
@@ -60,7 +57,6 @@ import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToAdminURISupplier;
 import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToURIFromAccessForTypeAndVersion;
 import org.jclouds.openstack.keystone.v2_0.suppliers.ZoneIdToURIFromAccessForTypeAndVersion;
 import org.jclouds.rest.annotations.ApiVersion;
-import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -89,7 +85,7 @@ public class KeystoneAuthenticationModule extends AbstractModule {
     * {@link javax.inject.Qualifier}</li>
     * <li>add the above annotation to any {@link AsyncApi} classes by placing it on the type. ex.
     * {@code @Endpoint(CloudDNS.class)}</li>
-    * <li>add the following to your {@link RestClientModule}</li>
+    * <li>add the following to your {@link org.jclouds.rest.config.RestClientModule}</li>
     * 
     * <pre>
     * bind(new TypeLiteral&lt;Supplier&lt;URI&gt;&gt;() {
@@ -184,12 +180,6 @@ public class KeystoneAuthenticationModule extends AbstractModule {
    @Override
    protected void configure() {
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenew.class);
-      bindAuthenticationApi();
-   }
-
-   protected void bindAuthenticationApi() {
-      // AuthenticationApi is used directly for filters and retry handlers, so let's bind it explicitly
-      bindHttpApi(binder(), AuthenticationApi.class, AuthenticationAsyncApi.class);
    }
 
    /**

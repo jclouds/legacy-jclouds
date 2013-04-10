@@ -54,13 +54,13 @@ public final class UpdatePoolRecord {
       this.mode = checkNotNull(mode, "mode for %s", pointsTo);
       this.priority = priority;
       this.weight = weight;
-      checkArgument(weight >= 0, "weight of %s must be unsigned", pointsTo);
+      checkArgument(weight >= 0, "weight of %s must be >= 0", pointsTo);
       this.failOverDelay = failOverDelay;
-      checkArgument(failOverDelay >= 0, "failOverDelay of %s must be unsigned", pointsTo);
+      checkArgument(failOverDelay >= 0, "failOverDelay of %s must be >= 0", pointsTo);
       this.threshold = threshold;
-      checkArgument(threshold >= 0, "threshold of %s must be unsigned", pointsTo);
+      checkArgument(threshold >= 0, "threshold of %s must be >= 0", pointsTo);
       this.ttl = ttl;
-      checkArgument(ttl >= 0, "ttl of %s must be unsigned", pointsTo);
+      checkArgument(ttl >= 0, "ttl of %s must be >= 0", pointsTo);
    }
 
    /**
