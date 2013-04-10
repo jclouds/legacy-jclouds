@@ -35,7 +35,10 @@ import com.google.inject.util.Types;
  * Allows you to lookup the {@link RestApiMetadata#getContext()} as {@link RestContext}, {@code RestContext<Client, AsyncClient>}, and {@code
  *  
  * @author Adrian Cole
+ * @deprecated please use {@link BindApiContextWithWildcardExtendsExplicitAndRawType} as
+ *             async interface will be removed in jclouds 1.7.
  */
+@Deprecated
 public class BindRestContextWithWildcardExtendsExplicitAndRawType extends AbstractModule {
    private final RestApiMetadata restApiMetadata;
 

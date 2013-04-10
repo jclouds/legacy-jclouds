@@ -18,7 +18,7 @@
  */
 package org.jclouds.blobstore.config;
 
-import static org.jclouds.rest.config.BinderUtils.bindBlockingApi;
+import static org.jclouds.rest.config.BinderUtils.bindMappedApi;
 
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobRequestSigner;
@@ -41,7 +41,7 @@ public class TransientBlobStoreContextModule extends AbstractModule {
    protected void configure() {
       bind(AsyncBlobStore.class).to(LocalAsyncBlobStore.class).asEagerSingleton();
       // forward all requests from TransientBlobStore to TransientAsyncBlobStore.  needs above binding as cannot proxy a class
-      bindBlockingApi(binder(), LocalBlobStore.class, AsyncBlobStore.class);
+      bindMappedApi(binder(), LocalBlobStore.class, AsyncBlobStore.class);
       install(new BlobStoreObjectModule());
       install(new BlobStoreMapModule());
       bind(BlobStore.class).to(LocalBlobStore.class);

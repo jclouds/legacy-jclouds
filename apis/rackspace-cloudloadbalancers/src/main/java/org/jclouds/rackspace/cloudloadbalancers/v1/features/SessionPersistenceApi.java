@@ -18,7 +18,25 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1.features;
 
+import javax.inject.Named;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
+import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.SessionPersistence;
+import org.jclouds.rackspace.cloudloadbalancers.v1.functions.ParseSessionPersistence;
+import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.Payload;
+import org.jclouds.rest.annotations.PayloadParam;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
 
 
 /**
@@ -26,15 +44,21 @@ import org.jclouds.rackspace.cloudloadbalancers.v1.domain.SessionPersistence;
  * directed to the same node. This is common with many web applications that do not inherently share application 
  * state between back-end servers. Two session persistence modes are available, HTTP Cookie and Source IP.
  *  
- * @see SessionPersistenceAsyncApi
  * @author Everett Toews
  */
+@RequestFilters(AuthenticateRequest.class)
 public interface SessionPersistenceApi {
    /**
     * Get the current session persistence.
     * 
     * @see SessionPersistence
     */
+   @Named("sessionpersistence:get")
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ResponseParser(ParseSessionPersistence.class)
+   @Fallback(NullOnNotFoundOr404.class)
+   @Path("/sessionpersistence")
    SessionPersistence get();
    
    /**
@@ -42,12 +66,24 @@ public interface SessionPersistenceApi {
     * 
     * @see SessionPersistence
     */
-   void create(SessionPersistence sessionPersistence);
+   @Named("sessionpersistence:create")
+   @PUT
+   @Produces(MediaType.APPLICATION_JSON)
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Fallback(VoidOnNotFoundOr404.class)
+   @Payload("%7B\"sessionPersistence\":%7B\"persistenceType\":\"{sessionPersistence}\"%7D%7D")
+   @Path("/sessionpersistence")
+   void create(@PayloadParam("sessionPersistence") SessionPersistence sessionPersistence);
    
    /**
     * Delete session persistence.
     * 
     * @see SessionPersistence
     */
+   @Named("sessionpersistence:delete")
+   @DELETE
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Fallback(VoidOnNotFoundOr404.class)
+   @Path("/sessionpersistence")
    void delete();
 }

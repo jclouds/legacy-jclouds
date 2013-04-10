@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.collect.IterableWithMarker;
-import org.jclouds.collect.internal.CallerArg0ToPagedIterable;
+import org.jclouds.collect.internal.Arg0ToPagedIterable;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.json.Json;
@@ -40,6 +40,7 @@ import org.jclouds.rackspace.cloudloadbalancers.v1.functions.ParseNodes.Nodes;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -64,7 +65,7 @@ public class ParseNodes extends ParseJson<Nodes> {
       super(json, new TypeLiteral<Nodes>() { });
    }
 
-   public static class ToPagedIterable extends CallerArg0ToPagedIterable<Node, ToPagedIterable> {
+   public static class ToPagedIterable extends Arg0ToPagedIterable.FromCaller<Node, ToPagedIterable> {
 
       private final CloudLoadBalancersApi api;
       private int lbId;
@@ -86,7 +87,8 @@ public class ParseNodes extends ParseJson<Nodes> {
       }
 
       @Override
-      protected Function<Object, IterableWithMarker<Node>> markerToNextForCallingArg0(final String zone) {
+      protected Function<Object, IterableWithMarker<Node>> markerToNextForArg0(Optional<Object> arg0) {
+         String zone = arg0.isPresent() ? arg0.get().toString() : null;
          final NodeApi nodeApi = api.getNodeApiForZoneAndLoadBalancer(zone, lbId);
          
          return new Function<Object, IterableWithMarker<Node>>() {

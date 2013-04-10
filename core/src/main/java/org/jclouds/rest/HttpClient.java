@@ -21,9 +21,21 @@ package org.jclouds.rest;
 import java.io.InputStream;
 import java.net.URI;
 
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+
+import org.jclouds.Fallbacks.FalseOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.io.Payload;
+import org.jclouds.rest.annotations.EndpointParam;
+import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.ResponseParser;
 
 /**
  * Simple client
@@ -32,6 +44,34 @@ import org.jclouds.io.Payload;
  */
 public interface HttpClient {
    /**
+    * @return eTag
+    */
+   @PUT
+   @ResponseParser(ParseETagHeader.class)
+   String put(@EndpointParam URI location, Payload payload);
+
+   /**
+    * @return eTag
+    */
+   @POST
+   @ResponseParser(ParseETagHeader.class)
+   String post(@EndpointParam URI location, Payload payload);
+
+   /**
+    * @see HttpClient#exists
+    */
+   @HEAD
+   @Fallback(FalseOnNotFoundOr404.class)
+   boolean exists(@EndpointParam URI location);
+
+   /**
+    * @return null if the resource didn't exist.
+    */
+   @GET
+   @Fallback(NullOnNotFoundOr404.class)
+   InputStream get(@EndpointParam URI location);
+
+   /**
     * 
     * @param request
     * @return response, but make sure you consume its content.
@@ -39,24 +79,10 @@ public interface HttpClient {
    HttpResponse invoke(HttpRequest request);
 
    /**
-    * @return eTag
-    */
-   String put(URI location, Payload payload);
-
-   /**
-    * @return eTag
-    */
-   String post(URI location, Payload payload);
-
-   boolean exists(URI location);
-
-   /**
-    * @return null if the resource didn't exist.
-    */
-   InputStream get(URI location);
-
-   /**
     * @return false if the resource didn't exist.
     */
-   boolean delete(URI location);
+   @DELETE
+   @Fallback(FalseOnNotFoundOr404.class)
+   boolean delete(@EndpointParam URI location);
+
 }

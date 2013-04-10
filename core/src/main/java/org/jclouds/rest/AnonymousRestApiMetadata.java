@@ -20,6 +20,7 @@ package org.jclouds.rest;
 
 import java.net.URI;
 
+import org.jclouds.rest.internal.BaseHttpApiMetadata;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.annotations.Beta;
@@ -28,6 +29,8 @@ import com.google.common.annotations.Beta;
  * Useful in creating arbitrary clients.
  * 
  * @author Adrian Cole
+ * @deprecated please use {@link AnonymousHttpApiMetadata} as
+ *             async interface will be removed in jclouds 1.7.
  */
 @Beta
 public class AnonymousRestApiMetadata extends BaseRestApiMetadata {

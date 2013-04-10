@@ -18,19 +18,62 @@
  */
 package org.jclouds.ultradns.ws.features;
 
+import javax.inject.Named;
+import javax.ws.rs.POST;
+
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.rest.ResourceNotFoundException;
+import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.Payload;
+import org.jclouds.rest.annotations.PayloadParam;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.VirtualHost;
+import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
 import org.jclouds.ultradns.ws.domain.ResourceRecord;
 import org.jclouds.ultradns.ws.domain.ResourceRecordMetadata;
 import org.jclouds.ultradns.ws.domain.RoundRobinPool;
+import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
+import org.jclouds.ultradns.ws.xml.ElementTextHandler;
+import org.jclouds.ultradns.ws.xml.ResourceRecordListHandler;
+import org.jclouds.ultradns.ws.xml.RoundRobinPoolListHandler;
 
 import com.google.common.collect.FluentIterable;
 
 /**
- * @see RoundRobinPoolAsyncApi
+ * @see <a href="https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01?wsdl" />
+ * @see <a href="https://www.ultradns.net/api/NUS_API_XML_SOAP.pdf" />
  * @author Adrian Cole
  */
+@RequestFilters(SOAPWrapWithPasswordAuth.class)
+@VirtualHost
 public interface RoundRobinPoolApi {
+
+   /**
+    * Returns all round robin pools in the zone.
+    * 
+    * @throws ResourceNotFoundException
+    *            if the zone doesn't exist
+    */
+   @Named("getLoadBalancingPoolsByZone")
+   @POST
+   @XMLResponseParser(RoundRobinPoolListHandler.class)
+   @Payload("<v01:getLoadBalancingPoolsByZone><zoneName>{zoneName}</zoneName><lbPoolType>RR</lbPoolType></v01:getLoadBalancingPoolsByZone>")
+   FluentIterable<RoundRobinPool> list() throws ResourceNotFoundException;
+
+   /**
+    * Returns all records in the round robin pool.
+    * 
+    * @throws ResourceNotFoundException
+    *            if the pool doesn't exist
+    */
+   @Named("getRRPoolRecords")
+   @POST
+   @XMLResponseParser(ResourceRecordListHandler.class)
+   @Payload("<v01:getRRPoolRecords><lbPoolId>{poolId}</lbPoolId></v01:getRRPoolRecords>")
+   FluentIterable<ResourceRecordMetadata> listRecords(@PayloadParam("poolId") String poolId)
+         throws ResourceNotFoundException;
+
    /**
     * creates a round robin pool for {@code A} (ipv4) records
     * 
@@ -43,7 +86,12 @@ public interface RoundRobinPoolApi {
     * @throws ResourceAlreadyExistsException
     *            if a pool already exists with the same attrs
     */
-   String createAPoolForHostname(String name, String hostname) throws ResourceAlreadyExistsException;
+   @Named("addRRLBPool")
+   @POST
+   @XMLResponseParser(ElementTextHandler.RRPoolID.class)
+   @Payload("<v01:addRRLBPool><transactionID /><zoneName>{zoneName}</zoneName><hostName>{hostName}</hostName><description>{description}</description><poolRecordType>1</poolRecordType><rrGUID /></v01:addRRLBPool>")
+   String createAPoolForHostname(@PayloadParam("description") String name,
+         @PayloadParam("hostName") String hostname) throws ResourceAlreadyExistsException;
 
    /**
     * adds a new {@code A} record to the pool
@@ -58,37 +106,12 @@ public interface RoundRobinPoolApi {
     * @throws ResourceAlreadyExistsException
     *            if a record already exists with the same attrs
     */
-   String addARecordWithAddressAndTTL(String lbPoolID, String ipv4Address, int ttl)
-         throws ResourceAlreadyExistsException;
-
-   /**
-    * creates a round robin pool for {@code AAAA} (ipv6) records
-    * 
-    * @param name
-    *           {@link RoundRobinPool#getName() name} of the RR pool
-    * @param hostname
-    *           {@link RoundRobinPool#getDName() hostname} {ex.
-    *           www.jclouds.org.}
-    * @return the {@code guid} of the new record
-    * @throws ResourceAlreadyExistsException
-    *            if a pool already exists with the same attrs
-    */
-   String createAAAAPoolForHostname(String name, String hostname) throws ResourceAlreadyExistsException;
-
-   /**
-    * adds a new {@code AAAA} record to the pool
-    * 
-    * @param lbPoolID
-    *           the pool to add the record to.
-    * @param ipv6Address
-    *           the ipv6 address
-    * @param ttl
-    *           the {@link ResourceRecord#getTTL ttl} of the record
-    * @return the {@code guid} of the new record
-    * @throws ResourceAlreadyExistsException
-    *            if a record already exists with the same attrs
-    */
-   String addAAAARecordWithAddressAndTTL(String lbPoolID, String ipv6Address, int ttl)
+   @Named("addRecordToRRPool")
+   @POST
+   @XMLResponseParser(ElementTextHandler.Guid.class)
+   @Payload("<v01:addRecordToRRPool><transactionID /><roundRobinRecord lbPoolID=\"{lbPoolID}\" info1Value=\"{address}\" ZoneName=\"{zoneName}\" Type=\"1\" TTL=\"{ttl}\"/></v01:addRecordToRRPool>")
+   String addARecordWithAddressAndTTL(@PayloadParam("lbPoolID") String lbPoolID,
+         @PayloadParam("address") String ipv4Address, @PayloadParam("ttl") int ttl)
          throws ResourceAlreadyExistsException;
 
    /**
@@ -107,24 +130,12 @@ public interface RoundRobinPoolApi {
     * @throws ResourceNotFoundException
     *            if the guid doesn't exist
     */
-   void updateRecordWithAddressAndTTL(String lbPoolID, String guid, String address, int ttl)
-         throws ResourceNotFoundException;
-
-   /**
-    * Returns all round robin pools in the zone.
-    * 
-    * @throws ResourceNotFoundException
-    *            if the zone doesn't exist
-    */
-   FluentIterable<RoundRobinPool> list() throws ResourceNotFoundException;
-
-   /**
-    * Returns all records in the round robin pool.
-    * 
-    * @throws ResourceNotFoundException
-    *            if the pool doesn't exist
-    */
-   FluentIterable<ResourceRecordMetadata> listRecords(String poolId) throws ResourceNotFoundException;
+   @Named("updateRecordOfRRPool")
+   @POST
+   @Payload("<v01:updateRecordOfRRPool><transactionID /><resourceRecord rrGuid=\"{guid}\" lbPoolID=\"{lbPoolID}\" info1Value=\"{address}\" TTL=\"{ttl}\"/></v01:updateRecordOfRRPool>")
+   void updateRecordWithAddressAndTTL(@PayloadParam("lbPoolID") String lbPoolID,
+         @PayloadParam("guid") String guid, @PayloadParam("address") String ipv4Address,
+         @PayloadParam("ttl") int ttl) throws ResourceNotFoundException;
 
    /**
     * deletes a specific pooled resource record
@@ -133,7 +144,51 @@ public interface RoundRobinPoolApi {
     *           the global unique identifier for the resource record {@see
     *           ResourceRecordMetadata#getGuid()}
     */
-   void deleteRecord(String guid);
+   @Named("deleteRecordOfRRPool")
+   @POST
+   @Payload("<v01:deleteRecordOfRRPool><transactionID /><guid>{guid}</guid></v01:deleteRecordOfRRPool>")
+   @Fallback(VoidOnNotFoundOr404.class)
+   void deleteRecord(@PayloadParam("guid") String guid);
+
+   /**
+    * creates a round robin pool for {@code AAAA} (ipv6) records
+    * 
+    * @param name
+    *           {@link RoundRobinPool#getName() name} of the RR pool
+    * @param hostname
+    *           {@link RoundRobinPool#getDName() hostname} {ex.
+    *           www.jclouds.org.}
+    * @return the {@code guid} of the new record
+    * @throws ResourceAlreadyExistsException
+    *            if a pool already exists with the same attrs
+    */
+   @Named("addRRLBPool")
+   @POST
+   @XMLResponseParser(ElementTextHandler.RRPoolID.class)
+   @Payload("<v01:addRRLBPool><transactionID /><zoneName>{zoneName}</zoneName><hostName>{hostName}</hostName><description>{description}</description><poolRecordType>28</poolRecordType><rrGUID /></v01:addRRLBPool>")
+   String createAAAAPoolForHostname(@PayloadParam("description") String name,
+         @PayloadParam("hostName") String hostname) throws ResourceAlreadyExistsException;
+
+   /**
+    * adds a new {@code AAAA} record to the pool
+    * 
+    * @param lbPoolID
+    *           the pool to add the record to.
+    * @param ipv6Address
+    *           the ipv6 address
+    * @param ttl
+    *           the {@link ResourceRecord#getTTL ttl} of the record
+    * @return the {@code guid} of the new record
+    * @throws ResourceAlreadyExistsException
+    *            if a record already exists with the same attrs
+    */
+   @Named("addRecordToRRPool")
+   @POST
+   @XMLResponseParser(ElementTextHandler.Guid.class)
+   @Payload("<v01:addRecordToRRPool><transactionID /><roundRobinRecord lbPoolID=\"{lbPoolID}\" info1Value=\"{address}\" ZoneName=\"{zoneName}\" Type=\"28\" TTL=\"{ttl}\"/></v01:addRecordToRRPool>")
+   String addAAAARecordWithAddressAndTTL(@PayloadParam("lbPoolID") String lbPoolID,
+         @PayloadParam("address") String ipv6Address, @PayloadParam("ttl") int ttl)
+         throws ResourceAlreadyExistsException;
 
    /**
     * removes a pool and all its records and probes
@@ -141,5 +196,9 @@ public interface RoundRobinPoolApi {
     * @param id
     *           the {@link RoundRobinPool#getId() id}
     */
-   void delete(String id);
+   @Named("deleteLBPool")
+   @POST
+   @Payload("<v01:deleteLBPool><transactionID /><lbPoolID>{lbPoolID}</lbPoolID><DeleteAll>Yes</DeleteAll><retainRecordId /></v01:deleteLBPool>")
+   @Fallback(VoidOnNotFoundOr404.class)
+   void delete(@PayloadParam("lbPoolID") String id);
 }

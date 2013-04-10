@@ -18,17 +18,35 @@
  */
 package org.jclouds.ultradns.ws.features;
 
+import javax.inject.Named;
+import javax.ws.rs.POST;
+
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.rest.ResourceNotFoundException;
+import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.MapBinder;
+import org.jclouds.rest.annotations.Payload;
+import org.jclouds.rest.annotations.PayloadParam;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.VirtualHost;
+import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
+import org.jclouds.ultradns.ws.binders.ZoneAndResourceRecordToXML;
 import org.jclouds.ultradns.ws.domain.ResourceRecord;
 import org.jclouds.ultradns.ws.domain.ResourceRecordMetadata;
+import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
+import org.jclouds.ultradns.ws.xml.ElementTextHandler;
+import org.jclouds.ultradns.ws.xml.ResourceRecordListHandler;
 
 import com.google.common.collect.FluentIterable;
 
 /**
- * @see ResourceRecordAsyncApi
+ * @see <a href="https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01?wsdl" />
+ * @see <a href="https://www.ultradns.net/api/NUS_API_XML_SOAP.pdf" />
  * @author Adrian Cole
  */
+@RequestFilters(SOAPWrapWithPasswordAuth.class)
+@VirtualHost
 public interface ResourceRecordApi {
 
    /**
@@ -40,7 +58,12 @@ public interface ResourceRecordApi {
     * @throws ResourceAlreadyExistsException
     *            if a record already exists with the same attrs
     */
-   String create(ResourceRecord toCreate) throws ResourceAlreadyExistsException;
+   @Named("createResourceRecord")
+   @POST
+   @XMLResponseParser(ElementTextHandler.Guid.class)
+   @MapBinder(ZoneAndResourceRecordToXML.class)
+   String create(@PayloadParam("resourceRecord") ResourceRecord toCreate)
+         throws ResourceAlreadyExistsException;
 
    /**
     * updates an existing resource record in the zone.
@@ -53,7 +76,11 @@ public interface ResourceRecordApi {
     * @throws ResourceNotFoundException
     *            if the guid doesn't exist
     */
-   void update(String guid, ResourceRecord updated) throws ResourceNotFoundException;
+   @Named("updateResourceRecord")
+   @POST
+   @MapBinder(ZoneAndResourceRecordToXML.class)
+   void update(@PayloadParam("guid") String guid,
+         @PayloadParam("resourceRecord") ResourceRecord toCreate) throws ResourceNotFoundException;
 
    /**
     * Returns all the specified record types in the zone.
@@ -61,6 +88,10 @@ public interface ResourceRecordApi {
     * @throws ResourceNotFoundException
     *            if the zone doesn't exist
     */
+   @Named("getResourceRecordsOfZone")
+   @POST
+   @XMLResponseParser(ResourceRecordListHandler.class)
+   @Payload("<v01:getResourceRecordsOfZone><zoneName>{zoneName}</zoneName><rrType>0</rrType></v01:getResourceRecordsOfZone>")
    FluentIterable<ResourceRecordMetadata> list() throws ResourceNotFoundException;
 
    /**
@@ -72,7 +103,12 @@ public interface ResourceRecordApi {
     * @throws ResourceNotFoundException
     *            if the zone doesn't exist
     */
-   FluentIterable<ResourceRecordMetadata> listByName(String hostName) throws ResourceNotFoundException;
+   @Named("getResourceRecordsOfDNameByType")
+   @POST
+   @XMLResponseParser(ResourceRecordListHandler.class)
+   @Payload("<v01:getResourceRecordsOfDNameByType><zoneName>{zoneName}</zoneName><hostName>{hostName}</hostName><rrType>0</rrType></v01:getResourceRecordsOfDNameByType>")
+   FluentIterable<ResourceRecordMetadata> listByName(@PayloadParam("hostName") String hostName)
+         throws ResourceNotFoundException;
 
    /**
     * Returns all the specified record types in the zone with the fully
@@ -86,7 +122,12 @@ public interface ResourceRecordApi {
     * @throws ResourceNotFoundException
     *            if the zone doesn't exist
     */
-   FluentIterable<ResourceRecordMetadata> listByNameAndType(String hostName, int rrType)
+   @Named("getResourceRecordsOfDNameByType")
+   @POST
+   @XMLResponseParser(ResourceRecordListHandler.class)
+   @Payload("<v01:getResourceRecordsOfDNameByType><zoneName>{zoneName}</zoneName><hostName>{hostName}</hostName><rrType>{rrType}</rrType></v01:getResourceRecordsOfDNameByType>")
+   FluentIterable<ResourceRecordMetadata> listByNameAndType(
+         @PayloadParam("hostName") String hostName, @PayloadParam("rrType") int rrType)
          throws ResourceNotFoundException;
 
    /**
@@ -96,5 +137,9 @@ public interface ResourceRecordApi {
     *           the global unique identifier for the resource record {@see
     *           ResourceRecordMetadata#getGuid()}
     */
-   void delete(String guid);
+   @Named("deleteResourceRecord")
+   @POST
+   @Payload("<v01:deleteResourceRecord><transactionID /><guid>{guid}</guid></v01:deleteResourceRecord>")
+   @Fallback(VoidOnNotFoundOr404.class)
+   void delete(@PayloadParam("guid") String guid);
 }

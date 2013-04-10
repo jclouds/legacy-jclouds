@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
+import org.jclouds.rest.AnonymousHttpApiMetadata;
 import org.jclouds.rest.AnonymousRestApiMetadata;
 
 /**
@@ -31,11 +32,14 @@ import org.jclouds.rest.AnonymousRestApiMetadata;
  */
 public class AnonymousProviderMetadata extends BaseProviderMetadata {
 
+   public static <A> ProviderMetadata forApiOnEndpoint(Class<A> api, String endpoint) {
+      return forApiWithEndpoint(AnonymousHttpApiMetadata.forApi(api), endpoint);
+   }
+
    public static ProviderMetadata forClientMappedToAsyncClientOnEndpoint(Class<?> client, Class<?> asyncClient,
             String endpoint) {
       return forApiWithEndpoint(AnonymousRestApiMetadata.forClientMappedToAsyncClient(client, asyncClient), endpoint);
    }
-
    public static ProviderMetadata forApiWithEndpoint(ApiMetadata md, String endpoint) {
       checkNotNull(md, "api");
       checkNotNull(endpoint, "endpoint (%s)", md.getEndpointName());

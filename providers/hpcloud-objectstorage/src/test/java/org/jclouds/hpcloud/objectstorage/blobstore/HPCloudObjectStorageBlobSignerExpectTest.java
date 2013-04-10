@@ -30,6 +30,7 @@ import org.jclouds.hpcloud.objectstorage.blobstore.config.HPCloudObjectStorageBl
 import org.jclouds.hpcloud.objectstorage.config.HPCloudObjectStorageRestClientModule;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.openstack.keystone.v2_0.config.MappedAuthenticationApiModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.RegionModule;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule.KeystoneStorageEndpointModule;
 import org.testng.annotations.Test;
@@ -132,6 +133,7 @@ public class HPCloudObjectStorageBlobSignerExpectTest extends BaseBlobSignerExpe
    protected ApiMetadata createApiMetadata() {
       return new HPCloudObjectStorageApiMetadata().toBuilder()
                                    .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                         .add(MappedAuthenticationApiModule.class)
                                          .add(KeystoneStorageEndpointModule.class)
                                          .add(RegionModule.class)
                                          .add(HPCloudObjectStorageRestClientModule.class)

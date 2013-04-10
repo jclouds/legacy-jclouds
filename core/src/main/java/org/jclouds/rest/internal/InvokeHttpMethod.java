@@ -20,19 +20,14 @@ package org.jclouds.rest.internal;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Throwables.propagate;
-import static com.google.common.util.concurrent.Futures.transform;
-import static com.google.common.util.concurrent.Futures.withFallback;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
-import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpCommandExecutorService;
@@ -47,9 +42,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
-import com.google.common.reflect.Invokable;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.TimeLimiter;
 import com.google.common.util.concurrent.UncheckedTimeoutException;
 
@@ -61,24 +53,19 @@ public class InvokeHttpMethod implements Function<Invocation, Object> {
    @Resource
    private Logger logger = Logger.NULL;
 
-   private final Function<Invocation, Invocation> sync2async;
    private final Function<Invocation, HttpRequest> annotationProcessor;
    private final HttpCommandExecutorService http;
-   private final ListeningExecutorService userExecutor;
    private final TimeLimiter timeLimiter;
    private final Function<HttpRequest, Function<HttpResponse, ?>> transformerForRequest;
    private final InvocationConfig config;
 
    @Inject
    @VisibleForTesting
-   InvokeHttpMethod(Function<Invocation, Invocation> sync2async, Function<Invocation, HttpRequest> annotationProcessor,
+   InvokeHttpMethod(Function<Invocation, HttpRequest> annotationProcessor,
          HttpCommandExecutorService http, Function<HttpRequest, Function<HttpResponse, ?>> transformerForRequest,
-         TimeLimiter timeLimiter, InvocationConfig config,
-         @Named(PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
-      this.sync2async = sync2async;
+         TimeLimiter timeLimiter, InvocationConfig config) {
       this.annotationProcessor = annotationProcessor;
       this.http = http;
-      this.userExecutor = userExecutor;
       this.timeLimiter = timeLimiter;
       this.transformerForRequest = transformerForRequest;
       this.config = config;
@@ -86,32 +73,11 @@ public class InvokeHttpMethod implements Function<Invocation, Object> {
 
    @Override
    public Object apply(Invocation in) {
-      if (isFuture(in.getInvokable())) {
-         return submit(in);
-      }
-      Invocation async = toAsync(in);
-      Optional<Long> timeoutNanos = config.getTimeoutNanos(async);
+      Optional<Long> timeoutNanos = config.getTimeoutNanos(in);
       if (timeoutNanos.isPresent()) {
-         return invokeWithTimeout(async, timeoutNanos.get());
+         return invokeWithTimeout(in, timeoutNanos.get());
       }
-      return invoke(async);
-   }
-
-   /**
-    * submits the {@linkplain HttpCommand} associated with {@code invocation},
-    * {@link #getTransformer(String, HttpCommand) parses its response}, and
-    * applies a {@link #getFallback(String, Invocation, HttpCommand) fallback}
-    * if a {@code Throwable} is encountered. Parsing and Fallback occur on the
-    * {@code userExecutor} thread.
-    */
-   public ListenableFuture<?> submit(Invocation invocation) {
-      String commandName = config.getCommandName(invocation);
-      HttpCommand command = toCommand(commandName, invocation);
-      Function<HttpResponse, ?> transformer = getTransformer(commandName, command);
-      org.jclouds.Fallback<?> fallback = getFallback(commandName, invocation, command);
-
-      logger.debug(">> submitting %s", commandName);
-      return withFallback(transform(http.submit(command), transformer, userExecutor), fallback);
+      return invoke(in);
    }
 
    /**
@@ -224,17 +190,6 @@ public class InvokeHttpMethod implements Function<Invocation, Object> {
       }
    }
 
-   /**
-    * looks up the corresponding {@code Invocation} that returns a
-    * {@code Future}. Only Invokables that return {@code Futures} are annotated
-    * in a way that can be parsed into an {@linkplain HttpRequest}.
-    */
-   private Invocation toAsync(Invocation in) {
-      Invocation async = sync2async.apply(in);
-      checkState(isFuture(async.getInvokable()), "not a future: %s", async);
-      return async;
-   }
-
    private HttpCommand toCommand(String commandName, Invocation invocation) {
       logger.trace(">> converting %s", commandName);
       HttpRequest request = annotationProcessor.apply(invocation);
@@ -247,10 +202,6 @@ public class InvokeHttpMethod implements Function<Invocation, Object> {
       Function<HttpResponse, ?> transformer = transformerForRequest.apply(request);
       logger.trace("<< response from %s is parsed by %s", commandName, transformer.getClass().getSimpleName());
       return transformer;
-   }
-
-   private boolean isFuture(Invokable<?, ?> in) {
-      return in.getReturnType().getRawType().equals(ListenableFuture.class);
    }
 
    @Override

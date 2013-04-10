@@ -19,8 +19,8 @@
 package org.jclouds.sts.internal;
 
 import org.jclouds.date.DateService;
-import org.jclouds.sts.config.STSRestClientModule;
-import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.sts.config.STSHttpApiModule;
+import org.jclouds.rest.ConfiguresHttpApi;
 import org.jclouds.rest.internal.BaseRestApiExpectTest;
 
 import com.google.inject.Module;
@@ -35,8 +35,8 @@ public class BaseSTSExpectTest<T> extends BaseRestApiExpectTest<T> {
       provider = "sts";
    }
    
-   @ConfiguresRestClient
-   private static final class TestSTSRestClientModule extends STSRestClientModule {
+   @ConfiguresHttpApi
+   private static final class TestSTSHttpApiModule extends STSHttpApiModule {
 
       @Override
       protected String provideTimeStamp(final DateService dateService) {
@@ -46,6 +46,6 @@ public class BaseSTSExpectTest<T> extends BaseRestApiExpectTest<T> {
 
    @Override
    protected Module createModule() {
-      return new TestSTSRestClientModule();
+      return new TestSTSHttpApiModule();
    }
 }
