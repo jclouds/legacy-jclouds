@@ -61,7 +61,7 @@ public class DirectionalGroup {
 
    @Override
    public String toString() {
-      return toStringHelper("").omitNullValues().add("id", id).add("name", name).toString();
+      return toStringHelper(this).omitNullValues().add("id", id).add("name", name).toString();
    }
 
    public static Builder builder() {

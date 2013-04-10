@@ -91,7 +91,7 @@ public class DirectionalRecord {
 
    @Override
    public String toString() {
-      return toStringHelper("").add("type", type).add("ttl", ttl).add("noResponseRecord", noResponseRecord)
+      return toStringHelper(this).add("type", type).add("ttl", ttl).add("noResponseRecord", noResponseRecord)
             .add("infoValues", infoValues).toString();
    }
 

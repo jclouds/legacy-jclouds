@@ -73,7 +73,7 @@ public class DirectionalGroupNameAndRegions extends ForwardingSet<Region> {
 
    @Override
    public String toString() {
-      return toStringHelper("").add("name", name).add("regions", regions).toString();
+      return toStringHelper(this).add("name", name).add("regions", regions).toString();
    }
 
    public static Builder builder() {
