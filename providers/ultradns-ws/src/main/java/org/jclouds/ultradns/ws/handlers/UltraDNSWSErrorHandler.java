@@ -96,6 +96,10 @@ public class UltraDNSWSErrorHandler implements HttpErrorHandler {
        */
       static final int RESOURCE_RECORD_ALREADY_EXISTS = 2111;
       /**
+       * No Pool or Multiple pools of same type exists for the PoolName
+       */
+      static final int DIRECTIONAL_POOL_NOT_FOUND = 2142;
+      /**
        * Account not found in the system.
        */
       static final int ACCOUNT_NOT_FOUND = 2401;
@@ -111,6 +115,10 @@ public class UltraDNSWSErrorHandler implements HttpErrorHandler {
        * Pool Record does not exist.
        */
       static final int POOL_RECORD_NOT_FOUND = 3101;
+      /**
+       * Group does not exist.
+       */
+      static final int GROUP_NOT_FOUND = 4003;
    }
 
    private Exception refineException(UltraDNSWSResponseException exception) {
@@ -125,7 +133,9 @@ public class UltraDNSWSErrorHandler implements HttpErrorHandler {
       case RESOURCE_RECORD_NOT_FOUND:
       case ACCOUNT_NOT_FOUND:
       case POOL_NOT_FOUND:
+      case DIRECTIONAL_POOL_NOT_FOUND:
       case POOL_RECORD_NOT_FOUND:
+      case GROUP_NOT_FOUND:
          return new ResourceNotFoundException(message, exception);
       case ZONE_ALREADY_EXISTS:
       case RESOURCE_RECORD_ALREADY_EXISTS:

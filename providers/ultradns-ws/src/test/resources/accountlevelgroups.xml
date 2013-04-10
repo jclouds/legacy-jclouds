@@ -1,0 +1,15 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Body>
+		<ns1:getAccountLevelDirectionalGroupsResponse
+			xmlns:ns1="http://webservice.api.ultra.neustar.com/v01/">
+			<GroupsList xmlns:ns2="http://schema.ultraservice.neustar.com/v01/">
+				<ns2:AccountLevelGroups GroupId="000000000000000A"
+					GroupName="ASIA" RecordsCount="0" GroupType="GEOLOCATION" />
+				<ns2:AccountLevelGroups GroupId="000000000000000B"
+					GroupName="EU" RecordsCount="3" GroupType="GEOLOCATION" />
+				<ns2:AccountLevelGroups GroupId="000000000000000C"
+					GroupName="LATAM" RecordsCount="1" GroupType="GEOLOCATION" />
+			</GroupsList>
+		</ns1:getAccountLevelDirectionalGroupsResponse>
+	</soap:Body>
+</soap:Envelope>

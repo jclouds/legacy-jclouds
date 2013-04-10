@@ -33,38 +33,37 @@ import com.google.common.collect.ImmutableList;
 /**
  * @author Adrian Cole
  */
-public class ResourceRecord {
-
-   private final String dName;
-   private final int type;
+public class DirectionalRecord {
+   private final String type;
    private final int ttl;
+   private final boolean noResponseRecord;
    private final List<String> infoValues;
 
-   private ResourceRecord(String dName, int type, int ttl, List<String> infoValues) {
-      this.dName = checkNotNull(dName, "dName");
-      checkArgument(type >= 0, "type of %s must be >= 0", dName);
-      this.type = type;
-      checkArgument(ttl >= 0, "ttl of %s must be >= 0", dName);
+   private DirectionalRecord(String type, int ttl, boolean noResponseRecord, List<String> infoValues) {
+      this.type = checkNotNull(type, "type");
+      checkArgument(ttl >= 0, "ttl must be >= 0");
       this.ttl = ttl;
-      this.infoValues = checkNotNull(infoValues, "infoValues of %s", dName);
+      this.noResponseRecord = noResponseRecord;
+      this.infoValues = checkNotNull(infoValues, "infoValues");
    }
 
    /**
-    * the {@code dName} of the record.
+    * the type. ex. {@code A}
     */
-   public String getName() {
-      return dName;
-   }
-
-   /**
-    * the type value. ex {@code 1} for type {@code A}
-    */
-   public int getType() {
+   public String getType() {
       return type;
    }
 
    public int getTTL() {
       return ttl;
+   }
+
+   /**
+    * true if blocks traffic from specified regions by returning No Error, No
+    * Response.
+    */
+   public boolean isNoResponseRecord() {
+      return noResponseRecord;
    }
 
    /**
@@ -76,7 +75,7 @@ public class ResourceRecord {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(dName, type, ttl, infoValues);
+      return Objects.hashCode(noResponseRecord, type, ttl, infoValues);
    }
 
    @Override
@@ -85,49 +84,41 @@ public class ResourceRecord {
          return true;
       if (obj == null || getClass() != obj.getClass())
          return false;
-      ResourceRecord that = ResourceRecord.class.cast(obj);
-      return equal(this.dName, that.dName) && equal(this.type, that.type) && equal(this.ttl, that.ttl)
-            && equal(this.infoValues, that.infoValues);
+      DirectionalRecord that = DirectionalRecord.class.cast(obj);
+      return equal(this.type, that.type) && equal(this.ttl, that.ttl)
+            && equal(this.noResponseRecord, that.noResponseRecord) && equal(this.infoValues, that.infoValues);
    }
 
    @Override
    public String toString() {
-      return toStringHelper(this).omitNullValues().add("dName", dName).add("type", type).add("ttl", ttl)
+      return toStringHelper(this).add("type", type).add("ttl", ttl).add("noResponseRecord", noResponseRecord)
             .add("infoValues", infoValues).toString();
    }
 
-   public static Builder rrBuilder() {
+   public static Builder drBuilder() {
       return new Builder();
    }
 
    public Builder toBuilder() {
-      return rrBuilder().from(this);
+      return drBuilder().from(this);
    }
 
    public final static class Builder {
-      private String dName;
-      private int type = -1;
+      private String type;
       private int ttl = -1;
+      private boolean noResponseRecord;
       private ImmutableList.Builder<String> infoValues = ImmutableList.<String> builder();
 
       /**
-       * @see ResourceRecord#getName()
+       * @see DirectionalRecord#getType()
        */
-      public Builder name(String dName) {
-         this.dName = dName;
-         return this;
-      }
-
-      /**
-       * @see ResourceRecord#getType()
-       */
-      public Builder type(int type) {
+      public Builder type(String type) {
          this.type = type;
          return this;
       }
 
       /**
-       * @see ResourceRecord#getTTL()
+       * @see DirectionalRecord#getTTL()
        */
       public Builder ttl(int ttl) {
          this.ttl = ttl;
@@ -135,9 +126,17 @@ public class ResourceRecord {
       }
 
       /**
+       * @see DirectionalRecord#isNoResponseRecord()
+       */
+      public Builder noResponseRecord(boolean noResponseRecord) {
+         this.noResponseRecord = noResponseRecord;
+         return this;
+      }
+
+      /**
        * adds to current values
        * 
-       * @see ResourceRecord#getRData()
+       * @see DirectionalRecord#getRData()
        */
       public Builder infoValue(Object infoValue) {
          this.infoValues.add(infoValue.toString());
@@ -147,7 +146,7 @@ public class ResourceRecord {
       /**
        * replaces current values
        * 
-       * @see ResourceRecord#getRData()
+       * @see DirectionalRecord#getRData()
        */
       public Builder rdata(Object infoValue) {
          this.infoValues = ImmutableList.<String> builder().add(infoValue.toString());
@@ -157,19 +156,19 @@ public class ResourceRecord {
       /**
        * replaces current values
        * 
-       * @see ResourceRecord#getRData()
+       * @see DirectionalRecord#getRData()
        */
       public Builder rdata(Iterable<?> infoValues) {
          this.infoValues = ImmutableList.<String> builder().addAll(transform(infoValues, toStringFunction()));
          return this;
       }
 
-      public ResourceRecord build() {
-         return new ResourceRecord(dName, type, ttl, infoValues.build());
+      public DirectionalRecord build() {
+         return new DirectionalRecord(type, ttl, noResponseRecord, infoValues.build());
       }
 
-      public Builder from(ResourceRecord in) {
-         return name(in.getName()).type(in.getType()).ttl(in.getTTL()).rdata(in.getRData());
+      public Builder from(DirectionalRecord in) {
+         return type(in.type).ttl(in.ttl).noResponseRecord(in.noResponseRecord).rdata(in.infoValues);
       }
    }
 }
