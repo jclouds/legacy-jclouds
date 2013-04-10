@@ -43,7 +43,10 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Simple rest client
  * 
  * @author Adrian Cole
+ * @deprecated will be removed in jclouds 1.7, as async interfaces are no longer
+ *             supported.
  */
+@Deprecated
 public interface HttpAsyncClient {
    /**
     * @see HttpClient#put

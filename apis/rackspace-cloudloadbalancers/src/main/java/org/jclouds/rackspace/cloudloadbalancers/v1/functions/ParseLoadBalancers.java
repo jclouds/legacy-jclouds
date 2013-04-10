@@ -27,7 +27,7 @@ import javax.inject.Inject;
 
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.IterableWithMarkers;
-import org.jclouds.collect.internal.CallerArg0ToPagedIterable;
+import org.jclouds.collect.internal.Arg0ToPagedIterable;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
@@ -40,6 +40,7 @@ import org.jclouds.rackspace.cloudloadbalancers.v1.functions.ConvertLB.Factory;
 import org.jclouds.rest.InvocationContext;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 
 /**
@@ -92,7 +93,7 @@ public class ParseLoadBalancers implements Function<HttpResponse, IterableWithMa
 
    }
 
-   public static class ToPagedIterable extends CallerArg0ToPagedIterable<LoadBalancer, ToPagedIterable> {
+   public static class ToPagedIterable extends Arg0ToPagedIterable.FromCaller<LoadBalancer, ToPagedIterable> {
 
       private final CloudLoadBalancersApi api;
 
@@ -102,7 +103,8 @@ public class ParseLoadBalancers implements Function<HttpResponse, IterableWithMa
       }
 
       @Override
-      protected Function<Object, IterableWithMarker<LoadBalancer>> markerToNextForCallingArg0(final String zone) {
+      protected Function<Object, IterableWithMarker<LoadBalancer>> markerToNextForArg0(Optional<Object> arg0) {
+         String zone = arg0.isPresent() ? arg0.get().toString() : null;
          final LoadBalancerApi loadBalancerApi = api.getLoadBalancerApiForZone(zone);
          
          return new Function<Object, IterableWithMarker<LoadBalancer>>() {

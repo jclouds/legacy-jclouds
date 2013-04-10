@@ -37,7 +37,9 @@ import com.google.common.util.concurrent.ListenableFuture;
 /**
  * 
  * @author Adrian Cole
+ * @deprecated will be removed in jclouds 1.7, as async interfaces are no longer supported.
  */
+@Deprecated
 public final class InvokeAndCallGetOnFutures<R> implements Function<Invocation, Object> {
 
    @Resource

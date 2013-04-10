@@ -75,11 +75,22 @@ public interface Utils {
     */
    Json json();
 
+   /**
+    * 
+    * @deprecated will be removed in jclouds 1.7, as async interfaces are no
+    *             longer supported.
+    * @see #getHttpClient()
+    */
+   @Deprecated
    HttpAsyncClient getHttpAsyncClient();
 
    /**
-    * #see #getHttpAsyncClient
+    * 
+    * @deprecated will be removed in jclouds 1.7, as async interfaces are no
+    *             longer supported.
+    * @see #http()
     */
+   @Deprecated
    HttpAsyncClient asyncHttp();
 
    HttpClient getHttpClient();

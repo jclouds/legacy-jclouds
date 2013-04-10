@@ -18,6 +18,8 @@
  */
 package org.jclouds.openstack.keystone.v2_0;
 
+import java.io.Closeable;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -42,8 +44,11 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Service_API_Api_Operations.html"
  *      />
  * @author Adrian Cole
+ * @deprecated will be removed in jclouds 1.7, as async interfaces are no longer
+ *             supported. please use {@link AuthenticationApi}
  */
-public interface AuthenticationAsyncApi {
+@Deprecated
+public interface AuthenticationAsyncApi extends Closeable {
 
    /**
     * @see AuthenticationApi#authenticateWithTenantNameAndCredentials(String,PasswordCredentials)

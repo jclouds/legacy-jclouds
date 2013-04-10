@@ -21,12 +21,17 @@ package org.jclouds.rest;
 import org.jclouds.apis.ApiMetadata;
 
 import com.google.common.annotations.Beta;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * 
  * @author Adrian Cole
  * @since 1.5
+ * 
+ * @deprecated please use {@link HttpApiMetadata} as
+ *             async interface will be removed in jclouds 1.7.
  */
+@Deprecated
 @Beta
 public interface RestApiMetadata extends ApiMetadata {
 

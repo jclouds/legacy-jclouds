@@ -26,7 +26,6 @@ import java.util.Properties;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.internal.BaseApiMetadata;
 import org.jclouds.rest.RestApiMetadata;
-import org.jclouds.rest.RestContext;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects.ToStringHelper;
@@ -37,6 +36,8 @@ import com.google.common.reflect.TypeToken;
  * Useful in creating rest apis.
  * 
  * @author Adrian Cole
+ * @deprecated please use {@link BaseHttpApiMetadata} as
+ *             async interface will be removed in jclouds 1.7.
  */
 @Beta
 public abstract class BaseRestApiMetadata extends BaseApiMetadata implements RestApiMetadata {
@@ -55,8 +56,8 @@ public abstract class BaseRestApiMetadata extends BaseApiMetadata implements Res
       return props;
    }
    
-   public static <S, A> TypeToken<RestContext<S, A>> contextToken(TypeToken<S> apiToken, TypeToken<A> asyncApiToken) {
-      return new TypeToken<RestContext<S, A>>() {
+   public static <S, A> TypeToken<org.jclouds.rest.RestContext<S, A>> contextToken(TypeToken<S> apiToken, TypeToken<A> asyncApiToken) {
+      return new TypeToken<org.jclouds.rest.RestContext<S, A>>() {
          private static final long serialVersionUID = 1L;
       }.where(new TypeParameter<S>() {
       }, apiToken).where(new TypeParameter<A>() {

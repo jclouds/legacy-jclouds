@@ -31,7 +31,6 @@ import org.jclouds.date.DateService;
 import org.jclouds.domain.Credentials;
 import org.jclouds.json.Json;
 import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshClient.Factory;
@@ -54,11 +53,12 @@ public class UtilsImpl extends org.jclouds.rest.internal.UtilsImpl implements Ut
    private final Function<NodeMetadata, SshClient> sshForNode;
 
    @Inject
-   UtilsImpl(Injector injector, Json json, XMLParser xml, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
-            Crypto encryption, DateService date, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
-            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ListeningExecutorService ioExecutor, EventBus eventBus,
-            Map<String, Credentials> credentialStore, LoggerFactory loggerFactory,
-            Function<NodeMetadata, SshClient> sshForNode) {
+   UtilsImpl(Injector injector, Json json, XMLParser xml, HttpClient simpleClient,
+         org.jclouds.rest.HttpAsyncClient simpleAsyncClient, Crypto encryption, DateService date,
+         @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
+         @Named(Constants.PROPERTY_IO_WORKER_THREADS) ListeningExecutorService ioExecutor, EventBus eventBus,
+         Map<String, Credentials> credentialStore, LoggerFactory loggerFactory,
+         Function<NodeMetadata, SshClient> sshForNode) {
       super(injector, json, xml, simpleClient, simpleAsyncClient, encryption, date, userExecutor, ioExecutor, eventBus,
             credentialStore, loggerFactory);
       this.sshForNode = sshForNode;

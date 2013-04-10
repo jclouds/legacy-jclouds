@@ -18,22 +18,48 @@
  */
 package org.jclouds.route53.features;
 
+import static javax.ws.rs.core.MediaType.APPLICATION_XML;
+
+import javax.inject.Named;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.Payload;
+import org.jclouds.rest.annotations.PayloadParam;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.Transform;
+import org.jclouds.rest.annotations.VirtualHost;
+import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.route53.domain.Change;
 import org.jclouds.route53.domain.Change.Status;
 import org.jclouds.route53.domain.HostedZone;
 import org.jclouds.route53.domain.HostedZoneAndNameServers;
 import org.jclouds.route53.domain.NewHostedZone;
+import org.jclouds.route53.filters.RestAuthentication;
+import org.jclouds.route53.functions.HostedZonesToPagedIterable;
+import org.jclouds.route53.xml.ChangeHandler;
+import org.jclouds.route53.xml.CreateHostedZoneResponseHandler;
+import org.jclouds.route53.xml.GetHostedZoneResponseHandler;
+import org.jclouds.route53.xml.ListHostedZonesResponseHandler;
 
 /**
- * @see HostedZoneAsyncApi
  * @see <a href=
  *      "http://docs.aws.amazon.com/Route53/latest/APIReference/ActionsOnHostedZones.html"
  *      />
  * @author Adrian Cole
  */
+@RequestFilters(RestAuthentication.class)
+@VirtualHost
 public interface HostedZoneApi {
 
    /**
@@ -51,28 +77,55 @@ public interface HostedZoneApi {
     *           retries. ex. {@code MyDNSMigration_01}
     * @return the new zone in progress, in {@link Status#PENDING}.
     */
-   NewHostedZone createWithReference(String name, String callerReference);
+   @Named("CreateHostedZone")
+   @POST
+   @Produces(APPLICATION_XML)
+   @Path("/hostedzone")
+   @Payload("<CreateHostedZoneRequest xmlns=\"https://route53.amazonaws.com/doc/2012-02-29/\"><Name>{name}</Name><CallerReference>{callerReference}</CallerReference></CreateHostedZoneRequest>")
+   @XMLResponseParser(CreateHostedZoneResponseHandler.class)
+   NewHostedZone createWithReference(@PayloadParam("name") String name,
+         @PayloadParam("callerReference") String callerReference);
 
    /**
     * like {@link #createWithReference(String, String)}, except you can specify
     * a comment.
     */
-   NewHostedZone createWithReferenceAndComment(String name, String callerReference, String comment);
+   @Named("CreateHostedZone")
+   @POST
+   @Produces(APPLICATION_XML)
+   @Path("/hostedzone")
+   @Payload("<CreateHostedZoneRequest xmlns=\"https://route53.amazonaws.com/doc/2012-02-29/\"><Name>{name}</Name><CallerReference>{callerReference}</CallerReference><HostedZoneConfig><Comment>{comment}</Comment></HostedZoneConfig></CreateHostedZoneRequest>")
+   @XMLResponseParser(CreateHostedZoneResponseHandler.class)
+   NewHostedZone createWithReferenceAndComment(@PayloadParam("name") String name,
+         @PayloadParam("callerReference") String callerReference, @PayloadParam("comment") String comment);
 
    /**
     * returns all zones in order.
     */
+   @Named("ListHostedZones")
+   @GET
+   @Path("/hostedzone")
+   @XMLResponseParser(ListHostedZonesResponseHandler.class)
+   @Transform(HostedZonesToPagedIterable.class)
    PagedIterable<HostedZone> list();
 
    /**
     * retrieves up to 100 zones in order.
     */
+   @Named("ListHostedZones")
+   @GET
+   @Path("/hostedzone")
+   @XMLResponseParser(ListHostedZonesResponseHandler.class)
    IterableWithMarker<HostedZone> listFirstPage();
 
    /**
     * retrieves up to 100 zones in order, starting at {@code nextMarker}
     */
-   IterableWithMarker<HostedZone> listAt(String nextMarker);
+   @Named("ListHostedZones")
+   @GET
+   @Path("/hostedzone")
+   @XMLResponseParser(ListHostedZonesResponseHandler.class)
+   IterableWithMarker<HostedZone> listAt(@QueryParam("marker") String nextMarker);
 
    /**
     * Retrieves information about the specified zone, including its nameserver
@@ -83,8 +136,13 @@ public interface HostedZoneApi {
     *           {@code Z1PA6795UKMFR9}
     * @return null if not found
     */
+   @Named("GetHostedZone")
+   @GET
+   @Path("/hostedzone/{zoneId}")
+   @XMLResponseParser(GetHostedZoneResponseHandler.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Nullable
-   HostedZoneAndNameServers get(String id);
+   HostedZoneAndNameServers get(@PathParam("zoneId") String zoneId);
 
    /**
     * This action deletes a hosted zone.
@@ -93,6 +151,11 @@ public interface HostedZoneApi {
     *           id of the zone to delete. ex {@code Z1PA6795UKMFR9}
     * @return null if not found or the change in progress
     */
+   @Named("DeleteHostedZone")
+   @DELETE
+   @Path("/hostedzone/{zoneId}")
+   @XMLResponseParser(ChangeHandler.class)
+   @Fallback(NullOnNotFoundOr404.class)
    @Nullable
-   Change delete(String id);
+   Change delete(@PathParam("zoneId") String zoneId);
 }

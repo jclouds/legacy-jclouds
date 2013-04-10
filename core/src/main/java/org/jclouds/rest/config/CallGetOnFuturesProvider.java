@@ -24,7 +24,7 @@ import java.lang.reflect.Proxy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.rest.internal.DelegatesToInvocationFunction;
+import org.jclouds.rest.internal.DelegatesToPotentiallyMappedInvocationFunction;
 import org.jclouds.rest.internal.InvokeAndCallGetOnFutures;
 
 import com.google.common.cache.Cache;
@@ -33,20 +33,22 @@ import com.google.inject.Provider;
 
 /**
  * @author Adrian Cole
+ * @deprecated will be removed in jclouds 1.7, as async interfaces are no longer supported.
  */
+@Deprecated
 @Singleton
 public class CallGetOnFuturesProvider<S, A> implements Provider<S> {
 
    private final Class<? super S> apiType;
-   private final DelegatesToInvocationFunction<S, InvokeAndCallGetOnFutures<A>> syncInvoker;
+   private final DelegatesToPotentiallyMappedInvocationFunction<S, InvokeAndCallGetOnFutures<A>> syncInvoker;
 
    @Inject
    private CallGetOnFuturesProvider(Cache<Invokable<?, ?>, Invokable<?, ?>> invokables,
-         DelegatesToInvocationFunction<S, InvokeAndCallGetOnFutures<A>> syncInvoker, Class<S> apiType,
+         DelegatesToPotentiallyMappedInvocationFunction<S, InvokeAndCallGetOnFutures<A>> syncInvoker, Class<S> apiType,
          Class<A> asyncApiType) {
       this.syncInvoker = syncInvoker;
       this.apiType = apiType;
-      RestModule.putInvokables(apiType, asyncApiType, invokables);
+      MappedHttpInvocationModule.putInvokables(apiType, asyncApiType, invokables);
    }
 
    @SuppressWarnings("unchecked")

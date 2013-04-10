@@ -25,16 +25,9 @@ import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONES;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.ZoneModule;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
-import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityAuthenticationModule;
 import org.jclouds.rackspace.cloudloadbalancers.v1.CloudLoadBalancersApiMetadata;
-import org.jclouds.rackspace.cloudloadbalancers.v1.config.CloudLoadBalancersRestClientModule;
-import org.jclouds.rackspace.cloudloadbalancers.v1.loadbalancer.config.CloudLoadBalancersLoadBalancerContextModule;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud LoadBalancers US.
@@ -74,18 +67,7 @@ public class CloudLoadBalancersUSProviderMetadata extends BaseProviderMetadata {
          id("rackspace-cloudloadbalancers-us")
          .name("Rackspace Cloud Load Balancers US")
          .apiMetadata(new CloudLoadBalancersApiMetadata().toBuilder()
-                  .identityName("${userName}")
-                  .credentialName("${apiKey}")
-                  .version("1.0")
                   .defaultEndpoint("https://identity.api.rackspacecloud.com/v2.0/")
-                  .endpointName("Identity service URL ending in /v2.0/")
-                  .documentation(URI.create("http://docs.rackspace.com/loadbalancers/api/clb-devguide-latest/index.html"))
-                  .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
-                                              .add(CloudIdentityAuthenticationModule.class)
-                                              .add(ZoneModule.class)
-                                              .add(CloudLoadBalancersRestClientModule.class)
-                                              .add(CloudLoadBalancersLoadBalancerContextModule.class)
-                                              .build())
                   .build())
          .homepage(URI.create("http://www.rackspace.com/cloud/public/loadbalancers/"))
          .console(URI.create("https://mycloud.rackspace.com"))

@@ -70,7 +70,7 @@ import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.providers.ProviderMetadata;
-import org.jclouds.rest.RestApiMetadata;
+import org.jclouds.rest.HttpApiMetadata;
 import org.jclouds.rest.config.CredentialStoreModule;
 import org.jclouds.util.Strings2;
 import org.w3c.dom.Node;
@@ -557,11 +557,16 @@ public abstract class BaseRestApiExpectTest<S> {
          ApiMetadata am = (pm != null) ? pm.getApiMetadata() : checkNotNull(createApiMetadata(),
                   "either createApiMetadata or createProviderMetadata must be overridden");
 
-         builder = pm != null ? ContextBuilder.newBuilder(pm) : ContextBuilder.newBuilder(RestApiMetadata.class.cast(am));
+         builder = pm != null ? ContextBuilder.newBuilder(pm) : ContextBuilder.newBuilder(am);
       }
-
-      this.api = RestApiMetadata.class.cast(builder.getApiMetadata()).getApi();
-
+      ApiMetadata am = builder.getApiMetadata();
+      if (am instanceof HttpApiMetadata) {
+         this.api = HttpApiMetadata.class.cast(am).getApi();
+      } else if (am instanceof org.jclouds.rest.RestApiMetadata) {
+         this.api = org.jclouds.rest.RestApiMetadata.class.cast(am).getApi();
+      } else {
+         throw new UnsupportedOperationException("unsupported base type: " + am);
+      }
       // isolate tests from eachother, as default credentialStore is static
       return builder.credentials(identity, credential).modules(
                ImmutableSet.of(new ExpectModule(fn), new NullLoggingModule(), new CredentialStoreModule(new CopyInputStreamInputSupplierMap(
