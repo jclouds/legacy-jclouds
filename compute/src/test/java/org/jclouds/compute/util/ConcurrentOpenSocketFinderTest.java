@@ -21,8 +21,11 @@ package org.jclouds.compute.util;
 import static com.google.common.base.Predicates.alwaysFalse;
 import static com.google.common.base.Predicates.alwaysTrue;
 import static com.google.common.base.Throwables.propagate;
+import static com.google.common.util.concurrent.MoreExecutors.listeningDecorator;
 import static com.google.common.util.concurrent.Uninterruptibles.sleepUninterruptibly;
+import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.jclouds.compute.domain.NodeMetadata.Status.RUNNING;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
@@ -30,7 +33,6 @@ import static org.testng.Assert.fail;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -47,16 +49,20 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.net.HostAndPort;
 import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
 
 @Test(singleThreaded = true)
 public class ConcurrentOpenSocketFinderTest {
 
-   private static final long SLOW_GRACE = 500;
+   /**
+    * prevente test failures on slow build slaves
+    */
+   private static final long SLOW_GRACE = 700;
    private static final long EARLY_GRACE = 10;
 
-   private final NodeMetadata node = new NodeMetadataBuilder().id("myid").status(NodeMetadata.Status.RUNNING)
-         .publicAddresses(ImmutableSet.of("1.2.3.4")).privateAddresses(ImmutableSet.of("1.2.3.5")).build();
+   private final NodeMetadata node = new NodeMetadataBuilder().id("myid")
+                                                              .status(RUNNING)
+                                                              .publicAddresses(ImmutableSet.of("1.2.3.4"))
+                                                              .privateAddresses(ImmutableSet.of("1.2.3.5")).build();
 
    private final SocketOpen socketAlwaysClosed = new SocketOpen() {
       @Override
@@ -72,7 +78,7 @@ public class ConcurrentOpenSocketFinderTest {
 
    @BeforeClass
    public void setUp() {
-      userExecutor = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
+      userExecutor = listeningDecorator(newCachedThreadPool());
    }
 
    @AfterClass(alwaysRun = true)
@@ -95,7 +101,7 @@ public class ConcurrentOpenSocketFinderTest {
       } catch (NoSuchElementException success) {
          // expected
       }
-      long timetaken = stopwatch.elapsedMillis();
+      long timetaken = stopwatch.elapsed(MILLISECONDS);
 
       assertTrue(timetaken >= timeoutMs - EARLY_GRACE && timetaken <= timeoutMs + SLOW_GRACE, "timetaken=" + timetaken);
 
