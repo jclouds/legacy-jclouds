@@ -70,9 +70,9 @@ public class S3ClientMockTest {
 
    public void testZeroLengthPutHasContentLengthHeader() throws IOException, InterruptedException {
       MockWebServer server = new MockWebServer();
-      server.enqueue(new MockResponse().setBody("").addHeader(ETAG, "ABCDEF"));
+      server.enqueue(new MockResponse().addHeader(ETAG, "ABCDEF"));
       // hangs on Java 7 without this additional response ?!?
-      server.enqueue(new MockResponse());
+      server.enqueue(new MockResponse().addHeader(ETAG, "ABCDEF"));
       server.play();
 
       S3Client client = getS3Client(server.getUrl("/"));
