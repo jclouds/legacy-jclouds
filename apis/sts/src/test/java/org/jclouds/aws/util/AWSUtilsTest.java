@@ -17,7 +17,8 @@
  * under the License.
  */
 package org.jclouds.aws.util;
-
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -63,7 +64,7 @@ public class AWSUtilsTest {
    }
 
    HttpResponse response(InputStream content) {
-      HttpResponse response = HttpResponse.builder().statusCode(400)
+      HttpResponse response = HttpResponse.builder().statusCode(BAD_REQUEST.getStatusCode())
                                           .message("boa")
                                           .payload(content)
                                           .addHeader("x-amz-request-id", "requestid")
@@ -77,7 +78,7 @@ public class AWSUtilsTest {
     */
    @Test
    public void testNoExceptionWhenNoPayload() {
-      HttpResponse response = HttpResponse.builder().statusCode(400).build();
+      HttpResponse response = HttpResponse.builder().statusCode(BAD_REQUEST.getStatusCode()).build();
       assertNull(utils.parseAWSErrorFromContent(command.getCurrentRequest(), response));
    }
    
@@ -86,8 +87,8 @@ public class AWSUtilsTest {
     */
    @Test
    public void testNoExceptionParsingTextPlain() {
-      HttpResponse response = HttpResponse.builder().statusCode(400).payload("foo bar").build();
-      response.getPayload().getContentMetadata().setContentType("text/plain");
+      HttpResponse response = HttpResponse.builder().statusCode(BAD_REQUEST.getStatusCode()).payload("foo bar").build();
+      response.getPayload().getContentMetadata().setContentType(TEXT_PLAIN);
       assertNull(utils.parseAWSErrorFromContent(command.getCurrentRequest(), response));
    }
 

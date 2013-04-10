@@ -17,7 +17,9 @@
  * under the License.
  */
 package org.jclouds.aws.handlers;
-
+import static javax.ws.rs.HttpMethod.PUT;
+import static javax.ws.rs.core.Response.Status.CONFLICT;
+import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -54,7 +56,7 @@ public class AWSClientErrorRetryHandlerTest {
       AWSClientErrorRetryHandler retry = new AWSClientErrorRetryHandler(utils, backoffLimitedRetryHandler,
             ImmutableSet.<String> of());
 
-      assert !retry.shouldRetryRequest(command, HttpResponse.builder().statusCode(401).build());
+      assert !retry.shouldRetryRequest(command, HttpResponse.builder().statusCode(UNAUTHORIZED.getStatusCode()).build());
 
       verify(utils, backoffLimitedRetryHandler, command);
 
@@ -72,10 +74,10 @@ public class AWSClientErrorRetryHandlerTest {
       BackoffLimitedRetryHandler backoffLimitedRetryHandler = createMock(BackoffLimitedRetryHandler.class);
       HttpCommand command = createMock(HttpCommand.class);
 
-      HttpRequest putBucket = HttpRequest.builder().method("PUT")
+      HttpRequest putBucket = HttpRequest.builder().method(PUT)
             .endpoint("https://adriancole-blobstore113.s3.amazonaws.com/").build();
 
-      HttpResponse operationAborted = HttpResponse.builder().statusCode(409)
+      HttpResponse operationAborted = HttpResponse.builder().statusCode(CONFLICT.getStatusCode())
             .payload(Payloads.newStringPayload(String.format("<Error><Code>%s</Code></Error>", code))).build();
 
       expect(command.getCurrentRequest()).andReturn(putBucket);
