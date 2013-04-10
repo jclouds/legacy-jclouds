@@ -18,6 +18,8 @@
  */
 package org.jclouds.route53.internal;
 
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.ConfiguresHttpApi;
@@ -25,7 +27,6 @@ import org.jclouds.rest.internal.BaseRestApiExpectTest;
 import org.jclouds.route53.config.Route53HttpApiModule;
 
 import com.google.inject.Module;
-
 /**
  * 
  * @author Adrian Cole
@@ -45,7 +46,7 @@ public class BaseRoute53ExpectTest<T> extends BaseRestApiExpectTest<T> {
       }
    }
 
-   protected final HttpResponse notFound = HttpResponse.builder().statusCode(404).build();
+   protected final HttpResponse notFound = HttpResponse.builder().statusCode(NOT_FOUND.getStatusCode()).build();
    protected final String authForDate = "AWS3-HTTPS AWSAccessKeyId=identity,Algorithm=HmacSHA256,Signature=pylxNiLcrsjNRZOsxyT161JCwytVPHyc2rFfmNCuZKI=";
 
    @Override

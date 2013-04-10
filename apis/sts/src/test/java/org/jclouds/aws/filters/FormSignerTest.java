@@ -18,6 +18,7 @@
  */
 package org.jclouds.aws.filters;
 
+import static javax.ws.rs.HttpMethod.GET;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 import static org.testng.Assert.assertEquals;
 
@@ -43,7 +44,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
-
 /**
  * Tests behavior of {@code FormSigner}
  * 
@@ -76,7 +76,7 @@ public class FormSignerTest {
 
    public static FormSigner staticCredentialsFilter = filter(new Credentials("identity", "credential"));
 
-   HttpRequest request = HttpRequest.builder().method("GET")
+   HttpRequest request = HttpRequest.builder().method(GET)
          .endpoint("http://localhost")
          .addHeader(HttpHeaders.HOST, "localhost")
          .addFormParam("Action", "DescribeImages")

@@ -17,7 +17,10 @@
  * under the License.
  */
 package org.jclouds.ultradns.ws.features;
-
+import static com.google.common.net.HttpHeaders.HOST;
+import static javax.ws.rs.HttpMethod.POST;
+import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.http.HttpRequest;
@@ -34,17 +37,17 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit", testName = "RoundRobinPoolApiExpectTest")
 public class RoundRobinPoolApiExpectTest extends BaseUltraDNSWSApiExpectTest {
-   HttpRequest createA = HttpRequest.builder().method("POST")
+   HttpRequest createA = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/create_rrpool_a.xml", "application/xml")).build();
 
-   HttpRequest createAAAA = HttpRequest.builder().method("POST")
+   HttpRequest createAAAA = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/create_rrpool_aaaa.xml", "application/xml")).build();
 
-   HttpResponse createResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse createResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/rrpool_created.xml", "application/xml")).build();
 
    public void testCreateAWhenResponseIs2xx() {
@@ -57,7 +60,7 @@ public class RoundRobinPoolApiExpectTest extends BaseUltraDNSWSApiExpectTest {
       assertEquals(success.getRoundRobinPoolApiForZone("jclouds.org.").createAAAAPoolForHostname("www.jclouds.org.", "foo"), "060339AA04175655");
    }
 
-   HttpResponse alreadyCreated = HttpResponse.builder().statusCode(500)
+   HttpResponse alreadyCreated = HttpResponse.builder().statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
          .payload(payloadFromResourceWithContentType("/lbpool_already_exists.xml", "application/xml")).build();
 
    @Test(expectedExceptions = ResourceAlreadyExistsException.class, expectedExceptionsMessageRegExp = "Pool already created for this host name : www.rrpool.adrianc.rrpool.ultradnstest.jclouds.org.")
@@ -66,12 +69,12 @@ public class RoundRobinPoolApiExpectTest extends BaseUltraDNSWSApiExpectTest {
       already.getRoundRobinPoolApiForZone("jclouds.org.").createAPoolForHostname("www.jclouds.org.", "foo");
    }
 
-   HttpRequest list = HttpRequest.builder().method("POST")
+   HttpRequest list = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/list_rrpools.xml", "application/xml")).build();
 
-   HttpResponse listResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse listResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/rrpools.xml", "application/xml")).build();
    
    public void testListWhenResponseIs2xx() {
@@ -82,12 +85,12 @@ public class RoundRobinPoolApiExpectTest extends BaseUltraDNSWSApiExpectTest {
             new GetRRLoadBalancingPoolsByZoneResponseTest().expected().toString());
    }
 
-   HttpRequest listRecords = HttpRequest.builder().method("POST")
+   HttpRequest listRecords = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/list_rrrecords.xml", "application/xml")).build();
 
-   HttpResponse listRecordsResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse listRecordsResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/records.xml", "application/xml")).build();
 
    public void testListRecordsWhenResponseIs2xx() {
@@ -98,9 +101,9 @@ public class RoundRobinPoolApiExpectTest extends BaseUltraDNSWSApiExpectTest {
             new GetResourceRecordsOfResourceRecordResponseTest().expected().toString());
    }
 
-   HttpRequest delete = HttpRequest.builder().method("POST")
+   HttpRequest delete = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/delete_lbpool.xml", "application/xml")).build();
 
    HttpResponse deleteResponse = HttpResponse.builder().statusCode(404)
@@ -111,7 +114,7 @@ public class RoundRobinPoolApiExpectTest extends BaseUltraDNSWSApiExpectTest {
       success.getRoundRobinPoolApiForZone("jclouds.org.").delete("04053D8E57C7931F");
    }
 
-   HttpResponse poolDoesntExist = HttpResponse.builder().message("Server Epoolor").statusCode(500)
+   HttpResponse poolDoesntExist = HttpResponse.builder().message("Server Epoolor").statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
          .payload(payloadFromResource("/lbpool_doesnt_exist.xml")).build();
    
    public void testDeleteWhenResponseRRNotFound() {

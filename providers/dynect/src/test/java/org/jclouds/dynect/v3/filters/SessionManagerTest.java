@@ -18,6 +18,8 @@
  */
 package org.jclouds.dynect.v3.filters;
 
+import static javax.ws.rs.core.Response.Status.FORBIDDEN;
+import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
@@ -38,14 +40,16 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
-
 /**
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "SessionManagerTest")
 public class SessionManagerTest {
-   SessionCredentials creds = SessionCredentials.builder().customerName("customer").userName("robbie")
-         .password("password").build();
+   SessionCredentials creds = SessionCredentials.builder()
+                                                .customerName("customer")
+                                                .userName("robbie")
+                                                .password("password").build();
+
    Session session = Session.forTokenAndVersion("token", "version");
 
    public void testAlreadySessionCredentials() {
@@ -68,7 +72,7 @@ public class SessionManagerTest {
 
    @SuppressWarnings("unchecked")
    @Test
-   public void test401ShouldInvalidateSessionAndRetry() {
+   public void testUnauthorizedShouldInvalidateSessionAndRetry() {
       HttpCommand command = createMock(HttpCommand.class);
       Supplier<Credentials> creds = createMock(Supplier.class);
       LoadingCache<Credentials, Session> sessionCache = createMock(LoadingCache.class);
@@ -82,7 +86,7 @@ public class SessionManagerTest {
 
       replay(creds, sessionCache, sessionApi, command);
 
-      HttpResponse response = HttpResponse.builder().statusCode(401).build();
+      HttpResponse response = HttpResponse.builder().statusCode(UNAUTHORIZED.getStatusCode()).build();
 
       SessionManager retry = new SessionManager(creds, sessionCache, sessionApi);
 
@@ -93,7 +97,7 @@ public class SessionManagerTest {
 
    @SuppressWarnings("unchecked")
    @Test
-   public void test403ShouldNotInvalidateSessionOrRetry() {
+   public void testForbiddenShouldNotInvalidateSessionOrRetry() {
       HttpCommand command = createMock(HttpCommand.class);
       Supplier<Credentials> creds = createMock(Supplier.class);
       LoadingCache<Credentials, Session> sessionCache = createMock(LoadingCache.class);
@@ -101,7 +105,7 @@ public class SessionManagerTest {
 
       replay(creds, sessionCache, sessionApi, command);
 
-      HttpResponse response = HttpResponse.builder().statusCode(403).build();
+      HttpResponse response = HttpResponse.builder().statusCode(FORBIDDEN.getStatusCode()).build();
 
       SessionManager retry = new SessionManager(creds, sessionCache, sessionApi);
 

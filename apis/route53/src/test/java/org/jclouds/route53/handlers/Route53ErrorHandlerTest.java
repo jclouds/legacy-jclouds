@@ -18,8 +18,11 @@
  */
 
 package org.jclouds.route53.handlers;
-
 import static com.google.common.base.Throwables.propagate;
+import static com.google.common.net.HttpHeaders.DATE;
+import static com.google.common.net.HttpHeaders.HOST;
+import static javax.ws.rs.HttpMethod.POST;
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static org.jclouds.rest.internal.BaseRestApiExpectTest.payloadFromStringWithContentType;
 import static org.jclouds.util.Strings2.toStringAndClose;
 import static org.testng.Assert.assertEquals;
@@ -38,7 +41,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
-
 /**
  * 
  * @author Adrian Cole
@@ -47,17 +49,17 @@ import com.google.inject.Guice;
 public class Route53ErrorHandlerTest {
    Route53ErrorHandler function = Guice.createInjector(new SaxParserModule()).getInstance(Route53ErrorHandler.class);
 
-   HttpRequest request = HttpRequest.builder().method("POST")
+   HttpRequest request = HttpRequest.builder().method(POST)
          .endpoint("https://route53.amazonaws.com/2012-02-29/hostedzone/Z1PA6795UKMFR9/rrset")
-         .addHeader("Host", "route53.amazonaws.com")
-         .addHeader("Date", "Mon, 21 Jan 02013 19:29:03 -0800")
+         .addHeader(HOST, "route53.amazonaws.com")
+         .addHeader(DATE, "Mon, 21 Jan 02013 19:29:03 -0800")
          .addHeader("X-Amzn-Authorization", "AWS3-HTTPS AWSAccessKeyId=identity,Algorithm=HmacSHA256,Signature=pylxNiLcrsjNRZOsxyT161JCwytVPHyc2rFfmNCuZKI=")
          .payload(payloadFromResource("/batch_rrs_request.xml")).build();
    HttpCommand command = new HttpCommand(request);
 
    @Test
    public void testInvalidChangeBatchException() throws IOException {
-      HttpResponse response = HttpResponse.builder().statusCode(400)
+      HttpResponse response = HttpResponse.builder().statusCode(BAD_REQUEST.getStatusCode())
                                                     .payload(payloadFromResource("/invalid_change_batch.xml")).build();
       function.handleError(command, response);
 
@@ -71,7 +73,7 @@ public class Route53ErrorHandlerTest {
    @Test
    public void testDeleteNotFound() throws IOException {
 
-      HttpResponse response = HttpResponse.builder().statusCode(400)
+      HttpResponse response = HttpResponse.builder().statusCode(BAD_REQUEST.getStatusCode())
             .payload(
                   payloadFromStringWithContentType(
                         "<ErrorResponse><Error><Type>Sender</Type><Code>InvalidChangeBatch</Code>"

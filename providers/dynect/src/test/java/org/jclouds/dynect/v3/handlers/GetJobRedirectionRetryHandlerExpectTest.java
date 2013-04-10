@@ -17,11 +17,13 @@
  * under the License.
  */
 package org.jclouds.dynect.v3.handlers;
-
 import static com.google.common.net.HttpHeaders.ACCEPT;
 import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 import static com.google.common.net.HttpHeaders.LOCATION;
+import static javax.ws.rs.HttpMethod.GET;
+import static javax.ws.rs.HttpMethod.PUT;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.Response.Status.TEMPORARY_REDIRECT;
 
 import org.jclouds.dynect.v3.DynECTApi;
 import org.jclouds.dynect.v3.internal.BaseDynECTApiExpectTest;
@@ -38,7 +40,7 @@ public class GetJobRedirectionRetryHandlerExpectTest extends BaseDynECTApiExpect
 
    public void testRedirectOnJobLocationSwitchesToGETAndNoPayload() {
 
-      HttpRequest thaw = HttpRequest.builder().method("PUT")
+      HttpRequest thaw = HttpRequest.builder().method(PUT)
                                     .endpoint("https://api2.dynect.net/REST/Zone/jclouds.org")
                                     .addHeader("API-Version", "3.3.8")
                                     .addHeader(ACCEPT, APPLICATION_JSON)
@@ -47,11 +49,11 @@ public class GetJobRedirectionRetryHandlerExpectTest extends BaseDynECTApiExpect
                                     .build();
 
       HttpResponse redirectResponse = HttpResponse.builder() 
-                                                  .statusCode(317)
+                                                  .statusCode(TEMPORARY_REDIRECT.getStatusCode())
                                                   .addHeader(LOCATION, "https://api2.dynect.net/REST/Job/1234")
                                                   .build();
 
-      HttpRequest job = HttpRequest.builder().method("GET")
+      HttpRequest job = HttpRequest.builder().method(GET)
                                    .endpoint("https://api2.dynect.net/REST/Job/1234")
                                    .addHeader("API-Version", "3.3.8")
                                    .addHeader(ACCEPT, APPLICATION_JSON)

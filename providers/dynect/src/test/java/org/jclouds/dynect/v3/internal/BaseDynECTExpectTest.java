@@ -17,8 +17,10 @@
  * under the License.
  */
 package org.jclouds.dynect.v3.internal;
-
+import static javax.ws.rs.HttpMethod.POST;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import static javax.ws.rs.core.Response.Status.OK;
 
 import org.jclouds.dynect.v3.config.DynECTHttpApiModule;
 import org.jclouds.http.HttpRequest;
@@ -70,9 +72,8 @@ public class BaseDynECTExpectTest<T> extends BaseRestApiExpectTest<T> {
 
    protected String authToken = "FFFFFFFFFF";
 
-   protected HttpRequest createSession = HttpRequest
-         .builder()
-         .method("POST")
+   protected HttpRequest createSession = HttpRequest.builder()
+         .method(POST)
          .endpoint("https://api2.dynect.net/REST/Session")
          .addHeader("API-Version", "3.3.8")
          .payload(
@@ -80,8 +81,8 @@ public class BaseDynECTExpectTest<T> extends BaseRestApiExpectTest<T> {
                      "{\"customer_name\":\"jclouds\",\"user_name\":\"joe\",\"password\":\"letmein\"}", APPLICATION_JSON))
          .build();
 
-   protected HttpResponse createSessionResponse = HttpResponse.builder().statusCode(200)
+   protected HttpResponse createSessionResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/create_session.json", APPLICATION_JSON)).build();
 
-   protected HttpResponse notFound = HttpResponse.builder().statusCode(404).build();
+   protected HttpResponse notFound = HttpResponse.builder().statusCode(NOT_FOUND.getStatusCode()).build();
 }
