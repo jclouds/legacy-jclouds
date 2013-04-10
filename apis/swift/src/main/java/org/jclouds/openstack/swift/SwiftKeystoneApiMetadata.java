@@ -27,6 +27,7 @@ import java.util.Properties;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
+import org.jclouds.openstack.keystone.v2_0.config.MappedAuthenticationApiModule;
 import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
 import org.jclouds.openstack.swift.blobstore.config.TemporaryUrlExtensionModule.SwiftKeystoneTemporaryUrlExtensionModule;
@@ -90,6 +91,7 @@ public class SwiftKeystoneApiMetadata extends SwiftApiMetadata {
                .context(CONTEXT_TOKEN)
                .defaultProperties(SwiftKeystoneApiMetadata.defaultProperties())
                .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
+                                           .add(MappedAuthenticationApiModule.class)
                                            .add(KeystoneStorageEndpointModule.class)
                                            .add(KeystoneAuthenticationModule.RegionModule.class)
                                            .add(SwiftKeystoneRestClientModule.class)
