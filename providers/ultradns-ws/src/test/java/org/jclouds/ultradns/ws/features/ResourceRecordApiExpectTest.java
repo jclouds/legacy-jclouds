@@ -17,7 +17,10 @@
  * under the License.
  */
 package org.jclouds.ultradns.ws.features;
-
+import static com.google.common.net.HttpHeaders.HOST;
+import static javax.ws.rs.HttpMethod.POST;
+import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.jclouds.ultradns.ws.domain.ResourceRecord.rrBuilder;
 import static org.testng.Assert.assertEquals;
 
@@ -32,17 +35,18 @@ import org.jclouds.ultradns.ws.parse.GetResourceRecordsOfResourceRecordResponseT
 import org.testng.annotations.Test;
 
 
+
 /**
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ResourceRecordApiExpectTest")
 public class ResourceRecordApiExpectTest extends BaseUltraDNSWSApiExpectTest {
-   HttpRequest create = HttpRequest.builder().method("POST")
+   HttpRequest create = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/create_rr.xml", "application/xml")).build();
 
-   HttpResponse createResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse createResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/rr_created.xml", "application/xml")).build();
 
    ResourceRecord record = rrBuilder().name("mail.jclouds.org.")
@@ -56,7 +60,7 @@ public class ResourceRecordApiExpectTest extends BaseUltraDNSWSApiExpectTest {
       success.getResourceRecordApiForZone("jclouds.org.").create(record);
    }
 
-   HttpResponse alreadyCreated = HttpResponse.builder().statusCode(500)
+   HttpResponse alreadyCreated = HttpResponse.builder().statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
          .payload(payloadFromResourceWithContentType("/rr_already_exists.xml", "application/xml")).build();
 
    @Test(expectedExceptions = ResourceAlreadyExistsException.class, expectedExceptionsMessageRegExp = "Resource Record of type 15 with these attributes already exists in the system.")
@@ -65,12 +69,12 @@ public class ResourceRecordApiExpectTest extends BaseUltraDNSWSApiExpectTest {
       already.getResourceRecordApiForZone("jclouds.org.").create(record);
    }
 
-   HttpRequest update = HttpRequest.builder().method("POST")
+   HttpRequest update = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/update_rr.xml", "application/xml")).build();
 
-   HttpResponse updateResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse updateResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/rr_updated.xml", "application/xml")).build();
 
    public void testUpdateWhenResponseIs2xx() {
@@ -78,12 +82,12 @@ public class ResourceRecordApiExpectTest extends BaseUltraDNSWSApiExpectTest {
       success.getResourceRecordApiForZone("jclouds.org.").update("04053D8E57C7931F", record);
    }
 
-   HttpRequest list = HttpRequest.builder().method("POST")
+   HttpRequest list = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/list_records.xml", "application/xml")).build();
 
-   HttpResponse listResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse listResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/records.xml", "application/xml")).build();
    
    public void testListWhenResponseIs2xx() {
@@ -94,7 +98,7 @@ public class ResourceRecordApiExpectTest extends BaseUltraDNSWSApiExpectTest {
             new GetResourceRecordsOfResourceRecordResponseTest().expected().toString());
    }
 
-   HttpResponse zoneDoesntExist = HttpResponse.builder().message("Server Error").statusCode(500)
+   HttpResponse zoneDoesntExist = HttpResponse.builder().message("Server Error").statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
          .payload(payloadFromResource("/zone_doesnt_exist.xml")).build();
    
    @Test(expectedExceptions = ResourceNotFoundException.class, expectedExceptionsMessageRegExp = "Zone does not exist in the system.")
@@ -103,9 +107,9 @@ public class ResourceRecordApiExpectTest extends BaseUltraDNSWSApiExpectTest {
       notFound.getResourceRecordApiForZone("jclouds.org.").list();
    }
 
-   HttpRequest listByName = HttpRequest.builder().method("POST")
+   HttpRequest listByName = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/list_records_by_name.xml", "application/xml")).build();
    
    public void testListByNameWhenResponseIs2xx() {
@@ -116,9 +120,9 @@ public class ResourceRecordApiExpectTest extends BaseUltraDNSWSApiExpectTest {
             new GetResourceRecordsOfResourceRecordResponseTest().expected().toString());
    }
 
-   HttpRequest listByNameAndType = HttpRequest.builder().method("POST")
+   HttpRequest listByNameAndType = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/list_records_by_name_and_type.xml", "application/xml")).build();
    
    public void testListByNameAndTypeWhenResponseIs2xx() {
@@ -133,9 +137,9 @@ public class ResourceRecordApiExpectTest extends BaseUltraDNSWSApiExpectTest {
             new GetResourceRecordsOfResourceRecordResponseTest().expected().toString());
    }
 
-   HttpRequest delete = HttpRequest.builder().method("POST")
+   HttpRequest delete = HttpRequest.builder().method(POST)
          .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
-         .addHeader("Host", "ultra-api.ultradns.com:8443")
+         .addHeader(HOST, "ultra-api.ultradns.com:8443")
          .payload(payloadFromResourceWithContentType("/delete_rr.xml", "application/xml")).build();
 
    HttpResponse deleteResponse = HttpResponse.builder().statusCode(404)
@@ -146,7 +150,7 @@ public class ResourceRecordApiExpectTest extends BaseUltraDNSWSApiExpectTest {
       success.getZoneApi().delete("04053D8E57C7931F");
    }
 
-   HttpResponse rrDoesntExist = HttpResponse.builder().message("Server Error").statusCode(500)
+   HttpResponse rrDoesntExist = HttpResponse.builder().message("Server Error").statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
          .payload(payloadFromResource("/rr_doesnt_exist.xml")).build();
    
    public void testDeleteWhenResponseRRNotFound() {
