@@ -18,41 +18,25 @@
  */
 package org.jclouds.rackspace.cloudidentity.v2_0.config;
 
-import static org.jclouds.rest.config.BinderUtils.bindMappedHttpApi;
-
 import java.util.Map;
 
 import org.jclouds.domain.Credentials;
-import org.jclouds.openstack.keystone.v2_0.AuthenticationAsyncApi;
-import org.jclouds.openstack.keystone.v2_0.AuthenticationApi;
 import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.functions.AuthenticatePasswordCredentials;
-import org.jclouds.rackspace.cloudidentity.v2_0.CloudIdentityAuthenticationAsyncApi;
-import org.jclouds.rackspace.cloudidentity.v2_0.CloudIdentityAuthenticationApi;
 import org.jclouds.rackspace.cloudidentity.v2_0.functions.AuthenticateApiKeyCredentials;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.inject.Injector;
-import com.google.inject.Scopes;
 
 /**
  * 
  * @author Adrian Cole
  */
 public class CloudIdentityAuthenticationModule extends KeystoneAuthenticationModule {
-
-   @Override
-   protected void bindAuthenticationApi() {
-      // AuthenticationApi is used directly for filters and retry handlers, so let's bind it explicitly
-      bindMappedHttpApi(binder(), CloudIdentityAuthenticationApi.class,
-            CloudIdentityAuthenticationAsyncApi.class);
-      bind(AuthenticationApi.class).to(CloudIdentityAuthenticationApi.class).in(Scopes.SINGLETON);
-      bind(AuthenticationAsyncApi.class).to(CloudIdentityAuthenticationAsyncApi.class).in(Scopes.SINGLETON);
-   }
 
    @Override
    protected Map<String, Function<Credentials, Access>> authenticationMethods(Injector i) {

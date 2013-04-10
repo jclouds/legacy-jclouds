@@ -43,7 +43,10 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Service_API_Api_Operations.html"
  *      />
  * @author Adrian Cole
+ * @deprecated will be removed in jclouds 1.7, as async interfaces are no longer
+ *             supported. please use {@link CloudIdentityAuthenticationAsyncApi}
  */
+@Deprecated
 public interface CloudIdentityAuthenticationAsyncApi extends AuthenticationAsyncApi {
 
    /**
