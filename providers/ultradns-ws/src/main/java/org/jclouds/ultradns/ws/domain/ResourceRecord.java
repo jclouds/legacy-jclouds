@@ -92,7 +92,7 @@ public class ResourceRecord {
 
    @Override
    public String toString() {
-      return toStringHelper("").omitNullValues().add("dName", dName).add("type", type).add("ttl", ttl)
+      return toStringHelper(this).omitNullValues().add("dName", dName).add("type", type).add("ttl", ttl)
             .add("infoValues", infoValues).toString();
    }
 

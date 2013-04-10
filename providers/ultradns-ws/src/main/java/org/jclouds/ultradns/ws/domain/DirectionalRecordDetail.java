@@ -104,7 +104,7 @@ public class DirectionalRecordDetail {
 
    @Override
    public String toString() {
-      return toStringHelper("").omitNullValues().add("zoneName", zoneName).add("name", name).add("id", id)
+      return toStringHelper(this).omitNullValues().add("zoneName", zoneName).add("name", name).add("id", id)
             .add("group", group.orNull()).add("geolocationGroup", geolocationGroup.orNull())
             .add("sourceIpGroup", sourceIpGroup.orNull()).add("record", record).toString();
    }

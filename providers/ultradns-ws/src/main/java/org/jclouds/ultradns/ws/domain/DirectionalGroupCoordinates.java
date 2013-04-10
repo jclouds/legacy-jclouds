@@ -95,7 +95,7 @@ public class DirectionalGroupCoordinates {
 
    @Override
    public String toString() {
-      return toStringHelper("").add("zoneName", zoneName).add("recordName", recordName).add("recordType", recordType)
+      return toStringHelper(this).add("zoneName", zoneName).add("recordName", recordName).add("recordType", recordType)
             .add("groupName", groupName).toString();
    }
 

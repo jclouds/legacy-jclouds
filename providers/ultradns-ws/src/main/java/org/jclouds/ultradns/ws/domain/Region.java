@@ -73,7 +73,7 @@ public class Region extends ForwardingSet<String> {
 
    @Override
    public String toString() {
-      return toStringHelper("").add("name", name).add("territoryNames", territoryNames).toString();
+      return toStringHelper(this).add("name", name).add("territoryNames", territoryNames).toString();
    }
 
    public static Builder builder() {
