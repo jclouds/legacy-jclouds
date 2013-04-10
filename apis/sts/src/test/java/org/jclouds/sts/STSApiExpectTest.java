@@ -17,7 +17,9 @@
  * under the License.
  */
 package org.jclouds.sts;
-
+import static com.google.common.net.HttpHeaders.HOST;
+import static javax.ws.rs.HttpMethod.POST;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.jclouds.sts.options.AssumeRoleOptions.Builder.externalId;
 import static org.jclouds.sts.options.FederatedUserOptions.Builder.policy;
 import static org.jclouds.sts.options.SessionCredentialsOptions.Builder.serialNumber;
@@ -39,9 +41,9 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "STSApiExpectTest")
 public class STSApiExpectTest extends BaseSTSApiExpectTest {
 
-   HttpRequest createTemporaryCredentials = HttpRequest.builder().method("POST")
+   HttpRequest createTemporaryCredentials = HttpRequest.builder().method(POST)
          .endpoint("https://sts.amazonaws.com/")
-         .addHeader("Host", "sts.amazonaws.com")
+         .addHeader(HOST, "sts.amazonaws.com")
          .addFormParam("Action", "GetSessionToken")
          .addFormParam("Signature", "ntC%2BPKAcmYTJ5Py5tjICG4KX5y00Pl2L0XJrLbSgLEs%3D")
          .addFormParam("SignatureMethod", "HmacSHA256")
@@ -50,7 +52,7 @@ public class STSApiExpectTest extends BaseSTSApiExpectTest {
          .addFormParam("Version", "2011-06-15")
          .addFormParam("AWSAccessKeyId", "identity").build();
 
-   HttpResponse createTemporaryCredentialsResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse createTemporaryCredentialsResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/session_token.xml", "text/xml")).build();
 
    public void testCreateTemporaryCredentialsWhenResponseIs2xx() {
@@ -62,9 +64,9 @@ public class STSApiExpectTest extends BaseSTSApiExpectTest {
             new GetSessionTokenResponseTest().expected().toString());
    }
 
-   HttpRequest createTemporaryCredentialsWithOptions = HttpRequest.builder().method("POST")
+   HttpRequest createTemporaryCredentialsWithOptions = HttpRequest.builder().method(POST)
          .endpoint("https://sts.amazonaws.com/")
-         .addHeader("Host", "sts.amazonaws.com")
+         .addHeader(HOST, "sts.amazonaws.com")
          .addFormParam("Action", "GetSessionToken")
          .addFormParam("DurationSeconds", "900")
          .addFormParam("SerialNumber", "YourMFADeviceSerialNumber")
@@ -86,9 +88,9 @@ public class STSApiExpectTest extends BaseSTSApiExpectTest {
             new GetSessionTokenResponseTest().expected().toString());
    }
 
-   HttpRequest assumeRole = HttpRequest.builder().method("POST")
+   HttpRequest assumeRole = HttpRequest.builder().method(POST)
          .endpoint("https://sts.amazonaws.com/")
-         .addHeader("Host", "sts.amazonaws.com")
+         .addHeader(HOST, "sts.amazonaws.com")
          .addFormParam("Action", "AssumeRole")
          .addFormParam("RoleArn", "arn:aws:iam::123456789012:role/demo")
          .addFormParam("RoleSessionName", "Bob")
@@ -99,7 +101,7 @@ public class STSApiExpectTest extends BaseSTSApiExpectTest {
          .addFormParam("Version", "2011-06-15")
          .addFormParam("AWSAccessKeyId", "identity").build();
 
-   HttpResponse assumeRoleResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse assumeRoleResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/assume_role.xml", "text/xml")).build();
 
    public void testAssumeRoleWhenResponseIs2xx() {
@@ -112,9 +114,9 @@ public class STSApiExpectTest extends BaseSTSApiExpectTest {
 
    String policy = "{\"Statement\":[{\"Sid\":\"Stmt1\",\"Effect\":\"Allow\",\"Action\":\"s3:*\",\"Resource\":\"*\"}]}";
 
-   HttpRequest assumeRoleWithOptions = HttpRequest.builder().method("POST")
+   HttpRequest assumeRoleWithOptions = HttpRequest.builder().method(POST)
          .endpoint("https://sts.amazonaws.com/")
-         .addHeader("Host", "sts.amazonaws.com")
+         .addHeader(HOST, "sts.amazonaws.com")
          .addFormParam("Action", "AssumeRole")
          .addFormParam("DurationSeconds", "900")
          .addFormParam("ExternalId", "123ABC")
@@ -138,9 +140,9 @@ public class STSApiExpectTest extends BaseSTSApiExpectTest {
             new AssumeRoleResponseTest().expected().toString());
    }
 
-   HttpRequest createFederatedUser = HttpRequest.builder().method("POST")
+   HttpRequest createFederatedUser = HttpRequest.builder().method(POST)
          .endpoint("https://sts.amazonaws.com/")
-         .addHeader("Host", "sts.amazonaws.com")
+         .addHeader(HOST, "sts.amazonaws.com")
          .addFormParam("Action", "GetFederationToken")
          .addFormParam("Name", "Bob")
          .addFormParam("Signature", "Z7AtGK4X9IAx/zMtLD7baNiyltNl%2BF%2BSHqjIGUidzOc%3D")
@@ -150,7 +152,7 @@ public class STSApiExpectTest extends BaseSTSApiExpectTest {
          .addFormParam("Version", "2011-06-15")
          .addFormParam("AWSAccessKeyId", "identity").build();
 
-   HttpResponse createFederatedUserResponse = HttpResponse.builder().statusCode(200)
+   HttpResponse createFederatedUserResponse = HttpResponse.builder().statusCode(OK.getStatusCode())
          .payload(payloadFromResourceWithContentType("/federation_token.xml", "text/xml")).build();
 
    public void testCreateFederatedUserWhenResponseIs2xx() {
@@ -161,9 +163,9 @@ public class STSApiExpectTest extends BaseSTSApiExpectTest {
             .expected().toString());
    }
 
-   HttpRequest createFederatedUserWithOptions = HttpRequest.builder().method("POST")
+   HttpRequest createFederatedUserWithOptions = HttpRequest.builder().method(POST)
          .endpoint("https://sts.amazonaws.com/")
-         .addHeader("Host", "sts.amazonaws.com")
+         .addHeader(HOST, "sts.amazonaws.com")
          .addFormParam("Action", "GetFederationToken")
          .addFormParam("DurationSeconds", "900")
          .addFormParam("Name", "Bob")
