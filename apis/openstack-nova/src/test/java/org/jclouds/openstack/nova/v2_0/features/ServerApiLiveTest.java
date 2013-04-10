@@ -43,8 +43,8 @@ public class ServerApiLiveTest extends BaseNovaApiLiveTest {
     @Test(description = "GET /v${apiVersion}/{tenantId}/servers")
     public void testListServers() throws Exception {
        for (String zoneId : zones) {
-          ServerApi api = novaContext.getApi().getServerApiForZone(zoneId);
-          for (Resource server : api.list().concat()) {
+          ServerApi serverApi = api.getServerApiForZone(zoneId);
+          for (Resource server : serverApi.list().concat()) {
              checkResource(server);
           }
        }
@@ -53,8 +53,8 @@ public class ServerApiLiveTest extends BaseNovaApiLiveTest {
     @Test(description = "GET /v${apiVersion}/{tenantId}/servers/detail")
     public void testListServersInDetail() throws Exception {
        for (String zoneId : zones) {
-          ServerApi api = novaContext.getApi().getServerApiForZone(zoneId);
-          for (Server server : api.listInDetail().concat()) {
+          ServerApi serverApi = api.getServerApiForZone(zoneId);
+          for (Server server : serverApi.listInDetail().concat()) {
              checkServer(server);
           }
        }
@@ -63,9 +63,9 @@ public class ServerApiLiveTest extends BaseNovaApiLiveTest {
     @Test(description = "GET /v${apiVersion}/{tenantId}/servers/{id}", dependsOnMethods = { "testListServersInDetail" })
     public void testGetServerById() throws Exception {
        for (String zoneId : zones) {
-          ServerApi api = novaContext.getApi().getServerApiForZone(zoneId);
-          for (Resource server : api.list().concat()) {
-             Server details = api.get(server.getId());
+          ServerApi serverApi = api.getServerApiForZone(zoneId);
+          for (Resource server : serverApi.list().concat()) {
+             Server details = serverApi.get(server.getId());
              assertEquals(details.getId(), server.getId());
              assertEquals(details.getName(), server.getName());
              assertEquals(details.getLinks(), server.getLinks());

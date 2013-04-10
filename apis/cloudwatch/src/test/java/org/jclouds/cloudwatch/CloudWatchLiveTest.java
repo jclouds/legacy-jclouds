@@ -25,44 +25,27 @@ import static org.jclouds.util.Predicates2.retry;
 import java.util.Date;
 import java.util.Set;
 
-import org.jclouds.apis.BaseContextLiveTest;
+import org.jclouds.apis.BaseApiLiveTest;
 import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
-import org.jclouds.rest.RestContext;
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import com.google.common.reflect.TypeToken;
 
 /**
  * Tests behavior of {@code CloudWatch}.
  *
  * @author Jeremy Whitlock
  */
-public class CloudWatchLiveTest extends BaseContextLiveTest<RestContext<CloudWatchApi, CloudWatchAsyncApi>> {
+public class CloudWatchLiveTest extends BaseApiLiveTest<CloudWatchApi> {
 
    public CloudWatchLiveTest() {
       provider = "cloudwatch";
-   }
-
-   private CloudWatchApi api;
-
-   @Override
-   @BeforeClass(groups = { "integration", "live" })
-   public void setupContext() {
-      super.setupContext();
-      api = context.getApi();
-   }
-
-   @Override
-   protected TypeToken<RestContext<CloudWatchApi, CloudWatchAsyncApi>> contextType() {
-      return CloudWatchApiMetadata.CONTEXT_TOKEN;
    }
 
    @Test

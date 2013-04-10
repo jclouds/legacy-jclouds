@@ -18,6 +18,8 @@
  */
 package org.jclouds.softlayer;
 
+import java.io.Closeable;
+
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.softlayer.features.AccountClient;
 import org.jclouds.softlayer.features.DatacenterClient;
@@ -32,7 +34,7 @@ import org.jclouds.softlayer.features.VirtualGuestClient;
  * @see <a href="http://sldn.softlayer.com/article/REST" />
  * @author Adrian Cole
  */
-public interface SoftLayerClient {
+public interface SoftLayerClient extends Closeable {
 
    /**
     * Provides synchronous access to VirtualGuest features.

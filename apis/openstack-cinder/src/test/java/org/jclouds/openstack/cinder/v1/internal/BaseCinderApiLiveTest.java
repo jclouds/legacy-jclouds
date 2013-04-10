@@ -20,34 +20,19 @@ package org.jclouds.openstack.cinder.v1.internal;
 
 import java.util.Properties;
 
-import org.jclouds.apis.BaseContextLiveTest;
+import org.jclouds.apis.BaseApiLiveTest;
 import org.jclouds.openstack.cinder.v1.CinderApi;
-import org.jclouds.openstack.cinder.v1.CinderApiMetadata;
-import org.jclouds.openstack.cinder.v1.CinderAsyncApi;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
-import org.jclouds.rest.RestContext;
-import org.testng.annotations.BeforeGroups;
-
-import com.google.common.reflect.TypeToken;
 
 /**
  * Tests behavior of CinderApi
  * 
  * @author Everett Toews
  */
-public class BaseCinderApiLiveTest extends BaseContextLiveTest<RestContext<CinderApi, CinderAsyncApi>> {
+public class BaseCinderApiLiveTest extends BaseApiLiveTest<CinderApi> {
 
    public BaseCinderApiLiveTest() {
       provider = "openstack-cinder";
-   }
-
-   protected RestContext<CinderApi, CinderAsyncApi> cinder;
-
-   @BeforeGroups(groups = { "integration", "live" })
-   @Override
-   public void setupContext() {
-      super.setupContext();
-      cinder = context;
    }
 
    @Override
@@ -56,10 +41,4 @@ public class BaseCinderApiLiveTest extends BaseContextLiveTest<RestContext<Cinde
       setIfTestSystemPropertyPresent(props, KeystoneProperties.CREDENTIAL_TYPE);
       return props;
    }
-   
-   @Override
-   protected TypeToken<RestContext<CinderApi, CinderAsyncApi>> contextType() {
-      return CinderApiMetadata.CONTEXT_TOKEN;
-   }
-
 }

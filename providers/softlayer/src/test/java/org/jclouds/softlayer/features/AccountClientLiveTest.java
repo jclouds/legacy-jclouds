@@ -23,7 +23,6 @@ import static org.testng.Assert.assertTrue;
 import java.util.Set;
 
 import org.jclouds.softlayer.domain.ProductPackage;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 /**
@@ -33,17 +32,10 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class AccountClientLiveTest extends BaseSoftLayerClientLiveTest {
-   @BeforeGroups(groups = { "live" })
-   public void setupContext() {
-      super.setupContext();
-      client = socontext.getApi().getAccountClient();
-   }
-
-   private AccountClient client;
 
    @Test
    public void testGetActivePackages() {
-      Set<ProductPackage> response = client.getActivePackages();
+      Set<ProductPackage> response = api.getAccountClient().getActivePackages();
       assert null != response;
 
       assertTrue(response.size() >= 0);

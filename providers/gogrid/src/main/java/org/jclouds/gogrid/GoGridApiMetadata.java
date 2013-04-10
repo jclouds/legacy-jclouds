@@ -27,7 +27,6 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.gogrid.compute.config.GoGridComputeServiceContextModule;
 import org.jclouds.gogrid.config.GoGridRestClientModule;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
@@ -41,7 +40,12 @@ import com.google.inject.Module;
  */
 public class GoGridApiMetadata extends BaseRestApiMetadata {
 
-   public static final TypeToken<RestContext<GoGridClient, GoGridAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<GoGridClient, GoGridAsyncClient>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(GoGridClient.class)} as
+    *             {@link GoGridAsyncClient} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<GoGridClient, GoGridAsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<GoGridClient, GoGridAsyncClient>>() {
       private static final long serialVersionUID = 1L;
    };
    
@@ -67,6 +71,7 @@ public class GoGridApiMetadata extends BaseRestApiMetadata {
 
    public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
+      @SuppressWarnings("deprecation")
       protected Builder() {
          super(GoGridClient.class, GoGridAsyncClient.class);
          id("gogrid")
@@ -74,7 +79,7 @@ public class GoGridApiMetadata extends BaseRestApiMetadata {
          .identityName("API Key")
          .credentialName("Shared Secret")
          .documentation(URI.create("https://wiki.gogrid.com/wiki/index.php/API"))
-         .version(GoGridAsyncClient.VERSION)
+         .version("1.5")
          .defaultEndpoint("https://api.gogrid.com/api")
          .defaultProperties(GoGridApiMetadata.defaultProperties())
          .view(typeToken(ComputeServiceContext.class))

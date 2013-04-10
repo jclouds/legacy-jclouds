@@ -31,7 +31,6 @@ import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.ZoneModule;
 import org.jclouds.openstack.v2_0.ServiceType;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
@@ -45,7 +44,12 @@ import com.google.inject.Module;
  */
 public class CinderApiMetadata extends BaseRestApiMetadata {
    
-   public static final TypeToken<RestContext<CinderApi, CinderAsyncApi>> CONTEXT_TOKEN = new TypeToken<RestContext<CinderApi, CinderAsyncApi>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(CinderApi.class)} as
+    *             {@link CinderAsyncApi} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<CinderApi, CinderAsyncApi>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<CinderApi, CinderAsyncApi>>() {
       private static final long serialVersionUID = 1L;
    };
 
@@ -71,6 +75,7 @@ public class CinderApiMetadata extends BaseRestApiMetadata {
 
    public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
 
+      @SuppressWarnings("deprecation")
       protected Builder() {
          super(CinderApi.class, CinderAsyncApi.class);
           id("openstack-cinder")

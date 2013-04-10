@@ -28,7 +28,6 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.atmos.blobstore.config.AtmosBlobStoreContextModule;
 import org.jclouds.atmos.config.AtmosRestClientModule;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
@@ -42,7 +41,12 @@ import com.google.inject.Module;
  */
 public class AtmosApiMetadata extends BaseRestApiMetadata {
 
-   public static final TypeToken<RestContext<AtmosClient, AtmosAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<AtmosClient, AtmosAsyncClient>>() {
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(AtmosClient.class)} as
+    *             {@link AtmosAsyncClient} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<AtmosClient, AtmosAsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<AtmosClient, AtmosAsyncClient>>() {
       private static final long serialVersionUID = 1L;
    };
    
@@ -71,6 +75,7 @@ public class AtmosApiMetadata extends BaseRestApiMetadata {
    }
 
    public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
+      @SuppressWarnings("deprecation")
       protected Builder() {
          super(AtmosClient.class, AtmosAsyncClient.class);
          id("atmos")

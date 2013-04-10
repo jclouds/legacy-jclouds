@@ -46,7 +46,10 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @see <a href="http://docs.amazonwebservices.com/STS/latest/APIReference" />
  * @author Adrian Cole
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(STSApi.class)} as
+ *             {@link STSAsyncApi} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 @RequestFilters(FormSigner.class)
 @VirtualHost
 public interface STSAsyncApi extends Closeable {

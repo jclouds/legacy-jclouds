@@ -34,7 +34,6 @@ import org.jclouds.ec2.compute.EC2ComputeServiceContext;
 import org.jclouds.ec2.compute.config.EC2ComputeServiceContextModule;
 import org.jclouds.ec2.compute.config.EC2ResolveImagesModule;
 import org.jclouds.ec2.config.EC2RestClientModule;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
@@ -59,8 +58,13 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class EC2ApiMetadata extends BaseRestApiMetadata {
-   
-   public static final TypeToken<RestContext<? extends EC2Client, ? extends EC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<? extends EC2Client, ? extends EC2AsyncClient>>() {
+
+   /**
+    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(EC2Client.class)} as
+    *             {@link EC2AsyncClient} interface will be removed in jclouds 1.7.
+    */
+   @Deprecated
+   public static final TypeToken<org.jclouds.rest.RestContext<? extends EC2Client, ? extends EC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<? extends EC2Client, ? extends EC2AsyncClient>>() {
       private static final long serialVersionUID = 1L;
    };
 
@@ -90,6 +94,7 @@ public class EC2ApiMetadata extends BaseRestApiMetadata {
    }
 
    public static abstract class Builder<T extends Builder<T>> extends BaseRestApiMetadata.Builder<T> {
+      @SuppressWarnings("deprecation")
       protected Builder() {
          this(EC2Client.class, EC2AsyncClient.class);
       }
@@ -102,7 +107,7 @@ public class EC2ApiMetadata extends BaseRestApiMetadata {
          .credentialName("Secret Access Key")
          .defaultEndpoint("https://ec2.us-east-1.amazonaws.com")
          .documentation(URI.create("http://docs.amazonwebservices.com/AWSEC2/latest/APIReference"))
-         .version(EC2AsyncClient.VERSION)
+         .version("2010-06-15")
          .defaultProperties(EC2ApiMetadata.defaultProperties())
          .context(CONTEXT_TOKEN)
          .view(EC2ComputeServiceContext.class)

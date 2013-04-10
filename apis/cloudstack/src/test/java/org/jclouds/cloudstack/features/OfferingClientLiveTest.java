@@ -67,8 +67,7 @@ public class OfferingClientLiveTest extends BaseCloudStackClientLiveTest {
 
          } catch (NoSuchElementException e) {
             // This bug is present both in 2.2.8 and 2.2.12
-            assertTrue(Predicates.in(ImmutableSet.of("2.2.8", "2.2.12")).apply(
-                     cloudStackContext.getProviderMetadata().getApiMetadata().getVersion()));
+            assertTrue(Predicates.in(ImmutableSet.of("2.2.8", "2.2.12")).apply(apiVersion));
          }
       }
    }

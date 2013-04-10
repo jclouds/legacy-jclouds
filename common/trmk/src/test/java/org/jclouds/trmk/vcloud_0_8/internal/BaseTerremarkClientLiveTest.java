@@ -24,10 +24,8 @@ import static org.jclouds.util.Predicates2.retry;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.predicates.SocketOpen;
-import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.sshj.config.SshjSshClientModule;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -42,7 +40,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
-public abstract class BaseTerremarkClientLiveTest<S extends TerremarkVCloudClient, A extends TerremarkVCloudAsyncClient> extends BaseComputeServiceContextLiveTest {
+public abstract class BaseTerremarkClientLiveTest extends BaseComputeServiceContextLiveTest {
 
    protected String prefix = System.getProperty("user.name");
 
@@ -54,9 +52,8 @@ public abstract class BaseTerremarkClientLiveTest<S extends TerremarkVCloudClien
 
    protected Predicate<HostAndPort> socketTester;
    protected Factory sshFactory;
-   protected S connection;
+   protected TerremarkVCloudClient api;
 
-   @SuppressWarnings("unchecked")
    @Override
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
@@ -65,7 +62,7 @@ public abstract class BaseTerremarkClientLiveTest<S extends TerremarkVCloudClien
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
       socketTester = retry(socketOpen, 300, 1, SECONDS);
       sshFactory = injector.getInstance(Factory.class);
-      connection = (S) RestContext.class.cast(view.unwrap()).getApi();
+      api = injector.getInstance(TerremarkVCloudClient.class);
    }
    
    protected Module getSshModule() {

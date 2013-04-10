@@ -54,16 +54,16 @@ public class VolumeAttachmentApiLiveTest extends BaseNovaApiLiveTest {
 
    @BeforeClass(groups = {"integration", "live"})
    @Override
-   public void setupContext() {
-      super.setupContext();
-      zone = Iterables.getLast(novaContext.getApi().getConfiguredZones(), "nova");
-      volumeApi = novaContext.getApi().getVolumeExtensionForZone(zone);
-      volumeAttachmentApi = novaContext.getApi().getVolumeAttachmentExtensionForZone(zone);
+   public void setup() {
+      super.setup();
+      zone = Iterables.getLast(api.getConfiguredZones(), "nova");
+      volumeApi = api.getVolumeExtensionForZone(zone);
+      volumeAttachmentApi = api.getVolumeAttachmentExtensionForZone(zone);
    }
 
    @AfterClass(groups = { "integration", "live" })
    @Override
-   protected void tearDownContext() {
+   protected void tearDown() {
       if (volumeApi.isPresent()) {
          if (testVolume != null) {
             final String volumeId = testVolume.getId();
@@ -76,7 +76,7 @@ public class VolumeAttachmentApiLiveTest extends BaseNovaApiLiveTest {
          }
       }
 
-      super.tearDownContext();
+      super.tearDown();
    }
 
    public void testCreateVolume() {
@@ -150,7 +150,7 @@ public class VolumeAttachmentApiLiveTest extends BaseNovaApiLiveTest {
 
          } finally {
             if (server_id != null)
-               novaContext.getApi().getServerApiForZone(zone).delete(server_id);
+               api.getServerApiForZone(zone).delete(server_id);
          }
 
       }

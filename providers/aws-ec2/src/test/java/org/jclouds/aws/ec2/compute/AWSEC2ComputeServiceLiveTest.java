@@ -37,7 +37,6 @@ import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.aws.ec2.services.AWSSecurityGroupClient;
 import org.jclouds.cloudwatch.CloudWatchApi;
-import org.jclouds.cloudwatch.CloudWatchAsyncApi;
 import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.cloudwatch.domain.EC2Constants;
 import org.jclouds.cloudwatch.domain.GetMetricStatistics;
@@ -56,7 +55,6 @@ import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
-import org.jclouds.rest.RestContext;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.testng.annotations.Test;
 
@@ -157,13 +155,13 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          // stop the spinner
          future.cancel(true);
 
-         RestContext<CloudWatchApi, CloudWatchAsyncApi> monitoringContext = ContextBuilder
-               .newBuilder(new AWSCloudWatchProviderMetadata())
-               .credentials(identity, credential)
-               .modules(setupModules()).build();
+         CloudWatchApi monitoringApi = ContextBuilder.newBuilder(new AWSCloudWatchProviderMetadata())
+                                                     .credentials(identity, credential)
+                                                     .modules(setupModules())
+                                                     .buildApi(CloudWatchApi.class);
 
          try {
-            GetMetricStatisticsResponse datapoints = monitoringContext.getApi().getMetricApiForRegion(instance.getRegion())
+            GetMetricStatisticsResponse datapoints = monitoringApi.getMetricApiForRegion(instance.getRegion())
                      .getMetricStatistics(GetMetricStatistics.builder()
                                                              .dimension(new Dimension(EC2Constants.Dimension.INSTANCE_ID, instance.getId()))
                                                              .unit(Unit.PERCENT)
@@ -176,7 +174,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
                                                              .build());
             assert (datapoints.size() > 0) : instance;
          } finally {
-            monitoringContext.close();
+            monitoringApi.close();
          }
 
          // make sure we made our dummy group and also let in the user's group

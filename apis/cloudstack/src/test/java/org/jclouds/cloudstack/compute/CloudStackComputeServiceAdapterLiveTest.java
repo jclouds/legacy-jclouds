@@ -109,7 +109,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
             }).annotatedWith(Memoized.class).to(NetworksForCurrentUser.class).in(Scopes.SINGLETON);
             bind(new TypeLiteral<Map<String, Credentials>>() {
             }).toInstance(credentialStore);
-            bind(CloudStackClient.class).toInstance(cloudStackContext.getApi());
+            bind(CloudStackClient.class).toInstance(client);
             bind(new TypeLiteral<Map<NetworkType, ? extends OptionsConverter>>() {}).
                toInstance(new CloudStackComputeServiceContextModule().optionsConverters());
             bind(String.class).annotatedWith(Names.named(PROPERTY_SESSION_INTERVAL)).toInstance("60");

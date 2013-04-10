@@ -53,16 +53,16 @@ public class VolumeTypeApiLiveTest extends BaseNovaApiLiveTest {
 
    @BeforeGroups(groups = {"integration", "live"})
    @Override
-   public void setupContext() {
-      super.setupContext();
-      zone = Iterables.getLast(novaContext.getApi().getConfiguredZones(), "nova");
-      volumeTypeOption = novaContext.getApi().getVolumeTypeExtensionForZone(zone);
+   public void setup() {
+      super.setup();
+      zone = Iterables.getLast(api.getConfiguredZones(), "nova");
+      volumeTypeOption = api.getVolumeTypeExtensionForZone(zone);
    }
 
 
    @AfterClass(groups = { "integration", "live" })
    @Override
-   protected void tearDownContext() {
+   protected void tearDown() {
       if (volumeTypeOption.isPresent()) {
          if (testVolumeType != null) {
             final String id = testVolumeType.getId();
@@ -74,7 +74,7 @@ public class VolumeTypeApiLiveTest extends BaseNovaApiLiveTest {
             }, 5 * 1000L).apply(volumeTypeOption.get()));
          }
       }
-      super.tearDownContext();
+      super.tearDown();
    }
 
    public void testCreateVolumeType() {

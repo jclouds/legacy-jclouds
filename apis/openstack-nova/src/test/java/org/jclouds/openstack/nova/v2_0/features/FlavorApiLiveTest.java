@@ -46,8 +46,8 @@ public class FlavorApiLiveTest extends BaseNovaApiLiveTest {
    @Test(description = "GET /v${apiVersion}/{tenantId}/flavors")
    public void testListFlavors() throws Exception {
       for (String zoneId : zones) {
-         FlavorApi api = novaContext.getApi().getFlavorApiForZone(zoneId);
-         Set<? extends Resource> response = api.list().concat().toSet();
+         FlavorApi flavorApi = api.getFlavorApiForZone(zoneId);
+         Set<? extends Resource> response = flavorApi.list().concat().toSet();
          assertNotNull(response);
          assertFalse(response.isEmpty());
          for (Resource flavor : response) {
@@ -66,8 +66,8 @@ public class FlavorApiLiveTest extends BaseNovaApiLiveTest {
    @Test(description = "GET /v${apiVersion}/{tenantId}/flavors/detail")
    public void testListFlavorsInDetail() throws Exception {
       for (String zoneId : zones) {
-         FlavorApi api = novaContext.getApi().getFlavorApiForZone(zoneId);
-         Set<? extends Flavor> response = api.listInDetail().concat().toSet();
+         FlavorApi flavorApi = api.getFlavorApiForZone(zoneId);
+         Set<? extends Flavor> response = flavorApi.listInDetail().concat().toSet();
          assertNotNull(response);
          assertFalse(response.isEmpty());
          for (Flavor flavor : response) {
@@ -89,10 +89,10 @@ public class FlavorApiLiveTest extends BaseNovaApiLiveTest {
    @Test(description = "GET /v${apiVersion}/{tenantId}/flavors/{id}", dependsOnMethods = { "testListFlavorsInDetail" })
    public void testGetFlavorById() throws Exception {
       for (String zoneId : zones) {
-         FlavorApi api = novaContext.getApi().getFlavorApiForZone(zoneId);
-         Set<? extends Flavor> response = api.listInDetail().concat().toSet();
+         FlavorApi flavorApi = api.getFlavorApiForZone(zoneId);
+         Set<? extends Flavor> response = flavorApi.listInDetail().concat().toSet();
          for (Flavor flavor : response) {
-            Flavor details = api.get(flavor.getId());
+            Flavor details = flavorApi.get(flavor.getId());
             assertNotNull(details);
             assertEquals(details.getId(), flavor.getId());
             assertEquals(details.getName(), flavor.getName());

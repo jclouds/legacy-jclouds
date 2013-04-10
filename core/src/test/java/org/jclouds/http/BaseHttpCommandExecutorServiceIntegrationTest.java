@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -140,9 +141,9 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
       }.hash(md5()).asBytes()), md5);
    }
 
-   private InputStream getConsitution() {
+   private InputStream getConsitution() throws MalformedURLException, IOException {
       URI constitutionUri = URI.create(format("http://localhost:%d/101constitutions", testPort));
-      return context.utils().http().get(constitutionUri);
+      return constitutionUri.toURL().openStream();
    }
 
    /**

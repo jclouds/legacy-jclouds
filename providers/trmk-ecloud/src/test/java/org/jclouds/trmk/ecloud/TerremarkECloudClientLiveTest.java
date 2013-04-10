@@ -40,7 +40,7 @@ import com.google.common.net.HostAndPort;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true, testName = "TerremarkECloudClientLiveTest")
-public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest<TerremarkECloudClient, TerremarkECloudAsyncClient> {
+public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest {
 
    public TerremarkECloudClientLiveTest() {
       this.provider = "trmk-ecloud";
@@ -64,7 +64,7 @@ public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest<Terre
 
    @Override
    protected Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIpForSSH(VApp vApp) {
-      return new TerremarkECloudInternetServiceAndPublicIpAddressSupplier(TerremarkECloudClient.class.cast(connection))
+      return new TerremarkECloudInternetServiceAndPublicIpAddressSupplier(TerremarkECloudClient.class.cast(api))
             .getNewInternetServiceAndIp(vApp, 22, Protocol.TCP);
    }
 

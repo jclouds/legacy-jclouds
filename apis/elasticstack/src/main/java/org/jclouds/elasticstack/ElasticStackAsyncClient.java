@@ -62,7 +62,10 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see ElasticStackClient
  * @see <a href="TODO: insert URL of provider documentation" />
  * @author Adrian Cole
+ * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(ElasticStackClient.class)} as
+ *             {@link ElasticStackAsyncClient} interface will be removed in jclouds 1.7.
  */
+@Deprecated
 @RequestFilters(BasicAuthentication.class)
 @Consumes(MediaType.TEXT_PLAIN)
 public interface ElasticStackAsyncClient extends Closeable {

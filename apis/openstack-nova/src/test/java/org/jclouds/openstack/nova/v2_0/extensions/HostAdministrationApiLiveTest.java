@@ -53,12 +53,12 @@ public class HostAdministrationApiLiveTest extends BaseNovaApiLiveTest {
 
    @BeforeGroups(groups = {"integration", "live"})
    @Override
-   public void setupContext() {
-      super.setupContext();
+   public void setup() {
+      super.setup();
 
       if (identity.endsWith(":admin")) {
-         String zone = Iterables.getLast(novaContext.getApi().getConfiguredZones(), "nova");
-         optApi = novaContext.getApi().getHostAdministrationExtensionForZone(zone);
+         String zone = Iterables.getLast(api.getConfiguredZones(), "nova");
+         optApi = api.getHostAdministrationExtensionForZone(zone);
       }
    }
 

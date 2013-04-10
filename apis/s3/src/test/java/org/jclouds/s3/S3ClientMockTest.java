@@ -34,7 +34,6 @@ import java.util.Set;
 
 import org.jclouds.ContextBuilder;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.rest.RestContext;
 import org.jclouds.s3.domain.S3Object;
 import org.testng.annotations.Test;
 
@@ -55,7 +54,7 @@ public class S3ClientMockTest {
    private static final Set<Module> modules = ImmutableSet.<Module> of(
          new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()));
 
-   static RestContext<? extends S3Client,? extends  S3AsyncClient> getContext(URL server) {
+   static S3Client getS3Client(URL server) {
       Properties overrides = new Properties();
       overrides.setProperty(PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "false");
       // prevent expect-100 bug http://code.google.com/p/mockwebserver/issues/detail?id=6
@@ -66,7 +65,7 @@ public class S3ClientMockTest {
                            .endpoint(server.toString())
                            .modules(modules)
                            .overrides(overrides)
-                           .build(S3ApiMetadata.CONTEXT_TOKEN);
+                           .buildApi(S3Client.class);
    }
 
    public void testZeroLengthPutHasContentLengthHeader() throws IOException, InterruptedException {
@@ -74,7 +73,7 @@ public class S3ClientMockTest {
       server.enqueue(new MockResponse().setBody("").addHeader(ETAG, "ABCDEF"));
       server.play();
 
-      S3Client client = getContext(server.getUrl("/")).getApi();
+      S3Client client = getS3Client(server.getUrl("/"));
       S3Object nada = client.newS3Object();
       nada.getMetadata().setKey("object");
       nada.setPayload(new byte[] {});
@@ -94,7 +93,7 @@ public class S3ClientMockTest {
       server.enqueue(new MockResponse().setBody("").addHeader(ETAG, "ABCDEF"));
       server.play();
 
-      S3Client client = getContext(server.getUrl("/")).getApi();
+      S3Client client = getS3Client(server.getUrl("/"));
       S3Object fileInDir = client.newS3Object();
       fileInDir.getMetadata().setKey("someDir/fileName");
       fileInDir.setPayload(new byte[] { 1, 2, 3, 4 });

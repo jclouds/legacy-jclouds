@@ -18,29 +18,17 @@
  */
 package org.jclouds.cloudwatch.internal;
 
-import org.jclouds.apis.BaseContextLiveTest;
-import org.jclouds.cloudwatch.CloudWatchApiMetadata;
-import org.jclouds.cloudwatch.CloudWatchAsyncApi;
+import org.jclouds.apis.BaseApiLiveTest;
 import org.jclouds.cloudwatch.CloudWatchApi;
-import org.jclouds.rest.RestContext;
 import org.testng.annotations.Test;
-
-import com.google.common.reflect.TypeToken;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class BaseCloudWatchApiLiveTest extends BaseContextLiveTest<RestContext<CloudWatchApi, CloudWatchAsyncApi>> {
-
+public class BaseCloudWatchApiLiveTest extends BaseApiLiveTest<CloudWatchApi> {
    public BaseCloudWatchApiLiveTest() {
       provider = "cloudwatch";
    }
-   
-   @Override
-   protected TypeToken<RestContext<CloudWatchApi, CloudWatchAsyncApi>> contextType() {
-      return CloudWatchApiMetadata.CONTEXT_TOKEN;
-   }
-
 }

@@ -22,25 +22,20 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.route53.domain.Change.Status.INSYNC;
 import static org.jclouds.util.Predicates2.retry;
 
-import org.jclouds.apis.BaseContextLiveTest;
-import org.jclouds.route53.Route53ApiMetadata;
-import org.jclouds.route53.Route53AsyncApi;
+import org.jclouds.apis.BaseApiLiveTest;
 import org.jclouds.route53.Route53Api;
 import org.jclouds.route53.domain.Change;
-import org.jclouds.rest.RestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
-import com.google.common.reflect.TypeToken;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class BaseRoute53ApiLiveTest extends
-         BaseContextLiveTest<RestContext<? extends Route53Api, ? extends Route53AsyncApi>> {
+public class BaseRoute53ApiLiveTest extends BaseApiLiveTest<Route53Api> {
 
    public BaseRoute53ApiLiveTest() {
       provider = "route53";
@@ -50,17 +45,12 @@ public class BaseRoute53ApiLiveTest extends
 
    @BeforeClass(groups = "live")
    @Override
-   public void setupContext() {
-      super.setupContext();
+   public void setup() {
+      super.setup();
       inSync = retry(new Predicate<Change>() {
          public boolean apply(Change input) {
-            return context.getApi().getChange(input.getId()).getStatus() == INSYNC;
+            return api.getChange(input.getId()).getStatus() == INSYNC;
          }
       }, 600, 1, 5, SECONDS);
-   }
-
-   @Override
-   protected TypeToken<RestContext<? extends Route53Api, ? extends Route53AsyncApi>> contextType() {
-      return Route53ApiMetadata.CONTEXT_TOKEN;
    }
 }

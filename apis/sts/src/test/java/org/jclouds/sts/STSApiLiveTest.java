@@ -39,7 +39,7 @@ public class STSApiLiveTest extends BaseSTSApiLiveTest {
 
    @Test
    protected void testCreateTemporaryCredentials() {
-      SessionCredentials creds = api().createTemporaryCredentials(
+      SessionCredentials creds = api.createTemporaryCredentials(
             new SessionCredentialsOptions().durationSeconds(MINUTES.toSeconds(15)));
       checkTemporaryCredentials(creds);
       // TODO: actually login to some service
@@ -53,7 +53,7 @@ public class STSApiLiveTest extends BaseSTSApiLiveTest {
 
    @Test
    protected void testCreateFederatedUser() {
-      UserAndSessionCredentials user = api().createFederatedUser("Bob", new FederatedUserOptions().durationSeconds(MINUTES.toSeconds(15)));
+      UserAndSessionCredentials user = api.createFederatedUser("Bob", new FederatedUserOptions().durationSeconds(MINUTES.toSeconds(15)));
       checkTemporaryCredentials(user.getCredentials());
       assertTrue(user.getUser().getId().contains("Bob"), user + " id incorrect");
       assertTrue(user.getUser().getArn().contains("Bob"), user + " arn incorrect");
@@ -63,7 +63,7 @@ public class STSApiLiveTest extends BaseSTSApiLiveTest {
    @Test
    protected void testAssumeRole() {
       String arnToAssume = getTestArn();
-      UserAndSessionCredentials role = api().assumeRole(arnToAssume, "session",
+      UserAndSessionCredentials role = api.assumeRole(arnToAssume, "session",
             new AssumeRoleOptions().durationSeconds(MINUTES.toSeconds(15)));
       checkTemporaryCredentials(role.getCredentials());
       assertTrue(role.getUser().getId().contains("session"), role + " id incorrect");
@@ -80,9 +80,5 @@ public class STSApiLiveTest extends BaseSTSApiLiveTest {
       checkNotNull(creds.getSecretAccessKey(), "SecretAccessKey cannot be null for TemporaryCredentials.");
       checkNotNull(creds.getSessionToken(), "SessionToken cannot be null for TemporaryCredentials.");
       checkNotNull(creds.getExpiration(), "Expiration cannot be null for TemporaryCredentials.");
-   }
-
-   protected STSApi api() {
-      return context.getApi();
    }
 }
