@@ -48,7 +48,9 @@ import com.google.common.collect.ImmutableSet;
  * @see BaseBlobMap
  * 
  * @author Adrian Cole
+ * @deprecated will be removed in jclouds 1.7. Please use {@link BlobStore}
  */
+@Deprecated
 public class BlobMapImpl extends BaseBlobMap<Blob> implements BlobMap {
    public static class CorrectBlobName implements Function<java.util.Map.Entry<? extends String, ? extends Blob>, Blob> {
       private final Function<String, String> prefixer;

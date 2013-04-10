@@ -42,6 +42,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
+import org.jclouds.blobstore.config.LocalBlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -89,7 +90,10 @@ import com.google.common.util.concurrent.ListeningExecutorService;
  * @author Alfredo "Rainbowbreeze" Morresi
  * @author Andrew Gaul
  * @author James Murty
+ * @deprecated will be removed in jclouds 1.7, as async interfaces are no longer
+ *             supported. Please create and use {@link LocalBlobStore}
  */
+@Deprecated
 public class LocalAsyncBlobStore extends BaseAsyncBlobStore {
 
    @Resource
