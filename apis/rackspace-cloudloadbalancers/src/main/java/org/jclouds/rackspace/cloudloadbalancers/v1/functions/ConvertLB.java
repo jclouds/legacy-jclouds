@@ -18,15 +18,17 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1.functions;
 
+import java.net.URI;
+
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.logging.Logger;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.AccessRuleWithId;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancer;
+import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancer.Builder;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.Metadata;
 import org.jclouds.rackspace.cloudloadbalancers.v1.domain.VirtualIPWithId;
-import org.jclouds.rackspace.cloudloadbalancers.v1.domain.LoadBalancer.Builder;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
@@ -37,18 +39,21 @@ import com.google.inject.assistedinject.Assisted;
  * @author Adrian Cole
  */
 public class ConvertLB implements Function<LB, LoadBalancer> {
+   private static final String LOAD_BALANCERS = "loadbalancers";
 
    public static interface Factory {
-      ConvertLB createForRegion(String region);
+      ConvertLB createForEndpointAndRegion(URI endpoint, String region);
    }
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    private final String region;
+   private final URI endpoint;
 
    @Inject
-   ConvertLB(@Assisted String region) {
+   ConvertLB(@Assisted URI endpoint, @Assisted String region) {
+      this.endpoint = endpoint;
       this.region = region.toUpperCase();
    }
 
@@ -85,6 +90,10 @@ public class ConvertLB implements Function<LB, LoadBalancer> {
             builder.metadata(new Metadata());
          else
             builder.metadata(ParseMetadata.transformCLBMetadataToMetadata(lb.metadata));
+         
+         int indexOfLB = endpoint.toString().lastIndexOf(LOAD_BALANCERS); 
+         String path = endpoint.toString().substring(0, indexOfLB + LOAD_BALANCERS.length()); 
+         builder.uri(URI.create(path + "/" + lb.id));
 
          return builder.build();
       }

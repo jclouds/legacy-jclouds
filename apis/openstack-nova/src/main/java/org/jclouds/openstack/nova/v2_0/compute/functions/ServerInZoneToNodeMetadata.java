@@ -52,6 +52,7 @@ import org.jclouds.openstack.nova.v2_0.domain.Server;
 import org.jclouds.openstack.nova.v2_0.domain.Server.Status;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ServerInZone;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneAndId;
+import org.jclouds.openstack.v2_0.domain.Link;
 import org.jclouds.util.InetAddresses2;
 
 import com.google.common.base.Function;
@@ -112,7 +113,13 @@ public class ServerInZoneToNodeMetadata implements Function<ServerInZone, NodeMe
                   AddressToStringTransformationFunction.INSTANCE), isInet4Address));
       builder.privateAddresses(filter(
             transform(filter(from.getAddresses().values(), isPrivateAddress), AddressToStringTransformationFunction.INSTANCE), isInet4Address));
-
+      
+      for (Link link: from.getLinks()) {
+         if (link.getRelation().equals(Link.Relation.SELF)) {
+            builder.uri(link.getHref());
+         }
+      }
+      
       return builder.build();
    }
    
