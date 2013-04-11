@@ -21,6 +21,7 @@ package org.jclouds.rackspace.cloudloadbalancers.v1.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.net.URI;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -63,12 +64,14 @@ public class ParseLoadBalancer implements Function<HttpResponse, LoadBalancer>, 
 
    @Override
    public ParseLoadBalancer setContext(HttpRequest request) {
-      return setRegion(request.getEndpoint().getHost().substring(0, request.getEndpoint().getHost().indexOf('.')));
+      return setEndpointAndRegion(request.getEndpoint());
    }
 
-   ParseLoadBalancer setRegion(String region) {
-      this.convertLB = factory.createForRegion(region);
+   ParseLoadBalancer setEndpointAndRegion(URI endpoint) {
+      String region = endpoint.getHost().substring(0, endpoint.getHost().indexOf('.'));
+      
+      this.convertLB = factory.createForEndpointAndRegion(endpoint, region);
+      
       return this;
    }
-
 }
