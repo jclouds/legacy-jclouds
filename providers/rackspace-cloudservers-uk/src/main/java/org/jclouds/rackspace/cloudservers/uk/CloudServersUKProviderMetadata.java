@@ -30,6 +30,7 @@ import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.Z
 import org.jclouds.openstack.nova.v2_0.NovaApiMetadata;
 import org.jclouds.openstack.nova.v2_0.config.NovaParserModule;
 import org.jclouds.openstack.nova.v2_0.config.NovaRestClientModule;
+import org.jclouds.openstack.nova.v2_0.config.NovaRestClientModule.ComputeEndpointModule;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityAuthenticationModule;
@@ -90,6 +91,7 @@ public class CloudServersUKProviderMetadata extends BaseProviderMetadata {
                                               .add(ZoneModule.class)
                                               .add(NovaParserModule.class)
                                               .add(NovaRestClientModule.class)
+                                              .add(ComputeEndpointModule.class)
                                               .add(CloudServersUKComputeServiceContextModule.class).build())
                   .build())
          .homepage(URI.create("http://www.rackspace.co.uk/opencloud"))

@@ -27,22 +27,28 @@ import static org.jclouds.openstack.nova.v2_0.config.NovaProperties.TIMEOUT_SECU
 import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.Properties;
 
+import org.jclouds.Context;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.Utils;
 import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
-import org.jclouds.openstack.keystone.v2_0.config.MappedAuthenticationApiModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.ZoneModule;
+import org.jclouds.openstack.keystone.v2_0.config.MappedAuthenticationApiModule;
 import org.jclouds.openstack.nova.v2_0.compute.config.NovaComputeServiceContextModule;
+import org.jclouds.openstack.nova.v2_0.config.ComputeEndpoint;
 import org.jclouds.openstack.nova.v2_0.config.NovaParserModule;
 import org.jclouds.openstack.nova.v2_0.config.NovaRestClientModule;
 import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Inject;
 import com.google.inject.Module;
 
 /**
@@ -123,6 +129,23 @@ public class NovaApiMetadata extends BaseRestApiMetadata {
       @Override
       protected Builder self() {
          return this;
+      }
+   }
+   
+   public static URI getServerURI(Utils utils, String region, String serverId) {
+      GetComputeEndpoint getURI = utils.getInjector().getInstance(GetComputeEndpoint.class);
+      Map<String, Supplier<URI>> map = getURI.zoneIdToURISupplier.get();
+      String uri = map.get(region).get().toString() + "/servers/" + serverId;
+            
+      return URI.create(uri);
+   }
+   
+   public static class GetComputeEndpoint {
+      Supplier<Map<String, Supplier<URI>>> zoneIdToURISupplier;
+
+      @Inject
+      protected GetComputeEndpoint(@ComputeEndpoint Supplier<Map<String, Supplier<URI>>> regionIdToURISupplier) {
+         this.zoneIdToURISupplier = regionIdToURISupplier;
       }
    }
 }
