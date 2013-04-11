@@ -21,6 +21,7 @@ package org.jclouds.rackspace.cloudloadbalancers.v1.domain;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
@@ -51,6 +52,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
    private final SourceAddresses sourceAddresses;
    private final Set<AccessRuleWithId> accessRules;
    private final Metadata metadata;
+   private final URI uri;
 
    public LoadBalancer(String region, int id, String name, String protocol, @Nullable Integer port, Set<Node> nodes,
          @Nullable Integer timeout, @Nullable Boolean halfClosed, @Nullable Algorithm algorithm, Status status,
@@ -58,7 +60,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
          String clusterName, Date created, Date updated, @Nullable Map<String, Boolean> connectionLogging,
          @Nullable ConnectionThrottle connectionThrottle, boolean contentCaching, int nodeCount,
          @Nullable HealthMonitor healthMonitor, @Nullable SSLTermination sslTermination,
-         SourceAddresses sourceAddresses, Set<AccessRuleWithId> accessRules, Metadata metadata) {
+         SourceAddresses sourceAddresses, Set<AccessRuleWithId> accessRules, Metadata metadata, URI uri) {
       super(name, protocol, port, nodes, algorithm, timeout, halfClosed, sessionPersistenceType, connectionLogging,
             connectionThrottle, healthMonitor);
       this.region = checkNotNull(region, "region");
@@ -75,6 +77,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
       this.sourceAddresses = sourceAddresses;
       this.accessRules = accessRules == null ? ImmutableSet.<AccessRuleWithId> of() : ImmutableSet.copyOf(accessRules);
       this.metadata = metadata == null ? new Metadata() : metadata;
+      this.uri = uri;
    }
 
    public String getRegion() {
@@ -167,6 +170,10 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
    public Metadata getMetadata() {
       return metadata;
    }
+   
+   public URI getUri() {
+      return uri;
+   }
 
    protected ToStringHelper string() {
       return Objects.toStringHelper(this).omitNullValues().add("id", id).add("region", region).add("status", status)
@@ -176,7 +183,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
             .add("contentCaching", contentCaching).add("sessionPersistenceType", getSessionPersistenceType())
             .add("sslTermination", sslTermination).add("connectionLogging", isConnectionLogging())
             .add("connectionThrottle", connectionThrottle).add("healthMonitor", healthMonitor)
-            .add("accessRules", accessRules).add("metadata", getMetadata()).add("sourceAddresses", sourceAddresses)
+            .add("accessRules", accessRules).add("metadata", getMetadata()).add("uri", uri).add("sourceAddresses", sourceAddresses)
             .add("virtualIPs", virtualIPs);
    }
 
@@ -272,6 +279,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
       private SourceAddresses sourceAddresses;
       private Set<AccessRuleWithId> accessRules;
       private Metadata metadata;
+      private URI uri;
 
       public Builder region(String region) {
          this.region = region;
@@ -340,11 +348,16 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
          this.metadata = checkNotNull(metadata, "metadata");
          return this;
       }
+      
+      public Builder uri(URI uri) {
+         this.uri = uri;
+         return this;
+      }
 
       public LoadBalancer build() {
          return new LoadBalancer(region, id, name, protocol, port, nodes, timeout, halfClosed, algorithm, status,
                virtualIPs, sessionPersistence, clusterName, created, updated, connectionLogging, connectionThrottle,
-               contentCaching, nodeCount, healthMonitor, sslTermination, sourceAddresses, accessRules, metadata);
+               contentCaching, nodeCount, healthMonitor, sslTermination, sourceAddresses, accessRules, metadata, uri);
       }
 
       /**
@@ -450,7 +463,8 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
          return Builder.class.cast(super.from(in)).region(in.getRegion()).id(in.getId()).status(in.getStatus())
                .virtualIPs(in.getVirtualIPs()).clusterName(in.getClusterName()).created(in.getCreated())
                .updated(in.getUpdated()).contentCaching(in.isContentCaching()).nodeCount(in.getNodeCount())
-               .sslTermination(in.getSSLTermination()).sourceAddresses(in.getSourceAddresses());
+               .sslTermination(in.getSSLTermination()).sourceAddresses(in.getSourceAddresses())
+               .accessRules(in.getAccessRules()).metadata(in.getMetadata()).uri(in.getUri());
       }
    }
 
