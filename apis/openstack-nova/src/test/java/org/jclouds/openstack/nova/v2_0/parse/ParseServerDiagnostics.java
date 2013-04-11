@@ -4,11 +4,12 @@
  */
 package org.jclouds.openstack.nova.v2_0.parse;
 
+import java.util.Map;
+
+import org.jclouds.json.BaseItemParserTest;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
-import java.util.Map;
-import java.util.TreeMap;
-import org.jclouds.json.BaseItemParserTest;
 
 /**
  *

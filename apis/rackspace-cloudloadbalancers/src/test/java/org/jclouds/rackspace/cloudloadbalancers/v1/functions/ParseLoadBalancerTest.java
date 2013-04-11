@@ -18,6 +18,8 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1.functions;
 
+import java.net.URI;
+
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.json.BaseItemParserTest;
@@ -96,7 +98,8 @@ public class ParseLoadBalancerTest extends BaseItemParserTest<LoadBalancer> {
             .clusterName("c1.dfw1")
             .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:42Z"))
             .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:44Z"))
-            .metadata(metadata).build();
+            .metadata(metadata)
+            .uri(URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000")).build();
    }
 
    // add factory binding as this is not default
@@ -115,6 +118,6 @@ public class ParseLoadBalancerTest extends BaseItemParserTest<LoadBalancer> {
 
    @Override
    protected Function<HttpResponse, LoadBalancer> parser(Injector i) {
-      return i.getInstance(ParseLoadBalancer.class).setRegion("DFW");
+      return i.getInstance(ParseLoadBalancer.class).setEndpointAndRegion(URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/2000"));
    }
 }

@@ -18,6 +18,8 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1.functions;
 
+import java.net.URI;
+
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.json.BaseItemParserTest;
@@ -48,7 +50,8 @@ public class ParseLoadBalancerWhenDeletedTest extends BaseItemParserTest<LoadBal
    public LoadBalancer expected() {
       return LoadBalancer.builder().region("LON").id(4865).name("adriancole-LON").status(Status.DELETED).nodeCount(0)
             .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-12-05T18:03:23Z"))
-            .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-12-05T18:04:04Z")).build();
+            .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-12-05T18:04:04Z"))
+            .uri(URI.create("https://lon.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/4865")).build();
    }
 
    // add factory binding as this is not default
@@ -67,6 +70,6 @@ public class ParseLoadBalancerWhenDeletedTest extends BaseItemParserTest<LoadBal
 
    @Override
    protected Function<HttpResponse, LoadBalancer> parser(Injector i) {
-      return i.getInstance(ParseLoadBalancer.class).setRegion("LON");
+      return i.getInstance(ParseLoadBalancer.class).setEndpointAndRegion(URI.create("https://lon.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/4865"));
    }
 }
