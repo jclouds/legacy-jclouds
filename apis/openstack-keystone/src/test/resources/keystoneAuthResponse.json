@@ -140,6 +140,17 @@
                 "endpoints_links": []
             },
             {
+                "type": "databases",
+                "name": "reddwarf",
+                "endpoints": [
+                  {
+                    "publicURL": "http://172.16.0.1:8776/v1/3456",
+                    "tenantId": "123123",
+                    "region": "RegionOne"
+                  }
+                ]
+            },
+            {
                 "type": "dns",
                 "name": "dns",
                 "endpoints": [
