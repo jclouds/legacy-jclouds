@@ -114,18 +114,36 @@ public interface Utils {
     */
    DateService date();
 
+   /**
+    * @deprecated will be removed in jclouds 1.7, as async interfaces are no
+    *             longer supported.
+    */
+   @Deprecated
    ListeningExecutorService getUserExecutor();
 
    /**
     * #see #getUserExecutor
+    *
+    * @deprecated will be removed in jclouds 1.7, as async interfaces are no
+    *             longer supported.
     */
+   @Deprecated
    ListeningExecutorService userExecutor();
 
+   /**
+    * @deprecated will be removed in jclouds 1.7, as async interfaces are no
+    *             longer supported.
+    */
+   @Deprecated
    ListeningExecutorService getIoExecutor();
 
    /**
     * #see #getIoExecutor
+    *
+    * @deprecated will be removed in jclouds 1.7, as async interfaces are no
+    *             longer supported.
     */
+   @Deprecated
    ListeningExecutorService ioExecutor();
 
    @Beta
