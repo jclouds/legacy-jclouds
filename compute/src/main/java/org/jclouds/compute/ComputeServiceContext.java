@@ -37,11 +37,6 @@ public interface ComputeServiceContext extends Closeable, View {
 
    ComputeService getComputeService();
 
-   Utils getUtils();
-
-   /**
-    * @see #getUtils
-    */
    Utils utils();
 
    @Override

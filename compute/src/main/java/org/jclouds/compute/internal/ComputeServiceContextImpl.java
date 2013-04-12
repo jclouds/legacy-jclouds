@@ -59,11 +59,6 @@ public class ComputeServiceContextImpl extends BaseView implements ComputeServic
    }
 
    @Override
-   public Utils getUtils() {
-      return utils();
-   }
-
-   @Override
    public Utils utils() {
       return utils;
    }
