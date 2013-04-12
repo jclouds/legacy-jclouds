@@ -98,14 +98,6 @@ public class ContextImpl implements Context {
       return creds.get().identity;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Utils getUtils() {
-      return utils();
-   }
-
    @Override
    public Utils utils() {
       return utils;

@@ -94,39 +94,8 @@ public class UtilsImpl implements Utils {
    }
 
    @Override
-   public DateService getDateService() {
-      return date;
-   }
-
-   @Override
-   public Crypto getCrypto() {
-      return encryption;
-   }
-
-   @Override
-   @Deprecated
-   public org.jclouds.rest.HttpAsyncClient getHttpAsyncClient() {
-      return simpleAsyncClient;
-   }
-
-   @Override
-   public HttpClient getHttpClient() {
-      return simpleClient;
-   }
-
-   @Override
    public HttpClient http() {
       return simpleClient;
-   }
-
-   @Override
-   public ListeningExecutorService getIoExecutor() {
-      return ioExecutor;
-   }
-
-   @Override
-   public ListeningExecutorService getUserExecutor() {
-      return userExecutor;
    }
 
    @Override
@@ -140,28 +109,13 @@ public class UtilsImpl implements Utils {
    }
    
    @Override
-   public EventBus getEventBus() {
-      return eventBus;
-   }
-   
-   @Override
    public EventBus eventBus() {
       return eventBus;
-   }
-   
-   @Override
-   public LoggerFactory getLoggerFactory() {
-      return loggerFactory;
    }
 
    @Override
    public LoggerFactory loggerFactory() {
       return loggerFactory;
-   }
-
-   @Override
-   public Json getJson() {
-      return json;
    }
 
    @Override
@@ -171,19 +125,8 @@ public class UtilsImpl implements Utils {
 
    @Override
    @Beta
-   public Injector getInjector() {
-      return injector;
-   }
-
-   @Override
-   @Beta
    public Injector injector() {
-      return getInjector();
-   }
-   
-   @Override
-   public XMLParser getXml() {
-      return xml;
+      return injector;
    }
 
    @Override
@@ -193,11 +136,6 @@ public class UtilsImpl implements Utils {
 
    @Override
    public Map<String, Credentials> credentialStore() {
-      return credentialStore;
-   }
-
-   @Override
-   public Map<String, Credentials> getCredentialStore() {
       return credentialStore;
    }
 

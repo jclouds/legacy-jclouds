@@ -55,11 +55,6 @@ public class LoadBalancerServiceContextImpl extends BaseView implements LoadBala
    }
 
    @Override
-   public Utils getUtils() {
-      return utils();
-   }
-
-   @Override
    public Utils utils() {
       return utils;
    }

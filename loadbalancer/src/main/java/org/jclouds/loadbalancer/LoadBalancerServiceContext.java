@@ -38,12 +38,6 @@ public interface LoadBalancerServiceContext extends Closeable, View {
 
    LoadBalancerService getLoadBalancerService();
 
-
-   Utils getUtils();
-
-   /**
-    * @see #getUtils
-    */
    Utils utils();
 
    @Override

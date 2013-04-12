@@ -61,11 +61,6 @@ public interface Context extends Location, Closeable {
     */
    String getIdentity();
 
-   Utils getUtils();
-
-   /**
-    * @see #getUtils
-    */
    Utils utils();
 
    /**

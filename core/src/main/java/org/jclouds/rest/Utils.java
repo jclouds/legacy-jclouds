@@ -60,70 +60,25 @@ public interface Utils {
     * </ul>
     */
    @Beta
-   Map<String, Credentials> getCredentialStore();
-
-   /**
-    * @see ComputeServiceContext#getCredentialStore
-    */
-   @Beta
    Map<String, Credentials> credentialStore();
-   
-   Json getJson();
 
-   /**
-    * #see #getJson
-    */
    Json json();
 
    /**
     * 
     * @deprecated will be removed in jclouds 1.7, as async interfaces are no
     *             longer supported.
-    * @see #getHttpClient()
-    */
-   @Deprecated
-   HttpAsyncClient getHttpAsyncClient();
-
-   /**
-    * 
-    * @deprecated will be removed in jclouds 1.7, as async interfaces are no
-    *             longer supported.
-    * @see #http()
     */
    @Deprecated
    HttpAsyncClient asyncHttp();
 
-   HttpClient getHttpClient();
-
-   /**
-    * #see #getHttpClient
-    */
    HttpClient http();
 
-   Crypto getCrypto();
-
-   /**
-    * #see #getCrypto
-    */
    Crypto crypto();
 
-   DateService getDateService();
-
-   /**
-    * #see #getDateService
-    */
    DateService date();
 
    /**
-    * @deprecated will be removed in jclouds 1.7, as async interfaces are no
-    *             longer supported.
-    */
-   @Deprecated
-   ListeningExecutorService getUserExecutor();
-
-   /**
-    * #see #getUserExecutor
-    *
     * @deprecated will be removed in jclouds 1.7, as async interfaces are no
     *             longer supported.
     */
@@ -135,44 +90,15 @@ public interface Utils {
     *             longer supported.
     */
    @Deprecated
-   ListeningExecutorService getIoExecutor();
-
-   /**
-    * #see #getIoExecutor
-    *
-    * @deprecated will be removed in jclouds 1.7, as async interfaces are no
-    *             longer supported.
-    */
-   @Deprecated
    ListeningExecutorService ioExecutor();
-
-   @Beta
-   EventBus getEventBus();
 
    EventBus eventBus();
 
-   LoggerFactory getLoggerFactory();
-
-   /**
-    * #see #getLoggerFactory
-    */
    LoggerFactory loggerFactory();
 
-
-   @Beta
-   Injector getInjector();
-
-   /**
-    * #see #getInjector
-    */
    @Beta
    Injector injector();
-   
-   XMLParser getXml();
 
-   /**
-    * #see #getXml
-    */
    XMLParser xml();
 
 }
