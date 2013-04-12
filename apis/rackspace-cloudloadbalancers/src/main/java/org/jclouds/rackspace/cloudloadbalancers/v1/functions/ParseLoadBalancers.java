@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.openstack.v2_0.options.PaginationOptions.Builder.marker;
 
 import java.beans.ConstructorProperties;
+import java.net.URI;
 
 import javax.inject.Inject;
 
@@ -76,11 +77,14 @@ public class ParseLoadBalancers implements Function<HttpResponse, IterableWithMa
 
    @Override
    public ParseLoadBalancers setContext(HttpRequest request) {
-      return setRegion(request.getEndpoint().getHost().substring(0, request.getEndpoint().getHost().indexOf('.')));
+      return setEndpointAndRegion(request.getEndpoint());
    }
 
-   ParseLoadBalancers setRegion(String region) {
-      this.convertLB = factory.createForRegion(region);
+   ParseLoadBalancers setEndpointAndRegion(URI endpoint) {
+      String region = endpoint.getHost().substring(0, endpoint.getHost().indexOf('.'));
+      
+      this.convertLB = factory.createForEndpointAndRegion(endpoint, region);
+      
       return this;
    }
 

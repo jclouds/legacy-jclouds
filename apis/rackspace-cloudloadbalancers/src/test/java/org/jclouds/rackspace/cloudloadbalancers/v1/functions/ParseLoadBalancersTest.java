@@ -18,6 +18,7 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers.v1.functions;
 
+import java.net.URI;
 import java.util.Set;
 
 import org.jclouds.collect.IterableWithMarker;
@@ -62,7 +63,8 @@ public class ParseLoadBalancersTest extends BaseIterableWithMarkerParserTest<Loa
                   .virtualIPs(ImmutableSet.of(
                         new VirtualIPWithId(VirtualIP.Type.PUBLIC, VirtualIP.IPVersion.IPV4, 403, "206.55.130.1")))
                   .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:42Z"))
-                  .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:44Z")).build(),
+                  .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:44Z"))
+                  .uri(URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/71")).build(),
             LoadBalancer
                   .builder()
                   .region("DFW")
@@ -76,7 +78,8 @@ public class ParseLoadBalancersTest extends BaseIterableWithMarkerParserTest<Loa
                   .virtualIPs(ImmutableSet.of(
                         new VirtualIPWithId(VirtualIP.Type.PUBLIC, VirtualIP.IPVersion.IPV4, 401, "206.55.130.2")))
                   .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:42Z"))
-                  .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:44Z")).build());
+                  .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:44Z"))
+                  .uri(URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers/166")).build());
    }
    
    @Override
@@ -105,6 +108,6 @@ public class ParseLoadBalancersTest extends BaseIterableWithMarkerParserTest<Loa
 
    @Override
    protected Function<HttpResponse, IterableWithMarker<LoadBalancer>> parser(Injector i) {
-      return i.getInstance(ParseLoadBalancers.class).setRegion("DFW");
+      return i.getInstance(ParseLoadBalancers.class).setEndpointAndRegion(URI.create("https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/123123/loadbalancers"));
    }
 }
