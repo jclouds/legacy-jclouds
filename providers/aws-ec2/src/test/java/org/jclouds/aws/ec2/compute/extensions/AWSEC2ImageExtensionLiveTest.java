@@ -48,11 +48,11 @@ public class AWSEC2ImageExtensionLiveTest extends BaseImageExtensionLiveTest {
 
    @Override
    protected Iterable<? extends Image> listImages() {
-      AWSEC2Client client = view.utils().getInjector().getInstance(AWSEC2Client.class);
+      AWSEC2Client client = view.utils().injector().getInstance(AWSEC2Client.class);
       String[] parts = AWSUtils.parseHandle(imageId);
       String region = parts[0];
       String imageId = parts[1];
-      EC2ImageParser parser = view.utils().getInjector().getInstance(EC2ImageParser.class);
+      EC2ImageParser parser = view.utils().injector().getInstance(EC2ImageParser.class);
       return transform(
             client.getAMIServices().describeImagesInRegion(region, new DescribeImagesOptions().imageIds(imageId)),
             parser);

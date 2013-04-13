@@ -60,6 +60,7 @@ public interface Utils {
     * </ul>
     */
    @Beta
+   @Deprecated
    Map<String, Credentials> getCredentialStore();
 
    /**
@@ -68,6 +69,7 @@ public interface Utils {
    @Beta
    Map<String, Credentials> credentialStore();
    
+   @Deprecated
    Json getJson();
 
    /**
@@ -93,6 +95,7 @@ public interface Utils {
    @Deprecated
    HttpAsyncClient asyncHttp();
 
+   @Deprecated
    HttpClient getHttpClient();
 
    /**
@@ -100,6 +103,7 @@ public interface Utils {
     */
    HttpClient http();
 
+   @Deprecated
    Crypto getCrypto();
 
    /**
@@ -107,6 +111,7 @@ public interface Utils {
     */
    Crypto crypto();
 
+   @Deprecated
    DateService getDateService();
 
    /**
@@ -147,10 +152,12 @@ public interface Utils {
    ListeningExecutorService ioExecutor();
 
    @Beta
+   @Deprecated
    EventBus getEventBus();
 
    EventBus eventBus();
 
+   @Deprecated
    LoggerFactory getLoggerFactory();
 
    /**
@@ -160,6 +167,7 @@ public interface Utils {
 
 
    @Beta
+   @Deprecated
    Injector getInjector();
 
    /**
@@ -168,6 +176,7 @@ public interface Utils {
    @Beta
    Injector injector();
    
+   @Deprecated
    XMLParser getXml();
 
    /**
