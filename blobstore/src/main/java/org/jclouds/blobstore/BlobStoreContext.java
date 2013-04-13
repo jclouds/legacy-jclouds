@@ -122,12 +122,6 @@ public interface BlobStoreContext extends Closeable, View {
    @Deprecated
    ConsistencyModel getConsistencyModel();
 
-
-   Utils getUtils();
-
-   /**
-    * @see #getUtils
-    */
    Utils utils();
 
    /**

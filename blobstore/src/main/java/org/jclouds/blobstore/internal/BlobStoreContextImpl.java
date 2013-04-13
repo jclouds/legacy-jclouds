@@ -104,11 +104,6 @@ public class BlobStoreContextImpl extends BaseView implements BlobStoreContext {
    }
 
    @Override
-   public Utils getUtils() {
-      return utils();
-   }
-
-   @Override
    public Utils utils() {
       return utils;
    }
