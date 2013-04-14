@@ -1,19 +1,43 @@
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
 	<soap:Body>
-		<getDirectionalDNSRecordsForHostResponse
+		<ns1:getDirectionalDNSRecordsForHostResponse
 			xmlns:ns1="http://webservice.api.ultra.neustar.com/v01/">
 			<DirectionalDNSRecordDetailList
-				ZoneName="directional-example.com." DName="chaos.directional-example.com.">
-				<DirectionalDNSRecordDetail
-					GeolocationGroupName="Geolocation field" GeolocationGroupId="06093C2D10CB1CB2"
-					SourceIPGroupName="172.16.1.0/24" SourceIPGroupId="06093C2D10CB1CB4"
-					TerritoriesCount="8" DirPoolRecordId="06093C2D10CB1CB1">
-					<DirectionalDNSRecord recordType="A" TTL="60"
-						noResponseRecord="false">
-						<InfoValues Info1Value="172.16.1.1" />
-					</DirectionalDNSRecord>
-				</DirectionalDNSRecordDetail>
+				xmlns:ns2="http://schema.ultraservice.neustar.com/v01/" ZoneName="geo.jclouds.org."
+				DName="www.geo.jclouds.org.">
+				<ns2:DirectionalDNSRecordDetail
+					GeolocationGroupName="southamerica" GeolocationGroupId="C000000000000001"
+					TerritoriesCount="16" DirPoolRecordId="A000000000000001">
+					<ns2:DirectionalDNSRecord recordType="CNAME"
+						TTL="300" noResponseRecord="false">
+						<ns2:InfoValues Info1Value="southamerica.geo.jclouds.org." />
+					</ns2:DirectionalDNSRecord>
+				</ns2:DirectionalDNSRecordDetail>
+				<ns2:DirectionalDNSRecordDetail
+					TerritoriesCount="302/323" DirPoolRecordId="A000000000000002"
+					GroupName="All Non-Configured Regions" GroupId="B000000000000001">
+					<ns2:DirectionalDNSRecord recordType="A"
+						TTL="500" noResponseRecord="false">
+						<ns2:InfoValues Info1Value="1.1.1.2" />
+					</ns2:DirectionalDNSRecord>
+				</ns2:DirectionalDNSRecordDetail>
+				<ns2:DirectionalDNSRecordDetail
+					GeolocationGroupName="antarctica-unsupported" GeolocationGroupId="C000000000000002"
+					TerritoriesCount="3" DirPoolRecordId="A000000000000003">
+					<ns2:DirectionalDNSRecord recordType="A"
+						TTL="0" noResponseRecord="true">
+						<ns2:InfoValues Info1Value="No Data Response" />
+					</ns2:DirectionalDNSRecord>
+				</ns2:DirectionalDNSRecordDetail>
+				<ns2:DirectionalDNSRecordDetail
+					GeolocationGroupName="alazona" GeolocationGroupId="C000000000000003"
+					TerritoriesCount="2" DirPoolRecordId="A000000000000004">
+					<ns2:DirectionalDNSRecord recordType="A"
+						TTL="86400" noResponseRecord="false">
+						<ns2:InfoValues Info1Value="1.1.1.1" />
+					</ns2:DirectionalDNSRecord>
+				</ns2:DirectionalDNSRecordDetail>
 			</DirectionalDNSRecordDetailList>
-		</getDirectionalDNSRecordsForHostResponse>
+		</ns1:getDirectionalDNSRecordsForHostResponse>
 	</soap:Body>
 </soap:Envelope>
