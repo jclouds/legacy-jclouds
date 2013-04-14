@@ -39,7 +39,7 @@ public class DirectionalRecordDetail {
    private final DirectionalRecord record;
 
    private DirectionalRecordDetail(String zoneName, String name, String id,
-         Optional<DirectionalGroup> geolocationGroup, Optional<DirectionalGroup> group,
+         Optional<DirectionalGroup> group, Optional<DirectionalGroup> geolocationGroup,
          Optional<DirectionalGroup> sourceIpGroup, DirectionalRecord record) {
       this.zoneName = checkNotNull(zoneName, "zoneName");
       this.name = checkNotNull(name, "name");
