@@ -26,10 +26,10 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.ultradns.ws.domain.Account;
+import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.jclouds.ultradns.ws.domain.AccountLevelGroup;
 import org.jclouds.ultradns.ws.domain.DirectionalGroupCoordinates;
-import org.jclouds.ultradns.ws.domain.DirectionalGroupNameAndRegions;
+import org.jclouds.ultradns.ws.domain.DirectionalGroup;
 import org.jclouds.ultradns.ws.domain.DirectionalPool;
 import org.jclouds.ultradns.ws.domain.DirectionalRecordDetail;
 import org.jclouds.ultradns.ws.domain.DirectionalRecordType;
@@ -46,7 +46,7 @@ import com.google.common.collect.Sets;
 @Test(groups = "live", singleThreaded = true, testName = "DirectionalGroupApiLiveTest")
 public class DirectionalGroupApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
-   private Account account;
+   private IdAndName account;
 
    @Override
    @BeforeClass(groups = { "integration", "live" })
@@ -81,7 +81,7 @@ public class DirectionalGroupApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    @Test
    public void testGetDirectionalGroup() {
       for (AccountLevelGroup group : api().listAccountLevelGroups()) {
-         DirectionalGroupNameAndRegions withRegions = api().get(group.getId());
+         DirectionalGroup withRegions = api().get(group.getId());
          assertEquals(withRegions.getName(), group.getName());
          assertTrue(withRegions.size() > 0);
       }

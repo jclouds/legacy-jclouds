@@ -30,7 +30,7 @@ import static org.testng.Assert.fail;
 
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
-import org.jclouds.ultradns.ws.domain.Account;
+import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.jclouds.ultradns.ws.domain.PoolRecordSpec;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
@@ -53,7 +53,7 @@ import com.google.common.collect.ImmutableSet;
 public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
    private String zoneName = System.getProperty("user.name").replace('.', '-') + ".tcpool.ultradnstest.jclouds.org.";
-   private Account account;
+   private IdAndName account;
 
    @Override
    @BeforeClass(groups = { "integration", "live" })
