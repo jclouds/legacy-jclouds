@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
-import org.jclouds.ultradns.ws.domain.Account;
+import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.jclouds.ultradns.ws.domain.ResourceRecord;
 import org.jclouds.ultradns.ws.domain.ResourceRecordMetadata;
 import org.jclouds.ultradns.ws.domain.Zone;
@@ -53,7 +53,7 @@ import com.google.common.collect.FluentIterable;
 public class ResourceRecordApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
    private String zoneName = System.getProperty("user.name").replace('.', '-') + ".rr.ultradnstest.jclouds.org.";
-   private Account account;
+   private IdAndName account;
 
    @Override
    @BeforeClass(groups = { "integration", "live" })

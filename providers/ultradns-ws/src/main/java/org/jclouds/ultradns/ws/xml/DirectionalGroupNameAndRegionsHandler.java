@@ -21,9 +21,8 @@ package org.jclouds.ultradns.ws.xml;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.ultradns.ws.domain.DirectionalGroupNameAndRegions;
-import org.jclouds.ultradns.ws.domain.DirectionalGroupNameAndRegions.Builder;
-import org.jclouds.ultradns.ws.domain.Region;
+import org.jclouds.ultradns.ws.domain.DirectionalGroup;
+import org.jclouds.ultradns.ws.domain.DirectionalGroup.Builder;
 import org.xml.sax.Attributes;
 
 import com.google.common.base.Splitter;
@@ -32,12 +31,12 @@ import com.google.common.base.Splitter;
  * 
  * @author Adrian Cole
  */
-public class DirectionalGroupNameAndRegionsHandler extends ParseSax.HandlerForGeneratedRequestWithResult<DirectionalGroupNameAndRegions> {
+public class DirectionalGroupNameAndRegionsHandler extends ParseSax.HandlerForGeneratedRequestWithResult<DirectionalGroup> {
 
-   private final Builder group = DirectionalGroupNameAndRegions.builder();
+   private final Builder group = DirectionalGroup.builder();
 
    @Override
-   public DirectionalGroupNameAndRegions getResult() {
+   public DirectionalGroup getResult() {
       return group.build();
    }
 
@@ -46,11 +45,9 @@ public class DirectionalGroupNameAndRegionsHandler extends ParseSax.HandlerForGe
       if (equalsOrSuffix(qName, "DirectionalDNSGroupDetail")) {
          group.name(attrs.getValue("GroupName"));
       } else if (equalsOrSuffix(qName, "RegionForNewGroups")) {
+         String regionName = attrs.getValue("RegionName");
          Iterable<String> territories = Splitter.on(';').split(attrs.getValue("TerritoryName"));
-         Region region = Region.builder()
-                               .name(attrs.getValue("RegionName"))
-                               .territoryNames(territories).build();
-         group.addRegion(region);
+         group.mapRegionToTerritories(regionName, territories);
       }
    }
 }

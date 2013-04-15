@@ -25,28 +25,28 @@ import com.google.common.base.Objects;
 /**
  * @author Adrian Cole
  */
-public final class Account {
-   public static Account fromIdAndName(String id, String name) {
-      return new Account(id, name);
+public final class IdAndName {
+   public static IdAndName fromIdAndName(String id, String name) {
+      return new IdAndName(id, name);
    }
 
    private final String id;
    private final String name;
 
-   private Account(String id, String name) {
+   private IdAndName(String id, String name) {
       this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name for %s", id);
    }
 
    /**
-    * The id of the account. ex {@code AAAAAAAAAAAAAAAA}
+    * The id of the resource. ex {@code AAAAAAAAAAAAAAAA}
     */
    public String getId() {
       return id;
    }
 
    /**
-    * The name of the account. ex {@code jclouds}
+    * The name of the resource. ex {@code jclouds}
     */
    public String getName() {
       return name;
@@ -65,7 +65,7 @@ public final class Account {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      Account that = Account.class.cast(obj);
+      IdAndName that = IdAndName.class.cast(obj);
       return Objects.equal(this.id, that.id) && Objects.equal(this.name, that.name);
    }
 

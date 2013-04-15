@@ -27,12 +27,11 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.ultradns.ws.domain.Account;
-import org.jclouds.ultradns.ws.domain.DirectionalGroup;
 import org.jclouds.ultradns.ws.domain.DirectionalPool;
 import org.jclouds.ultradns.ws.domain.DirectionalRecord;
 import org.jclouds.ultradns.ws.domain.DirectionalRecordDetail;
 import org.jclouds.ultradns.ws.domain.DirectionalRecordType;
+import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.jclouds.ultradns.ws.domain.Zone;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiLiveTest;
 import org.testng.annotations.BeforeClass;
@@ -49,7 +48,7 @@ import com.google.common.collect.Sets;
 @Test(groups = "live", singleThreaded = true, testName = "DirectionalPoolApiLiveTest")
 public class DirectionalPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
-   private Account account;
+   private IdAndName account;
 
    @Override
    @BeforeClass(groups = { "integration", "live" })
@@ -76,7 +75,7 @@ public class DirectionalPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
       assertNotNull(pool.getTieBreak(), "TieBreak cannot be null " + pool);
    }
 
-   Set<DirectionalGroup> allDirectionalGroups = Sets.newLinkedHashSet();
+   Set<IdAndName> allDirectionalGroups = Sets.newLinkedHashSet();
 
    @Test
    public void testListDirectionalRecords() {
@@ -86,10 +85,10 @@ public class DirectionalPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
                for (DirectionalRecordDetail rr : api(zone.getName())
                      .listRecordsByNameAndType(pool.getName(), type.getCode())) {
                   checkDirectionalRecordDetail(rr);
-                  Iterable<DirectionalGroup> groups = Optional.presentInstances(ImmutableSet.of(rr.getGroup(),
+                  Iterable<IdAndName> groups = Optional.presentInstances(ImmutableSet.of(rr.getGroup(),
                         rr.getGeolocationGroup(), rr.getGeolocationGroup()));
                   assertFalse(Iterables.isEmpty(groups), "No groups " + rr);
-                  for (DirectionalGroup group : groups) {
+                  for (IdAndName group : groups) {
                      allDirectionalGroups.add(group);
                      assertNotNull(group.getId(), "Id cannot be null " + group);
                      assertNotNull(group.getName(), "Name cannot be null " + group);
