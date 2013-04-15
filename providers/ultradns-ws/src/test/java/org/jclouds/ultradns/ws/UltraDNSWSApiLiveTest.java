@@ -20,12 +20,11 @@ package org.jclouds.ultradns.ws;
 
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
 
+import java.util.Collection;
 import java.util.Map.Entry;
 
-import org.jclouds.ultradns.ws.domain.Account;
-import org.jclouds.ultradns.ws.domain.Region;
+import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiLiveTest;
 import org.testng.annotations.Test;
 
@@ -37,26 +36,26 @@ public class UltraDNSWSApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
    @Test
    protected void testGetCurrentAccount() {
-      Account account = api.getCurrentAccount();
+      IdAndName account = api.getCurrentAccount();
       checkAccount(account);
    }
 
-   private void checkAccount(Account account) {
+   private void checkAccount(IdAndName account) {
       assertNotNull(account.getId(), "Id cannot be null for " + account);
       assertNotNull(account.getName(), "Name cannot be null for " + account);
    }
 
    @Test
    public void testListRegions() {
-      for (Entry<Integer, Region> region : api.getRegionsById().entrySet()) {
+      for (Entry<IdAndName, Collection<String>> region : api.getRegionsById().asMap().entrySet()) {
          checkRegion(region);
       }
    }
 
-   private void checkRegion(Entry<Integer, Region> region) {
-      assertTrue(region.getKey() > 0, "Id cannot be negative " + region);
-      assertNotNull(region.getValue().getName(), "Name cannot be null " + region);
-      assertNotNull(region.getValue().getTerritoryNames(), "TerritoryNames cannot be null " + region);
-      assertFalse(region.getValue().getTerritoryNames().isEmpty(), "TerritoryNames cannot be empty " + region);
+   private void checkRegion(Entry<IdAndName, Collection<String>> region) {
+      assertNotNull(region.getKey().getId(), "Id cannot be null " + region);
+      assertNotNull(region.getKey().getName(), "Name cannot be null " + region);
+      assertNotNull(region.getValue(), "TerritoryNames cannot be null " + region);
+      assertFalse(region.getValue().isEmpty(), "TerritoryNames cannot be empty " + region);
    }
 }

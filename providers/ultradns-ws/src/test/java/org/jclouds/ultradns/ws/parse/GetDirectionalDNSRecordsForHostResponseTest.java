@@ -18,12 +18,12 @@
  */
 package org.jclouds.ultradns.ws.parse;
 
+import static org.jclouds.ultradns.ws.domain.IdAndName.fromIdAndName;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.ultradns.ws.domain.DirectionalGroup;
 import org.jclouds.ultradns.ws.domain.DirectionalRecord;
 import org.jclouds.ultradns.ws.domain.DirectionalRecordDetail;
 import org.jclouds.ultradns.ws.xml.DirectionalRecordDetailListHandler;
@@ -55,10 +55,7 @@ public class GetDirectionalDNSRecordsForHostResponseTest extends BaseHandlerTest
                                                        .zoneName("geo.jclouds.org.")
                                                        .name("www.geo.jclouds.org.")
                                                        .id("A000000000000001")
-                                                       .geolocationGroup(DirectionalGroup.builder()
-                                                                                         .id("C000000000000001")
-                                                                                         .name("southamerica")
-                                                                                         .build())
+                                                       .geolocationGroup(fromIdAndName("C000000000000001", "southamerica"))
                                                        .record(DirectionalRecord.drBuilder()
                                                                                 .type("CNAME")
                                                                                 .ttl(300)
@@ -68,10 +65,7 @@ public class GetDirectionalDNSRecordsForHostResponseTest extends BaseHandlerTest
                                                        .zoneName("geo.jclouds.org.")
                                                        .name("www.geo.jclouds.org.")
                                                        .id("A000000000000002")
-                                                       .group(DirectionalGroup.builder()
-                                                                              .id("B000000000000001")
-                                                                              .name("All Non-Configured Regions")
-                                                                              .build())
+                                                       .group(fromIdAndName("B000000000000001", "All Non-Configured Regions"))
                                                        .record(DirectionalRecord.drBuilder()
                                                                                 .type("A")
                                                                                 .ttl(500)
@@ -81,10 +75,7 @@ public class GetDirectionalDNSRecordsForHostResponseTest extends BaseHandlerTest
                                                        .zoneName("geo.jclouds.org.")
                                                        .name("www.geo.jclouds.org.")
                                                        .id("A000000000000003")
-                                                       .geolocationGroup(DirectionalGroup.builder()
-                                                                                          .id("C000000000000002")
-                                                                                          .name("antarctica-unsupported")
-                                                                                          .build())
+                                                       .geolocationGroup(fromIdAndName("C000000000000002", "antarctica-unsupported"))
                                                        .record(DirectionalRecord.drBuilder()
                                                                                 .type("A")
                                                                                 .ttl(0)
@@ -94,10 +85,7 @@ public class GetDirectionalDNSRecordsForHostResponseTest extends BaseHandlerTest
                                                        .zoneName("geo.jclouds.org.")
                                                        .name("www.geo.jclouds.org.")
                                                        .id("A000000000000004")
-                                                       .geolocationGroup(DirectionalGroup.builder()
-                                                                                         .id("C000000000000003")
-                                                                                         .name("alazona")
-                                                                                         .build())
+                                                       .geolocationGroup(fromIdAndName("C000000000000003", "alazona"))
                                                        .record(DirectionalRecord.drBuilder()
                                                                                 .type("A")
                                                                                 .ttl(86400) // default

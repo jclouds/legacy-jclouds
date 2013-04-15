@@ -24,23 +24,24 @@ import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.ultradns.ws.domain.Region;
+import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.xml.sax.Attributes;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableMultimap.Builder;
+import com.google.common.collect.Multimap;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class RegionListHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Map<Integer, Region>> {
+public class RegionListHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Multimap<IdAndName, String>> {
 
-   private final Builder<Integer, Region> regions = ImmutableMap.<Integer, Region> builder();
+   private final Builder<IdAndName, String> regions = ImmutableMultimap.<IdAndName, String> builder();
 
    @Override
-   public Map<Integer, Region> getResult() {
+   public Multimap<IdAndName, String> getResult() {
       return regions.build();
    }
 
@@ -48,12 +49,8 @@ public class RegionListHandler extends ParseSax.HandlerForGeneratedRequestWithRe
    public void startElement(String url, String name, String qName, Attributes attrs) {
       if (equalsOrSuffix(qName, "Region")) {
          Map<String, String> attributes = cleanseAttributes(attrs);
-         int id = Integer.parseInt(attributes.get("RegionID"));
-         Iterable<String> territories = Splitter.on(';').split(attributes.get("TerritoryName"));
-         Region region = Region.builder()
-                               .name(attributes.get("RegionName"))
-                               .territoryNames(territories).build();
-         regions.put(id, region);
+         IdAndName region = IdAndName.fromIdAndName(attributes.get("RegionID"), attributes.get("RegionName"));
+         regions.putAll(region, Splitter.on(';').split(attributes.get("TerritoryName")));
       }
    }
 }
