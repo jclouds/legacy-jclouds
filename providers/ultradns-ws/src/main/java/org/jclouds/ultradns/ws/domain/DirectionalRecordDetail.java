@@ -33,14 +33,14 @@ public class DirectionalRecordDetail {
    private final String zoneName;
    private final String name;
    private final String id;
-   private final Optional<DirectionalGroup> group;
-   private final Optional<DirectionalGroup> geolocationGroup;
-   private final Optional<DirectionalGroup> sourceIpGroup;
+   private final Optional<IdAndName> group;
+   private final Optional<IdAndName> geolocationGroup;
+   private final Optional<IdAndName> sourceIpGroup;
    private final DirectionalRecord record;
 
    private DirectionalRecordDetail(String zoneName, String name, String id,
-         Optional<DirectionalGroup> group, Optional<DirectionalGroup> geolocationGroup,
-         Optional<DirectionalGroup> sourceIpGroup, DirectionalRecord record) {
+         Optional<IdAndName> group, Optional<IdAndName> geolocationGroup,
+         Optional<IdAndName> sourceIpGroup, DirectionalRecord record) {
       this.zoneName = checkNotNull(zoneName, "zoneName");
       this.name = checkNotNull(name, "name");
       this.id = checkNotNull(id, "id");
@@ -65,21 +65,21 @@ public class DirectionalRecordDetail {
    /**
     * group containing all regions that you have not specifically configured in {@link #getGeolocationGroup()}
     */
-   public Optional<DirectionalGroup> getGroup() {
+   public Optional<IdAndName> getGroup() {
       return group;
    }
 
    /**
     * group containing territories.
     */
-   public Optional<DirectionalGroup> getGeolocationGroup() {
+   public Optional<IdAndName> getGeolocationGroup() {
       return geolocationGroup;
    }
 
    /**
     * group containing IPV4 or IPV6 ranges. 
     */
-   public Optional<DirectionalGroup> getSourceIpGroup() {
+   public Optional<IdAndName> getSourceIpGroup() {
       return sourceIpGroup;
    }
 
@@ -121,9 +121,9 @@ public class DirectionalRecordDetail {
       private String zoneName;
       private String name;
       private String id;
-      private Optional<DirectionalGroup> group = Optional.absent();
-      private Optional<DirectionalGroup> geolocationGroup = Optional.absent();
-      private Optional<DirectionalGroup> sourceIpGroup = Optional.absent();
+      private Optional<IdAndName> group = Optional.absent();
+      private Optional<IdAndName> geolocationGroup = Optional.absent();
+      private Optional<IdAndName> sourceIpGroup = Optional.absent();
       private DirectionalRecord record;
 
       /**
@@ -153,7 +153,7 @@ public class DirectionalRecordDetail {
       /**
        * @see DirectionalRecordDetail#getGroup()
        */
-      public Builder group(DirectionalGroup group) {
+      public Builder group(IdAndName group) {
          this.group = Optional.fromNullable(group);
          return this;
       }
@@ -161,7 +161,7 @@ public class DirectionalRecordDetail {
       /**
        * @see DirectionalRecordDetail#getGeolocationGroup()
        */
-      public Builder geolocationGroup(DirectionalGroup geolocationGroup) {
+      public Builder geolocationGroup(IdAndName geolocationGroup) {
          this.geolocationGroup = Optional.fromNullable(geolocationGroup);
          return this;
       }
@@ -169,7 +169,7 @@ public class DirectionalRecordDetail {
       /**
        * @see DirectionalRecordDetail#getSourceIpGroup()
        */
-      public Builder sourceIpGroup(DirectionalGroup sourceIpGroup) {
+      public Builder sourceIpGroup(IdAndName sourceIpGroup) {
          this.sourceIpGroup = Optional.fromNullable(sourceIpGroup);
          return this;
       }

@@ -23,30 +23,49 @@ import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
+import com.google.common.collect.ForwardingMultimap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 
 /**
+ * A region is a set of territory names.
+ * 
  * @author Adrian Cole
  */
-public class DirectionalGroup {
-   private final String id;
+public class DirectionalGroup extends ForwardingMultimap<String, String> {
+
    private final String name;
+   private final Optional<String> description;
+   private final Multimap<String, String> regionToTerritories;
 
-   private DirectionalGroup(String id, String name) {
-      this.id = checkNotNull(id, "id");
+   private DirectionalGroup(String name, Optional<String> description,
+         Multimap<String, String> regionToTerritories) {
       this.name = checkNotNull(name, "name");
-   }
-
-   public String getId() {
-      return id;
+      this.description = checkNotNull(description, "description of %s", name);
+      this.regionToTerritories = checkNotNull(regionToTerritories, "regionToTerritories of %s", name);
    }
 
    public String getName() {
       return name;
    }
 
+   public Optional<String> getDescription() {
+      return description;
+   }
+
+   public Multimap<String, String> getRegionToTerritories() {
+      return regionToTerritories;
+   }
+
+   @Override
+   protected Multimap<String, String> delegate() {
+      return regionToTerritories;
+   }
+
    @Override
    public int hashCode() {
-      return Objects.hashCode(id, name);
+      return Objects.hashCode(name, regionToTerritories);
    }
 
    @Override
@@ -56,12 +75,13 @@ public class DirectionalGroup {
       if (obj == null || getClass() != obj.getClass())
          return false;
       DirectionalGroup that = DirectionalGroup.class.cast(obj);
-      return equal(this.id, that.id) && equal(this.name, that.name);
+      return equal(this.name, that.name) && equal(this.regionToTerritories, that.regionToTerritories);
    }
 
    @Override
    public String toString() {
-      return toStringHelper(this).omitNullValues().add("id", id).add("name", name).toString();
+      return toStringHelper(this).omitNullValues().add("name", name).add("description", description.orNull())
+            .add("regionToTerritories", regionToTerritories).toString();
    }
 
    public static Builder builder() {
@@ -73,16 +93,10 @@ public class DirectionalGroup {
    }
 
    public final static class Builder {
-      private String id;
       private String name;
-
-      /**
-       * @see DirectionalGroup#getId()
-       */
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
+      private Optional<String> description = Optional.absent();
+      private ImmutableMultimap.Builder<String, String> regionToTerritories = ImmutableMultimap
+            .<String, String> builder();
 
       /**
        * @see DirectionalGroup#getName()
@@ -92,12 +106,50 @@ public class DirectionalGroup {
          return this;
       }
 
+      /**
+       * @see DirectionalGroup#getDescription()
+       */
+      public Builder description(String description) {
+         this.description = Optional.fromNullable(description);
+         return this;
+      }
+
+      /**
+       * adds to current regionToTerritories
+       * 
+       * @see DirectionalGroup#getRegionToTerritories()
+       */
+      public Builder mapRegionToTerritories(String region, Iterable<String> territories) {
+         this.regionToTerritories.putAll(region, territories);
+         return this;
+      }
+
+      /**
+       * adds to current regionToTerritories
+       * 
+       * @see DirectionalGroup#getRegionToTerritories()
+       */
+      public Builder mapRegionToTerritory(String region, String territory) {
+         this.regionToTerritories.put(region, territory);
+         return this;
+      }
+
+      /**
+       * replaces current regionToTerritories
+       * 
+       * @see DirectionalGroup#getRegionToTerritories()
+       */
+      public Builder regionToTerritories(Multimap<String, String> regionToTerritories) {
+         this.regionToTerritories = ImmutableMultimap.<String, String> builder().putAll(regionToTerritories);
+         return this;
+      }
+
       public DirectionalGroup build() {
-         return new DirectionalGroup(id, name);
+         return new DirectionalGroup(name, description, regionToTerritories.build());
       }
 
       public Builder from(DirectionalGroup in) {
-         return id(in.id).name(in.name);
+         return name(in.getName()).regionToTerritories(in.getRegionToTerritories());
       }
    }
 }

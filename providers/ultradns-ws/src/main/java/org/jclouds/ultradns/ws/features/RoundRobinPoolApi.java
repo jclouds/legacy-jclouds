@@ -82,7 +82,7 @@ public interface RoundRobinPoolApi {
     * @param hostname
     *           {@link RoundRobinPool#getDName() dname} of the RR pool {ex.
     *           www.jclouds.org.}
-    * @return the {@code guid} of the new record
+    * @return the {@code guid} of the new pool
     * @throws ResourceAlreadyExistsException
     *            if a pool already exists with the same attrs
     */

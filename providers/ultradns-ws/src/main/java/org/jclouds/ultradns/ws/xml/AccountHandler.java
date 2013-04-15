@@ -24,19 +24,19 @@ import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.ultradns.ws.domain.Account;
+import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.xml.sax.Attributes;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class AccountHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Account> {
+public class AccountHandler extends ParseSax.HandlerForGeneratedRequestWithResult<IdAndName> {
 
-   private Account account;
+   private IdAndName account;
 
    @Override
-   public Account getResult() {
+   public IdAndName getResult() {
       try {
          return account;
       } finally {
@@ -48,7 +48,7 @@ public class AccountHandler extends ParseSax.HandlerForGeneratedRequestWithResul
    public void startElement(String uri, String localName, String qName, Attributes attrs) {
       Map<String, String> attributes = cleanseAttributes(attrs);
       if (equalsOrSuffix(qName, "AccountDetailsData")) {
-         account = Account.fromIdAndName(attributes.get("accountID"), attributes.get("accountName"));
+         account = IdAndName.fromIdAndName(attributes.get("accountID"), attributes.get("accountName"));
       }
    }
 }

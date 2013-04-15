@@ -29,7 +29,7 @@ import static org.testng.Assert.fail;
 
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
-import org.jclouds.ultradns.ws.domain.Account;
+import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.jclouds.ultradns.ws.domain.Zone;
 import org.jclouds.ultradns.ws.domain.Zone.Type;
 import org.jclouds.ultradns.ws.domain.ZoneProperties;
@@ -45,7 +45,7 @@ import com.google.common.collect.FluentIterable;
 @Test(groups = "live", testName = "ZoneApiLiveTest")
 public class ZoneApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
-   private Account account;
+   private IdAndName account;
 
    @Override
    @BeforeClass(groups = { "integration", "live" })
