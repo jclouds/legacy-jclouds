@@ -18,18 +18,19 @@
  */
 package org.jclouds.ultradns.ws.parse;
 
+import static org.jclouds.ultradns.ws.domain.IdAndName.fromIdAndName;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.util.Map;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.ultradns.ws.domain.Region;
+import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.jclouds.ultradns.ws.xml.RegionListHandler;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
 
 /**
  * @author Adrian Cole
@@ -40,26 +41,22 @@ public class GetAvailableRegionsResponseTest extends BaseHandlerTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/regions.xml");
 
-      Map<Integer, Region> expected = expected();
+      Multimap<IdAndName, String> expected = expected();
 
       RegionListHandler handler = injector.getInstance(RegionListHandler.class);
-      Map<Integer, Region> result = factory.create(handler).parse(is);
+      Multimap<IdAndName, String> result = factory.create(handler).parse(is);
 
       assertEquals(result.toString(), expected.toString());
    }
 
-   public Map<Integer, Region> expected() {
-      return ImmutableMap.<Integer, Region> builder()
-                         .put(14, Region.builder()
-                                        .name("Anonymous Proxy (A1)")
-                                        .addTerritoryName("Anonymous Proxy").build())
-                         .put(3, Region.builder()
-                                       .name("Antarctica")
-                                       .territoryNames(ImmutableSet.<String> builder()
-                                                                   .add("Antarctica")
-                                                                   .add("Bouvet Island")
-                                                                   .add("French Southern Territories").build())
-                                       .build())
+   public Multimap<IdAndName, String> expected() {
+      return ImmutableMultimap.<IdAndName, String> builder()
+                         .put(fromIdAndName("14", "Anonymous Proxy (A1)"), "Anonymous Proxy")
+                         .putAll(fromIdAndName("3", "Antarctica"), ImmutableSet.<String> builder()
+                                                                               .add("Antarctica")
+                                                                               .add("Bouvet Island")
+                                                                               .add("French Southern Territories")
+                                                                               .build())
                          .build();
    }
 }

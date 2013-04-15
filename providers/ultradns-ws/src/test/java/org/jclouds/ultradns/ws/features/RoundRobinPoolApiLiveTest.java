@@ -29,7 +29,7 @@ import static org.testng.Assert.fail;
 
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
-import org.jclouds.ultradns.ws.domain.Account;
+import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.jclouds.ultradns.ws.domain.ResourceRecord;
 import org.jclouds.ultradns.ws.domain.ResourceRecordMetadata;
 import org.jclouds.ultradns.ws.domain.RoundRobinPool;
@@ -50,7 +50,7 @@ import com.google.common.collect.FluentIterable;
 public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
    private String zoneName = System.getProperty("user.name").replace('.', '-') + ".rrpool.ultradnstest.jclouds.org.";
-   private Account account;
+   private IdAndName account;
 
    @Override
    @BeforeClass(groups = { "integration", "live" })

@@ -23,10 +23,11 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.ultradns.ws.domain.DirectionalGroupNameAndRegions;
-import org.jclouds.ultradns.ws.domain.Region;
+import org.jclouds.ultradns.ws.domain.DirectionalGroup;
 import org.jclouds.ultradns.ws.xml.DirectionalGroupNameAndRegionsHandler;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * @author Adrian Cole
@@ -37,27 +38,22 @@ public class GetDirectionalDNSGroupDetailsResponseTest extends BaseHandlerTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/directionalgroup.xml");
 
-      DirectionalGroupNameAndRegions expected = expected();
+      DirectionalGroup expected = expected();
 
       DirectionalGroupNameAndRegionsHandler handler = injector.getInstance(DirectionalGroupNameAndRegionsHandler.class);
-      DirectionalGroupNameAndRegions result = factory.create(handler).parse(is);
+      DirectionalGroup result = factory.create(handler).parse(is);
 
       assertEquals(result.toString(), expected.toString());
    }
 
-   public DirectionalGroupNameAndRegions expected() {
-      return DirectionalGroupNameAndRegions.builder()
-                                           .name("NON-EU")
-                                           .addRegion(Region.builder()
-                                                            .name("Anonymous Proxy (A1)")
-                                                            .addTerritoryName("Anonymous Proxy").build())
-                                           .addRegion(Region.builder()
-                                                            .name("Mexico")
-                                                            .addTerritoryName("Mexico").build())
-                                           .addRegion(Region.builder()
-                                                            .name("Antarctica")
-                                                            .addTerritoryName("Bouvet Island")
-                                                            .addTerritoryName("French Southern Territories")
-                                                            .addTerritoryName("Antarctica").build()).build();
+   public DirectionalGroup expected() {
+      return DirectionalGroup.builder()
+                             .name("NON-EU")
+                             .mapRegionToTerritory("Anonymous Proxy (A1)", "Anonymous Proxy")
+                             .mapRegionToTerritory("Mexico", "Mexico")
+                             .mapRegionToTerritories("Antarctica", ImmutableList.<String> builder()
+                                                                   .add("Bouvet Island")
+                                                                   .add("French Southern Territories")
+                                                                   .add("Antarctica").build()).build();
    }
 }

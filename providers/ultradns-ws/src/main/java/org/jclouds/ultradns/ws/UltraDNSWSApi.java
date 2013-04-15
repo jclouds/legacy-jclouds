@@ -19,7 +19,6 @@
 package org.jclouds.ultradns.ws;
 
 import java.io.Closeable;
-import java.util.Map;
 
 import javax.inject.Named;
 import javax.ws.rs.POST;
@@ -30,8 +29,7 @@ import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.ultradns.ws.domain.Account;
-import org.jclouds.ultradns.ws.domain.Region;
+import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.jclouds.ultradns.ws.features.DirectionalGroupApi;
 import org.jclouds.ultradns.ws.features.DirectionalPoolApi;
 import org.jclouds.ultradns.ws.features.ResourceRecordApi;
@@ -42,6 +40,8 @@ import org.jclouds.ultradns.ws.features.ZoneApi;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
 import org.jclouds.ultradns.ws.xml.AccountHandler;
 import org.jclouds.ultradns.ws.xml.RegionListHandler;
+
+import com.google.common.collect.Multimap;
 
 /**
  * Provides access to Neustar UltraDNS via the SOAP API
@@ -60,7 +60,7 @@ public interface UltraDNSWSApi extends Closeable {
    @POST
    @XMLResponseParser(AccountHandler.class)
    @Payload("<v01:getAccountsListOfUser/>")
-   Account getCurrentAccount();
+   IdAndName getCurrentAccount();
 
    /**
     * Lists the directional regions available in the account.
@@ -69,7 +69,7 @@ public interface UltraDNSWSApi extends Closeable {
    @POST
    @XMLResponseParser(RegionListHandler.class)
    @Payload("<v01:getAvailableRegions/>")
-   Map<Integer, Region> getRegionsById();
+   Multimap<IdAndName, String> getRegionsById();
 
    /**
     * Provides access to Zone features.

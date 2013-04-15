@@ -36,7 +36,6 @@ import org.jclouds.ultradns.ws.binders.DirectionalGroupCoordinatesToXML;
 import org.jclouds.ultradns.ws.domain.AccountLevelGroup;
 import org.jclouds.ultradns.ws.domain.DirectionalGroup;
 import org.jclouds.ultradns.ws.domain.DirectionalGroupCoordinates;
-import org.jclouds.ultradns.ws.domain.DirectionalGroupNameAndRegions;
 import org.jclouds.ultradns.ws.domain.DirectionalRecordDetail;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
 import org.jclouds.ultradns.ws.xml.AccountLevelGroupsHandler;
@@ -68,7 +67,7 @@ public interface DirectionalGroupApi {
    @Fallback(NullOnNotFoundOr404.class)
    @Payload("<v01:getDirectionalDNSGroupDetails><GroupId>{GroupId}</GroupId></v01:getDirectionalDNSGroupDetails>")
    @Nullable
-   DirectionalGroupNameAndRegions get(@PayloadParam("GroupId") String groupId);
+   DirectionalGroup get(@PayloadParam("GroupId") String groupId);
 
    /**
     * Returns all account-level groups.
