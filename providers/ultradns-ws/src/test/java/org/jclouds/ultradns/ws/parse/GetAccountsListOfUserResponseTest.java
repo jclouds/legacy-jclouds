@@ -23,7 +23,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.ultradns.ws.domain.Account;
+import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.jclouds.ultradns.ws.xml.AccountHandler;
 import org.testng.annotations.Test;
 
@@ -36,16 +36,16 @@ public class GetAccountsListOfUserResponseTest extends BaseHandlerTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/account.xml");
 
-      Account expected = expected();
+      IdAndName expected = expected();
 
       AccountHandler handler = injector.getInstance(AccountHandler.class);
-      Account result = factory.create(handler).parse(is);
+      IdAndName result = factory.create(handler).parse(is);
 
       assertEquals(result, expected);
    }
 
-   public Account expected() {
-      return Account.fromIdAndName("AAAAAAAAAAAAAAAA", "jclouds");
+   public IdAndName expected() {
+      return IdAndName.fromIdAndName("AAAAAAAAAAAAAAAA", "jclouds");
    }
 
 }
