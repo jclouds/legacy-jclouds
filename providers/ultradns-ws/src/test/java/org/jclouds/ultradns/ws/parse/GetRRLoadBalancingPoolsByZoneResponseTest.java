@@ -52,17 +52,17 @@ public class GetRRLoadBalancingPoolsByZoneResponseTest extends BaseHandlerTest {
                            .add(RoundRobinPool.builder()
                                               .zoneId("0000000000000001")
                                               .id("000000000000002")
-                                              .name("app-uswest1.jclouds.org.")
+                                              .name("uswest1")
                                               .dname("app-uswest1.jclouds.org.").build())
                            .add(RoundRobinPool.builder()
                                               .zoneId("0000000000000001")
                                               .id("000000000000003")
-                                              .name("app-uswest2.jclouds.org.")
+                                              .name("uswest2")
                                               .dname("app-uswest2.jclouds.org.").build())
                            .add(RoundRobinPool.builder()
                                               .zoneId("0000000000000001")
                                               .id("000000000000004")
-                                              .name("app-euwest.jclouds.org.")
+                                              .name("euwest")
                                               .dname("app-euwest.jclouds.org.").build()).build());
    }
 }

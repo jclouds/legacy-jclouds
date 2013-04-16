@@ -25,7 +25,7 @@ import java.io.InputStream;
 
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.ultradns.ws.domain.ResourceRecordMetadata;
+import org.jclouds.ultradns.ws.domain.ResourceRecordDetail;
 import org.jclouds.ultradns.ws.xml.ResourceRecordListHandler;
 import org.testng.annotations.Test;
 
@@ -43,16 +43,16 @@ public class GetResourceRecordsOfDNameByTypeResponseTest extends BaseHandlerTest
    public void test() {
       InputStream is = getClass().getResourceAsStream("/records_by_name_and_type.xml");
 
-      FluentIterable<ResourceRecordMetadata> expected = expected();
+      FluentIterable<ResourceRecordDetail> expected = expected();
 
       ResourceRecordListHandler handler = injector.getInstance(ResourceRecordListHandler.class);
-      FluentIterable<ResourceRecordMetadata> result = factory.create(handler).parse(is);
+      FluentIterable<ResourceRecordDetail> result = factory.create(handler).parse(is);
 
       assertEquals(result.toList().toString(), expected.toList().toString());
    }
 
-   public FluentIterable<ResourceRecordMetadata> expected() {
-      ResourceRecordMetadata record = ResourceRecordMetadata.builder()
+   public FluentIterable<ResourceRecordDetail> expected() {
+      ResourceRecordDetail record = ResourceRecordDetail.builder()
             .zoneId("03053D8E57C7A22A")
             .guid("04053D8E57C7A22F")
             .zoneName("adrianc.rr.ultradnstest.jclouds.org.")

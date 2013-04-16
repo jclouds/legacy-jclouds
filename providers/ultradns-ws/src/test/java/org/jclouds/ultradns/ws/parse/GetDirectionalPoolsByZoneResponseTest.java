@@ -54,13 +54,13 @@ public class GetDirectionalPoolsByZoneResponseTest extends BaseHandlerTest {
                            .add(DirectionalPool.builder()
                                                .zoneId("0000000000000001")
                                                .id("000000000000000A")
-                                               .name("mixy.jclouds.org.")
+                                               .dname("mixy.jclouds.org.")
                                                .type(Type.MIXED)
                                                .tieBreak(TieBreak.GEOLOCATION)
-                                               .description("mixy").build())
+                                               .name("mixy").build())
                            .add(DirectionalPool.builder()
                                                .zoneId("0000000000000002")
                                                .id("000000000000000B")
-                                               .name("geo.jclouds.org.").build()).build());
+                                               .dname("geo.jclouds.org.").build()).build());
    }
 }

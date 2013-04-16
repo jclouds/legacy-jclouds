@@ -52,7 +52,7 @@ public class GetTCLoadBalancingPoolsByZoneResponseTest extends BaseHandlerTest {
                            .add(TrafficControllerPool.builder()
                                                      .zoneId("0000000000000001")
                                                      .id("000000000000002")
-                                                     .name("us-west-1c.discovery.jclouds.org.")
+                                                     .name("us-west-1c")
                                                      .dname("us-west-1c.discovery.jclouds.org.")
                                                      .statusCode(1)
                                                      .failOverEnabled(true)

@@ -30,10 +30,10 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.ultradns.ws.domain.DirectionalPool;
-import org.jclouds.ultradns.ws.domain.DirectionalRecordDetail;
+import org.jclouds.ultradns.ws.domain.DirectionalPoolRecordDetail;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
 import org.jclouds.ultradns.ws.xml.DirectionalPoolListHandler;
-import org.jclouds.ultradns.ws.xml.DirectionalRecordDetailListHandler;
+import org.jclouds.ultradns.ws.xml.DirectionalPoolRecordDetailListHandler;
 
 import com.google.common.collect.FluentIterable;
 
@@ -75,10 +75,10 @@ public interface DirectionalPoolApi {
     */
    @Named("getDirectionalDNSRecordsForHost")
    @POST
-   @XMLResponseParser(DirectionalRecordDetailListHandler.class)
+   @XMLResponseParser(DirectionalPoolRecordDetailListHandler.class)
    @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
    @Payload("<v01:getDirectionalDNSRecordsForHost><zoneName>{zoneName}</zoneName><hostName>{hostName}</hostName><poolRecordType>{poolRecordType}</poolRecordType></v01:getDirectionalDNSRecordsForHost>")
-   FluentIterable<DirectionalRecordDetail> listRecordsByNameAndType(
+   FluentIterable<DirectionalPoolRecordDetail> listRecordsByNameAndType(
          @PayloadParam("hostName") String dname, @PayloadParam("poolRecordType") int type)
          throws ResourceNotFoundException;
 }

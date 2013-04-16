@@ -26,7 +26,8 @@ import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
-import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord.Status;
+import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecordDetail;
+import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecordDetail.Status;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.FluentIterable;
@@ -37,13 +38,13 @@ import com.google.common.collect.ImmutableSet.Builder;
  * 
  * @author Adrian Cole
  */
-public class TrafficControllerPoolRecordListHandler extends
-      ParseSax.HandlerForGeneratedRequestWithResult<FluentIterable<TrafficControllerPoolRecord>> {
+public class TrafficControllerPoolRecordDetailListHandler extends
+      ParseSax.HandlerForGeneratedRequestWithResult<FluentIterable<TrafficControllerPoolRecordDetail>> {
 
-   private final Builder<TrafficControllerPoolRecord> records = ImmutableSet.<TrafficControllerPoolRecord> builder();
+   private final Builder<TrafficControllerPoolRecordDetail> records = ImmutableSet.<TrafficControllerPoolRecordDetail> builder();
 
    @Override
-   public FluentIterable<TrafficControllerPoolRecord> getResult() {
+   public FluentIterable<TrafficControllerPoolRecordDetail> getResult() {
       return FluentIterable.from(records.build());
    }
 
@@ -52,13 +53,15 @@ public class TrafficControllerPoolRecordListHandler extends
       if (!equalsOrSuffix(qName, "PoolRecordData"))
          return;
       Map<String, String> attributes = cleanseAttributes(attrs);
-      records.add(TrafficControllerPoolRecord.builder()
+      TrafficControllerPoolRecord record = TrafficControllerPoolRecord.create(
+            attributes.get("recordType"),
+            attributes.get("pointsTo"));
+      records.add(TrafficControllerPoolRecordDetail.builder()
                                              .id(attributes.get("poolRecordID"))
                                              .poolId(attributes.get("poolId"))
-                                             .pointsTo(attributes.get("pointsTo"))
+                                             .record(record)
                                              .weight(parseInt(checkNotNull(attributes.get("weight"), "weight")))
                                              .priority(parseInt(checkNotNull(attributes.get("priority"), "priority")))
-                                             .type(attributes.get("recordType"))
                                              .forceAnswer(attributes.get("forceAnswer"))
                                              .probingEnabled("ENABLED".equalsIgnoreCase(attributes.get("probing")))
                                              .status(Status.valueOf(attributes.get("status")))

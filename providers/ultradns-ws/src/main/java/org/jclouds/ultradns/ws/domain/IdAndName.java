@@ -19,14 +19,19 @@
 package org.jclouds.ultradns.ws.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.compose;
+import static com.google.common.base.Predicates.equalTo;
 
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Predicate;
 
 /**
  * @author Adrian Cole
  */
 public final class IdAndName {
-   public static IdAndName fromIdAndName(String id, String name) {
+
+   public static IdAndName create(String id, String name) {
       return new IdAndName(id, name);
    }
 
@@ -71,6 +76,25 @@ public final class IdAndName {
 
    @Override
    public String toString() {
-      return Objects.toStringHelper(this).add("id", id).add("name", name).toString();
+      return Objects.toStringHelper("").add("id", id).add("name", name).toString();
+   }
+
+   /**
+    * convenience predicate as typically the user is unaware of the system
+    * generated id of a resource
+    * 
+    * @param name
+    *           see {@link #getName()}
+    */
+   public static Predicate<IdAndName> nameEqualTo(String name) {
+      return compose(equalTo(name), ToName.INSTANCE);
+   }
+
+   private static enum ToName implements Function<IdAndName, String> {
+      INSTANCE;
+      @Override
+      public String apply(IdAndName input) {
+         return input.getName();
+      }
    }
 }

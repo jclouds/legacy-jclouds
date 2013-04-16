@@ -52,12 +52,12 @@ public class RoundRobinPoolApiExpectTest extends BaseUltraDNSWSApiExpectTest {
 
    public void testCreateAWhenResponseIs2xx() {
       UltraDNSWSApi success = requestSendsResponse(createA, createResponse);
-      assertEquals(success.getRoundRobinPoolApiForZone("jclouds.org.").createAPoolForHostname("www.jclouds.org.", "foo"), "060339AA04175655");
+      assertEquals(success.getRoundRobinPoolApiForZone("jclouds.org.").createAPoolForDName("www.jclouds.org.", "foo"), "060339AA04175655");
    }
 
    public void testCreateAAAAWhenResponseIs2xx() {
       UltraDNSWSApi success = requestSendsResponse(createAAAA, createResponse);
-      assertEquals(success.getRoundRobinPoolApiForZone("jclouds.org.").createAAAAPoolForHostname("www.jclouds.org.", "foo"), "060339AA04175655");
+      assertEquals(success.getRoundRobinPoolApiForZone("jclouds.org.").createAAAAPoolForDName("www.jclouds.org.", "foo"), "060339AA04175655");
    }
 
    HttpResponse alreadyCreated = HttpResponse.builder().statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
@@ -66,7 +66,7 @@ public class RoundRobinPoolApiExpectTest extends BaseUltraDNSWSApiExpectTest {
    @Test(expectedExceptions = ResourceAlreadyExistsException.class, expectedExceptionsMessageRegExp = "Pool already created for this host name : www.rrpool.adrianc.rrpool.ultradnstest.jclouds.org.")
    public void testCreateWhenResponseError2912() {
       UltraDNSWSApi already = requestSendsResponse(createA, alreadyCreated);
-      already.getRoundRobinPoolApiForZone("jclouds.org.").createAPoolForHostname("www.jclouds.org.", "foo");
+      already.getRoundRobinPoolApiForZone("jclouds.org.").createAPoolForDName("www.jclouds.org.", "foo");
    }
 
    HttpRequest list = HttpRequest.builder().method(POST)

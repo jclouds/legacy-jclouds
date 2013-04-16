@@ -49,7 +49,7 @@ public class RegionListHandler extends ParseSax.HandlerForGeneratedRequestWithRe
    public void startElement(String url, String name, String qName, Attributes attrs) {
       if (equalsOrSuffix(qName, "Region")) {
          Map<String, String> attributes = cleanseAttributes(attrs);
-         IdAndName region = IdAndName.fromIdAndName(attributes.get("RegionID"), attributes.get("RegionName"));
+         IdAndName region = IdAndName.create(attributes.get("RegionID"), attributes.get("RegionName"));
          regions.putAll(region, Splitter.on(';').split(attributes.get("TerritoryName")));
       }
    }
