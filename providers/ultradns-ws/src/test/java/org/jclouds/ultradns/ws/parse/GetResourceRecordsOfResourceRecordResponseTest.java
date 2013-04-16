@@ -25,8 +25,8 @@ import java.io.InputStream;
 
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.ultradns.ws.domain.ResourceRecordMetadata;
-import org.jclouds.ultradns.ws.domain.ResourceRecordMetadata.Builder;
+import org.jclouds.ultradns.ws.domain.ResourceRecordDetail;
+import org.jclouds.ultradns.ws.domain.ResourceRecordDetail.Builder;
 import org.jclouds.ultradns.ws.xml.ResourceRecordListHandler;
 import org.testng.annotations.Test;
 
@@ -45,17 +45,17 @@ public class GetResourceRecordsOfResourceRecordResponseTest extends BaseHandlerT
    public void test() {
       InputStream is = getClass().getResourceAsStream("/records.xml");
 
-      FluentIterable<ResourceRecordMetadata> expected = expected();
+      FluentIterable<ResourceRecordDetail> expected = expected();
 
       ResourceRecordListHandler handler = injector.getInstance(ResourceRecordListHandler.class);
-      FluentIterable<ResourceRecordMetadata> result = factory.create(handler).parse(is);
+      FluentIterable<ResourceRecordDetail> result = factory.create(handler).parse(is);
 
       assertEquals(result.toList().toString(), expected.toList().toString());
    }
 
-   public FluentIterable<ResourceRecordMetadata> expected() {
-      Builder builder = ResourceRecordMetadata.builder().zoneId("0000000000000001").zoneName("jclouds.org.");
-      ImmutableList<ResourceRecordMetadata> records = ImmutableList.<ResourceRecordMetadata> builder()
+   public FluentIterable<ResourceRecordDetail> expected() {
+      Builder builder = ResourceRecordDetail.builder().zoneId("0000000000000001").zoneName("jclouds.org.");
+      ImmutableList<ResourceRecordDetail> records = ImmutableList.<ResourceRecordDetail> builder()
       .add(builder.guid("04023A2507B6468F")
                   .created(dateService.iso8601DateParse("2010-10-02T16:57:16.000Z"))
                   .modified(dateService.iso8601DateParse("2011-09-27T23:49:21.000Z"))

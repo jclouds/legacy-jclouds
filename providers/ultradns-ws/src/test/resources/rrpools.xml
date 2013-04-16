@@ -4,17 +4,17 @@
 			xmlns:ns1="http://webservice.api.ultra.neustar.com/v01/">
 			<LBPoolList xmlns:ns2="http://schema.ultraservice.neustar.com/v01/">
 				<ns2:LBPoolData zoneid="0000000000000001">
-					<ns2:PoolData PoolName="app-uswest1.jclouds.org."
+					<ns2:PoolData description="uswest1"
 						PoolId="000000000000002" PoolType="RD" PoolDName="app-uswest1.jclouds.org."
 						ResponseMethod="RR" />
 				</ns2:LBPoolData>
 				<ns2:LBPoolData zoneid="0000000000000001">
-					<ns2:PoolData PoolName="app-uswest2.jclouds.org."
+					<ns2:PoolData description="uswest2"
 						PoolId="000000000000003" PoolType="RD" PoolDName="app-uswest2.jclouds.org."
 						ResponseMethod="RR" />
 				</ns2:LBPoolData>
 				<ns2:LBPoolData zoneid="0000000000000001">
-					<ns2:PoolData PoolName="app-euwest.jclouds.org."
+					<ns2:PoolData description="euwest"
 						PoolId="000000000000004" PoolType="RD" PoolDName="app-euwest.jclouds.org."
 						ResponseMethod="RR" />
 				</ns2:LBPoolData>

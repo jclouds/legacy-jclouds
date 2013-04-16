@@ -45,7 +45,7 @@ public class GetAccountsListOfUserResponseTest extends BaseHandlerTest {
    }
 
    public IdAndName expected() {
-      return IdAndName.fromIdAndName("AAAAAAAAAAAAAAAA", "jclouds");
+      return IdAndName.create("AAAAAAAAAAAAAAAA", "jclouds");
    }
 
 }

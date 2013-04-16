@@ -36,14 +36,15 @@ import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsExcepti
 import org.jclouds.ultradns.ws.binders.UpdatePoolRecordToXML;
 import org.jclouds.ultradns.ws.domain.PoolRecordSpec;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
-import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
+import org.jclouds.ultradns.ws.domain.TrafficControllerPool.RecordType;
+import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecordDetail;
 import org.jclouds.ultradns.ws.domain.UpdatePoolRecord;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
 import org.jclouds.ultradns.ws.xml.AttributeHandler;
 import org.jclouds.ultradns.ws.xml.ElementTextHandler;
 import org.jclouds.ultradns.ws.xml.PoolRecordSpecHandler;
 import org.jclouds.ultradns.ws.xml.TrafficControllerPoolListHandler;
-import org.jclouds.ultradns.ws.xml.TrafficControllerPoolRecordListHandler;
+import org.jclouds.ultradns.ws.xml.TrafficControllerPoolRecordDetailListHandler;
 
 import com.google.common.collect.FluentIterable;
 
@@ -61,9 +62,11 @@ public interface TrafficControllerPoolApi {
     * 
     * @param name
     *           {@link TrafficControllerPool#getName() name} of the TC pool
-    * @param hostname
+    * @param dname
     *           {@link TrafficControllerPool#getDName() dname} of the TC pool
     *           {ex. www.jclouds.org.}
+    * @param type
+    *           the record types supported.
     * @return the {@code guid} of the new record
     * @throws ResourceAlreadyExistsException
     *            if a pool already exists with the same attrs
@@ -71,9 +74,9 @@ public interface TrafficControllerPoolApi {
    @Named("addTCLBPool")
    @POST
    @XMLResponseParser(ElementTextHandler.TCPoolID.class)
-   @Payload("<v01:addTCLBPool><transactionID /><zoneName>{zoneName}</zoneName><hostName>{hostName}</hostName><description>{description}</description><poolRecordType>1</poolRecordType><failOver>Enabled</failOver><probing>Enabled</probing><maxActive>0</maxActive><rrGUID /></v01:addTCLBPool>")
-   String createPoolForHostname(@PayloadParam("description") String name, @PayloadParam("hostName") String hostname)
-         throws ResourceAlreadyExistsException;
+   @Payload("<v01:addTCLBPool><transactionID /><zoneName>{zoneName}</zoneName><hostName>{hostName}</hostName><description>{description}</description><poolRecordType>{poolRecordType}</poolRecordType><failOver>Enabled</failOver><probing>Enabled</probing><maxActive>0</maxActive><rrGUID /></v01:addTCLBPool>")
+   String createPoolForDNameAndType(@PayloadParam("description") String name, @PayloadParam("hostName") String dname,
+         @PayloadParam("poolRecordType") RecordType type) throws ResourceAlreadyExistsException;
 
    /**
     * Returns all traffic controller pools in the zone.
@@ -95,9 +98,9 @@ public interface TrafficControllerPoolApi {
     */
    @Named("getPoolRecords")
    @POST
-   @XMLResponseParser(TrafficControllerPoolRecordListHandler.class)
+   @XMLResponseParser(TrafficControllerPoolRecordDetailListHandler.class)
    @Payload("<v01:getPoolRecords><poolId>{poolId}</poolId></v01:getPoolRecords>")
-   FluentIterable<TrafficControllerPoolRecord> listRecords(@PayloadParam("poolId") String poolId)
+   FluentIterable<TrafficControllerPoolRecordDetail> listRecords(@PayloadParam("poolId") String poolId)
          throws ResourceNotFoundException;
 
    /**
@@ -130,13 +133,13 @@ public interface TrafficControllerPoolApi {
    /**
     * adds a new record to the pool with default weight.
     * 
-    * @param pointsTo
+    * @param rdata
     *           the ipv4 address or hostname
     * @param lbPoolID
     *           the pool to add the record to.
     * @param ttl
     *           the {@link PoolRecordSpec#getTTL ttl} of the record
-    * @return the {@link TrafficControllerPoolRecord#getId() id} of the new
+    * @return the {@link TrafficControllerPoolRecordDetail#getId() id} of the new
     *         record
     * @throws ResourceAlreadyExistsException
     *            if a record already exists with the same attrs
@@ -145,13 +148,13 @@ public interface TrafficControllerPoolApi {
    @POST
    @XMLResponseParser(ElementTextHandler.PoolRecordID.class)
    @Payload("<v01:addPoolRecord><transactionID /><poolID>{poolID}</poolID><pointsTo>{pointsTo}</pointsTo><priority /><failOverDelay /><ttl>{ttl}</ttl><weight /><mode /><threshold /></v01:addPoolRecord>")
-   String addRecordToPoolWithTTL(@PayloadParam("pointsTo") String pointsTo, @PayloadParam("poolID") String lbPoolID,
+   String addRecordToPoolWithTTL(@PayloadParam("pointsTo") String rdata, @PayloadParam("poolID") String lbPoolID,
          @PayloadParam("ttl") int ttl) throws ResourceAlreadyExistsException;
 
    /**
     * adds a new record to the pool with a specified weight.
     * 
-    * @param pointsTo
+    * @param rdata
     *           the ipv4 address or hostname
     * @param lbPoolID
     *           the pool to add the record to.
@@ -159,7 +162,7 @@ public interface TrafficControllerPoolApi {
     *           the {@link PoolRecordSpec#getTTL ttl} of the record
     * @param weight
     *           the {@link PoolRecordSpec#getWeight() weight} of the record
-    * @return the {@link TrafficControllerPoolRecord#getId() id} of the new
+    * @return the {@link TrafficControllerPoolRecordDetail#getId() id} of the new
     *         record
     * @throws ResourceAlreadyExistsException
     *            if a record already exists with the same attrs
@@ -168,13 +171,13 @@ public interface TrafficControllerPoolApi {
    @POST
    @XMLResponseParser(ElementTextHandler.PoolRecordID.class)
    @Payload("<v01:addPoolRecord><transactionID /><poolID>{poolID}</poolID><pointsTo>{pointsTo}</pointsTo><priority /><failOverDelay /><ttl>{ttl}</ttl><weight>{weight}</weight><mode /><threshold /></v01:addPoolRecord>")
-   String addRecordToPoolWithTTLAndWeight(@PayloadParam("pointsTo") String pointsTo,
+   String addRecordToPoolWithTTLAndWeight(@PayloadParam("pointsTo") String rdata,
          @PayloadParam("poolID") String lbPoolID, @PayloadParam("ttl") int ttl, @PayloadParam("weight") int weight)
          throws ResourceAlreadyExistsException;
 
    /**
     * @param poolRecordID
-    *           {@link TrafficControllerPoolRecord#getId()}
+    *           {@link TrafficControllerPoolRecordDetail#getId()}
     * @return null if not found
     */
    @Named("getPoolRecordSpec>")
@@ -189,7 +192,7 @@ public interface TrafficControllerPoolApi {
     * This request updates an existing pool record.
     * 
     * @param poolRecordID
-    *           {@link TrafficControllerPoolRecord#getId()}
+    *           {@link TrafficControllerPoolRecordDetail#getId()}
     * @param update
     *           what to update, usually primed via
     *           {@link UpdatePoolRecord#pointingTo(PoolRecordSpec, String)} or
