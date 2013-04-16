@@ -47,7 +47,7 @@ public class UltraDNSWSApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
    @Test
    public void testListRegions() {
-      for (Entry<IdAndName, Collection<String>> region : api.getRegionsById().asMap().entrySet()) {
+      for (Entry<IdAndName, Collection<String>> region : api.getRegionsByIdAndName().asMap().entrySet()) {
          checkRegion(region);
       }
    }

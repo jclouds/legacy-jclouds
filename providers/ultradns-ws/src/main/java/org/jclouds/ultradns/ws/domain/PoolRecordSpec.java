@@ -57,7 +57,7 @@ public final class PoolRecordSpec {
    }
 
    /**
-    * correlates to {@link TrafficControllerPoolRecord#getDescription()}
+    * correlates to {@link TrafficControllerPoolRecordDetail#getDescription()}
     */
    public String getDescription() {
       return description;
@@ -71,7 +71,7 @@ public final class PoolRecordSpec {
    }
 
    /**
-    * correlates to {@link TrafficControllerPoolRecord#isProbingEnabled()}
+    * correlates to {@link TrafficControllerPoolRecordDetail#isProbingEnabled()}
     */
    public boolean isProbingEnabled() {
       return probingEnabled;
@@ -85,7 +85,7 @@ public final class PoolRecordSpec {
    }
 
    /**
-    * correlates to {@link TrafficControllerPoolRecord#getWeight()}
+    * correlates to {@link TrafficControllerPoolRecordDetail#getWeight()}
     */
    public int getWeight() {
       return weight;

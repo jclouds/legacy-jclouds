@@ -33,7 +33,7 @@ import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
 import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.jclouds.ultradns.ws.domain.ResourceRecord;
-import org.jclouds.ultradns.ws.domain.ResourceRecordMetadata;
+import org.jclouds.ultradns.ws.domain.ResourceRecordDetail;
 import org.jclouds.ultradns.ws.domain.Zone;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiLiveTest;
 import org.testng.annotations.AfterClass;
@@ -80,7 +80,7 @@ public class ResourceRecordApiLiveTest extends BaseUltraDNSWSApiLiveTest {
       assertNotNull(rr.getRData(), "InfoValues cannot be null for " +  rr);
    }
 
-   static void checkResourceRecordMetadata(ResourceRecordMetadata rr) {
+   static void checkResourceRecordMetadata(ResourceRecordDetail rr) {
       assertNotNull(rr.getZoneId(), "ZoneId cannot be null for " +  rr);
       assertNotNull(rr.getGuid(), "Guid cannot be null for " +  rr);
       assertNotNull(rr.getZoneName(), "ZoneName cannot be null for " +  rr);
@@ -95,7 +95,7 @@ public class ResourceRecordApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    public void testListResourceRecords() {
       for (Zone zone : api.getZoneApi().listByAccount(account.getId())) {
          zones.incrementAndGet();
-         for (ResourceRecordMetadata rr : api(zone.getName()).list()) {
+         for (ResourceRecordDetail rr : api(zone.getName()).list()) {
             recordTypeCounts.getUnchecked(rr.getRecord().getType()).incrementAndGet();
             checkResourceRecordMetadata(rr);
          }
@@ -177,8 +177,8 @@ public class ResourceRecordApiLiveTest extends BaseUltraDNSWSApiLiveTest {
       assertFalse(listRRs().anyMatch(equalTo(mx)));
    }
 
-   static Function<ResourceRecordMetadata, ResourceRecord> toRecord = new Function<ResourceRecordMetadata, ResourceRecord>() {
-      public ResourceRecord apply(ResourceRecordMetadata in) {
+   static Function<ResourceRecordDetail, ResourceRecord> toRecord = new Function<ResourceRecordDetail, ResourceRecord>() {
+      public ResourceRecord apply(ResourceRecordDetail in) {
          checkResourceRecordMetadata(in);
          return in.getRecord();
       }

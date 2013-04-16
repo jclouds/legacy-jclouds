@@ -26,12 +26,13 @@ import org.jclouds.ultradns.ws.domain.DirectionalGroup.Builder;
 import org.xml.sax.Attributes;
 
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSortedSet;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class DirectionalGroupNameAndRegionsHandler extends ParseSax.HandlerForGeneratedRequestWithResult<DirectionalGroup> {
+public class DirectionalGroupHandler extends ParseSax.HandlerForGeneratedRequestWithResult<DirectionalGroup> {
 
    private final Builder group = DirectionalGroup.builder();
 
@@ -44,10 +45,12 @@ public class DirectionalGroupNameAndRegionsHandler extends ParseSax.HandlerForGe
    public void startElement(String url, String name, String qName, Attributes attrs) {
       if (equalsOrSuffix(qName, "DirectionalDNSGroupDetail")) {
          group.name(attrs.getValue("GroupName"));
+         group.description(attrs.getValue("Description"));
       } else if (equalsOrSuffix(qName, "RegionForNewGroups")) {
          String regionName = attrs.getValue("RegionName");
          Iterable<String> territories = Splitter.on(';').split(attrs.getValue("TerritoryName"));
-         group.mapRegionToTerritories(regionName, territories);
+         // for some reason, this isn't sorted here, though it is in other parts of the api.  manually sort.
+         group.mapRegionToTerritories(regionName, ImmutableSortedSet.copyOf(territories));
       }
    }
 }

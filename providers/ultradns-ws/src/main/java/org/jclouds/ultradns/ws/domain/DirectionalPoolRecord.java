@@ -33,13 +33,13 @@ import com.google.common.collect.ImmutableList;
 /**
  * @author Adrian Cole
  */
-public class DirectionalRecord {
+public class DirectionalPoolRecord {
    private final String type;
    private final int ttl;
    private final boolean noResponseRecord;
    private final List<String> infoValues;
 
-   private DirectionalRecord(String type, int ttl, boolean noResponseRecord, List<String> infoValues) {
+   private DirectionalPoolRecord(String type, int ttl, boolean noResponseRecord, List<String> infoValues) {
       this.type = checkNotNull(type, "type");
       checkArgument(ttl >= 0, "ttl must be >= 0");
       this.ttl = ttl;
@@ -84,7 +84,7 @@ public class DirectionalRecord {
          return true;
       if (obj == null || getClass() != obj.getClass())
          return false;
-      DirectionalRecord that = DirectionalRecord.class.cast(obj);
+      DirectionalPoolRecord that = DirectionalPoolRecord.class.cast(obj);
       return equal(this.type, that.type) && equal(this.ttl, that.ttl)
             && equal(this.noResponseRecord, that.noResponseRecord) && equal(this.infoValues, that.infoValues);
    }
@@ -110,7 +110,7 @@ public class DirectionalRecord {
       private ImmutableList.Builder<String> infoValues = ImmutableList.<String> builder();
 
       /**
-       * @see DirectionalRecord#getType()
+       * @see DirectionalPoolRecord#getType()
        */
       public Builder type(String type) {
          this.type = type;
@@ -118,7 +118,7 @@ public class DirectionalRecord {
       }
 
       /**
-       * @see DirectionalRecord#getTTL()
+       * @see DirectionalPoolRecord#getTTL()
        */
       public Builder ttl(int ttl) {
          this.ttl = ttl;
@@ -126,7 +126,7 @@ public class DirectionalRecord {
       }
 
       /**
-       * @see DirectionalRecord#isNoResponseRecord()
+       * @see DirectionalPoolRecord#isNoResponseRecord()
        */
       public Builder noResponseRecord(boolean noResponseRecord) {
          this.noResponseRecord = noResponseRecord;
@@ -136,7 +136,7 @@ public class DirectionalRecord {
       /**
        * adds to current values
        * 
-       * @see DirectionalRecord#getRData()
+       * @see DirectionalPoolRecord#getRData()
        */
       public Builder infoValue(Object infoValue) {
          this.infoValues.add(infoValue.toString());
@@ -146,7 +146,7 @@ public class DirectionalRecord {
       /**
        * replaces current values
        * 
-       * @see DirectionalRecord#getRData()
+       * @see DirectionalPoolRecord#getRData()
        */
       public Builder rdata(Object infoValue) {
          this.infoValues = ImmutableList.<String> builder().add(infoValue.toString());
@@ -156,18 +156,18 @@ public class DirectionalRecord {
       /**
        * replaces current values
        * 
-       * @see DirectionalRecord#getRData()
+       * @see DirectionalPoolRecord#getRData()
        */
       public Builder rdata(Iterable<?> infoValues) {
          this.infoValues = ImmutableList.<String> builder().addAll(transform(infoValues, toStringFunction()));
          return this;
       }
 
-      public DirectionalRecord build() {
-         return new DirectionalRecord(type, ttl, noResponseRecord, infoValues.build());
+      public DirectionalPoolRecord build() {
+         return new DirectionalPoolRecord(type, ttl, noResponseRecord, infoValues.build());
       }
 
-      public Builder from(DirectionalRecord in) {
+      public Builder from(DirectionalPoolRecord in) {
          return type(in.type).ttl(in.ttl).noResponseRecord(in.noResponseRecord).rdata(in.infoValues);
       }
    }

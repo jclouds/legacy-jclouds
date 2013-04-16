@@ -31,7 +31,7 @@ import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
 import org.jclouds.ultradns.ws.domain.ResourceRecord;
-import org.jclouds.ultradns.ws.domain.ResourceRecordMetadata;
+import org.jclouds.ultradns.ws.domain.ResourceRecordDetail;
 import org.jclouds.ultradns.ws.domain.RoundRobinPool;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
 import org.jclouds.ultradns.ws.xml.ElementTextHandler;
@@ -71,7 +71,7 @@ public interface RoundRobinPoolApi {
    @POST
    @XMLResponseParser(ResourceRecordListHandler.class)
    @Payload("<v01:getRRPoolRecords><lbPoolId>{poolId}</lbPoolId></v01:getRRPoolRecords>")
-   FluentIterable<ResourceRecordMetadata> listRecords(@PayloadParam("poolId") String poolId)
+   FluentIterable<ResourceRecordDetail> listRecords(@PayloadParam("poolId") String poolId)
          throws ResourceNotFoundException;
 
    /**
@@ -79,7 +79,7 @@ public interface RoundRobinPoolApi {
     * 
     * @param name
     *           {@link RoundRobinPool#getName() name} of the RR pool
-    * @param hostname
+    * @param dname
     *           {@link RoundRobinPool#getDName() dname} of the RR pool {ex.
     *           www.jclouds.org.}
     * @return the {@code guid} of the new pool
@@ -90,8 +90,8 @@ public interface RoundRobinPoolApi {
    @POST
    @XMLResponseParser(ElementTextHandler.RRPoolID.class)
    @Payload("<v01:addRRLBPool><transactionID /><zoneName>{zoneName}</zoneName><hostName>{hostName}</hostName><description>{description}</description><poolRecordType>1</poolRecordType><rrGUID /></v01:addRRLBPool>")
-   String createAPoolForHostname(@PayloadParam("description") String name,
-         @PayloadParam("hostName") String hostname) throws ResourceAlreadyExistsException;
+   String createAPoolForDName(@PayloadParam("description") String name,
+         @PayloadParam("hostName") String dname) throws ResourceAlreadyExistsException;
 
    /**
     * adds a new {@code A} record to the pool
@@ -155,8 +155,8 @@ public interface RoundRobinPoolApi {
     * 
     * @param name
     *           {@link RoundRobinPool#getName() name} of the RR pool
-    * @param hostname
-    *           {@link RoundRobinPool#getDName() hostname} {ex.
+    * @param dname
+    *           {@link RoundRobinPool#getDName() dname} {ex.
     *           www.jclouds.org.}
     * @return the {@code guid} of the new record
     * @throws ResourceAlreadyExistsException
@@ -166,8 +166,8 @@ public interface RoundRobinPoolApi {
    @POST
    @XMLResponseParser(ElementTextHandler.RRPoolID.class)
    @Payload("<v01:addRRLBPool><transactionID /><zoneName>{zoneName}</zoneName><hostName>{hostName}</hostName><description>{description}</description><poolRecordType>28</poolRecordType><rrGUID /></v01:addRRLBPool>")
-   String createAAAAPoolForHostname(@PayloadParam("description") String name,
-         @PayloadParam("hostName") String hostname) throws ResourceAlreadyExistsException;
+   String createAAAAPoolForDName(@PayloadParam("description") String name,
+         @PayloadParam("hostName") String dname) throws ResourceAlreadyExistsException;
 
    /**
     * adds a new {@code AAAA} record to the pool

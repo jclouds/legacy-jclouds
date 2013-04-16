@@ -21,7 +21,7 @@ package org.jclouds.ultradns.ws.xml;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.ultradns.ws.domain.DirectionalRecordDetail;
+import org.jclouds.ultradns.ws.domain.DirectionalPoolRecordDetail;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.FluentIterable;
@@ -33,20 +33,20 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
-public class DirectionalRecordDetailListHandler extends
-      ParseSax.HandlerForGeneratedRequestWithResult<FluentIterable<DirectionalRecordDetail>> {
+public class DirectionalPoolRecordDetailListHandler extends
+      ParseSax.HandlerForGeneratedRequestWithResult<FluentIterable<DirectionalPoolRecordDetail>> {
 
-   private final DirectionalRecordDetailHandler directionalRecordHandler;
+   private final DirectionalPoolRecordDetailHandler directionalRecordHandler;
 
-   private final Builder<DirectionalRecordDetail> drs = ImmutableSet.<DirectionalRecordDetail> builder();
+   private final Builder<DirectionalPoolRecordDetail> drs = ImmutableSet.<DirectionalPoolRecordDetail> builder();
 
    @Inject
-   public DirectionalRecordDetailListHandler(DirectionalRecordDetailHandler directionalRecordHandler) {
+   public DirectionalPoolRecordDetailListHandler(DirectionalPoolRecordDetailHandler directionalRecordHandler) {
       this.directionalRecordHandler = directionalRecordHandler;
    }
 
    @Override
-   public FluentIterable<DirectionalRecordDetail> getResult() {
+   public FluentIterable<DirectionalPoolRecordDetail> getResult() {
       return FluentIterable.from(drs.build());
    }
 

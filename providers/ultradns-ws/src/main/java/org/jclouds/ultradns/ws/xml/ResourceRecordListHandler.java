@@ -21,7 +21,7 @@ package org.jclouds.ultradns.ws.xml;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.ultradns.ws.domain.ResourceRecordMetadata;
+import org.jclouds.ultradns.ws.domain.ResourceRecordDetail;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.FluentIterable;
@@ -34,19 +34,19 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 public class ResourceRecordListHandler extends
-      ParseSax.HandlerForGeneratedRequestWithResult<FluentIterable<ResourceRecordMetadata>> {
+      ParseSax.HandlerForGeneratedRequestWithResult<FluentIterable<ResourceRecordDetail>> {
 
-   private final ResourceRecordMetadataHandler resourceRecordHandler;
+   private final ResourceRecordDetailHandler resourceRecordHandler;
 
-   private Builder<ResourceRecordMetadata> rrs = ImmutableSet.<ResourceRecordMetadata> builder();
+   private Builder<ResourceRecordDetail> rrs = ImmutableSet.<ResourceRecordDetail> builder();
 
    @Inject
-   public ResourceRecordListHandler(ResourceRecordMetadataHandler resourceRecordHandler) {
+   public ResourceRecordListHandler(ResourceRecordDetailHandler resourceRecordHandler) {
       this.resourceRecordHandler = resourceRecordHandler;
    }
 
    @Override
-   public FluentIterable<ResourceRecordMetadata> getResult() {
+   public FluentIterable<ResourceRecordDetail> getResult() {
       return FluentIterable.from(rrs.build());
    }
 

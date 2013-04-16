@@ -99,6 +99,30 @@ public final class TrafficControllerPool {
       return probingEnabled;
    }
 
+   /**
+    * currently supported {@link ResourceRecord#getType() types} for traffic
+    * controller pools.
+    * 
+    */
+   public static enum RecordType {
+      // A/CNAME
+      IPV4(1),
+
+      // AAAA/CNAME
+      IPV6(28);
+
+      @Override
+      public String toString() {
+         return String.valueOf(code);
+      }
+
+      private final int code;
+
+      private RecordType(int code) {
+         this.code = code;
+      }
+   }
+
    @Override
    public int hashCode() {
       return Objects.hashCode(zoneId, id, name, dname);

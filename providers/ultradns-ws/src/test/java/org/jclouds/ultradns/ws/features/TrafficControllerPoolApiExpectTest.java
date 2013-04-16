@@ -21,6 +21,7 @@ import static com.google.common.net.HttpHeaders.HOST;
 import static javax.ws.rs.HttpMethod.POST;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static javax.ws.rs.core.Response.Status.OK;
+import static org.jclouds.ultradns.ws.domain.TrafficControllerPool.RecordType.IPV4;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
@@ -50,7 +51,9 @@ public class TrafficControllerPoolApiExpectTest extends BaseUltraDNSWSApiExpectT
 
    public void testCreateWhenResponseIs2xx() {
       UltraDNSWSApi success = requestSendsResponse(create, createResponse);
-      assertEquals(success.getTrafficControllerPoolApiForZone("jclouds.org.").createPoolForHostname("www.jclouds.org.", "foo"), "060339AA0417567A");
+      assertEquals(
+            success.getTrafficControllerPoolApiForZone("jclouds.org.").createPoolForDNameAndType("foo",
+                  "www.jclouds.org.", IPV4), "060339AA0417567A");
    }
 
    HttpResponse alreadyCreated = HttpResponse.builder().statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
@@ -59,7 +62,8 @@ public class TrafficControllerPoolApiExpectTest extends BaseUltraDNSWSApiExpectT
    @Test(expectedExceptions = ResourceAlreadyExistsException.class, expectedExceptionsMessageRegExp = "Pool already created for this host name : www.rrpool.adrianc.rrpool.ultradnstest.jclouds.org.")
    public void testCreateWhenResponseError2912() {
       UltraDNSWSApi already = requestSendsResponse(create, alreadyCreated);
-      already.getTrafficControllerPoolApiForZone("jclouds.org.").createPoolForHostname("www.jclouds.org.", "foo");
+      already.getTrafficControllerPoolApiForZone("jclouds.org.").createPoolForDNameAndType("foo", "www.jclouds.org.",
+            IPV4);
    }
 
    HttpRequest list = HttpRequest.builder().method(POST)
@@ -189,7 +193,7 @@ public class TrafficControllerPoolApiExpectTest extends BaseUltraDNSWSApiExpectT
    }
 
    UpdatePoolRecord update = UpdatePoolRecord.builder()
-                                             .pointsTo("www.baz.com.")
+                                             .rdata("www.baz.com.")
                                              .mode("Normal")
                                              .weight(98)
                                              .failOverDelay(0)
