@@ -65,7 +65,7 @@ public class UltraDNSWSApiExpectTest extends BaseUltraDNSWSApiExpectTest {
       UltraDNSWSApi success = requestSendsResponse(getRegionsById, getRegionsByIdResponse);
 
       assertEquals(
-            success.getRegionsById().toString(),
+            success.getRegionsByIdAndName().toString(),
             new GetAvailableRegionsResponseTest().expected().toString());
    }
 }

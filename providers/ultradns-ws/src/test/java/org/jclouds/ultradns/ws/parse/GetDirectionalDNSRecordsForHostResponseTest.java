@@ -18,15 +18,15 @@
  */
 package org.jclouds.ultradns.ws.parse;
 
-import static org.jclouds.ultradns.ws.domain.IdAndName.fromIdAndName;
+import static org.jclouds.ultradns.ws.domain.IdAndName.create;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.ultradns.ws.domain.DirectionalRecord;
-import org.jclouds.ultradns.ws.domain.DirectionalRecordDetail;
-import org.jclouds.ultradns.ws.xml.DirectionalRecordDetailListHandler;
+import org.jclouds.ultradns.ws.domain.DirectionalPoolRecord;
+import org.jclouds.ultradns.ws.domain.DirectionalPoolRecordDetail;
+import org.jclouds.ultradns.ws.xml.DirectionalPoolRecordDetailListHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.FluentIterable;
@@ -41,52 +41,52 @@ public class GetDirectionalDNSRecordsForHostResponseTest extends BaseHandlerTest
    public void test() {
       InputStream is = getClass().getResourceAsStream("/directionalrecords.xml");
 
-      FluentIterable<DirectionalRecordDetail> expected = expected();
+      FluentIterable<DirectionalPoolRecordDetail> expected = expected();
 
-      DirectionalRecordDetailListHandler handler = injector.getInstance(DirectionalRecordDetailListHandler.class);
-      FluentIterable<DirectionalRecordDetail> result = factory.create(handler).parse(is);
+      DirectionalPoolRecordDetailListHandler handler = injector.getInstance(DirectionalPoolRecordDetailListHandler.class);
+      FluentIterable<DirectionalPoolRecordDetail> result = factory.create(handler).parse(is);
 
       assertEquals(result.toSet().toString(), expected.toSet().toString());
    }
 
-   public FluentIterable<DirectionalRecordDetail> expected() {
-      return FluentIterable.from(ImmutableSet.<DirectionalRecordDetail> builder()
-                           .add(DirectionalRecordDetail.builder()
+   public FluentIterable<DirectionalPoolRecordDetail> expected() {
+      return FluentIterable.from(ImmutableSet.<DirectionalPoolRecordDetail> builder()
+                           .add(DirectionalPoolRecordDetail.builder()
                                                        .zoneName("geo.jclouds.org.")
                                                        .name("www.geo.jclouds.org.")
                                                        .id("A000000000000001")
-                                                       .geolocationGroup(fromIdAndName("C000000000000001", "southamerica"))
-                                                       .record(DirectionalRecord.drBuilder()
+                                                       .geolocationGroup(create("C000000000000001", "southamerica"))
+                                                       .record(DirectionalPoolRecord.drBuilder()
                                                                                 .type("CNAME")
                                                                                 .ttl(300)
                                                                                 .noResponseRecord(false)
                                                                                 .rdata("southamerica.geo.jclouds.org.").build()).build())
-                           .add(DirectionalRecordDetail.builder()
+                           .add(DirectionalPoolRecordDetail.builder()
                                                        .zoneName("geo.jclouds.org.")
                                                        .name("www.geo.jclouds.org.")
                                                        .id("A000000000000002")
-                                                       .group(fromIdAndName("B000000000000001", "All Non-Configured Regions"))
-                                                       .record(DirectionalRecord.drBuilder()
+                                                       .group(create("B000000000000001", "All Non-Configured Regions"))
+                                                       .record(DirectionalPoolRecord.drBuilder()
                                                                                 .type("A")
                                                                                 .ttl(500)
                                                                                 .noResponseRecord(false)
                                                                                 .rdata("1.1.1.2").build()).build())
-                           .add(DirectionalRecordDetail.builder()
+                           .add(DirectionalPoolRecordDetail.builder()
                                                        .zoneName("geo.jclouds.org.")
                                                        .name("www.geo.jclouds.org.")
                                                        .id("A000000000000003")
-                                                       .geolocationGroup(fromIdAndName("C000000000000002", "antarctica-unsupported"))
-                                                       .record(DirectionalRecord.drBuilder()
+                                                       .geolocationGroup(create("C000000000000002", "antarctica-unsupported"))
+                                                       .record(DirectionalPoolRecord.drBuilder()
                                                                                 .type("A")
                                                                                 .ttl(0)
                                                                                 .noResponseRecord(true)
                                                                                 .rdata("No Data Response").build()).build())
-                           .add(DirectionalRecordDetail.builder()
+                           .add(DirectionalPoolRecordDetail.builder()
                                                        .zoneName("geo.jclouds.org.")
                                                        .name("www.geo.jclouds.org.")
                                                        .id("A000000000000004")
-                                                       .geolocationGroup(fromIdAndName("C000000000000003", "alazona"))
-                                                       .record(DirectionalRecord.drBuilder()
+                                                       .geolocationGroup(create("C000000000000003", "alazona"))
+                                                       .record(DirectionalPoolRecord.drBuilder()
                                                                                 .type("A")
                                                                                 .ttl(86400) // default
                                                                                 .noResponseRecord(false)

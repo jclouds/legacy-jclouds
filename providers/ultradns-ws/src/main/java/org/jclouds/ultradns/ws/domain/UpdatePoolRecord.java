@@ -34,13 +34,13 @@ public final class UpdatePoolRecord {
 
    /**
     * @param spec what to prime updates from
-    * @param pointsTo new value to point to.
+    * @param rdata new value to point to.
     */
-   public static UpdatePoolRecord pointingTo(PoolRecordSpec spec, String pointsTo) {
-      return new Builder().from(spec).pointsTo(pointsTo).build();
+   public static UpdatePoolRecord pointingTo(PoolRecordSpec spec, String rdata) {
+      return new Builder().from(spec).rdata(rdata).build();
    }
 
-   private final String pointsTo;
+   private final String rdata;
    private final String mode;
    private final int priority;
    private final int weight;
@@ -48,26 +48,26 @@ public final class UpdatePoolRecord {
    private final int threshold;
    private final int ttl;
 
-   private UpdatePoolRecord(String pointsTo, String mode, int priority, int weight, int failOverDelay, int threshold,
+   private UpdatePoolRecord(String rdata, String mode, int priority, int weight, int failOverDelay, int threshold,
          int ttl) {
-      this.pointsTo = checkNotNull(pointsTo, "pointsTo");
-      this.mode = checkNotNull(mode, "mode for %s", pointsTo);
+      this.rdata = checkNotNull(rdata, "rdata");
+      this.mode = checkNotNull(mode, "mode for %s", rdata);
       this.priority = priority;
       this.weight = weight;
-      checkArgument(weight >= 0, "weight of %s must be >= 0", pointsTo);
+      checkArgument(weight >= 0, "weight of %s must be >= 0", rdata);
       this.failOverDelay = failOverDelay;
-      checkArgument(failOverDelay >= 0, "failOverDelay of %s must be >= 0", pointsTo);
+      checkArgument(failOverDelay >= 0, "failOverDelay of %s must be >= 0", rdata);
       this.threshold = threshold;
-      checkArgument(threshold >= 0, "threshold of %s must be >= 0", pointsTo);
+      checkArgument(threshold >= 0, "threshold of %s must be >= 0", rdata);
       this.ttl = ttl;
-      checkArgument(ttl >= 0, "ttl of %s must be >= 0", pointsTo);
+      checkArgument(ttl >= 0, "ttl of %s must be >= 0", rdata);
    }
 
    /**
-    * correlates to {@link TrafficControllerPoolRecord#getPointsTo()}
+    * correlates to {@link TrafficControllerPoolRecord#getRData()}
     */
-   public String getPointsTo() {
-      return pointsTo;
+   public String getRData() {
+      return rdata;
    }
 
    /**
@@ -114,7 +114,7 @@ public final class UpdatePoolRecord {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(pointsTo, mode, priority, weight, failOverDelay, threshold, ttl);
+      return Objects.hashCode(rdata, mode, priority, weight, failOverDelay, threshold, ttl);
    }
 
    @Override
@@ -126,14 +126,14 @@ public final class UpdatePoolRecord {
       if (getClass() != obj.getClass())
          return false;
       UpdatePoolRecord that = UpdatePoolRecord.class.cast(obj);
-      return equal(this.pointsTo, that.pointsTo) && equal(this.mode, that.mode) && equal(this.priority, that.priority)
+      return equal(this.rdata, that.rdata) && equal(this.mode, that.mode) && equal(this.priority, that.priority)
             && equal(this.weight, that.weight) && equal(this.failOverDelay, that.failOverDelay)
             && equal(this.threshold, that.threshold) && equal(this.ttl, that.ttl);
    }
 
    @Override
    public String toString() {
-      return toStringHelper(this).add("pointsTo", pointsTo).add("mode", mode).add("priority", priority)
+      return toStringHelper(this).add("rdata", rdata).add("mode", mode).add("priority", priority)
             .add("weight", weight).add("failOverDelay", failOverDelay).add("threshold", threshold).add("ttl", ttl)
             .toString();
    }
@@ -147,7 +147,7 @@ public final class UpdatePoolRecord {
    }
 
    public final static class Builder {
-      private String pointsTo;
+      private String rdata;
       private String mode;
       private int priority;
       private int weight;
@@ -156,10 +156,10 @@ public final class UpdatePoolRecord {
       private int ttl;
 
       /**
-       * @see UpdatePoolRecord#getPointsTo()
+       * @see UpdatePoolRecord#getRData()
        */
-      public Builder pointsTo(String pointsTo) {
-         this.pointsTo = pointsTo;
+      public Builder rdata(String rdata) {
+         this.rdata = rdata;
          return this;
       }
 
@@ -212,7 +212,7 @@ public final class UpdatePoolRecord {
       }
 
       public UpdatePoolRecord build() {
-         return new UpdatePoolRecord(pointsTo, mode, priority, weight, failOverDelay, threshold, ttl);
+         return new UpdatePoolRecord(rdata, mode, priority, weight, failOverDelay, threshold, ttl);
       }
 
       public Builder from(PoolRecordSpec in) {
@@ -220,12 +220,12 @@ public final class UpdatePoolRecord {
                .threshold(in.getThreshold()).ttl(in.getTTL());
       }
 
-      public Builder from(TrafficControllerPoolRecord in) {
-         return this.weight(in.getWeight()).pointsTo(in.getPointsTo()).priority(in.getPriority());
+      public Builder from(TrafficControllerPoolRecordDetail in) {
+         return this.weight(in.getWeight()).rdata(in.getRecord().getRData()).priority(in.getPriority());
       }
 
       public Builder from(UpdatePoolRecord in) {
-         return this.pointsTo(in.pointsTo).mode(in.mode).priority(in.priority).weight(in.weight)
+         return this.rdata(in.rdata).mode(in.mode).priority(in.priority).weight(in.weight)
                .failOverDelay(in.failOverDelay).threshold(in.threshold).ttl(in.ttl);
       }
    }

@@ -18,14 +18,15 @@
  */
 package org.jclouds.ultradns.ws.predicates;
 
+import static org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord.createCNAME;
 import static org.jclouds.ultradns.ws.predicates.TrafficControllerPoolPredicates.idEqualTo;
 import static org.jclouds.ultradns.ws.predicates.TrafficControllerPoolPredicates.recordIdEqualTo;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
-import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
-import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord.Status;
+import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecordDetail;
+import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecordDetail.Status;
 import org.testng.annotations.Test;
 
 /**
@@ -53,13 +54,12 @@ public class TrafficControllerPoolPredicatesTest {
       assertFalse(idEqualTo("000000000000003").apply(pool));
    }
 
-   TrafficControllerPoolRecord record = TrafficControllerPoolRecord.builder()
+   TrafficControllerPoolRecordDetail record = TrafficControllerPoolRecordDetail.builder()
                                                                    .id("0000000000000001")
                                                                    .poolId("0000000000000001")
-                                                                   .pointsTo("canary.jclouds.org.")
+                                                                   .record(createCNAME("canary.jclouds.org."))
                                                                    .weight(2)
                                                                    .priority(2)
-                                                                   .type("CNAME")
                                                                    .forceAnswer("Normal")
                                                                    .probingEnabled(true)
                                                                    .status(Status.OK)

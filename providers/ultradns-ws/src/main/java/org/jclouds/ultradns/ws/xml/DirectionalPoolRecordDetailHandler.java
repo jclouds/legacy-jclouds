@@ -25,30 +25,30 @@ import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
 import static org.jclouds.ultradns.ws.domain.IdAndName.*;
-import org.jclouds.ultradns.ws.domain.DirectionalRecord;
-import org.jclouds.ultradns.ws.domain.DirectionalRecordDetail;
+import org.jclouds.ultradns.ws.domain.DirectionalPoolRecord;
+import org.jclouds.ultradns.ws.domain.DirectionalPoolRecordDetail;
 import org.xml.sax.Attributes;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class DirectionalRecordDetailHandler extends
-      ParseSax.HandlerForGeneratedRequestWithResult<DirectionalRecordDetail> {
+public class DirectionalPoolRecordDetailHandler extends
+      ParseSax.HandlerForGeneratedRequestWithResult<DirectionalPoolRecordDetail> {
 
-   private DirectionalRecordDetail.Builder drd = DirectionalRecordDetail.builder();
-   private DirectionalRecord.Builder dr = DirectionalRecord.drBuilder();
+   private DirectionalPoolRecordDetail.Builder drd = DirectionalPoolRecordDetail.builder();
+   private DirectionalPoolRecord.Builder dr = DirectionalPoolRecord.drBuilder();
 
    private String zoneName;
    private String dname;
 
    @Override
-   public DirectionalRecordDetail getResult() {
+   public DirectionalPoolRecordDetail getResult() {
       try {
          return drd.record(dr.build()).build();
       } finally {
-         drd = DirectionalRecordDetail.builder().zoneName(zoneName).name(dname);
-         dr = DirectionalRecord.drBuilder();
+         drd = DirectionalPoolRecordDetail.builder().zoneName(zoneName).name(dname);
+         dr = DirectionalPoolRecord.drBuilder();
       }
    }
 
@@ -64,14 +64,14 @@ public class DirectionalRecordDetailHandler extends
          drd.id(attributes.get("DirPoolRecordId"));
       }
       if (attributes.containsKey("GroupId")) {
-         drd.group(fromIdAndName(attributes.get("GroupId"), attributes.get("GroupName")));
+         drd.group(create(attributes.get("GroupId"), attributes.get("GroupName")));
       }
       if (attributes.containsKey("GeolocationGroupId")) {
-         drd.geolocationGroup(fromIdAndName(attributes.get("GeolocationGroupId"),
+         drd.geolocationGroup(create(attributes.get("GeolocationGroupId"),
                attributes.get("GeolocationGroupName")));
       }
       if (attributes.containsKey("SourceIPGroupId")) {
-         drd.sourceIpGroup(fromIdAndName(attributes.get("SourceIPGroupId"), attributes.get("SourceIPGroupName")));
+         drd.sourceIpGroup(create(attributes.get("SourceIPGroupId"), attributes.get("SourceIPGroupName")));
       }
       if (attributes.containsKey("recordType")) {
          dr.type(attributes.get("recordType"));

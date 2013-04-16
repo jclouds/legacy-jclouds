@@ -54,8 +54,8 @@ public class DirectionalPoolListHandler extends ParseSax.HandlerForGeneratedRequ
          DirectionalPool.Builder pool = DirectionalPool.builder()
                                                        .zoneId(attributes.get("Zoneid"))
                                                        .id(attributes.get("dirpoolid"))
-                                                       .name(attributes.get("Pooldname"))
-                                                       .description(attributes.get("Description"));
+                                                       .dname(attributes.get("Pooldname"))
+                                                       .name(attributes.get("Description"));
 
          String type = attributes.get("DirPoolType");
          if (type != null)

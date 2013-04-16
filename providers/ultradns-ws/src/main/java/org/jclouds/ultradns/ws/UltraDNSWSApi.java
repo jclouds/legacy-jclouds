@@ -69,7 +69,7 @@ public interface UltraDNSWSApi extends Closeable {
    @POST
    @XMLResponseParser(RegionListHandler.class)
    @Payload("<v01:getAvailableRegions/>")
-   Multimap<IdAndName, String> getRegionsById();
+   Multimap<IdAndName, String> getRegionsByIdAndName();
 
    /**
     * Provides access to Zone features.

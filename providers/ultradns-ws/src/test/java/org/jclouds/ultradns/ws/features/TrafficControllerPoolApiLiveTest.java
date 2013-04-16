@@ -19,6 +19,8 @@
 package org.jclouds.ultradns.ws.features;
 
 import static java.util.logging.Logger.getAnonymousLogger;
+import static org.jclouds.ultradns.ws.domain.TrafficControllerPool.RecordType.IPV4;
+import static org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecordDetail.Status.UNRECOGNIZED;
 import static org.jclouds.ultradns.ws.predicates.TrafficControllerPoolPredicates.idEqualTo;
 import static org.jclouds.ultradns.ws.predicates.TrafficControllerPoolPredicates.recordIdEqualTo;
 import static org.testng.Assert.assertEquals;
@@ -34,7 +36,7 @@ import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.jclouds.ultradns.ws.domain.PoolRecordSpec;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
-import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord.Status;
+import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecordDetail;
 import org.jclouds.ultradns.ws.domain.UpdatePoolRecord;
 import org.jclouds.ultradns.ws.domain.Zone;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiLiveTest;
@@ -85,14 +87,14 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
    public void testListTCPoolRecords() {
       for (Zone zone : api.getZoneApi().listByAccount(account.getId())) {
          for (TrafficControllerPool pool : api(zone.getName()).list()) {
-            for (TrafficControllerPoolRecord record : api(zone.getName()).listRecords(pool.getId())) {
+            for (TrafficControllerPoolRecordDetail record : api(zone.getName()).listRecords(pool.getId())) {
                checkPoolRecordConsistent(zone.getName(), record);
             }
          }
       }
    }
 
-   private TrafficControllerPoolRecord checkPoolRecordConsistent(String zoneName, TrafficControllerPoolRecord record) {
+   private TrafficControllerPoolRecordDetail checkPoolRecordConsistent(String zoneName, TrafficControllerPoolRecordDetail record) {
       Optional<TrafficControllerPool> pool = getPoolByZoneAndId(zoneName, record.getPoolId());
       assertTrue(pool.isPresent(), "could not get pool for " + record);
       assertEquals(record.getDescription(), pool.get().getName());
@@ -103,15 +105,15 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
       return checkTrafficControllerPoolRecord(record);
    }
 
-   static TrafficControllerPoolRecord checkTrafficControllerPoolRecord(TrafficControllerPoolRecord record) {
+   static TrafficControllerPoolRecordDetail checkTrafficControllerPoolRecord(TrafficControllerPoolRecordDetail record) {
       assertNotNull(record.getId(), "Id cannot be null for " + record);
       assertNotNull(record.getPoolId(), "PoolId cannot be null for " + record);
-      assertNotNull(record.getPointsTo(), "PointsTo cannot be null for " + record);
+      assertNotNull(record.getRecord().getRData(), "Record.RData cannot be null for " + record);
+      assertNotNull(record.getRecord().getType(), "Record.Type cannot be null for " + record);
       assertTrue(record.getWeight() >= 0, "Weight must be unsigned for " + record);
       assertTrue(record.getPriority() >= 0, "Priority must be unsigned for " + record);
-      assertNotNull(record.getType(), "Type cannot be null for " + record);
       assertNotNull(record.getStatus(), "Status cannot be null for " + record);
-      assertTrue(record.getStatus() != Status.UNRECOGNIZED, "unrecognized status for " + record);
+      assertTrue(record.getStatus() != UNRECOGNIZED, "unrecognized status for " + record);
       assertNotNull(record.getDescription(), "Description cannot be null for " + record);
       return record;
    }
@@ -156,25 +158,25 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
    @Test(expectedExceptions = ResourceNotFoundException.class, expectedExceptionsMessageRegExp = "Pool Record does not exist.")
    public void testUpdateRecordWhenNotFound() {
       api(zoneName).updateRecord("06063D9C54C5AE09",
-            UpdatePoolRecord.builder().pointsTo("www.foo.com.").mode("Normal").build());
+            UpdatePoolRecord.builder().rdata("www.foo.com.").mode("Normal").build());
    }
 
-   String hostname = "www.tcpool." + zoneName;
+   String dname = "www.tcpool." + zoneName;
    String poolId;
 
    @Test
    public void testCreatePool() {
-      poolId = api(zoneName).createPoolForHostname("pool", hostname);
+      poolId = api(zoneName).createPoolForDNameAndType("pool", dname, IPV4);
       getAnonymousLogger().info("created tc pool: " + poolId);
       try {
-         api(zoneName).createPoolForHostname("pool", hostname);
+         api(zoneName).createPoolForDNameAndType("pool", dname, IPV4);
          fail();
       } catch (ResourceAlreadyExistsException e) {
 
       }
-      // ensure there's only one pool for a hostname
+      // ensure there's only one pool for a dname
       try {
-         api(zoneName).createPoolForHostname("pool1", hostname);
+         api(zoneName).createPoolForDNameAndType("pool1", dname, IPV4);
          fail();
       } catch (ResourceAlreadyExistsException e) {
 
@@ -183,7 +185,7 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
       assertTrue(pool.isPresent());
       assertEquals(pool.get().getId(), poolId);
       assertEquals(pool.get().getName(), "pool");
-      assertEquals(pool.get().getDName(), hostname);
+      assertEquals(pool.get().getDName(), dname);
       checkTCPool(pool.get());
    }
 
@@ -202,18 +204,17 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
    }
 
    @Test(dependsOnMethods = "testCreatePool", dataProvider = "records")
-   public TrafficControllerPoolRecord addRecordToPool(String pointsTo, String type, int ttl, Optional<Integer> weight) {
+   public TrafficControllerPoolRecordDetail addRecordToPool(String rdata, String type, int ttl, Optional<Integer> weight) {
       String recordId;
       if (weight.isPresent()) {
-         recordId = api(zoneName).addRecordToPoolWithTTLAndWeight(pointsTo, poolId, ttl, weight.get());
+         recordId = api(zoneName).addRecordToPoolWithTTLAndWeight(rdata, poolId, ttl, weight.get());
       } else {
-         recordId = api(zoneName).addRecordToPoolWithTTL(pointsTo, poolId, ttl);
+         recordId = api(zoneName).addRecordToPoolWithTTL(rdata, poolId, ttl);
       }
       getAnonymousLogger().info("created " + type + " record: " + recordId);
-      TrafficControllerPoolRecord record = checkPoolRecordConsistent(zoneName, getRecordById(recordId).get());
+      TrafficControllerPoolRecordDetail record = checkPoolRecordConsistent(zoneName, getRecordById(recordId).get());
       PoolRecordSpec recordSpec = checkPoolRecordSpec(api(zoneName).getRecordSpec(recordId));
-      assertEquals(record.getPointsTo(), pointsTo);
-      assertEquals(record.getType(), type);
+      assertEquals(record.getRecord(), TrafficControllerPoolRecord.create(type, rdata));
       assertEquals(record.getWeight(), weight.or(2).intValue());
       assertEquals(recordSpec.getTTL(), ttl);
       return record;
@@ -240,14 +241,14 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
    public void testUpdateRecord() {
       PoolRecordSpec spec = api(zoneName).getRecordSpec(cname2);
       UpdatePoolRecord update = UpdatePoolRecord.builder().from(spec)
-                                                .pointsTo("www.baz.com.")
+                                                .rdata("www.baz.com.")
                                                 .weight(98)
                                                 .ttl(200).build();
 
       api(zoneName).updateRecord(cname2, update);
 
-      TrafficControllerPoolRecord record = getRecordById(cname2).get();
-      assertEquals(record.getPointsTo(), "www.baz.com.");
+      TrafficControllerPoolRecordDetail record = getRecordById(cname2).get();
+      assertEquals(record.getRecord().getRData(), "www.baz.com.");
 
       spec = api(zoneName).getRecordSpec(cname2);
       assertEquals(spec.getWeight(), 98);
@@ -267,7 +268,7 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
       assertFalse(getPoolByZoneAndId(zoneName, poolId).isPresent());
    }
 
-   private Optional<TrafficControllerPoolRecord> getRecordById(String recordId) {
+   private Optional<TrafficControllerPoolRecordDetail> getRecordById(String recordId) {
       return api(zoneName).listRecords(poolId).firstMatch(recordIdEqualTo(recordId));
    }
 

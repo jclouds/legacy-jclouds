@@ -18,14 +18,15 @@
  */
 package org.jclouds.ultradns.ws.parse;
 
+import static org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord.createCNAME;
+import static org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecordDetail.Status.OK;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
-import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord.Status;
-import org.jclouds.ultradns.ws.xml.TrafficControllerPoolRecordListHandler;
+import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecordDetail;
+import org.jclouds.ultradns.ws.xml.TrafficControllerPoolRecordDetailListHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.FluentIterable;
@@ -40,38 +41,36 @@ public class GetTCPoolRecordsResponseTest extends BaseHandlerTest {
    public void test() {
       InputStream is = getClass().getResourceAsStream("/tcrecords.xml");
 
-      FluentIterable<TrafficControllerPoolRecord> expected = expected();
+      FluentIterable<TrafficControllerPoolRecordDetail> expected = expected();
 
-      TrafficControllerPoolRecordListHandler handler = injector.getInstance(TrafficControllerPoolRecordListHandler.class);
-      FluentIterable<TrafficControllerPoolRecord> result = factory.create(handler).parse(is);
+      TrafficControllerPoolRecordDetailListHandler handler = injector.getInstance(TrafficControllerPoolRecordDetailListHandler.class);
+      FluentIterable<TrafficControllerPoolRecordDetail> result = factory.create(handler).parse(is);
 
       assertEquals(result.toSet().toString(), expected.toSet().toString());
    }
 
-   public FluentIterable<TrafficControllerPoolRecord> expected() {
-      return FluentIterable.from(ImmutableSet.<TrafficControllerPoolRecord> builder()
-                           .add(TrafficControllerPoolRecord.builder()
+   public FluentIterable<TrafficControllerPoolRecordDetail> expected() {
+      return FluentIterable.from(ImmutableSet.<TrafficControllerPoolRecordDetail> builder()
+                           .add(TrafficControllerPoolRecordDetail.builder()
                                                            .id("0000000000000001")
                                                            .poolId("0000000000000001")
-                                                           .pointsTo("canary.jclouds.org.")
+                                                           .record(createCNAME("canary.jclouds.org."))
                                                            .weight(2)
                                                            .priority(2)
-                                                           .type("CNAME")
                                                            .forceAnswer("Normal")
                                                            .probingEnabled(true)
-                                                           .status(Status.OK)
+                                                           .status(OK)
                                                            .serving(true)
                                                            .description("canary app").build())
-                           .add(TrafficControllerPoolRecord.builder()
+                           .add(TrafficControllerPoolRecordDetail.builder()
                                                            .id("0000000000000002")
                                                            .poolId("0000000000000001")
-                                                           .pointsTo("prod.jclouds.org.")
+                                                           .record(createCNAME("prod.jclouds.org."))
                                                            .weight(98)
                                                            .priority(1)
-                                                           .type("CNAME")
                                                            .forceAnswer("Normal")
                                                            .probingEnabled(true)
-                                                           .status(Status.OK)
+                                                           .status(OK)
                                                            .serving(true)
                                                            .description("prod app").build())
                            .build());

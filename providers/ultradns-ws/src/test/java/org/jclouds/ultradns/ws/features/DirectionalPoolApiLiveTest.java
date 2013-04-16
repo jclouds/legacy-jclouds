@@ -28,9 +28,9 @@ import java.util.Set;
 
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ultradns.ws.domain.DirectionalPool;
-import org.jclouds.ultradns.ws.domain.DirectionalRecord;
-import org.jclouds.ultradns.ws.domain.DirectionalRecordDetail;
-import org.jclouds.ultradns.ws.domain.DirectionalRecordType;
+import org.jclouds.ultradns.ws.domain.DirectionalPool.RecordType;
+import org.jclouds.ultradns.ws.domain.DirectionalPoolRecord;
+import org.jclouds.ultradns.ws.domain.DirectionalPoolRecordDetail;
 import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.jclouds.ultradns.ws.domain.Zone;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiLiveTest;
@@ -69,8 +69,8 @@ public class DirectionalPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    private void checkDirectional(DirectionalPool pool) {
       assertNotNull(pool.getZoneId(), "ZoneId cannot be null " + pool);
       assertNotNull(pool.getId(), "Id cannot be null " + pool);
-      assertNotNull(pool.getName(), "DName cannot be null " + pool);
-      assertNotNull(pool.getDescription(), "Description cannot be null " + pool);
+      assertNotNull(pool.getDName(), "DName cannot be null " + pool);
+      assertNotNull(pool.getName(), "Name cannot be null " + pool);
       assertNotNull(pool.getType(), "Type cannot be null " + pool);
       assertNotNull(pool.getTieBreak(), "TieBreak cannot be null " + pool);
    }
@@ -81,9 +81,9 @@ public class DirectionalPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    public void testListDirectionalRecords() {
       for (Zone zone : api.getZoneApi().listByAccount(account.getId())) {
          for (DirectionalPool pool : api(zone.getName()).list()) {
-            for (DirectionalRecordType type : EnumSet.allOf(DirectionalRecordType.class)) {
-               for (DirectionalRecordDetail rr : api(zone.getName())
-                     .listRecordsByNameAndType(pool.getName(), type.getCode())) {
+            for (RecordType type : EnumSet.allOf(RecordType.class)) {
+               for (DirectionalPoolRecordDetail rr : api(zone.getName())
+                     .listRecordsByNameAndType(pool.getDName(), type.getCode())) {
                   checkDirectionalRecordDetail(rr);
                   Iterable<IdAndName> groups = Optional.presentInstances(ImmutableSet.of(rr.getGroup(),
                         rr.getGeolocationGroup(), rr.getGeolocationGroup()));
@@ -94,7 +94,7 @@ public class DirectionalPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
                      assertNotNull(group.getName(), "Name cannot be null " + group);
                   }
                   assertEquals(rr.getZoneName(), zone.getName());
-                  assertEquals(rr.getName(), pool.getName());
+                  assertEquals(rr.getName(), pool.getDName());
                   switch (pool.getType()) {
                   case GEOLOCATION:
                      assertNotNull(rr.getGeolocationGroup().or(rr.getGroup()).orNull(),
@@ -116,13 +116,13 @@ public class DirectionalPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
       }
    }
 
-   static void checkDirectionalRecord(DirectionalRecord rr) {
+   static void checkDirectionalRecord(DirectionalPoolRecord rr) {
       assertNotNull(rr.getType(), "Type cannot be null " + rr);
       assertNotNull(rr.getTTL(), "TTL cannot be null " + rr);
       assertNotNull(rr.getRData(), "InfoValues cannot be null " + rr);
    }
 
-   static void checkDirectionalRecordDetail(DirectionalRecordDetail rr) {
+   static void checkDirectionalRecordDetail(DirectionalPoolRecordDetail rr) {
       assertNotNull(rr.getZoneName(), "ZoneName cannot be null " + rr);
       assertNotNull(rr.getName(), "DName cannot be null " + rr);
       assertNotNull(rr.getId(), "Id cannot be null " + rr);
