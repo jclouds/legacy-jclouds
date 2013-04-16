@@ -51,7 +51,7 @@ public class TrafficControllerPoolHandler extends ParseSax.HandlerForGeneratedRe
       if (equalsOrSuffix(qName, "LBPoolData")) {
          pool.zoneId(attributes.get("zoneid"));
       } else if (equalsOrSuffix(qName, "PoolData")) {
-         pool.id(attributes.get("PoolId")).name(attributes.get("PoolName")).dname(attributes.get("PoolDName"));
+         pool.id(attributes.get("PoolId")).name(attributes.get("description")).dname(attributes.get("PoolDName"));
          pool.statusCode(Integer.parseInt(attributes.get("PoolStatus")));
          pool.failOverEnabled("Enabled".equalsIgnoreCase(attributes.get("FailOver")));
          pool.probingEnabled("Enabled".equalsIgnoreCase(attributes.get("Probing")));

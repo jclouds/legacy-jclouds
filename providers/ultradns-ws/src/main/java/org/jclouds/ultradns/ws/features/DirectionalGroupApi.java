@@ -36,11 +36,11 @@ import org.jclouds.ultradns.ws.binders.DirectionalGroupCoordinatesToXML;
 import org.jclouds.ultradns.ws.domain.AccountLevelGroup;
 import org.jclouds.ultradns.ws.domain.DirectionalGroup;
 import org.jclouds.ultradns.ws.domain.DirectionalGroupCoordinates;
-import org.jclouds.ultradns.ws.domain.DirectionalRecordDetail;
+import org.jclouds.ultradns.ws.domain.DirectionalPoolRecordDetail;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
 import org.jclouds.ultradns.ws.xml.AccountLevelGroupsHandler;
-import org.jclouds.ultradns.ws.xml.DirectionalGroupNameAndRegionsHandler;
-import org.jclouds.ultradns.ws.xml.DirectionalRecordDetailListHandler;
+import org.jclouds.ultradns.ws.xml.DirectionalGroupHandler;
+import org.jclouds.ultradns.ws.xml.DirectionalPoolRecordDetailListHandler;
 import org.jclouds.ultradns.ws.xml.ItemListHandler;
 
 import com.google.common.collect.FluentIterable;
@@ -63,7 +63,7 @@ public interface DirectionalGroupApi {
     */
    @Named("getDirectionalDNSGroupDetails")
    @POST
-   @XMLResponseParser(DirectionalGroupNameAndRegionsHandler.class)
+   @XMLResponseParser(DirectionalGroupHandler.class)
    @Fallback(NullOnNotFoundOr404.class)
    @Payload("<v01:getDirectionalDNSGroupDetails><GroupId>{GroupId}</GroupId></v01:getDirectionalDNSGroupDetails>")
    @Nullable
@@ -89,9 +89,9 @@ public interface DirectionalGroupApi {
     */
    @Named("getDirectionalDNSRecordsForAcctLvlGroup")
    @POST
-   @XMLResponseParser(DirectionalRecordDetailListHandler.class)
+   @XMLResponseParser(DirectionalPoolRecordDetailListHandler.class)
    @Payload("<v01:getDirectionalDNSRecordsForAcctLvlGroup><groupId>{groupId}</groupId></v01:getDirectionalDNSRecordsForAcctLvlGroup>")
-   FluentIterable<DirectionalRecordDetail> listRecordsByAccountLevelGroup(
+   FluentIterable<DirectionalPoolRecordDetail> listRecordsByAccountLevelGroup(
          @PayloadParam("groupId") String groupId) throws ResourceNotFoundException;
 
    /**
@@ -126,9 +126,9 @@ public interface DirectionalGroupApi {
     */
    @Named("getDirectionalDNSRecordsForGroup")
    @POST
-   @XMLResponseParser(DirectionalRecordDetailListHandler.class)
+   @XMLResponseParser(DirectionalPoolRecordDetailListHandler.class)
    @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
-   FluentIterable<DirectionalRecordDetail> listRecordsByGroupCoordinates(
+   FluentIterable<DirectionalPoolRecordDetail> listRecordsByGroupCoordinates(
          @BinderParam(DirectionalGroupCoordinatesToXML.class) DirectionalGroupCoordinates group)
          throws ResourceNotFoundException;
 }

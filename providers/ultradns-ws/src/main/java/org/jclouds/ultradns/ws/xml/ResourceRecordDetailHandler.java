@@ -26,7 +26,7 @@ import java.util.Map;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.ultradns.ws.domain.ResourceRecord;
-import org.jclouds.ultradns.ws.domain.ResourceRecordMetadata;
+import org.jclouds.ultradns.ws.domain.ResourceRecordDetail;
 import org.xml.sax.Attributes;
 
 import com.google.inject.Inject;
@@ -35,24 +35,24 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
-public class ResourceRecordMetadataHandler extends
-      ParseSax.HandlerForGeneratedRequestWithResult<ResourceRecordMetadata> {
+public class ResourceRecordDetailHandler extends
+      ParseSax.HandlerForGeneratedRequestWithResult<ResourceRecordDetail> {
    private final DateService dateService;
 
    @Inject
-   private ResourceRecordMetadataHandler(DateService dateService) {
+   private ResourceRecordDetailHandler(DateService dateService) {
       this.dateService = dateService;
    }
 
-   private ResourceRecordMetadata.Builder rrm = ResourceRecordMetadata.builder();
+   private ResourceRecordDetail.Builder rrm = ResourceRecordDetail.builder();
    private ResourceRecord.Builder rr = ResourceRecord.rrBuilder();
 
    @Override
-   public ResourceRecordMetadata getResult() {
+   public ResourceRecordDetail getResult() {
       try {
          return rrm.record(rr.build()).build();
       } finally {
-         rrm = ResourceRecordMetadata.builder();
+         rrm = ResourceRecordDetail.builder();
          rr = ResourceRecord.rrBuilder();
       }
    }

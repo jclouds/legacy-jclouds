@@ -18,7 +18,7 @@
  */
 package org.jclouds.ultradns.ws.parse;
 
-import static org.jclouds.ultradns.ws.domain.IdAndName.fromIdAndName;
+import static org.jclouds.ultradns.ws.domain.IdAndName.create;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
@@ -51,8 +51,8 @@ public class GetAvailableRegionsResponseTest extends BaseHandlerTest {
 
    public Multimap<IdAndName, String> expected() {
       return ImmutableMultimap.<IdAndName, String> builder()
-                         .put(fromIdAndName("14", "Anonymous Proxy (A1)"), "Anonymous Proxy")
-                         .putAll(fromIdAndName("3", "Antarctica"), ImmutableSet.<String> builder()
+                         .put(create("14", "Anonymous Proxy (A1)"), "Anonymous Proxy")
+                         .putAll(create("3", "Antarctica"), ImmutableSet.<String> builder()
                                                                                .add("Antarctica")
                                                                                .add("Bouvet Island")
                                                                                .add("French Southern Territories")

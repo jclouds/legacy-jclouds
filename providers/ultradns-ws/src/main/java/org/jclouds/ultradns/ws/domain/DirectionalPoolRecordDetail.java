@@ -28,7 +28,7 @@ import com.google.common.base.Optional;
 /**
  * @author Adrian Cole
  */
-public class DirectionalRecordDetail {
+public class DirectionalPoolRecordDetail {
 
    private final String zoneName;
    private final String name;
@@ -36,11 +36,11 @@ public class DirectionalRecordDetail {
    private final Optional<IdAndName> group;
    private final Optional<IdAndName> geolocationGroup;
    private final Optional<IdAndName> sourceIpGroup;
-   private final DirectionalRecord record;
+   private final DirectionalPoolRecord record;
 
-   private DirectionalRecordDetail(String zoneName, String name, String id,
+   private DirectionalPoolRecordDetail(String zoneName, String name, String id,
          Optional<IdAndName> group, Optional<IdAndName> geolocationGroup,
-         Optional<IdAndName> sourceIpGroup, DirectionalRecord record) {
+         Optional<IdAndName> sourceIpGroup, DirectionalPoolRecord record) {
       this.zoneName = checkNotNull(zoneName, "zoneName");
       this.name = checkNotNull(name, "name");
       this.id = checkNotNull(id, "id");
@@ -83,7 +83,7 @@ public class DirectionalRecordDetail {
       return sourceIpGroup;
    }
 
-   public DirectionalRecord getRecord() {
+   public DirectionalPoolRecord getRecord() {
       return record;
    }
 
@@ -98,7 +98,7 @@ public class DirectionalRecordDetail {
          return true;
       if (obj == null || getClass() != obj.getClass())
          return false;
-      DirectionalRecordDetail that = DirectionalRecordDetail.class.cast(obj);
+      DirectionalPoolRecordDetail that = DirectionalPoolRecordDetail.class.cast(obj);
       return equal(this.zoneName, that.zoneName) && equal(this.name, that.name) && equal(this.id, that.id);
    }
 
@@ -124,10 +124,10 @@ public class DirectionalRecordDetail {
       private Optional<IdAndName> group = Optional.absent();
       private Optional<IdAndName> geolocationGroup = Optional.absent();
       private Optional<IdAndName> sourceIpGroup = Optional.absent();
-      private DirectionalRecord record;
+      private DirectionalPoolRecord record;
 
       /**
-       * @see DirectionalRecordDetail#getZoneName()
+       * @see DirectionalPoolRecordDetail#getZoneName()
        */
       public Builder zoneName(String zoneName) {
          this.zoneName = zoneName;
@@ -135,7 +135,7 @@ public class DirectionalRecordDetail {
       }
 
       /**
-       * @see DirectionalRecordDetail#getName()
+       * @see DirectionalPoolRecordDetail#getName()
        */
       public Builder name(String name) {
          this.name = name;
@@ -143,7 +143,7 @@ public class DirectionalRecordDetail {
       }
 
       /**
-       * @see DirectionalRecordDetail#getId()
+       * @see DirectionalPoolRecordDetail#getId()
        */
       public Builder id(String id) {
          this.id = id;
@@ -151,7 +151,7 @@ public class DirectionalRecordDetail {
       }
 
       /**
-       * @see DirectionalRecordDetail#getGroup()
+       * @see DirectionalPoolRecordDetail#getGroup()
        */
       public Builder group(IdAndName group) {
          this.group = Optional.fromNullable(group);
@@ -159,7 +159,7 @@ public class DirectionalRecordDetail {
       }
 
       /**
-       * @see DirectionalRecordDetail#getGeolocationGroup()
+       * @see DirectionalPoolRecordDetail#getGeolocationGroup()
        */
       public Builder geolocationGroup(IdAndName geolocationGroup) {
          this.geolocationGroup = Optional.fromNullable(geolocationGroup);
@@ -167,7 +167,7 @@ public class DirectionalRecordDetail {
       }
 
       /**
-       * @see DirectionalRecordDetail#getSourceIpGroup()
+       * @see DirectionalPoolRecordDetail#getSourceIpGroup()
        */
       public Builder sourceIpGroup(IdAndName sourceIpGroup) {
          this.sourceIpGroup = Optional.fromNullable(sourceIpGroup);
@@ -175,26 +175,26 @@ public class DirectionalRecordDetail {
       }
 
       /**
-       * @see DirectionalRecordDetail#getRecord()
+       * @see DirectionalPoolRecordDetail#getRecord()
        */
-      public Builder record(DirectionalRecord record) {
+      public Builder record(DirectionalPoolRecord record) {
          this.record = record;
          return this;
       }
 
       /**
-       * @see DirectionalRecordDetail#getRecord()
+       * @see DirectionalPoolRecordDetail#getRecord()
        */
-      public Builder record(DirectionalRecord.Builder record) {
+      public Builder record(DirectionalPoolRecord.Builder record) {
          this.record = record.build();
          return this;
       }
 
-      public DirectionalRecordDetail build() {
-         return new DirectionalRecordDetail(zoneName, name, id, group, geolocationGroup, sourceIpGroup, record);
+      public DirectionalPoolRecordDetail build() {
+         return new DirectionalPoolRecordDetail(zoneName, name, id, group, geolocationGroup, sourceIpGroup, record);
       }
 
-      public Builder from(DirectionalRecordDetail in) {
+      public Builder from(DirectionalPoolRecordDetail in) {
          return this.zoneName(in.zoneName).name(in.name).id(in.id).group(in.group.orNull())
                .geolocationGroup(in.geolocationGroup.orNull()).sourceIpGroup(in.sourceIpGroup.orNull())
                .record(in.record);

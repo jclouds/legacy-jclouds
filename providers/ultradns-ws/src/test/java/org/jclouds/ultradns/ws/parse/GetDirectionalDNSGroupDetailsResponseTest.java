@@ -24,7 +24,7 @@ import java.io.InputStream;
 
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.ultradns.ws.domain.DirectionalGroup;
-import org.jclouds.ultradns.ws.xml.DirectionalGroupNameAndRegionsHandler;
+import org.jclouds.ultradns.ws.xml.DirectionalGroupHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -40,7 +40,7 @@ public class GetDirectionalDNSGroupDetailsResponseTest extends BaseHandlerTest {
 
       DirectionalGroup expected = expected();
 
-      DirectionalGroupNameAndRegionsHandler handler = injector.getInstance(DirectionalGroupNameAndRegionsHandler.class);
+      DirectionalGroupHandler handler = injector.getInstance(DirectionalGroupHandler.class);
       DirectionalGroup result = factory.create(handler).parse(is);
 
       assertEquals(result.toString(), expected.toString());
@@ -52,8 +52,9 @@ public class GetDirectionalDNSGroupDetailsResponseTest extends BaseHandlerTest {
                              .mapRegionToTerritory("Anonymous Proxy (A1)", "Anonymous Proxy")
                              .mapRegionToTerritory("Mexico", "Mexico")
                              .mapRegionToTerritories("Antarctica", ImmutableList.<String> builder()
+                                                                   .add("Antarctica")
                                                                    .add("Bouvet Island")
                                                                    .add("French Southern Territories")
-                                                                   .add("Antarctica").build()).build();
+                                                                   .build()).build();
    }
 }
