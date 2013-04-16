@@ -32,16 +32,16 @@ public final class DirectionalPool {
 
    private final String zoneId;
    private final String id;
-   private final Optional<String> description;
+   private final Optional<String> name;
    private final String dname;
    private final Type type;
    private final TieBreak tieBreak;
 
-   private DirectionalPool(String zoneId, String id, Optional<String> description, String dname, Type type,
+   private DirectionalPool(String zoneId, String id, Optional<String> name, String dname, Type type,
          TieBreak tieBreak) {
       this.zoneId = checkNotNull(zoneId, "zoneId");
       this.id = checkNotNull(id, "id");
-      this.description = checkNotNull(description, "description for %s", id);
+      this.name = checkNotNull(name, "name for %s", id);
       this.dname = checkNotNull(dname, "dname for %s", id);
       this.type = type;
       this.tieBreak = tieBreak;
@@ -58,15 +58,15 @@ public final class DirectionalPool {
    /**
     * The dname of the pool. ex. {@code jclouds.org.}
     */
-   public String getName() {
+   public String getDName() {
       return dname;
    }
 
    /**
-    * The description of the pool. ex. {@code My Pool}
+    * The name of the pool. ex. {@code My Pool}
     */
-   public Optional<String> getDescription() {
-      return description;
+   public Optional<String> getName() {
+      return name;
    }
 
    public Type getType() {
@@ -86,13 +86,66 @@ public final class DirectionalPool {
       GEOLOCATION, SOURCEIP, MIXED;
    }
 
+   /**
+    * currently supported {@link ResourceRecord#getType() types} for directional
+    * groups.
+    * 
+    */
+   public static enum RecordType {
+      // A/CNAME
+      IPV4(1),
+
+      // AAAA/CNAME
+      IPV6(28),
+
+      TXT(16),
+
+      SRV(33),
+
+      PTR(12),
+
+      RP(17),
+
+      HINFO(13),
+
+      NAPTR(35),
+
+      MX(15);
+
+      @Override
+      public String toString() {
+         switch (this) {
+         case IPV4:
+            return "A";
+         case IPV6:
+            return "AAAA";
+         default:
+            return super.toString();
+         }
+      }
+
+      private final int code;
+
+      private RecordType(int code) {
+         this.code = code;
+      }
+
+      /**
+       * The {@link ResourceRecord#getType() type} that can be used in
+       * directional groups.
+       */
+      public int getCode() {
+         return code;
+      }
+   }
+
    public static enum TieBreak {
       GEOLOCATION, SOURCEIP;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(zoneId, id, description, dname);
+      return Objects.hashCode(zoneId, id, name, dname);
    }
 
    @Override
@@ -105,13 +158,13 @@ public final class DirectionalPool {
          return false;
       DirectionalPool that = DirectionalPool.class.cast(obj);
       return Objects.equal(this.zoneId, that.zoneId) && Objects.equal(this.id, that.id)
-            && Objects.equal(this.description, that.description) && Objects.equal(this.dname, that.dname);
+            && Objects.equal(this.name, that.name) && Objects.equal(this.dname, that.dname);
    }
 
    @Override
    public String toString() {
-      return Objects.toStringHelper(this).omitNullValues().add("zoneId", zoneId).add("id", id).add("name", dname)
-            .add("description", description.orNull()).add("type", type).add("tieBreak", tieBreak).toString();
+      return Objects.toStringHelper(this).omitNullValues().add("zoneId", zoneId).add("id", id).add("dname", dname)
+            .add("name", name.orNull()).add("type", type).add("tieBreak", tieBreak).toString();
    }
 
    public static Builder builder() {
@@ -125,7 +178,7 @@ public final class DirectionalPool {
    public final static class Builder {
       private String zoneId;
       private String id;
-      private Optional<String> description = Optional.absent();
+      private Optional<String> name = Optional.absent();
       private String dname;
       private Type type = Type.GEOLOCATION;
       private TieBreak tieBreak = TieBreak.GEOLOCATION;
@@ -147,18 +200,18 @@ public final class DirectionalPool {
       }
 
       /**
-       * @see DirectionalPool#getName()
+       * @see DirectionalPool#getDName()
        */
-      public Builder name(String dname) {
+      public Builder dname(String dname) {
          this.dname = dname;
          return this;
       }
 
       /**
-       * @see DirectionalPool#getDescription()
+       * @see DirectionalPool#getName()
        */
-      public Builder description(String description) {
-         this.description = Optional.fromNullable(description);
+      public Builder name(String name) {
+         this.name = Optional.fromNullable(name);
          return this;
       }
 
@@ -179,11 +232,11 @@ public final class DirectionalPool {
       }
 
       public DirectionalPool build() {
-         return new DirectionalPool(zoneId, id, description, dname, type, tieBreak);
+         return new DirectionalPool(zoneId, id, name, dname, type, tieBreak);
       }
 
       public Builder from(DirectionalPool in) {
-         return this.zoneId(in.zoneId).id(in.id).description(in.description.orNull()).name(in.dname).type(in.type)
+         return this.zoneId(in.zoneId).id(in.id).name(in.name.orNull()).dname(in.dname).type(in.type)
                .tieBreak(in.tieBreak);
       }
    }

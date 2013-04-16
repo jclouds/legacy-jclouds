@@ -26,13 +26,13 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.jclouds.ultradns.ws.domain.AccountLevelGroup;
-import org.jclouds.ultradns.ws.domain.DirectionalGroupCoordinates;
 import org.jclouds.ultradns.ws.domain.DirectionalGroup;
+import org.jclouds.ultradns.ws.domain.DirectionalGroupCoordinates;
 import org.jclouds.ultradns.ws.domain.DirectionalPool;
-import org.jclouds.ultradns.ws.domain.DirectionalRecordDetail;
-import org.jclouds.ultradns.ws.domain.DirectionalRecordType;
+import org.jclouds.ultradns.ws.domain.DirectionalPool.RecordType;
+import org.jclouds.ultradns.ws.domain.DirectionalPoolRecordDetail;
+import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.jclouds.ultradns.ws.domain.Zone;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiLiveTest;
 import org.testng.annotations.BeforeClass;
@@ -72,7 +72,7 @@ public class DirectionalGroupApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    @Test
    public void testListRecordsByAccountLevelGroup() {
       for (AccountLevelGroup group : api().listAccountLevelGroups()) {
-         for (DirectionalRecordDetail rr : api().listRecordsByAccountLevelGroup(group.getId())) {
+         for (DirectionalPoolRecordDetail rr : api().listRecordsByAccountLevelGroup(group.getId())) {
             DirectionalPoolApiLiveTest.checkDirectionalRecordDetail(rr);
          }
       }
@@ -93,11 +93,11 @@ public class DirectionalGroupApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    public void testListGroupNamesByRecordNameAndType() {
       for (Zone zone : api.getZoneApi().listByAccount(account.getId())) {
          for (DirectionalPool pool : api.getDirectionalPoolApiForZone(zone.getName()).list()) {
-            for (DirectionalRecordType type : EnumSet.allOf(DirectionalRecordType.class)) {
-               for (String groupName : api().listGroupNamesByRecordNameAndType(pool.getName(), type.getCode())) {
+            for (RecordType type : EnumSet.allOf(RecordType.class)) {
+               for (String groupName : api().listGroupNamesByRecordNameAndType(pool.getDName(), type.getCode())) {
                   allGroups.add(DirectionalGroupCoordinates.builder()
                                                            .zoneName(zone.getName())
-                                                           .recordName(pool.getName())
+                                                           .recordName(pool.getDName())
                                                            .recordType(type.getCode())
                                                            .groupName(groupName).build());
                }
@@ -109,7 +109,7 @@ public class DirectionalGroupApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    @Test(dependsOnMethods = "testListGroupNamesByRecordNameAndType")
    public void testListRecordsByGroupCoordinates() {
       for (DirectionalGroupCoordinates group : allGroups) {
-         for (DirectionalRecordDetail rr : api().listRecordsByGroupCoordinates(group)) {
+         for (DirectionalPoolRecordDetail rr : api().listRecordsByGroupCoordinates(group)) {
             DirectionalPoolApiLiveTest.checkDirectionalRecordDetail(rr);
          }
       }

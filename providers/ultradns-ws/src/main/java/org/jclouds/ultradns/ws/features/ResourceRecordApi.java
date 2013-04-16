@@ -33,7 +33,7 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
 import org.jclouds.ultradns.ws.binders.ZoneAndResourceRecordToXML;
 import org.jclouds.ultradns.ws.domain.ResourceRecord;
-import org.jclouds.ultradns.ws.domain.ResourceRecordMetadata;
+import org.jclouds.ultradns.ws.domain.ResourceRecordDetail;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
 import org.jclouds.ultradns.ws.xml.ElementTextHandler;
 import org.jclouds.ultradns.ws.xml.ResourceRecordListHandler;
@@ -92,7 +92,7 @@ public interface ResourceRecordApi {
    @POST
    @XMLResponseParser(ResourceRecordListHandler.class)
    @Payload("<v01:getResourceRecordsOfZone><zoneName>{zoneName}</zoneName><rrType>0</rrType></v01:getResourceRecordsOfZone>")
-   FluentIterable<ResourceRecordMetadata> list() throws ResourceNotFoundException;
+   FluentIterable<ResourceRecordDetail> list() throws ResourceNotFoundException;
 
    /**
     * Returns all the specified record types in the zone with the fully
@@ -107,7 +107,7 @@ public interface ResourceRecordApi {
    @POST
    @XMLResponseParser(ResourceRecordListHandler.class)
    @Payload("<v01:getResourceRecordsOfDNameByType><zoneName>{zoneName}</zoneName><hostName>{hostName}</hostName><rrType>0</rrType></v01:getResourceRecordsOfDNameByType>")
-   FluentIterable<ResourceRecordMetadata> listByName(@PayloadParam("hostName") String hostName)
+   FluentIterable<ResourceRecordDetail> listByName(@PayloadParam("hostName") String hostName)
          throws ResourceNotFoundException;
 
    /**
@@ -126,7 +126,7 @@ public interface ResourceRecordApi {
    @POST
    @XMLResponseParser(ResourceRecordListHandler.class)
    @Payload("<v01:getResourceRecordsOfDNameByType><zoneName>{zoneName}</zoneName><hostName>{hostName}</hostName><rrType>{rrType}</rrType></v01:getResourceRecordsOfDNameByType>")
-   FluentIterable<ResourceRecordMetadata> listByNameAndType(
+   FluentIterable<ResourceRecordDetail> listByNameAndType(
          @PayloadParam("hostName") String hostName, @PayloadParam("rrType") int rrType)
          throws ResourceNotFoundException;
 

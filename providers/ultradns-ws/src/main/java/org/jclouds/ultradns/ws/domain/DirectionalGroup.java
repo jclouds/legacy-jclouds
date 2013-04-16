@@ -135,6 +135,16 @@ public class DirectionalGroup extends ForwardingMultimap<String, String> {
       }
 
       /**
+       * adds to current regionToTerritories
+       * 
+       * @see DirectionalGroup#getRegionToTerritories()
+       */
+      public Builder mapRegion(String region) {
+         this.regionToTerritories.put(region, "all");
+         return this;
+      }
+
+      /**
        * replaces current regionToTerritories
        * 
        * @see DirectionalGroup#getRegionToTerritories()

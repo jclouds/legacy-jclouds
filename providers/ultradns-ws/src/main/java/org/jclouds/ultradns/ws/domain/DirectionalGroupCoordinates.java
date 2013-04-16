@@ -44,23 +44,23 @@ public class DirectionalGroupCoordinates {
    }
 
    /**
-    * the {@link DirectionalRecordDetail#getZoneName() name} of the zone.
+    * the {@link DirectionalPoolRecordDetail#getZoneName() name} of the zone.
     */
    public String getZoneName() {
       return zoneName;
    }
 
    /**
-    * the {@link DirectionalRecordDetail#getName() dname} of the record.
+    * the {@link DirectionalPoolRecordDetail#getName() dname} of the record.
     */
    public String getRecordName() {
       return recordName;
    }
 
    /**
-    * the {@link DirectionalRecord#getType() recordType} of the record.
+    * the {@link DirectionalPoolRecord#getType() recordType} of the record.
     * 
-    * @see DirectionalRecordDetail#getRecord()
+    * @see DirectionalPoolRecordDetail#getRecord()
     */
    public int getRecordType() {
       return recordType;
@@ -69,9 +69,9 @@ public class DirectionalGroupCoordinates {
    /**
     * the {@link DirectionalGroup#getName() name} of the directional group.
     * 
-    * @see DirectionalRecordDetail#getGroup()
-    * @see DirectionalRecordDetail#getGeolocationGroup()
-    * @see DirectionalRecordDetail#getSourceIpGroup()
+    * @see DirectionalPoolRecordDetail#getGroup()
+    * @see DirectionalPoolRecordDetail#getGeolocationGroup()
+    * @see DirectionalPoolRecordDetail#getSourceIpGroup()
     */
    public String getGroupName() {
       return groupName;

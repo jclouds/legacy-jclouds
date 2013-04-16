@@ -48,7 +48,7 @@ public class AccountHandler extends ParseSax.HandlerForGeneratedRequestWithResul
    public void startElement(String uri, String localName, String qName, Attributes attrs) {
       Map<String, String> attributes = cleanseAttributes(attrs);
       if (equalsOrSuffix(qName, "AccountDetailsData")) {
-         account = IdAndName.fromIdAndName(attributes.get("accountID"), attributes.get("accountName"));
+         account = IdAndName.create(attributes.get("accountID"), attributes.get("accountName"));
       }
    }
 }

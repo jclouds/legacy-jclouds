@@ -51,7 +51,7 @@ public class RoundRobinPoolHandler extends ParseSax.HandlerForGeneratedRequestWi
       if (equalsOrSuffix(qName, "LBPoolData")) {
          pool.zoneId(attributes.get("zoneid"));
       } else if (equalsOrSuffix(qName, "PoolData")) {
-         pool.id(attributes.get("PoolId")).name(attributes.get("PoolName")).dname(attributes.get("PoolDName"));
+         pool.id(attributes.get("PoolId")).name(attributes.get("description")).dname(attributes.get("PoolDName"));
       }
    }
 }

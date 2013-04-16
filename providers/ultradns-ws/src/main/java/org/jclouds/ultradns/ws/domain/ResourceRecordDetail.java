@@ -30,7 +30,7 @@ import com.google.common.base.Objects;
  * 
  * @author Adrian Cole
  */
-public class ResourceRecordMetadata {
+public class ResourceRecordDetail {
 
    private final String zoneId;
    private final String guid;
@@ -39,7 +39,7 @@ public class ResourceRecordMetadata {
    private final Date modified;
    private final ResourceRecord record;
 
-   private ResourceRecordMetadata(String zoneId, String guid, String zoneName, Date created, Date modified,
+   private ResourceRecordDetail(String zoneId, String guid, String zoneName, Date created, Date modified,
          ResourceRecord record) {
       this.zoneId = checkNotNull(zoneId, "zoneId");
       this.guid = checkNotNull(guid, "guid");
@@ -87,7 +87,7 @@ public class ResourceRecordMetadata {
          return true;
       if (obj == null || getClass() != obj.getClass())
          return false;
-      ResourceRecordMetadata that = ResourceRecordMetadata.class.cast(obj);
+      ResourceRecordDetail that = ResourceRecordDetail.class.cast(obj);
       return equal(this.zoneId, that.zoneId) && equal(this.guid, that.guid);
    }
 
@@ -114,7 +114,7 @@ public class ResourceRecordMetadata {
       private ResourceRecord record;
 
       /**
-       * @see ResourceRecordMetadata#getZoneName()
+       * @see ResourceRecordDetail#getZoneName()
        */
       public Builder zoneName(String zoneName) {
          this.zoneName = zoneName;
@@ -122,7 +122,7 @@ public class ResourceRecordMetadata {
       }
 
       /**
-       * @see ResourceRecordMetadata#getGuid()
+       * @see ResourceRecordDetail#getGuid()
        */
       public Builder guid(String guid) {
          this.guid = guid;
@@ -130,7 +130,7 @@ public class ResourceRecordMetadata {
       }
 
       /**
-       * @see ResourceRecordMetadata#getZoneId()
+       * @see ResourceRecordDetail#getZoneId()
        */
       public Builder zoneId(String zoneId) {
          this.zoneId = zoneId;
@@ -138,7 +138,7 @@ public class ResourceRecordMetadata {
       }
 
       /**
-       * @see ResourceRecordMetadata#getCreated()
+       * @see ResourceRecordDetail#getCreated()
        */
       public Builder created(Date created) {
          this.created = created;
@@ -146,7 +146,7 @@ public class ResourceRecordMetadata {
       }
 
       /**
-       * @see ResourceRecordMetadata#getModified()
+       * @see ResourceRecordDetail#getModified()
        */
       public Builder modified(Date modified) {
          this.modified = modified;
@@ -154,7 +154,7 @@ public class ResourceRecordMetadata {
       }
 
       /**
-       * @see ResourceRecordMetadata#getRecord()
+       * @see ResourceRecordDetail#getRecord()
        */
       public Builder record(ResourceRecord record) {
          this.record = record;
@@ -162,18 +162,18 @@ public class ResourceRecordMetadata {
       }
 
       /**
-       * @see ResourceRecordMetadata#getRecord()
+       * @see ResourceRecordDetail#getRecord()
        */
       public Builder record(ResourceRecord.Builder record) {
          this.record = record.build();
          return this;
       }
 
-      public ResourceRecordMetadata build() {
-         return new ResourceRecordMetadata(zoneId, guid, zoneName, created, modified, record);
+      public ResourceRecordDetail build() {
+         return new ResourceRecordDetail(zoneId, guid, zoneName, created, modified, record);
       }
 
-      public Builder from(ResourceRecordMetadata in) {
+      public Builder from(ResourceRecordDetail in) {
          return this.zoneName(in.zoneName).guid(in.guid).zoneId(in.zoneId).created(in.created).modified(in.modified)
                .record(in.record);
       }

@@ -20,23 +20,23 @@ package org.jclouds.ultradns.ws.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
-import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecordDetail;
+import org.jclouds.ultradns.ws.domain.DirectionalPool;
+import org.jclouds.ultradns.ws.domain.DirectionalPoolRecordDetail;
 
 import com.google.common.base.Predicate;
 
 /**
- * Predicates handy when working with TrafficControllerPool Types
+ * Predicates handy when working with DirectionalPool Types
  * 
  * @author Adrian Cole
  */
-public class TrafficControllerPoolPredicates {
+public class DirectionalPoolPredicates {
 
-   public static Predicate<TrafficControllerPool> idEqualTo(String id) {
+   public static Predicate<DirectionalPool> idEqualTo(String id) {
       return new IdEqualToPredicate(id);
    }
 
-   private static final class IdEqualToPredicate implements Predicate<TrafficControllerPool> {
+   private static final class IdEqualToPredicate implements Predicate<DirectionalPool> {
       private final String id;
 
       public IdEqualToPredicate(String id) {
@@ -44,7 +44,7 @@ public class TrafficControllerPoolPredicates {
       }
 
       @Override
-      public boolean apply(TrafficControllerPool input) {
+      public boolean apply(DirectionalPool input) {
          return input != null && id.equals(input.getId());
       }
 
@@ -54,11 +54,11 @@ public class TrafficControllerPoolPredicates {
       }
    }
 
-   public static Predicate<TrafficControllerPoolRecordDetail> recordIdEqualTo(String recordId) {
+   public static Predicate<DirectionalPoolRecordDetail> recordIdEqualTo(String recordId) {
       return new RecordIdEqualToPredicate(recordId);
    }
 
-   private static final class RecordIdEqualToPredicate implements Predicate<TrafficControllerPoolRecordDetail> {
+   private static final class RecordIdEqualToPredicate implements Predicate<DirectionalPoolRecordDetail> {
       private final String recordId;
 
       public RecordIdEqualToPredicate(String recordId) {
@@ -66,7 +66,7 @@ public class TrafficControllerPoolPredicates {
       }
 
       @Override
-      public boolean apply(TrafficControllerPoolRecordDetail input) {
+      public boolean apply(DirectionalPoolRecordDetail input) {
          return input != null && recordId.equals(input.getId());
       }
 

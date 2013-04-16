@@ -31,7 +31,7 @@ import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
 import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.jclouds.ultradns.ws.domain.ResourceRecord;
-import org.jclouds.ultradns.ws.domain.ResourceRecordMetadata;
+import org.jclouds.ultradns.ws.domain.ResourceRecordDetail;
 import org.jclouds.ultradns.ws.domain.RoundRobinPool;
 import org.jclouds.ultradns.ws.domain.Zone;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiLiveTest;
@@ -81,7 +81,7 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    public void testListRRPoolRecords() {
       for (Zone zone : api.getZoneApi().listByAccount(account.getId())) {
          for (RoundRobinPool pool : api(zone.getName()).list()) {
-            for (ResourceRecordMetadata record : api(zone.getName()).listRecords(pool.getId())) {
+            for (ResourceRecordDetail record : api(zone.getName()).listRecords(pool.getId())) {
                ResourceRecordApiLiveTest.checkResourceRecordMetadata(record);
             }
          }
@@ -98,15 +98,15 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
       api(zoneName).delete("06063D9C54C5AE09");
    }
 
-   String hostname = "www.rrpool." + zoneName;
+   String dname = "www.rrpool." + zoneName;
    String aPoolId;
 
    @Test
    public void testCreateAPool() {
-      aPoolId = api(zoneName).createAPoolForHostname("A pool", hostname);
+      aPoolId = api(zoneName).createAPoolForDName("A pool", dname);
       getAnonymousLogger().info("created A rr pool: " + aPoolId);
       try {
-         api(zoneName).createAPoolForHostname("A pool", hostname);
+         api(zoneName).createAPoolForDName("A pool", dname);
          fail();
       } catch (ResourceAlreadyExistsException e) {
 
@@ -114,7 +114,7 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
       Optional<RoundRobinPool> aPool = getPoolById(aPoolId);
       assertTrue(aPool.isPresent());
       assertEquals(aPool.get().getName(), "A pool");
-      assertEquals(aPool.get().getDName(), hostname);
+      assertEquals(aPool.get().getDName(), dname);
    }
 
    String aRecord1;
@@ -127,12 +127,12 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
       getAnonymousLogger().info("created A record: " + aRecord1);
 
       assertTrue(listRRs(aPoolId).anyMatch(
-            equalTo(rrBuilder().name(hostname).type(1).ttl(1).rdata("1.2.3.4").build())));
+            equalTo(rrBuilder().name(dname).type(1).ttl(1).rdata("1.2.3.4").build())));
 
       aRecord2 = api(zoneName).addARecordWithAddressAndTTL(aPoolId, "3.4.5.6", 1);
 
       assertTrue(listRRs(aPoolId).anyMatch(
-            equalTo(rrBuilder().name(hostname).type(1).ttl(1).rdata("3.4.5.6").build())));
+            equalTo(rrBuilder().name(dname).type(1).ttl(1).rdata("3.4.5.6").build())));
 
       getAnonymousLogger().info("created A record: " + aRecord1);
       try {
@@ -147,17 +147,17 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
    public void testUpdateRecord() {
       api(zoneName).updateRecordWithAddressAndTTL(aPoolId, aRecord1, "1.1.1.1", 0);
       assertTrue(listRRs(aPoolId).anyMatch(
-            equalTo(rrBuilder().name(hostname).type(1).ttl(0).rdata("1.1.1.1").build())));
+            equalTo(rrBuilder().name(dname).type(1).ttl(0).rdata("1.1.1.1").build())));
    }
 
    @Test(dependsOnMethods = "testUpdateRecord")
    public void testDeleteRecord() {
       api(zoneName).deleteRecord(aRecord2);
       assertTrue(listRRs(aPoolId).anyMatch(
-            equalTo(rrBuilder().name(hostname).type(1).ttl(0).rdata("1.1.1.1").build())));
+            equalTo(rrBuilder().name(dname).type(1).ttl(0).rdata("1.1.1.1").build())));
 
       assertFalse(listRRs(aPoolId).anyMatch(
-            equalTo(rrBuilder().name(hostname).type(1).ttl(1).rdata("3.4.5.6").build())));
+            equalTo(rrBuilder().name(dname).type(1).ttl(1).rdata("3.4.5.6").build())));
    }
 
    @Test(dependsOnMethods = "testDeleteRecord")
@@ -170,10 +170,10 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
    @Test
    public void testCreateAAAAPool() {
-      aaaaPoolId = api(zoneName).createAAAAPoolForHostname("AAAA pool", hostname);
+      aaaaPoolId = api(zoneName).createAAAAPoolForDName("AAAA pool", dname);
       getAnonymousLogger().info("created AAAA rr pool: " + aaaaPoolId);
       try {
-         api(zoneName).createAAAAPoolForHostname("AAAA pool", hostname);
+         api(zoneName).createAAAAPoolForDName("AAAA pool", dname);
          fail();
       } catch (ResourceAlreadyExistsException e) {
 
@@ -181,7 +181,7 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
       Optional<RoundRobinPool> aPool = getPoolById(aaaaPoolId);
       assertTrue(aPool.isPresent());
       assertEquals(aPool.get().getName(), "AAAA pool");
-      assertEquals(aPool.get().getDName(), hostname);
+      assertEquals(aPool.get().getDName(), dname);
    }
 
    String aaaaRecord1;
@@ -195,7 +195,7 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
       getAnonymousLogger().info("created AAAA record: " + aaaaRecord1);
 
       assertTrue(listRRs(aaaaPoolId).anyMatch(
-            equalTo(rrBuilder().name(hostname)
+            equalTo(rrBuilder().name(dname)
                                .type(28)
                                .ttl(1)
                                .rdata("2001:0DB8:85A3:0000:0000:8A2E:0370:7334")
@@ -205,7 +205,7 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
             1);
 
       assertTrue(listRRs(aaaaPoolId).anyMatch(
-            equalTo(rrBuilder().name(hostname)
+            equalTo(rrBuilder().name(dname)
                                .type(28)
                                .ttl(1)
                                .rdata("2002:0DB8:85A3:0000:0000:8A2E:0370:7334")

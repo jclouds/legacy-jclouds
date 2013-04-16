@@ -43,7 +43,7 @@ public class UpdatePoolRecordToXML implements MapBinder {
 
       UpdatePoolRecord update = UpdatePoolRecord.class.cast(postParams.get("update"));
 
-      xml.append("<pointsTo>").append(update.getPointsTo()).append("</pointsTo>");
+      xml.append("<pointsTo>").append(update.getRData()).append("</pointsTo>");
       xml.append("<priority>").append(update.getPriority()).append("</priority>");
       xml.append("<failOverDelay>").append(update.getFailOverDelay()).append("</failOverDelay>");
       xml.append("<ttl>").append(update.getTTL()).append("</ttl>");
