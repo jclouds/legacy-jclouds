@@ -108,7 +108,7 @@ public final class HostedZone {
       return builder().from(this);
    }
 
-   public final static class Builder {
+   public static final class Builder {
       private String id;
       private String name;
       private String callerReference;

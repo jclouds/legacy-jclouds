@@ -145,7 +145,7 @@ public class SOAData extends ForwardingMap<String, Object> {
       return builder().from(this);
    }
 
-   public final static class Builder {
+   public static final class Builder {
       private String mname;
       private String rname;
       private int serial = -1;

@@ -146,7 +146,7 @@ public final class UpdatePoolRecord {
       return new Builder().from(this);
    }
 
-   public final static class Builder {
+   public static final class Builder {
       private String rdata;
       private String mode;
       private int priority;

@@ -113,7 +113,7 @@ public class WithSubmissionTrace {
       }
    }
 
-   private final static Set<String> stackTracesToTrim = ImmutableSet.of(WithSubmissionTrace.class.getName(),
+   private static final Set<String> stackTracesToTrim = ImmutableSet.of(WithSubmissionTrace.class.getName(),
          ListeningExecutorService.class.getName(), ListenableFuture.class.getName(),
          ListeningScheduledExecutorService.class.getName(), ScheduledFuture.class.getName());
 

@@ -89,7 +89,7 @@ public class MXData extends ForwardingMap<String, Object> {
       return builder().from(this);
    }
 
-   public final static class Builder {
+   public static final class Builder {
       private int preference = -1;
       private String exchange;
 

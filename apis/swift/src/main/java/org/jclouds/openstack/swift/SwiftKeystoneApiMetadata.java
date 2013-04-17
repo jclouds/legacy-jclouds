@@ -75,7 +75,7 @@ public class SwiftKeystoneApiMetadata extends SwiftApiMetadata {
       return properties;
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends SwiftApiMetadata.Builder<T> {
+   public abstract static class Builder<T extends Builder<T>> extends SwiftApiMetadata.Builder<T> {
       protected Builder() {
          this(SwiftKeystoneClient.class, SwiftKeystoneAsyncClient.class);
       }

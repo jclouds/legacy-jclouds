@@ -225,8 +225,8 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
       ListenableFuture<BoundedSet<? extends DirectoryEntry>> returnVal = async.listDirectory(container, nativeOptions);
       ListenableFuture<PageSet<? extends StorageMetadata>> list = transform(returnVal, container2ResourceList,
             userExecutor);
-      return (options.isDetailed() ? transform(list,
-               fetchBlobMetadataProvider.get().setContainerName(container)) : list);
+      return options.isDetailed() ? transform(list,
+               fetchBlobMetadataProvider.get().setContainerName(container)) : list;
    }
 
    /**
