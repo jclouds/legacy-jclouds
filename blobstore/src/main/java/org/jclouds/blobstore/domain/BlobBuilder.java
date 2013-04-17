@@ -27,6 +27,7 @@ import java.util.Map;
 import org.jclouds.blobstore.domain.internal.BlobBuilderImpl;
 import org.jclouds.io.Payload;
 
+import com.google.common.net.MediaType;
 import com.google.inject.ImplementedBy;
 
 /**
@@ -108,6 +109,8 @@ public interface BlobBuilder {
       PayloadBlobBuilder contentLength(long contentLength);
 
       PayloadBlobBuilder contentMD5(byte[] md5);
+
+      PayloadBlobBuilder contentType(MediaType contentType);
 
       PayloadBlobBuilder contentType(String contentType);
 
