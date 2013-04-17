@@ -199,7 +199,7 @@ public class NamingStrategies {
    /**
     * Determines field naming from constructor annotations
     */
-   public final static class AnnotationConstructorNamingStrategy extends AnnotationBasedNamingStrategy {
+   public static final class AnnotationConstructorNamingStrategy extends AnnotationBasedNamingStrategy {
       private final Predicate<Invokable<?, ?>> hasMarker;
       private final Collection<? extends Class<? extends Annotation>> markers;
 

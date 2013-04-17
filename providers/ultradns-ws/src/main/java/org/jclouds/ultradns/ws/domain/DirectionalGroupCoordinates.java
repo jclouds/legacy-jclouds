@@ -107,7 +107,7 @@ public class DirectionalGroupCoordinates {
       return builder().from(this);
    }
 
-   public final static class Builder {
+   public static final class Builder {
       private String zoneName;
       private String recordName;
       private int recordType = -1;

@@ -156,7 +156,7 @@ public final class Zone {
       return builder().from(this);
    }
 
-   public final static class Builder {
+   public static final class Builder {
       private String fqdn;
       private Type type;
       private int serial;

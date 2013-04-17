@@ -572,8 +572,8 @@ public class RestAnnotationProcessor implements Function<Invocation, HttpRequest
    }
 
    private boolean shouldAddHostHeader(Invocation invocation) {
-      return (invocation.getInvokable().getOwnerType().getRawType().isAnnotationPresent(VirtualHost.class) || invocation
-            .getInvokable().isAnnotationPresent(VirtualHost.class));
+      return invocation.getInvokable().getOwnerType().getRawType().isAnnotationPresent(VirtualHost.class) || invocation
+            .getInvokable().isAnnotationPresent(VirtualHost.class);
    }
 
    private GeneratedHttpRequest decorateRequest(GeneratedHttpRequest request) throws NegativeArraySizeException {

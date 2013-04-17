@@ -41,7 +41,7 @@ import com.google.common.reflect.Invokable;
 @Test(testName = "Arg0ToPagedIterableTest")
 public class Arg0ToPagedIterableTest {
 
-   private static abstract class TestArg0 extends Arg0ToPagedIterable<String, TestArg0> {
+   private abstract static class TestArg0 extends Arg0ToPagedIterable<String, TestArg0> {
       private TestArg0(GeneratedHttpRequest in) {
          this.setContext(in);
       }
@@ -112,7 +112,7 @@ public class Arg0ToPagedIterableTest {
       }
    }
 
-   private static abstract class TestCallerArg0 extends Arg0ToPagedIterable.FromCaller<String, TestCallerArg0> {
+   private abstract static class TestCallerArg0 extends Arg0ToPagedIterable.FromCaller<String, TestCallerArg0> {
       private TestCallerArg0(GeneratedHttpRequest in) {
          this.setContext(in);
       }

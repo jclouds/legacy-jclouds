@@ -37,7 +37,7 @@ public final class UserAndSessionCredentials {
       return builder().from(this);
    }
 
-   public final static class Builder {
+   public static final class Builder {
       private User user;
       private SessionCredentials credentials;
       private int packedPolicySize;
