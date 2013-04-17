@@ -105,7 +105,7 @@ public class ResourceRecordDetail {
       return builder().from(this);
    }
 
-   public final static class Builder {
+   public static final class Builder {
       private String zoneId;
       private String guid;
       private String zoneName;

@@ -106,7 +106,7 @@ public final class CreatePrimaryZone {
       return builder().from(this);
    }
 
-   public final static class Builder {
+   public static final class Builder {
       private String fqdn;
       private String contact;
       private int defaultTTL = 3600;

@@ -306,8 +306,8 @@ public class Reflection2 {
          return false;
       }
       String packageName = clazzPackage.getName();
-      return (packageName.startsWith("com.sun.") || packageName.startsWith("java.")
-              || packageName.startsWith("javax.") || packageName.startsWith("sun."));
+      return packageName.startsWith("com.sun.") || packageName.startsWith("java.")
+              || packageName.startsWith("javax.") || packageName.startsWith("sun.");
    }
 
    /**

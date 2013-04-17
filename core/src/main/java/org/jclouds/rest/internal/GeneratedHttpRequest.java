@@ -45,7 +45,7 @@ public final class GeneratedHttpRequest extends HttpRequest {
       return new Builder().fromGeneratedHttpRequest(this);
    }
 
-   public final static class Builder extends HttpRequest.Builder<Builder> {
+   public static final class Builder extends HttpRequest.Builder<Builder> {
       private Invocation invocation;
       private Optional<Invocation> caller = Optional.absent();
 

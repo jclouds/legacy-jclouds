@@ -10,7 +10,6 @@
     <module name="TreeWalker">
         <module name="AvoidStarImport"/>
         <module name="EmptyStatement"/>
-        <module name="IllegalThrows"/>
 <!--
         jclouds prefers 120 character line lengths but has many files with
         longer lines
@@ -23,10 +22,6 @@
         <module name="MultipleVariableDeclarations"/>
         <module name="SimplifyBooleanExpression"/>
         <module name="UnnecessaryParentheses"/>
-        <module name="UnusedImports"/>
-        <module name="InterfaceIsType">
-            <property name="allowMarkerInterfaces" value="false"/>
-        </module>
     </module>
     <module name="RegexpMultiline">
         <property name="format" value="=\s*new ArrayList&lt;[^&gt;]"/>

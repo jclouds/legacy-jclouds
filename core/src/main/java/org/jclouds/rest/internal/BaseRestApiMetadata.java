@@ -64,7 +64,7 @@ public abstract class BaseRestApiMetadata extends BaseApiMetadata implements Res
       }, asyncApiToken);
    }
    
-   public static abstract class Builder<T extends Builder<T>> extends BaseApiMetadata.Builder<T> implements RestApiMetadata.Builder<T> {
+   public abstract static class Builder<T extends Builder<T>> extends BaseApiMetadata.Builder<T> implements RestApiMetadata.Builder<T> {
       protected Class<?> api;
       protected Class<?> asyncApi;
       

@@ -38,7 +38,7 @@ public final class EncryptedPasswordAndPrivateKey {
       return builder().fromEncryptedPasswordAndPrivateKey(this);
    }
 
-   public final static class Builder {
+   public static final class Builder {
 
       protected String encryptedPassword;
       protected String privateKey;

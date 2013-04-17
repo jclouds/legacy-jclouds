@@ -66,7 +66,7 @@ public final class SOARecord extends Record<SOAData> {
       return builder().from(this);
    }
 
-   public final static class Builder extends Record.Builder<SOAData, Builder> {
+   public static final class Builder extends Record.Builder<SOAData, Builder> {
 
       private SerialStyle serialStyle;
 

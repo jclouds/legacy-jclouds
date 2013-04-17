@@ -17,7 +17,6 @@
  * under the License.
  */
 package org.jclouds.ultradns.ws.handlers;
-import static org.jclouds.ultradns.ws.handlers.UltraDNSWSErrorHandler.ErrorCodes.*;
 import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
 import static org.jclouds.http.HttpUtils.releasePayload;
 
@@ -124,22 +123,22 @@ public class UltraDNSWSErrorHandler implements HttpErrorHandler {
    private Exception refineException(UltraDNSWSResponseException exception) {
       String message = exception.getError().getDescription().or(exception.getMessage());
       switch (exception.getError().getCode()) {
-      case UNKNOWN:
+      case ErrorCodes.UNKNOWN:
          if (!exception.getError().getDescription().isPresent())
             return exception;
          if (exception.getError().getDescription().get().indexOf("Cannot find") == -1)
             return exception;
-      case ZONE_NOT_FOUND:
-      case RESOURCE_RECORD_NOT_FOUND:
-      case ACCOUNT_NOT_FOUND:
-      case POOL_NOT_FOUND:
-      case DIRECTIONAL_POOL_NOT_FOUND:
-      case POOL_RECORD_NOT_FOUND:
-      case GROUP_NOT_FOUND:
+      case ErrorCodes.ZONE_NOT_FOUND:
+      case ErrorCodes.RESOURCE_RECORD_NOT_FOUND:
+      case ErrorCodes.ACCOUNT_NOT_FOUND:
+      case ErrorCodes.POOL_NOT_FOUND:
+      case ErrorCodes.DIRECTIONAL_POOL_NOT_FOUND:
+      case ErrorCodes.POOL_RECORD_NOT_FOUND:
+      case ErrorCodes.GROUP_NOT_FOUND:
          return new ResourceNotFoundException(message, exception);
-      case ZONE_ALREADY_EXISTS:
-      case RESOURCE_RECORD_ALREADY_EXISTS:
-      case POOL_ALREADY_EXISTS:
+      case ErrorCodes.ZONE_ALREADY_EXISTS:
+      case ErrorCodes.RESOURCE_RECORD_ALREADY_EXISTS:
+      case ErrorCodes.POOL_ALREADY_EXISTS:
          return new ResourceAlreadyExistsException(message, exception);
       }
       return exception;

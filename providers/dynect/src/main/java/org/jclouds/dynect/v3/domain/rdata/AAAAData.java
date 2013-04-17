@@ -73,7 +73,7 @@ public class AAAAData extends ForwardingMap<String, Object> {
       return builder().from(this);
    }
 
-   public final static class Builder {
+   public static final class Builder {
       private String address;
 
       /**

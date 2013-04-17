@@ -47,7 +47,7 @@ public class ServerCreated extends Resource {
       return builder().fromServerCreated(this);
    }
 
-   public final static class Builder extends Resource.Builder<Builder>  {
+   public static final class Builder extends Resource.Builder<Builder>  {
       protected String adminPass;
    
       /** 
