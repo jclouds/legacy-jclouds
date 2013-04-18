@@ -37,7 +37,7 @@ import org.testng.annotations.Test;
 public class PayerHandlerTest extends BaseHandlerTest {
 
    ParseSax<Payer> createParser() {
-      ParseSax<Payer> parser = (ParseSax<Payer>) factory.create(injector
+      ParseSax<Payer> parser = factory.create(injector
                .getInstance(PayerHandler.class));
       return parser;
    }

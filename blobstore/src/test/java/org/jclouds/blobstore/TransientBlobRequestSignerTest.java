@@ -83,7 +83,7 @@ public class TransientBlobRequestSignerTest extends BaseAsyncClientTest<LocalAsy
       assertNonPayloadHeadersEqual(
                request,
                "Authorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\nContent-Length: 2\nContent-MD5: AAIECA==\nContent-Type: text/plain\n");
-      assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 }, null);
+      assertContentHeadersEqual(request, "text/plain", null, null, null, 2L, new byte[] { 0, 2, 4, 8 }, null);
 
       assertEquals(request.getFilters().size(), 0);
    }
@@ -101,7 +101,7 @@ public class TransientBlobRequestSignerTest extends BaseAsyncClientTest<LocalAsy
       assertNonPayloadHeadersEqual(
                request,
                "Authorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\nContent-Length: 3\nContent-MD5: rL0Y20zC+Fzt72VPzMSk2A==\nContent-Type: text/plain\n");
-      assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 3l, md5, null);
+      assertContentHeadersEqual(request, "text/plain", null, null, null, 3L, md5, null);
 
       assertEquals(request.getFilters().size(), 0);
    }

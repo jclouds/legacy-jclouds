@@ -64,7 +64,7 @@ public class CatalogItemHandlerTest extends BaseHandlerTest {
 
       InputStream is = getClass().getResourceAsStream("/catalogItem-terremark.xml");
 
-      CatalogItem result = (CatalogItem) factory.create(
+      CatalogItem result = factory.create(
             injector.getInstance(CatalogItemHandler.class)).parse(is);
       assertEquals(
             result,

@@ -63,7 +63,7 @@ public class AtmosUtils {
 
    public AtmosError parseAtmosErrorFromContent(HttpCommand command, HttpResponse response, InputStream content)
             throws HttpException {
-      AtmosError error = (AtmosError) factory.create(errorHandlerProvider.get()).parse(content);
+      AtmosError error = factory.create(errorHandlerProvider.get()).parse(content);
       if (error.getCode() == 1032) {
          error.setStringSigned(signer.createStringToSign(command.getCurrentRequest()));
       }

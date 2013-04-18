@@ -77,7 +77,7 @@ public abstract class BaseApiMetadata implements ApiMetadata {
       return props;
    }
    
-   public static abstract class Builder<T extends Builder<T>> implements ApiMetadata.Builder<T> {
+   public abstract static class Builder<T extends Builder<T>> implements ApiMetadata.Builder<T> {
       protected abstract T self();
 
       private String id;

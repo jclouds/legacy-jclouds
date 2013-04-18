@@ -42,7 +42,7 @@ public class BindChangeMessageVisibilityBatchRequestEntryToIndexedFormParams ext
    }
 
    public Map<String, String> idReceiptHandle(Iterable<String> input) {
-      return Maps.uniqueIndex((Iterable<String>) input, new Function<String, String>() {
+      return Maps.uniqueIndex(input, new Function<String, String>() {
          int index = 1;
 
          @Override

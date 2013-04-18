@@ -83,7 +83,7 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
 
    @Override
    public AWSS3Client getApi() {
-      return (AWSS3Client) view.unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN).getApi();
+      return view.unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN).getApi();
    }
 
    @BeforeClass(groups = { "integration", "live" })

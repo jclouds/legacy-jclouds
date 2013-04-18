@@ -133,7 +133,7 @@ public class ChangeBatch extends ForwardingList<ActionOnResourceRecordSet> {
       return new Builder();
    }
 
-   public final static class Builder {
+   public static final class Builder {
       private Optional<String> comment = Optional.absent();
       private ImmutableList.Builder<ActionOnResourceRecordSet> changes = ImmutableList.builder();
 

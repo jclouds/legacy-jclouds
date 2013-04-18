@@ -42,7 +42,7 @@ public final class SessionConnection implements Connection<Session> {
       return new Builder();
    }
 
-   public final static class Builder {
+   public static final class Builder {
 
       private HostAndPort hostAndPort;
       private LoginCredentials loginCredentials;

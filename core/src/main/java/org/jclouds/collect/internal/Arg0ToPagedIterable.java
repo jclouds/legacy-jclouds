@@ -97,7 +97,7 @@ public abstract class Arg0ToPagedIterable<T, I extends Arg0ToPagedIterable<T, I>
     * 
     * @author Adrian Cole
     */
-   public static abstract class FromCaller<T, I extends FromCaller<T, I>> extends Arg0ToPagedIterable<T, I> {
+   public abstract static class FromCaller<T, I extends FromCaller<T, I>> extends Arg0ToPagedIterable<T, I> {
       @Override
       protected List<Object> getArgs(GeneratedHttpRequest request) {
          return request.getCaller().get().getArgs();

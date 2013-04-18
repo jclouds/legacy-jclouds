@@ -85,7 +85,7 @@ public class SSHFPData extends ForwardingMap<String, Object> {
       return fingerprint;
    }
 
-   public final static class Builder {
+   public static final class Builder {
       private int algorithm;
       private int fptype;
       private String fingerprint;

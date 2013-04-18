@@ -93,7 +93,7 @@ public class EC2ApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public static abstract class Builder<T extends Builder<T>> extends BaseRestApiMetadata.Builder<T> {
+   public abstract static class Builder<T extends Builder<T>> extends BaseRestApiMetadata.Builder<T> {
       @SuppressWarnings("deprecation")
       protected Builder() {
          this(EC2Client.class, EC2AsyncClient.class);

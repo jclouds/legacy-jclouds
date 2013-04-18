@@ -114,7 +114,7 @@ public final class Task {
       return builder().from(this);
    }
 
-   public final static class Builder {
+   public static final class Builder {
       private String guid;
       private StatusCode statusCode;
       private Optional<String> message = Optional.absent();
