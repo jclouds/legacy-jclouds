@@ -36,20 +36,21 @@ import com.google.inject.Injector;
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class ListZonesResponseTest extends BaseDynECTParseTest<FluentIterable<String>> {
+public class ListGeoRegionGroupsResponseTest extends BaseDynECTParseTest<FluentIterable<String>> {
 
    @Override
    public String resource() {
-      return "/list_zones.json";
+      return "/list_geo_regiongroups.json";
    }
 
    @Override
    @SelectJson("data")
    public FluentIterable<String> expected() {
-      return FluentIterable.from(ImmutableSet.of("0.0.0.0.d.6.e.0.0.a.2.ip6.arpa", "126.12.44.in-addr.arpa", "jclouds.org"));
+      return FluentIterable.from(ImmutableSet.of("Everywhere Else", "Europe", "Fallback"));
    }
 
-   // TODO: currently our parsing of annotations on expected() ignores @Transform
+   // TODO: currently our parsing of annotations on expected() ignores
+   // @Transform
    @Override
    protected Function<HttpResponse, FluentIterable<String>> parser(Injector i) {
       return compose(new ExtractLastPathComponent(), super.parser(i));

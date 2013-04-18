@@ -1,0 +1,12 @@
+{
+    "status": "success",
+    "data": ["/REST/Geo/srv/", "/REST/Geo/srv-log/"],
+    "job_id": 321483166,
+    "msgs": [{
+            "INFO": "GET: Found 2 services",
+            "SOURCE": "BLL",
+            "ERR_CD": null,
+            "LVL": "INFO"
+        }
+    ]
+}
