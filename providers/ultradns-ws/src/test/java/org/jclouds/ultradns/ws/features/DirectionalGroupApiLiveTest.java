@@ -32,10 +32,8 @@ import org.jclouds.ultradns.ws.domain.DirectionalGroupCoordinates;
 import org.jclouds.ultradns.ws.domain.DirectionalPool;
 import org.jclouds.ultradns.ws.domain.DirectionalPool.RecordType;
 import org.jclouds.ultradns.ws.domain.DirectionalPoolRecordDetail;
-import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.jclouds.ultradns.ws.domain.Zone;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiLiveTest;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Sets;
@@ -45,15 +43,6 @@ import com.google.common.collect.Sets;
  */
 @Test(groups = "live", singleThreaded = true, testName = "DirectionalGroupApiLiveTest")
 public class DirectionalGroupApiLiveTest extends BaseUltraDNSWSApiLiveTest {
-
-   private IdAndName account;
-
-   @Override
-   @BeforeClass(groups = { "integration", "live" })
-   public void setup() {
-      super.setup();
-      account = api.getCurrentAccount();
-   }
 
    @Test
    public void testListAccountLevelGroups() {
@@ -94,7 +83,7 @@ public class DirectionalGroupApiLiveTest extends BaseUltraDNSWSApiLiveTest {
       for (Zone zone : api.getZoneApi().listByAccount(account.getId())) {
          for (DirectionalPool pool : api.getDirectionalPoolApiForZone(zone.getName()).list()) {
             for (RecordType type : EnumSet.allOf(RecordType.class)) {
-               for (String groupName : api().listGroupNamesByRecordNameAndType(pool.getDName(), type.getCode())) {
+               for (String groupName : api().listGroupNamesByDNameAndType(pool.getDName(), type.getCode())) {
                   allGroups.add(DirectionalGroupCoordinates.builder()
                                                            .zoneName(zone.getName())
                                                            .recordName(pool.getDName())

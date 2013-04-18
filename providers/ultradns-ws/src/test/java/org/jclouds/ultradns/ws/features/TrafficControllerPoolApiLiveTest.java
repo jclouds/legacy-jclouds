@@ -32,7 +32,6 @@ import static org.testng.Assert.fail;
 
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
-import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.jclouds.ultradns.ws.domain.PoolRecordSpec;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecord;
@@ -54,16 +53,11 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "live", singleThreaded = true, testName = "TrafficControllerPoolApiLiveTest")
 public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
-   private String zoneName = System.getProperty("user.name").replace('.', '-') + ".tcpool.ultradnstest.jclouds.org.";
-   private IdAndName account;
-
    @Override
    @BeforeClass(groups = { "integration", "live" })
    public void setup() {
       super.setup();
-      api.getZoneApi().delete(zoneName);
-      account = api.getCurrentAccount();
-      api.getZoneApi().createInAccount(zoneName, account.getId());
+      createZone();
    }
 
    private void checkTCPool(TrafficControllerPool pool) {
@@ -166,17 +160,17 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
 
    @Test
    public void testCreatePool() {
-      poolId = api(zoneName).createPoolForDNameAndType("pool", dname, IPV4);
+      poolId = api(zoneName).createForDNameAndType("pool", dname, IPV4.getCode());
       getAnonymousLogger().info("created tc pool: " + poolId);
       try {
-         api(zoneName).createPoolForDNameAndType("pool", dname, IPV4);
+         api(zoneName).createForDNameAndType("pool", dname, IPV4.getCode());
          fail();
       } catch (ResourceAlreadyExistsException e) {
 
       }
       // ensure there's only one pool for a dname
       try {
-         api(zoneName).createPoolForDNameAndType("pool1", dname, IPV4);
+         api(zoneName).createForDNameAndType("pool1", dname, IPV4.getCode());
          fail();
       } catch (ResourceAlreadyExistsException e) {
 
@@ -285,7 +279,6 @@ public class TrafficControllerPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest 
    protected void tearDown() {
       if (poolId != null)
          api(zoneName).delete(poolId);
-      api.getZoneApi().delete(zoneName);
       super.tearDown();
    }
 }

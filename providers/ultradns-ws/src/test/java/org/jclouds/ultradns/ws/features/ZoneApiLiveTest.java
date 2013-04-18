@@ -29,12 +29,10 @@ import static org.testng.Assert.fail;
 
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
-import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.jclouds.ultradns.ws.domain.Zone;
 import org.jclouds.ultradns.ws.domain.Zone.Type;
 import org.jclouds.ultradns.ws.domain.ZoneProperties;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiLiveTest;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.FluentIterable;
@@ -44,15 +42,6 @@ import com.google.common.collect.FluentIterable;
  */
 @Test(groups = "live", testName = "ZoneApiLiveTest")
 public class ZoneApiLiveTest extends BaseUltraDNSWSApiLiveTest {
-
-   private IdAndName account;
-
-   @Override
-   @BeforeClass(groups = { "integration", "live" })
-   public void setup() {
-      super.setup();
-      account = api.getCurrentAccount();
-   }
 
    private void checkZone(Zone zone) {
       assertNotNull(zone.getId(), "Id cannot be null for " + zone);
@@ -111,32 +100,30 @@ public class ZoneApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
    @Test(expectedExceptions = ResourceNotFoundException.class, expectedExceptionsMessageRegExp = "Account not found in the system. ID: AAAAAAAAAAAAAAAA")
    public void testCreateZoneBadAccountId() {
-      api().createInAccount(name, "AAAAAAAAAAAAAAAA");
+      api().createInAccount(zoneName, "AAAAAAAAAAAAAAAA");
    }
-
-   String name = System.getProperty("user.name").replace('.', '-') + ".zone.ultradnstest.jclouds.org.";
 
    @Test
    public void testCreateAndDeleteZone() {
       try {
-         api().createInAccount(name, account.getId());
-         ZoneProperties newZone = api().get(name);
+         api().createInAccount(zoneName, account.getId());
+         ZoneProperties newZone = api().get(zoneName);
          getAnonymousLogger().info("created zone: " + newZone);
 
          try {
-            api().createInAccount(name, account.getId());
+            api().createInAccount(zoneName, account.getId());
             fail();
          } catch (ResourceAlreadyExistsException e) {
 
          }
 
-         assertEquals(newZone.getName(), name);
+         assertEquals(newZone.getName(), zoneName);
          assertEquals(newZone.getType(), Type.PRIMARY);
          assertEquals(newZone.getTypeCode(), Type.PRIMARY.getCode());
          assertNotNull(newZone.getModified(), "Modified cannot be null for " + newZone);
          assertEquals(newZone.getResourceRecordCount(), 5);
       } finally {
-         api().delete(name);
+         api().delete(zoneName);
       }
    }
 
