@@ -21,6 +21,8 @@ import static com.google.common.net.HttpHeaders.HOST;
 import static javax.ws.rs.HttpMethod.POST;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static javax.ws.rs.core.Response.Status.OK;
+import static org.jclouds.ultradns.ws.domain.RoundRobinPool.RecordType.A;
+import static org.jclouds.ultradns.ws.domain.RoundRobinPool.RecordType.AAAA;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.http.HttpRequest;
@@ -52,12 +54,16 @@ public class RoundRobinPoolApiExpectTest extends BaseUltraDNSWSApiExpectTest {
 
    public void testCreateAWhenResponseIs2xx() {
       UltraDNSWSApi success = requestSendsResponse(createA, createResponse);
-      assertEquals(success.getRoundRobinPoolApiForZone("jclouds.org.").createAPoolForDName("www.jclouds.org.", "foo"), "060339AA04175655");
+      assertEquals(
+            success.getRoundRobinPoolApiForZone("jclouds.org.").createForDNameAndType("www.jclouds.org.", "foo",
+                  A.getCode()), "060339AA04175655");
    }
 
    public void testCreateAAAAWhenResponseIs2xx() {
       UltraDNSWSApi success = requestSendsResponse(createAAAA, createResponse);
-      assertEquals(success.getRoundRobinPoolApiForZone("jclouds.org.").createAAAAPoolForDName("www.jclouds.org.", "foo"), "060339AA04175655");
+      assertEquals(
+            success.getRoundRobinPoolApiForZone("jclouds.org.").createForDNameAndType("www.jclouds.org.", "foo",
+                  AAAA.getCode()), "060339AA04175655");
    }
 
    HttpResponse alreadyCreated = HttpResponse.builder().statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
@@ -66,7 +72,8 @@ public class RoundRobinPoolApiExpectTest extends BaseUltraDNSWSApiExpectTest {
    @Test(expectedExceptions = ResourceAlreadyExistsException.class, expectedExceptionsMessageRegExp = "Pool already created for this host name : www.rrpool.adrianc.rrpool.ultradnstest.jclouds.org.")
    public void testCreateWhenResponseError2912() {
       UltraDNSWSApi already = requestSendsResponse(createA, alreadyCreated);
-      already.getRoundRobinPoolApiForZone("jclouds.org.").createAPoolForDName("www.jclouds.org.", "foo");
+      already.getRoundRobinPoolApiForZone("jclouds.org.").createForDNameAndType("www.jclouds.org.", "foo",
+            A.getCode());
    }
 
    HttpRequest list = HttpRequest.builder().method(POST)

@@ -18,9 +18,19 @@
  */
 package org.jclouds.ultradns.ws.internal;
 
+import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
+import static com.google.common.base.CaseFormat.UPPER_CAMEL;
+
 import org.jclouds.apis.BaseApiLiveTest;
 import org.jclouds.ultradns.ws.UltraDNSWSApi;
+import org.jclouds.ultradns.ws.domain.IdAndName;
+import org.jclouds.ultradns.ws.domain.Zone;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 
 /**
  * 
@@ -28,7 +38,41 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class BaseUltraDNSWSApiLiveTest extends BaseApiLiveTest<UltraDNSWSApi> {
+   protected String zoneName = String.format("%s-%s.ultradnstest.jclouds.org.", System.getProperty("user.name")
+         .replace('.', '-'), UPPER_CAMEL.to(LOWER_HYPHEN, getClass().getSimpleName()));
+   protected String zoneId;
+   protected IdAndName account;
+
    public BaseUltraDNSWSApiLiveTest() {
       provider = "ultradns-ws";
+   }
+
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setup() {
+      super.setup();
+      account = api.getCurrentAccount();
+   }
+
+   protected void createZone() {
+      api.getZoneApi().delete(zoneName);
+      api.getZoneApi().createInAccount(zoneName, account.getId());
+      zoneId = getZoneByName(zoneName).get().getId();
+   }
+
+   protected Optional<Zone> getZoneByName(final String zoneName) {
+      return api.getZoneApi().listByAccount(account.getId()).firstMatch(new Predicate<Zone>() {
+         public boolean apply(Zone in) {
+            return in.getName().equals(zoneName);
+         }
+      });
+   }
+
+   @Override
+   @AfterClass(groups = { "integration", "live" })
+   protected void tearDown() {
+      if (zoneId != null)
+         api.getZoneApi().delete(zoneName);
+      super.tearDown();
    }
 }
