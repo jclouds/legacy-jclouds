@@ -36,4 +36,15 @@ public interface UltraDNSWSExceptions {
          super(message, cause);
       }
    }
+   
+   /**
+    * Error 7021: Geolocation/Source IP overlap(s) found: Region: Utah (Group: US )
+    */
+   public static class DirectionalGroupOverlapException extends IllegalStateException {
+      private static final long serialVersionUID = 1L;
+
+      public DirectionalGroupOverlapException(String message, Throwable cause) {
+         super(message, cause);
+      }
+   }
 }

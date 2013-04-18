@@ -31,6 +31,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ultradns.ws.UltraDNSWSError;
+import org.jclouds.ultradns.ws.UltraDNSWSExceptions.DirectionalGroupOverlapException;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
 import org.jclouds.ultradns.ws.UltraDNSWSResponseException;
 import org.jclouds.ultradns.ws.xml.UltraWSExceptionHandler;
@@ -97,11 +98,15 @@ public class UltraDNSWSErrorHandler implements HttpErrorHandler {
       /**
        * No Pool or Multiple pools of same type exists for the PoolName
        */
-      static final int DIRECTIONAL_POOL_NOT_FOUND = 2142;
+      static final int DIRECTIONALPOOL_NOT_FOUND = 2142;
       /**
        * Account not found in the system.
        */
       static final int ACCOUNT_NOT_FOUND = 2401;
+      /**
+       * Directional Pool Record does not exist in the system
+       */
+      static final int DIRECTIONALPOOL_RECORD_NOT_FOUND = 2705;
       /**
        * Pool does not exist in the system.
        */
@@ -118,6 +123,14 @@ public class UltraDNSWSErrorHandler implements HttpErrorHandler {
        * Group does not exist.
        */
       static final int GROUP_NOT_FOUND = 4003;
+      /**
+       * Resource Record already exists.
+       */
+      static final int POOL_RECORD_ALREADY_EXISTS = 4009;
+      /**
+       * Geolocation/Source IP overlap(s) found
+       */
+      static final int DIRECTIONALPOOL_OVERLAP = 7021;
    }
 
    private Exception refineException(UltraDNSWSResponseException exception) {
@@ -132,14 +145,18 @@ public class UltraDNSWSErrorHandler implements HttpErrorHandler {
       case ErrorCodes.RESOURCE_RECORD_NOT_FOUND:
       case ErrorCodes.ACCOUNT_NOT_FOUND:
       case ErrorCodes.POOL_NOT_FOUND:
-      case ErrorCodes.DIRECTIONAL_POOL_NOT_FOUND:
+      case ErrorCodes.DIRECTIONALPOOL_NOT_FOUND:
+      case ErrorCodes.DIRECTIONALPOOL_RECORD_NOT_FOUND:
       case ErrorCodes.POOL_RECORD_NOT_FOUND:
       case ErrorCodes.GROUP_NOT_FOUND:
          return new ResourceNotFoundException(message, exception);
       case ErrorCodes.ZONE_ALREADY_EXISTS:
       case ErrorCodes.RESOURCE_RECORD_ALREADY_EXISTS:
       case ErrorCodes.POOL_ALREADY_EXISTS:
+      case ErrorCodes.POOL_RECORD_ALREADY_EXISTS:
          return new ResourceAlreadyExistsException(message, exception);
+      case ErrorCodes.DIRECTIONALPOOL_OVERLAP:
+         return new DirectionalGroupOverlapException(message, exception);
       }
       return exception;
    }

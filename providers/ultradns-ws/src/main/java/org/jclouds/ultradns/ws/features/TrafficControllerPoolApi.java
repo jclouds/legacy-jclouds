@@ -27,6 +27,7 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.MapBinder;
+import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -36,10 +37,10 @@ import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsExcepti
 import org.jclouds.ultradns.ws.binders.UpdatePoolRecordToXML;
 import org.jclouds.ultradns.ws.domain.PoolRecordSpec;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPool;
-import org.jclouds.ultradns.ws.domain.TrafficControllerPool.RecordType;
 import org.jclouds.ultradns.ws.domain.TrafficControllerPoolRecordDetail;
 import org.jclouds.ultradns.ws.domain.UpdatePoolRecord;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
+import org.jclouds.ultradns.ws.internal.TrafficControllerPoolRecordTypeToString;
 import org.jclouds.ultradns.ws.xml.AttributeHandler;
 import org.jclouds.ultradns.ws.xml.ElementTextHandler;
 import org.jclouds.ultradns.ws.xml.PoolRecordSpecHandler;
@@ -65,8 +66,9 @@ public interface TrafficControllerPoolApi {
     * @param dname
     *           {@link TrafficControllerPool#getDName() dname} of the TC pool
     *           {ex. www.jclouds.org.}
-    * @param type
-    *           the record types supported.
+    * @param rrType
+    *           the {@link TrafficControllerPool.RecordType record type}
+    *           supported.
     * @return the {@code guid} of the new record
     * @throws ResourceAlreadyExistsException
     *            if a pool already exists with the same attrs
@@ -75,8 +77,9 @@ public interface TrafficControllerPoolApi {
    @POST
    @XMLResponseParser(ElementTextHandler.TCPoolID.class)
    @Payload("<v01:addTCLBPool><transactionID /><zoneName>{zoneName}</zoneName><hostName>{hostName}</hostName><description>{description}</description><poolRecordType>{poolRecordType}</poolRecordType><failOver>Enabled</failOver><probing>Enabled</probing><maxActive>0</maxActive><rrGUID /></v01:addTCLBPool>")
-   String createPoolForDNameAndType(@PayloadParam("description") String name, @PayloadParam("hostName") String dname,
-         @PayloadParam("poolRecordType") RecordType type) throws ResourceAlreadyExistsException;
+   String createForDNameAndType(@PayloadParam("description") String name, @PayloadParam("hostName") String dname,
+         @PayloadParam("poolRecordType") @ParamParser(TrafficControllerPoolRecordTypeToString.class) int rrType)
+         throws ResourceAlreadyExistsException;
 
    /**
     * Returns all traffic controller pools in the zone.
