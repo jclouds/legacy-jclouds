@@ -92,7 +92,7 @@ public class DirectionalGroup extends ForwardingMultimap<String, String> {
       return builder().from(this);
    }
 
-   public final static class Builder {
+   public static final class Builder {
       private String name;
       private Optional<String> description = Optional.absent();
       private ImmutableMultimap.Builder<String, String> regionToTerritories = ImmutableMultimap

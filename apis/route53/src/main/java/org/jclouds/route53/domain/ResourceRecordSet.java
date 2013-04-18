@@ -95,7 +95,7 @@ public class ResourceRecordSet {
    /**
     * A portion of a RRs who share the same name and type
     */
-   public static abstract class RecordSubset extends ResourceRecordSet {
+   public abstract static class RecordSubset extends ResourceRecordSet {
       public static final class Weighted extends RecordSubset {
 
          private final int weight;
@@ -261,7 +261,7 @@ public class ResourceRecordSet {
       return builder().from(this);
    }
 
-   public final static class Builder {
+   public static final class Builder {
       private String id;
       private String name;
       private String type;

@@ -53,6 +53,7 @@ import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneAndId;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.util.concurrent.Atomics;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.UncheckedTimeoutException;
@@ -109,7 +110,7 @@ public class NovaImageExtension implements ImageExtension {
 
       logger.info(">> Registered new Image %s, waiting for it to become available.", newImageId);
       
-      final AtomicReference<Image> image = new AtomicReference<Image>(new ImageBuilder()
+      final AtomicReference<Image> image = Atomics.newReference(new ImageBuilder()
             .location(find(locations.get(), idEquals(targetImageZoneAndId.getZone())))
             .id(targetImageZoneAndId.slashEncode())
             .providerId(targetImageZoneAndId.getId())
