@@ -35,9 +35,9 @@ public class RecordId extends Node {
    private final long id;
    private final String type;
 
-   @ConstructorProperties({"fqdn", "zone", "record_type", "record_id" })
-   RecordId(String fqdn, String zone, String type, long id) {
-      super(fqdn, zone);
+   @ConstructorProperties({"zone", "fqdn", "record_type", "record_id" })
+   RecordId(String zone, String fqdn, String type, long id) {
+      super(zone, fqdn);
       this.id = checkNotNull(id, "id");
       this.type = checkNotNull(type, "type of %s", id);
    }
@@ -80,7 +80,7 @@ public class RecordId extends Node {
    }
 
    protected ToStringHelper string() {
-      return toStringHelper(this).add("fqdn", getFQDN()).add("zone", getZone()).add("type", type).add("id", id);
+      return toStringHelper(this).add("zone", getZone()).add("fqdn", getFQDN()).add("type", type).add("id", id);
    }
 
    public static Builder<?> recordIdBuilder() {
@@ -94,24 +94,24 @@ public class RecordId extends Node {
    public abstract static class Builder<B extends Builder<B>>  {
       protected abstract B self();
 
-      protected String fqdn;
       protected String zone;
+      protected String fqdn;
       protected String type;
       protected long id;
-
-      /**
-       * @see Node#getFQDN()
-       */
-      public B fqdn(String fqdn) {
-         this.fqdn = fqdn;
-         return self();
-      }
 
       /**
        * @see Node#getZone()
        */
       public B zone(String zone) {
          this.zone = zone;
+         return self();
+      }
+
+      /**
+       * @see Node#getFQDN()
+       */
+      public B fqdn(String fqdn) {
+         this.fqdn = fqdn;
          return self();
       }
 
@@ -132,11 +132,11 @@ public class RecordId extends Node {
       }
 
       public RecordId build() {
-         return new RecordId(fqdn, zone, type, id);
+         return new RecordId(zone, fqdn, type, id);
       }
 
       public B from(RecordId in) {
-         return fqdn(in.getFQDN()).zone(in.getZone()).type(in.type).id(in.id);
+         return zone(in.getZone()).fqdn(in.getFQDN()).type(in.type).id(in.id);
       }
    }
 
