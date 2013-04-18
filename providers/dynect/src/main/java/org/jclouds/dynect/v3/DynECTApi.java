@@ -30,6 +30,8 @@ import javax.ws.rs.PathParam;
 
 import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.dynect.v3.domain.Job;
+import org.jclouds.dynect.v3.features.GeoRegionGroupApi;
+import org.jclouds.dynect.v3.features.GeoServiceApi;
 import org.jclouds.dynect.v3.features.RecordApi;
 import org.jclouds.dynect.v3.features.SessionApi;
 import org.jclouds.dynect.v3.features.ZoneApi;
@@ -67,20 +69,32 @@ public interface DynECTApi extends Closeable {
    Job getJob(@PathParam("jobId") long jobId);
 
    /**
-    * Provides synchronous access to Session features.
+    * Provides access to Session features.
     */
    @Delegate
    SessionApi getSessionApi();
 
    /**
-    * Provides synchronous access to Zone features.
+    * Provides access to Zone features.
     */
    @Delegate
    ZoneApi getZoneApi();
 
    /**
-    * Provides synchronous access to Record features
+    * Provides access to Record features
     */
    @Delegate
    RecordApi getRecordApiForZone(@PathParam("zone") String zone);
+
+   /**
+    * Provides access to Geo features.
+    */
+   @Delegate
+   GeoServiceApi getGeoServiceApi();
+
+   /**
+    * Provides access to Geo region group features
+    */
+   @Delegate
+   GeoRegionGroupApi getGeoRegionGroupApiForService(@PathParam("serviceName") String serviceName);
 }
