@@ -26,24 +26,17 @@ import com.google.common.base.Objects;
 
 public class Node {
 
-   public static Node create(String fqdn, String zone) {
-      return new Node(fqdn, zone);
+   public static Node create(String zone, String fqdn) {
+      return new Node(zone, fqdn);
    }
 
-   private final String fqdn;
    private final String zone;
+   private final String fqdn;
 
-   @ConstructorProperties({ "fqdn", "zone" })
-   protected Node(String fqdn, String zone) {
+   @ConstructorProperties({ "zone", "fqdn" })
+   protected Node(String zone, String fqdn) {
       this.fqdn = checkNotNull(fqdn, "fqdn");
       this.zone = checkNotNull(zone, "zone for %s", fqdn);
-   }
-
-   /**
-    * Fully qualified domain name of a node in the zone
-    */
-   public String getFQDN() {
-      return fqdn;
    }
 
    /**
@@ -53,9 +46,16 @@ public class Node {
       return zone;
    }
 
+   /**
+    * Fully qualified domain name of a node in the zone
+    */
+   public String getFQDN() {
+      return fqdn;
+   }
+
    @Override
    public int hashCode() {
-      return Objects.hashCode(fqdn, zone);
+      return Objects.hashCode(zone, fqdn);
    }
 
    @Override
@@ -67,11 +67,11 @@ public class Node {
       if (getClass() != obj.getClass())
          return false;
       Node that = Node.class.cast(obj);
-      return Objects.equal(this.fqdn, that.fqdn) && Objects.equal(this.zone, that.zone);
+      return Objects.equal(this.zone, that.zone) && Objects.equal(this.fqdn, that.fqdn);
    }
 
    @Override
    public String toString() {
-      return Objects.toStringHelper("").add("fqdn", fqdn).add("zone", zone).toString();
+      return Objects.toStringHelper("").add("zone", zone).add("fqdn", fqdn).toString();
    }
 }
