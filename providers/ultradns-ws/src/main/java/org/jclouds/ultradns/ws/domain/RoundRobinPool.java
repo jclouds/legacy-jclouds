@@ -68,6 +68,30 @@ public final class RoundRobinPool {
       return dname;
    }
 
+   /**
+    * currently supported {@link ResourceRecord#getType() types} for round robin pools.
+    * 
+    */
+   public static enum RecordType {
+      A(1),
+      AAAA(28);
+
+      @Override
+      public String toString() {
+         return String.valueOf(code);
+      }
+
+      private final int code;
+
+      private RecordType(int code) {
+         this.code = code;
+      }
+
+      public int getCode() {
+         return code;
+      }
+   }
+
    @Override
    public int hashCode() {
       return Objects.hashCode(zoneId, id, name, dname);
