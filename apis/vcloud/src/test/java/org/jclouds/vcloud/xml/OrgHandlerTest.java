@@ -55,7 +55,7 @@ public class OrgHandlerTest {
       Injector injector = Guice.createInjector(new SaxParserModule());
       Factory factory = injector.getInstance(ParseSax.Factory.class);
 
-      Org result = (Org) factory.create(injector.getInstance(OrgHandler.class)).parse(is);
+      Org result = factory.create(injector.getInstance(OrgHandler.class)).parse(is);
       assertEquals(result.getName(), "ExampleOrg");
       assertEquals(result.getFullName(), "ExampleOrg");
       assertEquals(result.getDescription(), "Example Corp's Primary Organization.");
@@ -80,7 +80,7 @@ public class OrgHandlerTest {
       Injector injector = Guice.createInjector(new SaxParserModule());
       Factory factory = injector.getInstance(ParseSax.Factory.class);
 
-      Org result = (Org) factory.create(injector.getInstance(OrgHandler.class)).parse(is);
+      Org result = factory.create(injector.getInstance(OrgHandler.class)).parse(is);
       assertEquals(result.getName(), "adrian@jclouds.org");
       assertEquals(result.getFullName(), "adrian@jclouds.org");
       assertEquals(result.getHref(), URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"));
@@ -98,7 +98,7 @@ public class OrgHandlerTest {
       InputStream is = getClass().getResourceAsStream("/org-hosting.xml");
       Injector injector = Guice.createInjector(new SaxParserModule());
       Factory factory = injector.getInstance(ParseSax.Factory.class);
-      Org result = (Org) factory.create(injector.getInstance(OrgHandler.class)).parse(is);
+      Org result = factory.create(injector.getInstance(OrgHandler.class)).parse(is);
       assertEquals(result.getName(), "Customer 188849");
       assertEquals(result.getFullName(), "Customer 188849");
       assertEquals(result.getHref(), URI.create("https://vcloud.safesecureweb.com/api/v0.8/org/188849"));
@@ -115,7 +115,7 @@ public class OrgHandlerTest {
       InputStream is = getClass().getResourceAsStream("/org-savvis.xml");
       Injector injector = Guice.createInjector(new SaxParserModule());
       Factory factory = injector.getInstance(ParseSax.Factory.class);
-      Org result = (Org) factory.create(injector.getInstance(OrgHandler.class)).parse(is);
+      Org result = factory.create(injector.getInstance(OrgHandler.class)).parse(is);
       assertEquals(result, new OrgImpl("607968.0", null, null, "607968.0", "Gravitant Inc", ImmutableMap
                .<String, ReferenceType> of(), ImmutableMap.<String, ReferenceType> of("GravDataCenter1(Saved)",
                new ReferenceTypeImpl("GravDataCenter1(Saved)", "application/vnd.vmware.vcloud.vdc+xml", URI

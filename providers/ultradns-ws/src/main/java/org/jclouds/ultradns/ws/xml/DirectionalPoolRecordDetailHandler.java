@@ -24,9 +24,9 @@ import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
-import static org.jclouds.ultradns.ws.domain.IdAndName.*;
 import org.jclouds.ultradns.ws.domain.DirectionalPoolRecord;
 import org.jclouds.ultradns.ws.domain.DirectionalPoolRecordDetail;
+import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.xml.sax.Attributes;
 
 /**
@@ -64,14 +64,14 @@ public class DirectionalPoolRecordDetailHandler extends
          drd.id(attributes.get("DirPoolRecordId"));
       }
       if (attributes.containsKey("GroupId")) {
-         drd.group(create(attributes.get("GroupId"), attributes.get("GroupName")));
+         drd.group(IdAndName.create(attributes.get("GroupId"), attributes.get("GroupName")));
       }
       if (attributes.containsKey("GeolocationGroupId")) {
-         drd.geolocationGroup(create(attributes.get("GeolocationGroupId"),
+         drd.geolocationGroup(IdAndName.create(attributes.get("GeolocationGroupId"),
                attributes.get("GeolocationGroupName")));
       }
       if (attributes.containsKey("SourceIPGroupId")) {
-         drd.sourceIpGroup(create(attributes.get("SourceIPGroupId"), attributes.get("SourceIPGroupName")));
+         drd.sourceIpGroup(IdAndName.create(attributes.get("SourceIPGroupId"), attributes.get("SourceIPGroupName")));
       }
       if (attributes.containsKey("recordType")) {
          dr.type(attributes.get("recordType"));

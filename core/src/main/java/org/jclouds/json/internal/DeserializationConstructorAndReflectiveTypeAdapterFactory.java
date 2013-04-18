@@ -214,7 +214,7 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactory imp
 
       private T newInstance(Object[] ctorParams) throws AssertionError {
          try {
-            return (T) parameterizedCtor.invoke(null, ctorParams);
+            return parameterizedCtor.invoke(null, ctorParams);
          } catch (IllegalAccessException e) {
             throw new AssertionError(e);
          } catch (InvocationTargetException e) {

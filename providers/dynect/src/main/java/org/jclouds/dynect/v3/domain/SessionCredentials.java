@@ -26,7 +26,7 @@ public final class SessionCredentials extends Credentials {
       return builder().from(this);
    }
 
-   public final static class Builder extends Credentials.Builder<SessionCredentials> {
+   public static final class Builder extends Credentials.Builder<SessionCredentials> {
       private String customerName;
       private String userName;
       private String password;

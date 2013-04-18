@@ -73,7 +73,7 @@ public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
       BoundedSet<ContainerProperties> list = new BoundedHashSet<ContainerProperties>(contents, URI
                .create("http://myaccount.blob.core.windows.net/"), null, null, 3, "video");
 
-      BoundedSet<ContainerProperties> result = (BoundedSet<ContainerProperties>) factory.create(
+      BoundedSet<ContainerProperties> result = factory.create(
                injector.getInstance(AccountNameEnumerationResultsHandler.class)).parse(is);
 
       assertEquals(result, list);
@@ -96,7 +96,7 @@ public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
       InputStream is = getClass().getResourceAsStream("/test_list_containers_options.xml");
       BoundedSet<ContainerProperties> list = new BoundedHashSet<ContainerProperties>(contents, URI
                .create("http://myaccount.blob.core.windows.net"), "prefix", "marker", 1, "video");
-      BoundedSet<ContainerProperties> result = (BoundedSet<ContainerProperties>) factory.create(
+      BoundedSet<ContainerProperties> result = factory.create(
                injector.getInstance(AccountNameEnumerationResultsHandler.class)).parse(is);
       assertEquals(result, list);
    }

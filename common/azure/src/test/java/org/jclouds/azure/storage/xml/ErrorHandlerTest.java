@@ -37,7 +37,7 @@ import org.testng.annotations.Test;
 public class ErrorHandlerTest extends BaseHandlerTest {
 
    ParseSax<AzureStorageError> createParser() {
-      ParseSax<AzureStorageError> parser = (ParseSax<AzureStorageError>) factory.create(injector
+      ParseSax<AzureStorageError> parser = factory.create(injector
                .getInstance(ErrorHandler.class));
       return parser;
    }

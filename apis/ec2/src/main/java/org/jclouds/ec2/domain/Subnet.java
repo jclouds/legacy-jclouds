@@ -161,7 +161,7 @@ public final class Subnet {
       return builder().from(this);
    }
 
-   public final static class Builder {
+   public static final class Builder {
       private String subnetId;
       private State subnetState;
       private String vpcId;

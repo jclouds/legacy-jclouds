@@ -88,7 +88,7 @@ public class IterableWithMarkers {
       }
    }
 
-   private static abstract class ForwardingIterableWithMarker<T> extends IterableWithMarker<T> {
+   private abstract static class ForwardingIterableWithMarker<T> extends IterableWithMarker<T> {
 
       protected abstract IterableWithMarker<T> delegate();
 

@@ -61,7 +61,7 @@ public abstract class BaseHttpApiMetadata<A> extends BaseApiMetadata implements 
       }, apiToken);
    }
 
-   public static abstract class Builder<A, T extends Builder<A, T>> extends BaseApiMetadata.Builder<T> implements
+   public abstract static class Builder<A, T extends Builder<A, T>> extends BaseApiMetadata.Builder<T> implements
          HttpApiMetadata.Builder<A, T> {
       protected Class<A> api;
 

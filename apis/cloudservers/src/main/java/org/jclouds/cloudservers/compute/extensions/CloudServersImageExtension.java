@@ -48,6 +48,7 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.util.concurrent.Atomics;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.UncheckedTimeoutException;
@@ -97,7 +98,7 @@ public class CloudServersImageExtension implements ImageExtension {
       org.jclouds.cloudservers.domain.Image csImage = client.createImageFromServer(cloneTemplate.getName(),
                Integer.parseInt(cloneTemplate.getSourceNodeId()));
       
-      final AtomicReference<Image> image = new AtomicReference<Image>(new ImageBuilder()
+      final AtomicReference<Image> image = Atomics.newReference(new ImageBuilder()
             .location(location.get())
             .ids(csImage.getId() + "")
             .description(cloneTemplate.getName())

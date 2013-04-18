@@ -59,7 +59,7 @@ public class VCloudUtils {
       String contentType = response.getPayload().getContentMetadata().getContentType();
       if (contentType != null && contentType.startsWith(VCloudMediaType.ERROR_XML)) {
          try {
-            return (VCloudError) factory.create(errorHandlerProvider.get()).setContext(request).apply(response);
+            return factory.create(errorHandlerProvider.get()).setContext(request).apply(response);
          } catch (RuntimeException e) {
             logger.warn(e, "error parsing error");
          }

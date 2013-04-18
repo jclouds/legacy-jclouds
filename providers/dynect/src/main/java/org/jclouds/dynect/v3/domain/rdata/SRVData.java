@@ -113,7 +113,7 @@ public class SRVData extends ForwardingMap<String, Object> {
       return builder().from(this);
    }
 
-   public final static class Builder {
+   public static final class Builder {
       private int priority = -1;
       private int weight = -1;
       private int port = -1;

@@ -103,7 +103,7 @@ public class DirectionalPoolRecord {
       return drBuilder().from(this);
    }
 
-   public final static class Builder {
+   public static final class Builder {
       private String type;
       private int ttl = -1;
       private boolean noResponseRecord;

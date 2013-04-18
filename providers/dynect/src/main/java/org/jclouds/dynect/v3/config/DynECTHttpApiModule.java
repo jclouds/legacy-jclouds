@@ -118,7 +118,7 @@ public class DynECTHttpApiModule extends HttpApiModule<DynECTApi> {
        * synchronized to prevent multiple callers from overlapping requests on the same session
        */
       @Override
-      synchronized protected HttpResponse invoke(HttpURLConnection connection) throws IOException, InterruptedException {
+      protected synchronized HttpResponse invoke(HttpURLConnection connection) throws IOException, InterruptedException {
          HttpResponse response = super.invoke(connection);
          if (response.getStatusCode() == 200) {
             byte[] data = closeClientButKeepContentStream(response);

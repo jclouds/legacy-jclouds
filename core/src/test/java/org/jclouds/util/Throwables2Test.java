@@ -134,7 +134,7 @@ public class Throwables2Test {
    public void testGetFirstThrowableOfTypeOuterTransformParallel() {
       Exception aex = createMock(AuthorizationException.class);
       TransformParallelException pex = new TransformParallelException(ImmutableMap.<Object, Future<?>> of(),
-            ImmutableMap.of("bad", (Exception) aex), "test");
+            ImmutableMap.of("bad", aex), "test");
       assertEquals(getFirstThrowableOfType(new ExecutionException(pex), AuthorizationException.class), aex);
    }
 

@@ -55,6 +55,7 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.util.concurrent.Atomics;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.UncheckedTimeoutException;
@@ -110,7 +111,7 @@ public class EC2ImageExtension implements ImageExtension {
       String imageId = ec2Client.getAMIServices().createImageInRegion(region, cloneTemplate.getName(), instanceId,
             CreateImageOptions.NONE);
 
-      final AtomicReference<Image> image = new AtomicReference<Image>(new ImageBuilder()
+      final AtomicReference<Image> image = Atomics.newReference(new ImageBuilder()
             .location(find(locations.get(), idEquals(region)))
             .id(region + "/" + imageId)
             .providerId(imageId)
