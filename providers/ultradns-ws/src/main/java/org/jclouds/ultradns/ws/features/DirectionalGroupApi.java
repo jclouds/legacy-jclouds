@@ -36,6 +36,7 @@ import org.jclouds.ultradns.ws.binders.DirectionalGroupCoordinatesToXML;
 import org.jclouds.ultradns.ws.domain.AccountLevelGroup;
 import org.jclouds.ultradns.ws.domain.DirectionalGroup;
 import org.jclouds.ultradns.ws.domain.DirectionalGroupCoordinates;
+import org.jclouds.ultradns.ws.domain.DirectionalPool.RecordType;
 import org.jclouds.ultradns.ws.domain.DirectionalPoolRecordDetail;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
 import org.jclouds.ultradns.ws.xml.AccountLevelGroupsHandler;
@@ -103,9 +104,7 @@ public interface DirectionalGroupApi {
     * @param hostName
     *           fully qualified hostname including the trailing dot.
     * @param rrType
-    *           type value, with special casing: for {@code A} or {@code CNAME}
-    *           of ipv4 hosts, this is {@code 1}; for {@code AAAA} or
-    *           {@code CNAME} of ipv4 hosts, this is {@code 28}
+    *           {@link RecordType type} value of the existing records.
     * @return empty if there are not groups for the specified host and type
     */
    @Named("getAvailableGroups")
@@ -113,7 +112,7 @@ public interface DirectionalGroupApi {
    @XMLResponseParser(ItemListHandler.class)
    @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
    @Payload("<v01:getAvailableGroups><poolName>{hostName}</poolName><poolRecordType>{rrType}</poolRecordType><accountID>{accountId}</accountID><groupType /></v01:getAvailableGroups>")
-   FluentIterable<String> listGroupNamesByRecordNameAndType(
+   FluentIterable<String> listGroupNamesByDNameAndType(
          @PayloadParam("hostName") String hostName, @PayloadParam("rrType") int rrType);
 
    /**

@@ -121,6 +121,10 @@ public final class TrafficControllerPool {
       private RecordType(int code) {
          this.code = code;
       }
+
+      public int getCode() {
+         return code;
+      }
    }
 
    @Override

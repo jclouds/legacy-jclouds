@@ -112,18 +112,6 @@ public final class DirectionalPool {
 
       MX(15);
 
-      @Override
-      public String toString() {
-         switch (this) {
-         case IPV4:
-            return "A";
-         case IPV6:
-            return "AAAA";
-         default:
-            return super.toString();
-         }
-      }
-
       private final int code;
 
       private RecordType(int code) {

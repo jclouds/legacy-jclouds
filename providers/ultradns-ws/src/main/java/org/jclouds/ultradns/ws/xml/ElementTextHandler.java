@@ -54,6 +54,18 @@ public abstract class ElementTextHandler extends ParseSax.HandlerForGeneratedReq
       }
    }
 
+   public static class DirPoolID extends ElementTextHandler {
+      public DirPoolID() {
+         super("DirPoolID");
+      }
+   }
+
+   public static class DirectionalPoolRecordID extends ElementTextHandler {
+      public DirectionalPoolRecordID() {
+         super("DirectionalPoolRecordID");
+      }
+   }
+
    private final String textElement;
 
    private StringBuilder currentText = new StringBuilder();

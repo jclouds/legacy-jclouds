@@ -21,6 +21,8 @@ package org.jclouds.ultradns.ws.features;
 import static com.google.common.base.Predicates.equalTo;
 import static java.util.logging.Logger.getAnonymousLogger;
 import static org.jclouds.ultradns.ws.domain.ResourceRecord.rrBuilder;
+import static org.jclouds.ultradns.ws.domain.RoundRobinPool.RecordType.A;
+import static org.jclouds.ultradns.ws.domain.RoundRobinPool.RecordType.AAAA;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -29,13 +31,11 @@ import static org.testng.Assert.fail;
 
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
-import org.jclouds.ultradns.ws.domain.IdAndName;
 import org.jclouds.ultradns.ws.domain.ResourceRecord;
 import org.jclouds.ultradns.ws.domain.ResourceRecordDetail;
 import org.jclouds.ultradns.ws.domain.RoundRobinPool;
 import org.jclouds.ultradns.ws.domain.Zone;
 import org.jclouds.ultradns.ws.internal.BaseUltraDNSWSApiLiveTest;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -49,16 +49,11 @@ import com.google.common.collect.FluentIterable;
 @Test(groups = "live", singleThreaded = true, testName = "RoundRobinPoolApiLiveTest")
 public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
-   private String zoneName = System.getProperty("user.name").replace('.', '-') + ".rrpool.ultradnstest.jclouds.org.";
-   private IdAndName account;
-
    @Override
    @BeforeClass(groups = { "integration", "live" })
    public void setup() {
       super.setup();
-      api.getZoneApi().delete(zoneName);
-      account = api.getCurrentAccount();
-      api.getZoneApi().createInAccount(zoneName, account.getId());
+      createZone();
    }
 
    private void checkRRPool(RoundRobinPool pool) {
@@ -103,10 +98,10 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
    @Test
    public void testCreateAPool() {
-      aPoolId = api(zoneName).createAPoolForDName("A pool", dname);
+      aPoolId = api(zoneName).createForDNameAndType("A pool", dname, A.getCode());
       getAnonymousLogger().info("created A rr pool: " + aPoolId);
       try {
-         api(zoneName).createAPoolForDName("A pool", dname);
+         api(zoneName).createForDNameAndType("A pool", dname, A.getCode());
          fail();
       } catch (ResourceAlreadyExistsException e) {
 
@@ -170,10 +165,10 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
    @Test
    public void testCreateAAAAPool() {
-      aaaaPoolId = api(zoneName).createAAAAPoolForDName("AAAA pool", dname);
+      aaaaPoolId = api(zoneName).createForDNameAndType("AAAA pool", dname, AAAA.getCode());
       getAnonymousLogger().info("created AAAA rr pool: " + aaaaPoolId);
       try {
-         api(zoneName).createAAAAPoolForDName("AAAA pool", dname);
+         api(zoneName).createForDNameAndType("AAAA pool", dname, AAAA.getCode());
          fail();
       } catch (ResourceAlreadyExistsException e) {
 
@@ -240,16 +235,5 @@ public class RoundRobinPoolApiLiveTest extends BaseUltraDNSWSApiLiveTest {
 
    private RoundRobinPoolApi api(String zoneName) {
       return api.getRoundRobinPoolApiForZone(zoneName);
-   }
-
-   @Override
-   @AfterClass(groups = { "integration", "live" })
-   protected void tearDown() {
-      if (aPoolId != null)
-         api(zoneName).delete(aPoolId);
-      if (aaaaPoolId != null)
-         api(zoneName).delete(aaaaPoolId);
-      api.getZoneApi().delete(zoneName);
-      super.tearDown();
    }
 }
