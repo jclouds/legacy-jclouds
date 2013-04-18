@@ -33,6 +33,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.io.Payload;
 import org.jclouds.rest.ResourceNotFoundException;
+import org.jclouds.ultradns.ws.UltraDNSWSExceptions.DirectionalGroupOverlapException;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
 import org.jclouds.ultradns.ws.UltraDNSWSResponseException;
 import org.testng.annotations.Test;
@@ -337,6 +338,54 @@ public class UltraDNSWSErrorHandlerTest {
       assertEquals(exception.getMessage(), "Error 4003: Group does not exist.");
       assertEquals(exception.getError().getDescription().get(), "Group does not exist.");
       assertEquals(exception.getError().getCode(), 4003);
+   }
+
+   @Test
+   public void testCode2705SetsResourceNotFoundException() throws IOException {
+      HttpRequest request = HttpRequest.builder().method(POST)
+                                                 .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+                                                 .addHeader(HOST, "ultra-api.ultradns.com:8443")
+                                                 .payload(payloadFromResource("/delete_directionalrecord.xml")).build();
+      HttpCommand command = new HttpCommand(request);
+      HttpResponse response = HttpResponse.builder()
+                                          .message(INTERNAL_SERVER_ERROR.getReasonPhrase())
+                                          .statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
+                                          .payload(payloadFromResource("/directionalrecord_doesnt_exist.xml")).build();
+
+      function.handleError(command, response);
+
+      assertEquals(command.getException().getClass(), ResourceNotFoundException.class);
+      assertEquals(command.getException().getMessage(), "Directional Pool Record does not exist in the system");
+
+      UltraDNSWSResponseException exception = UltraDNSWSResponseException.class.cast(command.getException().getCause());
+
+      assertEquals(exception.getMessage(), "Error 2705: Directional Pool Record does not exist in the system");
+      assertEquals(exception.getError().getDescription().get(), "Directional Pool Record does not exist in the system");
+      assertEquals(exception.getError().getCode(), 2705);
+   }
+
+   @Test
+   public void testCode7021SetsDirectionalGroupOverlapException() throws IOException {
+      HttpRequest request = HttpRequest.builder().method(POST)
+                                                 .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+                                                 .addHeader(HOST, "ultra-api.ultradns.com:8443")
+                                                 .payload(payloadFromResource("/create_directionalrecord_newgroup.xml")).build();
+      HttpCommand command = new HttpCommand(request);
+      HttpResponse response = HttpResponse.builder()
+                                          .message(INTERNAL_SERVER_ERROR.getReasonPhrase())
+                                          .statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
+                                          .payload(payloadFromResource("/directionalgroup_overlap.xml")).build();
+
+      function.handleError(command, response);
+
+      assertEquals(command.getException().getClass(), DirectionalGroupOverlapException.class);
+      assertEquals(command.getException().getMessage(), "Geolocation/Source IP overlap(s) found: Region: Utah (Group: US )");
+
+      UltraDNSWSResponseException exception = UltraDNSWSResponseException.class.cast(command.getException().getCause());
+
+      assertEquals(exception.getMessage(), "Error 7021: Geolocation/Source IP overlap(s) found: Region: Utah (Group: US )");
+      assertEquals(exception.getError().getDescription().get(), "Geolocation/Source IP overlap(s) found: Region: Utah (Group: US )");
+      assertEquals(exception.getError().getCode(), 7021);
    }
 
    private Payload payloadFromResource(String resource) {

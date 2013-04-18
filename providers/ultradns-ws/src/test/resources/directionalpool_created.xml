@@ -1,0 +1,8 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Body>
+		<ns1:addDirectionalPoolResponse
+			xmlns:ns1="http://webservice.api.ultra.neustar.com/v01/">
+			<DirPoolID xmlns:ns2="http://schema.ultraservice.neustar.com/v01/">06063DC355055E68</DirPoolID>
+		</ns1:addDirectionalPoolResponse>
+	</soap:Body>
+</soap:Envelope>

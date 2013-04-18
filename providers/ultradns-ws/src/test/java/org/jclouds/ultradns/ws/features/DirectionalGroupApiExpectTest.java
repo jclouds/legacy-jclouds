@@ -51,7 +51,7 @@ public class DirectionalGroupApiExpectTest extends BaseUltraDNSWSApiExpectTest {
    public void testListGroupNamesByRecordNameAndTypeWhenResponseIs2xx() {
       UltraDNSWSApi success = requestSendsResponse(listGroupNamesByRecordNameAndType, listGroupNamesByRecordNameAndTypeResponse);
 
-      assertEquals(success.getDirectionalGroupApiForAccount("accountid").listGroupNamesByRecordNameAndType("www.jclouds.org.", 1).toString(),
+      assertEquals(success.getDirectionalGroupApiForAccount("accountid").listGroupNamesByDNameAndType("www.jclouds.org.", 1).toString(),
             new GetAvailableGroupsResponseTest().expected().toString());
    }
 
