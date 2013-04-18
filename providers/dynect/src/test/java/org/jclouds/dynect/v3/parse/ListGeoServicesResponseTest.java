@@ -17,29 +17,42 @@
  * under the License.
  */
 
-package org.jclouds.dynect.v3.functions;
+package org.jclouds.dynect.v3.parse;
 
-import static org.testng.Assert.assertEquals;
+import static com.google.common.base.Functions.compose;
 
-import org.jclouds.dynect.v3.functions.ExtractZoneNames.ExtractNameInPath;
+import org.jclouds.dynect.v3.functions.ExtractLastPathComponent;
+import org.jclouds.dynect.v3.internal.BaseDynECTParseTest;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Injector;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class ExtractZoneNamesTest {
-   ExtractZoneNames fn = new ExtractZoneNames();
+public class ListGeoServicesResponseTest extends BaseDynECTParseTest<FluentIterable<String>> {
 
-   public void testExtractNameInPath() {
-      assertEquals(ExtractNameInPath.INSTANCE.apply("/REST/Zone/jclouds.org/"), "jclouds.org");
+   @Override
+   public String resource() {
+      return "/list_geo_services.json";
    }
 
-   public void testExtractZoneNames() {
-      assertEquals(fn.apply(FluentIterable.from(ImmutableSet.of("/REST/Zone/jclouds.org/"))).toSet(),
-            ImmutableSet.of("jclouds.org"));
+   @Override
+   @SelectJson("data")
+   public FluentIterable<String> expected() {
+      return FluentIterable.from(ImmutableSet.of("srv", "srv-log"));
+   }
+
+   // TODO: currently our parsing of annotations on expected() ignores
+   // @Transform
+   @Override
+   protected Function<HttpResponse, FluentIterable<String>> parser(Injector i) {
+      return compose(new ExtractLastPathComponent(), super.parser(i));
    }
 }

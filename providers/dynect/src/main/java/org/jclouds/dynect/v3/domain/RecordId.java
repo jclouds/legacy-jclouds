@@ -30,33 +30,16 @@ import com.google.common.base.Objects.ToStringHelper;
 /**
  * @author Adrian Cole
  */
-public class RecordId {
+public class RecordId extends Node {
 
    private final long id;
-   private final String zone;
-   private final String fqdn;
    private final String type;
 
-   @ConstructorProperties({ "zone", "fqdn", "record_type", "record_id" })
-   RecordId(String zone, String fqdn, String type, long id) {
+   @ConstructorProperties({"fqdn", "zone", "record_type", "record_id" })
+   RecordId(String fqdn, String zone, String type, long id) {
+      super(fqdn, zone);
       this.id = checkNotNull(id, "id");
-      this.fqdn = checkNotNull(fqdn, "fqdn of %s", id);
-      this.zone = checkNotNull(zone, "zone of %s", id);
       this.type = checkNotNull(type, "type of %s", id);
-   }
-
-   /**
-    * Name of the zone
-    */
-   public String getZone() {
-      return zone;
-   }
-
-   /**
-    * Fully qualified domain name of a node in the zone
-    */
-   public String getFQDN() {
-      return fqdn;
    }
 
    /**
@@ -75,7 +58,7 @@ public class RecordId {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(zone, fqdn, type, id);
+      return Objects.hashCode(getZone(), getFQDN(), type, id);
    }
 
    /**
@@ -88,8 +71,7 @@ public class RecordId {
       if (obj == null || !(obj instanceof RecordId))
          return false;
       RecordId that = RecordId.class.cast(obj);
-      return equal(this.zone, that.zone) && equal(this.fqdn, that.fqdn) && equal(this.type, that.type)
-            && equal(this.id, that.id);
+      return super.equals(obj) && equal(this.type, that.type) && equal(this.id, that.id);
    }
 
    @Override
@@ -98,7 +80,7 @@ public class RecordId {
    }
 
    protected ToStringHelper string() {
-      return toStringHelper(this).add("zone", zone).add("fqdn", fqdn).add("type", type).add("id", id);
+      return toStringHelper(this).add("fqdn", getFQDN()).add("zone", getZone()).add("type", type).add("id", id);
    }
 
    public static Builder<?> recordIdBuilder() {
@@ -112,24 +94,24 @@ public class RecordId {
    public abstract static class Builder<B extends Builder<B>>  {
       protected abstract B self();
 
-      protected String zone;
       protected String fqdn;
+      protected String zone;
       protected String type;
       protected long id;
 
       /**
-       * @see RecordId#getZone()
+       * @see Node#getFQDN()
        */
-      public B zone(String zone) {
-         this.zone = zone;
+      public B fqdn(String fqdn) {
+         this.fqdn = fqdn;
          return self();
       }
 
       /**
-       * @see RecordId#getFQDN()
+       * @see Node#getZone()
        */
-      public B fqdn(String fqdn) {
-         this.fqdn = fqdn;
+      public B zone(String zone) {
+         this.zone = zone;
          return self();
       }
 
@@ -150,11 +132,11 @@ public class RecordId {
       }
 
       public RecordId build() {
-         return new RecordId(zone, fqdn, type, id);
+         return new RecordId(fqdn, zone, type, id);
       }
 
       public B from(RecordId in) {
-         return zone(in.zone).fqdn(in.fqdn).type(in.type).id(in.id);
+         return fqdn(in.getFQDN()).zone(in.getZone()).type(in.type).id(in.id);
       }
    }
 
