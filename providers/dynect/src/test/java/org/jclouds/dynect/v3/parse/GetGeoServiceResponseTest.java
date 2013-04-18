@@ -54,7 +54,7 @@ public class GetGeoServiceResponseTest extends BaseDynECTParseTest<GeoService> {
             .name("CCS")
             .active(true)
             .ttl(30)
-            .addNode(Node.create("srv.jclouds.org", "jclouds.org"))
+            .addNode(Node.create("jclouds.org", "srv.jclouds.org"))
             .addGroup(
                   GeoRegionGroup
                         .builder()
