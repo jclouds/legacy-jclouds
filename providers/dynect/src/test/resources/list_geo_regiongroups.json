@@ -1,0 +1,12 @@
+{
+    "status": "success",
+    "data": ["/REST/GeoRegionGroup/srv/Everywhere Else", "/REST/GeoRegionGroup/srv/Europe", "/REST/GeoRegionGroup/srv/Fallback"],
+    "job_id": 321503402,
+    "msgs": [{
+            "INFO": "get_region_groups: Here are your groups",
+            "SOURCE": "BLL",
+            "ERR_CD": null,
+            "LVL": "INFO"
+        }
+    ]
+}

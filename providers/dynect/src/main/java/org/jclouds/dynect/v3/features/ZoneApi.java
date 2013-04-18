@@ -40,7 +40,7 @@ import org.jclouds.dynect.v3.domain.Zone;
 import org.jclouds.dynect.v3.domain.Zone.SerialStyle;
 import org.jclouds.dynect.v3.filters.AlwaysAddContentType;
 import org.jclouds.dynect.v3.filters.SessionManager;
-import org.jclouds.dynect.v3.functions.ExtractZoneNames;
+import org.jclouds.dynect.v3.functions.ExtractLastPathComponent;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.annotations.BinderParam;
@@ -72,7 +72,7 @@ public interface ZoneApi {
    @GET
    @Path("/Zone")
    @SelectJson("data")
-   @Transform(ExtractZoneNames.class)
+   @Transform(ExtractLastPathComponent.class)
    FluentIterable<String> list() throws JobStillRunningException;
 
    /**
