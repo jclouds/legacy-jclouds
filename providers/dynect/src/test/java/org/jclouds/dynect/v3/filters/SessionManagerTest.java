@@ -18,6 +18,8 @@
  */
 package org.jclouds.dynect.v3.filters;
 
+import static com.google.common.io.Resources.getResource;
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.FORBIDDEN;
 import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
 import static org.easymock.EasyMock.createMock;
@@ -29,6 +31,8 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
+
+import java.io.IOException;
 
 import org.jclouds.domain.Credentials;
 import org.jclouds.dynect.v3.domain.Session;
@@ -87,6 +91,34 @@ public class SessionManagerTest {
       replay(creds, sessionCache, sessionApi, command);
 
       HttpResponse response = HttpResponse.builder().statusCode(UNAUTHORIZED.getStatusCode()).build();
+
+      SessionManager retry = new SessionManager(creds, sessionCache, sessionApi);
+
+      assertTrue(retry.shouldRetryRequest(command, response));
+
+      verify(creds, sessionCache, sessionApi, command);
+   }
+
+   @SuppressWarnings("unchecked")
+   @Test
+   public void testIPMismatchShouldInvalidateSessionAndRetry() throws IOException {
+      HttpCommand command = createMock(HttpCommand.class);
+      Supplier<Credentials> creds = createMock(Supplier.class);
+      LoadingCache<Credentials, Session> sessionCache = createMock(LoadingCache.class);
+      SessionApi sessionApi = createMock(SessionApi.class);
+
+      sessionCache.invalidateAll();
+      expectLastCall();
+      expect(command.incrementFailureCount()).andReturn(1);
+      expect(command.isReplayable()).andReturn(true);
+      expect(command.getFailureCount()).andReturn(1).atLeastOnce();
+
+      replay(creds, sessionCache, sessionApi, command);
+
+      HttpResponse response = HttpResponse.builder()
+                                          .statusCode(BAD_REQUEST.getStatusCode())
+                                          .payload(getResource("ip_mismatch.json").openStream())
+                                          .build();
 
       SessionManager retry = new SessionManager(creds, sessionCache, sessionApi);
 
