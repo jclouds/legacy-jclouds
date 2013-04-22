@@ -101,12 +101,15 @@ public final class SessionManager extends BackoffLimitedRetryHandler implements 
       return builder.build();
    }
 
+   private static final String IP_MISMATCH = "IP address does not match current session";
+
    @Override
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
       boolean retry = false; // default
       try {
-         if (response.getStatusCode() == 401) {
-            closeClientButKeepContentStream(response);
+         byte[] data = closeClientButKeepContentStream(response);
+         String message = data != null ? new String(data) : null;
+         if (response.getStatusCode() == 401 || (message != null && message.indexOf(IP_MISMATCH) != -1)) {
             logger.debug("invalidating session");
             sessionCache.invalidateAll();
             retry = super.shouldRetryRequest(command, response);
