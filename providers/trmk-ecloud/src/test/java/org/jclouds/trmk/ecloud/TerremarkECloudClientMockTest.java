@@ -23,12 +23,10 @@ import static org.jclouds.Constants.PROPERTY_MAX_RETRIES;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.jclouds.ContextBuilder;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
@@ -59,7 +57,7 @@ public class TerremarkECloudClientMockTest {
                            .endpoint(uri)
                            .overrides(overrides)
                            .modules(modules)
-                           .build(TerremarkECloudApiMetadata.CONTEXT_TOKEN).getApi();
+                           .buildApi(TerremarkECloudClient.class);
    }
 
    String versionXML = "<SupportedVersions><VersionInfo><Version>0.8b-ext2.8</Version><LoginUrl>URLv0.8/login</LoginUrl></VersionInfo></SupportedVersions>";
@@ -67,19 +65,17 @@ public class TerremarkECloudClientMockTest {
    @Test
    public void testLoginSetsContentLength() throws IOException, InterruptedException {
       MockWebServer server = new MockWebServer();
-      AtomicReference<URL> url = setURLReplacingDispatcher(server);
+      server.play();
+      server.setDispatcher(replaceURLWithLocalhostPort(server.getPort()));
       server.enqueue(new MockResponse().setResponseCode(200).setBody(versionXML));
       server.enqueue(new MockResponse().setResponseCode(200)
                                        .addHeader("x-vcloud-authorization", "cookie")
                                        .setBody("<OrgList />"));
-      server.play();
-      url.set(server.getUrl("/"));
 
-      TerremarkECloudClient api = mockTerremarkECloudClient(url.get().toString());
+      TerremarkECloudClient api = mockTerremarkECloudClient(server.getUrl("/").toString());
 
       try {
          api.listOrgs();
-      } finally {
          RecordedRequest getVersions = server.takeRequest();
          assertEquals(getVersions.getRequestLine(), "GET /versions HTTP/1.1");
 
@@ -87,26 +83,25 @@ public class TerremarkECloudClientMockTest {
          assertEquals(login.getRequestLine(), "POST /v0.8/login HTTP/1.1");
          assertEquals(login.getHeader("Authorization"), "Basic dXNlcjpwYXNzd29yZA==");
          assertEquals(login.getHeader("Content-Length"), "0");
-
+      } finally {
          server.shutdown();
       }
    }
 
-   /**
-    * there's no built-in way to defer evaluation of a response header, hence this
-    * method, which allows us to send back links to the mock server.
-    */
-   private AtomicReference<URL> setURLReplacingDispatcher(MockWebServer server) {
-      final AtomicReference<URL> url = new AtomicReference<URL>();
-
-      final QueueDispatcher dispatcher = new QueueDispatcher() {
+    /**
+     * this pattern is used for HATEOAS or similar apis which return urls for
+     * further requests. If we don't replace here, the test cannot be bound to
+     * the same MWS instance as it was created with.
+     */
+   private QueueDispatcher replaceURLWithLocalhostPort(final int port) {
+      return new QueueDispatcher() {
          protected final BlockingQueue<MockResponse> responseQueue = new LinkedBlockingQueue<MockResponse>();
 
          @Override
          public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
             MockResponse response = responseQueue.take();
             if (response.getBody() != null) {
-               String newBody = new String(response.getBody()).replace("URL", url.get().toString());
+               String newBody = new String(response.getBody()).replace("URL", "http://localhost:" + port + "/");
                response = response.setBody(newBody);
             }
             return response;
@@ -117,7 +112,5 @@ public class TerremarkECloudClientMockTest {
             responseQueue.add(response);
          }
       };
-      server.setDispatcher(dispatcher);
-      return url;
    }
 }
