@@ -1,0 +1,23 @@
+{
+  "records": [
+    {
+      "name": "jclouds-example.com",
+      "id": "PTR-557437",
+      "type": "PTR",
+      "data": "166.78.146.80",
+      "ttl": 11235,
+      "updated": "2013-04-11T15:35:34.000+0000",
+      "created": "2013-04-11T15:35:34.000+0000"
+    },
+    {
+      "name": "jclouds-example.com",
+      "id": "PTR-557438",
+      "type": "PTR",
+      "comment": "Hello IPv6",
+      "data": "2001:4800:7812:514:9a32:3c2a:ff04:aed2",
+      "ttl": 3600,
+      "updated": "2013-04-11T15:35:37.000+0000",
+      "created": "2013-04-11T15:35:37.000+0000"
+    }
+  ]
+}

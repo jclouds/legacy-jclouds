@@ -1,0 +1,32 @@
+{
+  "request": "{\"records\":[{\"name\":\"jclouds-example.com\",\"type\":\"MX\",\"data\":\"mail.jclouds-example.com\",\"comment\":\"MX Record\",\"priority\":11235},{\"name\":\"jclouds-example.com\",\"type\":\"A\",\"data\":\"10.0.0.1\"}]}",
+  "response": {
+    "records": [
+      {
+        "name": "jclouds-example.com",
+        "id": "MX-4350353",
+        "priority": 11235,
+        "type": "MX",
+        "comment":"MX Record",
+        "data": "mail.jclouds-example.com",
+        "ttl": 60000,
+        "updated": "2013-04-05T19:53:18.000+0000",
+        "created": "2013-04-05T19:53:18.000+0000"
+      },
+      {
+        "name": "jclouds-example.com",
+        "id": "A-9844102",
+        "type": "A",
+        "data": "10.0.0.1",
+        "ttl": 60000,
+        "updated": "2013-04-05T19:53:19.000+0000",
+        "created": "2013-04-05T19:53:19.000+0000"
+      }
+    ]
+  },
+  "status": "COMPLETED",
+  "verb": "POST",
+  "jobId": "290bdc5b-f6fa-4c67-83d7-3b29d2abb8e0",
+  "callbackUrl": "https://dns.api.rackspacecloud.com/v1.0/123123/status/290bdc5b-f6fa-4c67-83d7-3b29d2abb8e0",
+  "requestUrl": "https://dns.api.rackspacecloud.com/v1.0/123123/domains/3668461/records"
+}
