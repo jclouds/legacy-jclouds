@@ -18,44 +18,36 @@
  */
 package org.jclouds.cloudwatch;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.jclouds.util.Predicates2.retry;
 
 import java.util.Date;
 import java.util.Set;
 
-import org.jclouds.apis.BaseApiLiveTest;
-import org.jclouds.cloudwatch.domain.Dimension;
-import org.jclouds.cloudwatch.domain.MetricDatum;
-import org.jclouds.cloudwatch.domain.Unit;
-import org.jclouds.cloudwatch.options.ListMetricsOptions;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import org.jclouds.cloudwatch.domain.Dimension;
+import org.jclouds.cloudwatch.domain.MetricDatum;
+import org.jclouds.cloudwatch.domain.Unit;
+import org.jclouds.cloudwatch.internal.BaseCloudWatchApiLiveTest;
+import org.jclouds.cloudwatch.options.ListMetricsOptions;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 /**
  * Tests behavior of {@code CloudWatch}.
  *
  * @author Jeremy Whitlock
  */
-public class CloudWatchLiveTest extends BaseApiLiveTest<CloudWatchApi> {
+public class CloudWatchLiveTest extends BaseCloudWatchApiLiveTest {
 
    public CloudWatchLiveTest() {
       provider = "cloudwatch";
    }
 
    @Test
-   protected void testCloudWatchListMetrics() {
-      // Just make sure there is at least one metric returned (Much better if the account you use has more than 500)
-      checkArgument(CloudWatch.listMetrics(api, null, new ListMetricsOptions()).iterator().hasNext());
-   }
-
-   @Test
-   protected void testCloudWatchPutMetrics() {
+   protected void testCloudWatch() {
       String metricName = "TestMetricName" + System.currentTimeMillis();
       String namespace = "JCLOUDS/Test";
       Date metricTimestamp = new Date();

@@ -18,18 +18,23 @@
  */
 package org.jclouds.cloudwatch.config;
 
-import static org.jclouds.reflect.Reflection2.typeToken;
-
-import java.util.Map;
-
+import com.google.common.collect.ImmutableMap;
 import org.jclouds.aws.config.FormSigningRestClientModule;
 import org.jclouds.cloudwatch.CloudWatchApi;
 import org.jclouds.cloudwatch.CloudWatchAsyncApi;
+import org.jclouds.cloudwatch.features.AlarmApi;
+import org.jclouds.cloudwatch.features.AlarmAsyncApi;
 import org.jclouds.cloudwatch.features.MetricApi;
 import org.jclouds.cloudwatch.features.MetricAsyncApi;
+import org.jclouds.cloudwatch.handlers.CloudWatchErrorHandler;
+import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.annotation.ClientError;
+import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.Map;
+
+import static org.jclouds.reflect.Reflection2.typeToken;
 
 /**
  * Configures the Monitoring connection.
@@ -40,10 +45,17 @@ import com.google.common.collect.ImmutableMap;
 public class CloudWatchRestClientModule extends FormSigningRestClientModule<CloudWatchApi, CloudWatchAsyncApi> {
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
          .put(MetricApi.class, MetricAsyncApi.class)
+         .put(AlarmApi.class, AlarmAsyncApi.class)
          .build();
    
    public CloudWatchRestClientModule() {
       super(typeToken(CloudWatchApi.class), typeToken(CloudWatchAsyncApi.class), DELEGATE_MAP);
+   }
+
+   @Override
+   protected void bindErrorHandlers() {
+      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(CloudWatchErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(CloudWatchErrorHandler.class);
    }
 
 }

@@ -1,0 +1,20 @@
+<DescribeAlarmHistoryResponse xmlns="http://monitoring.amazonaws.com/doc/2010-08-01/">
+  <DescribeAlarmHistoryResult>
+    <AlarmHistoryItems>
+      <member>
+        <AlarmName>TestAlarmName1</AlarmName>
+        <HistoryData>{&quot;reason&quot;: &quot;1&quot;}</HistoryData>
+        <HistoryItemType>Action</HistoryItemType>
+        <HistorySummary>This is test 1.</HistorySummary>
+        <Timestamp>2013-01-01T00:00:00.000+0000</Timestamp>
+      </member>
+      <member>
+        <AlarmName>TestAlarmName2</AlarmName>
+        <HistoryData>{&quot;reason&quot;: &quot;2&quot;}</HistoryData>
+        <HistoryItemType>ConfigurationUpdate</HistoryItemType>
+        <HistorySummary>This is test 2.</HistorySummary>
+        <Timestamp>2013-01-02T00:00:00.000+0000</Timestamp>
+      </member>
+    </AlarmHistoryItems>
+  </DescribeAlarmHistoryResult>
+</DescribeAlarmHistoryResponse>

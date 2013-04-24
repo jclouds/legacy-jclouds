@@ -32,7 +32,7 @@ import com.google.common.collect.ImmutableSet;
  *
  * @author Jeremy Whitlock
  */
-public class ListMetricsResponse extends ForwardingSet<Metric>{
+public class ListMetricsResponse extends ForwardingSet<Metric> {
 
    private final Set<Metric> metrics;
    private final String nextToken;
