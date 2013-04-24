@@ -1,0 +1,13 @@
+{
+  "domains": [
+    {
+      "name": "test.jclouds-example.com",
+      "id": 3650908,
+      "comment": "Hello test subdomain",
+      "emailAddress": "jclouds@jclouds-example.com",
+      "updated": "2013-03-22T03:04:16.000+0000",
+      "created": "2013-03-22T03:04:15.000+0000"
+    }
+  ],
+  "totalEntries": 1
+}

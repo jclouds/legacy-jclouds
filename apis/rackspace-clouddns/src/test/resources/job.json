@@ -1,0 +1,7 @@
+{
+  "status": "RUNNING",
+  "verb": "GET",
+  "jobId": "bfbd6ec8-5d4c-49f8-97b5-aa5bfd3e95a4",
+  "callbackUrl": "https://dns.api.rackspacecloud.com/v1.0/123123/status/bfbd6ec8-5d4c-49f8-97b5-aa5bfd3e95a4",
+  "requestUrl": "https://dns.api.rackspacecloud.com/v1.0/123123/domains/3650883/export"
+}

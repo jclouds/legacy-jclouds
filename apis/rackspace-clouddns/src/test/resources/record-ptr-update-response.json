@@ -1,0 +1,8 @@
+{
+  "request": "{\"recordsList\":{\"records\":[{\"id\":\"PTR-557437\",\"name\":\"jclouds-example.com\",\"ttl\":12358,\"data\":\"166.78.146.80\"}]},\"link\":{\"href\":\"https://dfw.servers.api.rackspacecloud.com/v2/123123/servers/f5fb9334-b4f0-49d0-a2cc-57a5772dc7d1\",\"rel\":\"cloudServersOpenStack\"}}",
+  "status": "COMPLETED",
+  "verb": "PUT",
+  "jobId": "8e9970a4-365e-4fd9-a243-71c0abcdf18f",
+  "callbackUrl": "https://dns.api.rackspacecloud.com/v1.0/123123/status/8e9970a4-365e-4fd9-a243-71c0abcdf18f",
+  "requestUrl": "https://dns.api.rackspacecloud.com/v1.0/123123/rdns"
+}

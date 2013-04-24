@@ -1,0 +1,1 @@
+{"records":[{"name":"jclouds-example.com","type":"MX","data":"mail.jclouds-example.com","comment":"MX Record","priority":11235},{"name":"jclouds-example.com","type":"A","data":"10.0.0.1"}]}
