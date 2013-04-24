@@ -1,0 +1,7 @@
+{
+    "limitTypes": [
+        "RATE_LIMIT",
+        "DOMAIN_LIMIT",
+        "DOMAIN_RECORD_LIMIT"
+    ]
+}

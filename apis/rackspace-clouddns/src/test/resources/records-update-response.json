@@ -1,0 +1,8 @@
+{
+  "request": "{\"records\":[{\"id\":\"A-9849792\",\"comment\":\"Multi-record Update\"},{\"id\":\"NS-8687533\",\"comment\":\"Multi-record Update\"},{\"id\":\"NS-8687534\",\"comment\":\"Multi-record Update\"},{\"id\":\"MX-4352374\",\"comment\":\"Multi-record Update\"}]}",
+  "status": "COMPLETED",
+  "verb": "PUT",
+  "jobId": "839768a9-102b-49cc-8227-b9de7485296a",
+  "callbackUrl": "https://dns.api.rackspacecloud.com/v1.0/717071/status/839768a9-102b-49cc-8227-b9de7485296a",
+  "requestUrl": "https://dns.api.rackspacecloud.com/v1.0/717071/domains/3670431/records"
+}

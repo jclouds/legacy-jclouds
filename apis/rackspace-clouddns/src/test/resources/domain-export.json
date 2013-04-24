@@ -1,0 +1,13 @@
+{
+  "response": {
+    "id": 3651323,
+    "contentType": "BIND_9",
+    "contents": "jclouds-example.com.\t600000\tIN\tSOA\tns.rackspace.com. jclouds.jclouds-example.com. 1363960242 21600 3600 1814400 500\njclouds-example.com.\t600000\tIN\tA\t10.0.0.1\njclouds-example.com.\t600000\tIN\tNS\tdns1.stabletransit.com.\njclouds-example.com.\t600000\tIN\tNS\tdns2.stabletransit.com.\njclouds-example.com.\t600000\tIN\tMX\t11235 mail.jclouds-example.com.\n",
+    "accountId": 123123
+  },
+  "status": "COMPLETED",
+  "verb": "GET",
+  "jobId": "526d518b-f1b1-4e25-9e19-9643cb030a1e",
+  "callbackUrl": "https://dns.api.rackspacecloud.com/v1.0/123123/status/526d518b-f1b1-4e25-9e19-9643cb030a1e",
+  "requestUrl": "https://dns.api.rackspacecloud.com/v1.0/123123/domains/3651323/export"
+}

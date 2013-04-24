@@ -1,0 +1,7 @@
+{
+  "status": "COMPLETED",
+  "verb": "DELETE",
+  "jobId": "4988d69c-37b5-406c-b82b-58ed099d68cd",
+  "callbackUrl": "https://dns.api.rackspacecloud.com/v1.0/123123/status/4988d69c-37b5-406c-b82b-58ed099d68cd",
+  "requestUrl": "https://dns.api.rackspacecloud.com/v1.0/123123/rdns/cloudServersOpenStackhref=https://dfw.servers.api.rackspacecloud.com/v2/123123/servers/f5fb9334-b4f0-49d0-a2cc-57a5772dc7d1&ip=166.78.146.80"
+}
