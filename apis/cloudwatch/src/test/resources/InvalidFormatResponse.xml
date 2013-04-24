@@ -1,0 +1,9 @@
+<ErrorResponse>
+  <Errors>
+    <Error>
+      <Code>InvalidFormat</Code>
+      <Message>Data was not syntactically valid JSON.</Message>
+    </Error>
+  </Errors>
+  <RequestID>a9f8f3a3-e40f-11dd-af0f-cf11f65ec49d</RequestID>
+</ErrorResponse>

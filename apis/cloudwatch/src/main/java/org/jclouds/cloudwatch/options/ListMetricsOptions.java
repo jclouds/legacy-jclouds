@@ -166,14 +166,14 @@ public class ListMetricsOptions extends BaseHttpRequestOptions implements Clonea
       }
 
       /**
-       * @see ListMetricsOptions#dimension(String)
+       * @see ListMetricsOptions#dimension(Dimension)
        */
       public static ListMetricsOptions dimension(Dimension dimension) {
          return new ListMetricsOptions().dimension(dimension);
       }
 
       /**
-       * @see ListMetricsOptions#afterMarker(String)
+       * @see ListMetricsOptions#afterMarker(Object)
        */
       public static ListMetricsOptions afterMarker(Object afterMarker) {
          return new ListMetricsOptions().afterMarker(afterMarker);
