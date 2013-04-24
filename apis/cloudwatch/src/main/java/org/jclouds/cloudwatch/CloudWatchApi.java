@@ -21,14 +21,14 @@ package org.jclouds.cloudwatch;
 import java.io.Closeable;
 import java.util.Set;
 
+import com.google.inject.Provides;
+import org.jclouds.cloudwatch.features.AlarmApi;
 import org.jclouds.cloudwatch.features.MetricApi;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
-
-import com.google.inject.Provides;
 /**
  * Provides access to Amazon CloudWatch via the Query API
  * <p/>
@@ -58,4 +58,16 @@ public interface CloudWatchApi extends Closeable {
     */
    @Delegate
    MetricApi getMetricApiForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+
+   /**
+    * Provides synchronous access to Alarm features.
+    */
+   @Delegate
+   AlarmApi getAlarmApi();
+
+   /**
+    * Provides synchronous access to Alarm features.
+    */
+   @Delegate
+   AlarmApi getAlarmApiForRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 }

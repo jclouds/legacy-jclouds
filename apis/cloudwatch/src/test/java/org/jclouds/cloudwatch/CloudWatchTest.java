@@ -25,6 +25,9 @@ import static org.easymock.EasyMock.expect;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import org.easymock.EasyMock;
 import org.jclouds.cloudwatch.domain.Metric;
 import org.jclouds.cloudwatch.domain.MetricDatum;
@@ -34,10 +37,6 @@ import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.IterableWithMarkers;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 /**
  * Tests behavior of {@code CloudWatch}.
