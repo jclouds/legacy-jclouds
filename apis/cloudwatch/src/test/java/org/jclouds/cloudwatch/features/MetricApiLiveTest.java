@@ -269,13 +269,16 @@ public class MetricApiLiveTest extends BaseCloudWatchApiLiveTest {
 
          for (Metric metric : response) {
             Set<Dimension> dimensions = metric.getDimensions();
+            boolean dimensionFound = false;
 
-            checkArgument(dimensions.size() == 1, "There should only be one Dimension.");
+            for (Dimension dimension : dimensions) {
+               if (dimension.getName().equals(testDimensionName)) {
+                  dimensionFound = true;
+                  break;
+               }
+            }
 
-            Dimension dimension = dimensions.iterator().next();
-
-            checkArgument(dimension.equals(testDimension),
-                          "The retrieved Dimension and test Dimension should be equal.");
+            checkArgument(dimensionFound, "All metrics should have the " + testDimensionName + " Dimension.Name.");
          }
       }
    }
