@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.HttpHeaders;
@@ -45,6 +46,7 @@ import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.ByteArrayPayload;
 import org.jclouds.io.payloads.DelegatingPayload;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
@@ -52,7 +54,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimaps;
 
 public class TransientStorageStrategy implements LocalStorageStrategy {
-   private final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs = new ConcurrentHashMap<String, ConcurrentMap<String, Blob>>();
+   private final ConcurrentMap<String, ConcurrentSkipListMap<String, Blob>> containerToBlobs =
+				   new ConcurrentHashMap<String, ConcurrentSkipListMap<String, Blob>>();
    private final ConcurrentMap<String, Location> containerToLocation = new ConcurrentHashMap<String, Location>();
    private final Supplier<Location> defaultLocation;
    private final DateService dateService;
@@ -81,7 +84,7 @@ public class TransientStorageStrategy implements LocalStorageStrategy {
    @Override
    public boolean createContainerInLocation(final String containerName, final Location location) {
       ConcurrentMap<String, Blob> origValue = containerToBlobs.putIfAbsent(
-            containerName, new ConcurrentHashMap<String, Blob>());
+            containerName, new ConcurrentSkipListMap<String, Blob>());
       if (origValue != null) {
          return false;
       }
@@ -114,6 +117,11 @@ public class TransientStorageStrategy implements LocalStorageStrategy {
    @Override
    public Iterable<String> getBlobKeysInsideContainer(final String containerName) {
       return containerToBlobs.get(containerName).keySet();
+   }
+
+   @Override
+   public Iterable<String> getBlobKeysInsideContainer(final String containerName, final String fromElement) {
+      return containerToBlobs.get(containerName).keySet().tailSet(fromElement);
    }
 
    @Override

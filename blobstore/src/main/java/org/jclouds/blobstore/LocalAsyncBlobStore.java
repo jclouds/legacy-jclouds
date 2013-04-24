@@ -133,7 +133,12 @@ public class LocalAsyncBlobStore extends BaseAsyncBlobStore {
       // Loading blobs from container
       Iterable<String> blobBelongingToContainer = null;
       try {
-         blobBelongingToContainer = storageStrategy.getBlobKeysInsideContainer(container);
+           String marker = options.getMarker();
+           if (marker != null) {
+              blobBelongingToContainer = storageStrategy.getBlobKeysInsideContainer(container, marker);
+           } else {
+              blobBelongingToContainer = storageStrategy.getBlobKeysInsideContainer(container);
+           }
       } catch (IOException e) {
          logger.error(e, "An error occurred loading blobs contained into container %s", container);
          Throwables.propagate(e);
