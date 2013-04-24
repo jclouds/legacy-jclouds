@@ -1,0 +1,5 @@
+<VoidResponse xmlns="http://monitoring.amazonaws.com/doc/2010-08-01/">
+  <ResponseMetadata>
+    <RequestId>a9f8f3a3-e40f-11dd-af0f-cf11f65ec49d</RequestId>
+  </ResponseMetadata>
+</VoidResponse>

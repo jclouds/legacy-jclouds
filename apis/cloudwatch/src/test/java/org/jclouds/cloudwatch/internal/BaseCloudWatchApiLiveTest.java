@@ -28,7 +28,9 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class BaseCloudWatchApiLiveTest extends BaseApiLiveTest<CloudWatchApi> {
+
    public BaseCloudWatchApiLiveTest() {
       provider = "cloudwatch";
    }
+
 }

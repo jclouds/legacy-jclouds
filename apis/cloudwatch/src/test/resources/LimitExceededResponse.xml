@@ -1,0 +1,9 @@
+<ErrorResponse>
+  <Errors>
+    <Error>
+      <Code>LimitExceeded</Code>
+      <Message>The quota for alarms for this customer has already been reached.</Message>
+    </Error>
+  </Errors>
+  <RequestID>a9f8f3a3-e40f-11dd-af0f-cf11f65ec49d</RequestID>
+</ErrorResponse>
