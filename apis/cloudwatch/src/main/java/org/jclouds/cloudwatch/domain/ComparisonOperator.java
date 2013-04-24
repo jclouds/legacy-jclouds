@@ -20,45 +20,25 @@ package org.jclouds.cloudwatch.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.CaseFormat;
 
 /**
- * @see <a href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference/API_GetMetricStatistics.html?r=5424"/>
- * 
- * @author Adrian Cole, Andrei Savu
+ * @see <a href="http://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_MetricAlarm.html" />
+ *
+ * @author Jeremy Whitlock
  */
-public enum Unit {
-   SECONDS,
-   MICROSECONDS,
-   MILLISECONDS,
-   BYTES,
-   KILOBYTES,
-   MEGABYTES,
-   GIGABYTES,
-   TERABYTES,
-   BITS,
-   KILOBITS,
-   MEGABITS,
-   GIGABITS,
-   TERABITS,
-   PERCENT,
-   COUNT,
-   BYTES_PER_SECOND,
-   KILOBYTES_PER_SECOND,
-   MEGABYTES_PER_SECOND,
-   GIGABYTES_PER_SECOND,
-   TERABYTES_PER_SECOND,
-   BITS_PER_SECOND,
-   KILOBITS_PER_SECOND,
-   MEGABITS_PER_SECOND,
-   GIGABITS_PER_SECOND,
-   TERABITS_PER_SECOND,
-   COUNT_PER_SECOND,
-   NONE,
+@Beta
+public enum ComparisonOperator {
+
+   GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+   GREATER_THAN_THRESHOLD,
+   LESS_THAN_THRESHOLD,
+   LESS_THAN_OR_EQUAL_TO_THRESHOLD,
    UNRECOGNIZED;
 
    public String value() {
-      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()).replace("PerSecond", "/Second");
+      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
    }
 
    @Override
@@ -66,12 +46,13 @@ public enum Unit {
       return value();
    }
 
-   public static Unit fromValue(String value) {
+   public static ComparisonOperator fromValue(String value) {
       try {
-         return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(value, "value").replace(
-                  "/", "Per")));
+         return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(value, "value")));
+
       } catch (IllegalArgumentException e) {
          return UNRECOGNIZED;
       }
    }
+
 }

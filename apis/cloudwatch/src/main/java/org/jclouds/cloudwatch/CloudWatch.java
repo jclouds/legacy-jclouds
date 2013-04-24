@@ -20,15 +20,14 @@ package org.jclouds.cloudwatch;
 
 import java.util.List;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import org.jclouds.cloudwatch.domain.Metric;
 import org.jclouds.cloudwatch.domain.MetricDatum;
 import org.jclouds.cloudwatch.features.MetricApi;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterables;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 
 /**
  * Utilities for using CloudWatch.

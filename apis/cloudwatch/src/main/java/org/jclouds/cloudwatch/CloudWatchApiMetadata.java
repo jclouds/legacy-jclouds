@@ -24,11 +24,10 @@ import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 import java.net.URI;
 import java.util.Properties;
 
+import com.google.common.reflect.TypeToken;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.cloudwatch.config.CloudWatchRestClientModule;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
-
-import com.google.common.reflect.TypeToken;
 
 /**
  * Implementation of {@link ApiMetadata} for Amazon's CloudWatch api.
