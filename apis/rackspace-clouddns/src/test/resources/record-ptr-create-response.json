@@ -1,0 +1,31 @@
+{
+  "request": "{\"recordsList\":{\"records\":[{\"name\":\"jclouds-example.com\",\"type\":\"PTR\",\"ttl\":11235,\"data\":\"166.78.146.80\"},{\"name\":\"jclouds-example.com\",\"type\":\"PTR\",\"data\":\"2001:4800:7812:0514:9a32:3c2a:ff04:aed2\",\"comment\":\"Hello IPv6\"}]},\"link\":{\"href\":\"https://dfw.servers.api.rackspacecloud.com/v2/123123/servers/f5fb9334-b4f0-49d0-a2cc-57a5772dc7d1\",\"rel\":\"cloudServersOpenStack\"}}",
+  "response": {
+    "records": [
+      {
+        "name": "jclouds-example.com",
+        "id": "PTR-557432",
+        "type": "PTR",
+        "data": "166.78.146.80",
+        "ttl": 11235,
+        "updated": "2013-04-11T15:20:23.000+0000",
+        "created": "2013-04-11T15:20:23.000+0000"
+      },
+      {
+        "name": "jclouds-example.com",
+        "id": "PTR-557433",
+        "type": "PTR",
+        "data": "2001:4800:7812:514:9a32:3c2a:ff04:aed2",
+        "ttl": 3600,
+        "comment": "Hello IPv6",
+        "updated": "2013-04-11T15:20:25.000+0000",
+        "created": "2013-04-11T15:20:25.000+0000"
+      }
+    ]
+  },
+  "status": "COMPLETED",
+  "verb": "POST",
+  "jobId": "0e9aefac-476f-40ba-9626-66dd54c0a5c9",
+  "callbackUrl": "https://dns.api.rackspacecloud.com/v1.0/123123/status/0e9aefac-476f-40ba-9626-66dd54c0a5c9",
+  "requestUrl": "https://dns.api.rackspacecloud.com/v1.0/123123/rdns"
+}

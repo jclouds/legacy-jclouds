@@ -1,0 +1,8 @@
+{
+  "request": "{\"domains\":[{\"id\":3650906,\"emailAddress\":\"everett@jclouds-example.com\",\"ttl\":600001,\"comment\":\"Hello Domain Update\"},{\"id\":3650908,\"emailAddress\":\"everett@jclouds-example.com\",\"ttl\":600002,\"comment\":\"Hello Domain Update\"}]}",
+  "status": "COMPLETED",
+  "verb": "PUT",
+  "jobId": "b7fca312-abb5-4e23-91b4-8a21599f0403",
+  "callbackUrl": "https://dns.api.rackspacecloud.com/v1.0/123123/status/b7fca312-abb5-4e23-91b4-8a21599f0403",
+  "requestUrl": "https://dns.api.rackspacecloud.com/v1.0/123123/domains"
+}

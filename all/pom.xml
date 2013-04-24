@@ -41,6 +41,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>rackspace-clouddns</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.jclouds.provider</groupId>
             <artifactId>aws-cloudwatch</artifactId>
             <version>${project.version}</version>
@@ -53,6 +58,16 @@
         <dependency>
             <groupId>org.jclouds.provider</groupId>
             <artifactId>rackspace-cloudblockstorage-uk</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>rackspace-clouddns-us</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>rackspace-clouddns-uk</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

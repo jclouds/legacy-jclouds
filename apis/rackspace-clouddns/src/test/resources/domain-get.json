@@ -1,0 +1,41 @@
+{
+  "name": "test.jclouds-example.com",
+  "id": 3650908,
+  "comment": "Hello test subdomain",
+  "accountId": 123123,
+  "ttl": 3600,
+  "recordsList": {
+    "records": [
+      {
+        "name": "test.jclouds-example.com",
+        "id": "NS-8646158",
+        "type": "NS",
+        "data": "dns1.stabletransit.com",
+        "ttl": 3600,
+        "updated": "2013-03-22T03:04:15.000+0000",
+        "created": "2013-03-22T03:04:15.000+0000"
+      },
+      {
+        "name": "test.jclouds-example.com",
+        "id": "NS-8646159",
+        "type": "NS",
+        "data": "dns2.stabletransit.com",
+        "ttl": 3600,
+        "updated": "2013-03-22T03:04:16.000+0000",
+        "created": "2013-03-22T03:04:16.000+0000"
+      }
+    ],
+    "totalEntries": 2
+  },
+  "emailAddress": "jclouds@jclouds-example.com",
+  "nameservers": [
+    {
+      "name": "dns1.stabletransit.com"
+    },
+    {
+      "name": "dns2.stabletransit.com"
+    }
+  ],
+  "updated": "2013-03-22T03:04:16.000+0000",
+  "created": "2013-03-22T03:04:15.000+0000"
+}

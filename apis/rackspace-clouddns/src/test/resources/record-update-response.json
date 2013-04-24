@@ -1,0 +1,8 @@
+{
+  "request": "{\"name\":\"_sip._udp.jclouds-example.com\",\"ttl\":86401,\"data\":\"1 3444 sip.jclouds-example.com\",\"priority\":12358,\"comment\":\"Updated Protocol to UDP\"}",
+  "status": "COMPLETED",
+  "verb": "PUT",
+  "jobId": "90659522-915d-4b69-a806-0bc464f01cde",
+  "callbackUrl": "https://dns.api.rackspacecloud.com/v1.0/717071/status/90659522-915d-4b69-a806-0bc464f01cde",
+  "requestUrl": "https://dns.api.rackspacecloud.com/v1.0/717071/domains/3669444/records/SRV-21839"
+}
