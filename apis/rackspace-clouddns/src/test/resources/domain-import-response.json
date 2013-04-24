@@ -1,0 +1,42 @@
+{
+  "request": "{\"domains\":[{\"contentType\":\"BIND_9\",\"contents\":\"jclouds-example.com.      3600  IN SOA   ns.rackspace.com. jclouds.jclouds-example.com. 1363882703 3600 3600 3600 3600\\njclouds-example.com.      600   IN A  50.56.174.152\"}]}",
+  "response": {
+    "domains": [
+      {
+        "name": "jclouds-example.com",
+        "id": 3653942,
+        "accountId": 123123,
+        "ttl": 3600,
+        "recordsList": {
+          "records": [
+            {
+              "name": "jclouds-example.com",
+              "id": "A-9795196",
+              "type": "A",
+              "data": "50.56.174.152",
+              "ttl": 600,
+              "updated": "2013-03-25T15:15:09.000+0000",
+              "created": "2013-03-25T15:15:09.000+0000"
+            }
+          ]
+        },
+        "emailAddress": "jclouds@jclouds-example.com",
+        "nameservers": [
+          {
+            "name": "dns1.stabletransit.com"
+          },
+          {
+            "name": "dns2.stabletransit.com"
+          }
+        ],
+        "updated": "2013-03-25T15:15:08.000+0000",
+        "created": "2013-03-25T15:15:08.000+0000"
+      }
+    ]
+  },
+  "status": "COMPLETED",
+  "verb": "POST",
+  "jobId": "7729a749-7a16-41ee-a081-00ed71dce4bb",
+  "callbackUrl": "https://dns.api.rackspacecloud.com/v1.0/123123/status/7729a749-7a16-41ee-a081-00ed71dce4bb",
+  "requestUrl": "https://dns.api.rackspacecloud.com/v1.0/123123/domains/import"
+}

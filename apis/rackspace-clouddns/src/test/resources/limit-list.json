@@ -1,0 +1,57 @@
+{
+    "limits": {
+        "absolute": {
+            "records per domain": 500,
+            "domains": 500
+        },
+        "rate": [
+            {
+                "limit": [
+                    {
+                        "verb": "GET",
+                        "value": 5,
+                        "remaining": 5,
+                        "unit": "SECOND",
+                        "next-available": "2013-03-06T20:11:14.000Z"
+                    }
+                ],
+                "uri": "*/status/*",
+                "regex": ".*/v\\d+\\.\\d+/(\\d+/status).*"
+            },
+            {
+                "limit": [
+                    {
+                        "verb": "GET",
+                        "value": 100,
+                        "remaining": 100,
+                        "unit": "MINUTE",
+                        "next-available": "2013-03-06T20:11:14.000Z"
+                    },
+                    {
+                        "verb": "POST",
+                        "value": 25,
+                        "remaining": 25,
+                        "unit": "MINUTE",
+                        "next-available": "2013-03-06T20:11:14.000Z"
+                    },
+                    {
+                        "verb": "PUT",
+                        "value": 50,
+                        "remaining": 50,
+                        "unit": "MINUTE",
+                        "next-available": "2013-03-06T20:11:14.000Z"
+                    },
+                    {
+                        "verb": "DELETE",
+                        "value": 50,
+                        "remaining": 50,
+                        "unit": "MINUTE",
+                        "next-available": "2013-03-06T20:11:14.000Z"
+                    }
+                ],
+                "uri": "*/domains*",
+                "regex": ".*/v\\d+\\.\\d+/(\\d+/domains).*"
+            }
+        ]
+    }
+}
