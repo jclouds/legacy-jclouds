@@ -1,0 +1,111 @@
+{
+  "request": "{\"domains\":[{\"name\":\"jclouds-example.com\",\"emailAddress\":\"jclouds@jclouds-example.com\",\"ttl\":600000,\"comment\":\"Hello Domain\",\"subdomains\":{\"domains\":[{\"name\":\"dev.jclouds-example.com\",\"emailAddress\":\"jclouds@jclouds-example.com\",\"comment\":\"Hello dev subdomain\"},{\"name\":\"test.jclouds-example.com\",\"emailAddress\":\"jclouds@jclouds-example.com\",\"comment\":\"Hello test subdomain\"}]},\"recordsList\":{\"records\":[{\"name\":\"jclouds-example.com\",\"type\":\"MX\",\"data\":\"mail.jclouds-example.com\",\"priority\":11235},{\"name\":\"jclouds-example.com\",\"type\":\"A\",\"data\":\"10.0.0.1\"}]}},{\"name\":\"xjclouds-example.com\",\"emailAddress\":\"jclouds@jclouds-example.com\",\"ttl\":600000,\"comment\":\"Hello Domain\"}]}",
+  "response": {
+    "domains": [
+      {
+        "name": "jclouds-example.com",
+        "id": 3650906,
+        "comment": "Hello Domain",
+        "accountId": 123123,
+        "ttl": 600000,
+        "subdomains": {
+          "domains": [
+            {
+              "name": "dev.jclouds-example.com",
+              "id": 3650907,
+              "comment": "Hello dev subdomain",
+              "accountId": 123123,
+              "ttl": 3600,
+              "emailAddress": "jclouds@jclouds-example.com",
+              "nameservers": [
+                {
+                  "name": "dns1.stabletransit.com"
+                },
+                {
+                  "name": "dns2.stabletransit.com"
+                }
+              ],
+              "updated": "2013-03-22T03:04:15.000+0000",
+              "created": "2013-03-22T03:04:15.000+0000"
+            },
+            {
+              "name": "test.jclouds-example.com",
+              "id": 3650908,
+              "comment": "Hello test subdomain",
+              "accountId": 123123,
+              "ttl": 3600,
+              "emailAddress": "jclouds@jclouds-example.com",
+              "nameservers": [
+                {
+                  "name": "dns1.stabletransit.com"
+                },
+                {
+                  "name": "dns2.stabletransit.com"
+                }
+              ],
+              "updated": "2013-03-22T03:04:15.000+0000",
+              "created": "2013-03-22T03:04:15.000+0000"
+            }
+          ]
+        },
+        "recordsList": {
+          "records": [
+            {
+              "name": "jclouds-example.com",
+              "id": "MX-4328817",
+              "priority": 11235,
+              "type": "MX",
+              "data": "mail.jclouds-example.com",
+              "ttl": 600000,
+              "updated": "2013-03-22T03:04:13.000+0000",
+              "created": "2013-03-22T03:04:13.000+0000"
+            },
+            {
+              "name": "jclouds-example.com",
+              "id": "A-9785208",
+              "type": "A",
+              "data": "10.0.0.1",
+              "ttl": 600000,
+              "updated": "2013-03-22T03:04:14.000+0000",
+              "created": "2013-03-22T03:04:14.000+0000"
+            }
+          ]
+        },
+        "emailAddress": "jclouds@jclouds-example.com",
+        "nameservers": [
+          {
+            "name": "dns1.stabletransit.com"
+          },
+          {
+            "name": "dns2.stabletransit.com"
+          }
+        ],
+        "updated": "2013-03-22T03:04:12.000+0000",
+        "created": "2013-03-22T03:04:12.000+0000"
+      },
+      {
+        "name": "xjclouds-example.com",
+        "id": 3650909,
+        "comment": "Hello Domain",
+        "accountId": 123123,
+        "ttl": 600000,
+        "emailAddress": "jclouds@jclouds-example.com",
+        "nameservers": [
+          {
+            "name": "dns1.stabletransit.com"
+          },
+          {
+            "name": "dns2.stabletransit.com"
+          }
+        ],
+        "updated": "2013-03-22T03:04:16.000+0000",
+        "created": "2013-03-22T03:04:16.000+0000"
+      }
+    ]
+  },
+  "status": "COMPLETED",
+  "verb": "POST",
+  "jobId": "3f4be747-70b0-40e6-96fe-e445c3e12805",
+  "callbackUrl": "https://dns.api.rackspacecloud.com/v1.0/123123/status/3f4be747-70b0-40e6-96fe-e445c3e12805",
+  "requestUrl": "https://dns.api.rackspacecloud.com/v1.0/123123/domains"
+}
