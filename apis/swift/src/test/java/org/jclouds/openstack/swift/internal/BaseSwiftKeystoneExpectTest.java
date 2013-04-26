@@ -44,7 +44,7 @@ public class BaseSwiftKeystoneExpectTest<T> extends BaseRestClientExpectTest<T> 
    @Override
    protected Properties setupProperties() {
       Properties overrides = super.setupProperties();
-      // hpcloud or trystack
+      // hpcloud or openstack
       overrides.setProperty("jclouds.regions", "region-a.geo-1,RegionOne");
       return overrides;
    }
