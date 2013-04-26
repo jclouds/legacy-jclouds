@@ -3,10 +3,10 @@
         "rxtx_quota": 0,
         "name": "m1.medium",
         "links": [{
-            "href": "https://nova-api.trystack.org:9774/v1.1/37/flavors/3",
+            "href": "https://nova-api.openstack.org:9774/v1.1/37/flavors/3",
             "rel": "self"
         }, {
-            "href": "https://nova-api.trystack.org:9774/37/flavors/3",
+            "href": "https://nova-api.openstack.org:9774/37/flavors/3",
             "rel": "bookmark"
         }],
         "ram": 4096,
@@ -19,10 +19,10 @@
         "rxtx_quota": 0,
         "name": "m1.large",
         "links": [{
-            "href": "https://nova-api.trystack.org:9774/v1.1/37/flavors/4",
+            "href": "https://nova-api.openstack.org:9774/v1.1/37/flavors/4",
             "rel": "self"
         }, {
-            "href": "https://nova-api.trystack.org:9774/37/flavors/4",
+            "href": "https://nova-api.openstack.org:9774/37/flavors/4",
             "rel": "bookmark"
         }],
         "ram": 8192,
@@ -35,10 +35,10 @@
         "rxtx_quota": 0,
         "name": "m1.tiny",
         "links": [{
-            "href": "https://nova-api.trystack.org:9774/v1.1/37/flavors/1",
+            "href": "https://nova-api.openstack.org:9774/v1.1/37/flavors/1",
             "rel": "self"
         }, {
-            "href": "https://nova-api.trystack.org:9774/37/flavors/1",
+            "href": "https://nova-api.openstack.org:9774/37/flavors/1",
             "rel": "bookmark"
         }],
         "ram": 512,
@@ -51,10 +51,10 @@
         "rxtx_quota": 0,
         "name": "m1.xlarge",
         "links": [{
-            "href": "https://nova-api.trystack.org:9774/v1.1/37/flavors/5",
+            "href": "https://nova-api.openstack.org:9774/v1.1/37/flavors/5",
             "rel": "self"
         }, {
-            "href": "https://nova-api.trystack.org:9774/37/flavors/5",
+            "href": "https://nova-api.openstack.org:9774/37/flavors/5",
             "rel": "bookmark"
         }],
         "ram": 16384,
@@ -67,10 +67,10 @@
         "rxtx_quota": 0,
         "name": "m1.small",
         "links": [{
-            "href": "https://nova-api.trystack.org:9774/v1.1/37/flavors/2",
+            "href": "https://nova-api.openstack.org:9774/v1.1/37/flavors/2",
             "rel": "self"
         }, {
-            "href": "https://nova-api.trystack.org:9774/37/flavors/2",
+            "href": "https://nova-api.openstack.org:9774/37/flavors/2",
             "rel": "bookmark"
         }],
         "ram": 2048,

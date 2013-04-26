@@ -4,10 +4,10 @@
         "updated": "2012-02-02T19:11:00Z",
         "name": "oneiric-server-cloudimg-amd64",
         "links": [{
-            "href": "https://nova-api.trystack.org:9774/v1.1/37/images/15",
+            "href": "https://nova-api.openstack.org:9774/v1.1/37/images/15",
             "rel": "self"
         }, {
-            "href": "https://nova-api.trystack.org:9774/37/images/15",
+            "href": "https://nova-api.openstack.org:9774/37/images/15",
             "rel": "bookmark"
         }],
         "created": "2012-02-02T19:10:52Z",
@@ -24,10 +24,10 @@
         "updated": "2012-02-02T19:10:51Z",
         "name": "oneiric-server-cloudimg-amd64-kernel",
         "links": [{
-            "href": "https://nova-api.trystack.org:9774/v1.1/37/images/14",
+            "href": "https://nova-api.openstack.org:9774/v1.1/37/images/14",
             "rel": "self"
         }, {
-            "href": "https://nova-api.trystack.org:9774/37/images/14",
+            "href": "https://nova-api.openstack.org:9774/37/images/14",
             "rel": "bookmark"
         }],
         "created": "2012-02-02T19:10:50Z",
@@ -43,10 +43,10 @@
         "updated": "2012-02-02T19:10:41Z",
         "name": "natty-server-cloudimg-amd64",
         "links": [{
-            "href": "https://nova-api.trystack.org:9774/v1.1/37/images/13",
+            "href": "https://nova-api.openstack.org:9774/v1.1/37/images/13",
             "rel": "self"
         }, {
-            "href": "https://nova-api.trystack.org:9774/37/images/13",
+            "href": "https://nova-api.openstack.org:9774/37/images/13",
             "rel": "bookmark"
         }],
         "created": "2012-02-02T19:10:33Z",
@@ -63,10 +63,10 @@
         "updated": "2012-02-02T19:10:33Z",
         "name": "natty-server-cloudimg-amd64-kernel",
         "links": [{
-            "href": "https://nova-api.trystack.org:9774/v1.1/37/images/12",
+            "href": "https://nova-api.openstack.org:9774/v1.1/37/images/12",
             "rel": "self"
         }, {
-            "href": "https://nova-api.trystack.org:9774/37/images/12",
+            "href": "https://nova-api.openstack.org:9774/37/images/12",
             "rel": "bookmark"
         }],
         "created": "2012-02-02T19:10:32Z",

@@ -48,7 +48,7 @@ public class ParseServerWithInternetAddressesTest extends BaseItemParserTest<Ser
 
    @Override
    public String resource() {
-      return "/server_details_trystack.json";
+      return "/server_details_openstack.json";
    }
 
    @Override
@@ -73,7 +73,7 @@ public class ParseServerWithInternetAddressesTest extends BaseItemParserTest<Ser
                         .links(
                               Link.create(
                                     Relation.BOOKMARK,
-                                    URI.create("https://nova-api.trystack.org:9774/37/images/14")))
+                                    URI.create("https://nova-api.openstack.org:9774/37/images/14")))
                         .build())
             .flavor(
                   Resource
@@ -82,15 +82,15 @@ public class ParseServerWithInternetAddressesTest extends BaseItemParserTest<Ser
                         .links(
                               Link.create(
                                     Relation.BOOKMARK,
-                                    URI.create("https://nova-api.trystack.org:9774/37/flavors/1")))
+                                    URI.create("https://nova-api.openstack.org:9774/37/flavors/1")))
                         .build())
             .links(
                   Link.create(
                          Relation.SELF,
-                         URI.create("https://nova-api.trystack.org:9774/v1.1/37/servers/1459")),
+                         URI.create("https://nova-api.openstack.org:9774/v1.1/37/servers/1459")),
                   Link.create(
                          Relation.BOOKMARK,
-                         URI.create("https://nova-api.trystack.org:9774/37/servers/1459")))
+                         URI.create("https://nova-api.openstack.org:9774/37/servers/1459")))
             .addresses(ImmutableMultimap.of("internet", Address.createV4("8.21.28.47"))).build();
    }
   

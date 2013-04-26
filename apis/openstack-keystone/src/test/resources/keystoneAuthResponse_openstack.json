@@ -10,10 +10,10 @@
         },
         "serviceCatalog": [{
             "endpoints": [{
-                "adminURL": "https://nova-api.trystack.org:9774/v1.1/3456",
+                "adminURL": "https://nova-api.openstack.org:9774/v1.1/3456",
                 "region": "RegionOne",
-                "internalURL": "https://nova-api.trystack.org:9774/v1.1/3456",
-                "publicURL": "https://nova-api.trystack.org:9774/v1.1/3456"
+                "internalURL": "https://nova-api.openstack.org:9774/v1.1/3456",
+                "publicURL": "https://nova-api.openstack.org:9774/v1.1/3456"
             }],
             "type": "compute",
             "name": "nova"
@@ -28,7 +28,7 @@
             "name": "glance"
         }, {
             "endpoints": [{
-                "adminURL": "https://nova-api.trystack.org:5443/v2.0",
+                "adminURL": "https://nova-api.openstack.org:5443/v2.0",
                 "region": "RegionOne",
                 "internalURL": "https://keystone.thefreecloud.org:5000/v2.0",
                 "publicURL": "https://keystone.thefreecloud.org:5000/v2.0"
