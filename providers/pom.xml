@@ -61,7 +61,6 @@
         <module>ninefold-compute</module>
         <module>hpcloud-compute</module>
         <module>hpcloud-objectstorage</module>
-        <module>trystack-nova</module>
         <module>cloudservers-us</module>
         <module>cloudservers-uk</module>
         <module>cloudfiles-us</module>

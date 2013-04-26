@@ -58,7 +58,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    protected Properties setupProperties() {
       Properties overrides = super.setupProperties();
       // only specify limited zones so that we don't have to configure requests for multiple zones.
-      // since we are doing tests with keystone responses from hpcloud and also trystack, we have
+      // since we are doing tests with keystone responses from hpcloud and also openstack, we have
       // to whitelist one zone from each
       overrides.setProperty("jclouds.zones", "az-1.region-a.geo-1,RegionOne");
       return overrides;
@@ -85,7 +85,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
       assertEquals(apiWhenServersExist.listNodes().iterator().next().getName(), "sample-server");
    }
 
-   Map<HttpRequest, HttpResponse> defaultTemplateTryStack = ImmutableMap
+   Map<HttpRequest, HttpResponse> defaultTemplateOpenStack = ImmutableMap
          .<HttpRequest, HttpResponse> builder()
          .put(keystoneAuthWithUsernameAndPasswordAndTenantName,
                HttpResponse
@@ -93,31 +93,31 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
                      .statusCode(200)
                      .message("HTTP/1.1 200")
                      .payload(
-                           payloadFromResourceWithContentType("/keystoneAuthResponse_trystack.json", "application/json"))
+                           payloadFromResourceWithContentType("/keystoneAuthResponse_openstack.json", "application/json"))
                      .build())
          .put(extensionsOfNovaRequest.toBuilder()
-               .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/extensions").build(),
-               HttpResponse.builder().statusCode(200).payload(payloadFromResource("/extension_list_trystack.json"))
+               .endpoint("https://nova-api.openstack.org:9774/v1.1/3456/extensions").build(),
+               HttpResponse.builder().statusCode(200).payload(payloadFromResource("/extension_list_openstack.json"))
                      .build())
          .put(listDetail.toBuilder()
-               .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/images/detail").build(),
-               HttpResponse.builder().statusCode(200).payload(payloadFromResource("/image_list_detail_trystack.json"))
+               .endpoint("https://nova-api.openstack.org:9774/v1.1/3456/images/detail").build(),
+               HttpResponse.builder().statusCode(200).payload(payloadFromResource("/image_list_detail_openstack.json"))
                      .build())
          .put(listServers.toBuilder()
-               .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/servers/detail").build(),
+               .endpoint("https://nova-api.openstack.org:9774/v1.1/3456/servers/detail").build(),
                listServersResponse)
          .put(listFlavorsDetail.toBuilder()
-               .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/flavors/detail").build(),
-               HttpResponse.builder().statusCode(200).payload(payloadFromResource("/flavor_list_detail_trystack.json"))
+               .endpoint("https://nova-api.openstack.org:9774/v1.1/3456/flavors/detail").build(),
+               HttpResponse.builder().statusCode(200).payload(payloadFromResource("/flavor_list_detail_openstack.json"))
                      .build()).build();
 
-   public void testDefaultTemplateTryStack() throws Exception {
+   public void testDefaultTemplateOpenStack() throws Exception {
 
-      ComputeService apiForTryStack = requestsSendResponses(defaultTemplateTryStack);
+      ComputeService apiForOpenStack = requestsSendResponses(defaultTemplateOpenStack);
 
-      Template defaultTemplate = apiForTryStack.templateBuilder().imageId("RegionOne/15").build();
+      Template defaultTemplate = apiForOpenStack.templateBuilder().imageId("RegionOne/15").build();
       checkTemplate(defaultTemplate);
-      checkTemplate(apiForTryStack.templateBuilder().fromTemplate(defaultTemplate).build());
+      checkTemplate(apiForOpenStack.templateBuilder().fromTemplate(defaultTemplate).build());
 
    }
 
@@ -149,7 +149,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    HttpRequest list = HttpRequest
          .builder()
          .method("GET")
-         .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/os-security-groups")
+         .endpoint("https://nova-api.openstack.org:9774/v1.1/3456/os-security-groups")
          .addHeader("Accept", "application/json")
          .addHeader("X-Auth-Token", authToken).build();
 
@@ -158,7 +158,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    HttpRequest createWithPrefixOnGroup = HttpRequest
          .builder()
          .method("POST")
-         .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/os-security-groups")
+         .endpoint("https://nova-api.openstack.org:9774/v1.1/3456/os-security-groups")
          .addHeader("Accept", "application/json")
          .addHeader("X-Auth-Token", authToken)
          .payload(
@@ -172,7 +172,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    HttpRequest createRuleForDefaultPort22 = HttpRequest
          .builder()
          .method("POST")
-         .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/os-security-group-rules")
+         .endpoint("https://nova-api.openstack.org:9774/v1.1/3456/os-security-group-rules")
          .addHeader("Accept", "application/json")
          .addHeader("X-Auth-Token", authToken)
          .payload(
@@ -186,7 +186,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    HttpRequest getSecurityGroup = HttpRequest
          .builder()
          .method("GET")
-         .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/os-security-groups/160")
+         .endpoint("https://nova-api.openstack.org:9774/v1.1/3456/os-security-groups/160")
          .addHeader("Accept", "application/json")
          .addHeader("X-Auth-Token", authToken).build();
 
@@ -196,7 +196,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    HttpRequest create = HttpRequest
          .builder()
          .method("POST")
-         .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/os-keypairs")
+         .endpoint("https://nova-api.openstack.org:9774/v1.1/3456/os-keypairs")
          .addHeader("Accept", "application/json")
          .addHeader("X-Auth-Token", authToken)
          .payload(
@@ -210,7 +210,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    HttpRequest serverDetail = HttpRequest
          .builder()
          .method("GET")
-         .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/servers/71752")
+         .endpoint("https://nova-api.openstack.org:9774/v1.1/3456/servers/71752")
          .addHeader("Accept", "application/json")
          .addHeader("X-Auth-Token", authToken).build();
 
@@ -220,7 +220,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    @Test
    public void testCreateNodeWithGeneratedKeyPair() throws Exception {
       Builder<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
-            .putAll(defaultTemplateTryStack);
+            .putAll(defaultTemplateOpenStack);
       requestResponseMap.put(list, notFound);
 
       requestResponseMap.put(createWithPrefixOnGroup, securityGroupCreated);
@@ -236,7 +236,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
       HttpRequest createServerWithGeneratedKeyPair = HttpRequest
             .builder()
             .method("POST")
-            .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/servers")
+            .endpoint("https://nova-api.openstack.org:9774/v1.1/3456/servers")
             .addHeader("Accept", "application/json")
             .addHeader("X-Auth-Token", authToken)
             .payload(
@@ -276,7 +276,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    @Test
    public void testCreateNodeWhileUserSpecifiesKeyPair() throws Exception {
       Builder<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
-            .putAll(defaultTemplateTryStack);
+            .putAll(defaultTemplateOpenStack);
       requestResponseMap.put(list, notFound);
 
       requestResponseMap.put(createWithPrefixOnGroup, securityGroupCreated);
@@ -290,7 +290,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
       HttpRequest createServerWithSuppliedKeyPair = HttpRequest
             .builder()
             .method("POST")
-            .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/servers")
+            .endpoint("https://nova-api.openstack.org:9774/v1.1/3456/servers")
             .addHeader("Accept", "application/json")
             .addHeader("X-Auth-Token", authToken)
             .payload(
@@ -332,7 +332,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    @Test
    public void testCreateNodeWhileUserSpecifiesKeyPairAndUserSpecifiedGroups() throws Exception {
       Builder<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
-            .putAll(defaultTemplateTryStack);
+            .putAll(defaultTemplateOpenStack);
       requestResponseMap.put(list, notFound);
 
       requestResponseMap.put(serverDetail, serverDetailResponse);
@@ -340,7 +340,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
       HttpRequest createServerWithSuppliedKeyPairAndGroup = HttpRequest
             .builder()
             .method("POST")
-            .endpoint("https://nova-api.trystack.org:9774/v1.1/3456/servers")
+            .endpoint("https://nova-api.openstack.org:9774/v1.1/3456/servers")
             .addHeader("Accept", "application/json")
             .addHeader("X-Auth-Token", authToken)
             .payload(
