@@ -120,7 +120,7 @@ public interface ProviderMetadata {
 
    /**
     * 
-    * @return the provider's unique identifier (ex. aws-ec2, trystack-nova)
+    * @return the provider's unique identifier (ex. aws-ec2, rackspace-cloudservers-us)
     */
    public String getId();
 
