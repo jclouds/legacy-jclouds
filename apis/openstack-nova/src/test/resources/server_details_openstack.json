@@ -6,10 +6,10 @@
         "user_id": "508151008",
         "name": "mygroup-72c",
         "links": [{
-            "href": "https://nova-api.trystack.org:9774/v1.1/37/servers/1459",
+            "href": "https://nova-api.openstack.org:9774/v1.1/37/servers/1459",
             "rel": "self"
         }, {
-            "href": "https://nova-api.trystack.org:9774/37/servers/1459",
+            "href": "https://nova-api.openstack.org:9774/37/servers/1459",
             "rel": "bookmark"
         }],
         "addresses": {
@@ -22,7 +22,7 @@
         "image": {
             "id": "14",
             "links": [{
-                "href": "https://nova-api.trystack.org:9774/37/images/14",
+                "href": "https://nova-api.openstack.org:9774/37/images/14",
                 "rel": "bookmark"
             }]
         },
@@ -35,7 +35,7 @@
         "flavor": {
             "id": "1",
             "links": [{
-                "href": "https://nova-api.trystack.org:9774/37/flavors/1",
+                "href": "https://nova-api.openstack.org:9774/37/flavors/1",
                 "rel": "bookmark"
             }]
         },
