@@ -40,7 +40,6 @@
         <module>aws-ec2</module>
         <module>aws-sqs</module>
         <module>aws-cloudwatch</module>
-        <module>synaptic-storage</module>
         <module>ninefold-storage</module>
         <module>cloudonestorage</module>
         <module>bluelock-vcloud-zone01</module>
