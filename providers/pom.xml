@@ -43,7 +43,6 @@
         <module>ninefold-storage</module>
         <module>cloudonestorage</module>
         <module>bluelock-vcloud-zone01</module>
-        <module>stratogen-vcloud-mycloud</module>
         <module>trmk-ecloud</module>
         <module>trmk-vcloudexpress</module>
         <module>elastichosts-lon-p</module>
