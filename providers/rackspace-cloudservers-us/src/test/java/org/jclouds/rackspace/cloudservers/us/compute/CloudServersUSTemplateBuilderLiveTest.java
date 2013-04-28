@@ -53,13 +53,13 @@ public class CloudServersUSTemplateBuilderLiveTest extends BaseTemplateBuilderLi
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
                case UBUNTU:
-                  return (input.version.equals("") || (input.version.matches("^1[012].*") && !input.version
+                  return (input.version.equals("") || (input.version.matches("^1[012].*") && !input.version.equals("11.04") && !input.version
                            .equals("10.10")))
                            && input.is64Bit;
                case DEBIAN:
                   return input.is64Bit && !input.version.equals("5.0");
                case CENTOS:
-                  return (input.version.equals("") || input.version.equals("5.6") || input.version.equals("6.0"))
+                  return (input.version.equals("") || input.version.equals("5.6") || input.version.equals("6.0") || input.version.equals("5.0"))
                            && input.is64Bit;
                case WINDOWS:
                   return input.is64Bit && input.version.equals("");
@@ -79,9 +79,9 @@ public class CloudServersUSTemplateBuilderLiveTest extends BaseTemplateBuilderLi
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getImage().getName(), "Ubuntu 12.04 LTS (Precise Pangolin)");
       assertEquals(defaultTemplate.getImage().getDefaultCredentials().getUser(), "root");
-      assertEquals(defaultTemplate.getLocation().getId(), "ORD");
-      assertEquals(defaultTemplate.getImage().getLocation().getId(), "ORD");
-      assertEquals(defaultTemplate.getHardware().getLocation().getId(), "ORD");
+      assertEquals(defaultTemplate.getLocation().getId(), "DFW");
+      assertEquals(defaultTemplate.getImage().getLocation().getId(), "DFW");
+      assertEquals(defaultTemplate.getHardware().getLocation().getId(), "DFW");
       assertEquals(defaultTemplate.getOptions().as(NovaTemplateOptions.class).shouldAutoAssignFloatingIp(), false);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }

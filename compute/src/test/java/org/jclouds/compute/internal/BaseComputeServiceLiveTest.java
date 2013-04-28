@@ -47,7 +47,6 @@ import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -62,7 +61,6 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeTestUtils;
@@ -96,7 +94,6 @@ import org.jclouds.ssh.SshException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
