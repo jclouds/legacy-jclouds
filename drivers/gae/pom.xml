@@ -22,12 +22,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.jclouds</groupId>
+        <groupId>org.apache.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
         <version>1.7.0-SNAPSHOT</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
-    <groupId>org.jclouds.driver</groupId>
+    <groupId>org.apache.jclouds.driver</groupId>
     <artifactId>jclouds-gae</artifactId>
     <name>jclouds Google App Engine Components</name>
     <description>Google App Engine Components</description>
@@ -54,7 +54,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jclouds</groupId>
+            <groupId>org.apache.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -65,7 +65,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jclouds</groupId>
+            <groupId>org.apache.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>

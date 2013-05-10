@@ -25,7 +25,7 @@ $symbol_dollar = '$' )
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.jclouds</groupId>
+    <groupId>org.apache.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
     <version>1.7.0-SNAPSHOT</version>
     <relativePath>../../project/pom.xml</relativePath>
@@ -65,19 +65,19 @@ $symbol_dollar = '$' )
   </properties>
   <dependencies>
     <dependency>
-      <groupId>org.jclouds</groupId>
+      <groupId>org.apache.jclouds</groupId>
       <artifactId>jclouds-core</artifactId>
       <version>${symbol_dollar}{jclouds.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.jclouds</groupId>
+      <groupId>org.apache.jclouds</groupId>
       <artifactId>jclouds-core</artifactId>
       <version>${symbol_dollar}{jclouds.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jclouds.driver</groupId>
+      <groupId>org.apache.jclouds.driver</groupId>
       <artifactId>jclouds-slf4j</artifactId>
       <version>${symbol_dollar}{jclouds.version}</version>
       <scope>test</scope>

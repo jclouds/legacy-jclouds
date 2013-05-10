@@ -22,7 +22,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.jclouds</groupId>
+        <groupId>org.apache.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>        
         <version>1.7.0-SNAPSHOT</version>
         <relativePath>../project/pom.xml</relativePath>
@@ -31,62 +31,62 @@
     <name>allblobstore</name>
     <dependencies>
         <dependency>
-            <groupId>org.jclouds.api</groupId>
+            <groupId>org.apache.jclouds.api</groupId>
             <artifactId>s3</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.provider</groupId>
+            <groupId>org.apache.jclouds.provider</groupId>
             <artifactId>aws-s3</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.provider</groupId>
+            <groupId>org.apache.jclouds.provider</groupId>
             <artifactId>ninefold-storage</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.provider</groupId>
+            <groupId>org.apache.jclouds.provider</groupId>
             <artifactId>cloudonestorage</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.provider</groupId>
+            <groupId>org.apache.jclouds.provider</groupId>
             <artifactId>azureblob</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.api</groupId>
+            <groupId>org.apache.jclouds.api</groupId>
             <artifactId>atmos</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.api</groupId>
+            <groupId>org.apache.jclouds.api</groupId>
             <artifactId>swift</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.api</groupId>
+            <groupId>org.apache.jclouds.api</groupId>
             <artifactId>cloudfiles</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.provider</groupId>
+            <groupId>org.apache.jclouds.provider</groupId>
             <artifactId>cloudfiles-us</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.provider</groupId>
+            <groupId>org.apache.jclouds.provider</groupId>
             <artifactId>cloudfiles-uk</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.api</groupId>
+            <groupId>org.apache.jclouds.api</groupId>
             <artifactId>filesystem</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.provider</groupId>
+            <groupId>org.apache.jclouds.provider</groupId>
             <artifactId>hpcloud-objectstorage</artifactId>
             <version>${project.version}</version>
         </dependency>

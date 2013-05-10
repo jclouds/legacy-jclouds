@@ -22,13 +22,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.jclouds</groupId>
+        <groupId>org.apache.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
         <version>1.7.0-SNAPSHOT</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
 
-    <groupId>org.jclouds.common</groupId>
+    <groupId>org.apache.jclouds.common</groupId>
     <artifactId>openstack-common</artifactId>
     <name>jclouds OpenStack Components Core</name>
     <description>jclouds Core components to access OpenStack apis</description>
@@ -41,12 +41,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jclouds</groupId>
+            <groupId>org.apache.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jclouds</groupId>
+            <groupId>org.apache.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
