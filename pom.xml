@@ -55,7 +55,6 @@
           <plugin>
             <groupId>org.apache.rat</groupId>
             <artifactId>apache-rat-plugin</artifactId>
-            <version>0.8</version>
             <inherited>false</inherited>
             <executions>
               <execution>
@@ -85,6 +84,7 @@
                 <exclude>**/.checkstyle</exclude>
                 <exclude>**/target/**</exclude>
                 <exclude>demos/getpath/src/test/resources/log4j.xml</exclude>
+                <exclude>.repository/**</exclude>
                 <!-- binary -->
               </excludes>
             </configuration>
