@@ -1,9 +1,0 @@
-# use glob syntax.
-syntax: glob
-target
-.settings
-.classpath
-.project
-jclouds-twitter.iml
-jclouds-twitter.ipr
-jclouds-twitter.iws
