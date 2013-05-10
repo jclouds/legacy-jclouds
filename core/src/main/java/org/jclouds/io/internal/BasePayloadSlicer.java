@@ -36,6 +36,7 @@ import org.jclouds.io.payloads.InputStreamSupplierPayload;
 import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
 
 /**
  * 
@@ -58,14 +59,16 @@ public class BasePayloadSlicer implements PayloadSlicer {
          returnVal = doSlice((String) input.getRawContent(), offset, length);
       } else if (input.getRawContent() instanceof byte[]) {
          returnVal = doSlice((byte[]) input.getRawContent(), offset, length);
+      } else if (input.getRawContent() instanceof InputStream) {
+         returnVal = doSlice((InputStream) input.getRawContent(), offset, length);
       } else {
-         returnVal = doSlice(input.getInput(), offset, length);
+         returnVal = doSlice(input, offset, length);
       }
       return copyMetadataAndSetLength(input, returnVal, length);
    }
 
    protected Payload doSlice(Payload content, long offset, long length) {
-      return new InputStreamSupplierPayload(ByteStreams.slice(content, offset, length));
+      return doSlice((InputSupplier<? extends InputStream>) content, offset, length);
    }
 
    protected Payload doSlice(String content, long offset, long length) {
@@ -73,7 +76,7 @@ public class BasePayloadSlicer implements PayloadSlicer {
    }
 
    protected Payload doSlice(File content, long offset, long length) {
-      return new InputStreamSupplierPayload(ByteStreams.slice(Files.newInputStreamSupplier(content), offset, length));
+      return doSlice(Files.newInputStreamSupplier(content), offset, length);
    }
 
    protected Payload doSlice(InputStream content, long offset, long length) {
@@ -83,6 +86,10 @@ public class BasePayloadSlicer implements PayloadSlicer {
          throw Throwables.propagate(ioe);
       }
       return new InputStreamPayload(ByteStreams.limit(content, length));
+   }
+
+   protected Payload doSlice(InputSupplier<? extends InputStream> content, long offset, long length) {
+      return new InputStreamSupplierPayload(ByteStreams.slice(content, offset, length));
    }
 
    protected Payload doSlice(byte[] content, long offset, long length) {
