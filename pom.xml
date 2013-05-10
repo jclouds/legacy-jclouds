@@ -52,7 +52,44 @@
     </modules>
     <build>
         <plugins>
-            <plugin>
+          <plugin>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <version>0.8</version>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <excludes>
+                <exclude>**/BUILD.txt</exclude>
+                <exclude>**/CHANGES.txt</exclude>
+                <exclude>**/NOTICE-src.txt</exclude>
+                <exclude>**/README.md</exclude>
+                <exclude>.git/**</exclude>
+                <exclude>**/.gitignore</exclude>
+                <exclude>**/*.json</exclude>
+                <exclude>**/*.log*</exclude>
+                <exclude>**/TODO</exclude>
+                <exclude>.mailmap</exclude>
+                <exclude>.idea/**</exclude>
+                <exclude>**/*.iml</exclude>
+                <exclude>**/.project</exclude>
+                <exclude>**/.classpath</exclude>
+                <exclude>**/.settings/**</exclude>
+                <exclude>**/.checkstyle</exclude>
+                <exclude>**/target/**</exclude>
+                <exclude>demos/getpath/src/test/resources/log4j.xml</exclude>
+                <!-- binary -->
+              </excludes>
+            </configuration>
+          </plugin>
+          <plugin>
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
                 <version>1.9.0</version>
