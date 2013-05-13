@@ -9,11 +9,11 @@
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unles required by applicable law or agreed to in writing,
+ * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either expres or implied.  See the License for the
- * specific language governing permisions and limitations
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
  * under the License.
  */
 package org.jclouds.dynect.v3.features;
