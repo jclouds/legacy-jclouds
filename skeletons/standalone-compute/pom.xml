@@ -1,118 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to jclouds, Inc. (jclouds) under one or more
-    contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  jclouds licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
+Licensed to jclouds, Inc. (jclouds) under one or more
+contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  jclouds licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
 
-      http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.apache.jclouds</groupId>
-        <artifactId>jclouds-project</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
-        <relativePath>../../project/pom.xml</relativePath>
-    </parent>
-    <groupId>org.apache.jclouds.api</groupId>
-    <artifactId>servermanager</artifactId>
-    <name>jclouds example components for a standalone compute provider</name>
-    <packaging>bundle</packaging>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.apache.jclouds</groupId>
+    <artifactId>jclouds-project</artifactId>
+    <version>1.7.0-SNAPSHOT</version>
+    <relativePath>../../project/pom.xml</relativePath>
+  </parent>
+  <groupId>org.apache.jclouds.api</groupId>
+  <artifactId>servermanager</artifactId>
+  <name>jclouds example components for a standalone compute provider</name>
+  <packaging>bundle</packaging>
 
-    <properties>
-        <!-- when instances are hung, open a ticket and add here -->
-        <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
-        <test.servermanager.identity>FIXME</test.servermanager.identity>
-        <test.servermanager.endpoint>https://servermanager.com</test.servermanager.endpoint>
-        <test.servermanager.api-version>1.0</test.servermanager.api-version>
-        <test.servermanager.build-version />
-        <test.servermanager.identity>FIXME</test.servermanager.identity>
+  <properties>
+    <!-- when instances are hung, open a ticket and add here -->
+    <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
+    <test.servermanager.identity>FIXME</test.servermanager.identity>
+    <test.servermanager.endpoint>https://servermanager.com</test.servermanager.endpoint>
+    <test.servermanager.api-version>1.0</test.servermanager.api-version>
+    <test.servermanager.build-version />
+    <test.servermanager.identity>FIXME</test.servermanager.identity>
 
-      <jclouds.osgi.export>org.jclouds.servermanager*;version="${project.version}"</jclouds.osgi.export>
-      <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
-    </properties>
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.jclouds</groupId>
-            <artifactId>jclouds-core</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.jclouds</groupId>
-            <artifactId>jclouds-compute</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.jclouds</groupId>
-            <artifactId>jclouds-compute</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.jclouds.driver</groupId>
-            <artifactId>jclouds-log4j</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.jclouds.driver</groupId>
-            <artifactId>jclouds-jsch</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <jclouds.osgi.export>org.jclouds.servermanager*;version="${project.version}"</jclouds.osgi.export>
+    <jclouds.osgi.import>org.jclouds*;version="${project.version}",*</jclouds.osgi.import>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.jclouds</groupId>
+      <artifactId>jclouds-core</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.jclouds</groupId>
+      <artifactId>jclouds-compute</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.jclouds</groupId>
+      <artifactId>jclouds-compute</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.jclouds.driver</groupId>
+      <artifactId>jclouds-log4j</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.jclouds.driver</groupId>
+      <artifactId>jclouds-jsch</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
-    <profiles>
-        <profile>
-            <id>live</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>integration</id>
-                                <phase>integration-test</phase>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <systemPropertyVariables>
-                                        <test.servermanager.endpoint>${test.servermanager.endpoint}</test.servermanager.endpoint>
-                                        <test.servermanager.api-version>${test.servermanager.api-version}</test.servermanager.api-version>
-                                        <test.servermanager.build-version>${test.servermanager.build-version}</test.servermanager.build-version>
-                                        <test.servermanager.identity>${test.servermanager.identity}</test.servermanager.identity>
-                                        <jclouds.compute.blacklist-nodes>${jclouds.compute.blacklist-nodes}</jclouds.compute.blacklist-nodes>
-                                    </systemPropertyVariables>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+  <profiles>
+    <profile>
+      <id>live</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>integration</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <systemPropertyVariables>
+                    <test.servermanager.endpoint>${test.servermanager.endpoint}</test.servermanager.endpoint>
+                    <test.servermanager.api-version>${test.servermanager.api-version}</test.servermanager.api-version>
+                    <test.servermanager.build-version>${test.servermanager.build-version}</test.servermanager.build-version>
+                    <test.servermanager.identity>${test.servermanager.identity}</test.servermanager.identity>
+                    <jclouds.compute.blacklist-nodes>${jclouds.compute.blacklist-nodes}</jclouds.compute.blacklist-nodes>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
