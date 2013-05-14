@@ -100,6 +100,17 @@ public class ParseAWSErrorFromXmlContentTest {
    }
 
    @Test
+   public void test400WithTooManyBucketsCodeMakesInsufficientResourcesException() {
+      assertCodeMakes(
+               POST,
+               URI.create("https://ec2.us-east-1.amazonaws.com/"),
+               BAD_REQUEST.getStatusCode(),
+               "",
+               "<Response><Errors><Error><Code>TooManyBuckets</Code><Message>You have attempted to create more buckets than allowed</Message></Error></Errors><RequestID>c14f531a-cc35-4b48-8149-2655c7e6dc76</RequestID></Response>",
+               InsufficientResourcesException.class);
+   }
+
+   @Test
    public void test400WithInUseCodeSetsIllegalStateException() {
       assertCodeMakes(GET, URI.create("https://amazonaws.com/foo"), BAD_REQUEST.getStatusCode(), "",
                "<Error><Code>InvalidPlacementGroup.InUse</Code></Error>", IllegalStateException.class);
