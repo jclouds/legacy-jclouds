@@ -25,6 +25,9 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.rest.internal.BaseHttpApiMetadata;
 import org.jclouds.ultradns.ws.config.UltraDNSWSHttpApiModule;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
+
 /**
  * Implementation of {@link ApiMetadata} for Neustar's UltraDNSWS api.
  * 
@@ -61,7 +64,9 @@ public class UltraDNSWSApiMetadata extends BaseHttpApiMetadata<UltraDNSWSApi> {
          .documentation(URI.create("https://portal.ultradns.com/static/docs/NUS_API_XML_SOAP.pdf"))
          .defaultEndpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
          .defaultProperties(UltraDNSWSApiMetadata.defaultProperties())
-         .defaultModule(UltraDNSWSHttpApiModule.class);
+         .defaultModules(ImmutableSet.<Class<? extends Module>> builder()
+                                     .add(UltraDNSWSHttpApiModule.class)
+                                     .add(ScopedTransaction.Module.class).build());
       }
 
       @Override

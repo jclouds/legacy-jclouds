@@ -30,6 +30,7 @@ import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.ultradns.ws.ScopedTransaction;
 import org.jclouds.ultradns.ws.domain.Task;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
 import org.jclouds.ultradns.ws.xml.ElementTextHandler;
@@ -43,7 +44,10 @@ import com.google.common.collect.FluentIterable;
  * @see <a href="https://www.ultradns.net/api/NUS_API_XML_SOAP.pdf" />
  * @author Adrian Cole
  */
-@RequestFilters(SOAPWrapWithPasswordAuth.class)
+@RequestFilters({
+   ScopedTransaction.Filter.class,
+   SOAPWrapWithPasswordAuth.class
+})
 @VirtualHost
 public interface TaskApi {
    /**
