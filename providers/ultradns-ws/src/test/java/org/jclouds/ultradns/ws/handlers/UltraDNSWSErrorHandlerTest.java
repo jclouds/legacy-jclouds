@@ -35,6 +35,7 @@ import org.jclouds.io.Payload;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.DirectionalGroupOverlapException;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
+import org.jclouds.ultradns.ws.UltraDNSWSExceptions.TooManyTransactionsException;
 import org.jclouds.ultradns.ws.UltraDNSWSResponseException;
 import org.testng.annotations.Test;
 
@@ -362,6 +363,54 @@ public class UltraDNSWSErrorHandlerTest {
       assertEquals(exception.getMessage(), "Error 2705: Directional Pool Record does not exist in the system");
       assertEquals(exception.getError().getDescription().get(), "Directional Pool Record does not exist in the system");
       assertEquals(exception.getError().getCode(), 2705);
+   }
+
+   @Test
+   public void testCode1602SetsResourceNotFoundException() throws IOException {
+      HttpRequest request = HttpRequest.builder().method(POST)
+                                                 .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+                                                 .addHeader(HOST, "ultra-api.ultradns.com:8443")
+                                                 .payload(payloadFromResource("/delete_directionalrecord.xml")).build();
+      HttpCommand command = new HttpCommand(request);
+      HttpResponse response = HttpResponse.builder()
+                                          .message(INTERNAL_SERVER_ERROR.getReasonPhrase())
+                                          .statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
+                                          .payload(payloadFromResource("/tx_doesnt_exist.xml")).build();
+
+      function.handleError(command, response);
+
+      assertEquals(command.getException().getClass(), ResourceNotFoundException.class);
+      assertEquals(command.getException().getMessage(), "No transaction with Id AAAAAAAAAAAAAAAA found for the user jclouds");
+
+      UltraDNSWSResponseException exception = UltraDNSWSResponseException.class.cast(command.getException().getCause());
+
+      assertEquals(exception.getMessage(), "Error 1602: No transaction with Id AAAAAAAAAAAAAAAA found for the user jclouds");
+      assertEquals(exception.getError().getDescription().get(), "No transaction with Id AAAAAAAAAAAAAAAA found for the user jclouds");
+      assertEquals(exception.getError().getCode(), 1602);
+   }
+   
+   @Test
+   public void testCode9010SetsTooManyTransactionsException() throws IOException {
+      HttpRequest request = HttpRequest.builder().method(POST)
+                                                 .endpoint("https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01")
+                                                 .addHeader(HOST, "ultra-api.ultradns.com:8443")
+                                                 .payload(payloadFromResource("/create_directionalrecord_newgroup.xml")).build();
+      HttpCommand command = new HttpCommand(request);
+      HttpResponse response = HttpResponse.builder()
+                                          .message(INTERNAL_SERVER_ERROR.getReasonPhrase())
+                                          .statusCode(INTERNAL_SERVER_ERROR.getStatusCode())
+                                          .payload(payloadFromResource("/tx_toomany.xml")).build();
+
+      function.handleError(command, response);
+
+      assertEquals(command.getException().getClass(), TooManyTransactionsException.class);
+      assertEquals(command.getException().getMessage(), "Ultra API only allows 3 concurrent transactions per user");
+
+      UltraDNSWSResponseException exception = UltraDNSWSResponseException.class.cast(command.getException().getCause());
+
+      assertEquals(exception.getMessage(), "Error 9010: Ultra API only allows 3 concurrent transactions per user");
+      assertEquals(exception.getError().getDescription().get(), "Ultra API only allows 3 concurrent transactions per user");
+      assertEquals(exception.getError().getCode(), 9010);
    }
 
    @Test

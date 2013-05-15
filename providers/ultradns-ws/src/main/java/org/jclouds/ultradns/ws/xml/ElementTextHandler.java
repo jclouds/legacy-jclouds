@@ -66,6 +66,12 @@ public abstract class ElementTextHandler extends ParseSax.HandlerForGeneratedReq
       }
    }
 
+   public static class TransactionID extends ElementTextHandler {
+      public TransactionID() {
+         super("transactionId");
+      }
+   }
+
    private final String textElement;
 
    private StringBuilder currentText = new StringBuilder();

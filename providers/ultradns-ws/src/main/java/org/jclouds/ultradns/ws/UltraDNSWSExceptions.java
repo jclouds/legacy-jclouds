@@ -18,6 +18,8 @@
  */
 package org.jclouds.ultradns.ws;
 
+import org.jclouds.rest.InsufficientResourcesException;
+
 /**
  * Exceptions likely to be encountered when using {@link UltraDNSWSApi}
  * 
@@ -43,6 +45,17 @@ public interface UltraDNSWSExceptions {
       private static final long serialVersionUID = 1L;
 
       public DirectionalGroupOverlapException(String message, Throwable cause) {
+         super(message, cause);
+      }
+   }
+
+   /**
+    * Error 9010: Ultra API only allows 3 concurrent transactions per user
+    */
+   public static class TooManyTransactionsException extends InsufficientResourcesException {
+      private static final long serialVersionUID = 1L;
+
+      public TooManyTransactionsException(String message, Throwable cause) {
          super(message, cause);
       }
    }
