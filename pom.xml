@@ -33,8 +33,6 @@ under the License.
   <modules>
     <module>project</module>
     <module>resources</module>
-    <module>assemblies</module>
-    <module>archetypes</module>
     <module>core</module>
     <module>common</module>
     <module>compute</module>
