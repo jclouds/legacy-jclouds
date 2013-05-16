@@ -37,7 +37,7 @@ import com.google.common.annotations.VisibleForTesting;
  */
 public class JcloudsVersion {
     @VisibleForTesting
-    static final String VERSION_RESOURCE_FILE = "META-INF/maven/org.jclouds/jclouds-core/pom.properties";
+    static final String VERSION_RESOURCE_FILE = "META-INF/maven/org.apache.jclouds/jclouds-core/pom.properties";
     private static final String VERSION_PROPERTY_NAME = "version";
 
     // x.y.z or x.y.z-alpha.n or x.y.z-beta.n or x.y.z-rc.n or x.y.z-SNAPSHOT - see http://semver.org
