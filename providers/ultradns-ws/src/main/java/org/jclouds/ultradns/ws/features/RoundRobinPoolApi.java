@@ -28,7 +28,6 @@ import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.ultradns.ws.ScopedTransaction;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
 import org.jclouds.ultradns.ws.domain.ResourceRecord;
 import org.jclouds.ultradns.ws.domain.ResourceRecordDetail;
@@ -46,10 +45,7 @@ import com.google.common.collect.FluentIterable;
  * @see <a href="https://www.ultradns.net/api/NUS_API_XML_SOAP.pdf" />
  * @author Adrian Cole
  */
-@RequestFilters({
-   ScopedTransaction.Filter.class,
-   SOAPWrapWithPasswordAuth.class
-})
+@RequestFilters(SOAPWrapWithPasswordAuth.class)
 @VirtualHost
 public interface RoundRobinPoolApi {
 

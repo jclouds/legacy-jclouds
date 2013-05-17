@@ -25,30 +25,13 @@ import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.Transform;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.ultradns.ws.ScopedTransaction;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.TooManyTransactionsException;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
 import org.jclouds.ultradns.ws.xml.ElementTextHandler;
 
 /**
- * Adds transaction support when performing multiple write commands.
- * 
- * <p/>
- * ex.
- * 
- * <pre>
- * String txId = ultraDNSApi.getTransactionApi().start();
- * try {
- *    // perform operations
- *    ultraDNSApi.getTransactionApi().commit(txId);
- * } catch (Throwable t) {
- *    ultraDNSApi.getTransactionApi().rollback(txId);
- *    throw propagate(t);
- * }
- * </pre>
  * 
  * @see <a href="https://ultra-api.ultradns.com:8443/UltraDNS_WS/v01?wsdl" />
  * @see <a href="https://www.ultradns.net/api/NUS_API_XML_SOAP.pdf" />
@@ -65,15 +48,12 @@ public interface TransactionApi {
     * @return id of the transaction created
     * @throws TooManyTransactionsException
     *            if the maximum concurrent exception limit was hit.
-    * @throws IllegalStateException
-    *            if another transaction is in progress.
     */
    @Named("startTransaction")
    @POST
    @XMLResponseParser(ElementTextHandler.TransactionID.class)
    @Payload("<v01:startTransaction/>")
-   @Transform(ScopedTransaction.Set.class)
-   String start() throws TooManyTransactionsException, IllegalStateException;
+   String start() throws TooManyTransactionsException;
 
    /**
     * This request commits all of a transaction’s requests and writes them to
@@ -87,7 +67,6 @@ public interface TransactionApi {
    @Named("commitTransaction")
    @POST
    @Payload("<v01:commitTransaction><transactionID>{transactionID}</transactionID></v01:commitTransaction>")
-   @Transform(ScopedTransaction.Remove.class)
    void commit(@PayloadParam("transactionID") String transactionID) throws ResourceNotFoundException;
 
    /**
@@ -101,6 +80,5 @@ public interface TransactionApi {
    @POST
    @Payload("<v01:rollbackTransaction><transactionID>{transactionID}</transactionID></v01:rollbackTransaction>")
    @Fallback(VoidOnNotFoundOr404.class)
-   @Transform(ScopedTransaction.Remove.class)
    void rollback(@PayloadParam("transactionID") String transactionID);
 }
