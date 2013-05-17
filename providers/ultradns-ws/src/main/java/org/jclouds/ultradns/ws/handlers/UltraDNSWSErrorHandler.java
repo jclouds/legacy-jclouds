@@ -31,7 +31,6 @@ import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ultradns.ws.UltraDNSWSError;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.DirectionalGroupOverlapException;
 import org.jclouds.ultradns.ws.UltraDNSWSExceptions.ResourceAlreadyExistsException;
-import org.jclouds.ultradns.ws.UltraDNSWSExceptions.TooManyTransactionsException;
 import org.jclouds.ultradns.ws.UltraDNSWSResponseException;
 import org.jclouds.ultradns.ws.xml.UltraWSExceptionHandler;
 
@@ -78,10 +77,6 @@ public class UltraDNSWSErrorHandler implements HttpErrorHandler {
     */
    static final class ErrorCodes {
       static final int UNKNOWN = 0;
-      /**
-       * No transaction with Id Y found for the user Y
-       */
-      static final int TX_NOT_FOUND = 1602;
       /**
        * Zone does not exist in the system.
        */
@@ -134,10 +129,6 @@ public class UltraDNSWSErrorHandler implements HttpErrorHandler {
        * Geolocation/Source IP overlap(s) found
        */
       static final int DIRECTIONALPOOL_OVERLAP = 7021;
-      /**
-       * Ultra API only allows 3 concurrent transactions per user
-       */
-      static final int EXCEEDED_TX_LIMIT = 9010;
    }
 
    private Exception refineException(UltraDNSWSResponseException exception) {
@@ -148,7 +139,6 @@ public class UltraDNSWSErrorHandler implements HttpErrorHandler {
             return exception;
          if (exception.getError().getDescription().get().indexOf("Cannot find") == -1)
             return exception;
-      case ErrorCodes.TX_NOT_FOUND:
       case ErrorCodes.ZONE_NOT_FOUND:
       case ErrorCodes.RESOURCE_RECORD_NOT_FOUND:
       case ErrorCodes.ACCOUNT_NOT_FOUND:
@@ -165,8 +155,6 @@ public class UltraDNSWSErrorHandler implements HttpErrorHandler {
          return new ResourceAlreadyExistsException(message, exception);
       case ErrorCodes.DIRECTIONALPOOL_OVERLAP:
          return new DirectionalGroupOverlapException(message, exception);
-      case ErrorCodes.EXCEEDED_TX_LIMIT:
-         return new TooManyTransactionsException(message, exception);
       }
       return exception;
    }

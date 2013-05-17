@@ -34,7 +34,6 @@ import org.jclouds.ultradns.ws.features.ResourceRecordApi;
 import org.jclouds.ultradns.ws.features.RoundRobinPoolApi;
 import org.jclouds.ultradns.ws.features.TaskApi;
 import org.jclouds.ultradns.ws.features.TrafficControllerPoolApi;
-import org.jclouds.ultradns.ws.features.TransactionApi;
 import org.jclouds.ultradns.ws.features.ZoneApi;
 import org.jclouds.ultradns.ws.filters.SOAPWrapWithPasswordAuth;
 import org.jclouds.ultradns.ws.xml.AccountHandler;
@@ -126,10 +125,4 @@ public interface UltraDNSWSApi extends Closeable {
     */
    @Delegate
    TaskApi getTaskApi();
-
-   /**
-    * Provides access to Transaction features.
-    */
-   @Delegate
-   TransactionApi getTransactionApi();
 }
