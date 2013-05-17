@@ -113,7 +113,10 @@
             <exclude>.git/**</exclude>
             <exclude>**/.gitignore</exclude>
             <exclude>**/.gitattributes</exclude>
+
+            <!-- Temporary files generated on CloudBees slaves -->
             <exclude>.repository/**</exclude>
+            <exclude>gc.log</exclude>
           </excludes>
         </configuration>
       </plugin>
