@@ -38,9 +38,13 @@ public class JcloudsVersion {
     static final String VERSION_RESOURCE_FILE = "META-INF/maven/org.apache.jclouds/jclouds-core/pom.properties";
     private static final String VERSION_PROPERTY_NAME = "version";
 
-    // x.y.z or x.y.z-alpha.n or x.y.z-beta.n or x.y.z-rc.n or x.y.z-SNAPSHOT - see http://semver.org
+    /*
+     * x.y.z or x.y.z-incubating or x.y.z-alpha.n or x.y.z-beta.n or x.y.z-rc.n or x.y.z-SNAPSHOT -
+     * see http://semver.org. Note that x.y.z-incubating does *not* meet the 
+     * semver criteria for a *release* version.
+     */
     private static final Pattern SEMANTIC_VERSION_PATTERN =
-        Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(?:-(alpha|beta|rc)\\.(\\d+)|-SNAPSHOT)?");
+        Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(?:-(alpha|beta|rc)\\.(\\d+)|-incubating|-SNAPSHOT)?");
     private static final String ALPHA_VERSION_IDENTIFIER = "alpha";
     private static final String BETA_VERSION_IDENTIFIER = "beta";
 

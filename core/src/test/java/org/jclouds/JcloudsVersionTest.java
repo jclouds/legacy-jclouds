@@ -68,6 +68,16 @@ public class JcloudsVersionTest {
         new JcloudsVersion("1.2.3-rc.4-SNAPSHOT");
     }
 
+    @Test(expectedExceptions = { IllegalArgumentException.class })
+    public void testFailsIfIncubatingSnapshot() {
+        new JcloudsVersion("1.2.3-incubating-SNAPSHOT");
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class })
+    public void testFailsIfNumberedIncubating() {
+        new JcloudsVersion("1.2.3-incubating.1");
+    }
+
     @Test
     public void testExtractsVersionFromResourceFile() {
         JcloudsVersion version = new JcloudsVersion();
@@ -99,9 +109,21 @@ public class JcloudsVersionTest {
         JcloudsVersion version = new JcloudsVersion("1.2.3");
         assertFalse(version.alpha, "Expected non-alpha");
         assertFalse(version.beta, "Expected non-beta");
+        assertFalse(version.releaseCandidate, "Expected non-release candidate");
         assertNull(version.alphaVersion);
         assertNull(version.betaVersion);
+        assertNull(version.releaseCandidateVersion);
+    }
+
+    @Test
+    public void testSupportsIncubatingReleaseVersion() {
+        // *not* a semver-compliant release version!
+        JcloudsVersion version = new JcloudsVersion("1.2.3-incubating");
+        assertFalse(version.alpha, "Expected non-alpha");
+        assertFalse(version.beta, "Expected non-beta");
         assertFalse(version.releaseCandidate, "Expected non-release candidate");
+        assertNull(version.alphaVersion);
+        assertNull(version.betaVersion);
         assertNull(version.releaseCandidateVersion);
     }
 
