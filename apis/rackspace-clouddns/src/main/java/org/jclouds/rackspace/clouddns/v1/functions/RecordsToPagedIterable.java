@@ -36,7 +36,7 @@ import com.google.common.base.Optional;
  * @author Everett Toews
  */
 @Beta
-public class RecordsToPagedIterable extends Arg0ToPagedIterable<RecordDetail, RecordsToPagedIterable> {
+public class RecordsToPagedIterable extends Arg0ToPagedIterable.FromCaller<RecordDetail, RecordsToPagedIterable> {
 
    private final CloudDNSApi api;
 

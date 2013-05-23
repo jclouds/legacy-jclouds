@@ -1,0 +1,39 @@
+{
+  "domains": [
+    {
+      "name": "1of4.jclouds-example.com",
+      "id": 3728279,
+      "emailAddress": "jclouds@jclouds-example.com",
+      "updated": "2013-05-23T00:32:21.000+0000",
+      "created": "2013-05-23T00:32:21.000+0000"
+    },
+    {
+      "name": "2of4.jclouds-example.com",
+      "id": 3728280,
+      "emailAddress": "jclouds@jclouds-example.com",
+      "updated": "2013-05-23T00:32:21.000+0000",
+      "created": "2013-05-23T00:32:21.000+0000"
+    },
+    {
+      "name": "3of4.jclouds-example.com",
+      "id": 3728281,
+      "emailAddress": "jclouds@jclouds-example.com",
+      "updated": "2013-05-23T00:32:22.000+0000",
+      "created": "2013-05-23T00:32:22.000+0000"
+    },
+    {
+      "name": "4of4.jclouds-example.com",
+      "id": 3728282,
+      "emailAddress": "jclouds@jclouds-example.com",
+      "updated": "2013-05-23T00:32:22.000+0000",
+      "created": "2013-05-23T00:32:22.000+0000"
+    }
+  ],
+  "totalEntries": 8, 
+  "links": [
+  	{
+  	  "href":"https://dns.api.rackspacecloud.com/v1.0/123123/domains/3650908/subdomains?limit=4&offset=4",
+  	  "rel":"next"
+  	}
+  ]
+}

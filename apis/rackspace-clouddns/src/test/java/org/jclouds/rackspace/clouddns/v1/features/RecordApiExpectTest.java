@@ -131,6 +131,26 @@ public class RecordApiExpectTest extends BaseCloudDNSApiExpectTest<CloudDNSApi> 
       }
    }
 
+   public void testListRecordsPagination() {
+      URI endpointPage1 = URI.create("https://dns.api.rackspacecloud.com/v1.0/123123/domains/3650908/records");
+      URI endpointPage2 = URI.create("https://dns.api.rackspacecloud.com/v1.0/123123/domains/3650908/records?limit=4&offset=4");
+      RecordApi api = requestsSendResponses(
+            rackspaceAuthWithUsernameAndApiKey, 
+            responseWithAccess,
+            authenticatedGET().endpoint(endpointPage1).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/record-list-page1.json")).build(),
+            authenticatedGET().endpoint(endpointPage2).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/record-list-page2.json")).build())
+         .getRecordApiForDomain(3650908);
+
+      ImmutableList<RecordDetail> records = api.list().concat().toList();
+      assertEquals(records.size(), 8);
+      
+      for (RecordDetail record: records) {
+         assertTrue(record.getName().contains(JCLOUDS_EXAMPLE));
+      }
+   }
+
    public void testListByType() {
       URI endpoint = URI.create("https://dns.api.rackspacecloud.com/v1.0/123123/domains/3650908/records?type=A");
       RecordApi api = requestsSendResponses(

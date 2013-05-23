@@ -1,0 +1,48 @@
+{
+  "records": [
+    {
+      "name": "jclouds-example.com",
+      "id": "A-9846146",
+      "type": "A",
+      "data": "10.0.1.0",
+      "ttl": 60000,
+      "updated": "2013-04-06T15:20:29.000+0000",
+      "created": "2013-04-06T15:20:29.000+0000"
+    },
+    {
+      "name": "jclouds-example.com",
+      "id": "NS-8684719",
+      "type": "NS",
+      "data": "dns1.stabletransit.com",
+      "ttl": 60000,
+      "updated": "2013-04-06T15:19:20.000+0000",
+      "created": "2013-04-06T15:19:20.000+0000"
+    },
+    {
+      "name": "jclouds-example.com",
+      "id": "NS-8684720",
+      "type": "NS",
+      "data": "dns2.stabletransit.com",
+      "ttl": 60000,
+      "updated": "2013-04-06T15:19:20.000+0000",
+      "created": "2013-04-06T15:19:20.000+0000"
+    },
+    {
+      "name": "jclouds-example.com",
+      "id": "MX-4351045",
+      "priority": 11235,
+      "type": "MX",
+      "data": "mail.jclouds-example.com.com",
+      "ttl": 60000,
+      "updated": "2013-04-06T15:20:28.000+0000",
+      "created": "2013-04-06T15:20:28.000+0000"
+    }
+  ],
+  "totalEntries": 8, 
+  "links": [
+  	{
+  	  "href":"https://dns.api.rackspacecloud.com/v1.0/123123/domains/3650908/records?limit=4&offset=0",
+  	  "rel":"previous"
+  	}
+  ]
+}

@@ -39,6 +39,7 @@ import org.jclouds.rackspace.clouddns.v1.domain.Domain;
 import org.jclouds.rackspace.clouddns.v1.domain.DomainChange;
 import org.jclouds.rackspace.clouddns.v1.domain.Job;
 import org.jclouds.rackspace.clouddns.v1.domain.Record;
+import org.jclouds.rackspace.clouddns.v1.domain.Subdomain;
 import org.jclouds.rackspace.clouddns.v1.domain.UpdateDomain;
 import org.jclouds.rackspace.clouddns.v1.functions.DomainFunctions;
 import org.jclouds.rackspace.clouddns.v1.internal.BaseCloudDNSApiExpectTest;
@@ -140,6 +141,63 @@ public class DomainApiExpectTest extends BaseCloudDNSApiExpectTest<CloudDNSApi> 
       
       for (Domain domain: domains) {
          assertTrue(domain.getName().contains(JCLOUDS_EXAMPLE));
+      }
+   }
+
+   public void testListDomainsPaginated() {
+      URI endpointPage1 = URI.create("https://dns.api.rackspacecloud.com/v1.0/123123/domains");
+      URI endpointPage2 = URI.create("https://dns.api.rackspacecloud.com/v1.0/123123/domains?limit=4&offset=4");
+      DomainApi api = requestsSendResponses(
+            rackspaceAuthWithUsernameAndApiKey, 
+            responseWithAccess,
+            authenticatedGET().endpoint(endpointPage1).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/domain-list-page1.json")).build(),
+            authenticatedGET().endpoint(endpointPage2).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/domain-list-page2.json")).build())
+            .getDomainApi();
+
+      ImmutableList<Domain> domains = api.list().concat().toList();
+      assertEquals(domains.size(), 8);
+      
+      for (Domain domain: domains) {
+         assertTrue(domain.getName().contains(JCLOUDS_EXAMPLE));
+      }
+   }
+
+   public void testListSubdomains() {
+      URI endpoint = URI.create("https://dns.api.rackspacecloud.com/v1.0/123123/domains/3650908/subdomains");
+      DomainApi api = requestsSendResponses(
+            rackspaceAuthWithUsernameAndApiKey, 
+            responseWithAccess,
+            authenticatedGET().endpoint(endpoint).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/subdomain-list.json")).build())
+            .getDomainApi();
+
+      ImmutableList<Subdomain> subdomains = api.listSubdomains(3650908).concat().toList();
+      assertEquals(subdomains.size(), 4);
+      
+      for (Subdomain subdomain: subdomains) {
+         assertTrue(subdomain.getName().contains(JCLOUDS_EXAMPLE));
+      }
+   }
+
+   public void testListSubdomainsPaginated() {
+      URI endpointPage1 = URI.create("https://dns.api.rackspacecloud.com/v1.0/123123/domains/3650908/subdomains");
+      URI endpointPage2 = URI.create("https://dns.api.rackspacecloud.com/v1.0/123123/domains/3650908/subdomains?limit=4&offset=4");
+      DomainApi api = requestsSendResponses(
+            rackspaceAuthWithUsernameAndApiKey, 
+            responseWithAccess,
+            authenticatedGET().endpoint(endpointPage1).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/subdomain-list-page1.json")).build(),
+            authenticatedGET().endpoint(endpointPage2).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/subdomain-list-page2.json")).build())
+            .getDomainApi();
+
+      ImmutableList<Subdomain> subdomains = api.listSubdomains(3650908).concat().toList();
+      assertEquals(subdomains.size(), 8);
+      
+      for (Subdomain subdomain: subdomains) {
+         assertTrue(subdomain.getName().contains(JCLOUDS_EXAMPLE));
       }
    }
 
