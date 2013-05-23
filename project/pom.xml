@@ -28,9 +28,9 @@
   <artifactId>jclouds-project</artifactId>
   <version>1.7.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>jclouds Project</name>
-  <url>http://www.jclouds.org</url>
-  <description>jclouds: Concurrent API for Cloud Services</description>
+  <name>Apache jclouds (incubating)  Project</name>
+  <url>http://jclouds.incubator.apache.org/</url>
+  <description>Apache jclouds (incubating): Concurrent API for Cloud Services</description>
   <inceptionYear>2009</inceptionYear>
 
   <licenses>
@@ -41,54 +41,53 @@
     </license>
   </licenses>
 
-  <organization>
-    <name>jclouds</name>
-    <url>http://www.jclouds.org/</url>
-  </organization>
 
   <issueManagement>
-    <system>GitHub</system>
-    <url>https://github.com/jclouds/jclouds/issues</url>
+    <system>JIRA</system>
+    <url>https://issues.apache.org/jira/browse/JCLOUDS</url>
   </issueManagement>
+
 
   <mailingLists>
     <mailingList>
-      <name>Contributors</name>
-      <subscribe>http://groups.google.com/group/jclouds-contributors</subscribe>
-      <unsubscribe>http://groups.google.com/group/jclouds-contributors</unsubscribe>
-      <post>jclouds-contributors@googlegroups.com</post>
-      <archive>http://groups.google.com/group/jclouds-contributors</archive>
+      <name>User List</name>
+      <subscribe>user-subscribe@jclouds.apache.org</subscribe>
+      <unsubscribe>user-unsubscribe@jclouds.apache.org</unsubscribe>
+      <post>user@jclouds.apache.org</post>
+      <archive>http://mail-archives.apache.org/mod_mbox/jclouds-user/</archive>
     </mailingList>
     <mailingList>
-      <name>Repository Commits</name>
-      <subscribe>http://groups.google.com/group/jclouds-commits</subscribe>
-      <unsubscribe>http://groups.google.com/group/jclouds-commits</unsubscribe>
-      <post>jclouds-commits@googlegroups.com</post>
-      <archive>http://groups.google.com/group/jclouds-commits</archive>
+      <name>Developer List</name>
+      <subscribe>dev-subscribe@jclouds.apache.org</subscribe>
+      <unsubscribe>dev-unsubscribe@jclouds.apache.org</unsubscribe>
+      <post>dev@jclouds.apache.org</post>
+      <archive>http://mail-archives.apache.org/mod_mbox/jclouds-dev/</archive>
+    </mailingList>
+    <mailingList>
+      <name>Commits List</name>
+      <subscribe>commits-subscribe@jclouds.apache.org</subscribe>
+      <unsubscribe>commits-unsubscribe@jclouds.apache.org</unsubscribe>
+      <archive>http://mail-archives.apache.org/mod_mbox/jclouds-commits/</archive>
+    </mailingList>
+    <mailingList>
+      <name>Issues List</name>
+      <subscribe>issues-subscribe@jclouds.apache.org</subscribe>
+      <unsubscribe>issues-unsubscribe@jclouds.apache.org</unsubscribe>
+      <archive>http://mail-archives.apache.org/mod_mbox/jclouds-issues/</archive>
     </mailingList>
   </mailingLists>
 
   <scm>
-    <connection>scm:git:git://github.com/jclouds/jclouds.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/jclouds/jclouds.git</developerConnection>
-    <url>http://github.com/jclouds/jclouds</url>
+    <connection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-jclouds.git</connection>
+    <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-jclouds.git</developerConnection>
+    <url>https://git-wip-us.apache.org/repos/asf?p=incubator-jclouds.git</url>
     <tag>HEAD</tag>
   </scm>
-
+  
   <repositories>
     <repository>
       <id>apache-snapshots</id>
       <url>https://repository.apache.org/content/repositories/snapshots</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>sonatype-nexus-snapshots</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
       <releases>
         <enabled>false</enabled>
       </releases>
@@ -120,69 +119,82 @@
   <developers>
     <developer>
       <name>Adrian Cole</name>
-      <id>ferncam1</id>
+      <id>adriancole</id>
       <email>adrian -at- jclouds -dot- org</email>
       <organization>jclouds</organization>
       <roles>
-        <role>Java Developer</role>
-        <role>PMC</role>
+        <role>Committer</role>
+        <role>PPMC Member</role>
       </roles>
-      <url>http://www.jclouds.org</url>
+      <url>http://jclouds.incubator.apache.org</url>
       <timezone>-8</timezone>
     </developer>
     <developer>
-      <name>Hugo Duncan</name>
-      <id>hugoduncan</id>
-      <email>tabcdef -at- hugoduncan -dot- org</email>
+      <name>Andrew Bayer</name>
+      <id>abayer</id>
+      <email>abayer -at- apache -dot- org</email>
       <roles>
-        <role>Clojure Developer</role>
+        <role>Committer</role>
+        <role>PPMC Member</role>
       </roles>
-      <timezone>-8</timezone>
     </developer>
     <developer>
-      <name>Phil Hagelberg</name>
-      <id>technomancy</id>
-      <email>phil -at- technomancy -dot- us</email>
+      <name>Andrew Gaul</name>
+      <id>gaul</id>
       <roles>
-        <role>Clojure Developer</role>
+        <role>Committer</role>
+        <role>PPMC Member</role>
       </roles>
-      <timezone>-8</timezone>
-    </developer>
-    <developer>
-      <name>Ivan Meredith</name>
-      <id>barefootnz</id>
-      <email>ivan -at- ivan -dot- net -dot- nz</email>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>+13</timezone>
     </developer>
     <developer>
       <name>Andrew Phillips</name>
-      <id>demobox</id>
+      <id>andrewp</id>
       <email>aphillips -at- qrmedia -dot- com</email>
       <roles>
-        <role>Apprentice</role>
+        <role>Committer</role>
+        <role>PPMC Member</role>
       </roles>
       <timezone>+1</timezone>
     </developer>
     <developer>
-      <name>Alex Yarmuda</name>
-      <id>alexstaytuned</id>
-      <email>oleksiy -dot- yarmula -at- gmail -dot- com</email>
+      <name>Becca Woods</name>
+      <id>silkysun</id>
       <roles>
-        <role>Java Developer</role>
+        <role>Committer</role>
+        <role>PPMC Member</role>
       </roles>
-      <timezone>-8</timezone>
     </developer>
     <developer>
-      <name>Chas Emerick</name>
-      <id>cemerick</id>
-      <email>cemerick -at- snowtide -dot- com</email>
+      <name>Everett Toews</name>
+      <id>everett</id>
       <roles>
-        <role>Clojure Developer</role>
+        <role>Committer</role>
+        <role>PPMC Member</role>
       </roles>
-      <timezone>-5</timezone>
+    </developer>
+    <developer>
+      <name>Ignasi Barrera</name>
+      <id>nacx</id>
+      <roles>
+        <role>Committer</role>
+        <role>PPMC Member</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Ioannis Canellos</name>
+      <id>iocanel</id>
+      <roles>
+        <role>Committer</role>
+        <role>PPMC Member</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Matt Stephenson</name>
+      <id>mattstep</id>
+      <roles>
+        <role>Committer</role>
+        <role>PPMC Member</role>
+      </roles>
     </developer>
   </developers>
 
