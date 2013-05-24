@@ -17,19 +17,27 @@
 package org.jclouds.internal;
 
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.jclouds.reflect.Reflection2.typeToken;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.fail;
 
+import java.io.Closeable;
+import java.io.IOException;
+
 import org.jclouds.domain.Credentials;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.rest.ApiContext;
 import org.jclouds.rest.Utils;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.reflect.TypeToken;
 
 /** 
  * @author Adrian Cole
@@ -66,6 +74,23 @@ public class BaseViewTest {
       }
    }
 
+   private static class DummyApi implements Closeable {
+
+      @Override
+      public void close() throws IOException {
+
+      }
+   }
+
+   public class DummyView extends BaseView {
+
+      protected DummyView(ApiContext<DummyApi> context) {
+         super(context, new TypeToken<ApiContext<DummyApi>>() {
+            private static final long serialVersionUID = 1L;
+         });
+      }
+   }
+
    public void testWaterTurnedIntoWine() {
       Wine wine = new Wine();
       assertEquals(wine.getBackendType(), typeToken(Water.class));
@@ -83,5 +108,29 @@ public class BaseViewTest {
          assertEquals(e.getMessage(), "backend type: org.jclouds.internal.BaseViewTest$Water not assignable from org.jclouds.internal.BaseViewTest$PeanutButter");
       }
    }
-   
+
+   public void testCannotUnwrapIfNotApiContext() {
+      Wine wine = new Wine();
+      try {
+         wine.unwrapApi(DummyApi.class);
+         fail();
+      } catch (IllegalArgumentException e) {
+         assertEquals(e.getMessage(), "backend type: org.jclouds.internal.BaseViewTest$Water should be an ApiContext");
+      }
+   }
+
+   @SuppressWarnings("unchecked")
+   public void testUnwrapApi() {
+      DummyApi beer = new DummyApi();
+      ApiContext<DummyApi> beerContext = createMock(ApiContext.class);
+      expect(beerContext.getApi()).andReturn(beer);
+      replay(beerContext);
+
+      DummyView bar = new DummyView(beerContext);
+      DummyApi result = bar.unwrapApi(DummyApi.class);
+
+      assertEquals(result, beer);
+      verify(beerContext);
+   }
+
 }

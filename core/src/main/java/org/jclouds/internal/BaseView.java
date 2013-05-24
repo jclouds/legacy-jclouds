@@ -19,15 +19,19 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.Closeable;
+
 import javax.inject.Singleton;
 
 import org.jclouds.Context;
 import org.jclouds.View;
 import org.jclouds.location.Provider;
+import org.jclouds.rest.ApiContext;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ForwardingObject;
+import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 
 /**
@@ -62,6 +66,17 @@ public abstract class BaseView extends ForwardingObject implements View {
       return (C) unwrap(getBackendType());
    }
    
+   @Override
+   public <A extends Closeable> A unwrapApi(Class<A> apiClass) {
+      checkArgument(ApiContext.class.isAssignableFrom(backendType.getRawType()),
+            "backend type: %s should be an ApiContext", backendType);
+      TypeToken<ApiContext<A>> contextToken = new TypeToken<ApiContext<A>>(delegate().getClass()) {
+         private static final long serialVersionUID = 1L;
+      }.where(new TypeParameter<A>() {
+      }, TypeToken.of(apiClass));
+      return unwrap(contextToken).getApi();
+   }
+
    @Override
    protected Context delegate() {
       return backend;

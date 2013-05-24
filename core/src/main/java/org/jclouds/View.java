@@ -16,6 +16,8 @@
  */
 package org.jclouds;
 
+import java.io.Closeable;
+
 import com.google.common.annotations.Beta;
 import com.google.common.reflect.TypeToken;
 
@@ -67,5 +69,15 @@ public interface View {
     *            {@link #getBackendType()}
     */
    <C extends Context> C unwrap() throws ClassCastException;
+
+   /**
+    * Unwraps the underlying api from this view.
+    *
+    * @param apiClass The class of the api to unwrap.
+    * @return The unwrapped api.
+    *
+    * @since 1.7
+    */
+   <A extends Closeable> A unwrapApi(Class<A> apiClass);
 
 }
