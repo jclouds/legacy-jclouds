@@ -134,7 +134,7 @@ public class RecordDetail {
       return string().toString();
    }
 
-   public final static class Builder {
+   public static final class Builder {
       private String id;
       private Date created;
       private Date updated;

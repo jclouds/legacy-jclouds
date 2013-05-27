@@ -40,7 +40,7 @@ public class RecordSet extends ForwardingList<Value> {
 
    private final String type;
    private final int ttl;
-   private transient final List<Value> values;
+   private final transient List<Value> values;
 
    private RecordSet(String type, int ttl, List<Value> values) {
       this.type = checkNotNull(type, "type");
@@ -124,7 +124,7 @@ public class RecordSet extends ForwardingList<Value> {
          return new Builder().from(this);
       }
 
-      public final static class Builder {
+      public static final class Builder {
          private Optional<String> label = Optional.absent();
          private Optional<Integer> weight = Optional.absent();
          private Map<String, Object> rdata;
@@ -191,7 +191,7 @@ public class RecordSet extends ForwardingList<Value> {
       return new Builder().from(this);
    }
 
-   public final static class Builder {
+   public static final class Builder {
       private String type;
       private int ttl = -1;
       private ImmutableList.Builder<Value> values = ImmutableList.builder();

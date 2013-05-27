@@ -117,7 +117,7 @@ public class Record {
       return string().toString();
    }
 
-   public final static class Builder {
+   public static final class Builder {
       private String name;
       private String type;
       private Optional<Integer> ttl = Optional.absent();

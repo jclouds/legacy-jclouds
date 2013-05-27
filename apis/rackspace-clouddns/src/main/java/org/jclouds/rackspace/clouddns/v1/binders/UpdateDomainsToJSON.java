@@ -37,7 +37,9 @@ public class UpdateDomainsToJSON implements MapBinder {
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, Object> postParams) {
       Iterable<Integer> ids = Iterable.class.cast(postParams.get("ids"));
-      String key, value, updateTemplate;
+      String key;
+      String value;
+      String updateTemplate;
       
       if (postParams.get("emailAddress") != null) {
          updateTemplate = "{\"id\":%s,\"%s\":\"%s\"}";
