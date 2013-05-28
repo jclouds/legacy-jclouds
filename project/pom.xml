@@ -213,6 +213,7 @@
     <jclouds.blobstore.httpstream.md5>${jclouds.wire.httpstream.md5}</jclouds.blobstore.httpstream.md5>
     <jclouds.test.listener>org.jclouds.test.testng.UnitTestStatusListener</jclouds.test.listener>
     <test.ssh.keyfile />
+    <sourceReleaseAssemblyDescriptor>source-release-zip-tar</sourceReleaseAssemblyDescriptor>
   </properties>
 
   <dependencyManagement>
@@ -341,7 +342,18 @@
       </testResource>
     </testResources>
     <plugins>
-<plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <useReleaseProfile>false</useReleaseProfile>
+          <goals>deploy</goals>
+          <arguments>-Pdoc -Papache-release ${arguments}</arguments>
+        </configuration>
+      </plugin>
+      
+      <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
         <executions>
@@ -680,13 +692,6 @@
         <plugin>
           <artifactId>maven-jxr-plugin</artifactId>
           <version>2.3</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>2.4</version>
-          <configuration>
-            <releaseProfiles>doc</releaseProfiles>
-          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-remote-resources-plugin</artifactId>
