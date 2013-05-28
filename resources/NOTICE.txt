@@ -1,5 +1,8 @@
-jclouds
-Copyright 2009-2012 jclouds, Inc.
+Apache jclouds
+Copyright 2009-2013 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
 
 This product includes software developed at
 jclouds, Inc. (http://www.jclouds.org/).
