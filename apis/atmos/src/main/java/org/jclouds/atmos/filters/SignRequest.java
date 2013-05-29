@@ -147,7 +147,7 @@ public class SignRequest implements HttpRequestFilter {
             // newline characters and extra embedded white spaces in the value.
             for (String value : request.getHeaders().get(header)) {
                value = value.replace("  ", " ");
-               value = Strings2.replaceAll(value, NEWLINE_PATTERN, "");
+               value = NEWLINE_PATTERN.matcher(value).replaceAll("");
                toSign.append(value).append(' ');
             }
             toSign.deleteCharAt(toSign.lastIndexOf(" "));

@@ -113,12 +113,6 @@ public class Strings2 {
       }
    }
 
-   public static String replaceAll(String returnVal, Pattern pattern, String replace) {
-      Matcher m = pattern.matcher(returnVal);
-      returnVal = m.replaceAll(replace);
-      return returnVal;
-   }
-
    public static String toString(InputSupplier<? extends InputStream> supplier)
          throws IOException {
       return CharStreams.toString(CharStreams.newReaderSupplier(supplier,
@@ -173,7 +167,7 @@ public class Strings2 {
    public static String replaceTokens(String input, Multimap<String, ?> tokenValues) {
       for (Entry<String, ?> tokenValue : tokenValues.entries()) {
          Pattern pattern = TOKEN_TO_PATTERN.getUnchecked(tokenValue.getKey());
-         input = replaceAll(input, pattern, tokenValue.getValue().toString());
+         input = pattern.matcher(input).replaceAll(tokenValue.getValue().toString());
       }
       return input;
    }

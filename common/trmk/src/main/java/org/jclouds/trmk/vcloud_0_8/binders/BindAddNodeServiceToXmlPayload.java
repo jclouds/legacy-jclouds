@@ -63,7 +63,7 @@ public class BindAddNodeServiceToXmlPayload implements MapBinder {
       String payload = Strings2.replaceTokens(xmlTemplate,
             ImmutableMap.of("name", name, "ipAddress", ipAddress, "port", port, "enabled", enabled, "ns", ns));
       try {
-         payload = Strings2.replaceAll(payload, Patterns.TOKEN_TO_PATTERN.get("description"), description == null ? ""
+         payload = Patterns.TOKEN_TO_PATTERN.get("description").matcher(payload).replaceAll(description == null ? ""
                : String.format("\n    <Description>%s</Description>", description));
       } catch (ExecutionException e) {
          Throwables.propagate(e);

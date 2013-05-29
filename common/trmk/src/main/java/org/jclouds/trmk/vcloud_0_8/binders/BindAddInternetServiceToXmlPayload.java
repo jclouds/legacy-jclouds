@@ -62,9 +62,9 @@ public class BindAddInternetServiceToXmlPayload implements MapBinder {
       String payload = Strings2.replaceTokens(xmlTemplate,
             ImmutableMap.of("name", name, "protocol", protocol, "port", port, "enabled", enabled, "ns", ns));
       try {
-         payload = Strings2.replaceAll(payload, Patterns.TOKEN_TO_PATTERN.get("description"), description == null ? ""
+         payload = Patterns.TOKEN_TO_PATTERN.get("description").matcher(payload).replaceAll(description == null ? ""
                : String.format("\n\t<Description>%s</Description>", description));
-         payload = Strings2.replaceAll(payload, Patterns.TOKEN_TO_PATTERN.get("monitor"), getMonitorString(postParams));
+         payload = Patterns.TOKEN_TO_PATTERN.get("monitor").matcher(payload).replaceAll(getMonitorString(postParams));
       } catch (ExecutionException e) {
          Throwables.propagate(e);
       }

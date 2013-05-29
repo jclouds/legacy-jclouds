@@ -158,7 +158,7 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
          if (header.startsWith("x-ms-")) {
             toSign.append(header.toLowerCase()).append(":");
             for (String value : request.getHeaders().get(header)) {
-               toSign.append(Strings2.replaceAll(value, NEWLINE_PATTERN, "")).append(",");
+               toSign.append(NEWLINE_PATTERN.matcher(value).replaceAll("")).append(",");
             }
             toSign.deleteCharAt(toSign.lastIndexOf(","));
             toSign.append("\n");
