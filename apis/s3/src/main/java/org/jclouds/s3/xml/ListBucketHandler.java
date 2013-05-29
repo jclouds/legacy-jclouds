@@ -31,7 +31,6 @@ import org.jclouds.s3.domain.ListBucketResponse;
 import org.jclouds.s3.domain.ObjectMetadata;
 import org.jclouds.s3.domain.ObjectMetadataBuilder;
 import org.jclouds.s3.domain.internal.ListBucketResponseImpl;
-import org.jclouds.util.Strings2;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.ImmutableSet;
@@ -102,7 +101,7 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
       } else if (qName.equals("ETag")) {
          String currentETag = currentOrNull(currentText);
          builder.eTag(currentETag);
-         currentETag = Strings2.replaceAll(currentETag, '"', "");
+         currentETag = currentETag.replace("\"", "");
          if (!MULTIPART_BLOB_ETAG.matcher(currentETag).matches()) {
             builder.contentMD5(base16().lowerCase().decode(currentETag));
          }

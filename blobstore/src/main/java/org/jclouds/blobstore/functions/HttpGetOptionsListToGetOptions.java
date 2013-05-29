@@ -25,7 +25,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.date.DateService;
-import org.jclouds.util.Strings2;
 
 import com.google.common.base.Function;
 
@@ -49,14 +48,14 @@ public class HttpGetOptionsListToGetOptions implements
       org.jclouds.blobstore.options.GetOptions to = new org.jclouds.blobstore.options.GetOptions();
       if (from.length != 0) {
          if (from[0].getIfMatch() != null) {
-            to.ifETagMatches(Strings2.replaceAll(from[0].getIfMatch(), '"', ""));
+            to.ifETagMatches(from[0].getIfMatch().replace("\"", ""));
          }
          if (from[0].getIfModifiedSince() != null) {
             Date time = dateService.rfc822DateParse(from[0].getIfModifiedSince());
             to.ifModifiedSince(time);
          }
          if (from[0].getIfNoneMatch() != null) {
-            to.ifETagDoesntMatch(Strings2.replaceAll(from[0].getIfNoneMatch(), '"', ""));
+            to.ifETagDoesntMatch(from[0].getIfNoneMatch().replace("\"", ""));
          }
          if (from[0].getIfUnmodifiedSince() != null) {
             Date time = dateService.rfc822DateParse(from[0].getIfUnmodifiedSince());

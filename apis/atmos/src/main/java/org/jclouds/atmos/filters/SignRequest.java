@@ -24,7 +24,6 @@ import static org.jclouds.util.Patterns.NEWLINE_PATTERN;
 import static org.jclouds.util.Strings2.toInputStream;
 
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -136,8 +135,6 @@ public class SignRequest implements HttpRequestFilter {
       toSign.append(request.getMethod()).append("\n");
    }
    
-   private static final Pattern TWO_SPACE_PATTERN = Pattern.compile("  ");
-
    private void appendCanonicalizedHeaders(HttpRequest request, StringBuilder toSign) {
       // TreeSet == Sort the headers alphabetically.
       Set<String> headers = Sets.newTreeSet(request.getHeaders().keySet());
@@ -149,7 +146,7 @@ public class SignRequest implements HttpRequestFilter {
             // replacing any
             // newline characters and extra embedded white spaces in the value.
             for (String value : request.getHeaders().get(header)) {
-               value = Strings2.replaceAll(value, TWO_SPACE_PATTERN, " ");
+               value = value.replace("  ", " ");
                value = Strings2.replaceAll(value, NEWLINE_PATTERN, "");
                toSign.append(value).append(' ');
             }

@@ -119,25 +119,6 @@ public class Strings2 {
       return returnVal;
    }
 
-   public static String replaceAll(String input, char match, String replacement) {
-      if (input.indexOf(match) != -1) {
-         try {
-            input = CHAR_TO_PATTERN.get(match).matcher(input).replaceAll(replacement);
-         } catch (ExecutionException e) {
-            throw new IllegalStateException("error creating pattern: " + match, e);
-         }
-      }
-      return input;
-   }
-
-   private static final LoadingCache<Character, Pattern> CHAR_TO_PATTERN = CacheBuilder.newBuilder()
-         .<Character, Pattern> build(new CacheLoader<Character, Pattern>() {
-            @Override
-            public Pattern load(Character plain) {
-               return Pattern.compile(plain + "");
-            }
-         });
-   
    public static String toString(InputSupplier<? extends InputStream> supplier)
          throws IOException {
       return CharStreams.toString(CharStreams.newReaderSupplier(supplier,
