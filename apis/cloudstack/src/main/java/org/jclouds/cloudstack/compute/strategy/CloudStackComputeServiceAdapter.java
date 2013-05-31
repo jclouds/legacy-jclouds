@@ -174,10 +174,17 @@ public class CloudStackComputeServiceAdapter implements
       }
 
       if (templateOptions.getKeyPair() != null) {
+         SshKeyPair keyPair = null;
          if (templateOptions.getLoginPrivateKey() != null) {
             String pem = templateOptions.getLoginPrivateKey();
-            SshKeyPair keyPair = SshKeyPair.builder().name(templateOptions.getKeyPair())
+            keyPair = SshKeyPair.builder().name(templateOptions.getKeyPair())
                .fingerprint(fingerprintPrivateKey(pem)).privateKey(pem).build();
+            keyPairCache.asMap().put(keyPair.getName(), keyPair);
+            options.keyPair(keyPair.getName());
+         } else if (client.getSSHKeyPairClient().getSSHKeyPair(templateOptions.getKeyPair()) != null) {
+            keyPair = client.getSSHKeyPairClient().getSSHKeyPair(templateOptions.getKeyPair());
+         }
+         if (keyPair != null) {
             keyPairCache.asMap().put(keyPair.getName(), keyPair);
             options.keyPair(keyPair.getName());
          }
@@ -214,13 +221,15 @@ public class CloudStackComputeServiceAdapter implements
          templateId, options);
       VirtualMachine vm = blockUntilJobCompletesAndReturnResult.<VirtualMachine>apply(job);
       logger.debug("--- virtualmachine: %s", vm);
-      LoginCredentials credentials = null;
-      if (vm.isPasswordEnabled()) {
-         assert vm.getPassword() != null : vm;
-         credentials = LoginCredentials.builder().password(vm.getPassword()).build();
+      LoginCredentials.Builder credentialsBuilder = LoginCredentials.builder();
+      if (!vm.isPasswordEnabled() || templateOptions.getKeyPair() != null) {
+         SshKeyPair keyPair = keyPairCache.getUnchecked(templateOptions.getKeyPair());
+         credentialsBuilder.privateKey(keyPair.getPrivateKey());
       } else {
-         credentials = LoginCredentials.fromCredentials(credentialStore.get("keypair#" + templateOptions.getKeyPair()));
+         assert vm.getPassword() != null : vm;
+         credentialsBuilder.password(vm.getPassword());
       }
+      
       if (templateOptions.shouldSetupStaticNat()) {
          Capabilities capabilities = client.getConfigurationClient().listCapabilities();
          // TODO: possibly not all network ids, do we want to do this
@@ -241,7 +250,7 @@ public class CloudStackComputeServiceAdapter implements
             }
          }
       }
-      return new NodeAndInitialCredentials<VirtualMachine>(vm, vm.getId() + "", credentials);
+      return new NodeAndInitialCredentials<VirtualMachine>(vm, vm.getId() + "", credentialsBuilder.build());
    }
 
    @Override

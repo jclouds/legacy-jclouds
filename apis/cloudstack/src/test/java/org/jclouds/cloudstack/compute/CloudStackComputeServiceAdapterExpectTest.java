@@ -83,6 +83,57 @@ public class CloudStackComputeServiceAdapterExpectTest extends BaseCloudStackCom
         .payload(payloadFromResource("/queryasyncjobresultresponse-authorizeingress.json"))
         .build();
    
+   HttpRequest listCapabilitiesNotListAll = HttpRequest.builder().method("GET")
+     .endpoint("http://localhost:8080/client/api")
+     .addQueryParam("response", "json")
+     .addQueryParam("command", "listCapabilities")
+     .addQueryParam("apiKey", "APIKEY")      
+     .addQueryParam("signature", "l3PVoJnKK2G2gHk3HPHtpwWjlW4%3D")
+     .addHeader("Accept", "application/json")
+     .build();
+
+   public void testCreateNodeWithGroupEncodedIntoName() {
+      HttpRequest deployVM = HttpRequest.builder().method("GET")
+            .endpoint("http://localhost:8080/client/api")
+            .addQueryParam("response", "json")
+            .addQueryParam("command", "deployVirtualMachine")
+            .addQueryParam("zoneid", "1")
+            .addQueryParam("serviceofferingid", "1")
+            .addQueryParam("templateid", "4")
+            .addQueryParam("displayname", "test-e92")
+            .addQueryParam("name", "test-e92")
+            .addQueryParam("networkids", "204")
+            .addQueryParam("apiKey", "APIKEY")
+            .addQueryParam("signature", "wJ%2BiflOS3am5qcjQOd8Y/Pw8/Dc%3D")
+            .addHeader("Accept", "application/json")
+            .build(); 
+  
+      Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
+            .put(listTemplates, listTemplatesResponse)
+            .put(listOsTypes, listOsTypesResponse)
+            .put(listOsCategories, listOsCategoriesResponse)
+            .put(listZones, listZonesResponse)
+            .put(listServiceOfferings, listServiceOfferingsResponse)
+            .put(listAccounts, listAccountsResponse)
+            .put(listNetworks, listNetworksResponse)
+            .put(getZone, getZoneResponse)
+            .put(deployVM, deployVMResponse)
+            .put(queryAsyncJobResult, queryAsyncJobResultResponse)
+            .build();
+
+      Injector forNode = requestsSendResponses(requestResponseMap);
+
+      Template template = forNode.getInstance(TemplateBuilder.class).osFamily(OsFamily.CENTOS).build();
+      template.getOptions().as(CloudStackTemplateOptions.class).setupStaticNat(false);
+
+      CloudStackComputeServiceAdapter adapter = forNode.getInstance(CloudStackComputeServiceAdapter.class);
+
+      NodeAndInitialCredentials<VirtualMachine> server = adapter.createNodeWithGroupEncodedIntoName("test", "test-e92",
+            template);
+      assertNotNull(server);
+      assertEquals(server.getCredentials(), LoginCredentials.builder().password("dD7jwajkh").build());
+   }
+
    public void testCreateNodeWithGroupEncodedIntoNameWithKeyPair() throws IOException {
       HttpRequest deployVM = HttpRequest.builder().method("GET")
             .endpoint("http://localhost:8080/client/api")
@@ -126,7 +177,7 @@ public class CloudStackComputeServiceAdapterExpectTest extends BaseCloudStackCom
       NodeAndInitialCredentials<VirtualMachine> server = adapter.createNodeWithGroupEncodedIntoName("test", "test-e92",
             template);
       assertNotNull(server);
-      assertEquals(server.getCredentials(), LoginCredentials.builder().password("dD7jwajkh").build());
+      assertEquals(server.getCredentials().getPrivateKey(), privKey);
    }
 
    public void testCreateNodeWithGroupEncodedIntoNameWithGenerateKeyPair() throws IOException {
@@ -171,7 +222,7 @@ public class CloudStackComputeServiceAdapterExpectTest extends BaseCloudStackCom
       NodeAndInitialCredentials<VirtualMachine> server = adapter.createNodeWithGroupEncodedIntoName("test", "test-e92",
             template);
       assertNotNull(server);
-      assertEquals(server.getCredentials(), LoginCredentials.builder().password("dD7jwajkh").build());
+      assertNotNull(server.getCredentials().getPrivateKey());
    }
    
    public void testCreateNodeWithGroupEncodedIntoNameWithKeyPairDefaultSecurityGroup() throws IOException {
@@ -220,7 +271,7 @@ public class CloudStackComputeServiceAdapterExpectTest extends BaseCloudStackCom
       NodeAndInitialCredentials<VirtualMachine> server = adapter.createNodeWithGroupEncodedIntoName("test", "test-e92",
             template);
       assertNotNull(server);
-      assertEquals(server.getCredentials(), LoginCredentials.builder().password("dD7jwajkh").build());
+      assertEquals(server.getCredentials().getPrivateKey(), privKey);
    }
 
    public void testCreateNodeWithGroupEncodedIntoNameWithKeyPairGenerateSecurityGroup() throws IOException {
@@ -271,11 +322,12 @@ public class CloudStackComputeServiceAdapterExpectTest extends BaseCloudStackCom
          .overrideLoginPrivateKey(privKey);
 
       CloudStackComputeServiceAdapter adapter = forKeyPair.getInstance(CloudStackComputeServiceAdapter.class);
+      CloudStackContext context = forKeyPair.getInstance(CloudStackContext.class);
 
       NodeAndInitialCredentials<VirtualMachine> server = adapter.createNodeWithGroupEncodedIntoName("test", "test-e92",
             template);
       assertNotNull(server);
-      assertEquals(server.getCredentials(), LoginCredentials.builder().password("dD7jwajkh").build());
+      assertEquals(server.getCredentials().getPrivateKey(), privKey);
    }
 
    public void testCreateNodeWithGroupEncodedIntoNameWithKeyPairAssignedToAccountAndDomain() throws IOException {
@@ -321,11 +373,12 @@ public class CloudStackComputeServiceAdapterExpectTest extends BaseCloudStackCom
          .overrideLoginPrivateKey(privKey);
 
       CloudStackComputeServiceAdapter adapter = forKeyPair.getInstance(CloudStackComputeServiceAdapter.class);
+      CloudStackContext context = forKeyPair.getInstance(CloudStackContext.class);
 
       NodeAndInitialCredentials<VirtualMachine> server = adapter.createNodeWithGroupEncodedIntoName("test", "test-e92",
             template);
       assertNotNull(server);
-      assertEquals(server.getCredentials(), LoginCredentials.builder().password("dD7jwajkh").build());
+      assertEquals(server.getCredentials().getPrivateKey(), privKey);
    }   
    
    @Override
