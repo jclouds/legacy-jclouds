@@ -25,7 +25,7 @@
     <version>1.7.0-SNAPSHOT</version>
     <relativePath>project/pom.xml</relativePath>
   </parent>
-  <artifactId>jclouds-multi</artifactId>
+  <artifactId>jclouds</artifactId>
   <name>jclouds</name>
   <packaging>pom</packaging>
   <modules>
