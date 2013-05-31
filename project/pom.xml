@@ -641,21 +641,6 @@
           </instructions>
         </configuration>
       </plugin>
-      <plugin>      
-        <artifactId>maven-remote-resources-plugin</artifactId>
-        <executions>             
-          <execution>
-            <goals>
-              <goal>process</goal>
-            </goals>
-            <configuration>
-              <resourceBundles>
-                <resourceBundle>org.apache.jclouds:jclouds-resources:${project.version}</resourceBundle>
-              </resourceBundles>
-            </configuration>
-          </execution>          
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
