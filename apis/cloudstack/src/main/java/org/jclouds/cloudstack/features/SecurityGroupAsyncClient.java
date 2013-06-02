@@ -79,6 +79,18 @@ public interface SecurityGroupAsyncClient {
    ListenableFuture<SecurityGroup> getSecurityGroup(@QueryParam("id") String id);
 
    /**
+    * @see SecurityGroupClient#getSecurityGroupByName
+    */
+   @Named("listSecurityGroups")
+   @GET
+   @QueryParams(keys = { "command", "listAll" }, values = { "listSecurityGroups", "true" })
+   @SelectJson("securitygroup")
+   @OnlyElement
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Fallback(NullOnNotFoundOr404.class)
+   ListenableFuture<SecurityGroup> getSecurityGroupByName(@QueryParam("securitygroupname") String securityGroupName);
+
+   /**
     * @see SecurityGroupClient#createSecurityGroup
     */
    @Named("createSecurityGroup")

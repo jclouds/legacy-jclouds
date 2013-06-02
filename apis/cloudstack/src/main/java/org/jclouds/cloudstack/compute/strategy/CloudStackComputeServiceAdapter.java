@@ -25,6 +25,8 @@ import static com.google.common.collect.Iterables.get;
 import static org.jclouds.cloudstack.options.DeployVirtualMachineOptions.Builder.displayName;
 import static org.jclouds.cloudstack.options.ListTemplatesOptions.Builder.id;
 import static org.jclouds.cloudstack.predicates.TemplatePredicates.isReady;
+import static org.jclouds.cloudstack.predicates.ZonePredicates.supportsSecurityGroups;
+import static org.jclouds.ssh.SshKeys.fingerprintPrivateKey;
 
 import java.util.List;
 import java.util.Map;
@@ -45,10 +47,14 @@ import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
+import org.jclouds.cloudstack.domain.SecurityGroup;
 import org.jclouds.cloudstack.domain.ServiceOffering;
+import org.jclouds.cloudstack.domain.SshKeyPair;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.Zone;
+import org.jclouds.cloudstack.domain.ZoneAndName;
+import org.jclouds.cloudstack.domain.ZoneSecurityGroupNamePortsCidrs;
 import org.jclouds.cloudstack.functions.CreateFirewallRulesForIP;
 import org.jclouds.cloudstack.functions.CreatePortForwardingRulesForIP;
 import org.jclouds.cloudstack.functions.StaticNATVirtualMachineInNetwork;
@@ -58,6 +64,7 @@ import org.jclouds.cloudstack.options.ListFirewallRulesOptions;
 import org.jclouds.cloudstack.strategy.BlockUntilJobCompletesAndReturnResult;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceAdapter;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
@@ -96,6 +103,9 @@ public class CloudStackComputeServiceAdapter implements
    private final Map<String, Credentials> credentialStore;
    private final Map<NetworkType, ? extends OptionsConverter> optionsConverters;
    private final Supplier<LoadingCache<String, Zone>> zoneIdToZone;
+   private final LoadingCache<ZoneAndName, SecurityGroup> securityGroupCache;
+   private final LoadingCache<String, SshKeyPair> keyPairCache;
+   private final GroupNamingConvention.Factory namingConvention;
 
    @Inject
    public CloudStackComputeServiceAdapter(CloudStackClient client, Predicate<String> jobComplete,
@@ -107,7 +117,10 @@ public class CloudStackComputeServiceAdapter implements
                                           LoadingCache<String, Set<IPForwardingRule>> vmToRules,
                                           Map<String, Credentials> credentialStore,
                                           Map<NetworkType, ? extends OptionsConverter> optionsConverters,
-                                          Supplier<LoadingCache<String, Zone>> zoneIdToZone) {
+                                          Supplier<LoadingCache<String, Zone>> zoneIdToZone,
+                                          LoadingCache<ZoneAndName, SecurityGroup> securityGroupCache,
+                                          LoadingCache<String, SshKeyPair> keyPairCache,
+                                          GroupNamingConvention.Factory namingConvention) {
       this.client = checkNotNull(client, "client");
       this.jobComplete = checkNotNull(jobComplete, "jobComplete");
       this.networkSupplier = checkNotNull(networkSupplier, "networkSupplier");
@@ -118,8 +131,11 @@ public class CloudStackComputeServiceAdapter implements
       this.setupFirewallRulesForIP = checkNotNull(setupFirewallRulesForIP, "setupFirewallRulesForIP");
       this.vmToRules = checkNotNull(vmToRules, "vmToRules");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
+      this.securityGroupCache = checkNotNull(securityGroupCache, "securityGroupCache");
+      this.keyPairCache = checkNotNull(keyPairCache, "keyPairCache");
       this.optionsConverters = optionsConverters;
       this.zoneIdToZone = zoneIdToZone;
+      this.namingConvention = namingConvention;
    }
 
    @Override
@@ -134,12 +150,7 @@ public class CloudStackComputeServiceAdapter implements
       Map<String, Network> networks = networkSupplier.get();
 
       final String zoneId = template.getLocation().getId();
-      Zone zone = null;
-      try {
-         zone = zoneIdToZone.get().get(zoneId);
-      } catch (ExecutionException e) {
-         throw Throwables.propagate(e);
-      }
+      Zone zone = zoneIdToZone.get().getUnchecked(zoneId);
 
       CloudStackTemplateOptions templateOptions = template.getOptions().as(CloudStackTemplateOptions.class);
 
@@ -163,15 +174,37 @@ public class CloudStackComputeServiceAdapter implements
       }
 
       if (templateOptions.getKeyPair() != null) {
-         options.keyPair(templateOptions.getKeyPair());
-         if (templateOptions.getRunScript() != null) {
-            checkArgument(
-               credentialStore.containsKey("keypair#" + templateOptions.getKeyPair()),
-               "no private key configured for: %s; please use options.overrideLoginCredentialWith(rsa_private_text)",
-               templateOptions.getKeyPair());
+         if (templateOptions.getLoginPrivateKey() != null) {
+            String pem = templateOptions.getLoginPrivateKey();
+            SshKeyPair keyPair = SshKeyPair.builder().name(templateOptions.getKeyPair())
+               .fingerprint(fingerprintPrivateKey(pem)).privateKey(pem).build();
+            keyPairCache.asMap().put(keyPair.getName(), keyPair);
+            options.keyPair(keyPair.getName());
          }
+      } else if (templateOptions.shouldGenerateKeyPair()) {
+         SshKeyPair keyPair = keyPairCache.getUnchecked(namingConvention.create()
+                                                        .sharedNameForGroup(group));
+         keyPairCache.asMap().put(keyPair.getName(), keyPair);
+         templateOptions.keyPair(keyPair.getName());
+         options.keyPair(keyPair.getName());
       }
 
+      if (supportsSecurityGroups().apply(zone)) {
+         List<Integer> inboundPorts = Ints.asList(templateOptions.getInboundPorts());
+
+         if (templateOptions.getSecurityGroupIds().size() == 0
+             && inboundPorts.size() > 0
+             && templateOptions.shouldGenerateSecurityGroup()) {
+            String securityGroupName = namingConvention.create().sharedNameForGroup(group);
+            SecurityGroup sg = securityGroupCache.getUnchecked(ZoneSecurityGroupNamePortsCidrs.builder()
+                                                               .zone(zone.getId())
+                                                               .name(securityGroupName)
+                                                               .ports(ImmutableSet.copyOf(inboundPorts))
+                                                               .cidrs(ImmutableSet.<String> of()).build());
+            options.securityGroupId(sg.getId());
+         }
+      }
+      
       String templateId = template.getImage().getId();
       String serviceOfferingId = template.getHardware().getId();
 

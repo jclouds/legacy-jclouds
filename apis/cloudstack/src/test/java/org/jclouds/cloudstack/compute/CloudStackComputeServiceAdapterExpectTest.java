@@ -19,6 +19,7 @@ package org.jclouds.cloudstack.compute;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.jclouds.cloudstack.CloudStackContext;
@@ -33,6 +34,7 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -62,8 +64,26 @@ public class CloudStackComputeServiceAdapterExpectTest extends BaseCloudStackCom
    HttpResponse queryAsyncJobResultResponse = HttpResponse.builder().statusCode(200)
         .payload(payloadFromResource("/queryasyncjobresultresponse-virtualmachine.json"))
         .build();
+
+   HttpResponse queryAsyncJobResultSecurityGroupResponse = HttpResponse.builder().statusCode(200)
+        .payload(payloadFromResource("/queryasyncjobresultresponse-virtualmachine-securitygroup.json"))
+        .build();
+
+   HttpRequest queryAsyncJobResultAuthorizeIngress = HttpRequest.builder().method("GET")
+        .endpoint("http://localhost:8080/client/api")
+        .addQueryParam("response", "json")
+        .addQueryParam("command", "queryAsyncJobResult")
+        .addQueryParam("jobid", "13330fc9-8b3e-4582-aa3e-90883c041010")
+        .addQueryParam("apiKey", "APIKEY")
+        .addQueryParam("signature", "y4gk3ckWAMPDNZM26LUK0gAhfiE%3D")
+        .addHeader("Accept", "application/json")
+        .build();
+
+   HttpResponse queryAsyncJobResultAuthorizeIngressResponse = HttpResponse.builder().statusCode(200)
+        .payload(payloadFromResource("/queryasyncjobresultresponse-authorizeingress.json"))
+        .build();
    
-   public void testCreateNodeWithGroupEncodedIntoNameWithKeyPair() {
+   public void testCreateNodeWithGroupEncodedIntoNameWithKeyPair() throws IOException {
       HttpRequest deployVM = HttpRequest.builder().method("GET")
             .endpoint("http://localhost:8080/client/api")
             .addQueryParam("response", "json")
@@ -95,8 +115,11 @@ public class CloudStackComputeServiceAdapterExpectTest extends BaseCloudStackCom
 
       Injector forKeyPair = requestsSendResponses(requestResponseMap);
 
+      String privKey = Strings2.toStringAndClose(getClass().getResourceAsStream("/test"));
       Template template = forKeyPair.getInstance(TemplateBuilder.class).osFamily(OsFamily.CENTOS).build();
-      template.getOptions().as(CloudStackTemplateOptions.class).keyPair("mykeypair").setupStaticNat(false);
+      template.getOptions().as(CloudStackTemplateOptions.class).keyPair("mykeypair")
+         .setupStaticNat(false)
+         .overrideLoginPrivateKey(privKey);
 
       CloudStackComputeServiceAdapter adapter = forKeyPair.getInstance(CloudStackComputeServiceAdapter.class);
 
@@ -106,7 +129,156 @@ public class CloudStackComputeServiceAdapterExpectTest extends BaseCloudStackCom
       assertEquals(server.getCredentials(), LoginCredentials.builder().password("dD7jwajkh").build());
    }
 
-   public void testCreateNodeWithGroupEncodedIntoNameWithKeyPairAssignedToAccountAndDomain() {
+   public void testCreateNodeWithGroupEncodedIntoNameWithGenerateKeyPair() throws IOException {
+      HttpRequest deployVM = HttpRequest.builder().method("GET")
+            .endpoint("http://localhost:8080/client/api")
+            .addQueryParam("response", "json")
+            .addQueryParam("command", "deployVirtualMachine")
+            .addQueryParam("zoneid", "1")
+            .addQueryParam("serviceofferingid", "1")
+            .addQueryParam("templateid", "4")
+            .addQueryParam("displayname", "test-e92")
+            .addQueryParam("name", "test-e92")
+            .addQueryParam("networkids", "204")
+            .addQueryParam("keypair", "jclouds-test")
+            .addQueryParam("apiKey", "APIKEY")
+            .addQueryParam("signature", "4M9C8IjohDDKFMAXQSX3mjXpYvM%3D")
+            .addHeader("Accept", "application/json")
+            .build(); 
+  
+      Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
+            .put(listTemplates, listTemplatesResponse)
+            .put(listOsTypes, listOsTypesResponse)
+            .put(listOsCategories, listOsCategoriesResponse)
+            .put(listZones, listZonesResponse)
+            .put(listServiceOfferings, listServiceOfferingsResponse)
+            .put(listAccounts, listAccountsResponse)
+            .put(listNetworks, listNetworksResponse)
+            .put(getZone, getZoneResponse)
+            .put(deployVM, deployVMResponse)
+            .put(createSSHKeyPair, createSSHKeyPairResponse)
+            .put(queryAsyncJobResult, queryAsyncJobResultResponse)
+            .build();
+
+      Injector forKeyPair = requestsSendResponses(requestResponseMap);
+
+      Template template = forKeyPair.getInstance(TemplateBuilder.class).osFamily(OsFamily.CENTOS).build();
+      template.getOptions().as(CloudStackTemplateOptions.class).generateKeyPair(true)
+         .setupStaticNat(false);
+
+      CloudStackComputeServiceAdapter adapter = forKeyPair.getInstance(CloudStackComputeServiceAdapter.class);
+
+      NodeAndInitialCredentials<VirtualMachine> server = adapter.createNodeWithGroupEncodedIntoName("test", "test-e92",
+            template);
+      assertNotNull(server);
+      assertEquals(server.getCredentials(), LoginCredentials.builder().password("dD7jwajkh").build());
+   }
+   
+   public void testCreateNodeWithGroupEncodedIntoNameWithKeyPairDefaultSecurityGroup() throws IOException {
+      HttpRequest deployVM = HttpRequest.builder().method("GET")
+            .endpoint("http://localhost:8080/client/api")
+            .addQueryParam("response", "json")
+            .addQueryParam("command", "deployVirtualMachine")
+            .addQueryParam("zoneid", "2")
+            .addQueryParam("serviceofferingid", "1")
+            .addQueryParam("templateid", "241")
+            .addQueryParam("displayname", "test-e92")
+            .addQueryParam("name", "test-e92")
+            .addQueryParam("networkids", "204")
+            .addQueryParam("keypair", "mykeypair")
+            .addQueryParam("apiKey", "APIKEY")
+            .addQueryParam("signature", "Ar2B/ZVxMO2078cP0XliWWR4cQ0%3D")
+            .addHeader("Accept", "application/json")
+            .build(); 
+  
+      Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
+            .put(listTemplates, listTemplatesResponse)
+            .put(listOsTypes, listOsTypesResponse)
+            .put(listOsCategories, listOsCategoriesResponse)
+            .put(listZones, listZonesResponse)
+            .put(listServiceOfferings, listServiceOfferingsResponse)
+            .put(listAccounts, listAccountsResponse)
+            .put(listNetworks, listNetworksWithSecurityGroupsResponse)
+            .put(getZoneWithSecurityGroups, getZoneWithSecurityGroupsResponse)
+            .put(deployVM, deployVMResponse)
+            .put(queryAsyncJobResult, queryAsyncJobResultResponse)
+            .build();
+
+      Injector forKeyPair = requestsSendResponses(requestResponseMap);
+
+      String privKey = Strings2.toStringAndClose(getClass().getResourceAsStream("/test"));
+      Template template = forKeyPair.getInstance(TemplateBuilder.class)
+         .osFamily(OsFamily.CENTOS)
+         .locationId("2")
+         .build();
+      template.getOptions().as(CloudStackTemplateOptions.class).keyPair("mykeypair")
+         .setupStaticNat(false)
+         .overrideLoginPrivateKey(privKey);
+
+      CloudStackComputeServiceAdapter adapter = forKeyPair.getInstance(CloudStackComputeServiceAdapter.class);
+
+      NodeAndInitialCredentials<VirtualMachine> server = adapter.createNodeWithGroupEncodedIntoName("test", "test-e92",
+            template);
+      assertNotNull(server);
+      assertEquals(server.getCredentials(), LoginCredentials.builder().password("dD7jwajkh").build());
+   }
+
+   public void testCreateNodeWithGroupEncodedIntoNameWithKeyPairGenerateSecurityGroup() throws IOException {
+      HttpRequest deployVM = HttpRequest.builder().method("GET")
+            .endpoint("http://localhost:8080/client/api")
+            .addQueryParam("response", "json")
+            .addQueryParam("command", "deployVirtualMachine")
+            .addQueryParam("zoneid", "2")
+            .addQueryParam("serviceofferingid", "1")
+            .addQueryParam("templateid", "241")
+            .addQueryParam("displayname", "test-e92")
+            .addQueryParam("name", "test-e92")
+            .addQueryParam("networkids", "204")
+            .addQueryParam("keypair", "mykeypair")
+            .addQueryParam("securitygroupids", "30")
+            .addQueryParam("apiKey", "APIKEY")
+            .addQueryParam("signature", "yNAiMYw3RstNj979udttALOHxfU%3D")
+            .addHeader("Accept", "application/json")
+            .build(); 
+  
+      Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
+            .put(listTemplates, listTemplatesResponse)
+            .put(listOsTypes, listOsTypesResponse)
+            .put(listOsCategories, listOsCategoriesResponse)
+            .put(listZones, listZonesResponse)
+            .put(listServiceOfferings, listServiceOfferingsResponse)
+            .put(listAccounts, listAccountsResponse)
+            .put(listNetworks, listNetworksWithSecurityGroupsResponse)
+            .put(getZoneWithSecurityGroups, getZoneWithSecurityGroupsResponse)
+            .put(deployVM, deployVMResponse)
+            .put(queryAsyncJobResult, queryAsyncJobResultSecurityGroupResponse)
+            .put(queryAsyncJobResultAuthorizeIngress, queryAsyncJobResultAuthorizeIngressResponse)
+            .put(getSecurityGroup, getSecurityGroupResponse)
+            .put(createSecurityGroup, createSecurityGroupResponse)
+            .put(authorizeIngress, authorizeIngressResponse)
+            .build();
+
+      Injector forKeyPair = requestsSendResponses(requestResponseMap);
+
+      String privKey = Strings2.toStringAndClose(getClass().getResourceAsStream("/test"));
+      Template template = forKeyPair.getInstance(TemplateBuilder.class)
+         .osFamily(OsFamily.CENTOS)
+         .locationId("2")
+         .build();
+      template.getOptions().as(CloudStackTemplateOptions.class).keyPair("mykeypair")
+         .setupStaticNat(false)
+         .generateSecurityGroup(true)
+         .overrideLoginPrivateKey(privKey);
+
+      CloudStackComputeServiceAdapter adapter = forKeyPair.getInstance(CloudStackComputeServiceAdapter.class);
+
+      NodeAndInitialCredentials<VirtualMachine> server = adapter.createNodeWithGroupEncodedIntoName("test", "test-e92",
+            template);
+      assertNotNull(server);
+      assertEquals(server.getCredentials(), LoginCredentials.builder().password("dD7jwajkh").build());
+   }
+
+   public void testCreateNodeWithGroupEncodedIntoNameWithKeyPairAssignedToAccountAndDomain() throws IOException {
       HttpRequest deployVM = HttpRequest.builder().method("GET")
             .endpoint("http://localhost:8080/client/api")
             .addQueryParam("response", "json")
@@ -140,8 +312,13 @@ public class CloudStackComputeServiceAdapterExpectTest extends BaseCloudStackCom
 
       Injector forKeyPair = requestsSendResponses(requestResponseMap);
 
+      String privKey = Strings2.toStringAndClose(getClass().getResourceAsStream("/test"));
       Template template = forKeyPair.getInstance(TemplateBuilder.class).osFamily(OsFamily.CENTOS).build();
-      template.getOptions().as(CloudStackTemplateOptions.class).keyPair("mykeypair").account("account").domainId("domainId").setupStaticNat(false);
+      template.getOptions().as(CloudStackTemplateOptions.class).keyPair("mykeypair")
+         .account("account")
+         .domainId("domainId")
+         .setupStaticNat(false)
+         .overrideLoginPrivateKey(privKey);
 
       CloudStackComputeServiceAdapter adapter = forKeyPair.getInstance(CloudStackComputeServiceAdapter.class);
 

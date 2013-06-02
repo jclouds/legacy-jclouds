@@ -1,0 +1,34 @@
+{
+    "queryasyncjobresultresponse": {
+        "accountid": 3,
+        "userid": 3,
+        "cmd": "com.cloud.api.commands.AuthorizeSecurityGroupIngressCmd",
+        "jobstatus": 1,
+        "jobprocstatus": 0,
+        "jobresultcode": 0,
+        "jobresulttype": "object",
+        "jobresult": {
+            "securitygroup": {
+                "id": "30",
+                "name": "jclouds-test",
+                "account": "adrian",
+                "domainid": "1",
+                "domain": "ROOT",
+                "ingressrule": [
+                    {
+                        "ruleid": "35bb2ad4-e0cb-48a0-9534-fc4a067b5665",
+                        "protocol": "tcp",
+                        "startport": 22,
+                        "endport": 22,
+                        "cidr": "0.0.0.0/0"
+                    }
+                ],
+                "egressrule": [
+                    
+                ]
+            }
+        },
+        "jobid": "13330fc9-8b3e-4582-aa3e-90883c041010",
+        "created": "2013-06-04T14:37:26-0700"
+    }
+}

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.jclouds.cloudstack;
+import static org.jclouds.cloudstack.config.CloudStackProperties.AUTO_GENERATE_KEYPAIRS;
 import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.net.URI;
@@ -62,6 +63,7 @@ public class CloudStackApiMetadata extends BaseRestApiMetadata {
       Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty("jclouds.ssh.max-retries", "7");
       properties.setProperty("jclouds.ssh.retry-auth", "true");
+      properties.setProperty(AUTO_GENERATE_KEYPAIRS, "false");
       return properties;
    }
 

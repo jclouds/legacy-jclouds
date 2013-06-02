@@ -134,6 +134,10 @@ public abstract class BaseCloudStackComputeServiceContextExpectTest<T> extends B
       .payload(payloadFromResource("/listnetworksresponse.json"))
       .build();   
    
+   protected final HttpResponse listNetworksWithSecurityGroupsResponse = HttpResponse.builder().statusCode(200)
+      .payload(payloadFromResource("/listnetworksresponse-2.json"))
+      .build();   
+
    protected final HttpRequest getZone = HttpRequest.builder().method("GET")
       .endpoint("http://localhost:8080/client/api")
       .addQueryParam("response", "json")
@@ -147,6 +151,21 @@ public abstract class BaseCloudStackComputeServiceContextExpectTest<T> extends B
 
    protected final HttpResponse getZoneResponse = HttpResponse.builder().statusCode(200)
       .payload(payloadFromResource("/getzoneresponse.json"))
+      .build();
+
+   protected final HttpRequest getZoneWithSecurityGroups = HttpRequest.builder().method("GET")
+      .endpoint("http://localhost:8080/client/api")
+      .addQueryParam("response", "json")
+      .addQueryParam("command", "listZones")
+      .addQueryParam("listAll", "true")
+      .addQueryParam("id", "2")
+      .addQueryParam("apiKey", "APIKEY")
+      .addQueryParam("signature", "FnYX25207fVLLRz5GhOfRrWuUek%3D")
+      .addHeader("Accept", "application/json")
+      .build();
+
+   protected final HttpResponse getZoneWithSecurityGroupsResponse = HttpResponse.builder().statusCode(200)
+      .payload(payloadFromResource("/getzoneresponse-2.json"))
       .build();
    
    protected final HttpRequest listCapabilities = HttpRequest.builder().method("GET")
@@ -163,4 +182,64 @@ public abstract class BaseCloudStackComputeServiceContextExpectTest<T> extends B
       .payload(payloadFromResource("/listcapabilitiesresponse.json"))
       .build();   
          
+   protected final HttpRequest getSecurityGroup = HttpRequest.builder().method("GET")
+      .endpoint("http://localhost:8080/client/api")
+      .addQueryParam("response", "json")
+      .addQueryParam("command", "listSecurityGroups")
+      .addQueryParam("listAll", "true")      
+      .addQueryParam("securitygroupname", "jclouds-test")      
+      .addQueryParam("apiKey", "APIKEY")      
+      .addQueryParam("signature", "zGp2rfHY6fBIGkgODRxyNzFfPFI%3D")
+      .addHeader("Accept", "application/json")
+      .build();
+
+   protected final HttpResponse getSecurityGroupResponse = HttpResponse.builder().statusCode(200)
+      .payload(payloadFromResource("/getsecuritygroupresponse.json"))
+      .build();   
+
+   protected final HttpRequest createSecurityGroup = HttpRequest.builder().method("GET")
+      .endpoint("http://localhost:8080/client/api")
+      .addQueryParam("response", "json")
+      .addQueryParam("command", "createSecurityGroup")
+      .addQueryParam("name", "jclouds-test")      
+      .addQueryParam("apiKey", "APIKEY")      
+      .addQueryParam("signature", "BdgmqGsvjPmP4PxsEKEpq6buwuA%3D")
+      .addHeader("Accept", "application/json")
+      .build();
+
+   protected final HttpResponse createSecurityGroupResponse = HttpResponse.builder().statusCode(200)
+      .payload(payloadFromResource("/createsecuritygroupresponse.json"))
+      .build();   
+
+   protected final HttpRequest authorizeIngress = HttpRequest.builder().method("GET")
+      .endpoint("http://localhost:8080/client/api")
+      .addQueryParam("response", "json")
+      .addQueryParam("command", "authorizeSecurityGroupIngress")
+      .addQueryParam("securitygroupid", "30")      
+      .addQueryParam("protocol", "TCP")
+      .addQueryParam("startport", "22")
+      .addQueryParam("endport", "22")
+      .addQueryParam("cidrlist", "0.0.0.0/0")
+      .addQueryParam("apiKey", "APIKEY")      
+      .addQueryParam("signature", "GVtXzAl/Q7z4wnvKEHtdV0lxv2o%3D")
+      .addHeader("Accept", "application/json")
+      .build();
+
+   protected final HttpResponse authorizeIngressResponse = HttpResponse.builder().statusCode(200)
+      .payload(payloadFromResource("/authorizesecuritygroupingressresponse.json"))
+      .build();   
+
+   protected final HttpRequest createSSHKeyPair = HttpRequest.builder().method("GET")
+      .endpoint("http://localhost:8080/client/api")
+      .addQueryParam("response", "json")
+      .addQueryParam("command", "createSSHKeyPair")
+      .addQueryParam("name", "jclouds-test")      
+      .addQueryParam("apiKey", "APIKEY")      
+      .addQueryParam("signature", "er6YjvUjPFwxy/x/aAVNW9Z8yo8%3D")
+      .addHeader("Accept", "application/json")
+      .build();
+
+   protected final HttpResponse createSSHKeyPairResponse = HttpResponse.builder().statusCode(200)
+      .payload(payloadFromResource("/createsshkeypairresponse-2.json"))
+      .build();   
 }

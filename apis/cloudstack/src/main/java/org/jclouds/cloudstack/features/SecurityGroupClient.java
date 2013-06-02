@@ -132,6 +132,15 @@ public interface SecurityGroupClient {
    SecurityGroup getSecurityGroup(String id);
 
    /**
+    * get a specific security group by name
+    * 
+    * @param securityGroupName
+    *           group to get
+    * @return security group or null if not found
+    */
+   SecurityGroup getSecurityGroupByName(String securityGroupName);
+
+   /**
     * Creates a security group
     * 
     * @param name

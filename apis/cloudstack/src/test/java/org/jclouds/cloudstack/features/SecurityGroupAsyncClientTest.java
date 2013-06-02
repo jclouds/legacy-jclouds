@@ -104,6 +104,24 @@ public class SecurityGroupAsyncClientTest extends BaseCloudStackAsyncClientTest<
 
    }
 
+   public void testGetSecurityGroupByName() throws SecurityException, NoSuchMethodException, IOException {
+      Invokable<?, ?> method = method(SecurityGroupAsyncClient.class, "getSecurityGroupByName", String.class);
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("some-name"));
+
+      assertRequestLineEquals(httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=listSecurityGroups&listAll=true&securitygroupname=some-name HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest,
+            Functions.compose(IdentityFunction.INSTANCE, IdentityFunction.INSTANCE).getClass());
+      assertSaxResponseParserClassEquals(method, null);
+      assertFallbackClassEquals(method, NullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
    public void testCreateSecurityGroup() throws SecurityException, NoSuchMethodException, IOException {
       Invokable<?, ?> method = method(SecurityGroupAsyncClient.class, "createSecurityGroup", String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("goo"));

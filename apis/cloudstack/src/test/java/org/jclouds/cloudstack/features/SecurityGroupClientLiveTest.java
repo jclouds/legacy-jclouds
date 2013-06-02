@@ -190,8 +190,10 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
 
    protected void checkGroup(SecurityGroup group) {
       // http://bugs.cloud.com/show_bug.cgi?id=8968
-      if (group.getIngressRules().size() <= 1)
+      if (group.getIngressRules().size() <= 1) {
          assertEquals(group, client.getSecurityGroupClient().getSecurityGroup(group.getId()));
+         assertEquals(group, client.getSecurityGroupClient().getSecurityGroupByName(group.getName()));
+      }
       assert group.getId() != null : group;
       assert group.getName() != null : group;
       assert group.getAccount() != null : group;

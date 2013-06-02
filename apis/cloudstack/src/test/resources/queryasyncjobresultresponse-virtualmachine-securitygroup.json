@@ -1,0 +1,73 @@
+{
+    "queryasyncjobresultresponse": {
+            "jobid": 50006,
+            "accountid": 3,
+            "userid": 3,
+            "cmd": "com.cloud.api.commands.DeployVMCmd",
+            "jobstatus": 1,
+            "jobprocstatus": 0,
+            "jobresultcode": 0,
+            "jobresult": {
+                "virtualmachine": {
+                    "id": 1234,
+                    "name": "i-3-218-VM",
+                    "displayname": "i-3-218-VM",
+                    "account": "adrian",
+                    "domainid": 1,
+                    "domain": "ROOT",
+                    "created": "2011-02-27T08:39:10-0800",
+                    "state": "Running",
+                    "haenable": false,
+                    "zoneid": 1,
+                    "zonename": "San Jose 1",
+                    "templateid": 203,
+                    "templatename": "Centos 5.3 Password Managed",
+                    "templatedisplaytext": "Centos 5.3 Password Managed",
+                    "passwordenabled": true,
+                    "serviceofferingid": 1,
+                    "serviceofferingname": "Small Instance",
+                    "cpunumber": 1,
+                    "cpuspeed": 500,
+                    "memory": 512,
+                    "guestosid": 12,
+                    "rootdeviceid": 0,
+                    "rootdevicetype": "NetworkFilesystem",
+                    "securitygroup": [
+                        {
+                            "id": "30",
+                            "name": "jclouds-test",
+                            "account": "adrian",
+                            "domainid": "1",
+                            "domain": "ROOT",
+                            "ingressrule": [
+                                {
+                                    "ruleid": "35bb2ad4-e0cb-48a0-9534-fc4a067b5665",
+                                    "protocol": "tcp",
+                                    "startport": 22,
+                                    "endport": 22,
+                                    "cidr": "0.0.0.0/0"
+                                }
+                            ],
+                            "egressrule": [
+                                
+                            ]
+                        }
+                    ],
+                    "password": "dD7jwajkh",
+                    "nic": [{
+                        "id": 250,
+                        "networkid": 204,
+                        "netmask": "255.255.255.0",
+                        "gateway": "10.1.1.1",
+                        "ipaddress": "10.1.1.195",
+                        "traffictype": "Guest",
+                        "type": "Virtual",
+                        "isdefault": true
+                    }],
+                    "hypervisor": "XenServer"
+                }
+            },
+            "created": "2011-02-27T08:39:10-0800"
+        }
+    
+}

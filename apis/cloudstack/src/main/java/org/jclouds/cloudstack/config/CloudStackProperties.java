@@ -42,4 +42,9 @@ public interface CloudStackProperties {
     */
    public static final String CREDENTIAL_TYPE = "jclouds.cloudstack.credential-type";
 
+   /**
+    * Whenever a node is created, automatically generate keypairs for groups, as needed, also
+    * delete the keypair(s) when the last node in the group is destroyed.
+    */
+   public static final String AUTO_GENERATE_KEYPAIRS = "jclouds.cloudstack.auto-generate-keypairs";
 }

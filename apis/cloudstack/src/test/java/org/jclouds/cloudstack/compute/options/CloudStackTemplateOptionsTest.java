@@ -18,6 +18,8 @@ package org.jclouds.cloudstack.compute.options;
 
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.account;
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.domainId;
+import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.generateKeyPair;
+import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.generateSecurityGroup;
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.ipOnDefaultNetwork;
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.ipsToNetworks;
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.keyPair;
@@ -85,6 +87,27 @@ public class CloudStackTemplateOptionsTest {
    public void testSecurityGroupIdsStatic() {
       TemplateOptions options = securityGroupIds(ImmutableSet.of("3"));
       assertEquals(options.as(CloudStackTemplateOptions.class).getSecurityGroupIds(), ImmutableSet.of("3"));
+   }
+
+   @Test
+   public void testGenerateSecurityGroupDefaultsFalse() {
+      TemplateOptions options = new CloudStackTemplateOptions();
+      assertFalse(options.as(CloudStackTemplateOptions.class)
+         .shouldGenerateSecurityGroup());
+   }
+
+   @Test
+   public void testGenerateSecurityGroup() {
+      TemplateOptions options = new CloudStackTemplateOptions().generateSecurityGroup(true);
+      assertTrue(options.as(CloudStackTemplateOptions.class)
+         .shouldGenerateSecurityGroup());
+   }
+
+   @Test
+   public void testGenerateSecurityGroupStatic() {
+      TemplateOptions options = generateSecurityGroup(true);
+      assertTrue(options.as(CloudStackTemplateOptions.class)
+         .shouldGenerateSecurityGroup());
    }
 
    @Test
@@ -168,6 +191,27 @@ public class CloudStackTemplateOptionsTest {
       TemplateOptions options = setupStaticNat(false);
       assertFalse(options.as(CloudStackTemplateOptions.class)
          .shouldSetupStaticNat());
+   }
+
+   @Test
+   public void testGenerateKeyPairDefaultsFalse() {
+      TemplateOptions options = new CloudStackTemplateOptions();
+      assertFalse(options.as(CloudStackTemplateOptions.class)
+         .shouldGenerateKeyPair());
+   }
+
+   @Test
+   public void testGenerateKeyPair() {
+      TemplateOptions options = new CloudStackTemplateOptions().generateKeyPair(true);
+      assertTrue(options.as(CloudStackTemplateOptions.class)
+         .shouldGenerateKeyPair());
+   }
+
+   @Test
+   public void testGenerateKeyPairStatic() {
+      TemplateOptions options = generateKeyPair(true);
+      assertTrue(options.as(CloudStackTemplateOptions.class)
+         .shouldGenerateKeyPair());
    }
 
    @Test
