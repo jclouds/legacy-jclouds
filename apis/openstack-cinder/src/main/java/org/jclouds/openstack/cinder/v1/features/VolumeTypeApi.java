@@ -16,7 +16,21 @@
  */
 package org.jclouds.openstack.cinder.v1.features;
 
+import javax.inject.Named;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.Fallbacks.EmptyFluentIterableOnNotFoundOr404;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
 import org.jclouds.openstack.cinder.v1.domain.VolumeType;
+import org.jclouds.openstack.keystone.v2_0.filters.AuthenticateRequest;
+import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.annotations.SkipEncoding;
 
 import com.google.common.collect.FluentIterable;
 
@@ -27,12 +41,20 @@ import com.google.common.collect.FluentIterable;
  * @see <a href="http://api.openstack.org/">API Doc</a>
  * @author Everett Toews
  */
+@SkipEncoding({'/', '='})
+@RequestFilters(AuthenticateRequest.class)
 public interface VolumeTypeApi {
    /**
     * Returns a summary list of VolumeTypes.
     *
     * @return The list of VolumeTypes
     */
+   @Named("volumetype:list")
+   @GET
+   @Path("/types")
+   @SelectJson("volume_types")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
    FluentIterable<? extends VolumeType> list();
 
    /**
@@ -41,5 +63,11 @@ public interface VolumeTypeApi {
     * @param volumeTypeId Id of the VolumeType
     * @return Details of a specific VolumeType
     */
-   VolumeType get(String volumeTypeId);
+   @Named("volumetype:get")
+   @GET
+   @Path("/types/{id}")
+   @SelectJson("volume_type")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Fallback(NullOnNotFoundOr404.class)   
+   VolumeType get(@PathParam("id") String volumeTypeId);
 }

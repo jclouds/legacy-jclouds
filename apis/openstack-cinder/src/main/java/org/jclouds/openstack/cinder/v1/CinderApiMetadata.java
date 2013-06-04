@@ -23,17 +23,16 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.openstack.cinder.v1.config.CinderHttpApiModule;
 import org.jclouds.openstack.cinder.v1.config.CinderParserModule;
-import org.jclouds.openstack.cinder.v1.config.CinderRestClientModule;
+import org.jclouds.openstack.keystone.v2_0.config.AuthenticationApiModule;
 import org.jclouds.openstack.keystone.v2_0.config.CredentialTypes;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.ZoneModule;
-import org.jclouds.openstack.keystone.v2_0.config.MappedAuthenticationApiModule;
 import org.jclouds.openstack.v2_0.ServiceType;
-import org.jclouds.rest.internal.BaseRestApiMetadata;
+import org.jclouds.rest.internal.BaseHttpApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 
 /**
@@ -41,17 +40,8 @@ import com.google.inject.Module;
  * 
  * @author Everett Toews
  */
-public class CinderApiMetadata extends BaseRestApiMetadata {
+public class CinderApiMetadata extends BaseHttpApiMetadata<CinderApi> {
    
-   /**
-    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(CinderApi.class)} as
-    *             {@link CinderAsyncApi} interface will be removed in jclouds 1.7.
-    */
-   @Deprecated
-   public static final TypeToken<org.jclouds.rest.RestContext<CinderApi, CinderAsyncApi>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<CinderApi, CinderAsyncApi>>() {
-      private static final long serialVersionUID = 1L;
-   };
-
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
@@ -66,17 +56,15 @@ public class CinderApiMetadata extends BaseRestApiMetadata {
    }
 
    public static Properties defaultProperties() {
-      Properties properties = BaseRestApiMetadata.defaultProperties();
+      Properties properties = BaseHttpApiMetadata.defaultProperties();
       properties.setProperty(SERVICE_TYPE, ServiceType.BLOCK_STORAGE);
       properties.setProperty(CREDENTIAL_TYPE, CredentialTypes.PASSWORD_CREDENTIALS);
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
+   public static class Builder extends BaseHttpApiMetadata.Builder<CinderApi, Builder> {
 
-      @SuppressWarnings("deprecation")
       protected Builder() {
-         super(CinderApi.class, CinderAsyncApi.class);
           id("openstack-cinder")
          .name("OpenStack Cinder Folsom API")
          .identityName("${tenantName}:${userName} or ${userName}, if your keystone supports a default tenant")
@@ -87,11 +75,11 @@ public class CinderApiMetadata extends BaseRestApiMetadata {
          .defaultEndpoint("http://localhost:5000/v2.0/")
          .defaultProperties(CinderApiMetadata.defaultProperties())
          .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
-                                     .add(MappedAuthenticationApiModule.class)
+                                     .add(AuthenticationApiModule.class)
                                      .add(KeystoneAuthenticationModule.class)
                                      .add(ZoneModule.class)
                                      .add(CinderParserModule.class)
-                                     .add(CinderRestClientModule.class)
+                                     .add(CinderHttpApiModule.class)
                                      .build());
       }
       

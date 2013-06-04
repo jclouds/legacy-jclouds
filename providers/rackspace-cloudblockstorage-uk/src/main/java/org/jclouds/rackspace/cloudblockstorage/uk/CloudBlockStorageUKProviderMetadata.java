@@ -25,14 +25,14 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.openstack.cinder.v1.CinderApiMetadata;
+import org.jclouds.openstack.cinder.v1.config.CinderHttpApiModule;
 import org.jclouds.openstack.cinder.v1.config.CinderParserModule;
-import org.jclouds.openstack.cinder.v1.config.CinderRestClientModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.ZoneModule;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
+import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityAuthenticationApiModule;
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityAuthenticationModule;
 import org.jclouds.rackspace.cloudidentity.v2_0.config.CloudIdentityCredentialTypes;
-import org.jclouds.rackspace.cloudidentity.v2_0.config.SyncToAsyncCloudIdentityAuthenticationApiModule;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
@@ -81,11 +81,11 @@ public class CloudBlockStorageUKProviderMetadata extends BaseProviderMetadata {
                   .endpointName("identity service url ending in /v2.0/")
                   .documentation(URI.create("http://docs.rackspace.com/cbs/api/v1.0/cbs-devguide/content/overview.html"))
                   .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
-                                              .add(SyncToAsyncCloudIdentityAuthenticationApiModule.class)
+                                              .add(CloudIdentityAuthenticationApiModule.class)
                                               .add(CloudIdentityAuthenticationModule.class)
                                               .add(ZoneModule.class)
                                               .add(CinderParserModule.class)
-                                              .add(CinderRestClientModule.class).build())
+                                              .add(CinderHttpApiModule.class).build())
                   .build())
          .homepage(URI.create("http://www.rackspace.co.uk/cloud-hosting/cloud-products/cloud-block-storage/"))
          .console(URI.create("https://mycloud.rackspace.co.uk"))
