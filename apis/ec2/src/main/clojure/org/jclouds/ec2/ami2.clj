@@ -19,7 +19,7 @@
   #^{:author "Hunter Hutchinson, hunter.hutchinson@gmail.com"
      :doc "A clojure binding to the jclouds AMI service interface."}
   org.jclouds.ec2.ami2
-  (:use org.jclouds.compute2 [clojure.core.incubator :only (-?>)])
+  (:use org.jclouds.compute2)
   (:import org.jclouds.aws.domain.Region
     org.jclouds.ec2.services.AMIClient
     org.jclouds.ec2.options.CreateImageOptions
