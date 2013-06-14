@@ -633,7 +633,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
       
       HostAndPort socket = null;
       try {
-         socket = openSocketFinder.findOpenSocketOnNode(node, 8080, 60, TimeUnit.SECONDS);
+         socket = openSocketFinder.findOpenSocketOnNode(node, 8080, 600, TimeUnit.SECONDS);
       } catch (NoSuchElementException e) {
          throw new NoSuchElementException(format("%s%n%s%s", e.getMessage(), exec.getOutput(), exec.getError()));
       }

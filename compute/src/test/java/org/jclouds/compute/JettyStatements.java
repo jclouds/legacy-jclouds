@@ -33,8 +33,8 @@ import org.jclouds.scriptbuilder.statements.login.AdminAccess;
  */
 public class JettyStatements {
 
-   public static final URI JETTY_URL = URI.create(System.getProperty("test.jetty-url",//
-         "http://download.eclipse.org/jetty/8.1.8.v20121106/dist/jetty-distribution-8.1.8.v20121106.tar.gz"));
+   public static final URI JETTY_URL = URI.create(System.getProperty("test.jetty-url",
+         "http://archive.eclipse.org/jetty/8.1.8.v20121106/dist/jetty-distribution-8.1.8.v20121106.tar.gz"));
 
    public static final String JETTY_HOME = "/usr/local/jetty";
    
