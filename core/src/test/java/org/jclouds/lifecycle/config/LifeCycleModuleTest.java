@@ -20,10 +20,13 @@ import static com.google.inject.name.Names.named;
 import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 
+import java.io.Closeable;
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 
 import javax.annotation.PostConstruct;
 
+import static org.easymock.EasyMock.*;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.lifecycle.Closer;
 import org.testng.annotations.Test;
@@ -66,6 +69,7 @@ public class LifeCycleModuleTest {
    void testBindsCloser() {
       Injector i = createInjector();
       assert i.getInstance(Closer.class) != null;
+      assert i.getInstance(Closer.class).getState() == Closer.State.AVAILABLE;
    }
 
    @Test
@@ -75,8 +79,10 @@ public class LifeCycleModuleTest {
             named(PROPERTY_USER_THREADS)));
       assert !executor.isShutdown();
       Closer closer = i.getInstance(Closer.class);
+      assert closer.getState() == Closer.State.AVAILABLE;
       closer.close();
       assert executor.isShutdown();
+      assert closer.getState() == Closer.State.DONE;
    }
 
    @Test
@@ -89,9 +95,11 @@ public class LifeCycleModuleTest {
             named(PROPERTY_IO_WORKER_THREADS)));
       assert !ioExecutor.isShutdown();
       Closer closer = i.getInstance(Closer.class);
+      assert closer.getState() == Closer.State.AVAILABLE;
       closer.close();
       assert userExecutor.isShutdown();
       assert ioExecutor.isShutdown();
+      assert closer.getState() == Closer.State.DONE;
    }
 
    static class PostConstructable {
@@ -112,7 +120,90 @@ public class LifeCycleModuleTest {
       });
       PostConstructable postConstructable = i.getInstance(PostConstructable.class);
       assert postConstructable.isStarted;
-
    }
 
+   @Test
+   void testCloserClosingState() throws InterruptedException {
+      Injector i = createInjector();
+      final Closer closer = i.getInstance(Closer.class);
+
+      final CountDownLatch closeDone = new CountDownLatch(1);
+      final CountDownLatch closeStart = new CountDownLatch(1);
+
+      closer.addToClose(new Closeable() {
+         @Override
+         public void close() throws IOException {
+             try {
+                 closeStart.countDown();
+                 assert closer.getState() == Closer.State.PROCESSING;
+                 closeDone.await();
+             } catch (InterruptedException e) {
+                 assert false : e.getMessage();
+             }
+         }
+      });
+
+      Thread thread = new Thread(new Runnable() {
+         @Override
+         public void run() {
+            try {
+               closer.close();
+            } catch (IOException e) {
+               assert false : e.getMessage();
+            }
+         }
+      });
+
+      thread.start();
+
+      closeStart.await();
+
+      assert closer.getState() == Closer.State.PROCESSING;
+
+      closeDone.countDown();
+
+      thread.join();
+
+      assert closer.getState() == Closer.State.DONE;
+   }
+
+   @Test
+   void testCloserCallOneClose() throws IOException, InterruptedException {
+      Injector i = createInjector();
+      final Closer closer = i.getInstance(Closer.class);
+
+      Closeable closeable = createStrictMock(Closeable.class);
+
+      closeable.close();
+
+      expectLastCall();
+
+      replay(closeable);
+
+      closer.addToClose(closeable);
+
+      Runnable closeContext = new Runnable() {
+         @Override
+         public void run() {
+            try {
+               closer.close();
+            } catch (IOException e) {
+               assert false : e.getMessage();
+            }
+         }
+      };
+
+      Thread thread1 = new Thread(closeContext);
+      Thread thread2 = new Thread(closeContext);
+
+      thread1.start();
+      thread2.start();
+
+      thread1.join();
+      thread2.join();
+
+      verify(closeable);
+
+      assert closer.getState() == Closer.State.DONE;
+   }
 }

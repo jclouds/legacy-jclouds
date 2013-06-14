@@ -20,10 +20,13 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Singleton;
 
 import com.google.common.collect.Lists;
+
+import static org.jclouds.lifecycle.Closer.State.*;
 
 /**
  * This will close objects in the reverse order that they were added.
@@ -35,14 +38,33 @@ public class Closer implements Closeable {
    // guice is single threaded. no need to lock this
    List<Closeable> methodsToClose = Lists.<Closeable> newArrayList();
 
+   public enum State {
+      AVAILABLE,
+      PROCESSING,
+      DONE
+   }
+
+   private final AtomicReference<State> state;
+
+   public Closer() {
+      this.state = new AtomicReference<State>(AVAILABLE);
+   }
+
    public void addToClose(Closeable toClose) {
       methodsToClose.add(toClose);
    }
 
    public void close() throws IOException {
-      Collections.reverse(methodsToClose);
-      for (Closeable toClose : methodsToClose) {
-         toClose.close();
+      if (state.compareAndSet(AVAILABLE, PROCESSING)) {
+         Collections.reverse(methodsToClose);
+         for (Closeable toClose : methodsToClose) {
+            toClose.close();
+         }
+         state.set(DONE);
       }
+   }
+
+   public State getState() {
+      return state.get();
    }
 }

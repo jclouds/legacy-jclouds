@@ -67,4 +67,8 @@ public interface Context extends Location, Closeable {
    @Override
    void close();
 
+   /**
+    * @return true if context open
+    */
+   boolean isOpen();
 }

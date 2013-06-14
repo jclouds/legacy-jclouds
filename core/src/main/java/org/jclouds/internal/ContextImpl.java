@@ -21,6 +21,8 @@ import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.io.Closeables.closeQuietly;
 
+import static org.jclouds.lifecycle.Closer.State.AVAILABLE;
+
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
@@ -72,7 +74,12 @@ public class ContextImpl implements Context {
       closeQuietly(closer);
    }
 
-   /**
+   @Override
+   public boolean isOpen() {
+      return closer.getState() == AVAILABLE;
+   }
+
+    /**
     * {@inheritDoc}
     */
    @Override
