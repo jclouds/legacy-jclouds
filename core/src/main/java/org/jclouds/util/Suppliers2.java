@@ -47,6 +47,21 @@ public class Suppliers2 {
       };
    }
 
+   public static <K, V> Supplier<V> getValueInMapOrNull(final Supplier<Map<K, Supplier<V>>> input, final K keyValue) {
+      return new Supplier<V>() {
+         @Override
+         public V get() {
+            Map<K, Supplier<V>> map = input.get();
+            return map.containsKey(keyValue) ? map.get(keyValue).get() : null;
+         }
+
+         @Override
+         public String toString() {
+            return String.format("getValueInMapOrNull('%1$s')", keyValue);
+         }
+      };
+   }
+
    public static <X> Function<X, Supplier<X>> ofInstanceFunction() {
       return new Function<X, Supplier<X>>() {
 

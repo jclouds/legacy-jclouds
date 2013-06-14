@@ -38,6 +38,15 @@ public class Suppliers2Test {
    }
 
    @Test
+   public void testGetSpecificValueInMap() {
+      Supplier<Map<String, Supplier<String>>> testMap =  Suppliers.<Map<String, Supplier<String>>> ofInstance(
+               ImmutableMap.of("foo", Suppliers.ofInstance("bar")));
+
+      assertEquals(Suppliers2.<String, String> getValueInMapOrNull(testMap, "foo").get(), "bar");
+      assertEquals(Suppliers2.<String, String> getValueInMapOrNull(testMap, "baz").get(), null);
+   }
+
+   @Test
    public void testOfInstanceFunction() {
       assertEquals(Suppliers2.ofInstanceFunction().apply("foo").get(), "foo");
    }

@@ -17,18 +17,23 @@
 package org.jclouds.openstack.swift.config;
 import static org.jclouds.reflect.Reflection2.typeToken;
 import static org.jclouds.util.Suppliers2.getLastValueInMap;
+import static org.jclouds.util.Suppliers2.getValueInMapOrNull;
 
 import java.net.URI;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
+import org.jclouds.location.reference.LocationConstants;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.openstack.config.OpenStackAuthenticationModule;
 import org.jclouds.openstack.functions.URIFromAuthenticationResponseForService;
@@ -45,8 +50,14 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.config.RestClientModule;
 
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
+import com.google.common.base.Predicates;
+import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
@@ -80,14 +91,25 @@ public class SwiftRestClientModule<S extends CommonSwiftClient, A extends Common
    }
 
    public static class KeystoneStorageEndpointModule extends KeystoneAuthenticationModule {
-
       @Provides
       @Singleton
       @Storage
-      protected Supplier<URI> provideStorageUrl(RegionIdToURISupplier.Factory factory, @ApiVersion String apiVersion) {
-         return getLastValueInMap(factory.createForApiTypeAndVersion(ServiceType.OBJECT_STORE, apiVersion));
-      }
+      protected Supplier<URI> provideStorageUrl(RegionIdToURISupplier.Factory factory,
+            @ApiVersion String apiVersion,
+            @Named(LocationConstants.PROPERTY_REGION) String region) {
 
+         //Get the URI's keyed by their region name
+         Supplier<Map<String, Supplier<URI>>> endpointsSupplier = factory.createForApiTypeAndVersion(ServiceType.OBJECT_STORE, apiVersion);
+
+         //Pick the matching region name (if any) otherwise just return an arbitrary URL if no region name is set
+         //NOTE: The region string should never be null (it can be empty) if this object was instantiated via guice
+         //      as it pulls these named strings from a Properties object.
+         if (region.isEmpty()) {
+            return getLastValueInMap(endpointsSupplier);
+         } else {
+            return getValueInMapOrNull(endpointsSupplier, region);
+         }
+      }
    }
 
    @Override

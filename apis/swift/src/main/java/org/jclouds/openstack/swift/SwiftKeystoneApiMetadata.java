@@ -17,6 +17,7 @@
 package org.jclouds.openstack.swift;
 
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERVICE_TYPE;
 
@@ -69,6 +70,7 @@ public class SwiftKeystoneApiMetadata extends SwiftApiMetadata {
       Properties properties = SwiftApiMetadata.defaultProperties();
       properties.setProperty(SERVICE_TYPE, ServiceType.OBJECT_STORE);
       properties.setProperty(CREDENTIAL_TYPE, CredentialTypes.PASSWORD_CREDENTIALS);
+      properties.setProperty(PROPERTY_REGION, "");
       properties.remove(PROPERTY_REGIONS);
       return properties;
    }
