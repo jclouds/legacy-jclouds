@@ -22,6 +22,7 @@ import static org.jclouds.reflect.Reflection2.typeToken;
 import java.util.Map;
 
 import org.jclouds.aws.config.FormSigningRestClientModule;
+import org.jclouds.aws.handlers.AWSServerErrorRetryHandler;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.annotation.ClientError;
@@ -68,6 +69,7 @@ public class SQSRestClientModule extends FormSigningRestClientModule<SQSApi, SQS
    @Override
    protected void bindRetryHandlers() {
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(SQSErrorRetryHandler.class);
+      bind(HttpRetryHandler.class).annotatedWith(ServerError.class).to(AWSServerErrorRetryHandler.class);
    }
 
 }

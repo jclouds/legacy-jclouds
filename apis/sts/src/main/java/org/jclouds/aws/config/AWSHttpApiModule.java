@@ -22,6 +22,7 @@ import java.util.Set;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
+import org.jclouds.aws.handlers.AWSServerErrorRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
@@ -56,6 +57,13 @@ public abstract class AWSHttpApiModule<A> extends HttpApiModule<A> {
       return ImmutableSet.of("RequestTimeout", "OperationAborted", "SignatureDoesNotMatch");
    }
    
+   @Provides
+   @ServerError
+   @Singleton
+   protected Set<String> provideRetryableServerCodes(){
+      return ImmutableSet.of("RequestLimitExceeded");
+   }
+
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ParseAWSErrorFromXmlContent.class);
@@ -66,6 +74,7 @@ public abstract class AWSHttpApiModule<A> extends HttpApiModule<A> {
    @Override
    protected void bindRetryHandlers() {
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(AWSClientErrorRetryHandler.class);
+      bind(HttpRetryHandler.class).annotatedWith(ServerError.class).to(AWSServerErrorRetryHandler.class);
    }
 
 }

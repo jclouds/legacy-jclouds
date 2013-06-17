@@ -27,6 +27,7 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.aws.config.AWSRestClientModule;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
+import org.jclouds.aws.handlers.AWSServerErrorRetryHandler;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
@@ -185,6 +186,7 @@ public class S3RestClientModule<S extends S3Client, A extends S3AsyncClient> ext
    protected void bindRetryHandlers() {
       bind(HttpRetryHandler.class).annotatedWith(Redirection.class).to(S3RedirectionRetryHandler.class);
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(AWSClientErrorRetryHandler.class);
+      bind(HttpRetryHandler.class).annotatedWith(ServerError.class).to(AWSServerErrorRetryHandler.class);
    }
 
    @Provides
