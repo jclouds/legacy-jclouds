@@ -434,7 +434,7 @@ public class FilesystemStorageStrategyImplTest {
    }
 
    public void testBlobExists() throws IOException {
-      String[] sourceBlobKeys = new String[] { TestUtils.createRandomBlobKey("blobExists-", ".jpg"),
+      String[] sourceBlobKeys = { TestUtils.createRandomBlobKey("blobExists-", ".jpg"),
                TestUtils.createRandomBlobKey("blobExists-", ".jpg"),
                TestUtils.createRandomBlobKey("afasd" + FS + "asdma" + FS + "blobExists-", ".jpg") };
 

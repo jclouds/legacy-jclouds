@@ -79,7 +79,7 @@ public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> ext
          assertTrue(initialContainerCount >= 0);
 
          // Create test containers
-         String[] containerNames = new String[] { containerPrefix + ".testListOwnedContainers1",
+         String[] containerNames = { containerPrefix + ".testListOwnedContainers1",
                   containerPrefix + ".testListOwnedContainers2" };
          assertTrue(getApi().createContainer(containerNames[0]));
          assertTrue(getApi().createContainer(containerNames[1]));

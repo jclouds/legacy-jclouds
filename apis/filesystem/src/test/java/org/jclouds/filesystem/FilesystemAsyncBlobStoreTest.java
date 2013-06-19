@@ -139,7 +139,7 @@ public class FilesystemAsyncBlobStoreTest {
         assertTrue(containersRetrieved.isEmpty(), "List operation returns a not empty set of container");
 
         // Testing list with some containers
-        String[] containerNames = new String[]{"34343", "aaaa", "bbbbb"};
+        String[] containerNames = {"34343", "aaaa", "bbbbb"};
         containersCreated = Sets.newHashSet();
         for (String containerName : containerNames) {
             blobStore.createContainerInLocation(null, containerName);

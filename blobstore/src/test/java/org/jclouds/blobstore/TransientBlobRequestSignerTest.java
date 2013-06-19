@@ -89,7 +89,7 @@ public class TransientBlobRequestSignerTest extends BaseAsyncClientTest<LocalAsy
    public void testSignPutBlobWithGenerate() throws ArrayIndexOutOfBoundsException, SecurityException,
             IllegalArgumentException, NoSuchMethodException, IOException {
       Blob blob = blobFactory.get().name(blobName).payload("foo").calculateMD5().contentType("text/plain").build();
-      byte[] md5 = new byte[] { -84, -67, 24, -37, 76, -62, -8, 92, -19, -17, 101, 79, -52, -60, -92, -40 };
+      byte[] md5 = { -84, -67, 24, -37, 76, -62, -8, 92, -19, -17, 101, 79, -52, -60, -92, -40 };
       
       assertEquals(blob.getPayload().getContentMetadata().getContentMD5(), md5);
 

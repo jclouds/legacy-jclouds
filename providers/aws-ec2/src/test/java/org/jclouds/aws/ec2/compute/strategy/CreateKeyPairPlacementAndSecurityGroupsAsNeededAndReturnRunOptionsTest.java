@@ -656,7 +656,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       String group = "group";
       String generatedMarkerGroup = "jclouds#group";
       Set<String> groupNames = ImmutableSet.<String> of();
-      int[] ports = new int[] {};
+      int[] ports = {};
       boolean shouldAuthorizeSelf = true;
       Set<String> returnVal = ImmutableSet.<String> of(generatedMarkerGroup);
 
@@ -690,7 +690,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       String group = "group";
       String generatedMarkerGroup = "jclouds#group";
       Set<String> groupNames = ImmutableSet.<String> of();
-      int[] ports = new int[] { 22, 80 };
+      int[] ports = { 22, 80 };
       boolean shouldAuthorizeSelf = true;
       Set<String> returnVal = ImmutableSet.<String> of(generatedMarkerGroup);
 
@@ -724,7 +724,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       String group = "group";
       String generatedMarkerGroup = "jclouds#group";
       Set<String> groupNames = ImmutableSet.<String> of();
-      int[] ports = new int[] {};
+      int[] ports = {};
       boolean shouldAuthorizeSelf = true;
       Set<String> returnVal = ImmutableSet.<String> of(generatedMarkerGroup);
 
@@ -758,7 +758,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       String group = "group";
       String generatedMarkerGroup = "jclouds#group";
       Set<String> groupNames = ImmutableSet.<String> of("group1", "group2");
-      int[] ports = new int[] {};
+      int[] ports = {};
       boolean shouldAuthorizeSelf = true;
       boolean groupExisted = true;
       Set<String> returnVal = ImmutableSet.<String> of(generatedMarkerGroup, "group1", "group2");
@@ -794,7 +794,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       String group = "group";
       String generatedMarkerGroup = "jclouds#group";
       Set<String> groupNames = ImmutableSet.<String> of();
-      int[] ports = new int[] {};
+      int[] ports = {};
       boolean shouldAuthorizeSelf = true;
       boolean groupExisted = true;
       Set<String> returnVal = ImmutableSet.<String> of(generatedMarkerGroup);
