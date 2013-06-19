@@ -41,6 +41,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.inject.Guice;
 
 /**
@@ -140,5 +141,14 @@ public class ComputeServiceUtilsTest {
             ComputeServiceUtils.extractTargzIntoDirectory(request, "/stage/").render(
                   org.jclouds.scriptbuilder.domain.OsFamily.UNIX),
             "curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET -H \"Host: adriancolehappy.s3.amazonaws.com\" -H \"Date: Sun, 12 Sep 2010 08:25:19 GMT\" -H \"Authorization: AWS 0ASHDJAS82:JASHFDA=\" https://adriancolehappy.s3.amazonaws.com/java/install |(mkdir -p /stage/ &&cd /stage/ &&tar -xpzf -)\n");
+   }
+
+   @Test
+   public void testGetPortRangesFromList() {
+      Map<Integer, Integer> portRanges = Maps.newHashMap();
+      portRanges.put(5, 7);
+      portRanges.put(10, 11);
+      portRanges.put(20, 20);
+      assertEquals(portRanges, ComputeServiceUtils.getPortRangesFromList(5, 6, 7, 10, 11, 20));
    }
 }

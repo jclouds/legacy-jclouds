@@ -31,6 +31,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.compute.AWSEC2ComputeService;
 import org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions;
+import org.jclouds.aws.ec2.compute.loaders.AWSEC2CreateSecurityGroupIfNeeded;
 import org.jclouds.aws.ec2.compute.suppliers.CallForImages;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.domain.RegionNameAndPublicKeyMaterial;
@@ -55,7 +56,6 @@ import org.jclouds.ec2.compute.functions.EC2ImageParser;
 import org.jclouds.ec2.compute.functions.PasswordCredentialsFromWindowsInstance;
 import org.jclouds.ec2.compute.functions.WindowsLoginCredentialsFromEncryptedData;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
-import org.jclouds.ec2.compute.loaders.CreateSecurityGroupIfNeeded;
 import org.jclouds.ec2.compute.loaders.LoadPublicIpForInstanceOrNull;
 import org.jclouds.ec2.compute.loaders.RegionAndIdToImage;
 import org.jclouds.ec2.domain.KeyPair;
@@ -89,7 +89,7 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
       bind(new TypeLiteral<CacheLoader<RunningInstance, Optional<LoginCredentials>>>() {
       }).to(CredentialsForInstance.class);
       bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
-      }).annotatedWith(Names.named("SECURITY")).to(CreateSecurityGroupIfNeeded.class);
+      }).annotatedWith(Names.named("SECURITY")).to(AWSEC2CreateSecurityGroupIfNeeded.class);
       bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
       }).annotatedWith(Names.named("ELASTICIP")).to(LoadPublicIpForInstanceOrNull.class);   
       bind(new TypeLiteral<Function<PasswordDataAndPrivateKey, LoginCredentials>>() {

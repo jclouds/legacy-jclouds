@@ -59,6 +59,29 @@ public abstract class BaseAWSEC2ComputeServiceExpectTest extends BaseEC2ComputeS
    protected void setupDefaultRequests() {
       super.setupDefaultRequests();
 
+      authorizeSecurityGroupIngressRequest22 = 
+         formSigner.filter(HttpRequest.builder()
+                           .method("POST")
+                           .endpoint("https://ec2." + region + ".amazonaws.com/")
+                           .addHeader("Host", "ec2." + region + ".amazonaws.com")
+                           .addFormParam("Action", "AuthorizeSecurityGroupIngress")
+                           .addFormParam("GroupId", "jclouds#test")
+                           .addFormParam("IpPermissions.0.FromPort", "22")
+                           .addFormParam("IpPermissions.0.ToPort", "22")
+                           .addFormParam("IpPermissions.0.IpRanges.0.CidrIp", "0.0.0.0/0")
+                           .addFormParam("IpPermissions.0.IpProtocol", "tcp")
+                           .addFormParam("IpPermissions.1.FromPort", "0")
+                           .addFormParam("IpPermissions.1.ToPort", "65535")
+                           .addFormParam("IpPermissions.1.Groups.0.GroupName", "jclouds#test")
+                           .addFormParam("IpPermissions.1.Groups.0.UserId", "993194456877")
+                           .addFormParam("IpPermissions.1.IpProtocol", "tcp")
+                           .addFormParam("IpPermissions.2.FromPort", "0")
+                           .addFormParam("IpPermissions.2.ToPort", "65535")
+                           .addFormParam("IpPermissions.2.Groups.0.GroupName", "jclouds#test")
+                           .addFormParam("IpPermissions.2.Groups.0.UserId", "993194456877")
+                           .addFormParam("IpPermissions.2.IpProtocol", "udp")
+                           .build());
+
       describeImagesRequest = 
                formSigner.filter(HttpRequest.builder()
                           .method("POST")

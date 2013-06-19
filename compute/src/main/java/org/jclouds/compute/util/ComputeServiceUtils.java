@@ -29,6 +29,7 @@ import java.util.Formatter;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.jclouds.compute.domain.ComputeMetadata;
@@ -44,12 +45,19 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
 
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Range;
+import com.google.common.collect.RangeSet;
+import com.google.common.collect.TreeRangeSet;
+import com.google.common.primitives.Ints;
 
 /**
  * 
@@ -257,4 +265,21 @@ public class ComputeServiceUtils {
       }
    }
 
+   public static Map<Integer, Integer> getPortRangesFromList(int... ports) {
+      Set<Integer> sortedPorts = ImmutableSortedSet.copyOf(Ints.asList(ports));
+
+      RangeSet<Integer> ranges = TreeRangeSet.create();
+      
+      for (Integer port : sortedPorts) {
+         ranges.add(Range.closedOpen(port, port + 1));
+      }
+      
+      Map<Integer, Integer> portRanges = Maps.newHashMap();
+
+      for (Range<Integer> r : ranges.asRanges()) {
+         portRanges.put(r.lowerEndpoint(), r.upperEndpoint() - 1);
+      }
+
+      return portRanges;
+   }
 }
