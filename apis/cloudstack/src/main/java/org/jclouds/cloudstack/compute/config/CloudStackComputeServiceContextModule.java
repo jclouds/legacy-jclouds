@@ -31,6 +31,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.compute.CloudStackComputeService;
+import org.jclouds.cloudstack.compute.extensions.CloudStackImageExtension;
 import org.jclouds.cloudstack.compute.functions.OrphanedGroupsByZoneId;
 import org.jclouds.cloudstack.compute.functions.ServiceOfferingToHardware;
 import org.jclouds.cloudstack.compute.functions.TemplateToImage;
@@ -73,6 +74,7 @@ import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.rest.AuthorizationException;
@@ -80,6 +82,7 @@ import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExc
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
@@ -135,6 +138,9 @@ public class CloudStackComputeServiceContextModule extends
       }).to(FindSecurityGroupOrCreate.class);
       bind(new TypeLiteral<Function<Set<? extends NodeMetadata>,  Multimap<String, String>>>() {
       }).to(OrphanedGroupsByZoneId.class);
+
+      bind(new TypeLiteral<ImageExtension>() {
+      }).to(CloudStackImageExtension.class);
 
       // to have the compute service adapter override default locations
       install(new LocationsFromComputeServiceAdapterModule<VirtualMachine, ServiceOffering, Template, Zone>(){});
@@ -252,4 +258,10 @@ public class CloudStackComputeServiceContextModule extends
          NetworkType.ADVANCED, new AdvancedNetworkOptionsConverter(),
          NetworkType.BASIC, new BasicNetworkOptionsConverter());
    }
+
+   @Override
+   protected Optional<ImageExtension> provideImageExtension(Injector i) {
+      return Optional.of(i.getInstance(ImageExtension.class));
+   }
+
 }
