@@ -35,5 +35,6 @@ public interface AtmosHeaders {
    public static final String GROUP_ACL = "x-emc-groupacl";
    public static final String UID = "x-emc-uid";
    public static final String TOKEN = "x-emc-token";
+   public static final String CHECKSUM = "x-emc-wschecksum";
    
 }
