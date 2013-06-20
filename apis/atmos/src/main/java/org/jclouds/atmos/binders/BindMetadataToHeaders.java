@@ -22,7 +22,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.google.common.io.BaseEncoding;
+
 import org.jclouds.atmos.domain.AtmosObject;
+import org.jclouds.atmos.reference.AtmosHeaders;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 
@@ -47,6 +50,15 @@ public class BindMetadataToHeaders implements Binder {
       checkNotNull(object.getPayload(), "object payload");
       checkArgument(object.getPayload().getContentMetadata().getContentLength() != null,
             "contentLength must be set, streaming not supported");
+      byte[] contentMD5 = object.getContentMetadata().getContentMD5();
+      if (contentMD5 != null) {
+         // Swizzle Content-MD5 to Atmos-specific header
+         object.getContentMetadata().setContentMD5(null);
+         request = (R) request.toBuilder()
+               .addHeader(AtmosHeaders.CHECKSUM, "MD5/0/" +
+                     BaseEncoding.base64().encode(contentMD5))
+               .build();
+      }
       return metaBinder.bindToRequest(request, object.getUserMetadata());
    }
 }
