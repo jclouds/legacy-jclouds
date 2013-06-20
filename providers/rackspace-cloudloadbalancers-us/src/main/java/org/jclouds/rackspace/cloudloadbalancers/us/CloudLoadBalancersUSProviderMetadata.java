@@ -53,9 +53,10 @@ public class CloudLoadBalancersUSProviderMetadata extends BaseProviderMetadata {
 
    public static Properties defaultProperties() {
       Properties properties = new Properties();
-      properties.setProperty(PROPERTY_ZONES, "ORD,DFW");
+      properties.setProperty(PROPERTY_ZONES, "ORD,DFW,SYD");
       properties.setProperty(PROPERTY_ZONE + ".ORD." + ISO3166_CODES, "US-IL");
       properties.setProperty(PROPERTY_ZONE + ".DFW." + ISO3166_CODES, "US-TX");
+      properties.setProperty(PROPERTY_ZONE + ".SYD." + ISO3166_CODES, "AU-NSW");
       return properties;
    }
    
@@ -70,7 +71,7 @@ public class CloudLoadBalancersUSProviderMetadata extends BaseProviderMetadata {
          .homepage(URI.create("http://www.rackspace.com/cloud/public/loadbalancers/"))
          .console(URI.create("https://mycloud.rackspace.com"))
          .linkedServices("rackspace-cloudservers-us", "cloudfiles-us", "rackspace-cloudblockstorage-us")
-         .iso3166Codes("US-IL", "US-TX")
+         .iso3166Codes("US-IL", "US-TX", "AU-NSW")
          .endpoint("https://identity.api.rackspacecloud.com/v2.0/")
          .defaultProperties(CloudLoadBalancersApiMetadata.defaultProperties());
       }
