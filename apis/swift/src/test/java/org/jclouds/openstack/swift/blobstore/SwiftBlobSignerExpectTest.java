@@ -76,6 +76,7 @@ public class SwiftBlobSignerExpectTest extends BaseBlobSignerExpectTest {
    protected HttpRequest putBlob() {
       return HttpRequest.builder().method("PUT")
             .endpoint("http://storage/container/name")
+            .addHeader("ETag", "00020408")
             .addHeader("Expect", "100-continue")
             .addHeader("X-Auth-Token", "testtoken").build();
    }

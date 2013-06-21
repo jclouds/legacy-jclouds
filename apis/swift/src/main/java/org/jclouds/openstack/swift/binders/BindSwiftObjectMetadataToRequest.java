@@ -23,6 +23,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.MediaType;
 
+import com.google.common.io.BaseEncoding;
+import com.google.common.net.HttpHeaders;
+
 import org.jclouds.blobstore.binders.BindUserMetadataToHeadersWithPrefix;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.openstack.swift.blobstore.functions.ObjectToBlob;
@@ -59,6 +62,17 @@ public class BindSwiftObjectMetadataToRequest implements Binder {
          // Enable "chunked"/"streamed" data, where the size needn't be known in advance.
          request = (R) request.toBuilder().replaceHeader("Transfer-Encoding", "chunked").build();
       }
+
+      byte[] contentMD5 = object.getInfo().getHash();
+      if (contentMD5 != null) {
+         // Swizzle hash to ETag
+         object.getInfo().setHash(null);
+         request = (R) request.toBuilder()
+               .addHeader(HttpHeaders.ETAG,
+                     BaseEncoding.base16().lowerCase().encode(contentMD5))
+               .build();
+      }
+
       request = mdBinder.bindToRequest(request, object2Blob.apply(object));
       return request;
    }
