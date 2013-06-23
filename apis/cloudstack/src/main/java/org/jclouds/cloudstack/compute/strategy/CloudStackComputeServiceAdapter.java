@@ -222,10 +222,10 @@ public class CloudStackComputeServiceAdapter implements
       VirtualMachine vm = blockUntilJobCompletesAndReturnResult.<VirtualMachine>apply(job);
       logger.debug("--- virtualmachine: %s", vm);
       LoginCredentials.Builder credentialsBuilder = LoginCredentials.builder();
-      if (!vm.isPasswordEnabled() || templateOptions.getKeyPair() != null) {
+      if (templateOptions.getKeyPair() != null) {
          SshKeyPair keyPair = keyPairCache.getUnchecked(templateOptions.getKeyPair());
          credentialsBuilder.privateKey(keyPair.getPrivateKey());
-      } else {
+      } else if (vm.isPasswordEnabled()) {
          assert vm.getPassword() != null : vm;
          credentialsBuilder.password(vm.getPassword());
       }
