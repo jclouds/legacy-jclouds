@@ -119,7 +119,7 @@ public class CloudStackComputeService extends BaseComputeService {
                startNodeStrategy, stopNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning,
                nodeTerminated, nodeSuspended, initScriptRunnerFactory, initAdminAccess, runScriptOnNodeFactory,
                persistNodeCredentials, timeouts, userExecutor, imageExtension);
-      this.zoneIdToZone = zoneIdToZone;
+      this.zoneIdToZone = checkNotNull(zoneIdToZone, "zoneIdToZone");
       this.client = checkNotNull(client, "client");
       this.securityGroupMap = checkNotNull(securityGroupMap, "securityGroupMap");
       this.keyPairCache = checkNotNull(keyPairCache, "keyPairCache");
@@ -173,7 +173,7 @@ public class CloudStackComputeService extends BaseComputeService {
    }
 
    /**
-    * returns template options, except of type {@link CloudStackTemplateOptions}.
+    * returns template options, as {@link CloudStackTemplateOptions}.
     */
    @Override
    public CloudStackTemplateOptions templateOptions() {

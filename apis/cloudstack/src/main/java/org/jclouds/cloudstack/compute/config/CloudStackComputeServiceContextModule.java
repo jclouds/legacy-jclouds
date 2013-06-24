@@ -129,13 +129,10 @@ public class CloudStackComputeServiceContextModule extends
       }).to(CreateUniqueKeyPair.class);
       bind(new TypeLiteral<Supplier<LoadingCache<String, Zone>>>() {
       }).to(ZoneIdToZoneSupplier.class);
-
       bind(new TypeLiteral<Function<ZoneSecurityGroupNamePortsCidrs, SecurityGroup>>() {
       }).to(CreateSecurityGroupIfNeeded.class);
-
       bind(new TypeLiteral<CacheLoader<ZoneAndName, SecurityGroup>>() {
       }).to(FindSecurityGroupOrCreate.class);
-
       bind(new TypeLiteral<Function<Set<? extends NodeMetadata>,  Multimap<String, String>>>() {
       }).to(OrphanedGroupsByZoneId.class);
 
@@ -236,8 +233,8 @@ public class CloudStackComputeServiceContextModule extends
    @Provides
    @Singleton
    protected LoadingCache<String, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine(
-      CacheLoader<String, Set<IPForwardingRule>> getIPForwardingRules) {
-      return CacheBuilder.newBuilder().build(getIPForwardingRules);
+      CacheLoader<String, Set<IPForwardingRule>> in) {
+      return CacheBuilder.newBuilder().build(in);
    }
 
 

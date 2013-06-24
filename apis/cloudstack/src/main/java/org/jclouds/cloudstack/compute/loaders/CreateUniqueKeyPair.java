@@ -31,6 +31,7 @@ import org.jclouds.cloudstack.domain.SshKeyPair;
 import org.jclouds.cloudstack.strategy.BlockUntilJobCompletesAndReturnResult;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Throwables;
 import com.google.common.cache.CacheLoader;
 import com.google.inject.Inject;
 
@@ -58,7 +59,9 @@ public class CreateUniqueKeyPair extends CacheLoader<String, SshKeyPair> {
             keyPair = client.getSSHKeyPairClient().createSSHKeyPair(input);
             logger.debug(">> creating SSH key pair with name %s", input);
          } catch (IllegalStateException e) {
-            
+            logger.error(e, "<< error creating SSH key pair with name %s: ",
+                         Throwables.getRootCause(e).getMessage());
+            throw Throwables.propagate(e);
          }
       }
 
