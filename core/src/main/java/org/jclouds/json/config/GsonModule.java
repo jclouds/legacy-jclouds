@@ -65,6 +65,7 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.internal.ConstructorConstructor;
@@ -123,7 +124,7 @@ public class GsonModule extends AbstractModule {
             ImmutableSet.of(ConstructorProperties.class, Inject.class), ImmutableSet.of(new ExtractNamed()));
 
       builder.registerTypeAdapterFactory(new DeserializationConstructorAndReflectiveTypeAdapterFactory(
-            new ConstructorConstructor(), serializationPolicy, Excluder.DEFAULT, deserializationPolicy));
+            new ConstructorConstructor(ImmutableMap.<Type, InstanceCreator<?>>of()), serializationPolicy, Excluder.DEFAULT, deserializationPolicy));
 
       // complicated (serializers/deserializers as they need context to operate)
       builder.registerTypeHierarchyAdapter(Enum.class, new EnumTypeAdapterThatReturnsFromValue());

@@ -23,6 +23,7 @@ import static org.testng.Assert.assertNull;
 
 import java.beans.ConstructorProperties;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
@@ -36,12 +37,14 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
 import com.google.gson.TypeAdapter;
 import com.google.gson.internal.ConstructorConstructor;
 import com.google.gson.internal.Excluder;
@@ -65,7 +68,7 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactoryTest
       NamingStrategies.AnnotationConstructorNamingStrategy deserializationPolicy = new NamingStrategies.AnnotationConstructorNamingStrategy(
             ImmutableSet.of(ConstructorProperties.class, Inject.class), ImmutableSet.of(new ExtractNamed()));
 
-      return new DeserializationConstructorAndReflectiveTypeAdapterFactory(new ConstructorConstructor(),
+      return new DeserializationConstructorAndReflectiveTypeAdapterFactory(new ConstructorConstructor(ImmutableMap.<Type, InstanceCreator<?>>of()),
             serializationPolicy, Excluder.DEFAULT, deserializationPolicy);
    }
 
