@@ -23,6 +23,7 @@ import java.io.IOException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.domain.Location;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * Strategy for local operations related to container and blob
@@ -85,12 +86,21 @@ public interface LocalStorageStrategy {
     boolean blobExists(String container, String key);
 
     /**
-     * Returns all the blobs key inside a container
+     * Returns all the blob keys inside a container
      * @param container
      * @return
      * @throws IOException
      */
     Iterable<String> getBlobKeysInsideContainer(String container) throws IOException;
+
+    /**
+     * Returns the blob keys inside a container starting from a particular element
+     * @param container
+     * @param fromElement
+     * @return
+     * @throws IOException
+     */
+    Iterable<String> getBlobKeysInsideContainer(String container, String fromElement) throws IOException;
 
     /**
      * Load the blob with the given key belonging to the container with the given

@@ -24,7 +24,8 @@ import static com.google.common.io.BaseEncoding.base16;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Set;
+import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -42,13 +43,14 @@ import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jclouds.filesystem.util.Utils;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.ParamValidators;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
@@ -143,7 +145,14 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
       filesystemBlobKeyValidator.validate(key);
       return buildPathAndChecksIfFileExists(container, key);
    }
-
+   
+   @Override
+   public Iterable<String> getBlobKeysInsideContainer(String container, String fromElement)
+				   throws IOException {
+      ImmutableList<String> blobNames = ImmutableList.copyOf(getBlobKeysInsideContainer(container));
+      return blobNames.subList(blobNames.indexOf(fromElement), blobNames.size());
+   }
+   
    /**
     * Returns all the blobs key inside a container
     * 
@@ -156,11 +165,11 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
       filesystemContainerNameValidator.validate(container);
       // check if container exists
       // TODO maybe an error is more appropriate
-      Set<String> blobNames = Sets.newHashSet();
+      List<String> blobNames = Lists.newArrayList();
       if (!containerExists(container)) {
          return blobNames;
       }
-
+	      
       File containerFile = openFolder(container);
       final int containerPathLength = containerFile.getAbsolutePath().length() + 1;
       populateBlobKeysInContainer(containerFile, blobNames, new Function<String, String>() {
@@ -169,6 +178,7 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
             return string.substring(containerPathLength);
          }
       });
+
       return blobNames;
    }
 
@@ -435,7 +445,7 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
       return folder;
    }
 
-   private static void populateBlobKeysInContainer(File directory, Set<String> blobNames,
+   private static void populateBlobKeysInContainer(File directory, Collection<String> blobNames,
          Function<String, String> function) {
       File[] children = directory.listFiles();
       for (File child : children) {
@@ -469,5 +479,4 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
       boolean result = directoryToCreate.mkdirs();
       return result;
    }
-
 }
