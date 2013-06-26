@@ -31,6 +31,7 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.extensions.ImageExtension;
+import org.jclouds.compute.extensions.SecurityGroupExtension;
 import org.jclouds.ec2.compute.EC2ComputeService;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.loaders.RegionAndIdToImage;
@@ -137,5 +138,9 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
       return Optional.of(i.getInstance(ImageExtension.class));
    }
 
+   @Override
+   protected Optional<SecurityGroupExtension> provideSecurityGroupExtension(Injector i) {
+      return Optional.of(i.getInstance(SecurityGroupExtension.class));
+   }
 }
 

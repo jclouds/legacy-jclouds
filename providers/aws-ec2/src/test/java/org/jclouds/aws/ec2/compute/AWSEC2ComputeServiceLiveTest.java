@@ -48,11 +48,11 @@ import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.EC2ComputeServiceLiveTest;
-import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
+import org.jclouds.net.domain.IpProtocol;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.testng.annotations.Test;
 

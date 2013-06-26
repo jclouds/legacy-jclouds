@@ -18,10 +18,10 @@ package org.jclouds.aws.ec2.services;
 
 import java.util.Set;
 import org.jclouds.aws.ec2.options.CreateSecurityGroupOptions;
-import org.jclouds.ec2.domain.IpPermission;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.services.SecurityGroupClient;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.net.domain.IpPermission;
 
 import com.google.common.annotations.Beta;
 

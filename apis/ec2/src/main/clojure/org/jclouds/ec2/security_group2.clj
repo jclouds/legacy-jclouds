@@ -21,9 +21,9 @@
   org.jclouds.ec2.security-group2
   (:require (org.jclouds [compute2 :as compute])
     [org.jclouds.ec2.ebs2 :as ebs])
-  (:import org.jclouds.ec2.domain.IpProtocol
-           org.jclouds.ec2.domain.SecurityGroup
-           org.jclouds.ec2.services.SecurityGroupClient))
+  (:import org.jclouds.ec2.domain.SecurityGroup
+           org.jclouds.ec2.services.SecurityGroupClient
+           org.jclouds.net.domain.IpProtocol))
 
 (defn #^SecurityGroupClient
   sg-service

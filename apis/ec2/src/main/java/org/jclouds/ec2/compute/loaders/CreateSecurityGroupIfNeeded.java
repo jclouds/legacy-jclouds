@@ -27,10 +27,10 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
-import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.UserIdGroupPair;
 import org.jclouds.ec2.services.SecurityGroupClient;
 import org.jclouds.logging.Logger;
+import org.jclouds.net.domain.IpProtocol;
 
 import com.google.common.base.Predicate;
 import com.google.common.cache.CacheLoader;

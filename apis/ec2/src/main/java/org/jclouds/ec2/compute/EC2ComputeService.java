@@ -55,6 +55,7 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.extensions.ImageExtension;
+import org.jclouds.compute.extensions.SecurityGroupExtension;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.functions.GroupNamingConvention.Factory;
 import org.jclouds.compute.internal.BaseComputeService;
@@ -128,12 +129,13 @@ public class EC2ComputeService extends BaseComputeService {
             ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
             @Named("SECURITY") LoadingCache<RegionAndName, String> securityGroupMap,
             Optional<ImageExtension> imageExtension, GroupNamingConvention.Factory namingConvention,
-            @Named(PROPERTY_EC2_GENERATE_INSTANCE_NAMES) boolean generateInstanceNames) {
+            @Named(PROPERTY_EC2_GENERATE_INSTANCE_NAMES) boolean generateInstanceNames,
+            Optional<SecurityGroupExtension> securityGroupExtension) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getImageStrategy,
                getNodeMetadataStrategy, runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy,
                startNodeStrategy, stopNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning,
                nodeTerminated, nodeSuspended, initScriptRunnerFactory, initAdminAccess, runScriptOnNodeFactory,
-               persistNodeCredentials, timeouts, userExecutor, imageExtension);
+               persistNodeCredentials, timeouts, userExecutor, imageExtension, securityGroupExtension);
       this.client = client;
       this.credentialsMap = credentialsMap;
       this.securityGroupMap = securityGroupMap;

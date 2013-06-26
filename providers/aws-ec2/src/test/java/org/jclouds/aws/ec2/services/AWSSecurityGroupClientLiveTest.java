@@ -21,11 +21,11 @@ import static org.testng.Assert.assertNotNull;
 
 import java.util.Set;
 
-import org.jclouds.ec2.domain.IpPermission;
-import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.services.SecurityGroupClientLiveTest;
 import org.jclouds.ec2.util.IpPermissions;
+import org.jclouds.net.domain.IpPermission;
+import org.jclouds.net.domain.IpProtocol;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -69,7 +69,7 @@ public class AWSSecurityGroupClientLiveTest extends SecurityGroupClientLiveTest 
          assertEventually(new GroupHasPermission(client, group2Name, new Predicate<IpPermission>() {
             @Override
             public boolean apply(IpPermission arg0) {
-               return arg0.getUserIdGroupPairs().equals(ImmutableMultimap.of(group.getOwnerId(), group1Name))
+               return arg0.getTenantIdGroupNamePairs().equals(ImmutableMultimap.of(group.getOwnerId(), group1Name))
                      && arg0.getFromPort() == 80 && arg0.getToPort() == 80 && arg0.getIpProtocol() == IpProtocol.TCP;
             }
          }));

@@ -32,6 +32,8 @@ import javax.inject.Singleton;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.compute.CloudStackComputeService;
 import org.jclouds.cloudstack.compute.extensions.CloudStackImageExtension;
+import org.jclouds.cloudstack.compute.functions.CloudStackSecurityGroupToSecurityGroup;
+import org.jclouds.cloudstack.compute.functions.IngressRuleToIpPermission;
 import org.jclouds.cloudstack.compute.functions.OrphanedGroupsByZoneId;
 import org.jclouds.cloudstack.compute.functions.ServiceOfferingToHardware;
 import org.jclouds.cloudstack.compute.functions.TemplateToImage;
@@ -46,6 +48,7 @@ import org.jclouds.cloudstack.compute.strategy.BasicNetworkOptionsConverter;
 import org.jclouds.cloudstack.compute.strategy.CloudStackComputeServiceAdapter;
 import org.jclouds.cloudstack.compute.strategy.OptionsConverter;
 import org.jclouds.cloudstack.domain.FirewallRule;
+import org.jclouds.cloudstack.domain.IngressRule;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkType;
@@ -77,6 +80,7 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
+import org.jclouds.net.domain.IpPermission;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
@@ -112,6 +116,10 @@ public class CloudStackComputeServiceContextModule extends
       }).to(CloudStackComputeServiceAdapter.class);
       bind(new TypeLiteral<Function<VirtualMachine, NodeMetadata>>() {
       }).to(VirtualMachineToNodeMetadata.class);
+      bind(new TypeLiteral<Function<SecurityGroup, org.jclouds.compute.domain.SecurityGroup>>() {
+      }).to(CloudStackSecurityGroupToSecurityGroup.class);
+      bind(new TypeLiteral<Function<IngressRule, IpPermission>>() {
+      }).to(IngressRuleToIpPermission.class);
       bind(new TypeLiteral<Function<Template, org.jclouds.compute.domain.Image>>() {
       }).to(TemplateToImage.class);
       bind(new TypeLiteral<Function<ServiceOffering, org.jclouds.compute.domain.Hardware>>() {

@@ -17,11 +17,15 @@
 package org.jclouds.net.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.util.Strings2.isCidrFormat;
 
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableMultimap;
@@ -100,6 +104,7 @@ public class IpPermission implements Comparable<IpPermission> {
        * @see IpPermission#getCidrBlocks()
        */
       public Builder cidrBlock(String cidrBlock) {
+         checkArgument(isCidrFormat(cidrBlock), "cidrBlock %s is not a valid CIDR", cidrBlock);
          this.cidrBlocks.add(cidrBlock);
          return this;
       }
@@ -108,7 +113,16 @@ public class IpPermission implements Comparable<IpPermission> {
        * @see IpPermission#getCidrBlocks()
        */
       public Builder cidrBlocks(Iterable<String> cidrBlocks) {
-         Iterables.addAll(this.cidrBlocks, cidrBlocks);
+         Iterables.addAll(this.cidrBlocks, transform(cidrBlocks,
+                                                     new Function<String, String>() {
+                                                        @Override
+                                                        public String apply(String input) {
+                                                           checkArgument(isCidrFormat(input),
+                                                                         "input %s is not a valid CIDR",
+                                                                         input);
+                                                           return input;
+                                                        }
+                                                     }));
          return this;
       }
 
@@ -140,7 +154,7 @@ public class IpPermission implements Comparable<IpPermission> {
    private final IpProtocol ipProtocol;
    private final Set<String> cidrBlocks;
 
-   protected IpPermission(IpProtocol ipProtocol, int fromPort, int toPort,
+   public IpPermission(IpProtocol ipProtocol, int fromPort, int toPort,
             Multimap<String, String> tenantIdGroupNamePairs, Iterable<String> groupIds, Iterable<String> cidrBlocks) {
       this.fromPort = fromPort;
       this.toPort = toPort;
@@ -227,8 +241,8 @@ public class IpPermission implements Comparable<IpPermission> {
 
    protected ToStringHelper string() {
       return Objects.toStringHelper("").add("ipProtocol", ipProtocol).add("fromPort", fromPort).add("toPort", toPort)
-               .add("tenantIdGroupNamePairs", tenantIdGroupNamePairs).add("groupIds", groupIds).add("groupIds",
-                        groupIds);
+               .add("tenantIdGroupNamePairs", tenantIdGroupNamePairs).add("groupIds", groupIds).add("cidrBlocks",
+                        cidrBlocks);
    }
 
 }

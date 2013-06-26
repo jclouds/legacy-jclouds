@@ -41,13 +41,18 @@ import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.SecurityGroup;
+import org.jclouds.compute.domain.SecurityGroupBuilder;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.extensions.SecurityGroupExtension;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.location.suppliers.all.JustProvider;
 import org.jclouds.rest.ResourceNotFoundException;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
@@ -55,6 +60,7 @@ import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListeningExecutorService;
 
@@ -66,20 +72,25 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAdapter {
    private final Supplier<Location> location;
    private final ConcurrentMap<String, NodeMetadata> nodes;
+   private final Multimap<String, SecurityGroup> groupsForNodes;
    private final ListeningExecutorService ioExecutor;
    private final Provider<Integer> idProvider;
+   private final Provider<Integer> groupIdProvider;
    private final String publicIpPrefix;
    private final String privateIpPrefix;
    private final String passwordPrefix;
    private final Supplier<Set<? extends Location>> locationSupplier;
    private final Map<OsFamily, Map<String, String>> osToVersionMap;
+   private final Optional<SecurityGroupExtension> securityGroupExtension;
 
    @Inject
    public StubComputeServiceAdapter(ConcurrentMap<String, NodeMetadata> nodes,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ListeningExecutorService ioExecutor, Supplier<Location> location,
             @Named("NODE_ID") Provider<Integer> idProvider, @Named("PUBLIC_IP_PREFIX") String publicIpPrefix,
             @Named("PRIVATE_IP_PREFIX") String privateIpPrefix, @Named("PASSWORD_PREFIX") String passwordPrefix,
-            JustProvider locationSupplier, Map<OsFamily, Map<String, String>> osToVersionMap) {
+            JustProvider locationSupplier, Map<OsFamily, Map<String, String>> osToVersionMap,
+            Multimap<String, SecurityGroup> groupsForNodes, @Named("GROUP_ID") Provider<Integer> groupIdProvider,
+            Optional<SecurityGroupExtension> securityGroupExtension) {
       this.nodes = nodes;
       this.ioExecutor = ioExecutor;
       this.location = location;
@@ -89,6 +100,9 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       this.passwordPrefix = passwordPrefix;
       this.locationSupplier = locationSupplier;
       this.osToVersionMap = osToVersionMap;
+      this.groupsForNodes = groupsForNodes;
+      this.groupIdProvider = groupIdProvider;
+      this.securityGroupExtension = securityGroupExtension;
    }
 
    protected void setStateOnNode(Status status, NodeMetadata node) {
@@ -133,6 +147,22 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       builder.credentials(LoginCredentials.builder().user("root").password(passwordPrefix + id).build());
       NodeMetadata node = builder.build();
       nodes.put(node.getId(), node);
+
+      if (template.getOptions().getGroups().size() > 0) {
+         final String groupId = Iterables.getFirst(template.getOptions().getGroups(), "0");
+         Optional<SecurityGroup> secGroup = Iterables.tryFind(securityGroupExtension.get().listSecurityGroups(),
+                                                              new Predicate<SecurityGroup>() {
+                                                                 @Override
+                                                                 public boolean apply(SecurityGroup input) {
+                                                                    return input.getId().equals(groupId);
+                                                                 }
+                                                              });
+
+         if (secGroup.isPresent()) {
+            groupsForNodes.put(node.getId(), secGroup.get());
+         }
+      }
+      
       setStateOnNodeAfterDelay(Status.RUNNING, node, 100);
       return new NodeWithInitialCredentials(node);
    }
@@ -195,6 +225,8 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
          return;
       setStateOnNodeAfterDelay(Status.PENDING, node, 0);
       setStateOnNodeAfterDelay(Status.TERMINATED, node, 50);
+      groupsForNodes.removeAll(id);
+      
       ioExecutor.execute(new Runnable() {
 
          @Override

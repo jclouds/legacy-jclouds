@@ -30,10 +30,10 @@ import java.util.Set;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.domain.IpPermission;
-import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.domain.UserIdGroupPair;
+import org.jclouds.net.domain.IpPermission;
+import org.jclouds.net.domain.IpProtocol;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -174,7 +174,7 @@ public class SecurityGroupClientLiveTest extends BaseComputeServiceContextLiveTe
          assertEventually(new GroupHasPermission(client, group2Name, new Predicate<IpPermission>() {
             @Override
             public boolean apply(IpPermission arg0) {
-               return arg0.getUserIdGroupPairs().equals(ImmutableMultimap.of(group.getOwnerId(), group1Name));
+               return arg0.getTenantIdGroupNamePairs().equals(ImmutableMultimap.of(group.getOwnerId(), group1Name));
             }
          }));
 
@@ -191,7 +191,7 @@ public class SecurityGroupClientLiveTest extends BaseComputeServiceContextLiveTe
       @Override
       public boolean apply(IpPermission arg0) {
          return arg0.getIpProtocol() == IpProtocol.TCP && arg0.getFromPort() == 80 && arg0.getToPort() == 80
-               && arg0.getIpRanges().equals(ImmutableSet.of("0.0.0.0/0"));
+               && arg0.getCidrBlocks().equals(ImmutableSet.of("0.0.0.0/0"));
       }
    }
 

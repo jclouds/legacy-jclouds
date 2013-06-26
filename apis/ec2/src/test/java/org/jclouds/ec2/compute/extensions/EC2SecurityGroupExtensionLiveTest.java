@@ -14,35 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jclouds.ec2.domain;
+package org.jclouds.ec2.compute.extensions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.jclouds.compute.extensions.SecurityGroupExtension;
+import org.jclouds.compute.extensions.internal.BaseSecurityGroupExtensionLiveTest;
+import org.jclouds.sshj.config.SshjSshClientModule;
+import org.testng.annotations.Test;
+
+import com.google.inject.Module;
 
 /**
- * @author Adrian Cole
+ * Live test for ec2 {@link SecurityGroupExtension} implementation
+ * 
+ * @author Andrew Bayer
  * 
  */
-public enum IpProtocol {
+@Test(groups = "live", singleThreaded = true, testName = "EC2SecurityGroupExtensionLiveTest")
+public class EC2SecurityGroupExtensionLiveTest extends BaseSecurityGroupExtensionLiveTest {
 
-   TCP, UDP, ICMP, ALL, UNRECOGNIZED;
-
-   public String value() {
-      return this == ALL ? "-1" : name().toLowerCase();
-   }
-
-   @Override
-   public String toString() {
-      return value();
-   }
-
-   public static IpProtocol fromValue(String protocol) {
-      try {
-         if (protocol.equalsIgnoreCase("-1"))
-            return ALL;
-         return valueOf(checkNotNull(protocol, "protocol").toUpperCase());
-      } catch (IllegalArgumentException e) {
-         return UNRECOGNIZED;
-      }
+   public EC2SecurityGroupExtensionLiveTest() {
+      provider = "ec2";
    }
 
 }

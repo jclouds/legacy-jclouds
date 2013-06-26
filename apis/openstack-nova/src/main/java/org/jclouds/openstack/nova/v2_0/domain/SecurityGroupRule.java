@@ -23,6 +23,7 @@ import java.beans.ConstructorProperties;
 import javax.inject.Named;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.net.domain.IpProtocol;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;

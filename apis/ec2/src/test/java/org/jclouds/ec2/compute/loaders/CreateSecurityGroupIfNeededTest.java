@@ -29,10 +29,10 @@ import java.util.concurrent.ExecutionException;
 
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
-import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.domain.UserIdGroupPair;
 import org.jclouds.ec2.services.SecurityGroupClient;
+import org.jclouds.net.domain.IpProtocol;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;

@@ -23,6 +23,7 @@
 					<ipRanges />
 					<groups>
 						<item>
+                                                  <groupId>sg-3c6ef654</groupId>
 							<groupName>jclouds#cluster#world</groupName>
 							<userId>UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM</userId>
 						</item>
@@ -31,6 +32,7 @@
 				</item>
 			</ipPermissions>
 			<groupName>jclouds#cluster#world</groupName>
+                        <groupId>sg-3c6ef654</groupId>
 			<groupDescription>Cluster</groupDescription>
 			<ownerId>UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM</ownerId>
 		</item>

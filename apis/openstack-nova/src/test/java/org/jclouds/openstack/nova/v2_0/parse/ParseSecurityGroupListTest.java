@@ -23,8 +23,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
+import org.jclouds.net.domain.IpProtocol;
 import org.jclouds.openstack.nova.v2_0.config.NovaParserModule;
-import org.jclouds.openstack.nova.v2_0.domain.IpProtocol;
 import org.jclouds.openstack.nova.v2_0.domain.SecurityGroup;
 import org.jclouds.openstack.nova.v2_0.domain.SecurityGroupRule;
 import org.jclouds.rest.annotations.SelectJson;

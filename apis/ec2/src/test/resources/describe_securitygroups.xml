@@ -3,6 +3,7 @@
 	<securityGroupInfo>
 		<item>
 			<ownerId>UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM</ownerId>
+                        <groupId>sg-3c6ef654</groupId>
 			<groupName>WebServers</groupName>
 			<groupDescription>Web Servers</groupDescription>
 			<ipPermissions>
@@ -21,7 +22,8 @@
 		</item>
 		<item>
 			<ownerId>UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM</ownerId>
-			<groupName>RangedPortsBySource</groupName>
+                        <groupId>sg-867309ab</groupId>
+                        <groupName>RangedPortsBySource</groupName>
 			<groupDescription>Group A</groupDescription>
 			<ipPermissions>
 				<item>

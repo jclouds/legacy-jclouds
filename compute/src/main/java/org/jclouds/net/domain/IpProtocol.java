@@ -29,12 +29,22 @@ public enum IpProtocol {
 
    TCP, UDP, ICMP, ALL, UNRECOGNIZED;
 
+   public String value() {
+      return this == ALL ? "-1" : name().toLowerCase();
+   }
+
+   @Override
+   public String toString() {
+      return value();
+   }
+
    public static IpProtocol fromValue(String protocol) {
       try {
+         if (protocol.equalsIgnoreCase("-1"))
+            return ALL;
          return valueOf(checkNotNull(protocol, "protocol").toUpperCase());
       } catch (IllegalArgumentException e) {
          return UNRECOGNIZED;
       }
    }
-
 }

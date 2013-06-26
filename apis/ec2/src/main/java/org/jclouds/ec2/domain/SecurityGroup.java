@@ -21,6 +21,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.net.domain.IpPermission;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;

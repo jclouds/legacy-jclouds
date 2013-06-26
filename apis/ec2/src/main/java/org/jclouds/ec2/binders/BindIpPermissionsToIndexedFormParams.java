@@ -19,9 +19,9 @@ package org.jclouds.ec2.binders;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.ec2.domain.IpPermission;
 import org.jclouds.ec2.util.IpPermissions;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.net.domain.IpPermission;
 import org.jclouds.rest.Binder;
 
 import com.google.common.collect.ImmutableMultimap;

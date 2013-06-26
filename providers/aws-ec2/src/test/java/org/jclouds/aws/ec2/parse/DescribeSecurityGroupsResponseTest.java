@@ -25,12 +25,12 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.Set;
 
-import org.jclouds.ec2.domain.IpPermission;
-import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.xml.BaseEC2HandlerTest;
 import org.jclouds.ec2.xml.DescribeSecurityGroupsResponseHandler;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.net.domain.IpPermission;
+import org.jclouds.net.domain.IpProtocol;
 import org.jclouds.reflect.Invocation;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
@@ -69,7 +69,7 @@ public class DescribeSecurityGroupsResponseTest extends BaseEC2HandlerTest {
 //                                          .vpcId("vpc-99999999")
                                           .ipPermission(IpPermission.builder()
                                                                     .ipProtocol(IpProtocol.ALL)
-                                                                    .userIdGroupPair("123123123123","sg-11111111").build())
+                                                                    .tenantIdGroupNamePair("123123123123","sg-11111111").build())
 //                                          .ipPermissionEgress(IpPermission.builder()
 //                                                                    .ipProtocol(IpProtocol.ALL)
 //                                                                    .ipRange("0.0.0.0/0").build())

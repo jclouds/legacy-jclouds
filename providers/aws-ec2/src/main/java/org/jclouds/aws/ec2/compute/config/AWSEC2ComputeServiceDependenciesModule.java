@@ -31,6 +31,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.compute.AWSEC2ComputeService;
 import org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions;
+import org.jclouds.aws.ec2.compute.extensions.AWSEC2SecurityGroupExtension;
 import org.jclouds.aws.ec2.compute.loaders.AWSEC2CreateSecurityGroupIfNeeded;
 import org.jclouds.aws.ec2.compute.suppliers.CallForImages;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
@@ -41,8 +42,10 @@ import org.jclouds.aws.ec2.predicates.PlacementGroupAvailable;
 import org.jclouds.aws.ec2.predicates.PlacementGroupDeleted;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.SecurityGroup;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.extensions.ImageExtension;
+import org.jclouds.compute.extensions.SecurityGroupExtension;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.domain.LoginCredentials;
@@ -50,9 +53,11 @@ import org.jclouds.ec2.compute.config.EC2ComputeServiceDependenciesModule;
 import org.jclouds.ec2.compute.domain.PasswordDataAndPrivateKey;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.extensions.EC2ImageExtension;
+import org.jclouds.ec2.compute.extensions.EC2SecurityGroupExtension;
 import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.ec2.compute.functions.CredentialsForInstance;
 import org.jclouds.ec2.compute.functions.EC2ImageParser;
+import org.jclouds.ec2.compute.functions.EC2SecurityGroupToSecurityGroup;
 import org.jclouds.ec2.compute.functions.PasswordCredentialsFromWindowsInstance;
 import org.jclouds.ec2.compute.functions.WindowsLoginCredentialsFromEncryptedData;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
@@ -105,8 +110,12 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
       install(new FactoryModuleBuilder().build(CallForImages.Factory.class));
       bind(new TypeLiteral<Function<org.jclouds.ec2.domain.Image, Image>>() {
       }).to(EC2ImageParser.class);
+      bind(new TypeLiteral<Function<org.jclouds.ec2.domain.SecurityGroup, SecurityGroup>>() {
+      }).to(EC2SecurityGroupToSecurityGroup.class);
       bind(new TypeLiteral<ImageExtension>() {
       }).to(EC2ImageExtension.class);
+      bind(new TypeLiteral<SecurityGroupExtension>() {
+      }).to(AWSEC2SecurityGroupExtension.class);
    }
 
    @Provides

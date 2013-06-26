@@ -39,6 +39,7 @@ import org.jclouds.aws.ec2.compute.suppliers.AWSEC2HardwareSupplier;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.extensions.ImageExtension;
+import org.jclouds.compute.extensions.SecurityGroupExtension;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.ec2.compute.config.EC2BindComputeStrategiesByClass;
 import org.jclouds.ec2.compute.domain.RegionAndName;
@@ -172,5 +173,10 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
    @Override
    protected Optional<ImageExtension> provideImageExtension(Injector i) {
       return Optional.of(i.getInstance(ImageExtension.class));
+   }
+
+   @Override
+   protected Optional<SecurityGroupExtension> provideSecurityGroupExtension(Injector i) {
+      return Optional.of(i.getInstance(SecurityGroupExtension.class));
    }
 }

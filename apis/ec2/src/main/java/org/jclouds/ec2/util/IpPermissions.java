@@ -21,8 +21,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jclouds.ec2.domain.IpPermission;
-import org.jclouds.ec2.domain.IpProtocol;
+import org.jclouds.net.domain.IpPermission;
+import org.jclouds.net.domain.IpProtocol;
 import org.jclouds.util.Maps2;
 
 import com.google.common.annotations.Beta;
@@ -58,7 +58,7 @@ public class IpPermissions extends IpPermission {
       headers.put("IpPermissions.%d.ToPort", permission.getToPort() + "");
       String prefix = "IpPermissions.%d.IpRanges.";
       int i = 0;
-      for (String cidrIp : checkNotNull(permission.getIpRanges(), "cidrIps")) {
+      for (String cidrIp : checkNotNull(permission.getCidrBlocks(), "cidrIps")) {
          headers.put(prefix + i++ + ".CidrIp", cidrIp);
       }
       prefix = "IpPermissions.%d.Groups.";
@@ -68,15 +68,15 @@ public class IpPermissions extends IpPermission {
       }
       prefix = "IpPermissions.%d.Groups.";
       i = 0;
-      for (Entry<String, String> userIdGroupNamePair : checkNotNull(permission.getUserIdGroupPairs(),
-            "userIdGroupNamePairs").entries()) {
-         headers.put(prefix + i + ".UserId", userIdGroupNamePair.getKey());
-         headers.put(prefix + i + ".GroupName", userIdGroupNamePair.getValue());
+      for (Entry<String, String> tenantIdGroupNamePair : checkNotNull(permission.getTenantIdGroupNamePairs(),
+            "tenantIdGroupNamePairs").entries()) {
+         headers.put(prefix + i + ".UserId", tenantIdGroupNamePair.getKey());
+         headers.put(prefix + i + ".GroupName", tenantIdGroupNamePair.getValue());
          i++;
       }
       prefix = "IpPermissions.%d.IpRanges.";
       i = 0;
-      for (String cidrIp : checkNotNull(permission.getIpRanges(), "cidrIps")) {
+      for (String cidrIp : checkNotNull(permission.getCidrBlocks(), "cidrIps")) {
          headers.put(prefix + i++ + ".CidrIp", cidrIp);
       }
       return Multimaps.forMap(Maps2.transformKeys(headers, new Function<String, String>() {
@@ -165,7 +165,7 @@ public class IpPermissions extends IpPermission {
       }
 
       public IpPermissions toVPCSecurityGroups(Iterable<String> groupIds) {
-         return new IpPermissions(getIpProtocol(), getFromPort(), getToPort(), getUserIdGroupPairs(), groupIds,
+         return new IpPermissions(getIpProtocol(), getFromPort(), getToPort(), getTenantIdGroupNamePairs(), groupIds,
                ImmutableSet.<String> of());
       }
    }
@@ -189,8 +189,8 @@ public class IpPermissions extends IpPermission {
                checkNotNull(groupName, "groupName")));
       }
 
-      public IpPermissions toEC2SecurityGroups(Multimap<String, String> userIdGroupNamePairs) {
-         return new IpPermissions(getIpProtocol(), getFromPort(), getToPort(), userIdGroupNamePairs, getGroupIds(),
+      public IpPermissions toEC2SecurityGroups(Multimap<String, String> tenantIdGroupNamePairs) {
+         return new IpPermissions(getIpProtocol(), getFromPort(), getToPort(), tenantIdGroupNamePairs, getGroupIds(),
                ImmutableSet.<String> of());
       }
    }

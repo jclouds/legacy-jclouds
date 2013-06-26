@@ -32,10 +32,10 @@ import org.jclouds.aws.ec2.services.AWSSecurityGroupClient;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
-import org.jclouds.ec2.domain.IpPermission;
-import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.UserIdGroupPair;
 import org.jclouds.logging.Logger;
+import org.jclouds.net.domain.IpPermission;
+import org.jclouds.net.domain.IpProtocol;
 
 import com.google.common.base.Predicate;
 import com.google.common.cache.CacheLoader;
@@ -95,7 +95,7 @@ public class AWSEC2CreateSecurityGroupIfNeeded extends CacheLoader<RegionAndName
                                .fromPort(range.getKey())
                                .toPort(range.getValue())
                                .ipProtocol(IpProtocol.TCP)
-                               .ipRange("0.0.0.0/0")
+                               .cidrBlock("0.0.0.0/0")
                                .build());
             }
 
@@ -104,13 +104,13 @@ public class AWSEC2CreateSecurityGroupIfNeeded extends CacheLoader<RegionAndName
                             .fromPort(0)
                             .toPort(65535)
                             .ipProtocol(IpProtocol.TCP)
-                            .userIdGroupPair(myOwnerId, name)
+                            .tenantIdGroupNamePair(myOwnerId, name)
                             .build());
             permissions.add(IpPermission.builder()
                             .fromPort(0)
                             .toPort(65535)
                             .ipProtocol(IpProtocol.UDP)
-                            .userIdGroupPair(myOwnerId, name)
+                            .tenantIdGroupNamePair(myOwnerId, name)
                             .build());
          }
 

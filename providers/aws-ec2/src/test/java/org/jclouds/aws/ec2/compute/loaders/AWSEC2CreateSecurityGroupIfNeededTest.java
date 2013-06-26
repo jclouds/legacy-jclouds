@@ -30,10 +30,10 @@ import java.util.concurrent.ExecutionException;
 import org.jclouds.aws.ec2.services.AWSSecurityGroupClient;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
-import org.jclouds.ec2.domain.IpPermission;
-import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.domain.UserIdGroupPair;
+import org.jclouds.net.domain.IpPermission;
+import org.jclouds.net.domain.IpProtocol;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -63,20 +63,20 @@ public class AWSEC2CreateSecurityGroupIfNeededTest {
                       .fromPort(22)
                       .toPort(22)
                       .ipProtocol(IpProtocol.TCP)
-                      .ipRange("0.0.0.0/0")
+                      .cidrBlock("0.0.0.0/0")
                       .build());
 
       permissions.add(IpPermission.builder()
                       .fromPort(0)
                       .toPort(65535)
                       .ipProtocol(IpProtocol.TCP)
-                      .userIdGroupPair("ownerId", "group")
+                      .tenantIdGroupNamePair("ownerId", "group")
                       .build());
       permissions.add(IpPermission.builder()
                       .fromPort(0)
                       .toPort(65535)
                       .ipProtocol(IpProtocol.UDP)
-                      .userIdGroupPair("ownerId", "group")
+                      .tenantIdGroupNamePair("ownerId", "group")
                       .build());
       
       client.createSecurityGroupInRegion("region", "group", "group");

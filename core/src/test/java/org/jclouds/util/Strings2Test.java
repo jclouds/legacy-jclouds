@@ -53,4 +53,12 @@ public class Strings2Test {
       assertEquals(actual, urlDecode(urlEncode(actual)));
    }
 
+   public void testIsCidrFormat() {
+      assert Strings2.isCidrFormat("1.2.3.4/5");
+      assert Strings2.isCidrFormat("0.0.0.0/0");
+      assert !Strings2.isCidrFormat("banana");
+      assert !Strings2.isCidrFormat("1.2.3.4");
+      assert !Strings2.isCidrFormat("500.500.500.500/2423");
+   }
+      
 }

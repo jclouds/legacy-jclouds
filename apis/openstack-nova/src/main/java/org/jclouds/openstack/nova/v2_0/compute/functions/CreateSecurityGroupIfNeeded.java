@@ -28,9 +28,9 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
+import org.jclouds.net.domain.IpProtocol;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.domain.Ingress;
-import org.jclouds.openstack.nova.v2_0.domain.IpProtocol;
 import org.jclouds.openstack.nova.v2_0.domain.SecurityGroup;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.SecurityGroupInZone;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneSecurityGroupNameAndPorts;

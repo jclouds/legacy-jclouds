@@ -43,6 +43,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.extensions.ImageExtension;
+import org.jclouds.compute.extensions.SecurityGroupExtension;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.internal.PersistNodeCredentials;
@@ -113,12 +114,13 @@ public class CloudStackComputeService extends BaseComputeService {
             Function<Set<? extends NodeMetadata>, Multimap<String, String>> orphanedGroupsByZoneId,
             GroupNamingConvention.Factory namingConvention,
             Supplier<LoadingCache<String, Zone>> zoneIdToZone,
-            Optional<ImageExtension> imageExtension) {
+            Optional<ImageExtension> imageExtension,
+            Optional<SecurityGroupExtension> securityGroupExtension) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getImageStrategy,
                getNodeMetadataStrategy, runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy,
                startNodeStrategy, stopNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning,
                nodeTerminated, nodeSuspended, initScriptRunnerFactory, initAdminAccess, runScriptOnNodeFactory,
-               persistNodeCredentials, timeouts, userExecutor, imageExtension);
+               persistNodeCredentials, timeouts, userExecutor, imageExtension, securityGroupExtension);
       this.zoneIdToZone = checkNotNull(zoneIdToZone, "zoneIdToZone");
       this.client = checkNotNull(client, "client");
       this.securityGroupMap = checkNotNull(securityGroupMap, "securityGroupMap");

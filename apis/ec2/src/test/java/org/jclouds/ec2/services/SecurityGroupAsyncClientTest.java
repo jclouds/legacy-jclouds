@@ -22,12 +22,12 @@ import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
-import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.UserIdGroupPair;
 import org.jclouds.ec2.xml.DescribeSecurityGroupsResponseHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
+import org.jclouds.net.domain.IpProtocol;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 

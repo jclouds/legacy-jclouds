@@ -19,9 +19,9 @@ package org.jclouds.ec2.xml;
 import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
-import org.jclouds.ec2.domain.IpPermission;
-import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.net.domain.IpPermission;
+import org.jclouds.net.domain.IpProtocol;
 import org.xml.sax.SAXException;
 
 /**
@@ -66,14 +66,14 @@ public class IpPermissionHandler extends ParseSax.HandlerForGeneratedRequestWith
          // EC2)
          builder.toPort(Integer.parseInt(currentOrNegative(currentText)));
       } else if (equalsOrSuffix(qName, "cidrIp")) {
-         builder.ipRange(currentOrNull(currentText));
+         builder.cidrBlock(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "userId")) {
          this.userId = currentOrNull(currentText);
       } else if (equalsOrSuffix(qName, "groupName") || equalsOrSuffix(qName, "groupId")) {
          this.groupId = currentOrNull(currentText);
       } else if (equalsOrSuffix(qName, "item")) {
          if (userId != null && groupId != null)
-            builder.userIdGroupPair(userId, groupId);
+            builder.tenantIdGroupNamePair(userId, groupId);
          userId = groupId = null;
       }
       currentText = new StringBuilder();

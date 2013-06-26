@@ -37,6 +37,20 @@ public class IpPermissionsTest {
                .cidrBlock("0.0.0.0/0").build());
    }
 
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testAllProtocolInvalidCidr() {
+      IpPermissions authorization = IpPermissions.permitAnyProtocol();
+      assertEquals(authorization, IpPermission.builder().ipProtocol(IpProtocol.ALL).fromPort(1).toPort(65535)
+               .cidrBlock("a.0.0.0/0").build());
+   }
+
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testAllProtocolInvalidCidrMultiple() {
+      IpPermissions authorization = IpPermissions.permitAnyProtocol();
+      assertEquals(authorization, IpPermission.builder().ipProtocol(IpProtocol.ALL).fromPort(1).toPort(65535)
+                   .cidrBlocks(ImmutableSet.of("a.0.0.0/0", "0.0.0.0/0")).build());
+   }
+
    public void testAllProtocolCidrBound() {
       IpPermissions authorization = IpPermissions.permit(IpProtocol.ALL).originatingFromCidrBlock("1.1.1.1/32");
       assertEquals(authorization, IpPermission.builder().ipProtocol(IpProtocol.ALL).fromPort(1).toPort(65535)

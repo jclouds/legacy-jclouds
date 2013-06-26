@@ -87,7 +87,16 @@ public class Strings2 {
                }
             }
          });
+   
+   private static final String IP_ADDRESS = "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})";
+   private static final String SLASH_FORMAT = IP_ADDRESS + "/(\\d{1,3})";
+   private static final Pattern ADDRESS_PATTERN = Pattern.compile(IP_ADDRESS);
+   private static final Pattern CIDR_PATTERN = Pattern.compile(SLASH_FORMAT);
 
+   public static boolean isCidrFormat(String in) {
+      return CIDR_PATTERN.matcher(in).matches();
+   }
+      
    private static final Pattern URL_ENCODED_PATTERN = Pattern.compile(".*%[a-fA-F0-9][a-fA-F0-9].*");
 
    public static boolean isUrlEncoded(String in) {

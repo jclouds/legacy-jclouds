@@ -14,26 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jclouds.openstack.nova.v2_0.domain;
+package org.jclouds.aws.ec2.compute.extensions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.transform;
 
-public enum IpProtocol {
-   TCP, UDP, ICMP, UNRECOGNIZED;
-   public String value() {
-      return name().toLowerCase();
-   }
+import org.jclouds.compute.extensions.SecurityGroupExtension;
+import org.jclouds.compute.extensions.internal.BaseSecurityGroupExtensionLiveTest;
+import org.testng.annotations.Test;
 
-   @Override
-   public String toString() {
-      return value();
-   }
+import com.google.inject.Module;
 
-   public static IpProtocol fromValue(String protocol) {
-      try {
-         return valueOf(checkNotNull(protocol, "protocol").toUpperCase());
-      } catch (IllegalArgumentException e) {
-         return UNRECOGNIZED;
-      }
+/**
+ * Live test for aws-ec2 {@link SecurityGroupExtension} implementation
+ * 
+ * @author Andrew Bayer
+ * 
+ */
+@Test(groups = "live", singleThreaded = true, testName = "AWSEC2SecurityGroupExtensionLiveTest")
+public class AWSEC2SecurityGroupExtensionLiveTest extends BaseSecurityGroupExtensionLiveTest {
+
+   public AWSEC2SecurityGroupExtensionLiveTest() {
+      provider = "aws-ec2";
    }
 }

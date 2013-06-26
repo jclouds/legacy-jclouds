@@ -18,7 +18,7 @@ package org.jclouds.ec2.util;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.ec2.domain.IpProtocol;
+import org.jclouds.net.domain.IpProtocol;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
