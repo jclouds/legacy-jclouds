@@ -652,11 +652,18 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>2.9.1</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.jclouds</groupId>
+            <artifactId>jclouds-resources</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
         <configuration>
-          <configLocation>../resources/checkstyle.xml</configLocation>
+          <!-- jclouds-resources has the checkstyle config in the classpath -->
+          <configLocation>resources/checkstyle.xml</configLocation>
           <violationSeverity>warning</violationSeverity>
         </configuration>
       </plugin>
@@ -1017,6 +1024,15 @@
               </execution>
             </executions>
           </plugin>        
+          <plugin>
+            <!-- When building jclouds-project, override the config to use the local file -->
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <version>2.9.1</version>
+            <configuration>
+              <configLocation>../resources/checkstyle.xml</configLocation>
+              <violationSeverity>warning</violationSeverity>
+            </configuration>
+          </plugin>
         </plugins>            
       </build>
     </profile>

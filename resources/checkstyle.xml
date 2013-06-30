@@ -22,9 +22,6 @@
 <module name="Checker">
     <property name="severity" value="warning"/>
     <module name="NewlineAtEndOfFile"/>
-    <module name="SuppressionFilter">
-        <property name="file" value="resources/checkstyle_suppressions.xml"/>
-    </module>
     <module name="TreeWalker">
         <module name="AvoidStarImport"/>
         <module name="EmptyStatement"/>

@@ -40,6 +40,13 @@
           <include>NOTICE.txt</include>
         </includes>
       </resource>
+      <resource>
+        <targetPath>resources</targetPath>
+        <directory>${project.basedir}</directory>
+        <includes>
+            <include>checkstyle.xml</include>
+        </includes>
+      </resource>
     </resources>
     <plugins>
       <plugin>      
