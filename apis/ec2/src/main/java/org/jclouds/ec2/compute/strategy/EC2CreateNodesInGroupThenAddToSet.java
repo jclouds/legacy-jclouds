@@ -45,7 +45,7 @@ import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.functions.PresentInstances;
 import org.jclouds.ec2.domain.RunningInstance;
@@ -82,7 +82,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
    boolean autoAllocateElasticIps = false;
 
    @VisibleForTesting
-   final EC2Client client;
+   final EC2Api client;
    @VisibleForTesting
    final Predicate<AtomicReference<NodeMetadata>> nodeRunning;
    @VisibleForTesting
@@ -99,7 +99,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
 
    @Inject
    protected EC2CreateNodesInGroupThenAddToSet(
-         EC2Client client,
+         EC2Api client,
          @Named("ELASTICIP") LoadingCache<RegionAndName, String> elasticIpCache,
          @Named(TIMEOUT_NODE_RUNNING) Predicate<AtomicReference<NodeMetadata>> nodeRunning,
          CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
@@ -191,7 +191,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
          RunningInstance instance = entry.getValue();
          try {
             logger.debug("<< allocating elastic IP instance(%s)", id);
-            String ip = client.getElasticIPAddressServices().allocateAddressInRegion(id.getRegion());
+            String ip = client.getElasticIPAddressApi().get().allocateAddressInRegion(id.getRegion());
             // block until instance is running
             logger.debug(">> awaiting status running instance(%s)", id);
             AtomicReference<NodeMetadata> node = newReference(runningInstanceToNodeMetadata
@@ -199,7 +199,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
             nodeRunning.apply(node);
             logger.trace("<< running instance(%s)", id);
             logger.debug(">> associating elastic IP %s to instance %s", ip, id);
-            client.getElasticIPAddressServices().associateAddressInRegion(id.getRegion(), ip, id.getName());
+            client.getElasticIPAddressApi().get().associateAddressInRegion(id.getRegion(), ip, id.getName());
             logger.trace("<< associated elastic IP %s to instance %s", ip, id);
             // add mapping of instance to ip into the cache
             elasticIpCache.put(id, ip);
@@ -231,7 +231,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
 
          started = ImmutableSet.copyOf(concat(
                started,
-               client.getInstanceServices().runInstancesInRegion(region, zone, template.getImage().getProviderId(), 1,
+               client.getInstanceApi().get().runInstancesInRegion(region, zone, template.getImage().getProviderId(), 1,
                      count - countStarted, instanceOptions)));
 
          countStarted = size(started);

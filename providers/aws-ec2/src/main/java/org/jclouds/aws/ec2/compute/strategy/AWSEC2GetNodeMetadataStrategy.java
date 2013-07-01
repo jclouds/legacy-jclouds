@@ -22,7 +22,7 @@ import static com.google.common.collect.Iterables.getOnlyElement;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
 import org.jclouds.aws.ec2.functions.SpotInstanceRequestToAWSRunningInstance;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -38,11 +38,11 @@ import com.google.common.base.Function;
 @Singleton
 public class AWSEC2GetNodeMetadataStrategy extends EC2GetNodeMetadataStrategy {
 
-   private final AWSEC2Client client;
+   private final AWSEC2Api client;
    private final SpotInstanceRequestToAWSRunningInstance spotConverter;
 
    @Inject
-   protected AWSEC2GetNodeMetadataStrategy(AWSEC2Client client,
+   protected AWSEC2GetNodeMetadataStrategy(AWSEC2Api client,
             Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
             SpotInstanceRequestToAWSRunningInstance spotConverter) {
       super(client, runningInstanceToNodeMetadata);
@@ -54,7 +54,7 @@ public class AWSEC2GetNodeMetadataStrategy extends EC2GetNodeMetadataStrategy {
    public RunningInstance getRunningInstanceInRegion(String region, String id) {
       if (id.indexOf("sir-") != 0)
          return super.getRunningInstanceInRegion(region, id);
-      SpotInstanceRequest spot = getOnlyElement(client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(
+      SpotInstanceRequest spot = getOnlyElement(client.getSpotInstanceApi().get().describeSpotInstanceRequestsInRegion(
                region, id));
       if (spot.getState() == SpotInstanceRequest.State.ACTIVE)
          return super.getRunningInstanceInRegion(region, spot.getInstanceId());

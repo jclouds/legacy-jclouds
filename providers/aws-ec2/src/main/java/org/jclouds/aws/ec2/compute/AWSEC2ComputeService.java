@@ -35,7 +35,7 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.domain.PlacementGroup.State;
 import org.jclouds.collect.Memoized;
@@ -82,7 +82,7 @@ public class AWSEC2ComputeService extends EC2ComputeService {
 
    private final LoadingCache<RegionAndName, String> placementGroupMap;
    private final Predicate<PlacementGroup> placementGroupDeleted;
-   private final AWSEC2Client client;
+   private final AWSEC2Api client;
 
    @Inject
    protected AWSEC2ComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
@@ -99,7 +99,7 @@ public class AWSEC2ComputeService extends EC2ComputeService {
          InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
          RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
          PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
-         @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, AWSEC2Client client,
+         @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, AWSEC2Api client,
          ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
          @Named("SECURITY") LoadingCache<RegionAndName, String> securityGroupMap,
          @Named("PLACEMENT") LoadingCache<RegionAndName, String> placementGroupMap,
@@ -125,10 +125,10 @@ public class AWSEC2ComputeService extends EC2ComputeService {
       // http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/index.html?using_cluster_computing.html
       String placementGroup = String.format("jclouds#%s#%s", group, region);
       try {
-         if (client.getPlacementGroupServices().describePlacementGroupsInRegion(region, placementGroup).size() > 0) {
+         if (client.getPlacementGroupApi().get().describePlacementGroupsInRegion(region, placementGroup).size() > 0) {
             logger.debug(">> deleting placementGroup(%s)", placementGroup);
             try {
-               client.getPlacementGroupServices().deletePlacementGroupInRegion(region, placementGroup);
+               client.getPlacementGroupApi().get().deletePlacementGroupInRegion(region, placementGroup);
                checkState(placementGroupDeleted.apply(new PlacementGroup(region, placementGroup, "cluster",
                         State.PENDING)), String.format("placementGroup region(%s) name(%s) failed to delete", region,
                         placementGroup));

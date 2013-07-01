@@ -30,7 +30,7 @@ import org.jclouds.ec2.options.internal.BaseEC2RequestOptions;
  * <code>
  * import static org.jclouds.ec2.options.RegisterImageOptions.Builder.*
  * <p/>
- * EC2Client connection = // get connection
+ * EC2Api connection = // get connection
  * String imageId = connection.getImageServices().registerImageFromManifest(...withArchitecture(Architecture.I386).withDescription("description"));
  * <code>
  * 

@@ -19,7 +19,7 @@ package org.jclouds.ec2.predicates;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.logging.Logger;
@@ -38,13 +38,13 @@ import com.google.inject.Inject;
 @Singleton
 public class InstanceStateRunning implements Predicate<RunningInstance> {
 
-   private final EC2Client client;
+   private final EC2Api client;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public InstanceStateRunning(EC2Client client) {
+   public InstanceStateRunning(EC2Api client) {
       this.client = client;
    }
 
@@ -63,7 +63,7 @@ public class InstanceStateRunning implements Predicate<RunningInstance> {
 
    private RunningInstance refresh(RunningInstance instance) {
       return Iterables.getOnlyElement(Iterables.getOnlyElement(client
-            .getInstanceServices().describeInstancesInRegion(
+            .getInstanceApi().get().describeInstancesInRegion(
                   instance.getRegion(), instance.getId())));
    }
 }

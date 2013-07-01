@@ -31,7 +31,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
 import org.jclouds.aws.ec2.functions.SpotInstanceRequestToAWSRunningInstance;
@@ -55,11 +55,11 @@ import com.google.inject.Inject;
 @Singleton
 public class AWSEC2ListNodesStrategy extends EC2ListNodesStrategy {
 
-   protected final AWSEC2Client client;
+   protected final AWSEC2Api client;
    protected final SpotInstanceRequestToAWSRunningInstance spotConverter;
 
    @Inject
-   protected AWSEC2ListNodesStrategy(AWSEC2Client client, @Region Supplier<Set<String>> regions,
+   protected AWSEC2ListNodesStrategy(AWSEC2Api client, @Region Supplier<Set<String>> regions,
             Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
             @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
             SpotInstanceRequestToAWSRunningInstance spotConverter) {
@@ -92,7 +92,7 @@ public class AWSEC2ListNodesStrategy extends EC2ListNodesStrategy {
 
          @Override
          public Set<SpotInstanceRequest> apply(String from) {
-            return client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(from);
+            return client.getSpotInstanceApi().get().describeSpotInstanceRequestsInRegion(from);
          }
       };
    }
@@ -102,7 +102,7 @@ public class AWSEC2ListNodesStrategy extends EC2ListNodesStrategy {
 
          @Override
          public Set<SpotInstanceRequest> apply(String from) {
-            return client.getSpotInstanceServices()
+            return client.getSpotInstanceApi().get()
                .describeSpotInstanceRequestsInRegion(from, toArray(idsByRegions.get(from), String.class));
          }
       };

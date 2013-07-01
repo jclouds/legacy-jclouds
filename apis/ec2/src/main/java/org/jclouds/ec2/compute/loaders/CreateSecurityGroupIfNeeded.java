@@ -24,11 +24,11 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.ec2.domain.UserIdGroupPair;
-import org.jclouds.ec2.services.SecurityGroupClient;
+import org.jclouds.ec2.features.SecurityGroupApi;
 import org.jclouds.logging.Logger;
 import org.jclouds.net.domain.IpProtocol;
 
@@ -45,16 +45,16 @@ public class CreateSecurityGroupIfNeeded extends CacheLoader<RegionAndName, Stri
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   protected final SecurityGroupClient securityClient;
+   protected final SecurityGroupApi securityClient;
    protected final Predicate<RegionAndName> securityGroupEventualConsistencyDelay;
 
    @Inject
-   public CreateSecurityGroupIfNeeded(EC2Client ec2Client,
+   public CreateSecurityGroupIfNeeded(EC2Api ec2Api,
          @Named("SECURITY") Predicate<RegionAndName> securityGroupEventualConsistencyDelay) {
-      this(checkNotNull(ec2Client, "ec2Client").getSecurityGroupServices(), securityGroupEventualConsistencyDelay);
+      this(checkNotNull(ec2Api, "ec2Api").getSecurityGroupApi().get(), securityGroupEventualConsistencyDelay);
    }
 
-   public CreateSecurityGroupIfNeeded(SecurityGroupClient securityClient,
+   public CreateSecurityGroupIfNeeded(SecurityGroupApi securityClient,
          @Named("SECURITY") Predicate<RegionAndName> securityGroupEventualConsistencyDelay) {
       this.securityClient = checkNotNull(securityClient, "securityClient");
       this.securityGroupEventualConsistencyDelay = checkNotNull(securityGroupEventualConsistencyDelay,

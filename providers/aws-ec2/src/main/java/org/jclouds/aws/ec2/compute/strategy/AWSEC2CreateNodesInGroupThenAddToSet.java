@@ -29,7 +29,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions;
 import org.jclouds.aws.ec2.compute.functions.PresentSpotRequestsAndInstances;
 import org.jclouds.aws.ec2.domain.LaunchSpecification;
@@ -68,12 +68,12 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
    private Logger logger = Logger.NULL;
 
    @VisibleForTesting
-   private final AWSEC2Client client;
+   private final AWSEC2Api client;
    private final SpotInstanceRequestToAWSRunningInstance spotConverter;
 
    @Inject
    protected AWSEC2CreateNodesInGroupThenAddToSet(
-         AWSEC2Client client,
+         AWSEC2Api client,
          @Named("ELASTICIP") LoadingCache<RegionAndName, String> elasticIpCache,
          @Named(TIMEOUT_NODE_RUNNING) Predicate<AtomicReference<NodeMetadata>> nodeRunning,
          @Named(PROPERTY_EC2_GENERATE_INSTANCE_NAMES) boolean generateInstanceNames,
@@ -103,7 +103,7 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
          if (logger.isDebugEnabled())
             logger.debug(">> requesting %d spot instances region(%s) price(%f) spec(%s) options(%s)", count, region,
                      spotPrice, spec, options);
-         return ImmutableSet.<RunningInstance> copyOf(transform(client.getSpotInstanceServices()
+         return ImmutableSet.<RunningInstance> copyOf(transform(client.getSpotInstanceApi().get()
                .requestSpotInstancesInRegion(region, spotPrice, count, spec, options), spotConverter));
       }
       return super.createNodesInRegionAndZone(region, zone, group, count, template, instanceOptions);

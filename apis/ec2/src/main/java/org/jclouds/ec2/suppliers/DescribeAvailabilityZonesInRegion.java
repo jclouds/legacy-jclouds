@@ -23,9 +23,9 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.domain.AvailabilityZoneInfo;
-import org.jclouds.ec2.services.AvailabilityZoneAndRegionClient;
+import org.jclouds.ec2.features.AvailabilityZoneAndRegionApi;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.location.Region;
 import org.jclouds.location.suppliers.RegionIdToZoneIdsSupplier;
@@ -45,12 +45,12 @@ public class DescribeAvailabilityZonesInRegion implements RegionIdToZoneIdsSuppl
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final AvailabilityZoneAndRegionClient client;
+   private final AvailabilityZoneAndRegionApi client;
    private final Supplier<Set<String>> regions;
 
    @Inject
-   public DescribeAvailabilityZonesInRegion(EC2Client client, @Region Supplier<Set<String>> regions) {
-      this.client = client.getAvailabilityZoneAndRegionServices();
+   public DescribeAvailabilityZonesInRegion(EC2Api client, @Region Supplier<Set<String>> regions) {
+      this.client = client.getAvailabilityZoneAndRegionApi().get();
       this.regions = regions;
    }
 

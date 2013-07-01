@@ -29,8 +29,8 @@ import org.jclouds.ec2.options.internal.BaseEC2RequestOptions;
  * <code>
  * import static org.jclouds.ec2.options.DescribeSnapshotsOptions.Builder.*
  * <p/>
- * EC2Client connection = // get connection
- * Set<Snapshot> snapshots = connection.getElasticBlockStoreServices().describeSnapshots(restorableBy("123125").snapshotIds(1000, 1004));
+ * EC2Api connection = // get connection
+ * Set<Snapshot> snapshots = connection.getElasticBlockStoreApi().get().describeSnapshots(restorableBy("123125").snapshotIds(1000, 1004));
  * <code>
  * 
  * @author Adrian Cole

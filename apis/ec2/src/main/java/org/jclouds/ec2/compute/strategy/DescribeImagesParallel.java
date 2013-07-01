@@ -17,10 +17,14 @@
 package org.jclouds.ec2.compute.strategy;
 
 import static com.google.common.collect.Iterables.concat;
-import static org.jclouds.concurrent.FutureIterables.transformParallel;
+import static com.google.common.collect.Iterables.transform;
+import static com.google.common.util.concurrent.Futures.allAsList;
+import static com.google.common.util.concurrent.Futures.getUnchecked;
 
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -29,7 +33,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.ec2.EC2AsyncClient;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.options.DescribeImagesOptions;
 import org.jclouds.logging.Logger;
 
@@ -48,25 +52,35 @@ public class DescribeImagesParallel implements
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   protected final EC2AsyncClient async;
+   protected final EC2Api api;
    final ListeningExecutorService userExecutor;
 
    @Inject
-   public DescribeImagesParallel(EC2AsyncClient async, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
-      this.async = async;
+   public DescribeImagesParallel(EC2Api api, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
+      this.api = api;
       this.userExecutor = userExecutor;
    }
 
    @Override
    public Iterable<? extends org.jclouds.ec2.domain.Image> apply(
-            Iterable<Entry<String, DescribeImagesOptions>> queries) {
-      return concat(transformParallel(
-               queries,
-               new Function<Entry<String, DescribeImagesOptions>, ListenableFuture<? extends Set<? extends org.jclouds.ec2.domain.Image>>>() {
-                  public ListenableFuture<Set<? extends org.jclouds.ec2.domain.Image>> apply(
-                           Entry<String, DescribeImagesOptions> from) {
-                     return async.getAMIServices().describeImagesInRegion(from.getKey(), from.getValue());
-                  }
-               }, userExecutor, null, logger, "amis"));
+            final Iterable<Entry<String, DescribeImagesOptions>> queries) {
+      ListenableFuture<List<Set<? extends org.jclouds.ec2.domain.Image>>> futures
+         = allAsList(transform(
+                            queries,
+                            new Function<Entry<String, DescribeImagesOptions>,
+                            ListenableFuture<? extends Set<? extends org.jclouds.ec2.domain.Image>>>() {
+                               public ListenableFuture<Set<? extends org.jclouds.ec2.domain.Image>> apply(
+                                                                                                          final Entry<String, DescribeImagesOptions> from) {
+                                  return userExecutor.submit(new Callable<Set<? extends org.jclouds.ec2.domain.Image>>() {
+                                        @Override
+                                        public Set<? extends org.jclouds.ec2.domain.Image> call() throws Exception {
+                                           return api.getAMIApi().get().describeImagesInRegion(from.getKey(), from.getValue());
+                                        }
+                                     });
+                               }
+                            }));
+      logger.trace("amis");
+
+      return concat(getUnchecked(futures));
    }
 }

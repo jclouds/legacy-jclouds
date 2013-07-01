@@ -24,13 +24,14 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
 
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
-import org.jclouds.ec2.services.InstanceClient;
+import org.jclouds.ec2.features.InstanceApi;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -45,10 +46,10 @@ public class PresentInstancesTest {
    @Test
    public void testWhenInstancesPresentSingleCall() {
 
-      EC2Client client = createMock(EC2Client.class);
-      InstanceClient instanceClient = createMock(InstanceClient.class);
+      EC2Api client = createMock(EC2Api.class);
+      InstanceApi instanceClient = createMock(InstanceApi.class);
 
-      expect(client.getInstanceServices()).andReturn(instanceClient);
+      expect(client.getInstanceApi()).andReturn((Optional) Optional.of(instanceClient));
 
       // avoid imatcher fail.  if you change this, be sure to check multiple jres
       expect(instanceClient.describeInstancesInRegion("us-east-1", "i-aaaa", "i-bbbb")).andReturn(

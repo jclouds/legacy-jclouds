@@ -30,7 +30,7 @@ import java.util.Set;
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.Attachment.Status;
 import org.jclouds.ec2.domain.Volume;
-import org.jclouds.ec2.services.ElasticBlockStoreClient;
+import org.jclouds.ec2.features.ElasticBlockStoreApi;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -41,12 +41,12 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", singleThreaded = true)
 public class VolumeDetachedTest {
 
-   private ElasticBlockStoreClient client;
+   private ElasticBlockStoreApi client;
    private VolumeDetached volumeDetached;
 
    @BeforeMethod
    public void setUp() {
-      client = createMock(ElasticBlockStoreClient.class);
+      client = createMock(ElasticBlockStoreApi.class);
       volumeDetached = new VolumeDetached(client);
    }
 

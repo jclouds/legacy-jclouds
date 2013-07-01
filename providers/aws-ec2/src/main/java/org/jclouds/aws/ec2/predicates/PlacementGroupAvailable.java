@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.ResourceNotFoundException;
@@ -38,13 +38,13 @@ import com.google.inject.Inject;
 @Singleton
 public class PlacementGroupAvailable implements Predicate<PlacementGroup> {
 
-   private final AWSEC2Client client;
+   private final AWSEC2Api client;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public PlacementGroupAvailable(AWSEC2Client client) {
+   public PlacementGroupAvailable(AWSEC2Api client) {
       this.client = client;
    }
 
@@ -63,7 +63,7 @@ public class PlacementGroupAvailable implements Predicate<PlacementGroup> {
    }
 
    private PlacementGroup refresh(PlacementGroup group) {
-      return Iterables.getOnlyElement(client.getPlacementGroupServices().describePlacementGroupsInRegion(
+      return Iterables.getOnlyElement(client.getPlacementGroupApi().get().describePlacementGroupsInRegion(
                group.getRegion(), group.getName()));
    }
 }

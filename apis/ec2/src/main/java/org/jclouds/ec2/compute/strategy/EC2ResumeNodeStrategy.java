@@ -23,8 +23,8 @@ import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
-import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.services.InstanceClient;
+import org.jclouds.ec2.EC2Api;
+import org.jclouds.ec2.features.InstanceApi;
 
 /**
  * 
@@ -32,12 +32,12 @@ import org.jclouds.ec2.services.InstanceClient;
  */
 @Singleton
 public class EC2ResumeNodeStrategy implements ResumeNodeStrategy {
-   private final InstanceClient client;
+   private final InstanceApi client;
    private final GetNodeMetadataStrategy getNode;
 
    @Inject
-   protected EC2ResumeNodeStrategy(EC2Client client, GetNodeMetadataStrategy getNode) {
-      this.client = client.getInstanceServices();
+   protected EC2ResumeNodeStrategy(EC2Api client, GetNodeMetadataStrategy getNode) {
+      this.client = client.getInstanceApi().get();
       this.getNode = getNode;
    }
 

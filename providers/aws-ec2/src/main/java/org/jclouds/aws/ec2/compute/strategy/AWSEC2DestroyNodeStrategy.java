@@ -26,7 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.ec2.compute.domain.RegionAndName;
@@ -42,11 +42,11 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class AWSEC2DestroyNodeStrategy extends EC2DestroyNodeStrategy {
 
-   protected final AWSEC2Client client;
+   protected final AWSEC2Api client;
    protected final Map<String, Credentials> credentialStore;
 
    @Inject
-   protected AWSEC2DestroyNodeStrategy(AWSEC2Client client, GetNodeMetadataStrategy getNode,
+   protected AWSEC2DestroyNodeStrategy(AWSEC2Api client, GetNodeMetadataStrategy getNode,
             @Named("ELASTICIP") LoadingCache<RegionAndName, String> elasticIpCache,
             Map<String, Credentials> credentialStore) {
       super(client, getNode, elasticIpCache);
@@ -60,14 +60,14 @@ public class AWSEC2DestroyNodeStrategy extends EC2DestroyNodeStrategy {
       if (id.indexOf("sir-") != 0) {
          try {
             spotId = getOnlyElement(
-                     Iterables.concat(client.getInstanceServices().describeInstancesInRegion(region, id)))
+                                    Iterables.concat(client.getInstanceApi().get().describeInstancesInRegion(region, id)))
                      .getSpotInstanceRequestId();
             credentialStore.remove("node#" + region + "/" + spotId);
          } catch (NoSuchElementException e) {
          }
          super.destroyInstanceInRegion(id, region);
       } else {
-         client.getSpotInstanceServices().cancelSpotInstanceRequestsInRegion(region, spotId);
+         client.getSpotInstanceApi().get().cancelSpotInstanceRequestsInRegion(region, spotId);
          credentialStore.remove("node#" + region + "/" + id);
       }
 

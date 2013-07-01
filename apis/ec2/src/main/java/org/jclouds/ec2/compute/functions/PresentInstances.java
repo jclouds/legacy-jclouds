@@ -31,7 +31,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.logging.Logger;
@@ -53,10 +53,10 @@ public class PresentInstances implements Function<Set<RegionAndName>, Set<Runnin
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final EC2Client client;
+   private final EC2Api client;
 
    @Inject
-   public PresentInstances(EC2Client client) {
+   public PresentInstances(EC2Api client) {
       this.client = checkNotNull(client, "client");
    }
 
@@ -71,7 +71,7 @@ public class PresentInstances implements Function<Set<RegionAndName>, Set<Runnin
          String region = entry.getKey();
          Collection<String> instanceIds = entry.getValue();
          logger.trace("looking for instances %s in region %s", instanceIds, region);
-         builder.addAll(concat(client.getInstanceServices().describeInstancesInRegion(region,
+         builder.addAll(concat(client.getInstanceApi().get().describeInstancesInRegion(region,
                toArray(instanceIds, String.class))));
       }
       return builder.build();

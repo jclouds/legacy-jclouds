@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.ec2.domain.RegionNameAndPublicKeyMaterial;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.ec2.domain.KeyPair;
@@ -43,11 +43,11 @@ public class ImportOrReturnExistingKeypair implements Function<RegionNameAndPubl
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   protected final AWSEC2Client ec2Client;
+   protected final AWSEC2Api ec2Api;
 
    @Inject
-   public ImportOrReturnExistingKeypair(AWSEC2Client ec2Client) {
-      this.ec2Client = ec2Client;
+   public ImportOrReturnExistingKeypair(AWSEC2Api ec2Api) {
+      this.ec2Api = ec2Api;
    }
 
    @Override
@@ -66,12 +66,12 @@ public class ImportOrReturnExistingKeypair implements Function<RegionNameAndPubl
       // as this command is idempotent, it should be ok
       while (keyPair == null)
          try {
-            keyPair = ec2Client.getKeyPairServices().importKeyPairInRegion(region, "jclouds#" + group,
+            keyPair = ec2Api.getKeyPairApi().get().importKeyPairInRegion(region, "jclouds#" + group,
                      publicKeyMaterial);
             keyPair = addFingerprintToKeyPair(publicKeyMaterial, keyPair);
             logger.debug("<< imported keyPair(%s)", keyPair);
          } catch (IllegalStateException e) {
-            keyPair = Iterables.getFirst(ec2Client.getKeyPairServices().describeKeyPairsInRegion(region,
+            keyPair = Iterables.getFirst(ec2Api.getKeyPairApi().get().describeKeyPairsInRegion(region,
                      "jclouds#" + group), null);
             if (keyPair != null) {
                keyPair = addFingerprintToKeyPair(publicKeyMaterial, keyPair);

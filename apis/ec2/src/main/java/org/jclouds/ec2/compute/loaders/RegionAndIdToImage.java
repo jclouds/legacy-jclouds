@@ -25,7 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.functions.EC2ImageParser;
 import org.jclouds.logging.Logger;
@@ -43,10 +43,10 @@ public class RegionAndIdToImage extends CacheLoader<RegionAndName, Image> {
    protected Logger logger = Logger.NULL;
 
    private final EC2ImageParser parser;
-   private final EC2Client sync;
+   private final EC2Api sync;
 
    @Inject
-   public RegionAndIdToImage(EC2ImageParser parser, EC2Client sync) {
+   public RegionAndIdToImage(EC2ImageParser parser, EC2Api sync) {
       this.parser = parser;
       this.sync = sync;
    }
@@ -54,7 +54,7 @@ public class RegionAndIdToImage extends CacheLoader<RegionAndName, Image> {
    @Override
    public Image load(RegionAndName key) throws ExecutionException{
       try {
-         org.jclouds.ec2.domain.Image image = Iterables.getOnlyElement(sync.getAMIServices()
+         org.jclouds.ec2.domain.Image image = Iterables.getOnlyElement(sync.getAMIApi().get()
                .describeImagesInRegion(key.getRegion(), imageIds(key.getName())));
          return parser.apply(image);
       } catch (Exception e) {

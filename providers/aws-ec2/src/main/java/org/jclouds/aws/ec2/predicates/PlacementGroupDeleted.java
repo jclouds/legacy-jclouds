@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.logging.Logger;
 
@@ -37,13 +37,13 @@ import com.google.inject.Inject;
 @Singleton
 public class PlacementGroupDeleted implements Predicate<PlacementGroup> {
 
-   private final AWSEC2Client client;
+   private final AWSEC2Api client;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public PlacementGroupDeleted(AWSEC2Client client) {
+   public PlacementGroupDeleted(AWSEC2Api client) {
       this.client = client;
    }
 
@@ -60,7 +60,7 @@ public class PlacementGroupDeleted implements Predicate<PlacementGroup> {
    }
 
    private PlacementGroup refresh(PlacementGroup group) {
-      return Iterables.getOnlyElement(client.getPlacementGroupServices().describePlacementGroupsInRegion(
+      return Iterables.getOnlyElement(client.getPlacementGroupApi().get().describePlacementGroupsInRegion(
                group.getRegion(), group.getName()));
    }
 }

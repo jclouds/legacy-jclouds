@@ -73,7 +73,7 @@ import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
@@ -104,7 +104,7 @@ import com.google.inject.Inject;
  */
 @Singleton
 public class EC2ComputeService extends BaseComputeService {
-   private final EC2Client client;
+   private final EC2Api client;
    private final ConcurrentMap<RegionAndName, KeyPair> credentialsMap;
    private final LoadingCache<RegionAndName, String> securityGroupMap;
    private final Factory namingConvention;
@@ -125,7 +125,7 @@ public class EC2ComputeService extends BaseComputeService {
             InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
             RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
             PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
-            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, EC2Client client,
+            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, EC2Api client,
             ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
             @Named("SECURITY") LoadingCache<RegionAndName, String> securityGroupMap,
             Optional<ImageExtension> imageExtension, GroupNamingConvention.Factory namingConvention,
@@ -212,9 +212,9 @@ public class EC2ComputeService extends BaseComputeService {
       checkNotNull(emptyToNull(group), "group must be defined");
       String groupName = namingConvention.create().sharedNameForGroup(group);
       
-      if (client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, groupName).size() > 0) {
+      if (client.getSecurityGroupApi().get().describeSecurityGroupsInRegion(region, groupName).size() > 0) {
          logger.debug(">> deleting securityGroup(%s)", groupName);
-         client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, groupName);
+         client.getSecurityGroupApi().get().deleteSecurityGroupInRegion(region, groupName);
          // TODO: test this clear happens
          securityGroupMap.invalidate(new RegionNameAndIngressRules(region, groupName, null, false));
          logger.debug("<< deleted securityGroup(%s)", groupName);
@@ -223,20 +223,20 @@ public class EC2ComputeService extends BaseComputeService {
 
    @VisibleForTesting
    void deleteKeyPair(String region, String group) {
-      for (KeyPair keyPair : client.getKeyPairServices().describeKeyPairsInRegion(region)) {
+      for (KeyPair keyPair : client.getKeyPairApi().get().describeKeyPairsInRegion(region)) {
          String keyName = keyPair.getKeyName();
          Predicate<String> keyNameMatcher = namingConvention.create().containsGroup(group);
          String oldKeyNameRegex = String.format("jclouds#%s#%s#%s", group, region, "[0-9a-f]+").replace('#', delimiter);
          // old keypair pattern too verbose as it has an unnecessary region qualifier
          
          if (keyNameMatcher.apply(keyName) || keyName.matches(oldKeyNameRegex)) {
-            Set<String> instancesUsingKeyPair = extractIdsFromInstances(filter(concat(client.getInstanceServices()
+            Set<String> instancesUsingKeyPair = extractIdsFromInstances(filter(concat(client.getInstanceApi().get()
                   .describeInstancesInRegion(region)), usingKeyPairAndNotDead(keyPair)));
             if (instancesUsingKeyPair.size() > 0) {
                logger.debug("<< inUse keyPair(%s), by (%s)", keyPair.getKeyName(), instancesUsingKeyPair);
             } else {
                logger.debug(">> deleting keyPair(%s)", keyPair.getKeyName());
-               client.getKeyPairServices().deleteKeyPairInRegion(region, keyPair.getKeyName());
+               client.getKeyPairApi().get().deleteKeyPairInRegion(region, keyPair.getKeyName());
                // TODO: test this clear happens
                credentialsMap.remove(new RegionAndName(region, keyPair.getKeyName()));
                credentialsMap.remove(new RegionAndName(region, group));

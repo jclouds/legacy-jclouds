@@ -19,14 +19,14 @@ package org.jclouds.ec2.compute.internal;
 import java.util.Properties;
 
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.ec2.internal.BaseEC2ClientExpectTest;
+import org.jclouds.ec2.internal.BaseEC2ApiExpectTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 
 import com.google.common.base.Function;
 import com.google.inject.Module;
 
-public abstract class BaseEC2ComputeServiceContextExpectTest<T> extends BaseEC2ClientExpectTest<T> implements
+public abstract class BaseEC2ComputeServiceContextExpectTest<T> extends BaseEC2ApiExpectTest<T> implements
          Function<ComputeServiceContext, T> {
 
    @Override

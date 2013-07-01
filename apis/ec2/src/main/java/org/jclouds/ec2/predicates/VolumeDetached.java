@@ -22,7 +22,7 @@ import javax.annotation.Resource;
 
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.Volume;
-import org.jclouds.ec2.services.ElasticBlockStoreClient;
+import org.jclouds.ec2.features.ElasticBlockStoreApi;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
@@ -38,12 +38,12 @@ import com.google.inject.Singleton;
 @Singleton
 public class VolumeDetached implements Predicate<Attachment> {
 
-   private final ElasticBlockStoreClient client;
+   private final ElasticBlockStoreApi client;
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public VolumeDetached(ElasticBlockStoreClient client) {
+   public VolumeDetached(ElasticBlockStoreApi client) {
       this.client = client;
    }
 

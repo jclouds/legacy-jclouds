@@ -27,7 +27,7 @@ import static org.testng.Assert.assertEquals;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-import org.jclouds.aws.ec2.services.AWSSecurityGroupClient;
+import org.jclouds.aws.ec2.features.AWSSecurityGroupApi;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.ec2.domain.SecurityGroup;
@@ -51,7 +51,7 @@ public class AWSEC2CreateSecurityGroupIfNeededTest {
    @Test
    public void testWhenPort22AndToItselfAuthorizesIngressOnce() throws ExecutionException {
 
-      AWSSecurityGroupClient client = createMock(AWSSecurityGroupClient.class);
+      AWSSecurityGroupApi client = createMock(AWSSecurityGroupApi.class);
       Predicate<RegionAndName> tester = Predicates.alwaysTrue();
 
       SecurityGroup group = createNiceMock(SecurityGroup.class);

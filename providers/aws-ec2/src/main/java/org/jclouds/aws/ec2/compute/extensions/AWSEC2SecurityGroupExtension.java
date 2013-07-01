@@ -35,7 +35,7 @@ import javax.inject.Named;
 import javax.inject.Provider;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.SecurityGroup;
@@ -72,10 +72,10 @@ import com.google.common.util.concurrent.UncheckedTimeoutException;
  * @author Andrew Bayer
  */
 public class AWSEC2SecurityGroupExtension extends EC2SecurityGroupExtension {
-   protected final AWSEC2Client client;
+   protected final AWSEC2Api client;
 
    @Inject
-   public AWSEC2SecurityGroupExtension(AWSEC2Client client,
+   public AWSEC2SecurityGroupExtension(AWSEC2Api client,
                                        @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
                                        @Region Supplier<Set<String>> regions,
                                        Function<org.jclouds.ec2.domain.SecurityGroup, SecurityGroup> groupConverter,
@@ -93,7 +93,7 @@ public class AWSEC2SecurityGroupExtension extends EC2SecurityGroupExtension {
       String region = AWSUtils.getRegionFromLocationOrNull(group.getLocation());
       String name = group.getName();
 
-      client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(region, name, ipPermission);
+      client.getSecurityGroupApi().get().authorizeSecurityGroupIngressInRegion(region, name, ipPermission);
 
       return getSecurityGroupById(new RegionAndName(region, group.getName()).slashEncode());
    }
@@ -126,7 +126,7 @@ public class AWSEC2SecurityGroupExtension extends EC2SecurityGroupExtension {
          }
       }
 
-      client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(region, name, builder.build());
+      client.getSecurityGroupApi().get().authorizeSecurityGroupIngressInRegion(region, name, builder.build());
 
       return getSecurityGroupById(new RegionAndName(region, group.getName()).slashEncode());
    }
@@ -136,7 +136,7 @@ public class AWSEC2SecurityGroupExtension extends EC2SecurityGroupExtension {
       String region = AWSUtils.getRegionFromLocationOrNull(group.getLocation());
       String name = group.getName();
 
-      client.getSecurityGroupServices().revokeSecurityGroupIngressInRegion(region, name, ipPermission);
+      client.getSecurityGroupApi().get().revokeSecurityGroupIngressInRegion(region, name, ipPermission);
 
       return getSecurityGroupById(new RegionAndName(region, group.getName()).slashEncode());
    }
@@ -170,7 +170,7 @@ public class AWSEC2SecurityGroupExtension extends EC2SecurityGroupExtension {
          }
       }
 
-      client.getSecurityGroupServices().revokeSecurityGroupIngressInRegion(region, name, builder.build());
+      client.getSecurityGroupApi().get().revokeSecurityGroupIngressInRegion(region, name, builder.build());
 
       return getSecurityGroupById(new RegionAndName(region, group.getName()).slashEncode());
    }

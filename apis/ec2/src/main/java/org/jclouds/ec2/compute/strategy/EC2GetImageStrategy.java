@@ -26,7 +26,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.compute.strategy.GetImageStrategy;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.domain.Image;
 import org.jclouds.ec2.options.DescribeImagesOptions;
 
@@ -39,11 +39,11 @@ import com.google.common.base.Function;
 @Singleton
 public class EC2GetImageStrategy implements GetImageStrategy {
 
-   private final EC2Client client;
+   private final EC2Api client;
    private final Function<Image, org.jclouds.compute.domain.Image> imageToImage;
 
    @Inject
-   protected EC2GetImageStrategy(EC2Client client, Function<Image, org.jclouds.compute.domain.Image> imageToImage) {
+   protected EC2GetImageStrategy(EC2Api client, Function<Image, org.jclouds.compute.domain.Image> imageToImage) {
       this.client = checkNotNull(client, "client");
       this.imageToImage = checkNotNull(imageToImage, "imageToImage");
    }
@@ -63,7 +63,7 @@ public class EC2GetImageStrategy implements GetImageStrategy {
    }
 
    public Image getImageInRegion(String region, String id) {
-      return getOnlyElement(client.getAMIServices().describeImagesInRegion(region,
+      return getOnlyElement(client.getAMIApi().get().describeImagesInRegion(region,
                DescribeImagesOptions.Builder.imageIds(id)));
    }
 

@@ -18,7 +18,7 @@ package org.jclouds.aws.ec2.compute.extensions;
 
 import static com.google.common.collect.Iterables.transform;
 
-import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.extensions.ImageExtension;
@@ -45,13 +45,13 @@ public class AWSEC2ImageExtensionLiveTest extends BaseImageExtensionLiveTest {
 
    @Override
    protected Iterable<? extends Image> listImages() {
-      AWSEC2Client client = view.utils().injector().getInstance(AWSEC2Client.class);
+      AWSEC2Api client = view.unwrapApi(AWSEC2Api.class);
       String[] parts = AWSUtils.parseHandle(imageId);
       String region = parts[0];
       String imageId = parts[1];
       EC2ImageParser parser = view.utils().injector().getInstance(EC2ImageParser.class);
       return transform(
-            client.getAMIServices().describeImagesInRegion(region, new DescribeImagesOptions().imageIds(imageId)),
+                       client.getAMIApi().get().describeImagesInRegion(region, new DescribeImagesOptions().imageIds(imageId)),
             parser);
    }
 

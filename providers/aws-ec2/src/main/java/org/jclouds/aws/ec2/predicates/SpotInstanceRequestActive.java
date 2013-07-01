@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.ResourceNotFoundException;
@@ -38,13 +38,13 @@ import com.google.inject.Inject;
 @Singleton
 public class SpotInstanceRequestActive implements Predicate<SpotInstanceRequest> {
 
-   private final AWSEC2Client client;
+   private final AWSEC2Api client;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public SpotInstanceRequestActive(AWSEC2Client client) {
+   public SpotInstanceRequestActive(AWSEC2Api client) {
       this.client = client;
    }
 
@@ -69,7 +69,7 @@ public class SpotInstanceRequestActive implements Predicate<SpotInstanceRequest>
    }
 
    private SpotInstanceRequest refresh(SpotInstanceRequest spot) {
-      return Iterables.getOnlyElement(client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(
+      return Iterables.getOnlyElement(client.getSpotInstanceApi().get().describeSpotInstanceRequestsInRegion(
                spot.getRegion(), spot.getId()));
    }
 }

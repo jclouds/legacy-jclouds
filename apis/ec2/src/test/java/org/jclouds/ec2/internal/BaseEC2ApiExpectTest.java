@@ -20,9 +20,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jclouds.date.DateService;
 import org.jclouds.ec2.EC2Api;
-import org.jclouds.ec2.EC2AsyncApi;
-import org.jclouds.ec2.config.EC2RestClientModule;
-import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.ec2.config.BaseEC2HttpApiModule;
+import org.jclouds.rest.ConfiguresHttpApi;
 
 import com.google.common.base.Supplier;
 import com.google.inject.Module;
@@ -31,9 +30,13 @@ import com.google.inject.TypeLiteral;
 
 public abstract class BaseEC2ApiExpectTest<T> extends BaseEC2ExpectTest<T> {
    
-   @ConfiguresRestClient
-   protected static class TestEC2RestClientModule extends EC2RestClientModule<EC2Api, EC2AsyncApi> {
+   @ConfiguresHttpApi
+   protected static class TestEC2HttpApiModule extends BaseEC2HttpApiModule<EC2Api> {
 
+      protected TestEC2HttpApiModule() {
+         super(EC2Api.class);
+      }
+      
       @Override
       protected void configure() {
          super.configure();
@@ -59,6 +62,6 @@ public abstract class BaseEC2ApiExpectTest<T> extends BaseEC2ExpectTest<T> {
 
    @Override
    protected Module createModule() {
-      return new TestEC2RestClientModule();
+      return new TestEC2HttpApiModule();
    }
 }

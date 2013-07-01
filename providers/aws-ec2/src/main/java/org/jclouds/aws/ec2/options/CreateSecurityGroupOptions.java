@@ -30,7 +30,7 @@ import org.jclouds.ec2.options.internal.BaseEC2RequestOptions;
  * <code>
  * import static org.jclouds.aws.ec2.options.CreateSecurityGroupOptions.Builder.*
  * <p/>
- * AWSEC2Client connection = // get connection
+ * AWSEC2Api connection = // get connection
  * group = connection.getAMIServices().createSecurityGroup(vpcId("123125").noReboot());
  * <code>
  * 

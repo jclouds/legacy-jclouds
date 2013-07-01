@@ -22,7 +22,7 @@ import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.ec2.domain.Snapshot;
-import org.jclouds.ec2.services.ElasticBlockStoreClient;
+import org.jclouds.ec2.features.ElasticBlockStoreApi;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
@@ -38,12 +38,12 @@ import com.google.inject.Inject;
 @Singleton
 public class SnapshotCompleted implements Predicate<Snapshot> {
 
-   private final ElasticBlockStoreClient client;
+   private final ElasticBlockStoreApi client;
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public SnapshotCompleted(ElasticBlockStoreClient client) {
+   public SnapshotCompleted(ElasticBlockStoreApi client) {
       this.client = client;
    }
 

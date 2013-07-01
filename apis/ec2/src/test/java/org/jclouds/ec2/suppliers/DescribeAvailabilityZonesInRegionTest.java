@@ -25,13 +25,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.easymock.classextension.IMocksControl;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.domain.AvailabilityZoneInfo;
-import org.jclouds.ec2.services.AvailabilityZoneAndRegionClient;
+import org.jclouds.ec2.features.AvailabilityZoneAndRegionApi;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponseException;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -46,15 +47,15 @@ public class DescribeAvailabilityZonesInRegionTest {
    @Test
    public void testDescribeAvailabilityZonesInRegion_BestEffort() {
       IMocksControl control = createControl();
-      EC2Client client = control.createMock(EC2Client.class);
-      AvailabilityZoneAndRegionClient regionClient = control.createMock(AvailabilityZoneAndRegionClient.class);
+      EC2Api client = control.createMock(EC2Api.class);
+      AvailabilityZoneAndRegionApi regionClient = control.createMock(AvailabilityZoneAndRegionApi.class);
       AvailabilityZoneInfo info1 = control.createMock(AvailabilityZoneInfo.class);
       AvailabilityZoneInfo info2 = control.createMock(AvailabilityZoneInfo.class);
       HttpCommand command = control.createMock(HttpCommand.class);
       HttpResponseException exception = new HttpResponseException("Error: Unable to tunnel through proxy: ...",
                command, null);
 
-      expect(client.getAvailabilityZoneAndRegionServices()).andStubReturn(regionClient);
+      expect(client.getAvailabilityZoneAndRegionApi()).andStubReturn((Optional) Optional.of(regionClient));
       expect(regionClient.describeAvailabilityZonesInRegion("accessibleRegion1")).andReturn(
                ImmutableSet.of(info1));
       expect(regionClient.describeAvailabilityZonesInRegion("inaccessibleRegion")).andThrow(exception);
@@ -79,13 +80,13 @@ public class DescribeAvailabilityZonesInRegionTest {
    @Test
    public void testDescribeAvailabilityZonesInRegion_RethrowIfNoneFound() {
       IMocksControl control = createControl();
-      EC2Client client = control.createMock(EC2Client.class);
-      AvailabilityZoneAndRegionClient regionClient = control.createMock(AvailabilityZoneAndRegionClient.class);
+      EC2Api client = control.createMock(EC2Api.class);
+      AvailabilityZoneAndRegionApi regionClient = control.createMock(AvailabilityZoneAndRegionApi.class);
       HttpCommand command = control.createMock(HttpCommand.class);
       HttpResponseException exception = new HttpResponseException("Error: Unable to tunnel through proxy: ...",
                command, null);
 
-      expect(client.getAvailabilityZoneAndRegionServices()).andStubReturn(regionClient);
+      expect(client.getAvailabilityZoneAndRegionApi()).andStubReturn((Optional) Optional.of(regionClient));
       expect(regionClient.describeAvailabilityZonesInRegion("inaccessibleRegion")).andThrow(exception);
 
       Set<String> regions = ImmutableSet.of("inaccessibleRegion");
@@ -105,10 +106,10 @@ public class DescribeAvailabilityZonesInRegionTest {
    @Test
    public void testDescribeAvailabilityZonesInRegion_NoZones() {
       IMocksControl control = createControl();
-      EC2Client client = control.createMock(EC2Client.class);
-      AvailabilityZoneAndRegionClient regionClient = control.createMock(AvailabilityZoneAndRegionClient.class);
+      EC2Api client = control.createMock(EC2Api.class);
+      AvailabilityZoneAndRegionApi regionClient = control.createMock(AvailabilityZoneAndRegionApi.class);
 
-      expect(client.getAvailabilityZoneAndRegionServices()).andStubReturn(regionClient);
+      expect(client.getAvailabilityZoneAndRegionApi()).andStubReturn((Optional) Optional.of(regionClient));
       expect(regionClient.describeAvailabilityZonesInRegion("emptyRegion")).andReturn(
                ImmutableSet.<AvailabilityZoneInfo> of());
 

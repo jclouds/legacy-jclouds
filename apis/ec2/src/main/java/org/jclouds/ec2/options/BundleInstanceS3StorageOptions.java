@@ -39,7 +39,7 @@ import com.google.inject.Inject;
  * <code>
  * import static org.jclouds.ec2.options.BundleInstanceS3StorageOptions.Builder.*
  * <p/>
- * EC2Client connection = // get connection
+ * EC2Api connection = // get connection
  * String imageId = connection.getWindowsServices().bundleInstanceInRegion(...bucketOwnedBy(anotherAccessKey));
  * <code>
  * 

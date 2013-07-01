@@ -42,7 +42,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.functions.PresentInstances;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
@@ -50,8 +50,8 @@ import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.options.RunInstancesOptions;
-import org.jclouds.ec2.services.ElasticIPAddressClient;
-import org.jclouds.ec2.services.InstanceClient;
+import org.jclouds.ec2.features.ElasticIPAddressApi;
+import org.jclouds.ec2.features.InstanceApi;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -80,8 +80,8 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       // setup mocks
       EC2CreateNodesInGroupThenAddToSet strategy = setupStrategy(nodeMetadata);
       InputParams input = new InputParams(location);
-      InstanceClient instanceClient = createMock(InstanceClient.class);
-      ElasticIPAddressClient ipClient = createMock(ElasticIPAddressClient.class);
+      InstanceApi instanceClient = createMock(InstanceApi.class);
+      ElasticIPAddressApi ipClient = createMock(ElasticIPAddressApi.class);
       RunInstancesOptions ec2Options = createMock(RunInstancesOptions.class);
       RunningInstance instance = createMock(RunningInstance.class);
       Reservation<? extends RunningInstance> reservation = new Reservation<RunningInstance>(region,
@@ -93,11 +93,11 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
 
       // setup expectations
       expect(input.template.clone()).andReturn(input.template);
-      expect(strategy.client.getInstanceServices()).andReturn(instanceClient).atLeastOnce();
+      expect(strategy.client.getInstanceApi()).andReturn((Optional) Optional.of(instanceClient)).atLeastOnce();
       expect(
             strategy.createKeyPairAndSecurityGroupsAsNeededAndReturncustomize
                   .execute(region, input.tag, input.template)).andReturn(ec2Options);
-      expect(strategy.client.getElasticIPAddressServices()).andReturn(ipClient).atLeastOnce();
+      expect(strategy.client.getElasticIPAddressApi()).andReturn((Optional) Optional.of(ipClient)).atLeastOnce();
 
       expect(input.template.getLocation()).andReturn(input.location).atLeastOnce();
       expect(input.template.getImage()).andReturn(input.image).atLeastOnce();
@@ -191,7 +191,7 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       // setup mocks
       EC2CreateNodesInGroupThenAddToSet strategy = setupStrategy(nodeMetadata);
       InputParams input = new InputParams(location);
-      InstanceClient instanceClient = createMock(InstanceClient.class);
+      InstanceApi instanceClient = createMock(InstanceApi.class);
       RunInstancesOptions ec2Options = createMock(RunInstancesOptions.class);
       RunningInstance instance = createMock(RunningInstance.class);
       Reservation<? extends RunningInstance> reservation = new Reservation<RunningInstance>(region,
@@ -200,7 +200,7 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
 
       // setup expectations
       expect(input.template.clone()).andReturn(input.template);
-      expect(strategy.client.getInstanceServices()).andReturn(instanceClient).atLeastOnce();
+      expect(strategy.client.getInstanceApi()).andReturn((Optional) Optional.of(instanceClient)).atLeastOnce();
       expect(
             strategy.createKeyPairAndSecurityGroupsAsNeededAndReturncustomize
                   .execute(region, input.tag, input.template)).andReturn(ec2Options);
@@ -307,7 +307,7 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
 
    @SuppressWarnings("unchecked")
    private EC2CreateNodesInGroupThenAddToSet setupStrategy(final NodeMetadata node) {
-      EC2Client client = createMock(EC2Client.class);
+      EC2Api client = createMock(EC2Api.class);
       CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize = createMock(CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class);
       PresentInstances presentInstances = createMock(PresentInstances.class);
       RunningInstanceToNodeMetadata runningInstanceToNodeMetadata = createMock(RunningInstanceToNodeMetadata.class);

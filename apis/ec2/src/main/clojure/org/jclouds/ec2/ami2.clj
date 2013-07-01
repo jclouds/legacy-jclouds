@@ -21,12 +21,12 @@
   org.jclouds.ec2.ami2
   (:use org.jclouds.compute2)
   (:import org.jclouds.aws.domain.Region
-    org.jclouds.ec2.services.AMIClient
+    org.jclouds.ec2.features.AMIApi
     org.jclouds.ec2.options.CreateImageOptions
     org.jclouds.compute.domain.NodeMetadata
     (org.jclouds.ec2.domain Volume Volume$Status Snapshot Snapshot$Status AvailabilityZoneInfo)))
 
-(defn ^org.jclouds.ec2.services.AMIClient
+(defn ^org.jclouds.ec2.features.AMIApi
   ami-service
   ""
   [compute]
@@ -34,7 +34,7 @@
     .getContext
     .getProviderSpecificContext
     .getApi
-    .getAMIServices))
+    .getAMIApi().get))
 
 (defn get-region
   "Coerces the first parameter into a Region string; strings, keywords, and

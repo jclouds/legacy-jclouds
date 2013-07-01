@@ -21,7 +21,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.RunningInstance;
-import org.jclouds.ec2.services.InstanceClient;
+import org.jclouds.ec2.features.InstanceApi;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
@@ -37,13 +37,13 @@ import com.google.inject.Inject;
 @Singleton
 public class InstanceStateStopped implements Predicate<RunningInstance> {
 
-   private final InstanceClient client;
+   private final InstanceApi client;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public InstanceStateStopped(InstanceClient client) {
+   public InstanceStateStopped(InstanceApi client) {
       this.client = client;
    }
 

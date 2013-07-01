@@ -30,10 +30,10 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.ContextBuilder;
 import org.jclouds.aws.cloudwatch.AWSCloudWatchProviderMetadata;
 import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
-import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.MonitoringState;
-import org.jclouds.aws.ec2.services.AWSSecurityGroupClient;
+import org.jclouds.aws.ec2.features.AWSSecurityGroupApi;
 import org.jclouds.cloudwatch.CloudWatchApi;
 import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.cloudwatch.domain.EC2Constants;
@@ -46,12 +46,12 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.EC2ComputeServiceLiveTest;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.SecurityGroup;
-import org.jclouds.ec2.services.InstanceClient;
-import org.jclouds.ec2.services.KeyPairClient;
+import org.jclouds.ec2.features.InstanceApi;
+import org.jclouds.ec2.features.KeyPairApi;
 import org.jclouds.net.domain.IpProtocol;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.testng.annotations.Test;
@@ -78,14 +78,11 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
    public void testExtendedOptionsAndLogin() throws Exception {
       String region = "us-west-2";
 
-      AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(
-               view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi()).getSecurityGroupServices();
+      AWSSecurityGroupApi securityGroupApi = view.unwrapApi(AWSEC2Api.class).getSecurityGroupApi().get();
 
-      KeyPairClient keyPairClient = EC2Client.class.cast(view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi())
-               .getKeyPairServices();
+      KeyPairApi keyPairApi = view.unwrapApi(AWSEC2Api.class).getKeyPairApi().get();
 
-      InstanceClient instanceClient = EC2Client.class.cast(view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi())
-               .getInstanceServices();
+      InstanceApi instanceApi = view.unwrapApi(AWSEC2Api.class).getInstanceApi().get();
 
       String group = this.group + "o";
 
@@ -105,20 +102,20 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
       String startedId = null;
       try {
-         cleanupExtendedStuffInRegion(region, securityGroupClient, keyPairClient, group);
+         cleanupExtendedStuffInRegion(region, securityGroupApi, keyPairApi, group);
 
          Thread.sleep(3000);// eventual consistency if deletes actually occurred.
 
          // create a security group that allows ssh in so that our scripts later
          // will work
-         String groupId = securityGroupClient.createSecurityGroupInRegionAndReturnId(region, group, group);
+         String groupId = securityGroupApi.createSecurityGroupInRegionAndReturnId(region, group, group);
 
-         securityGroupClient.authorizeSecurityGroupIngressInRegion(region, groupId, permit(IpProtocol.TCP).port(22));
+         securityGroupApi.authorizeSecurityGroupIngressInRegion(region, groupId, permit(IpProtocol.TCP).port(22));
 
          template.getOptions().as(AWSEC2TemplateOptions.class).securityGroupIds(groupId);
 
          // create a keypair to pass in as well
-         KeyPair result = keyPairClient.createKeyPairInRegion(region, group);
+         KeyPair result = keyPairApi.createKeyPairInRegion(region, group);
          template.getOptions().as(AWSEC2TemplateOptions.class).keyPair(result.getKeyName());
 
          // pass in the private key, so that we can run a script with it
@@ -136,7 +133,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
          startedId = first.getProviderId();
 
-         AWSRunningInstance instance = AWSRunningInstance.class.cast(getOnlyElement(getOnlyElement(instanceClient
+         AWSRunningInstance instance = AWSRunningInstance.class.cast(getOnlyElement(getOnlyElement(instanceApi
                   .describeInstancesInRegion(region, startedId))));
 
          assertEquals(instance.getKeyName(), group);
@@ -179,7 +176,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          assertEquals(newTreeSet(instance.getGroupNames()), ImmutableSortedSet.<String> of("jclouds#" + group, group));
 
          // make sure our dummy group has no rules
-         SecurityGroup secgroup = getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(instance
+         SecurityGroup secgroup = getOnlyElement(securityGroupApi.describeSecurityGroupsInRegion(instance
                   .getRegion(), "jclouds#" + group));
 
          assert secgroup.size() == 0 : secgroup;
@@ -192,10 +189,10 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          client.destroyNodesMatching(NodePredicates.inGroup(group));
          if (startedId != null) {
             // ensure we didn't delete these resources!
-            assertEquals(keyPairClient.describeKeyPairsInRegion(region, group).size(), 1);
-            assertEquals(securityGroupClient.describeSecurityGroupsInRegion(region, group).size(), 1);
+            assertEquals(keyPairApi.describeKeyPairsInRegion(region, group).size(), 1);
+            assertEquals(securityGroupApi.describeSecurityGroupsInRegion(region, group).size(), 1);
          }
-         cleanupExtendedStuffInRegion(region, securityGroupClient, keyPairClient, group);
+         cleanupExtendedStuffInRegion(region, securityGroupApi, keyPairApi, group);
       }
    }
 }

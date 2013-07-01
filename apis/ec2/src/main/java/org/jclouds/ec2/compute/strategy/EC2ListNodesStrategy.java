@@ -42,7 +42,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.ListNodesStrategy;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.location.Region;
@@ -73,13 +73,13 @@ public class EC2ListNodesStrategy implements ListNodesStrategy {
    @Named(Constants.PROPERTY_REQUEST_TIMEOUT)
    protected static Long maxTime;
 
-   protected final EC2Client client;
+   protected final EC2Api client;
    protected final Supplier<Set<String>> regions;
    protected final Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata;
    protected final ListeningExecutorService userExecutor;
 
    @Inject
-   protected EC2ListNodesStrategy(EC2Client client, @Region Supplier<Set<String>> regions,
+   protected EC2ListNodesStrategy(EC2Api client, @Region Supplier<Set<String>> regions,
             Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
             @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
       this.client =  checkNotNull(client, "client");
@@ -146,7 +146,7 @@ public class EC2ListNodesStrategy implements ListNodesStrategy {
          
          @Override
          public Set<? extends Reservation<? extends RunningInstance>> apply(String from) {
-            return client.getInstanceServices().describeInstancesInRegion(from);
+            return client.getInstanceApi().get().describeInstancesInRegion(from);
          }
          
       };
@@ -158,7 +158,7 @@ public class EC2ListNodesStrategy implements ListNodesStrategy {
                  
          @Override
          public Set<? extends Reservation<? extends RunningInstance>> apply(String from) {
-            return client.getInstanceServices()
+            return client.getInstanceApi().get()
                .describeInstancesInRegion(from, toArray(idsByRegions.get(from), String.class));
          }
          

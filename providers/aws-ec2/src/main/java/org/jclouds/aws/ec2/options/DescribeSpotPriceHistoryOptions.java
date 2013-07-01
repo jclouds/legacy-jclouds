@@ -33,7 +33,7 @@ import org.jclouds.ec2.options.internal.BaseEC2RequestOptions;
  * <code>
  * import static org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptions.Builder.*
  * <p/>
- * AWSEC2Client client = // get connection
+ * AWSEC2Api client = // get connection
  * history = client.getSpotInstanceServices().describeSpotPriceHistoryInRegion(from(yesterday).instanceType("m1.small"));
  * <code>
  * 

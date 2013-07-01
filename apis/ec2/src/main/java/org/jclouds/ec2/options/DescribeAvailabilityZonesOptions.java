@@ -30,8 +30,8 @@ import org.jclouds.ec2.options.internal.BaseEC2RequestOptions;
  * <code>
  * import static org.jclouds.ec2.options.DescribeAvailabilityZonesOptions.Builder.*
  * <p/>
- * EC2Client connection = // get connection
- * Future<Set<ImageMetadata>> images = connection.getAvailabilityZoneAndRegionServices().describeAvailabilityZones(zones("us-east-1a", "us-east-1b"));
+ * EC2Api connection = // get connection
+ * Future<Set<ImageMetadata>> images = connection.getAvailabilityZoneAndRegionApi().get().describeAvailabilityZones(zones("us-east-1a", "us-east-1b"));
  * <code>
  * 
  * @author Adrian Cole

@@ -29,8 +29,8 @@ import org.jclouds.ec2.options.internal.BaseEC2RequestOptions;
  * <code>
  * import static org.jclouds.ec2.options.CreateImageOptions.Builder.*
  * <p/>
- * EC2Client connection = // get connection
- * Future<Set<ImageMetadata>> images = connection.getAMIServices().createImage(withDescription("123125").noReboot());
+ * EC2Api connection = // get connection
+ * Future<Set<ImageMetadata>> images = connection.getAMIApi().get().createImage(withDescription("123125").noReboot());
  * <code>
  * 
  * @author Adrian Cole

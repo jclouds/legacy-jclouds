@@ -22,11 +22,11 @@ import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_GENERATE_INSTA
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jclouds.aws.ec2.config.AWSEC2RestClientModule;
+import org.jclouds.aws.ec2.config.AWSEC2HttpApiModule;
 import org.jclouds.date.DateService;
 import org.jclouds.ec2.compute.internal.BaseEC2ComputeServiceExpectTest;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.ConfiguresHttpApi;
 import org.testng.annotations.BeforeClass;
 
 import com.google.common.base.Supplier;
@@ -100,8 +100,8 @@ public abstract class BaseAWSEC2ComputeServiceExpectTest extends BaseEC2ComputeS
                           .addFormParam("Filter.3.Value.1", "machine").build());
    }
 
-   @ConfiguresRestClient
-   protected static class TestAWSEC2RestClientModule extends AWSEC2RestClientModule {
+   @ConfiguresHttpApi
+   protected static class TestAWSEC2HttpApiModule extends AWSEC2HttpApiModule {
 
       @Override
       protected void configure() {
@@ -128,6 +128,6 @@ public abstract class BaseAWSEC2ComputeServiceExpectTest extends BaseEC2ComputeS
 
    @Override
    protected Module createModule() {
-      return new TestAWSEC2RestClientModule();
+      return new TestAWSEC2HttpApiModule();
    }
 }

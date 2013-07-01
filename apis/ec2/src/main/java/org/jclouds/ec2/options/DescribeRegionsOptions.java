@@ -30,7 +30,7 @@ import org.jclouds.ec2.options.internal.BaseEC2RequestOptions;
  * <code>
  * import static org.jclouds.ec2.options.DescribeRegionsOptions.Builder.*
  * <p/>
- * EC2Client connection = // get connection
+ * EC2Api connection = // get connection
  * Future<Set<ImageMetadata>> images = connection.getRegionsAndRegionsServices().describeRegions(regions("us-east-1a", "us-east-1b"));
  * <code>
  * 

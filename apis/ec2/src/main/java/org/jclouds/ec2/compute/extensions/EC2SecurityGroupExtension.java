@@ -43,7 +43,7 @@ import org.jclouds.compute.extensions.SecurityGroupExtension;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.functions.GroupNamingConvention.Factory;
 import org.jclouds.domain.Location;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.ec2.domain.RunningInstance;
@@ -72,7 +72,7 @@ import com.google.common.util.concurrent.UncheckedTimeoutException;
  */
 public class EC2SecurityGroupExtension implements SecurityGroupExtension {
 
-   protected final EC2Client client;
+   protected final EC2Api client;
    protected final ListeningExecutorService userExecutor;
    protected final Supplier<Set<String>> regions;
    protected final Function<org.jclouds.ec2.domain.SecurityGroup, SecurityGroup> groupConverter;
@@ -81,7 +81,7 @@ public class EC2SecurityGroupExtension implements SecurityGroupExtension {
    protected final Factory namingConvention;
 
    @Inject
-   public EC2SecurityGroupExtension(EC2Client client,
+   public EC2SecurityGroupExtension(EC2Api client,
                                     @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
                                     @Region Supplier<Set<String>> regions,
                                     Function<org.jclouds.ec2.domain.SecurityGroup, SecurityGroup> groupConverter,
@@ -130,7 +130,7 @@ public class EC2SecurityGroupExtension implements SecurityGroupExtension {
       String region = parts[0];
       String instanceId = parts[1];
       
-      RunningInstance instance = getOnlyElement(Iterables.concat(client.getInstanceServices().describeInstancesInRegion(region, instanceId)));
+      RunningInstance instance = getOnlyElement(Iterables.concat(client.getInstanceApi().get().describeInstancesInRegion(region, instanceId)));
 
       if (instance == null) {
          return ImmutableSet.of();
@@ -138,7 +138,7 @@ public class EC2SecurityGroupExtension implements SecurityGroupExtension {
       
       Set<String> groupNames = instance.getGroupNames();
       Set<? extends org.jclouds.ec2.domain.SecurityGroup> rawGroups =
-         client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, Iterables.toArray(groupNames, String.class));
+         client.getSecurityGroupApi().get().describeSecurityGroupsInRegion(region, Iterables.toArray(groupNames, String.class));
       
       return ImmutableSet.copyOf(transform(filter(rawGroups, notNull()), groupConverter));
    }
@@ -151,7 +151,7 @@ public class EC2SecurityGroupExtension implements SecurityGroupExtension {
       String groupId = parts[1];
 
       Set<? extends org.jclouds.ec2.domain.SecurityGroup> rawGroups =
-         client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, groupId);
+         client.getSecurityGroupApi().get().describeSecurityGroupsInRegion(region, groupId);
       
       return getOnlyElement(transform(filter(rawGroups, notNull()), groupConverter));
    }
@@ -183,8 +183,8 @@ public class EC2SecurityGroupExtension implements SecurityGroupExtension {
       String region = parts[0];
       String groupName = parts[1];
       
-      if (client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, groupName).size() > 0) {
-         client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, groupName);
+      if (client.getSecurityGroupApi().get().describeSecurityGroupsInRegion(region, groupName).size() > 0) {
+         client.getSecurityGroupApi().get().deleteSecurityGroupInRegion(region, groupName);
          // TODO: test this clear happens
          groupCreator.invalidate(new RegionNameAndIngressRules(region, groupName, null, false));
          return true;
@@ -201,7 +201,7 @@ public class EC2SecurityGroupExtension implements SecurityGroupExtension {
 
       if (ipPermission.getCidrBlocks().size() > 0) {
          for (String cidr : ipPermission.getCidrBlocks()) {
-            client.getSecurityGroupServices().
+            client.getSecurityGroupApi().get().
                authorizeSecurityGroupIngressInRegion(region,
                                                      name,
                                                      ipPermission.getIpProtocol(),
@@ -214,7 +214,7 @@ public class EC2SecurityGroupExtension implements SecurityGroupExtension {
       if (ipPermission.getTenantIdGroupNamePairs().size() > 0) {
          for (String userId : ipPermission.getTenantIdGroupNamePairs().keySet()) {
             for (String groupName : ipPermission.getTenantIdGroupNamePairs().get(userId)) {
-               client.getSecurityGroupServices().
+               client.getSecurityGroupApi().get().
                   authorizeSecurityGroupIngressInRegion(region,
                                                         name,
                                                         new UserIdGroupPair(userId, groupName));
@@ -235,7 +235,7 @@ public class EC2SecurityGroupExtension implements SecurityGroupExtension {
 
       if (Iterables.size(ipRanges) > 0) {
          for (String cidr : ipRanges) {
-            client.getSecurityGroupServices().
+            client.getSecurityGroupApi().get().
                authorizeSecurityGroupIngressInRegion(region,
                                                      name,
                                                      protocol,
@@ -248,7 +248,7 @@ public class EC2SecurityGroupExtension implements SecurityGroupExtension {
       if (tenantIdGroupNamePairs.size() > 0) {
          for (String userId : tenantIdGroupNamePairs.keySet()) {
             for (String groupName : tenantIdGroupNamePairs.get(userId)) {
-               client.getSecurityGroupServices().
+               client.getSecurityGroupApi().get().
                   authorizeSecurityGroupIngressInRegion(region,
                                                         name,
                                                         new UserIdGroupPair(userId, groupName));
@@ -266,7 +266,7 @@ public class EC2SecurityGroupExtension implements SecurityGroupExtension {
 
       if (ipPermission.getCidrBlocks().size() > 0) {
          for (String cidr : ipPermission.getCidrBlocks()) {
-            client.getSecurityGroupServices().
+            client.getSecurityGroupApi().get().
                revokeSecurityGroupIngressInRegion(region,
                                                   name,
                                                   ipPermission.getIpProtocol(),
@@ -279,7 +279,7 @@ public class EC2SecurityGroupExtension implements SecurityGroupExtension {
       if (ipPermission.getTenantIdGroupNamePairs().size() > 0) {
          for (String userId : ipPermission.getTenantIdGroupNamePairs().keySet()) {
             for (String groupName : ipPermission.getTenantIdGroupNamePairs().get(userId)) {
-               client.getSecurityGroupServices().
+               client.getSecurityGroupApi().get().
                   revokeSecurityGroupIngressInRegion(region,
                                                      name,
                                                      new UserIdGroupPair(userId, groupName));
@@ -300,7 +300,7 @@ public class EC2SecurityGroupExtension implements SecurityGroupExtension {
 
       if (Iterables.size(ipRanges) > 0) {
          for (String cidr : ipRanges) {
-            client.getSecurityGroupServices().
+            client.getSecurityGroupApi().get().
                revokeSecurityGroupIngressInRegion(region,
                                                   name,
                                                   protocol,
@@ -313,7 +313,7 @@ public class EC2SecurityGroupExtension implements SecurityGroupExtension {
       if (tenantIdGroupNamePairs.size() > 0) {
          for (String userId : tenantIdGroupNamePairs.keySet()) {
             for (String groupName : tenantIdGroupNamePairs.get(userId)) {
-               client.getSecurityGroupServices().
+               client.getSecurityGroupApi().get().
                   revokeSecurityGroupIngressInRegion(region,
                                                      name,
                                                      new UserIdGroupPair(userId, groupName));
@@ -356,7 +356,7 @@ public class EC2SecurityGroupExtension implements SecurityGroupExtension {
          
          @Override
          public Set<? extends org.jclouds.ec2.domain.SecurityGroup> apply(String from) {
-            return client.getSecurityGroupServices().describeSecurityGroupsInRegion(from);
+            return client.getSecurityGroupApi().get().describeSecurityGroupsInRegion(from);
          }
          
       };

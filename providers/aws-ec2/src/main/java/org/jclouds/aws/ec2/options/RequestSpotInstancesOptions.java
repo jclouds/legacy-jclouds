@@ -34,7 +34,7 @@ import org.jclouds.ec2.options.internal.BaseEC2RequestOptions;
  * <code>
  * import static org.jclouds.aws.ec2.options.RequestSpotInstancesOptions.Builder.*
  * <p/>
- * AWSEC2Client client = // get connection
+ * AWSEC2Api client = // get connection
  * history = client.getSpotInstanceServices().requestSpotInstancesInRegion("us-east-1",validFrom(yesterday).type("m1.small"));
  * <code>
  * 

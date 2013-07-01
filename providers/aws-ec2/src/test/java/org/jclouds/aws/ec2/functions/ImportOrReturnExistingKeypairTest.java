@@ -23,11 +23,12 @@ import static org.easymock.EasyMock.verify;
 import static org.jclouds.ssh.SshKeys.fingerprintPublicKey;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.aws.ec2.AWSEC2Client;
-import org.jclouds.aws.ec2.services.AWSKeyPairClient;
+import org.jclouds.aws.ec2.AWSEC2Api;
+import org.jclouds.aws.ec2.features.AWSKeyPairApi;
 import org.jclouds.ec2.domain.KeyPair;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -44,37 +45,37 @@ public class ImportOrReturnExistingKeypairTest {
 
    @Test
    public void testApply() {
-      AWSEC2Client client = createMock(AWSEC2Client.class);
-      AWSKeyPairClient keyClient = createMock(AWSKeyPairClient.class);
+      AWSEC2Api client = createMock(AWSEC2Api.class);
+      AWSKeyPairApi keyApi = createMock(AWSKeyPairApi.class);
 
-      expect(client.getKeyPairServices()).andReturn(keyClient).atLeastOnce();
+      expect(client.getKeyPairApi()).andReturn((Optional) Optional.of(keyApi)).atLeastOnce();
 
-      expect(keyClient.importKeyPairInRegion("region", "jclouds#group", PUBLIC_KEY)).andReturn(pair);
+      expect(keyApi.importKeyPairInRegion("region", "jclouds#group", PUBLIC_KEY)).andReturn(pair);
 
       replay(client);
-      replay(keyClient);
+      replay(keyApi);
 
       ImportOrReturnExistingKeypair parser = new ImportOrReturnExistingKeypair(client);
 
       assertEquals(parser.importOrReturnExistingKeypair("region", "group", PUBLIC_KEY), pairWithFingerprint);
 
       verify(client);
-      verify(keyClient);
+      verify(keyApi);
    }
 
    @Test
    public void testApplyWithIllegalStateExceptionReturnsExistingKey() {
-      AWSEC2Client client = createMock(AWSEC2Client.class);
-      AWSKeyPairClient keyClient = createMock(AWSKeyPairClient.class);
+      AWSEC2Api client = createMock(AWSEC2Api.class);
+      AWSKeyPairApi keyApi = createMock(AWSKeyPairApi.class);
 
-      expect(client.getKeyPairServices()).andReturn(keyClient).atLeastOnce();
+      expect(client.getKeyPairApi()).andReturn((Optional) Optional.of(keyApi)).atLeastOnce();
 
-      expect(keyClient.importKeyPairInRegion("region", "jclouds#group", PUBLIC_KEY)).andThrow(
+      expect(keyApi.importKeyPairInRegion("region", "jclouds#group", PUBLIC_KEY)).andThrow(
                new IllegalStateException());
-      expect(keyClient.describeKeyPairsInRegion("region", "jclouds#group")).andReturn(ImmutableSet.of(pair));
+      expect(keyApi.describeKeyPairsInRegion("region", "jclouds#group")).andReturn(ImmutableSet.of(pair));
 
       replay(client);
-      replay(keyClient);
+      replay(keyApi);
 
       ImportOrReturnExistingKeypair parser = new ImportOrReturnExistingKeypair(client);
 
@@ -82,33 +83,33 @@ public class ImportOrReturnExistingKeypairTest {
       assertEquals(parser.importOrReturnExistingKeypair("region", "group", PUBLIC_KEY), pairWithFingerprint);
 
       verify(client);
-      verify(keyClient);
+      verify(keyApi);
 
    }
 
    @Test
    public void testApplyWithIllegalStateExceptionRetriesWhenExistingKeyNotFound() {
-      AWSEC2Client client = createMock(AWSEC2Client.class);
-      AWSKeyPairClient keyClient = createMock(AWSKeyPairClient.class);
+      AWSEC2Api client = createMock(AWSEC2Api.class);
+      AWSKeyPairApi keyApi = createMock(AWSKeyPairApi.class);
 
-      expect(client.getKeyPairServices()).andReturn(keyClient).atLeastOnce();
+      expect(client.getKeyPairApi()).andReturn((Optional) Optional.of(keyApi)).atLeastOnce();
 
-      expect(keyClient.importKeyPairInRegion("region", "jclouds#group", PUBLIC_KEY)).andThrow(
+      expect(keyApi.importKeyPairInRegion("region", "jclouds#group", PUBLIC_KEY)).andThrow(
                new IllegalStateException());
-      expect(keyClient.describeKeyPairsInRegion("region", "jclouds#group")).andReturn(ImmutableSet.<KeyPair> of());
-      expect(keyClient.importKeyPairInRegion("region", "jclouds#group", PUBLIC_KEY)).andThrow(
+      expect(keyApi.describeKeyPairsInRegion("region", "jclouds#group")).andReturn(ImmutableSet.<KeyPair> of());
+      expect(keyApi.importKeyPairInRegion("region", "jclouds#group", PUBLIC_KEY)).andThrow(
                new IllegalStateException());
-      expect(keyClient.describeKeyPairsInRegion("region", "jclouds#group")).andReturn(ImmutableSet.<KeyPair> of(pair));
+      expect(keyApi.describeKeyPairsInRegion("region", "jclouds#group")).andReturn(ImmutableSet.<KeyPair> of(pair));
 
       replay(client);
-      replay(keyClient);
+      replay(keyApi);
 
       ImportOrReturnExistingKeypair parser = new ImportOrReturnExistingKeypair(client);
 
       assertEquals(parser.importOrReturnExistingKeypair("region", "group", PUBLIC_KEY), pairWithFingerprint);
 
       verify(client);
-      verify(keyClient);
+      verify(keyApi);
 
    }
 }

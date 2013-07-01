@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.domain.PublicIpInstanceIdPair;
 
@@ -34,17 +34,17 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class LoadPublicIpForInstanceOrNull extends CacheLoader<RegionAndName, String> {
-   private final EC2Client client;
+   private final EC2Api client;
 
    @Inject
-   public LoadPublicIpForInstanceOrNull(EC2Client client) {
+   public LoadPublicIpForInstanceOrNull(EC2Api client) {
       this.client = client;
    }
 
    @Override
    public String load(final RegionAndName key) throws Exception {
       try {
-         return Iterables.find(client.getElasticIPAddressServices().describeAddressesInRegion(key.getRegion()),
+         return Iterables.find(client.getElasticIPAddressApi().get().describeAddressesInRegion(key.getRegion()),
                   new Predicate<PublicIpInstanceIdPair>() {
 
                      @Override

@@ -31,7 +31,7 @@ import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.domain.UserIdGroupPair;
-import org.jclouds.ec2.services.SecurityGroupClient;
+import org.jclouds.ec2.features.SecurityGroupApi;
 import org.jclouds.net.domain.IpProtocol;
 import org.testng.annotations.Test;
 
@@ -49,7 +49,7 @@ public class CreateSecurityGroupIfNeededTest {
    @Test
    public void testWhenPort22AndToItselfAuthorizesIngressTwice() throws ExecutionException {
 
-      SecurityGroupClient client = createMock(SecurityGroupClient.class);
+      SecurityGroupApi client = createMock(SecurityGroupApi.class);
       Predicate<RegionAndName> tester = Predicates.alwaysTrue();
 
       SecurityGroup group = createNiceMock(SecurityGroup.class);
@@ -76,7 +76,7 @@ public class CreateSecurityGroupIfNeededTest {
    @Test
    public void testIllegalStateExceptionCreatingGroupJustReturns() throws ExecutionException {
 
-      SecurityGroupClient client = createMock(SecurityGroupClient.class);
+      SecurityGroupApi client = createMock(SecurityGroupApi.class);
       Predicate<RegionAndName> tester = Predicates.alwaysTrue();
 
       client.createSecurityGroupInRegion("region", "group", "group");
@@ -95,7 +95,7 @@ public class CreateSecurityGroupIfNeededTest {
    @Test(expectedExceptions = RuntimeException.class)
    public void testWhenEventualConsistencyExpiresIllegalStateException() throws ExecutionException {
 
-      SecurityGroupClient client = createMock(SecurityGroupClient.class);
+      SecurityGroupApi client = createMock(SecurityGroupApi.class);
       Predicate<RegionAndName> tester = Predicates.alwaysFalse();
 
       client.createSecurityGroupInRegion("region", "group", "group");

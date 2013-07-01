@@ -27,8 +27,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.AWSEC2Client;
-import org.jclouds.aws.ec2.services.AWSSecurityGroupClient;
+import org.jclouds.aws.ec2.AWSEC2Api;
+import org.jclouds.aws.ec2.features.AWSSecurityGroupApi;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
@@ -52,18 +52,18 @@ public class AWSEC2CreateSecurityGroupIfNeeded extends CacheLoader<RegionAndName
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   protected final AWSSecurityGroupClient securityClient;
+   protected final AWSSecurityGroupApi securityApi;
    protected final Predicate<RegionAndName> securityGroupEventualConsistencyDelay;
 
    @Inject
-   public AWSEC2CreateSecurityGroupIfNeeded(AWSEC2Client ec2Client,
+   public AWSEC2CreateSecurityGroupIfNeeded(AWSEC2Api ec2Api,
          @Named("SECURITY") Predicate<RegionAndName> securityGroupEventualConsistencyDelay) {
-      this(checkNotNull(ec2Client, "ec2Client").getSecurityGroupServices(), securityGroupEventualConsistencyDelay);
+      this(checkNotNull(ec2Api, "ec2Api").getSecurityGroupApi().get(), securityGroupEventualConsistencyDelay);
    }
 
-   public AWSEC2CreateSecurityGroupIfNeeded(AWSSecurityGroupClient securityClient,
+   public AWSEC2CreateSecurityGroupIfNeeded(AWSSecurityGroupApi securityApi,
          @Named("SECURITY") Predicate<RegionAndName> securityGroupEventualConsistencyDelay) {
-      this.securityClient = checkNotNull(securityClient, "securityClient");
+      this.securityApi = checkNotNull(securityApi, "securityApi");
       this.securityGroupEventualConsistencyDelay = checkNotNull(securityGroupEventualConsistencyDelay,
             "securityGroupEventualConsistencyDelay");
    }
@@ -80,7 +80,7 @@ public class AWSEC2CreateSecurityGroupIfNeeded extends CacheLoader<RegionAndName
       checkNotNull(name, "name");
       logger.debug(">> creating securityGroup region(%s) name(%s)", region, name);
       try {
-         securityClient.createSecurityGroupInRegion(region, name, name);
+         securityApi.createSecurityGroupInRegion(region, name, name);
          boolean created = securityGroupEventualConsistencyDelay.apply(new RegionAndName(region, name));
          if (!created)
             throw new RuntimeException(String.format("security group %s/%s is not available after creating", region,
@@ -99,7 +99,7 @@ public class AWSEC2CreateSecurityGroupIfNeeded extends CacheLoader<RegionAndName
                                .build());
             }
 
-            String myOwnerId = Iterables.get(securityClient.describeSecurityGroupsInRegion(region, name), 0).getOwnerId();
+            String myOwnerId = Iterables.get(securityApi.describeSecurityGroupsInRegion(region, name), 0).getOwnerId();
             permissions.add(IpPermission.builder()
                             .fromPort(0)
                             .toPort(65535)
@@ -118,7 +118,7 @@ public class AWSEC2CreateSecurityGroupIfNeeded extends CacheLoader<RegionAndName
 
          if (perms.size() > 0) {
             logger.debug(">> authorizing securityGroup region(%s) name(%s) IpPermissions(%s)", region, name, perms);
-            securityClient.authorizeSecurityGroupIngressInRegion(region, name, perms);
+            securityApi.authorizeSecurityGroupIngressInRegion(region, name, perms);
             logger.debug("<< authorized securityGroup(%s)", name);
          }            
 

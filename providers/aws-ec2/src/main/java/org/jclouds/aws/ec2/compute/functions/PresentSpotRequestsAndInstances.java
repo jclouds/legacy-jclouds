@@ -33,7 +33,7 @@ import java.util.Set;
 
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
 import org.jclouds.aws.ec2.functions.SpotInstanceRequestToAWSRunningInstance;
@@ -56,11 +56,11 @@ import com.google.inject.Inject;
 @Singleton
 public class PresentSpotRequestsAndInstances extends PresentInstances {
 
-   private final AWSEC2Client client;
+   private final AWSEC2Api client;
    private final Function<SpotInstanceRequest, AWSRunningInstance> spotConverter;
 
    @Inject
-   public PresentSpotRequestsAndInstances(AWSEC2Client client, Function<SpotInstanceRequest, AWSRunningInstance> spotConverter) {
+   public PresentSpotRequestsAndInstances(AWSEC2Api client, Function<SpotInstanceRequest, AWSRunningInstance> spotConverter) {
       super(client);
       this.client = checkNotNull(client, "client");
       this.spotConverter = checkNotNull(spotConverter, "spotConverter");
@@ -83,7 +83,7 @@ public class PresentSpotRequestsAndInstances extends PresentInstances {
          Collection<String> spotIds = entry.getValue();
          logger.trace("looking for spots %s in region %s", spotIds, region);
          builder.addAll(transform(
-               client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(region,
+                                  client.getSpotInstanceApi().get().describeSpotInstanceRequestsInRegion(region,
                      toArray(spotIds, String.class)), spotConverter));
       }
       return builder.build();

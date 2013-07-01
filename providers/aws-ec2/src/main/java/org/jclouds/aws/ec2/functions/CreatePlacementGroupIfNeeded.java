@@ -25,7 +25,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.AWSResponseException;
-import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.domain.PlacementGroup.State;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -44,13 +44,13 @@ public class CreatePlacementGroupIfNeeded extends CacheLoader<RegionAndName, Str
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   protected final AWSEC2Client ec2Client;
+   protected final AWSEC2Api ec2Api;
    protected final Predicate<PlacementGroup> placementGroupAvailable;
 
    @Inject
-   public CreatePlacementGroupIfNeeded(AWSEC2Client ec2Client,
+   public CreatePlacementGroupIfNeeded(AWSEC2Api ec2Api,
             @Named("AVAILABLE") Predicate<PlacementGroup> placementGroupAvailable) {
-      this.ec2Client = ec2Client;
+      this.ec2Api = ec2Api;
       this.placementGroupAvailable = placementGroupAvailable;
    }
 
@@ -65,7 +65,7 @@ public class CreatePlacementGroupIfNeeded extends CacheLoader<RegionAndName, Str
       checkNotNull(name, "name");
       logger.debug(">> creating placementGroup region(%s) name(%s)", region, name);
       try {
-         ec2Client.getPlacementGroupServices().createPlacementGroupInRegion(region, name);
+         ec2Api.getPlacementGroupApi().get().createPlacementGroupInRegion(region, name);
          logger.debug("<< created placementGroup(%s)", name);
          checkState(placementGroupAvailable.apply(new PlacementGroup(region, name, "cluster", State.PENDING)), String
                   .format("placementGroup region(%s) name(%s) failed to become available", region, name));

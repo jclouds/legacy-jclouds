@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.logging.Logger;
@@ -40,13 +40,13 @@ import com.google.inject.Inject;
 @Singleton
 public class SecurityGroupPresent implements Predicate<RegionAndName> {
 
-   private final EC2Client client;
+   private final EC2Api client;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public SecurityGroupPresent(EC2Client client) {
+   public SecurityGroupPresent(EC2Api client) {
       this.client = checkNotNull(client, "client");
    }
 
@@ -62,7 +62,7 @@ public class SecurityGroupPresent implements Predicate<RegionAndName> {
    }
 
    protected SecurityGroup refresh(RegionAndName securityGroup) {
-      return Iterables.getOnlyElement(client.getSecurityGroupServices().describeSecurityGroupsInRegion(
+      return Iterables.getOnlyElement(client.getSecurityGroupApi().get().describeSecurityGroupsInRegion(
             securityGroup.getRegion(), securityGroup.getName()));
    }
 }

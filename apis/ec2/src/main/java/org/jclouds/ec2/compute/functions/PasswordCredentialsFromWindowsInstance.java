@@ -31,7 +31,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.domain.PasswordDataAndPrivateKey;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.domain.KeyPair;
@@ -59,20 +59,20 @@ public class PasswordCredentialsFromWindowsInstance implements Function<RunningI
    protected Logger logger = Logger.NULL;
 
    private final ConcurrentMap<RegionAndName, KeyPair> credentialsMap;
-   private final EC2Client ec2Client;
+   private final EC2Api ec2Api;
    private final Function<PasswordDataAndPrivateKey, LoginCredentials> pwDataToLoginCredentials;
 
    @Inject
    protected PasswordCredentialsFromWindowsInstance(ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
-            EC2Client ec2Client, Function<PasswordDataAndPrivateKey, LoginCredentials> pwDataToLoginCredentials) {
+            EC2Api ec2Api, Function<PasswordDataAndPrivateKey, LoginCredentials> pwDataToLoginCredentials) {
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
-      this.ec2Client = checkNotNull(ec2Client, "ec2Client");
+      this.ec2Api = checkNotNull(ec2Api, "ec2Api");
       this.pwDataToLoginCredentials = checkNotNull(pwDataToLoginCredentials, "pwDataToLoginCredentials");
    }
 
    @Override
    public LoginCredentials apply(final RunningInstance instance) {
-      Optional<? extends WindowsApi> windowsOption = ec2Client.getWindowsApiForRegion(instance.getRegion());
+      Optional<? extends WindowsApi> windowsOption = ec2Api.getWindowsApiForRegion(instance.getRegion());
       checkState(windowsOption.isPresent(), "windows feature not present in region %s", instance.getRegion());
       
       final WindowsApi windowsApi = windowsOption.get();

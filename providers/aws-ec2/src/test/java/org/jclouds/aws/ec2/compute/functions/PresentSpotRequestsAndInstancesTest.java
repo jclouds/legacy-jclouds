@@ -24,17 +24,18 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
 
-import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
-import org.jclouds.aws.ec2.services.AWSInstanceClient;
-import org.jclouds.aws.ec2.services.SpotInstanceClient;
+import org.jclouds.aws.ec2.features.AWSInstanceApi;
+import org.jclouds.aws.ec2.features.SpotInstanceApi;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.domain.Reservation;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -50,25 +51,25 @@ public class PresentSpotRequestsAndInstancesTest {
    @Test
    public void testWhenInstancesPresentSingleCall() {
 
-      AWSEC2Client client = createMock(AWSEC2Client.class);
-      AWSInstanceClient instanceClient = createMock(AWSInstanceClient.class);
+      AWSEC2Api client = createMock(AWSEC2Api.class);
+      AWSInstanceApi instanceApi = createMock(AWSInstanceApi.class);
       Function<SpotInstanceRequest, AWSRunningInstance> converter = createMock(Function.class);
 
-      expect(client.getInstanceServices()).andReturn(instanceClient);
+      expect(client.getInstanceApi()).andReturn((Optional) Optional.of(instanceApi));
       
       // avoid imatcher fail.  if you change this, be sure to check multiple jres
-      expect(instanceClient.describeInstancesInRegion("us-east-1", "i-aaaa", "i-bbbb")).andReturn(
+      expect(instanceApi.describeInstancesInRegion("us-east-1", "i-aaaa", "i-bbbb")).andReturn(
             Set.class.cast(ImmutableSet.of(Reservation.<AWSRunningInstance> builder().region("us-east-1")
                   .instances(ImmutableSet.of(instance1, instance2)).build())));
 
-      replay(client, instanceClient, converter);
+      replay(client, instanceApi, converter);
 
       PresentSpotRequestsAndInstances fn = new PresentSpotRequestsAndInstances(client, converter);
 
       assertEquals(fn.apply(ImmutableSet.of(new RegionAndName("us-east-1", "i-aaaa"), new RegionAndName("us-east-1",
             "i-bbbb"))), ImmutableSet.of(instance1, instance2));
 
-      verify(client, instanceClient, converter);
+      verify(client, instanceApi, converter);
    }
 
    SpotInstanceRequest spot1 = createMock(SpotInstanceRequest.class);
@@ -80,20 +81,20 @@ public class PresentSpotRequestsAndInstancesTest {
       Function<SpotInstanceRequest, AWSRunningInstance> converter = Functions.forMap(ImmutableMap.of(spot1, instance1,
             spot2, instance2));
 
-      AWSEC2Client client = createMock(AWSEC2Client.class);
-      SpotInstanceClient spotClient = createMock(SpotInstanceClient.class);
+      AWSEC2Api client = createMock(AWSEC2Api.class);
+      SpotInstanceApi spotApi = createMock(SpotInstanceApi.class);
 
-      expect(client.getSpotInstanceServices()).andReturn(spotClient);
-      expect(spotClient.describeSpotInstanceRequestsInRegion("us-east-1", "sir-aaaa", "sir-bbbb")).andReturn(
+      expect(client.getSpotInstanceApi()).andReturn((Optional) Optional.of(spotApi));
+      expect(spotApi.describeSpotInstanceRequestsInRegion("us-east-1", "sir-aaaa", "sir-bbbb")).andReturn(
             ImmutableSet.of(spot1, spot2));
 
-      replay(client, spotClient);
+      replay(client, spotApi);
 
       PresentSpotRequestsAndInstances fn = new PresentSpotRequestsAndInstances(client, converter);
 
       assertEquals(fn.apply(ImmutableSet.of(new RegionAndName("us-east-1", "sir-aaaa"), new RegionAndName("us-east-1",
             "sir-bbbb"))), ImmutableSet.of(instance1, instance2));
 
-      verify(client, spotClient);
+      verify(client, spotApi);
    }
 }

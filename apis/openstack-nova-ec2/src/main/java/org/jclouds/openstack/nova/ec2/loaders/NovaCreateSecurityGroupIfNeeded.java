@@ -23,7 +23,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.AWSResponseException;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.loaders.CreateSecurityGroupIfNeeded;
 
@@ -37,9 +37,9 @@ import com.google.common.base.Predicate;
 public class NovaCreateSecurityGroupIfNeeded extends CreateSecurityGroupIfNeeded {
 
    @Inject
-   public NovaCreateSecurityGroupIfNeeded(EC2Client ec2Client,
+   public NovaCreateSecurityGroupIfNeeded(EC2Api ec2Client,
             @Named("SECURITY") Predicate<RegionAndName> securityGroupEventualConsistencyDelay) {
-      super(checkNotNull(ec2Client, "ec2Client").getSecurityGroupServices(), securityGroupEventualConsistencyDelay);
+      super(checkNotNull(ec2Client, "ec2Client").getSecurityGroupApi().get(), securityGroupEventualConsistencyDelay);
    }
 
    protected void authorizeGroupToItself(String region, String name) {

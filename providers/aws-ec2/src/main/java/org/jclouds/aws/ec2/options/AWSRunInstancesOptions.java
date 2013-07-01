@@ -37,7 +37,7 @@ import com.google.common.collect.ImmutableSet;
  * <code>
  * import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.*
  * <p/>
- * EC2Client connection = // get connection
+ * EC2Api connection = // get connection
  * Future<ReservationInfo> instances = connection.runInstances(executableBy("123125").imageIds(1000, 1004));
  * <code>
  * 

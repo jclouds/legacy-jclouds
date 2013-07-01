@@ -22,8 +22,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.services.AvailabilityZoneAndRegionClient;
+import org.jclouds.ec2.EC2Api;
+import org.jclouds.ec2.features.AvailabilityZoneAndRegionApi;
 import org.jclouds.location.Region;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.util.Suppliers2;
@@ -33,11 +33,11 @@ import com.google.common.collect.Maps;
 
 @Singleton
 public class DescribeRegionsForRegionURIs implements RegionIdToURISupplier {
-   private final AvailabilityZoneAndRegionClient client;
+   private final AvailabilityZoneAndRegionApi client;
 
    @Inject
-   public DescribeRegionsForRegionURIs(EC2Client client) {
-      this.client = client.getAvailabilityZoneAndRegionServices();
+   public DescribeRegionsForRegionURIs(EC2Api client) {
+      this.client = client.getAvailabilityZoneAndRegionApi().get();
    }
 
    @Singleton

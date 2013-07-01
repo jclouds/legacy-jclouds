@@ -31,8 +31,8 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.ec2.compute.EC2ComputeServiceContext;
 import org.jclouds.ec2.compute.config.EC2ComputeServiceContextModule;
 import org.jclouds.ec2.compute.config.EC2ResolveImagesModule;
-import org.jclouds.ec2.config.EC2RestClientModule;
-import org.jclouds.rest.internal.BaseRestApiMetadata;
+import org.jclouds.ec2.config.EC2HttpApiModule;
+import org.jclouds.rest.internal.BaseHttpApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
@@ -55,16 +55,8 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class EC2ApiMetadata extends BaseRestApiMetadata {
+public class EC2ApiMetadata extends BaseHttpApiMetadata<EC2Api> {
 
-   /**
-    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(EC2Client.class)} as
-    *             {@link EC2AsyncClient} interface will be removed in jclouds 1.7.
-    */
-   @Deprecated
-   public static final TypeToken<org.jclouds.rest.RestContext<? extends EC2Client, ? extends EC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<? extends EC2Client, ? extends EC2AsyncClient>>() {
-      private static final long serialVersionUID = 1L;
-   };
 
    @Override
    public Builder<?> toBuilder() {
@@ -80,7 +72,7 @@ public class EC2ApiMetadata extends BaseRestApiMetadata {
    }
 
    public static Properties defaultProperties() {
-      Properties properties = BaseRestApiMetadata.defaultProperties();
+      Properties properties = BaseHttpApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
       properties.setProperty(PROPERTY_HEADER_TAG, "amz");
       properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "*");
@@ -91,14 +83,8 @@ public class EC2ApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public abstract static class Builder<T extends Builder<T>> extends BaseRestApiMetadata.Builder<T> {
-      @SuppressWarnings("deprecation")
+   public abstract static class Builder<T extends Builder<T>> extends BaseHttpApiMetadata.Builder<EC2Api, T> {
       protected Builder() {
-         this(EC2Client.class, EC2AsyncClient.class);
-      }
-
-      protected Builder(Class<?> syncClient, Class<?> asyncClient) {
-         super(syncClient, asyncClient);
          id("ec2")
          .name("Amazon Elastic Compute Cloud (EC2) API")
          .identityName("Access Key ID")
@@ -107,9 +93,8 @@ public class EC2ApiMetadata extends BaseRestApiMetadata {
          .documentation(URI.create("http://docs.amazonwebservices.com/AWSEC2/latest/APIReference"))
          .version("2010-06-15")
          .defaultProperties(EC2ApiMetadata.defaultProperties())
-         .context(CONTEXT_TOKEN)
          .view(EC2ComputeServiceContext.class)
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(EC2RestClientModule.class, EC2ResolveImagesModule.class, EC2ComputeServiceContextModule.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(EC2HttpApiModule.class, EC2ResolveImagesModule.class, EC2ComputeServiceContextModule.class));
       }
 
       @Override

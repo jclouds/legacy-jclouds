@@ -25,11 +25,12 @@ import static org.testng.Assert.assertEquals;
 import java.net.UnknownHostException;
 
 import org.jclouds.ec2.EC2ApiMetadata;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.domain.KeyPair;
-import org.jclouds.ec2.services.KeyPairClient;
+import org.jclouds.ec2.features.KeyPairApi;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.inject.AbstractModule;
@@ -45,11 +46,11 @@ public class CreateUniqueKeyPairTest {
    
    @Test
    public void testApply() throws UnknownHostException {
-      final EC2Client client = createMock(EC2Client.class);
-      KeyPairClient keyClient = createMock(KeyPairClient.class);
+      final EC2Api client = createMock(EC2Api.class);
+      KeyPairApi keyClient = createMock(KeyPairApi.class);
       KeyPair pair = createMock(KeyPair.class);
 
-      expect(client.getKeyPairServices()).andReturn(keyClient).atLeastOnce();
+      expect(client.getKeyPairApi()).andReturn((Optional) Optional.of(keyClient)).atLeastOnce();
 
       expect(keyClient.createKeyPairInRegion("region", "jclouds#group#1")).andReturn(pair);
 
@@ -63,7 +64,7 @@ public class CreateUniqueKeyPairTest {
             Names.bindProperties(binder(),new EC2ApiMetadata().getDefaultProperties());
             bind(new TypeLiteral<Supplier<String>>() {
             }).toInstance(Suppliers.ofInstance("1"));
-            bind(EC2Client.class).toInstance(client);
+            bind(EC2Api.class).toInstance(client);
          }
 
       }).getInstance(CreateUniqueKeyPair.class);
@@ -77,13 +78,13 @@ public class CreateUniqueKeyPairTest {
    @SuppressWarnings( { "unchecked" })
    @Test
    public void testApplyWithIllegalStateException() throws UnknownHostException {
-      final EC2Client client = createMock(EC2Client.class);
-      KeyPairClient keyClient = createMock(KeyPairClient.class);
+      final EC2Api client = createMock(EC2Api.class);
+      KeyPairApi keyClient = createMock(KeyPairApi.class);
       final Supplier<String> uniqueIdSupplier = createMock(Supplier.class);
 
       KeyPair pair = createMock(KeyPair.class);
 
-      expect(client.getKeyPairServices()).andReturn(keyClient).atLeastOnce();
+      expect(client.getKeyPairApi()).andReturn((Optional) Optional.of(keyClient)).atLeastOnce();
 
       expect(uniqueIdSupplier.get()).andReturn("1");
       expect(keyClient.createKeyPairInRegion("region", "jclouds#group#1")).andThrow(new IllegalStateException());
@@ -101,7 +102,7 @@ public class CreateUniqueKeyPairTest {
             Names.bindProperties(binder(),new EC2ApiMetadata().getDefaultProperties());
             bind(new TypeLiteral<Supplier<String>>() {
             }).toInstance(uniqueIdSupplier);
-            bind(EC2Client.class).toInstance(client);
+            bind(EC2Api.class).toInstance(client);
          }
 
       }).getInstance(CreateUniqueKeyPair.class);

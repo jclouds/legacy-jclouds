@@ -24,12 +24,12 @@
   (:import org.jclouds.compute.domain.NodeMetadata
     (org.jclouds.ec2.domain PublicIpInstanceIdPair)))
 
-(defn ^org.jclouds.ec2.services.ElasticIPAddressClient
+(defn ^org.jclouds.ec2.features.ElasticIPAddressApi
   eip-service
-  "Returns an ElasticIPAddressClient for the given ComputeService"
+  "Returns an ElasticIPAddressApi for the given ComputeService"
   [compute]
   (-> compute
-    .getContext .getProviderSpecificContext .getApi .getElasticIPAddressServices))
+    .getContext .getProviderSpecificContext .getApi .getElasticIPAddressApi().get))
 
 (defn allocate
   "Claims a new elastic IP address within the (optionally) specified region for your account.

@@ -31,8 +31,8 @@ import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
 import org.jclouds.ec2.options.DescribeAvailabilityZonesOptions;
 import org.jclouds.ec2.options.DescribeImagesOptions;
 import org.jclouds.ec2.options.DescribeRegionsOptions;
-import org.jclouds.ec2.services.AMIAsyncClient;
-import org.jclouds.ec2.services.AvailabilityZoneAndRegionAsyncClient;
+import org.jclouds.ec2.features.AMIApi;
+import org.jclouds.ec2.features.AvailabilityZoneAndRegionApi;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -67,8 +67,8 @@ public abstract class EC2TemplateBuilderLiveTest extends BaseTemplateBuilderLive
 
          Collection<HttpCommand> filteredCommandsInvoked = Collections2.filter(commandsInvoked, new Predicate<HttpCommand>() {
             private final Collection<Method> ignored = ImmutableSet.of(
-                     AvailabilityZoneAndRegionAsyncClient.class.getMethod("describeRegions", DescribeRegionsOptions[].class),
-                     AvailabilityZoneAndRegionAsyncClient.class.getMethod("describeAvailabilityZonesInRegion", String.class, DescribeAvailabilityZonesOptions[].class));
+                     AvailabilityZoneAndRegionApi.class.getMethod("describeRegions", DescribeRegionsOptions[].class),
+                     AvailabilityZoneAndRegionApi.class.getMethod("describeAvailabilityZonesInRegion", String.class, DescribeAvailabilityZonesOptions[].class));
             @Override
             public boolean apply(HttpCommand input) {
                return !ignored.contains(getInvokerOfRequest(input));
@@ -76,7 +76,7 @@ public abstract class EC2TemplateBuilderLiveTest extends BaseTemplateBuilderLive
          });
          
          assert filteredCommandsInvoked.size() == 1 : commandsInvoked;
-         assertEquals(getInvokerOfRequestAtIndex(filteredCommandsInvoked, 0), AMIAsyncClient.class
+         assertEquals(getInvokerOfRequestAtIndex(filteredCommandsInvoked, 0), AMIApi.class
                   .getMethod("describeImagesInRegion", String.class, DescribeImagesOptions[].class));
          assertDescribeImagesOptionsEquals((DescribeImagesOptions[])getArgsForRequestAtIndex(filteredCommandsInvoked, 0).get(1), 
                   defaultImageProviderId);

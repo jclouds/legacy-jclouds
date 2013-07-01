@@ -20,8 +20,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.jclouds.ec2.services.BaseEC2AsyncClientTest;
-import org.jclouds.ec2.services.InstanceAsyncClient;
+import org.jclouds.ec2.features.BaseEC2ApiTest;
+import org.jclouds.ec2.features.InstanceApi;
 import org.jclouds.http.HttpRequest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "BindS3UploadPolicyAndSignatureTest")
-public class BindS3UploadPolicyAndSignatureTest extends BaseEC2AsyncClientTest<InstanceAsyncClient> {
+public class BindS3UploadPolicyAndSignatureTest extends BaseEC2ApiTest<InstanceApi> {
    private BindS3UploadPolicyAndSignature binder;
 
    @BeforeClass

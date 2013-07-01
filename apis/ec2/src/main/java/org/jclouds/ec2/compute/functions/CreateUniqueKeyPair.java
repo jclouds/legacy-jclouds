@@ -24,7 +24,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.logging.Logger;
@@ -42,12 +42,12 @@ public class CreateUniqueKeyPair implements Function<RegionAndName, KeyPair> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   protected final EC2Client ec2Client;
+   protected final EC2Api ec2Api;
    protected final GroupNamingConvention.Factory namingConvention;
 
    @Inject
-   public CreateUniqueKeyPair(EC2Client ec2Client, GroupNamingConvention.Factory namingConvention) {
-      this.ec2Client = ec2Client;
+   public CreateUniqueKeyPair(EC2Api ec2Api, GroupNamingConvention.Factory namingConvention) {
+      this.ec2Api = ec2Api;
       this.namingConvention = checkNotNull(namingConvention, "namingConvention");
    }
 
@@ -67,7 +67,7 @@ public class CreateUniqueKeyPair implements Function<RegionAndName, KeyPair> {
       while (keyPair == null) {
          String keyName = namingConvention.create().uniqueNameForGroup(prefix);
          try {
-            keyPair = ec2Client.getKeyPairServices().createKeyPairInRegion(region, keyName);
+            keyPair = ec2Api.getKeyPairApi().get().createKeyPairInRegion(region, keyName);
          } catch (IllegalStateException e) {
             logger.trace("   invalid keyname (%s in %s); retrying", keyName, region);
          }

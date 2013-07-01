@@ -29,8 +29,8 @@ import org.jclouds.ec2.options.internal.BaseEC2RequestOptions;
  * <code>
  * import static org.jclouds.ec2.options.DetachVolumeOptions.Builder.*
  * <p/>
- * EC2Client client = // get connection
- * client.getElasticBlockStoreServices().detachVolumeInRegion(null, id, fromDevice("123125").force());
+ * EC2Api client = // get connection
+ * client.getElasticBlockStoreApi().get().detachVolumeInRegion(null, id, fromDevice("123125").force());
  * <code>
  * 
  * @author Adrian Cole

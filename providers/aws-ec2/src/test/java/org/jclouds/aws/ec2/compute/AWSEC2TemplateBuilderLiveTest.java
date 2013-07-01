@@ -26,12 +26,14 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
 import org.jclouds.aws.ec2.reference.AWSEC2Constants;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.compute.EC2TemplateBuilderLiveTest;
 import org.jclouds.ec2.compute.predicates.EC2ImagePredicates;
@@ -40,7 +42,7 @@ import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.options.DescribeAvailabilityZonesOptions;
 import org.jclouds.ec2.options.DescribeRegionsOptions;
 import org.jclouds.ec2.reference.EC2Constants;
-import org.jclouds.ec2.services.AvailabilityZoneAndRegionAsyncClient;
+import org.jclouds.ec2.features.AvailabilityZoneAndRegionApi;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService;
 import org.jclouds.location.reference.LocationConstants;
@@ -336,9 +338,9 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
          throws NoSuchMethodException {
       assert commandsInvoked.size() == 2 : commandsInvoked;
       assertEquals(getInvokerOfRequestAtIndex(commandsInvoked, 0),
-            AvailabilityZoneAndRegionAsyncClient.class.getMethod("describeRegions", DescribeRegionsOptions[].class));
+            AvailabilityZoneAndRegionApi.class.getMethod("describeRegions", DescribeRegionsOptions[].class));
       assertEquals(getInvokerOfRequestAtIndex(commandsInvoked, 1),
-            AvailabilityZoneAndRegionAsyncClient.class.getMethod("describeAvailabilityZonesInRegion", String.class,
+            AvailabilityZoneAndRegionApi.class.getMethod("describeAvailabilityZonesInRegion", String.class,
                   DescribeAvailabilityZonesOptions[].class));
    }
 
@@ -355,8 +357,8 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
    
    @Test
    public void testAssignability() {
-      view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN);
-      view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN);
+      view.unwrapApi(EC2Api.class);
+      view.unwrapApi(AWSEC2Api.class);
    }
 
    @Override

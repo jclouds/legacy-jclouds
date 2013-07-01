@@ -22,12 +22,13 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.domain.PublicIpInstanceIdPair;
-import org.jclouds.ec2.services.ElasticIPAddressClient;
+import org.jclouds.ec2.features.ElasticIPAddressApi;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -38,10 +39,10 @@ public class LoadPublicIpForInstanceOrNullTest {
 
    @Test
    public void testReturnsPublicIpOnMatch() throws Exception {
-      EC2Client client = createMock(EC2Client.class);
-      ElasticIPAddressClient ipClient = createMock(ElasticIPAddressClient.class);
+      EC2Api client = createMock(EC2Api.class);
+      ElasticIPAddressApi ipClient = createMock(ElasticIPAddressApi.class);
 
-      expect(client.getElasticIPAddressServices()).andReturn(ipClient).atLeastOnce();
+      expect(client.getElasticIPAddressApi()).andReturn((Optional) Optional.of(ipClient)).atLeastOnce();
       expect(ipClient.describeAddressesInRegion("region")).andReturn(
                ImmutableSet.<PublicIpInstanceIdPair> of(new PublicIpInstanceIdPair("region", "1.1.1.1", "i-blah")))
                .atLeastOnce();
@@ -59,10 +60,10 @@ public class LoadPublicIpForInstanceOrNullTest {
 
    @Test
    public void testReturnsNullWhenNotFound() throws Exception {
-      EC2Client client = createMock(EC2Client.class);
-      ElasticIPAddressClient ipClient = createMock(ElasticIPAddressClient.class);
+      EC2Api client = createMock(EC2Api.class);
+      ElasticIPAddressApi ipClient = createMock(ElasticIPAddressApi.class);
 
-      expect(client.getElasticIPAddressServices()).andReturn(ipClient).atLeastOnce();
+      expect(client.getElasticIPAddressApi()).andReturn((Optional) Optional.of(ipClient)).atLeastOnce();
 
       expect(ipClient.describeAddressesInRegion("region")).andReturn(ImmutableSet.<PublicIpInstanceIdPair> of())
                .atLeastOnce();
@@ -81,10 +82,10 @@ public class LoadPublicIpForInstanceOrNullTest {
 
    @Test
    public void testReturnsNullWhenNotAssigned() throws Exception {
-      EC2Client client = createMock(EC2Client.class);
-      ElasticIPAddressClient ipClient = createMock(ElasticIPAddressClient.class);
+      EC2Api client = createMock(EC2Api.class);
+      ElasticIPAddressApi ipClient = createMock(ElasticIPAddressApi.class);
 
-      expect(client.getElasticIPAddressServices()).andReturn(ipClient).atLeastOnce();
+      expect(client.getElasticIPAddressApi()).andReturn((Optional) Optional.of(ipClient)).atLeastOnce();
 
       expect(ipClient.describeAddressesInRegion("region")).andReturn(
                ImmutableSet.<PublicIpInstanceIdPair> of(new PublicIpInstanceIdPair("region", "1.1.1.1", null)))

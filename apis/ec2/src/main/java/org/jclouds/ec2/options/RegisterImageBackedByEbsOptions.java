@@ -31,7 +31,7 @@ import org.jclouds.javax.annotation.Nullable;
  * <code>
  * import static org.jclouds.ec2.options.RegisterImageBackedByEbsOptions.Builder.*
  * <p/>
- * EC2Client connection = // get connection
+ * EC2Api connection = // get connection
  * String imageId = connection.getImageServices().registerImageBackedByEbs(...addEphemeralBlockDeviceFromSnapshot("/dev/sda2","virtual-1","snapshot-id"));
  * <code>
  * 

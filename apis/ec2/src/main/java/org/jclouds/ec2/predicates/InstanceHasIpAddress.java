@@ -20,7 +20,7 @@ import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.AWSResponseException;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.logging.Logger;
 
@@ -37,13 +37,13 @@ import com.google.inject.Inject;
 @Singleton
 public class InstanceHasIpAddress implements Predicate<RunningInstance> {
 
-   private final EC2Client client;
+   private final EC2Api client;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public InstanceHasIpAddress(EC2Client client) {
+   public InstanceHasIpAddress(EC2Api client) {
       this.client = client;
    }
 
@@ -60,7 +60,7 @@ public class InstanceHasIpAddress implements Predicate<RunningInstance> {
    }
 
    private RunningInstance refresh(RunningInstance instance) {
-      return Iterables.getOnlyElement(Iterables.getOnlyElement(client.getInstanceServices()
+      return Iterables.getOnlyElement(Iterables.getOnlyElement(client.getInstanceApi().get()
                .describeInstancesInRegion(instance.getRegion(), instance.getId())));
    }
 }

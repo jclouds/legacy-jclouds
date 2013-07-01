@@ -22,14 +22,14 @@
   (:require (org.jclouds [compute2 :as compute])
     [org.jclouds.ec2.ebs2 :as ebs])
   (:import org.jclouds.ec2.domain.SecurityGroup
-           org.jclouds.ec2.services.SecurityGroupClient
+           org.jclouds.ec2.features.SecurityGroupApi
            org.jclouds.net.domain.IpProtocol))
 
-(defn #^SecurityGroupClient
+(defn #^SecurityGroupApi
   sg-service
-  "Returns the SecurityGroup Client associated with the specified  compute service."
+  "Returns the SecurityGroup Api associated with the specified  compute service."
   [compute]
-  (-> compute .getContext .getProviderSpecificContext .getApi .getSecurityGroupServices))
+  (-> compute .getContext .getProviderSpecificContext .getApi .getSecurityGroupApi().get))
 
 (defn create-group
   "Creates a new security group.
