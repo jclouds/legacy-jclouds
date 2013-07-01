@@ -22,7 +22,7 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Options to the GlobalHostClient.addHost() API call
+ * Options to the GlobalHostApi.addHost() API call
  *
  * @author Richard Downer
  */

@@ -23,10 +23,10 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.User;
-import org.jclouds.cloudstack.features.NetworkClient;
+import org.jclouds.cloudstack.features.NetworkApi;
 import org.jclouds.collect.Memoized;
 
 import com.google.common.base.Function;
@@ -38,11 +38,11 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 public class NetworksForCurrentUser implements Supplier<Map<String, Network>> {
-   private final CloudStackClient client;
+   private final CloudStackApi client;
    private final Supplier<User> currentUserSupplier;
 
    @Inject
-   public NetworksForCurrentUser(CloudStackClient client, @Memoized Supplier<User> currentUserSupplier) {
+   public NetworksForCurrentUser(CloudStackApi client, @Memoized Supplier<User> currentUserSupplier) {
       this.client = checkNotNull(client, "client");
       this.currentUserSupplier = checkNotNull(currentUserSupplier, "currentUserSupplier");
    }
@@ -50,7 +50,7 @@ public class NetworksForCurrentUser implements Supplier<Map<String, Network>> {
    @Override
    public Map<String, Network> get() {
       User currentUser = currentUserSupplier.get();
-      NetworkClient networkClient = client.getNetworkClient();
+      NetworkApi networkClient = client.getNetworkApi();
       return Maps.uniqueIndex(
             networkClient.listNetworks(accountInDomain(currentUser.getAccount(), currentUser.getDomainId())),
             new Function<Network, String>() {

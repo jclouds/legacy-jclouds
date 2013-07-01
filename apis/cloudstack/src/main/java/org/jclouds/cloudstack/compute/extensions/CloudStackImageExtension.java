@@ -33,7 +33,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.TemplateMetadata;
@@ -75,7 +75,7 @@ public class CloudStackImageExtension implements ImageExtension {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final CloudStackClient client;
+   private final CloudStackApi client;
    private final ListeningExecutorService userExecutor;
    private final Supplier<Set<? extends Location>> locations;
    private final Predicate<AtomicReference<Image>> imageAvailablePredicate;
@@ -83,7 +83,7 @@ public class CloudStackImageExtension implements ImageExtension {
    private final Predicate<String> jobComplete;
 
    @Inject
-   public CloudStackImageExtension(CloudStackClient client,
+   public CloudStackImageExtension(CloudStackApi client,
                                    @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
                                    @Memoized Supplier<Set<? extends Location>> locations,
                                    @Named(TIMEOUT_IMAGE_AVAILABLE) Predicate<AtomicReference<Image>> imageAvailablePredicate,
@@ -100,7 +100,7 @@ public class CloudStackImageExtension implements ImageExtension {
 
    @Override
    public ImageTemplate buildImageTemplateFromNode(String name, String id) {
-      VirtualMachine vm = client.getVirtualMachineClient().getVirtualMachine(id);
+      VirtualMachine vm = client.getVirtualMachineApi().getVirtualMachine(id);
       if (vm == null)
          throw new NoSuchElementException("Cannot find vm with id: " + id);
       CloneImageTemplate template = new ImageTemplateBuilder.CloneImageTemplateBuilder().nodeId(id).name(name).build();
@@ -113,15 +113,15 @@ public class CloudStackImageExtension implements ImageExtension {
                " cloudstack only currently supports creating images through cloning.");
       CloneImageTemplate cloneTemplate = (CloneImageTemplate) template;
 
-      VirtualMachine vm = client.getVirtualMachineClient().getVirtualMachine(cloneTemplate.getSourceNodeId());
-      String stopJob = client.getVirtualMachineClient().stopVirtualMachine(vm.getId());
+      VirtualMachine vm = client.getVirtualMachineApi().getVirtualMachine(cloneTemplate.getSourceNodeId());
+      String stopJob = client.getVirtualMachineApi().stopVirtualMachine(vm.getId());
       jobComplete.apply(stopJob);
 
-      Set<Volume> volumes = client.getVolumeClient().listVolumes(ListVolumesOptions.Builder.virtualMachineId(vm.getId()));
+      Set<Volume> volumes = client.getVolumeApi().listVolumes(ListVolumesOptions.Builder.virtualMachineId(vm.getId()));
       Volume volume = Iterables.getOnlyElement(volumes);
       
       CreateTemplateOptions options = CreateTemplateOptions.Builder.volumeId(volume.getId());
-      AsyncCreateResponse templateJob = client.getTemplateClient().createTemplate(TemplateMetadata.builder()
+      AsyncCreateResponse templateJob = client.getTemplateApi().createTemplate(TemplateMetadata.builder()
                                                                                   .name(cloneTemplate.getName())
                                                                                   .osTypeId(vm.getGuestOSId())
                                                                                   .displayText(cloneTemplate.getName())
@@ -152,7 +152,7 @@ public class CloudStackImageExtension implements ImageExtension {
    @Override
    public boolean deleteImage(String id) {
       try {
-         AsyncCreateResponse deleteJob = client.getTemplateClient().deleteTemplate(id);
+         AsyncCreateResponse deleteJob = client.getTemplateApi().deleteTemplate(id);
          jobComplete.apply(deleteJob.getJobId());
          return true;
       } catch (Exception e) {

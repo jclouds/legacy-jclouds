@@ -26,10 +26,10 @@ import static org.testng.Assert.assertTrue;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.OSType;
 import org.jclouds.cloudstack.domain.Template;
-import org.jclouds.cloudstack.features.GuestOSClient;
+import org.jclouds.cloudstack.features.GuestOSApi;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -42,16 +42,16 @@ import com.google.common.collect.Maps;
 @Test(groups = "unit", singleThreaded = true)
 public class OSCategoryInTest {
 
-   private CloudStackClient client;
-   private GuestOSClient guestOSClient;
+   private CloudStackApi client;
+   private GuestOSApi guestOSClient;
    private Set<String> acceptableCategories = ImmutableSet.<String>of("Ubuntu");
 
    @BeforeMethod
    public void setUp() {
-      client = createMock(CloudStackClient.class);
-      guestOSClient = createMock(GuestOSClient.class);
+      client = createMock(CloudStackApi.class);
+      guestOSClient = createMock(GuestOSApi.class);
 
-      expect(client.getGuestOSClient()).andReturn(guestOSClient).times(2);
+      expect(client.getGuestOSApi()).andReturn(guestOSClient).times(2);
 
       Map<String, String> osCategories = Maps.newHashMap();
       osCategories.put("1", "Ubuntu");

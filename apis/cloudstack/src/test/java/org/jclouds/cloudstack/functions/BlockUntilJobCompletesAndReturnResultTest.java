@@ -22,12 +22,12 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.cloudstack.domain.AsyncJobError;
 import org.jclouds.cloudstack.domain.AsyncJobError.ErrorCode;
-import org.jclouds.cloudstack.features.AsyncJobClient;
+import org.jclouds.cloudstack.features.AsyncJobApi;
 import org.jclouds.cloudstack.strategy.BlockUntilJobCompletesAndReturnResult;
 import org.testng.annotations.Test;
 
@@ -45,11 +45,11 @@ public class BlockUntilJobCompletesAndReturnResultTest {
       String id = "1";
       String jobId = "2";
 
-      CloudStackClient client = createMock(CloudStackClient.class);
+      CloudStackApi client = createMock(CloudStackApi.class);
       Predicate<String> jobComplete = Predicates.alwaysTrue();
-      AsyncJobClient jobClient = createMock(AsyncJobClient.class);
+      AsyncJobApi jobClient = createMock(AsyncJobApi.class);
 
-      expect(client.getAsyncJobClient()).andReturn(jobClient).atLeastOnce();
+      expect(client.getAsyncJobApi()).andReturn(jobClient).atLeastOnce();
       expect(jobClient.getAsyncJob(jobId)).andReturn(AsyncJob.builder().id(jobId).result("foo").build()).atLeastOnce();
 
       replay(client);
@@ -69,12 +69,12 @@ public class BlockUntilJobCompletesAndReturnResultTest {
       String id = "1";
       String jobId = "2";
 
-      CloudStackClient client = createMock(CloudStackClient.class);
+      CloudStackApi client = createMock(CloudStackApi.class);
       // the alwaysfalse predicate should blow up with IllegalStateException
       Predicate<String> jobComplete = Predicates.alwaysFalse();
-      AsyncJobClient jobClient = createMock(AsyncJobClient.class);
+      AsyncJobApi jobClient = createMock(AsyncJobApi.class);
 
-      expect(client.getAsyncJobClient()).andReturn(jobClient).atLeastOnce();
+      expect(client.getAsyncJobApi()).andReturn(jobClient).atLeastOnce();
       expect(jobClient.getAsyncJob(jobId)).andReturn(AsyncJob.builder().id(jobId).result("foo").build()).atLeastOnce();
 
       replay(client);
@@ -94,11 +94,11 @@ public class BlockUntilJobCompletesAndReturnResultTest {
       String id = "1";
       String jobId = "2";
 
-      CloudStackClient client = createMock(CloudStackClient.class);
+      CloudStackApi client = createMock(CloudStackApi.class);
       Predicate<String> jobComplete = Predicates.alwaysTrue();
-      AsyncJobClient jobClient = createMock(AsyncJobClient.class);
+      AsyncJobApi jobClient = createMock(AsyncJobApi.class);
 
-      expect(client.getAsyncJobClient()).andReturn(jobClient).atLeastOnce();
+      expect(client.getAsyncJobApi()).andReturn(jobClient).atLeastOnce();
       expect(jobClient.getAsyncJob(jobId)).andReturn(
             AsyncJob.builder().id(jobId)
                   .error(AsyncJobError.builder().errorCode(ErrorCode.INTERNAL_ERROR).errorText("ERRROR").build())

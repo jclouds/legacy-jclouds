@@ -22,7 +22,7 @@ import com.google.common.base.CaseFormat;
 
 /**
  * @author Adrian Cole
- * @see OfferingClient#listServiceOfferings
+ * @see OfferingApi#listServiceOfferings
  */
 public enum StorageType {
    LOCAL,

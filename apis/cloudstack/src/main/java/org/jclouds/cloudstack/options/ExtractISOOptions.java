@@ -23,8 +23,8 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options for the ISO extractISO method.
  *
- * @see org.jclouds.cloudstack.features.ISOClient#extractISO
- * @see org.jclouds.cloudstack.features.ISOAsyncClient#extractISO
+ * @see org.jclouds.cloudstack.features.ISOApi#extractISO
+ * @see org.jclouds.cloudstack.features.ISOApi#extractISO
  * @author Richard Downer
  */
 public class ExtractISOOptions extends BaseHttpRequestOptions {

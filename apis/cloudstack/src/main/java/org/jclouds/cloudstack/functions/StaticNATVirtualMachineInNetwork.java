@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.VirtualMachine;
@@ -47,12 +47,12 @@ public class StaticNATVirtualMachineInNetwork implements Function<VirtualMachine
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final CloudStackClient client;
+   private final CloudStackApi client;
    private final ReuseOrAssociateNewPublicIPAddress reuseOrAssociate;
    private final Network network;
 
    @Inject
-   public StaticNATVirtualMachineInNetwork(CloudStackClient client,
+   public StaticNATVirtualMachineInNetwork(CloudStackApi client,
          ReuseOrAssociateNewPublicIPAddress reuseOrAssociate, @Assisted Network network) {
       this.client = checkNotNull(client, "client");
       this.reuseOrAssociate = checkNotNull(reuseOrAssociate, "reuseOrAssociate");
@@ -68,8 +68,8 @@ public class StaticNATVirtualMachineInNetwork implements Function<VirtualMachine
             continue;
          try {
             logger.debug(">> static NATing IPAddress(%s) to virtualMachine(%s)", ip.getId(), vm.getId());
-            client.getNATClient().enableStaticNATForVirtualMachine(vm.getId(), ip.getId());
-            ip = client.getAddressClient().getPublicIPAddress(ip.getId());
+            client.getNATApi().enableStaticNATForVirtualMachine(vm.getId(), ip.getId());
+            ip = client.getAddressApi().getPublicIPAddress(ip.getId());
             if (ip.isStaticNAT() && ip.getVirtualMachineId().equals(vm.getId()))
                break;
          } catch (IllegalStateException e) {

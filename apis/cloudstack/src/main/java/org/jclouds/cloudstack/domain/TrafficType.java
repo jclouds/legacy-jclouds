@@ -22,7 +22,7 @@ import com.google.common.base.CaseFormat;
 
 /**
  * @author Adrian Cole
- * @see NetworkOfferingClient#listNetworkOfferings
+ * @see NetworkOfferingApi#listNetworkOfferings
  */
 public enum TrafficType {
 

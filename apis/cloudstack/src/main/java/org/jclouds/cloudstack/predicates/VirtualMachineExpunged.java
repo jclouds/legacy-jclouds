@@ -21,7 +21,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.logging.Logger;
 
@@ -37,13 +37,13 @@ import com.google.inject.Inject;
 @Singleton
 public class VirtualMachineExpunged implements Predicate<VirtualMachine> {
 
-   private final CloudStackClient client;
+   private final CloudStackApi client;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public VirtualMachineExpunged(CloudStackClient client) {
+   public VirtualMachineExpunged(CloudStackApi client) {
       this.client = client;
    }
 
@@ -53,6 +53,6 @@ public class VirtualMachineExpunged implements Predicate<VirtualMachine> {
    }
 
    private VirtualMachine refresh(VirtualMachine virtualMachine) {
-      return client.getVirtualMachineClient().getVirtualMachine(virtualMachine.getId());
+      return client.getVirtualMachineApi().getVirtualMachine(virtualMachine.getId());
    }
 }

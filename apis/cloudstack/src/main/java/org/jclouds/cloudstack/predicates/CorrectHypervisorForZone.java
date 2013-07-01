@@ -24,7 +24,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.Zone;
 
@@ -47,23 +47,23 @@ public class CorrectHypervisorForZone implements Function<String, Predicate<Temp
    private final Supplier<Map<String, Set<String>>> hypervisorsSupplier;
 
    @Inject
-   public CorrectHypervisorForZone(CloudStackClient client) {
-      this(Suppliers.ofInstance(new CloudStackClientToZoneToHypervisors().apply(checkNotNull(client, "client"))));
+   public CorrectHypervisorForZone(CloudStackApi client) {
+      this(Suppliers.ofInstance(new CloudStackApiToZoneToHypervisors().apply(checkNotNull(client, "client"))));
    }
 
    public CorrectHypervisorForZone(Supplier<Map<String, Set<String>>> hypervisorsSupplier) {
       this.hypervisorsSupplier = checkNotNull(hypervisorsSupplier, "hypervisorsSupplier");
    }
 
-   private static class CloudStackClientToZoneToHypervisors implements
-         Function<CloudStackClient, Map<String, Set<String>>> {
+   private static class CloudStackApiToZoneToHypervisors implements
+         Function<CloudStackApi, Map<String, Set<String>>> {
 
       @Override
-      public Map<String, Set<String>> apply(CloudStackClient client) {
+      public Map<String, Set<String>> apply(CloudStackApi client) {
          checkNotNull(client, "client");
          Builder<String, Set<String>> builder = ImmutableMap.builder();
-         for (Zone zone : client.getZoneClient().listZones()) {
-            builder.put(zone.getId(), client.getHypervisorClient().listHypervisorsInZone(zone.getId()));
+         for (Zone zone : client.getZoneApi().listZones()) {
+            builder.put(zone.getId(), client.getHypervisorApi().listHypervisorsInZone(zone.getId()));
          }
          return builder.build();
       }

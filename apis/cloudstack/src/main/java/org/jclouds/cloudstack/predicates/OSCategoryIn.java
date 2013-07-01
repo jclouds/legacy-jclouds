@@ -24,7 +24,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.OSType;
 import org.jclouds.cloudstack.domain.Template;
 
@@ -46,9 +46,9 @@ public class OSCategoryIn implements Function<Set<String>, Predicate<Template>> 
    private final Supplier<Set<OSType>> osTypesSupplier;
 
    @Inject
-   public OSCategoryIn(CloudStackClient client) {
-      this(Suppliers.ofInstance(checkNotNull(client, "client").getGuestOSClient().listOSCategories()), Suppliers
-            .ofInstance(client.getGuestOSClient().listOSTypes()));
+   public OSCategoryIn(CloudStackApi client) {
+      this(Suppliers.ofInstance(checkNotNull(client, "client").getGuestOSApi().listOSCategories()), Suppliers
+            .ofInstance(client.getGuestOSApi().listOSTypes()));
    }
 
    public OSCategoryIn(Supplier<Map<String, String>> categoriesSupplier, Supplier<Set<OSType>> osTypesSupplier) {

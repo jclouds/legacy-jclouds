@@ -23,8 +23,8 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options for the ISO deleteISO method.
  *
- * @see org.jclouds.cloudstack.features.ISOClient#deleteISO
- * @see org.jclouds.cloudstack.features.ISOAsyncClient#deleteISO
+ * @see org.jclouds.cloudstack.features.ISOApi#deleteISO
+ * @see org.jclouds.cloudstack.features.ISOApi#deleteISO
  * @author Richard Downer
  */
 public class DeleteISOOptions extends BaseHttpRequestOptions {

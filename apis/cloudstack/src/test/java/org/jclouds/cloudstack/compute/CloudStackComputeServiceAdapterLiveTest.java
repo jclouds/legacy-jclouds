@@ -29,7 +29,7 @@ import java.util.Set;
 
 import javax.inject.Singleton;
 
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.compute.config.CloudStackComputeServiceContextModule;
 import org.jclouds.cloudstack.compute.functions.OrphanedGroupsByZoneId;
 import org.jclouds.cloudstack.compute.loaders.CreateUniqueKeyPair;
@@ -38,7 +38,7 @@ import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.compute.strategy.CloudStackComputeServiceAdapter;
 import org.jclouds.cloudstack.compute.strategy.OptionsConverter;
 import org.jclouds.cloudstack.config.CloudStackParserModule;
-import org.jclouds.cloudstack.config.CloudStackRestClientModule;
+import org.jclouds.cloudstack.config.CloudStackHttpApiModule;
 import org.jclouds.cloudstack.domain.FirewallRule;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.Network;
@@ -56,7 +56,7 @@ import org.jclouds.cloudstack.functions.GetFirewallRulesByVirtualMachine;
 import org.jclouds.cloudstack.functions.GetIPForwardingRulesByVirtualMachine;
 import org.jclouds.cloudstack.functions.StaticNATVirtualMachineInNetwork;
 import org.jclouds.cloudstack.functions.ZoneIdToZone;
-import org.jclouds.cloudstack.internal.BaseCloudStackClientLiveTest;
+import org.jclouds.cloudstack.internal.BaseCloudStackApiLiveTest;
 import org.jclouds.cloudstack.predicates.JobComplete;
 import org.jclouds.cloudstack.predicates.TemplatePredicates;
 import org.jclouds.cloudstack.suppliers.GetCurrentUser;
@@ -99,7 +99,7 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Names;
 
 @Test(groups = "live", singleThreaded = true, testName = "CloudStackComputeServiceAdapterLiveTest")
-public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClientLiveTest {
+public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackApiLiveTest {
 
    private CloudStackComputeServiceAdapter adapter;
    private NodeAndInitialCredentials<VirtualMachine> vm;
@@ -118,8 +118,8 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
       keyPairName = prefix + "-adapter-test-keypair";
       keyPair = ComputeTestUtils.setupKeyPair();
 
-      client.getSSHKeyPairClient().deleteSSHKeyPair(keyPairName);
-      client.getSSHKeyPairClient().registerSSHKeyPair(keyPairName, keyPair.get("public"));
+      client.getSSHKeyPairApi().deleteSSHKeyPair(keyPairName);
+      client.getSSHKeyPairApi().registerSSHKeyPair(keyPairName, keyPair.get("public"));
    }
 
    @Test
@@ -137,11 +137,11 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
       Template template = view.getComputeService().templateBuilder().build();
 
       if (!client
-            .getTemplateClient()
+            .getTemplateApi()
             .getTemplateInZone(template.getImage().getId(),
                   template.getLocation().getId()).isPasswordEnabled()) {
 
-         // TODO: look at SecurityGroupClientLiveTest for how to do this
+         // TODO: look at SecurityGroupApiLiveTest for how to do this
          template.getOptions().as(CloudStackTemplateOptions.class).keyPair(keyPairName);
       }
       vm = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
@@ -150,7 +150,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
       // check to see if we setup a NAT rule (conceding we could check this from
       // cache)
       IPForwardingRule rule = getFirst(
-         client.getNATClient().getIPForwardingRulesForVirtualMachine(vm.getNode().getId()), null);
+         client.getNATApi().getIPForwardingRulesForVirtualMachine(vm.getNode().getId()), null);
 
       String address = rule != null ? rule.getIPAddress() : vm.getNode().getIPAddress();
 

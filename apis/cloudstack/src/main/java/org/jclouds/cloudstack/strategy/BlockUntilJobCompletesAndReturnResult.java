@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -42,11 +42,11 @@ public class BlockUntilJobCompletesAndReturnResult {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    
-   private final CloudStackClient client;
+   private final CloudStackApi client;
    private final Predicate<String> jobComplete;
 
    @Inject
-   public BlockUntilJobCompletesAndReturnResult(CloudStackClient client, Predicate<String> jobComplete) {
+   public BlockUntilJobCompletesAndReturnResult(CloudStackApi client, Predicate<String> jobComplete) {
       this.client = checkNotNull(client, "client");
       this.jobComplete = checkNotNull(jobComplete, "jobComplete");
    }
@@ -61,7 +61,7 @@ public class BlockUntilJobCompletesAndReturnResult {
    public <T> T apply(AsyncCreateResponse job) {
       boolean completed = jobComplete.apply(job.getJobId());
       logger.trace("<< job(%s) complete(%s)", job, completed);
-      AsyncJob<T> jobWithResult = client.getAsyncJobClient().<T> getAsyncJob(job.getJobId());
+      AsyncJob<T> jobWithResult = client.getAsyncJobApi().<T> getAsyncJob(job.getJobId());
       checkState(completed, "job %s failed to complete in time %s", job.getJobId(), jobWithResult);
       if (jobWithResult.getError() != null)
          throw new UncheckedExecutionException(String.format("job %s failed with exception %s", job.getJobId(),

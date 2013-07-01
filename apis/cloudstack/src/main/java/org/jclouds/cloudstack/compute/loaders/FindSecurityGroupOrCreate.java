@@ -26,7 +26,7 @@ import javax.inject.Named;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.SecurityGroup;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.domain.ZoneAndName;
@@ -46,11 +46,11 @@ public class FindSecurityGroupOrCreate extends CacheLoader<ZoneAndName, Security
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   protected final CloudStackClient client;
+   protected final CloudStackApi client;
    protected final Function<ZoneSecurityGroupNamePortsCidrs, SecurityGroup> groupCreator;
 
    @Inject
-   public FindSecurityGroupOrCreate(CloudStackClient client,
+   public FindSecurityGroupOrCreate(CloudStackApi client,
                                     Function<ZoneSecurityGroupNamePortsCidrs, SecurityGroup> groupCreator) {
       this.client = checkNotNull(client, "client");
       this.groupCreator = checkNotNull(groupCreator, "groupCreator");
@@ -58,7 +58,7 @@ public class FindSecurityGroupOrCreate extends CacheLoader<ZoneAndName, Security
 
    @Override
    public SecurityGroup load(ZoneAndName in) {
-      SecurityGroup group = client.getSecurityGroupClient().getSecurityGroupByName(in.getName());
+      SecurityGroup group = client.getSecurityGroupApi().getSecurityGroupByName(in.getName());
       if (group != null) {
          return group;
       } else {

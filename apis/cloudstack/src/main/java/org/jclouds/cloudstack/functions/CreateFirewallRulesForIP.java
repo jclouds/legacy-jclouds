@@ -26,7 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.FirewallRule;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
@@ -51,12 +51,12 @@ public class CreateFirewallRulesForIP {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final CloudStackClient client;
+   private final CloudStackApi client;
    private final BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult;
    private final LoadingCache<String, Set<FirewallRule>> getFirewallRulesByVirtualMachine;
 
    @Inject
-   public CreateFirewallRulesForIP(CloudStackClient client,
+   public CreateFirewallRulesForIP(CloudStackApi client,
          BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult,
          LoadingCache<String, Set<FirewallRule>> getFirewallRulesByVirtualMachine) {
       this.client = checkNotNull(client, "client");
@@ -77,7 +77,7 @@ public class CreateFirewallRulesForIP {
          return ImmutableSet.<FirewallRule> of();
       Builder<AsyncCreateResponse> responses = ImmutableSet.builder();
       for (int port : ports) {
-          AsyncCreateResponse response = client.getFirewallClient().createFirewallRuleForIpAndProtocol(ip.getId(), FirewallRule.Protocol.fromValue(protocol),
+          AsyncCreateResponse response = client.getFirewallApi().createFirewallRuleForIpAndProtocol(ip.getId(), FirewallRule.Protocol.fromValue(protocol),
                                                                                                        CreateFirewallRuleOptions.Builder.startPort(port).endPort(port));
          logger.debug(">> creating firewall rule IPAddress(%s) for protocol(%s), port(%s); response(%s)",
                ip.getId(), protocol, port, response);

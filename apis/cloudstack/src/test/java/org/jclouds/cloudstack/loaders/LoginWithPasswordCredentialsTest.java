@@ -23,7 +23,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 
 import org.jclouds.cloudstack.domain.LoginResponse;
-import org.jclouds.cloudstack.features.SessionClient;
+import org.jclouds.cloudstack.features.SessionApi;
 import org.jclouds.domain.Credentials;
 import org.testng.annotations.Test;
 
@@ -37,7 +37,7 @@ public class LoginWithPasswordCredentialsTest {
    @Test
    public void testWithDoubleDomainname() {
       LoginResponse response = createMock(LoginResponse.class);
-      SessionClient client = createMock(SessionClient.class);
+      SessionApi client = createMock(SessionApi.class);
 
       expect(client.loginUserInDomainWithHashOfPassword(eq("User"), eq("Test/Domain"), (String) anyObject())).andReturn(response);
       replay(client);
@@ -51,7 +51,7 @@ public class LoginWithPasswordCredentialsTest {
    @Test
    public void testWithSingleDomainname() {
       LoginResponse response = createMock(LoginResponse.class);
-      SessionClient client = createMock(SessionClient.class);
+      SessionApi client = createMock(SessionApi.class);
 
       expect(client.loginUserInDomainWithHashOfPassword(eq("User"), eq("Domain"), (String) anyObject())).andReturn(response);
       replay(client);
@@ -65,7 +65,7 @@ public class LoginWithPasswordCredentialsTest {
    @Test
    public void testWithNoDomainname() {
        LoginResponse response = createMock(LoginResponse.class);
-       SessionClient client = createMock(SessionClient.class);
+       SessionApi client = createMock(SessionApi.class);
 
        expect(client.loginUserInDomainWithHashOfPassword(eq("User"), eq(""), (String) anyObject())).andReturn(response);
        replay(client);

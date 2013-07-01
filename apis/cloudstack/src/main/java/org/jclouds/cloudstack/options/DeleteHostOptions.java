@@ -21,7 +21,7 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Options to the GlobalHostClient.deleteHost() API call
+ * Options to the GlobalHostApi.deleteHost() API call
  *
  * @author Richard Downer
  */

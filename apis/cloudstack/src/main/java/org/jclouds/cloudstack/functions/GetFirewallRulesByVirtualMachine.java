@@ -22,16 +22,16 @@ import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.FirewallRule;
 import org.jclouds.cloudstack.options.ListFirewallRulesOptions;
 
 @Singleton
 public class GetFirewallRulesByVirtualMachine extends CacheLoader<String, Set<FirewallRule>> {
-   private final CloudStackClient client;
+   private final CloudStackApi client;
 
    @Inject
-   public GetFirewallRulesByVirtualMachine(CloudStackClient client) {
+   public GetFirewallRulesByVirtualMachine(CloudStackApi client) {
       this.client = checkNotNull(client, "client");
    }
 
@@ -41,8 +41,8 @@ public class GetFirewallRulesByVirtualMachine extends CacheLoader<String, Set<Fi
     */
    @Override
    public Set<FirewallRule> load(String input) {
-      String publicIPId = client.getVirtualMachineClient().getVirtualMachine(input).getPublicIPId();
-      Set<FirewallRule> rules = client.getFirewallClient()
+      String publicIPId = client.getVirtualMachineApi().getVirtualMachine(input).getPublicIPId();
+      Set<FirewallRule> rules = client.getFirewallApi()
          .listFirewallRules(ListFirewallRulesOptions.Builder.ipAddressId(publicIPId));
       return rules != null ? rules : ImmutableSet.<FirewallRule>of();
    }

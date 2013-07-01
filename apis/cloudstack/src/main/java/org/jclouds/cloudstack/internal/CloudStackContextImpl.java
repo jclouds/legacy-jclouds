@@ -20,16 +20,15 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.Context;
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.CloudStackContext;
-import org.jclouds.cloudstack.CloudStackDomainAsyncClient;
-import org.jclouds.cloudstack.CloudStackDomainClient;
-import org.jclouds.cloudstack.CloudStackGlobalAsyncClient;
-import org.jclouds.cloudstack.CloudStackGlobalClient;
+import org.jclouds.cloudstack.CloudStackDomainApi;
+import org.jclouds.cloudstack.CloudStackGlobalApi;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.Utils;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.location.Provider;
+import org.jclouds.rest.ApiContext;
 
 import com.google.common.reflect.TypeToken;
 
@@ -38,15 +37,15 @@ import com.google.common.reflect.TypeToken;
  */
 @Singleton
 public class CloudStackContextImpl extends ComputeServiceContextImpl implements CloudStackContext {
-   private final CloudStackClient client;
-   private final org.jclouds.rest.RestContext<CloudStackDomainClient, CloudStackDomainAsyncClient> domainContext;
-   private final org.jclouds.rest.RestContext<CloudStackGlobalClient, CloudStackGlobalAsyncClient> globalContext;
+   private final CloudStackApi client;
+   private final ApiContext<CloudStackDomainApi> domainContext;
+   private final ApiContext<CloudStackGlobalApi> globalContext;
 
    @Inject
    CloudStackContextImpl(@Provider Context backend, @Provider TypeToken<? extends Context> backendType,
-         ComputeService computeService, Utils utils, CloudStackClient client,
-         org.jclouds.rest.RestContext<CloudStackDomainClient, CloudStackDomainAsyncClient> domainContext,
-         org.jclouds.rest.RestContext<CloudStackGlobalClient, CloudStackGlobalAsyncClient> globalContext) {
+         ComputeService computeService, Utils utils, CloudStackApi client,
+         ApiContext<CloudStackDomainApi> domainContext,
+         ApiContext<CloudStackGlobalApi> globalContext) {
       super(backend, backendType, computeService, utils);
       this.client = client;
       this.domainContext = domainContext;
@@ -54,27 +53,18 @@ public class CloudStackContextImpl extends ComputeServiceContextImpl implements 
    }
 
    @Override
-   public CloudStackClient getApi() {
+   public CloudStackApi getApi() {
       return client;
    }
 
    @Override
-   public CloudStackDomainClient getDomainApi() {
+   public CloudStackDomainApi getDomainApi() {
       return domainContext.getApi();
    }
 
    @Override
-   public CloudStackGlobalClient getGlobalApi() {
+   public CloudStackGlobalApi getGlobalApi() {
       return globalContext.getApi();
    }
 
-   @Override
-   public org.jclouds.rest.RestContext<CloudStackDomainClient, CloudStackDomainAsyncClient> getDomainContext() {
-      return domainContext;
-   }
-
-   @Override
-   public org.jclouds.rest.RestContext<CloudStackGlobalClient, CloudStackGlobalAsyncClient> getGlobalContext() {
-      return globalContext;
-   }
 }

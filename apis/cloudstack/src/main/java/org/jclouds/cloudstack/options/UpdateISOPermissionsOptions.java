@@ -25,8 +25,8 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options for the ISO updateISOPermissions method.
  *
- * @see org.jclouds.cloudstack.features.ISOClient#updateISOPermissions
- * @see org.jclouds.cloudstack.features.ISOAsyncClient#updateISOPermissions
+ * @see org.jclouds.cloudstack.features.ISOApi#updateISOPermissions
+ * @see org.jclouds.cloudstack.features.ISOApi#updateISOPermissions
  * @author Richard Downer
  */
 public class UpdateISOPermissionsOptions extends BaseHttpRequestOptions {

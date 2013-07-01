@@ -24,13 +24,13 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import org.jclouds.cloudstack.AsyncJobException;
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.cloudstack.domain.AsyncJobError;
 import org.jclouds.cloudstack.domain.AsyncJob.ResultCode;
 import org.jclouds.cloudstack.domain.AsyncJob.Status;
 import org.jclouds.cloudstack.domain.AsyncJobError.ErrorCode;
-import org.jclouds.cloudstack.features.AsyncJobClient;
+import org.jclouds.cloudstack.features.AsyncJobApi;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -40,15 +40,15 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", singleThreaded = true)
 public class JobCompleteTest {
 
-   CloudStackClient client;
-   AsyncJobClient asyncJobClient;
+   CloudStackApi client;
+   AsyncJobApi asyncJobClient;
 
    @BeforeMethod
    public void setUp() {
-      client = createMock(CloudStackClient.class);
-      asyncJobClient = createMock(AsyncJobClient.class);
+      client = createMock(CloudStackApi.class);
+      asyncJobClient = createMock(AsyncJobApi.class);
 
-      expect(client.getAsyncJobClient()).andReturn(asyncJobClient);
+      expect(client.getAsyncJobApi()).andReturn(asyncJobClient);
    }
 
    @Test

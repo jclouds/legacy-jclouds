@@ -21,8 +21,8 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options for the Snapshot createSnapshot method.
  *
- * @see org.jclouds.cloudstack.features.SnapshotClient#createSnapshot
- * @see org.jclouds.cloudstack.features.SnapshotAsyncClient#createSnapshot
+ * @see org.jclouds.cloudstack.features.SnapshotApi#createSnapshot
+ * @see org.jclouds.cloudstack.features.SnapshotApi#createSnapshot
  * @author Richard Downer
  */
 public class CreateSnapshotOptions extends AccountInDomainOptions {

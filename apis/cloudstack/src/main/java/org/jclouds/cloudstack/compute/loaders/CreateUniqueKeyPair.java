@@ -25,7 +25,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.SshKeyPair;
 import org.jclouds.cloudstack.strategy.BlockUntilJobCompletesAndReturnResult;
@@ -44,10 +44,10 @@ public class CreateUniqueKeyPair extends CacheLoader<String, SshKeyPair> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   protected final CloudStackClient client;
+   protected final CloudStackApi client;
 
    @Inject
-   public CreateUniqueKeyPair(CloudStackClient client) {
+   public CreateUniqueKeyPair(CloudStackApi client) {
       this.client = checkNotNull(client, "client");
    }
 
@@ -56,7 +56,7 @@ public class CreateUniqueKeyPair extends CacheLoader<String, SshKeyPair> {
       SshKeyPair keyPair = null;
       while (keyPair == null) {
          try {
-            keyPair = client.getSSHKeyPairClient().createSSHKeyPair(input);
+            keyPair = client.getSSHKeyPairApi().createSSHKeyPair(input);
             logger.debug(">> creating SSH key pair with name %s", input);
          } catch (IllegalStateException e) {
             logger.error(e, "<< error creating SSH key pair with name %s: ",

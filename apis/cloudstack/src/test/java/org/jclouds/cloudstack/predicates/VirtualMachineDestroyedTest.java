@@ -23,9 +23,9 @@ import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.VirtualMachine;
-import org.jclouds.cloudstack.features.VirtualMachineClient;
+import org.jclouds.cloudstack.features.VirtualMachineApi;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -35,14 +35,14 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", singleThreaded = true, testName = "VirtualMachineDestroyedTest")
 public class VirtualMachineDestroyedTest {
 
-   CloudStackClient client;
-   VirtualMachineClient virtualMachineClient;
+   CloudStackApi client;
+   VirtualMachineApi virtualMachineClient;
 
    @BeforeMethod
    public void setUp() {
-      client = createMock(CloudStackClient.class);
-      virtualMachineClient = createMock(VirtualMachineClient.class);
-      expect(client.getVirtualMachineClient()).andReturn(virtualMachineClient);
+      client = createMock(CloudStackApi.class);
+      virtualMachineClient = createMock(VirtualMachineApi.class);
+      expect(client.getVirtualMachineApi()).andReturn(virtualMachineClient);
    }
 
    @Test

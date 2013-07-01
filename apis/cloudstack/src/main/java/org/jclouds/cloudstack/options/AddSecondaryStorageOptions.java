@@ -21,7 +21,7 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Options for the GlobalHostClient.addSecondaryStorage() API call
+ * Options for the GlobalHostApi.addSecondaryStorage() API call
  * 
  * @author Richard Downer
  */

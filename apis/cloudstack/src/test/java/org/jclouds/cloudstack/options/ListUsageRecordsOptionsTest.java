@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Options to the GlobalUsageClient.listUsageOptions() API call
+ * Options to the GlobalUsageApi.listUsageOptions() API call
  *
  * @author Richard Downer
  */

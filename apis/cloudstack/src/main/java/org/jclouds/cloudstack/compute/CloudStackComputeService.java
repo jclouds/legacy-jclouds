@@ -60,7 +60,7 @@ import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.domain.SecurityGroup;
 import org.jclouds.cloudstack.domain.SshKeyPair;
@@ -86,7 +86,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
  */
 @Singleton
 public class CloudStackComputeService extends BaseComputeService {
-   protected final CloudStackClient client;
+   protected final CloudStackApi client;
    protected final LoadingCache<ZoneAndName, SecurityGroup> securityGroupMap;
    protected final LoadingCache<String, SshKeyPair> keyPairCache;
    protected final Function<Set<? extends NodeMetadata>, Multimap<String, String>> orphanedGroupsByZoneId;
@@ -108,7 +108,7 @@ public class CloudStackComputeService extends BaseComputeService {
             InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
             RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
             PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
-            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, CloudStackClient client,
+            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, CloudStackApi client,
             LoadingCache<ZoneAndName, SecurityGroup> securityGroupMap,
             LoadingCache<String, SshKeyPair> keyPairCache,
             Function<Set<? extends NodeMetadata>, Multimap<String, String>> orphanedGroupsByZoneId,
@@ -147,11 +147,11 @@ public class CloudStackComputeService extends BaseComputeService {
 
       if (supportsSecurityGroups().apply(zone)) {
          for (String group : groups) {
-            for (SecurityGroup securityGroup : Iterables.filter(client.getSecurityGroupClient().listSecurityGroups(),
+            for (SecurityGroup securityGroup : Iterables.filter(client.getSecurityGroupApi().listSecurityGroups(),
                      SecurityGroupPredicates.nameMatches(namingConvention.create().containsGroup(group)))) {
                ZoneAndName zoneAndName = ZoneAndName.fromZoneAndName(zoneId, securityGroup.getName());
                logger.debug(">> deleting securityGroup(%s)", zoneAndName);
-               client.getSecurityGroupClient().deleteSecurityGroup(securityGroup.getId());
+               client.getSecurityGroupApi().deleteSecurityGroup(securityGroup.getId());
                // TODO: test this clear happens
                securityGroupMap.invalidate(zoneAndName);
                logger.debug("<< deleted securityGroup(%s)", zoneAndName);
@@ -162,10 +162,10 @@ public class CloudStackComputeService extends BaseComputeService {
 
    private void cleanupOrphanedKeyPairsInZone(Set<String> groups, String zoneId) {
       for (String group : groups) {
-         for (SshKeyPair pair : Iterables.filter(client.getSSHKeyPairClient().listSSHKeyPairs(),
+         for (SshKeyPair pair : Iterables.filter(client.getSSHKeyPairApi().listSSHKeyPairs(),
                                                  nameMatches(namingConvention.create().containsGroup(group)))) {
             logger.debug(">> deleting keypair(%s)", pair.getName());
-            client.getSSHKeyPairClient().deleteSSHKeyPair(pair.getName());
+            client.getSSHKeyPairApi().deleteSSHKeyPair(pair.getName());
             // TODO: test this clear happens
             keyPairCache.invalidate(pair.getName());
             logger.debug("<< deleted keypair(%s)", pair.getName());

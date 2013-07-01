@@ -24,9 +24,9 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.UnknownHostException;
 
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.SshKeyPair;
-import org.jclouds.cloudstack.features.SSHKeyPairClient;
+import org.jclouds.cloudstack.features.SSHKeyPairApi;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
@@ -44,12 +44,12 @@ public class CreateUniqueKeyPairTest {
 
    @Test
    public void testLoad() throws UnknownHostException {
-      final CloudStackClient client = createMock(CloudStackClient.class);
-      SSHKeyPairClient keyClient = createMock(SSHKeyPairClient.class);
+      final CloudStackApi client = createMock(CloudStackApi.class);
+      SSHKeyPairApi keyClient = createMock(SSHKeyPairApi.class);
 
       SshKeyPair pair = createMock(SshKeyPair.class);
 
-      expect(client.getSSHKeyPairClient()).andReturn(keyClient);
+      expect(client.getSSHKeyPairApi()).andReturn(keyClient);
       expect(keyClient.createSSHKeyPair("group-1")).andReturn(pair);
 
       replay(client, keyClient);
@@ -60,7 +60,7 @@ public class CreateUniqueKeyPairTest {
          protected void configure() {
             bind(new TypeLiteral<Supplier<String>>() {
             }).toInstance(Suppliers.ofInstance("1"));
-            bind(CloudStackClient.class).toInstance(client);
+            bind(CloudStackApi.class).toInstance(client);
          }
 
       }).getInstance(CreateUniqueKeyPair.class);

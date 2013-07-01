@@ -26,7 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
@@ -50,12 +50,12 @@ public class CreatePortForwardingRulesForIP {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final CloudStackClient client;
+   private final CloudStackApi client;
    private final BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult;
    private final LoadingCache<String, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine;
 
    @Inject
-   public CreatePortForwardingRulesForIP(CloudStackClient client,
+   public CreatePortForwardingRulesForIP(CloudStackApi client,
          BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult,
          LoadingCache<String, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine) {
       this.client = checkNotNull(client, "client");
@@ -76,7 +76,7 @@ public class CreatePortForwardingRulesForIP {
          return ImmutableSet.<IPForwardingRule> of();
       Builder<AsyncCreateResponse> responses = ImmutableSet.builder();
       for (int port : ports) {
-         AsyncCreateResponse response = client.getNATClient().createIPForwardingRule(ip.getId(), protocol, port);
+         AsyncCreateResponse response = client.getNATApi().createIPForwardingRule(ip.getId(), protocol, port);
          logger.debug(">> creating IP forwarding rule IPAddress(%s) for protocol(%s), port(%s); response(%s)",
                ip.getId(), protocol, port, response);
          responses.add(response);

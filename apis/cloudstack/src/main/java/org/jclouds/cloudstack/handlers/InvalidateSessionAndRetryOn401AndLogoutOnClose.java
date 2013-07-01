@@ -22,7 +22,7 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 
 import org.jclouds.cloudstack.domain.LoginResponse;
-import org.jclouds.cloudstack.features.SessionClient;
+import org.jclouds.cloudstack.features.SessionApi;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
@@ -44,11 +44,11 @@ public class InvalidateSessionAndRetryOn401AndLogoutOnClose extends BackoffLimit
    protected Logger logger = Logger.NULL;
 
    private final LoadingCache<Credentials, LoginResponse> authenticationResponseCache;
-   private final SessionClient sessionClient;
+   private final SessionApi sessionClient;
 
    @Inject
    protected InvalidateSessionAndRetryOn401AndLogoutOnClose(LoadingCache<Credentials, LoginResponse> authenticationResponseCache,
-                                                            SessionClient sessionClient) {
+                                                            SessionApi sessionClient) {
       this.authenticationResponseCache = authenticationResponseCache;
       this.sessionClient = sessionClient;
    }

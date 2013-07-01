@@ -20,7 +20,6 @@ import static org.testng.Assert.assertEquals;
 
 import org.jclouds.ContextBuilder;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.providers.AnonymousProviderMetadata;
@@ -42,7 +41,7 @@ import com.google.inject.Module;
 public class QuerySignerTest {
    public static final Injector INJECTOR = ContextBuilder
          .newBuilder(
-               AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(IntegrationTestClient.class, IntegrationTestAsyncClient.class,
+               AnonymousProviderMetadata.forApiOnEndpoint(IntegrationTestClient.class,
                      "http://localhost:8080/client/api"))
          .credentials("apiKey", "secretKey")
          .apiVersion("2.2")

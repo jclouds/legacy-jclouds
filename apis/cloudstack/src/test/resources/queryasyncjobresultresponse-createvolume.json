@@ -10,7 +10,7 @@
       "jobresult":{
          "volume":{
             "id":"f947c7b3-e079-4e7d-aacc-1509d1ae387a",
-            "name":"VolumeClientExpectTest-jclouds-volume",
+            "name":"VolumeApiExpectTest-jclouds-volume",
             "zoneid":"6f9a2921-b22a-4149-8b71-6ffc275a2177",
             "zonename":"Basic1",
             "type":"DATADISK",

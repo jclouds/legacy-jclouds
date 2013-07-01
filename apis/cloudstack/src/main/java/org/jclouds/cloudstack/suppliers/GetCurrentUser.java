@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.predicates.UserPredicates;
 import org.jclouds.domain.Credentials;
@@ -43,18 +43,18 @@ public class GetCurrentUser implements Supplier<User> {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final CloudStackClient client;
+   private final CloudStackApi client;
    private final Supplier<Credentials> creds;
 
    @Inject
-   public GetCurrentUser(CloudStackClient client, @Provider Supplier<Credentials> creds) {
+   public GetCurrentUser(CloudStackApi client, @Provider Supplier<Credentials> creds) {
       this.client = checkNotNull(client, "client");
       this.creds = checkNotNull(creds, "creds");
    }
 
    @Override
    public User get() {
-      Iterable<User> users = Iterables.concat(client.getAccountClient().listAccounts());
+      Iterable<User> users = Iterables.concat(client.getAccountApi().listAccounts());
       Predicate<User> apiKeyMatches = UserPredicates.apiKeyEquals(creds.get().identity);
       User currentUser = null;
       try {

@@ -24,17 +24,17 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.cloudstack.domain.LoginResponse;
-import org.jclouds.cloudstack.features.SessionClient;
+import org.jclouds.cloudstack.features.SessionApi;
 import org.jclouds.domain.Credentials;
 
 import com.google.common.cache.CacheLoader;
 
 @Singleton
 public class LoginWithPasswordCredentials extends CacheLoader<Credentials, LoginResponse> {
-   private final SessionClient client;
+   private final SessionApi client;
 
    @Inject
-   public LoginWithPasswordCredentials(SessionClient client) {
+   public LoginWithPasswordCredentials(SessionApi client) {
       this.client = client;
    }
 

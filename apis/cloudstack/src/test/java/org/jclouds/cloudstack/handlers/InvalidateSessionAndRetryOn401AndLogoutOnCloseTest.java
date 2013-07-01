@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.easymock.IAnswer;
 import org.jclouds.cloudstack.domain.LoginResponse;
-import org.jclouds.cloudstack.features.SessionClient;
+import org.jclouds.cloudstack.features.SessionApi;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
@@ -49,7 +49,7 @@ public class InvalidateSessionAndRetryOn401AndLogoutOnCloseTest {
    @Test
    public void test401ShouldRetryAndFailAfterFiveAttempts() {
       HttpCommand command = createMock(HttpCommand.class);
-      SessionClient sessionClient = createMock(SessionClient.class);
+      SessionApi sessionClient = createMock(SessionApi.class);
       LoadingCache<Credentials, LoginResponse> cache = createMock(LoadingCache.class);
 
       cache.invalidateAll();

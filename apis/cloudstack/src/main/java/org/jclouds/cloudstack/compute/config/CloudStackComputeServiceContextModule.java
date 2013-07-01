@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.compute.CloudStackComputeService;
 import org.jclouds.cloudstack.compute.extensions.CloudStackImageExtension;
 import org.jclouds.cloudstack.compute.functions.CloudStackSecurityGroupToSecurityGroup;
@@ -62,7 +62,7 @@ import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.domain.ZoneAndName;
 import org.jclouds.cloudstack.domain.ZoneSecurityGroupNamePortsCidrs;
-import org.jclouds.cloudstack.features.GuestOSClient;
+import org.jclouds.cloudstack.features.GuestOSApi;
 import org.jclouds.cloudstack.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.cloudstack.functions.GetFirewallRulesByVirtualMachine;
 import org.jclouds.cloudstack.functions.GetIPForwardingRulesByVirtualMachine;
@@ -166,17 +166,17 @@ public class CloudStackComputeServiceContextModule extends
    @Singleton
    @Memoized
    public Supplier<Map<String, String>> listOSCategories(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
-         final CloudStackClient client) {
+         final CloudStackApi client) {
       return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
             new Supplier<Map<String, String>>() {
                @Override
                public Map<String, String> get() {
-                  GuestOSClient guestOSClient = client.getGuestOSClient();
+                  GuestOSApi guestOSClient = client.getGuestOSApi();
                   return guestOSClient.listOSCategories();
                }
                @Override
                public String toString() {
-                  return Objects.toStringHelper(client.getGuestOSClient()).add("method", "listOSCategories").toString();
+                  return Objects.toStringHelper(client.getGuestOSApi()).add("method", "listOSCategories").toString();
                }
             }, seconds, TimeUnit.SECONDS);
    }
@@ -185,12 +185,12 @@ public class CloudStackComputeServiceContextModule extends
    @Singleton
    @Memoized
    public Supplier<Map<String, OSType>> listOSTypes(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
-         final CloudStackClient client) {
+         final CloudStackApi client) {
       return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
             new Supplier<Map<String, OSType>>() {
                @Override
                public Map<String, OSType> get() {
-                  GuestOSClient guestOSClient = client.getGuestOSClient();
+                  GuestOSApi guestOSClient = client.getGuestOSApi();
                   return Maps.uniqueIndex(guestOSClient.listOSTypes(), new Function<OSType, String>() {
 
                      @Override
@@ -201,7 +201,7 @@ public class CloudStackComputeServiceContextModule extends
                }
                @Override
                public String toString() {
-                  return Objects.toStringHelper(client.getGuestOSClient()).add("method", "listOSTypes").toString();
+                  return Objects.toStringHelper(client.getGuestOSApi()).add("method", "listOSTypes").toString();
                }
             }, seconds, TimeUnit.SECONDS);
    }

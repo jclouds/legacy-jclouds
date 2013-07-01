@@ -23,8 +23,8 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options for the Snapshot listSnapshots method.
  *
- * @see org.jclouds.cloudstack.features.SnapshotClient#listSnapshots
- * @see org.jclouds.cloudstack.features.SnapshotAsyncClient#listSnapshots
+ * @see org.jclouds.cloudstack.features.SnapshotApi#listSnapshots
+ * @see org.jclouds.cloudstack.features.SnapshotApi#listSnapshots
  * @author Richard Downer
  */
 public class ListSnapshotsOptions extends AccountInDomainOptions {

@@ -35,7 +35,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.IngressRule;
 import org.jclouds.cloudstack.domain.SecurityGroup;
 import org.jclouds.cloudstack.domain.Zone;
@@ -59,12 +59,12 @@ public class CreateSecurityGroupIfNeeded implements Function<ZoneSecurityGroupNa
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   protected final CloudStackClient client;
+   protected final CloudStackApi client;
    protected final Supplier<LoadingCache<String, Zone>> zoneIdToZone;
    protected final Predicate<String> jobComplete;
 
    @Inject
-   public CreateSecurityGroupIfNeeded(CloudStackClient client,
+   public CreateSecurityGroupIfNeeded(CloudStackApi client,
                                       Predicate<String> jobComplete,
                                       Supplier<LoadingCache<String, Zone>> zoneIdToZone) {
       this.client = checkNotNull(client, "client");
@@ -84,7 +84,7 @@ public class CreateSecurityGroupIfNeeded implements Function<ZoneSecurityGroupNa
       logger.debug(">> creating securityGroup %s", input);
       try {
 
-         SecurityGroup securityGroup = client.getSecurityGroupClient().createSecurityGroup(input.getName());
+         SecurityGroup securityGroup = client.getSecurityGroupApi().createSecurityGroup(input.getName());
 
          logger.debug("<< created securityGroup(%s)", securityGroup);
          ImmutableSet<String> cidrs;
@@ -99,20 +99,20 @@ public class CreateSecurityGroupIfNeeded implements Function<ZoneSecurityGroupNa
          return securityGroup;
       } catch (IllegalStateException e) {
          logger.trace("<< trying to find securityGroup(%s): %s", input, e.getMessage());
-         SecurityGroup group = client.getSecurityGroupClient().getSecurityGroupByName(input.getName());
+         SecurityGroup group = client.getSecurityGroupApi().getSecurityGroupByName(input.getName());
          logger.debug("<< reused securityGroup(%s)", group.getId());
          return group;
       }
    }
 
-   private void authorizeGroupToItselfAndToTCPPortAndCidr(CloudStackClient client,
+   private void authorizeGroupToItselfAndToTCPPortAndCidr(CloudStackApi client,
                                                           SecurityGroup securityGroup,
                                                           int port,
                                                           Set<String> cidrs) {
       for (String cidr : cidrs) {
          logger.debug(">> authorizing securityGroup(%s) permission to %s on port %d", securityGroup, cidr, port);
          if (!portInRangeForCidr(port, cidr).apply(securityGroup)) {
-            jobComplete.apply(client.getSecurityGroupClient().authorizeIngressPortsToCIDRs(securityGroup.getId(),
+            jobComplete.apply(client.getSecurityGroupApi().authorizeIngressPortsToCIDRs(securityGroup.getId(),
                                                                                            "TCP",
                                                                                            port,
                                                                                            port,

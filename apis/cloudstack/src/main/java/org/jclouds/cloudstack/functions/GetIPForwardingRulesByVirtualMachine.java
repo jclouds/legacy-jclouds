@@ -23,17 +23,17 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 
 import com.google.common.cache.CacheLoader;
 
 @Singleton
 public class GetIPForwardingRulesByVirtualMachine extends CacheLoader<String, Set<IPForwardingRule>> {
-   private final CloudStackClient client;
+   private final CloudStackApi client;
 
    @Inject
-   public GetIPForwardingRulesByVirtualMachine(CloudStackClient client) {
+   public GetIPForwardingRulesByVirtualMachine(CloudStackApi client) {
       this.client = checkNotNull(client, "client");
    }
 
@@ -43,6 +43,6 @@ public class GetIPForwardingRulesByVirtualMachine extends CacheLoader<String, Se
     */
    @Override
    public Set<IPForwardingRule> load(String input) {
-      return client.getNATClient().getIPForwardingRulesForVirtualMachine(input);
+      return client.getNATApi().getIPForwardingRulesForVirtualMachine(input);
    }
 }

@@ -20,7 +20,7 @@ import com.google.common.base.CaseFormat;
 
 /**
  * @author Adrian Cole
- * @see TemplateClient#listTemplates
+ * @see TemplateApi#listTemplates
  */
 public enum TemplateFilter {
    /**

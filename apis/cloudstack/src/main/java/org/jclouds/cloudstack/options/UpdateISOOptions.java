@@ -23,8 +23,8 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options for the ISO updateISO method.
  *
- * @see org.jclouds.cloudstack.features.ISOClient#updateISO
- * @see org.jclouds.cloudstack.features.ISOAsyncClient#updateISO
+ * @see org.jclouds.cloudstack.features.ISOApi#updateISO
+ * @see org.jclouds.cloudstack.features.ISOApi#updateISO
  * @author Richard Downer
  */
 public class UpdateISOOptions extends BaseHttpRequestOptions {

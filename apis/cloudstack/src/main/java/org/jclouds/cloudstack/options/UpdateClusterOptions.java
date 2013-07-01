@@ -24,7 +24,7 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Options for the GlobalHostClient.updateCluster() API call.
+ * Options for the GlobalHostApi.updateCluster() API call.
  *
  * @author Richard Downer
  */

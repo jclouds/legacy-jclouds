@@ -26,7 +26,7 @@ import java.util.Set;
 import org.jclouds.Constants;
 import org.jclouds.ContextBuilder;
 import org.jclouds.cloudstack.CloudStackApiMetadata;
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.ApiKeyPair;
@@ -65,8 +65,8 @@ public class ApiKeyPairs {
                .credentials(String.format("%s/%s", checkNotNull(domain, "domain"), checkNotNull(username, "username")), password)
                .overrides(overrides).build(CloudStackContext.class);
 
-         CloudStackClient client = context.unwrap(CloudStackApiMetadata.CONTEXT_TOKEN).getApi();
-         Set<Account> listOfAccounts = client.getAccountClient().listAccounts();
+         CloudStackApi client = context.getApi();
+         Set<Account> listOfAccounts = client.getAccountApi().listAccounts();
 
          domain = (domain.equals("") || domain.equals("/")) ? "ROOT" : domain;
          for (Account account : listOfAccounts) {

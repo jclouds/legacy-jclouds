@@ -21,7 +21,7 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Options to the GlobalUsageClient.generateUsageOptions() API call
+ * Options to the GlobalUsageApi.generateUsageOptions() API call
  *
  * @author Richard Downer
  */

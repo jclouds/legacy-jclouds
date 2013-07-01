@@ -22,7 +22,7 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Options to the GlobalPodClient.listPods API call.
+ * Options to the GlobalPodApi.listPods API call.
  *
  * @author Richard Downer
  */

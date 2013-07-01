@@ -25,8 +25,8 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options for the ISO listISOs method.
  *
- * @see org.jclouds.cloudstack.features.ISOClient#listISOs
- * @see org.jclouds.cloudstack.features.ISOAsyncClient#listISOs
+ * @see org.jclouds.cloudstack.features.ISOApi#listISOs
+ * @see org.jclouds.cloudstack.features.ISOApi#listISOs
  * @author Richard Downer
  */
 public class ListISOsOptions extends AccountInDomainOptions {

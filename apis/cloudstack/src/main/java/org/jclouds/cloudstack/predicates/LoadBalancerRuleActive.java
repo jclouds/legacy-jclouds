@@ -22,7 +22,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
 import org.jclouds.cloudstack.domain.LoadBalancerRule.State;
 import org.jclouds.logging.Logger;
@@ -38,13 +38,13 @@ import com.google.common.base.Predicate;
 @Singleton
 public class LoadBalancerRuleActive implements Predicate<LoadBalancerRule> {
 
-   private final CloudStackClient client;
+   private final CloudStackApi client;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public LoadBalancerRuleActive(CloudStackClient client) {
+   public LoadBalancerRuleActive(CloudStackApi client) {
       this.client = client;
    }
 
@@ -58,6 +58,6 @@ public class LoadBalancerRuleActive implements Predicate<LoadBalancerRule> {
    }
 
    private LoadBalancerRule refresh(LoadBalancerRule rule) {
-      return client.getLoadBalancerClient().getLoadBalancerRule(rule.getId());
+      return client.getLoadBalancerApi().getLoadBalancerRule(rule.getId());
    }
 }

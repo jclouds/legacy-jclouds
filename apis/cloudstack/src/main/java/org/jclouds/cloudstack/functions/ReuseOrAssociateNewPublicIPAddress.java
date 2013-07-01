@@ -32,11 +32,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
-import org.jclouds.cloudstack.features.AddressClient;
+import org.jclouds.cloudstack.features.AddressApi;
 import org.jclouds.cloudstack.strategy.BlockUntilJobCompletesAndReturnResult;
 import org.jclouds.logging.Logger;
 
@@ -48,14 +48,14 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class ReuseOrAssociateNewPublicIPAddress implements Function<Network, PublicIPAddress> {
-   private final CloudStackClient client;
+   private final CloudStackApi client;
    private final BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult;
    @Resource
    @Named(COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public ReuseOrAssociateNewPublicIPAddress(CloudStackClient client,
+   public ReuseOrAssociateNewPublicIPAddress(CloudStackApi client,
          BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult) {
       this.client = checkNotNull(client, "client");
       this.blockUntilJobCompletesAndReturnResult = checkNotNull(blockUntilJobCompletesAndReturnResult,
@@ -74,14 +74,14 @@ public class ReuseOrAssociateNewPublicIPAddress implements Function<Network, Pub
     * @throws NoSuchElementException
     *            if there's no existing ip address that is free for use
     */
-   public static PublicIPAddress findAvailableAndAssociatedWithNetwork(String networkId, AddressClient client) {
+   public static PublicIPAddress findAvailableAndAssociatedWithNetwork(String networkId, AddressApi client) {
       return find(client.listPublicIPAddresses(allocatedOnly(true).networkId(networkId)),
             and(associatedWithNetwork(networkId), available()));
    }
 
-   public static PublicIPAddress associateIPAddressInNetwork(Network network, CloudStackClient client,
+   public static PublicIPAddress associateIPAddressInNetwork(Network network, CloudStackApi client,
          BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult) {
-      AsyncCreateResponse job = client.getAddressClient().associateIPAddressInZone(network.getZoneId(),
+      AsyncCreateResponse job = client.getAddressApi().associateIPAddressInZone(network.getZoneId(),
             networkId(network.getId()));
       PublicIPAddress ip = blockUntilJobCompletesAndReturnResult.<PublicIPAddress> apply(job);
       assert ip.getZoneId().equals(network.getZoneId());
@@ -92,7 +92,7 @@ public class ReuseOrAssociateNewPublicIPAddress implements Function<Network, Pub
    public PublicIPAddress apply(Network input) {
       try {
          logger.debug(">> looking for existing address in network(%s)", input.getId());
-         PublicIPAddress returnVal = findAvailableAndAssociatedWithNetwork(input.getId(), client.getAddressClient());
+         PublicIPAddress returnVal = findAvailableAndAssociatedWithNetwork(input.getId(), client.getAddressApi());
          logger.debug("<< reused address(%s)", returnVal.getId());
          return returnVal;
       } catch (NoSuchElementException e) {

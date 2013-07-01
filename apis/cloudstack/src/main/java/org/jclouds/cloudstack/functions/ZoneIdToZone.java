@@ -18,9 +18,9 @@ package org.jclouds.cloudstack.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.Zone;
-import org.jclouds.cloudstack.features.ZoneClient;
+import org.jclouds.cloudstack.features.ZoneApi;
 
 import com.google.common.cache.CacheLoader;
 import com.google.inject.Inject;
@@ -32,12 +32,12 @@ import com.google.inject.Inject;
  */
 public class ZoneIdToZone extends CacheLoader<String, Zone> {
 
-   private final ZoneClient zoneClient;
+   private final ZoneApi zoneClient;
 
    @Inject
-   public ZoneIdToZone(CloudStackClient client) {
+   public ZoneIdToZone(CloudStackApi client) {
       checkNotNull(client, "client");
-      this.zoneClient = client.getZoneClient();
+      this.zoneClient = client.getZoneApi();
    }
 
    @Override

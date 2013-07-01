@@ -22,7 +22,7 @@ import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.cloudstack.AsyncJobException;
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.logging.Logger;
 
@@ -38,13 +38,13 @@ import com.google.inject.Inject;
 @Singleton
 public class JobComplete implements Predicate<String> {
 
-   private final CloudStackClient client;
+   private final CloudStackApi client;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public JobComplete(CloudStackClient client) {
+   public JobComplete(CloudStackApi client) {
       this.client = client;
    }
 
@@ -64,6 +64,6 @@ public class JobComplete implements Predicate<String> {
    }
 
    private AsyncJob<?> refresh(String jobId) {
-      return client.getAsyncJobClient().getAsyncJob(jobId);
+      return client.getAsyncJobApi().getAsyncJob(jobId);
    }
 }

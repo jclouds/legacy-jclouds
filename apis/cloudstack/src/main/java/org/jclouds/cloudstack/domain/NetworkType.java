@@ -22,7 +22,7 @@ import com.google.common.base.CaseFormat;
 
 /**
  * @author Adrian Cole
- * @see TemplateClient#listZones
+ * @see TemplateApi#listZones
  */
 public enum NetworkType {
    BASIC,

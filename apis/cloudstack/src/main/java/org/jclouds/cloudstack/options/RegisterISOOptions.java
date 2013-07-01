@@ -21,8 +21,8 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options for the ISO registerISO method.
  *
- * @see org.jclouds.cloudstack.features.ISOClient#registerISO
- * @see org.jclouds.cloudstack.features.ISOAsyncClient#registerISO
+ * @see org.jclouds.cloudstack.features.ISOApi#registerISO
+ * @see org.jclouds.cloudstack.features.ISOApi#registerISO
  * @author Richard Downer
  */
 public class RegisterISOOptions extends AccountInDomainOptions {

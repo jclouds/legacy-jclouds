@@ -24,11 +24,11 @@ import static org.jclouds.cloudstack.options.AssociateIPAddressOptions.Builder.n
 import static org.jclouds.cloudstack.options.ListPublicIPAddressesOptions.Builder.allocatedOnly;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
-import org.jclouds.cloudstack.features.AddressClient;
+import org.jclouds.cloudstack.features.AddressApi;
 import org.jclouds.cloudstack.strategy.BlockUntilJobCompletesAndReturnResult;
 import org.testng.annotations.Test;
 
@@ -48,10 +48,10 @@ public class ReuseOrAssociateNewPublicIPAddressTest {
    public void testReuseWorks() throws SecurityException, NoSuchMethodException {
 
       // create mocks
-      CloudStackClient client = createMock(CloudStackClient.class);
+      CloudStackApi client = createMock(CloudStackApi.class);
       BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult = createMock(BlockUntilJobCompletesAndReturnResult.class);
-      AddressClient addressClient = createMock(AddressClient.class);
-      expect(client.getAddressClient()).andReturn(addressClient).atLeastOnce();
+      AddressApi addressClient = createMock(AddressApi.class);
+      expect(client.getAddressApi()).andReturn(addressClient).atLeastOnce();
 
       // an address is available
       expect(addressClient.listPublicIPAddresses(allocatedOnly(true).networkId(networkId))).andReturn(
@@ -74,10 +74,10 @@ public class ReuseOrAssociateNewPublicIPAddressTest {
    public void testAssociateWorks() throws SecurityException, NoSuchMethodException {
 
       // create mocks
-      CloudStackClient client = createMock(CloudStackClient.class);
+      CloudStackApi client = createMock(CloudStackApi.class);
       BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult = createMock(BlockUntilJobCompletesAndReturnResult.class);
-      AddressClient addressClient = createMock(AddressClient.class);
-      expect(client.getAddressClient()).andReturn(addressClient).atLeastOnce();
+      AddressApi addressClient = createMock(AddressApi.class);
+      expect(client.getAddressApi()).andReturn(addressClient).atLeastOnce();
 
       // no ip addresses available
       expect(addressClient.listPublicIPAddresses(allocatedOnly(true).networkId(networkId))).andReturn(

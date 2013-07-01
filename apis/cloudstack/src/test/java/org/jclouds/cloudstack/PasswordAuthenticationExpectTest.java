@@ -21,7 +21,7 @@ import static org.testng.Assert.assertNotNull;
 import java.util.Properties;
 
 import org.jclouds.cloudstack.config.CloudStackProperties;
-import org.jclouds.cloudstack.features.AccountClient;
+import org.jclouds.cloudstack.features.AccountApi;
 import org.jclouds.cloudstack.internal.BaseCloudStackExpectTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -36,7 +36,7 @@ import com.google.common.net.HttpHeaders;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "PasswordAuthenticationExpectTest")
-public class PasswordAuthenticationExpectTest extends BaseCloudStackExpectTest<AccountClient> {
+public class PasswordAuthenticationExpectTest extends BaseCloudStackExpectTest<AccountApi> {
 
    /**
     * this reflects the properties that a user would pass to createContext
@@ -50,7 +50,7 @@ public class PasswordAuthenticationExpectTest extends BaseCloudStackExpectTest<A
 
    public void testLoginWithPasswordSetsSessionKeyAndCookie() {
       
-      AccountClient client = requestsSendResponses(
+      AccountApi client = requestsSendResponses(
                login, loginResponse, 
          HttpRequest.builder()
             .method("GET")
@@ -68,7 +68,7 @@ public class PasswordAuthenticationExpectTest extends BaseCloudStackExpectTest<A
    }
 
    @Override
-   protected AccountClient clientFrom(CloudStackContext context) {
-      return context.unwrap(CloudStackApiMetadata.CONTEXT_TOKEN).getApi().getAccountClient();
+   protected AccountApi clientFrom(CloudStackContext context) {
+      return context.getApi().getAccountApi();
    }
 }

@@ -29,15 +29,15 @@ import static org.testng.Assert.assertEquals;
 import java.net.UnknownHostException;
 import javax.inject.Singleton;
 
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApi;
 import org.jclouds.cloudstack.domain.IngressRule;
 import org.jclouds.cloudstack.domain.SecurityGroup;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.domain.ZoneAndName;
 import org.jclouds.cloudstack.domain.ZoneSecurityGroupNamePortsCidrs;
-import org.jclouds.cloudstack.features.AsyncJobClient;
-import org.jclouds.cloudstack.features.SecurityGroupClient;
-import org.jclouds.cloudstack.features.ZoneClient;
+import org.jclouds.cloudstack.features.AsyncJobApi;
+import org.jclouds.cloudstack.features.SecurityGroupApi;
+import org.jclouds.cloudstack.features.ZoneApi;
 import org.jclouds.cloudstack.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.cloudstack.functions.ZoneIdToZone;
 import org.jclouds.cloudstack.predicates.JobComplete;
@@ -66,10 +66,10 @@ public class FindSecurityGroupOrCreateTest {
 
    @Test
    public void testLoad() throws UnknownHostException {
-      final CloudStackClient client = createMock(CloudStackClient.class);
-      SecurityGroupClient secClient = createMock(SecurityGroupClient.class);
-      ZoneClient zoneClient = createMock(ZoneClient.class);
-      AsyncJobClient jobClient = createMock(AsyncJobClient.class);
+      final CloudStackApi client = createMock(CloudStackApi.class);
+      SecurityGroupApi secClient = createMock(SecurityGroupApi.class);
+      ZoneApi zoneClient = createMock(ZoneApi.class);
+      AsyncJobApi jobClient = createMock(AsyncJobApi.class);
       
       SecurityGroup group = createMock(SecurityGroup.class);
       
@@ -79,10 +79,10 @@ public class FindSecurityGroupOrCreateTest {
       expect(group.getId()).andReturn("sec-1234").anyTimes();
       expect(zone.isSecurityGroupsEnabled()).andReturn(true);
       
-      expect(client.getSecurityGroupClient()).andReturn(secClient)
+      expect(client.getSecurityGroupApi()).andReturn(secClient)
          .anyTimes();
-      expect(client.getZoneClient()).andReturn(zoneClient);
-      expect(client.getAsyncJobClient()).andReturn(jobClient).anyTimes();
+      expect(client.getZoneApi()).andReturn(zoneClient);
+      expect(client.getAsyncJobApi()).andReturn(jobClient).anyTimes();
 
       expect(zoneClient.getZone("zone-1")).andReturn(zone);
       expect(secClient.getSecurityGroupByName("group-1")).andReturn(null);
@@ -107,7 +107,7 @@ public class FindSecurityGroupOrCreateTest {
             protected void configure() {
                bind(new TypeLiteral<Supplier<String>>() {
                   }).toInstance(Suppliers.ofInstance("1"));
-               bind(CloudStackClient.class).toInstance(client);
+               bind(CloudStackApi.class).toInstance(client);
                bind(new TypeLiteral<CacheLoader<String, Zone>>() {}).
                   to(ZoneIdToZone.class);
                bind(new TypeLiteral<Supplier<LoadingCache<String, Zone>>>() {}).
@@ -137,10 +137,10 @@ public class FindSecurityGroupOrCreateTest {
    
    @Test
    public void testLoadAlreadyExists() throws UnknownHostException {
-      final CloudStackClient client = createMock(CloudStackClient.class);
-      SecurityGroupClient secClient = createMock(SecurityGroupClient.class);
-      ZoneClient zoneClient = createMock(ZoneClient.class);
-      AsyncJobClient jobClient = createMock(AsyncJobClient.class);
+      final CloudStackApi client = createMock(CloudStackApi.class);
+      SecurityGroupApi secClient = createMock(SecurityGroupApi.class);
+      ZoneApi zoneClient = createMock(ZoneApi.class);
+      AsyncJobApi jobClient = createMock(AsyncJobApi.class);
       
       SecurityGroup group = createMock(SecurityGroup.class);
       
@@ -148,10 +148,10 @@ public class FindSecurityGroupOrCreateTest {
 
       expect(group.getId()).andReturn("sec-1234").anyTimes();
       
-      expect(client.getSecurityGroupClient()).andReturn(secClient)
+      expect(client.getSecurityGroupApi()).andReturn(secClient)
          .anyTimes();
-      expect(client.getZoneClient()).andReturn(zoneClient);
-      expect(client.getAsyncJobClient()).andReturn(jobClient).anyTimes();
+      expect(client.getZoneApi()).andReturn(zoneClient);
+      expect(client.getAsyncJobApi()).andReturn(jobClient).anyTimes();
 
       expect(secClient.getSecurityGroupByName("group-1")).andReturn(group);
 
@@ -169,7 +169,7 @@ public class FindSecurityGroupOrCreateTest {
             protected void configure() {
                bind(new TypeLiteral<Supplier<String>>() {
                   }).toInstance(Suppliers.ofInstance("1"));
-               bind(CloudStackClient.class).toInstance(client);
+               bind(CloudStackApi.class).toInstance(client);
                bind(new TypeLiteral<CacheLoader<String, Zone>>() {}).
                   to(ZoneIdToZone.class);
                bind(new TypeLiteral<Supplier<LoadingCache<String, Zone>>>() {}).
@@ -198,10 +198,10 @@ public class FindSecurityGroupOrCreateTest {
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testLoadZoneNoSecurityGroups() throws UnknownHostException {
-      final CloudStackClient client = createMock(CloudStackClient.class);
-      SecurityGroupClient secClient = createMock(SecurityGroupClient.class);
-      ZoneClient zoneClient = createMock(ZoneClient.class);
-      AsyncJobClient jobClient = createMock(AsyncJobClient.class);
+      final CloudStackApi client = createMock(CloudStackApi.class);
+      SecurityGroupApi secClient = createMock(SecurityGroupApi.class);
+      ZoneApi zoneClient = createMock(ZoneApi.class);
+      AsyncJobApi jobClient = createMock(AsyncJobApi.class);
       
       SecurityGroup group = createMock(SecurityGroup.class);
       
@@ -209,10 +209,10 @@ public class FindSecurityGroupOrCreateTest {
 
       expect(zone.isSecurityGroupsEnabled()).andReturn(false);
       
-      expect(client.getSecurityGroupClient()).andReturn(secClient)
+      expect(client.getSecurityGroupApi()).andReturn(secClient)
          .anyTimes();
-      expect(client.getZoneClient()).andReturn(zoneClient);
-      expect(client.getAsyncJobClient()).andReturn(jobClient).anyTimes();
+      expect(client.getZoneApi()).andReturn(zoneClient);
+      expect(client.getAsyncJobApi()).andReturn(jobClient).anyTimes();
 
       expect(zoneClient.getZone("zone-1")).andReturn(zone);
       expect(secClient.getSecurityGroupByName("group-1")).andReturn(null);
@@ -231,7 +231,7 @@ public class FindSecurityGroupOrCreateTest {
             protected void configure() {
                bind(new TypeLiteral<Supplier<String>>() {
                   }).toInstance(Suppliers.ofInstance("1"));
-               bind(CloudStackClient.class).toInstance(client);
+               bind(CloudStackApi.class).toInstance(client);
                bind(new TypeLiteral<CacheLoader<String, Zone>>() {}).
                   to(ZoneIdToZone.class);
                bind(new TypeLiteral<Supplier<LoadingCache<String, Zone>>>() {}).
