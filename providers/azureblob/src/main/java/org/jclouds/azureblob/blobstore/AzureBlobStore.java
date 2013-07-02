@@ -19,9 +19,11 @@ package org.jclouds.azureblob.blobstore;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.includeMetadata;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.azure.storage.domain.BoundedSet;
@@ -32,7 +34,10 @@ import org.jclouds.azureblob.blobstore.functions.BlobToAzureBlob;
 import org.jclouds.azureblob.blobstore.functions.ContainerToResourceMetadata;
 import org.jclouds.azureblob.blobstore.functions.ListBlobsResponseToResourceList;
 import org.jclouds.azureblob.blobstore.functions.ListOptionsToListBlobsOptions;
+import org.jclouds.azureblob.blobstore.strategy.MultipartUploadStrategy;
+import org.jclouds.azureblob.domain.AzureBlob;
 import org.jclouds.azureblob.domain.ContainerProperties;
+import org.jclouds.azureblob.domain.ListBlobBlocksResponse;
 import org.jclouds.azureblob.domain.PublicAccess;
 import org.jclouds.azureblob.options.ListBlobsOptions;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -54,6 +59,7 @@ import org.jclouds.http.options.GetOptions;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
+import org.jclouds.io.Payload;
 
 /**
  * @author Adrian Cole
@@ -68,6 +74,8 @@ public class AzureBlobStore extends BaseBlobStore {
    private final BlobToAzureBlob blob2AzureBlob;
    private final BlobPropertiesToBlobMetadata blob2BlobMd;
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
+   private final Provider<MultipartUploadStrategy> multipartUploadStrategy;
+
 
    @Inject
    AzureBlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
@@ -76,7 +84,7 @@ public class AzureBlobStore extends BaseBlobStore {
             ListOptionsToListBlobsOptions blobStore2AzureContainerListOptions,
             ListBlobsResponseToResourceList azure2BlobStoreResourceList, AzureBlobToBlob azureBlob2Blob,
             BlobToAzureBlob blob2AzureBlob, BlobPropertiesToBlobMetadata blob2BlobMd,
-            BlobToHttpGetOptions blob2ObjectGetOptions) {
+            BlobToHttpGetOptions blob2ObjectGetOptions, Provider<MultipartUploadStrategy> multipartUploadStrategy) {
       super(context, blobUtils, defaultLocation, locations);
       this.sync = checkNotNull(sync, "sync");
       this.container2ResourceMd = checkNotNull(container2ResourceMd, "container2ResourceMd");
@@ -87,6 +95,7 @@ public class AzureBlobStore extends BaseBlobStore {
       this.blob2AzureBlob = checkNotNull(blob2AzureBlob, "blob2AzureBlob");
       this.blob2BlobMd = checkNotNull(blob2BlobMd, "blob2BlobMd");
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
+      this.multipartUploadStrategy = checkNotNull(multipartUploadStrategy, "multipartUploadStrategy");
    }
 
    /**
@@ -202,7 +211,9 @@ public class AzureBlobStore extends BaseBlobStore {
     */
    @Override
    public String putBlob(String container, Blob blob, PutOptions options) {
-      // TODO implement options
+      if (options.isMultipart()) {
+         return multipartUploadStrategy.get().execute(container, blob);
+      }
       return putBlob(container, blob);
    }
 
@@ -220,6 +231,31 @@ public class AzureBlobStore extends BaseBlobStore {
    }
 
    /**
+    *  The Put Block operation creates a block blob on Azure which can be later assembled into
+    *  a single, large blob object with the Put Block List operation.
+    */
+   public void putBlock(String container, String name, String blockId, Payload block) {
+      sync.putBlock(container, name, blockId, block);
+   }
+
+
+   /**
+    *  The Put Block operation creates a block blob on Azure which can be later assembled into
+    *  a single, large blob object with the Put Block List operation. Azure will search the
+    *  latest blocks uploaded with putBlock to assemble the blob.
+    */
+   public String putBlockList(String container, String name, List<String> blockIdList) {
+      return sync.putBlockList(container, name, blockIdList);
+   }
+
+   /**
+    * Get Block ID List for a blob
+    */
+   public ListBlobBlocksResponse getBlockList(String container, String name) {
+      return sync.getBlockList(container, name);
+   }
+
+    /**
     * This implementation invokes {@link AzureBlobClient#getBlobProperties}
     * 
     * @param container

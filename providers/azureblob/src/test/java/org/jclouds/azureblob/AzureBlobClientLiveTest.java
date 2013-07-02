@@ -27,14 +27,17 @@ import java.io.ByteArrayInputStream;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.Set;
 
+import com.google.common.io.BaseEncoding;
 import org.jclouds.azure.storage.AzureStorageResponseException;
 import org.jclouds.azure.storage.domain.BoundedSet;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azureblob.domain.AzureBlob;
 import org.jclouds.azureblob.domain.BlobProperties;
 import org.jclouds.azureblob.domain.ContainerProperties;
+import org.jclouds.azureblob.domain.ListBlobBlocksResponse;
 import org.jclouds.azureblob.domain.ListBlobsResponse;
 import org.jclouds.azureblob.domain.PublicAccess;
 import org.jclouds.azureblob.options.ListBlobsOptions;
@@ -43,6 +46,7 @@ import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.io.Payloads;
+import org.jclouds.io.payloads.ByteArrayPayload;
 import org.jclouds.util.Strings2;
 import org.jclouds.util.Throwables2;
 import org.testng.annotations.Test;
@@ -124,7 +128,7 @@ public class AzureBlobClientLiveTest extends BaseBlobStoreIntegrationTest {
       // Utils.toStringAndClose(url.openStream());
    }
 
-   @Test(timeOut = 5 * 60 * 1000)
+   @Test(timeOut = 10 * 60 * 1000)
    public void testCreatePublicRootContainer() throws Exception {
       try {
          getApi().deleteRootContainer();
@@ -345,5 +349,32 @@ public class AzureBlobClientLiveTest extends BaseBlobStoreIntegrationTest {
 
       getApi().deleteBlob(privateContainer, "object");
       getApi().deleteBlob(privateContainer, "chunked-object");
+   }
+
+   @Test(timeOut = 5 * 60 * 1000)
+   public void testBlockOperations() throws Exception {
+      String blockContainer = prefix + new SecureRandom().nextInt();
+      String blockBlob = "myblockblob-" + new SecureRandom().nextInt();
+      String A = "A";
+      String B = "B";
+      String C = "C";
+
+      String blockIdA = BaseEncoding.base64().encode((blockBlob + "-" + A).getBytes());
+      String blockIdB = BaseEncoding.base64().encode((blockBlob + "-" + B).getBytes());
+      String blockIdC = BaseEncoding.base64().encode((blockBlob + "-" + C).getBytes());
+      getApi().createContainer(blockContainer);
+      getApi().putBlock(blockContainer, blockBlob, blockIdA, new ByteArrayPayload(A.getBytes()));
+      getApi().putBlock(blockContainer, blockBlob, blockIdB, new ByteArrayPayload(B.getBytes()));
+      getApi().putBlock(blockContainer, blockBlob, blockIdC, new ByteArrayPayload(C.getBytes()));
+      getApi().putBlockList(blockContainer, blockBlob, Arrays.asList(blockIdA, blockIdB, blockIdC));
+      ListBlobBlocksResponse blocks = getApi().getBlockList(blockContainer, blockBlob);
+      assertEquals(3, blocks.getBlocks().size());
+      assertEquals(blockIdA, blocks.getBlocks().get(0).getBlockName());
+      assertEquals(blockIdB, blocks.getBlocks().get(1).getBlockName());
+      assertEquals(blockIdC, blocks.getBlocks().get(2).getBlockName());
+      assertEquals(1, blocks.getBlocks().get(0).getContentLength());
+      assertEquals(1, blocks.getBlocks().get(1).getContentLength());
+      assertEquals(1, blocks.getBlocks().get(2).getContentLength());
+      getApi().deleteContainer(blockContainer);
    }
 }

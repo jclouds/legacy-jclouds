@@ -20,10 +20,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.transform;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.includeMetadata;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
@@ -35,9 +37,11 @@ import org.jclouds.azureblob.blobstore.functions.BlobToAzureBlob;
 import org.jclouds.azureblob.blobstore.functions.ContainerToResourceMetadata;
 import org.jclouds.azureblob.blobstore.functions.ListBlobsResponseToResourceList;
 import org.jclouds.azureblob.blobstore.functions.ListOptionsToListBlobsOptions;
+import org.jclouds.azureblob.blobstore.strategy.MultipartUploadStrategy;
 import org.jclouds.azureblob.domain.AzureBlob;
 import org.jclouds.azureblob.domain.BlobProperties;
 import org.jclouds.azureblob.domain.ContainerProperties;
+import org.jclouds.azureblob.domain.ListBlobBlocksResponse;
 import org.jclouds.azureblob.domain.ListBlobsResponse;
 import org.jclouds.azureblob.domain.PublicAccess;
 import org.jclouds.azureblob.options.ListBlobsOptions;
@@ -62,6 +66,7 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
+import org.jclouds.io.Payload;
 
 /**
  * @author Adrian Cole
@@ -79,6 +84,8 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
    private final BlobToAzureBlob blob2AzureBlob;
    private final BlobPropertiesToBlobMetadata blob2BlobMd;
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
+   private final Provider<MultipartUploadStrategy> multipartUploadStrategy;
+
 
    @Inject
    AzureAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
@@ -88,7 +95,8 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
             ListOptionsToListBlobsOptions blobStore2AzureContainerListOptions,
             ListBlobsResponseToResourceList azure2BlobStoreResourceList, AzureBlobToBlob azureBlob2Blob,
             BlobToAzureBlob blob2AzureBlob, BlobPropertiesToBlobMetadata blob2BlobMd,
-            BlobToHttpGetOptions blob2ObjectGetOptions) {
+            BlobToHttpGetOptions blob2ObjectGetOptions,
+            Provider<MultipartUploadStrategy> multipartUploadStrategy) {
       super(context, blobUtils, userExecutor, defaultLocation, locations);
       this.async = checkNotNull(async, "async");
       this.container2ResourceMd = checkNotNull(container2ResourceMd, "container2ResourceMd");
@@ -99,6 +107,7 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
       this.blob2AzureBlob = checkNotNull(blob2AzureBlob, "blob2AzureBlob");
       this.blob2BlobMd = checkNotNull(blob2BlobMd, "blob2BlobMd");
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
+      this.multipartUploadStrategy = checkNotNull(multipartUploadStrategy, "multipartUploadStrategy");
    }
 
    /**
@@ -221,6 +230,37 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
    }
 
    /**
+    * This implementation invokes {@link AzureBlobAsyncClient#putBlock(String, String, String, Payload)}
+    * @param container
+    * @param name
+    * @param blockId
+    * @param object
+    */
+   public ListenableFuture<Void> putBlock(String container, String name, String blockId, Payload object) {
+      return async.putBlock(container, name, blockId, object);
+   }
+
+
+   /**
+    * This implementation invokes {@link AzureBlobAsyncClient#putBlockList(String, String, java.util.List)}
+    * @param container
+    * @param name
+    * @param blockIdList
+    */
+   public ListenableFuture<String> putBlockList(String container, String name, List<String> blockIdList) {
+      return async.putBlockList(container, name, blockIdList);
+   }
+
+   /**
+    * This implementation invokes {@link AzureBlobAsyncClient#getBlockList(String, String)}
+    * @param container
+    * @param name
+    */
+   public ListenableFuture<ListBlobBlocksResponse> getBlockList(String container, String name) {
+      return async.getBlockList(container, name);
+   }
+
+   /**
     * This implementation invokes {@link AzureBlobAsyncClient#getBlobProperties}
     * 
     * @param container
@@ -244,7 +284,9 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
 
    @Override
    public ListenableFuture<String> putBlob(String container, Blob blob, PutOptions options) {
-      // TODO implement options
+      if (options.isMultipart()) {
+         throw new UnsupportedOperationException("Multipart upload not supported in AzureAsyncBlobStore");
+      }
       return putBlob(container, blob);
    }
 
