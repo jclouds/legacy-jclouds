@@ -16,23 +16,44 @@
  */
 package org.jclouds.cloudwatch.features;
 
+import javax.inject.Named;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+
+import org.jclouds.Fallbacks.EmptyIterableWithMarkerOnNotFoundOr404;
+import org.jclouds.Fallbacks.EmptyPagedIterableOnNotFoundOr404;
+import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.cloudwatch.binders.GetMetricStatisticsBinder;
+import org.jclouds.cloudwatch.binders.MetricDataBinder;
 import org.jclouds.cloudwatch.domain.GetMetricStatistics;
 import org.jclouds.cloudwatch.domain.GetMetricStatisticsResponse;
 import org.jclouds.cloudwatch.domain.Metric;
 import org.jclouds.cloudwatch.domain.MetricDatum;
+import org.jclouds.cloudwatch.functions.MetricsToPagedIterable;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
+import org.jclouds.cloudwatch.xml.GetMetricStatisticsResponseHandlerV2;
+import org.jclouds.cloudwatch.xml.ListMetricsResponseHandler;
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.PagedIterable;
+import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.FormParams;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.Transform;
+import org.jclouds.rest.annotations.VirtualHost;
+import org.jclouds.rest.annotations.XMLResponseParser;
 
 /**
  * Provides access to Amazon CloudWatch via the Query API
  * <p/>
  * 
- * @see MetricAsyncApi
  * @see <a href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference" />
  * @author Jeremy Whitlock
  */
+@RequestFilters(FormSigner.class)
+@VirtualHost
 public interface MetricApi {
 
    /**
@@ -50,8 +71,21 @@ public interface MetricApi {
     * 
     * @return the response object
     */
+   @Named("ListMetrics")
+   @POST
+   @Path("/")
+   @XMLResponseParser(ListMetricsResponseHandler.class)
+   @FormParams(keys = "Action", values = "ListMetrics")
+   @Fallback(EmptyIterableWithMarkerOnNotFoundOr404.class)
    IterableWithMarker<Metric> list(ListMetricsOptions options);
 
+   @Named("ListMetrics")
+   @POST
+   @Path("/")
+   @XMLResponseParser(ListMetricsResponseHandler.class)
+   @Transform(MetricsToPagedIterable.class)
+   @FormParams(keys = "Action", values = "ListMetrics")
+   @Fallback(EmptyPagedIterableOnNotFoundOr404.class)
    PagedIterable<Metric> list();
 
    /**
@@ -62,9 +96,22 @@ public interface MetricApi {
     * 
     * @return the response object
     */
-   GetMetricStatisticsResponse getMetricStatistics(GetMetricStatistics statistics, GetMetricStatisticsOptions options);
+   @Named("GetMetricStatistics")
+   @POST
+   @Path("/")
+   @XMLResponseParser(GetMetricStatisticsResponseHandlerV2.class)
+   @FormParams(keys = "Action", values = "GetMetricStatistics")
+   GetMetricStatisticsResponse getMetricStatistics(
+            @BinderParam(GetMetricStatisticsBinder.class) GetMetricStatistics statistics,
+            GetMetricStatisticsOptions options);
 
-   GetMetricStatisticsResponse getMetricStatistics(GetMetricStatistics statistics);
+   @Named("GetMetricStatistics")
+   @POST
+   @Path("/")
+   @XMLResponseParser(GetMetricStatisticsResponseHandlerV2.class)
+   @FormParams(keys = "Action", values = "GetMetricStatistics")
+   GetMetricStatisticsResponse getMetricStatistics(
+            @BinderParam(GetMetricStatisticsBinder.class) GetMetricStatistics statistics);
 
    /**
     * Publishes metric data points to Amazon CloudWatch.
@@ -72,6 +119,11 @@ public interface MetricApi {
     * @param metrics the metrics to publish
     * @param namespace the namespace to publish the metrics to
     */
-   void putMetricsInNamespace(Iterable<MetricDatum> metrics, String namespace);
+   @Named("PutMetricData")
+   @POST
+   @Path("/")
+   @FormParams(keys = "Action", values = "PutMetricData")
+   void putMetricsInNamespace(@BinderParam(MetricDataBinder.class) Iterable<MetricDatum> metrics,
+                                        @FormParam("Namespace") String namespace);
 
 }

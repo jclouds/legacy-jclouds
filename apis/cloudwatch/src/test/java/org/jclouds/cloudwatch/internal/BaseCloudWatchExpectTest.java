@@ -22,11 +22,11 @@ import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.cloudwatch.config.CloudWatchRestClientModule;
+import org.jclouds.cloudwatch.config.CloudWatchHttpApiModule;
 import org.jclouds.date.DateService;
 import org.jclouds.location.config.LocationModule;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
-import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.ConfiguresHttpApi;
 import org.jclouds.rest.internal.BaseRestApiExpectTest;
 import org.jclouds.util.Suppliers2;
 
@@ -44,8 +44,8 @@ public class BaseCloudWatchExpectTest<T> extends BaseRestApiExpectTest<T> {
       provider = "cloudwatch";
    }
    
-   @ConfiguresRestClient
-   private static final class TestMonitoringRestClientModule extends CloudWatchRestClientModule {
+   @ConfiguresHttpApi
+   private static final class TestMonitoringHttpApiModule extends CloudWatchHttpApiModule {
 
       @Override
       protected void installLocations() {
@@ -71,6 +71,6 @@ public class BaseCloudWatchExpectTest<T> extends BaseRestApiExpectTest<T> {
 
    @Override
    protected Module createModule() {
-      return new TestMonitoringRestClientModule();
+      return new TestMonitoringHttpApiModule();
    }
 }

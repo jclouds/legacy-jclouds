@@ -17,7 +17,7 @@
 package org.jclouds.cloudwatch;
 
 import org.jclouds.View;
-import org.jclouds.rest.internal.BaseRestApiMetadataTest;
+import org.jclouds.rest.internal.BaseHttpApiMetadataTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -28,7 +28,7 @@ import com.google.common.reflect.TypeToken;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "CloudWatchApiMetadataTest")
-public class CloudWatchApiMetadataTest extends BaseRestApiMetadataTest {
+public class CloudWatchApiMetadataTest extends BaseHttpApiMetadataTest {
 
    // no monitoring abstraction, yet
    public CloudWatchApiMetadataTest() {
