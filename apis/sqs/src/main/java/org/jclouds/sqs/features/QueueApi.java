@@ -16,11 +16,39 @@
  */
 package org.jclouds.sqs.features;
 
+import static org.jclouds.sqs.reference.SQSParameters.ACTION;
+import static org.jclouds.sqs.reference.SQSParameters.VERSION;
+
 import java.net.URI;
 import java.util.Map;
+
+import javax.inject.Named;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+
+import org.jclouds.Constants;
+import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
+import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.EndpointParam;
+import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.FormParams;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.Transform;
+import org.jclouds.rest.annotations.VirtualHost;
+import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.sqs.binders.BindAttributeNamesToIndexedFormParams;
 import org.jclouds.sqs.domain.QueueAttributes;
+import org.jclouds.sqs.functions.MapToQueueAttributes;
 import org.jclouds.sqs.options.CreateQueueOptions;
 import org.jclouds.sqs.options.ListQueuesOptions;
+import org.jclouds.sqs.xml.AttributesHandler;
+import org.jclouds.sqs.xml.RegexListQueuesResponseHandler;
+import org.jclouds.sqs.xml.RegexQueueHandler;
+import org.jclouds.sqs.xml.ValueHandler;
 
 import com.google.common.collect.FluentIterable;
 
@@ -28,9 +56,11 @@ import com.google.common.collect.FluentIterable;
  * Provides access to SQS via their REST API.
  * <p/>
  * 
- * @see QueueAsyncApi
  * @author Adrian Cole
  */
+@RequestFilters(FormSigner.class)
+@FormParams(keys = VERSION, values = "{" + Constants.PROPERTY_API_VERSION + "}")
+@VirtualHost
 public interface QueueApi {
 
    /**
@@ -48,10 +78,20 @@ public interface QueueApi {
     *      "http://docs.amazonwebservices.com/AWSSimpleQueueService/2011-10-01/APIReference/Query_QueryListQueues.html"
     *      />
     */
+   @Named("ListQueues")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "ListQueues")
+   @ResponseParser(RegexListQueuesResponseHandler.class)
    FluentIterable<URI> list();
 
+   @Named("ListQueues")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "ListQueues")
+   @ResponseParser(RegexListQueuesResponseHandler.class)
    FluentIterable<URI> list(ListQueuesOptions options);
-   
+
    /**
     * The GetQueueUrl action returns the Uniform Resource Locater (URL) of a
     * queue. This action provides a simple way to retrieve the URL of an SQS
@@ -61,7 +101,13 @@ public interface QueueApi {
     *           The name of an existing queue.
     * @return uri of the queue or null if not found
     */
-   URI get(String queueName);
+   @Named("GetQueueUrl")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "GetQueueUrl")
+   @ResponseParser(RegexQueueHandler.class)
+   @Fallback(NullOnNotFoundOr404.class)
+   URI get(@FormParam("QueueName") String queueName);
 
    /**
     * like {@link #get(String)}, except specifying the owner of the queue.
@@ -73,7 +119,14 @@ public interface QueueApi {
     * @param accountId
     * @return The AWS account ID of the account that created the queue.
     */
-   URI getInAccount(String queueName, String accountId);
+   @Named("GetQueueUrl")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "GetQueueUrl")
+   @ResponseParser(RegexQueueHandler.class)
+   @Fallback(NullOnNotFoundOr404.class)
+   URI getInAccount(@FormParam("QueueName") String queueName,
+         @FormParam("QueueOwnerAWSAccountId") String accountId);
 
    /**
     * The CreateQueue action creates a new queue.
@@ -104,7 +157,12 @@ public interface QueueApi {
     *           characters; alphanumeric characters, hyphens (-), and
     *           underscores (_) are allowed.
     */
-   URI create(String queueName);
+   @Named("CreateQueue")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "CreateQueue")
+   @ResponseParser(RegexQueueHandler.class)
+   URI create(@FormParam("QueueName") String queueName);
 
    /**
     * same as {@link #create(String, String)} except you can
@@ -114,7 +172,12 @@ public interface QueueApi {
     *           options such as delay seconds
     * @see #create(String, String)
     */
-   URI create(String queueName, CreateQueueOptions options);
+   @Named("CreateQueue")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "CreateQueue")
+   @ResponseParser(RegexQueueHandler.class)
+   URI create(@FormParam("QueueName") String queueName, CreateQueueOptions options);
 
    /**
     * The DeleteQueue action deletes the queue specified by the queue URL,
@@ -140,7 +203,12 @@ public interface QueueApi {
     * @param queue
     *           queue you want to delete
     */
-   void delete(URI queue);
+   @Named("DeleteQueue")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "DeleteQueue")
+   @Fallback(VoidOnNotFoundOr404.class)
+   void delete(@EndpointParam URI queue);
 
    /**
     * returns all attributes of a queue.
@@ -148,7 +216,41 @@ public interface QueueApi {
     * @param queue
     *           queue to get the attributes of
     */
-   QueueAttributes getAttributes(URI queue);
+   @Named("GetQueueAttributes")
+   @POST
+   @Path("/")
+   @FormParams(keys = { ACTION, "AttributeName.1" }, values = { "GetQueueAttributes", "All" })
+   @Transform(MapToQueueAttributes.class)
+   @Fallback(NullOnNotFoundOr404.class)
+   @XMLResponseParser(AttributesHandler.class)
+   QueueAttributes getAttributes(@EndpointParam URI queue);
+
+   /**
+    * returns an attribute of a queue.
+    * 
+    * @param queue
+    *           queue to get the attributes of
+    */
+   @Named("GetQueueAttributes")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "GetQueueAttributes")
+   @XMLResponseParser(AttributesHandler.class)
+   Map<String, String> getAttributes(@EndpointParam URI queue,
+         @BinderParam(BindAttributeNamesToIndexedFormParams.class) Iterable<String> attributeNames);
+
+   /**
+    * returns an attribute of a queue.
+    * 
+    * @param queue
+    *           queue to get the attributes of
+    */
+   @Named("GetQueueAttributes")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "GetQueueAttributes")
+   @XMLResponseParser(ValueHandler.class)
+   String getAttribute(@EndpointParam URI queue, @FormParam("AttributeName.1") String attributeName);
 
    /**
     * The SetQueueAttributes action sets one attribute of a queue per request.
@@ -205,22 +307,11 @@ public interface QueueApi {
     *           DelaySeconds - An integer from 0 to 900 (15 minutes). The
     *           default for this attribute is 0.
     */
-   void setAttribute(URI queue, String name, String value);
-
-   /**
-    * returns some attributes of a queue.
-    * 
-    * @param queue
-    *           queue to get the attributes of
-    */
-   Map<String, String> getAttributes(URI queue, Iterable<String> attributeNames);
-
-   /**
-    * returns an attribute of a queue.
-    * 
-    * @param queue
-    *           queue to get the attributes of
-    */
-   String getAttribute(URI queue, String attributeName);
+   @Named("SetQueueAttributes")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "SetQueueAttributes")
+   void setAttribute(@EndpointParam URI queue, @FormParam("Attribute.Name") String name,
+         @FormParam("Attribute.Value") String value);
 
 }

@@ -16,15 +16,30 @@
  */
 package org.jclouds.sqs.features;
 
+import static org.jclouds.sqs.reference.SQSParameters.ACTION;
+import static org.jclouds.sqs.reference.SQSParameters.VERSION;
+
+import javax.inject.Named;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+
+import org.jclouds.Constants;
+import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.rest.annotations.FormParams;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.sqs.domain.Action;
 
 /**
  * Provides access to SQS via their REST API.
  * <p/>
  * 
- * @see PermissionAsyncApi
  * @author Adrian Cole
  */
+@RequestFilters(FormSigner.class)
+@FormParams(keys = VERSION, values = "{" + Constants.PROPERTY_API_VERSION + "}")
+@VirtualHost
 public interface PermissionApi {
 
    /**
@@ -62,7 +77,12 @@ public interface PermissionApi {
     *           Constraints: Valid 12-digit AWS account number, without hyphens
     * 
     */
-   void addPermissionToAccount(String label, Action permission, String accountId);
+   @Named("AddPermission")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "AddPermission")
+   void addPermissionToAccount(@FormParam("Label") String label,
+         @FormParam("ActionName.1") Action permission, @FormParam("AWSAccountId.1") String accountId);
 
    /**
     * The RemovePermission action revokes any permissions in the queue policy
@@ -76,6 +96,10 @@ public interface PermissionApi {
     *           The identification of the permission you want to remove. This is
     *           the label you added in AddPermission. example: AliceSendMessage
     */
-   void remove(String label);
+   @Named("RemovePermission")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "RemovePermission")
+   void remove(@FormParam("Label") String label);
 
 }

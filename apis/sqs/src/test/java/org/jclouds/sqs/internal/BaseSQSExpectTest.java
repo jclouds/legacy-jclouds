@@ -19,9 +19,9 @@ package org.jclouds.sqs.internal;
 import java.net.URI;
 
 import org.jclouds.date.DateService;
-import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.ConfiguresHttpApi;
 import org.jclouds.rest.internal.BaseRestApiExpectTest;
-import org.jclouds.sqs.config.SQSRestClientModule;
+import org.jclouds.sqs.config.SQSHttpApiModule;
 
 import com.google.inject.Module;
 
@@ -36,8 +36,8 @@ public class BaseSQSExpectTest<T> extends BaseRestApiExpectTest<T> {
       provider = "sqs";
    }
 
-   @ConfiguresRestClient
-   private static final class TestSQSRestClientModule extends SQSRestClientModule {
+   @ConfiguresHttpApi
+   private static final class TestSQSHttpApiModule extends SQSHttpApiModule {
 
       @Override
       protected String provideTimeStamp(final DateService dateService) {
@@ -47,6 +47,6 @@ public class BaseSQSExpectTest<T> extends BaseRestApiExpectTest<T> {
 
    @Override
    protected Module createModule() {
-      return new TestSQSRestClientModule();
+      return new TestSQSHttpApiModule();
    }
 }

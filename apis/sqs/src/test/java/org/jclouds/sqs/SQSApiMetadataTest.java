@@ -17,7 +17,7 @@
 package org.jclouds.sqs;
 
 import org.jclouds.View;
-import org.jclouds.rest.internal.BaseRestApiMetadataTest;
+import org.jclouds.rest.internal.BaseHttpApiMetadataTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -28,7 +28,7 @@ import com.google.common.reflect.TypeToken;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "SQSApiMetadataTest")
-public class SQSApiMetadataTest extends BaseRestApiMetadataTest {
+public class SQSApiMetadataTest extends BaseHttpApiMetadataTest {
 
    // no queue abstraction, yet
    public SQSApiMetadataTest() {

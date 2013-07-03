@@ -36,7 +36,6 @@ import com.google.inject.Provides;
  * <p/>
  * 
  * @author Adrian Cole
- * @see SQSAsyncApi
  */
 @Beta
 public interface SQSApi extends Closeable {

@@ -21,22 +21,18 @@ import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.util.Map;
 
-import org.jclouds.aws.config.FormSigningRestClientModule;
+import org.jclouds.aws.config.FormSigningHttpApiModule;
 import org.jclouds.aws.handlers.AWSServerErrorRetryHandler;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
-import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.ConfiguresHttpApi;
 import org.jclouds.sqs.SQSApi;
-import org.jclouds.sqs.SQSAsyncApi;
 import org.jclouds.sqs.features.MessageApi;
-import org.jclouds.sqs.features.MessageAsyncApi;
 import org.jclouds.sqs.features.PermissionApi;
-import org.jclouds.sqs.features.PermissionAsyncApi;
 import org.jclouds.sqs.features.QueueApi;
-import org.jclouds.sqs.features.QueueAsyncApi;
 import org.jclouds.sqs.handlers.ParseSQSErrorFromXmlContent;
 import org.jclouds.sqs.handlers.SQSErrorRetryHandler;
 
@@ -47,16 +43,11 @@ import com.google.common.collect.ImmutableMap;
  * 
  * @author Adrian Cole
  */
-@ConfiguresRestClient
-public class SQSRestClientModule extends FormSigningRestClientModule<SQSApi, SQSAsyncApi> {
-   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(QueueApi.class, QueueAsyncApi.class)
-         .put(MessageApi.class, MessageAsyncApi.class)
-         .put(PermissionApi.class, PermissionAsyncApi.class)
-         .build();
+@ConfiguresHttpApi
+public class SQSHttpApiModule extends FormSigningHttpApiModule<SQSApi> {
 
-   public SQSRestClientModule() {
-      super(typeToken(SQSApi.class), typeToken(SQSAsyncApi.class), DELEGATE_MAP);
+   public SQSHttpApiModule() {
+      super(SQSApi.class);
    }
    
    @Override

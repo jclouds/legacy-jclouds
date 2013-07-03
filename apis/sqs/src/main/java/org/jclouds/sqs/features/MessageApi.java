@@ -16,12 +16,43 @@
  */
 package org.jclouds.sqs.features;
 
+import static org.jclouds.sqs.reference.SQSParameters.ACTION;
+import static org.jclouds.sqs.reference.SQSParameters.VERSION;
+
 import java.util.Map;
+
+import javax.inject.Named;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+
+import org.jclouds.Constants;
+import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
+import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.FormParams;
+import org.jclouds.rest.annotations.MapBinder;
+import org.jclouds.rest.annotations.PayloadParam;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.VirtualHost;
+import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.sqs.binders.BindChangeMessageVisibilityBatchRequestEntryToIndexedFormParams;
+import org.jclouds.sqs.binders.BindDeleteMessageBatchRequestEntryToIndexedFormParams;
+import org.jclouds.sqs.binders.BindSendMessageBatchRequestEntryToIndexedFormParams;
+import org.jclouds.sqs.binders.BindSendMessageBatchRequestEntryWithDelaysToIndexedFormParams;
 import org.jclouds.sqs.domain.BatchResult;
 import org.jclouds.sqs.domain.Message;
 import org.jclouds.sqs.domain.MessageIdAndMD5;
 import org.jclouds.sqs.options.ReceiveMessageOptions;
 import org.jclouds.sqs.options.SendMessageOptions;
+import org.jclouds.sqs.xml.ChangeMessageVisibilityBatchResponseHandler;
+import org.jclouds.sqs.xml.DeleteMessageBatchResponseHandler;
+import org.jclouds.sqs.xml.MessageHandler;
+import org.jclouds.sqs.xml.ReceiveMessageResponseHandler;
+import org.jclouds.sqs.xml.RegexMessageIdAndMD5Handler;
+import org.jclouds.sqs.xml.SendMessageBatchResponseHandler;
 
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Table;
@@ -30,9 +61,11 @@ import com.google.common.collect.Table;
  * Provides access to SQS via their REST API.
  * <p/>
  * 
- * @see MessageAsyncApi
  * @author Adrian Cole
  */
+@RequestFilters(FormSigner.class)
+@FormParams(keys = VERSION, values = "{" + Constants.PROPERTY_API_VERSION + "}")
+@VirtualHost
 public interface MessageApi {
 
    /**
@@ -67,7 +100,12 @@ public interface MessageApi {
     *           The receipt handle associated with the message you want to
     *           delete.
     */
-   void delete(String receiptHandle);
+   @Named("DeleteMessage")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "DeleteMessage")
+   @Fallback(VoidOnNotFoundOr404.class)
+   void delete(@FormParam("ReceiptHandle") String receiptHandle);
 
    /**
     * Currently, you can send up to 10 {@link #delete} requests.
@@ -91,7 +129,13 @@ public interface MessageApi {
     * @return result that contains success or errors of the operation
     * @see #delete(String)
     */
-   BatchResult<String> delete(Map<String, String> idReceiptHandle);
+   @Named("DeleteMessageBatch")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "DeleteMessageBatch")
+   @XMLResponseParser(DeleteMessageBatchResponseHandler.class)
+   BatchResult<String> delete(
+         @BinderParam(BindDeleteMessageBatchRequestEntryToIndexedFormParams.class) Map<String, String> idReceiptHandle);
 
    /**
     * Same as {@link #delete(Map)}, except that we generate numeric ids starting
@@ -101,7 +145,13 @@ public interface MessageApi {
     *           receipt handles to delete
     * @see #delete(Map)
     */
-   BatchResult<String> delete(Iterable<String> receiptHandles);
+   @Named("DeleteMessageBatch")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "DeleteMessageBatch")
+   @XMLResponseParser(DeleteMessageBatchResponseHandler.class)
+   BatchResult<String> delete(
+         @BinderParam(BindDeleteMessageBatchRequestEntryToIndexedFormParams.class) Iterable<String> receiptHandles);
 
    /**
     * The ChangeMessageVisibility action changes the visibility timeout of a
@@ -143,7 +193,12 @@ public interface MessageApi {
     *           The new value for the message's visibility timeout (in seconds)
     *           from 0 to 43200 (maximum 12 hours)
     */
-   void changeVisibility(String receiptHandle, int visibilityTimeout);
+   @Named("ChangeMessageVisibility")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "ChangeMessageVisibility")
+   void changeVisibility(@FormParam("ReceiptHandle") String receiptHandle,
+         @FormParam("VisibilityTimeout") int visibilityTimeout);
 
    /**
     * Currently, you can send up to 10 {@link #changeVisibility} requests.
@@ -168,7 +223,13 @@ public interface MessageApi {
     * @return result that contains success or errors of the operation
     * @see #changeVisibility(String, int)
     */
-   BatchResult<String> changeVisibility(Table<String, String, Integer> idReceiptHandleVisibilityTimeout);
+   @Named("ChangeMessageVisibilityBatch")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "ChangeMessageVisibilityBatch")
+   @XMLResponseParser(ChangeMessageVisibilityBatchResponseHandler.class)
+   BatchResult<String> changeVisibility(
+         @BinderParam(BindChangeMessageVisibilityBatchRequestEntryToIndexedFormParams.class) Table<String, String, Integer> idReceiptHandleVisibilityTimeout);
 
    /**
     * Same as {@link #changeVisibility(Table)}, except that we generate numeric
@@ -178,7 +239,13 @@ public interface MessageApi {
     *           receipt handle to visibility timeout
     * @see #changeVisibility(Table)
     */
-   BatchResult<? extends MessageIdAndMD5> changeVisibility(Map<String, Integer> receiptHandleVisibilityTimeout);
+   @Named("ChangeMessageVisibilityBatch")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "ChangeMessageVisibilityBatch")
+   @XMLResponseParser(ChangeMessageVisibilityBatchResponseHandler.class)
+   BatchResult<MessageIdAndMD5> changeVisibility(
+         @BinderParam(BindChangeMessageVisibilityBatchRequestEntryToIndexedFormParams.class) Map<String, Integer> receiptHandleVisibilityTimeout);
 
    /**
     * Currently, you can send up to 10 {@link #changeVisibility} requests.
@@ -204,7 +271,15 @@ public interface MessageApi {
     * @return result that contains success or errors of the operation
     * @see #changeVisibility(String, int)
     */
-   BatchResult<String> changeVisibility(Map<String, String> idReceiptHandle, int visibilityTimeout);
+   @Named("ChangeMessageVisibilityBatch")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "ChangeMessageVisibilityBatch")
+   @MapBinder(BindChangeMessageVisibilityBatchRequestEntryToIndexedFormParams.class)
+   @XMLResponseParser(ChangeMessageVisibilityBatchResponseHandler.class)
+   BatchResult<String> changeVisibility(
+         @PayloadParam("idReceiptHandle") Map<String, String> idReceiptHandle,
+         @PayloadParam("visibilityTimeout") int visibilityTimeout);
 
    /**
     * Same as {@link #changeVisibility(Map, int)}, except that we generate
@@ -214,7 +289,15 @@ public interface MessageApi {
     *           receipt handles to change visibility
     * @see #changeVisibility(Map, int)
     */
-   BatchResult<String> changeVisibility(Iterable<String> receiptHandles, int visibilityTimeout);
+   @Named("ChangeMessageVisibilityBatch")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "ChangeMessageVisibilityBatch")
+   @MapBinder(BindChangeMessageVisibilityBatchRequestEntryToIndexedFormParams.class)
+   @XMLResponseParser(ChangeMessageVisibilityBatchResponseHandler.class)
+   BatchResult<String> changeVisibility(
+         @PayloadParam("receiptHandles") Iterable<String> receiptHandles,
+         @PayloadParam("visibilityTimeout") int visibilityTimeout);
 
    /**
     * The SendMessage action delivers a message to the specified queue. The
@@ -238,7 +321,27 @@ public interface MessageApi {
     *           characters, see the preceding important note.
     * @return id of the message and md5 of the content sent
     */
-   MessageIdAndMD5 send(String message);
+   @Named("SendMessage")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "SendMessage")
+   @ResponseParser(RegexMessageIdAndMD5Handler.class)
+   MessageIdAndMD5 send(@FormParam("MessageBody") String message);
+
+   /**
+    * same as {@link #sendMessage(URI, String)} except you can control options
+    * such as delay seconds.
+    * 
+    * @param options
+    *           options such as delay seconds
+    * @see #sendMessage(URI, String)
+    */
+   @Named("SendMessage")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "SendMessage")
+   @ResponseParser(RegexMessageIdAndMD5Handler.class)
+   MessageIdAndMD5 send(@FormParam("MessageBody") String message, SendMessageOptions options);
 
    /**
     * Same as {@link #send(Map)} except you can set a delay for each message in
@@ -264,7 +367,14 @@ public interface MessageApi {
     * @return result that contains success or errors of the operation
     * @see #send(String, SendMessageOptions)
     */
-   BatchResult<? extends MessageIdAndMD5> sendWithDelays(Table<String, String, Integer> idMessageBodyDelaySeconds);
+   @Named("SendMessageBatch")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "SendMessageBatch")
+   @ResponseParser(RegexMessageIdAndMD5Handler.class)
+   @XMLResponseParser(SendMessageBatchResponseHandler.class)
+   BatchResult<? extends MessageIdAndMD5> sendWithDelays(
+         @BinderParam(BindSendMessageBatchRequestEntryWithDelaysToIndexedFormParams.class) Table<String, String, Integer> idMessageBodyDelaySeconds);
 
    /**
     * Same as {@link #sendWithDelays(Table)}, except that we generate numeric
@@ -274,7 +384,14 @@ public interface MessageApi {
     *           message body to the delay desired
     * @see #sendWithDelays(Table)
     */
-   BatchResult<? extends MessageIdAndMD5> sendWithDelays(Map<String, Integer> messageBodyDelaySeconds);
+   @Named("SendMessageBatch")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "SendMessageBatch")
+   @ResponseParser(RegexMessageIdAndMD5Handler.class)
+   @XMLResponseParser(SendMessageBatchResponseHandler.class)
+   BatchResult<? extends MessageIdAndMD5> sendWithDelays(
+         @BinderParam(BindSendMessageBatchRequestEntryWithDelaysToIndexedFormParams.class) Map<String, Integer> messageBodyDelaySeconds);
 
    /**
     * Same as {@link #send(Map)} except you set a delay for all messages in the
@@ -287,7 +404,15 @@ public interface MessageApi {
     * 
     * @see #send(String, SendMessageOptions)
     */
-   BatchResult<? extends MessageIdAndMD5> sendWithDelay(Map<String, String> idMessageBody, int delaySeconds);
+   @Named("SendMessageBatch")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "SendMessageBatch")
+   @MapBinder(BindSendMessageBatchRequestEntryWithDelaysToIndexedFormParams.class)
+   @XMLResponseParser(SendMessageBatchResponseHandler.class)
+   BatchResult<? extends MessageIdAndMD5> sendWithDelay(
+         @PayloadParam("idMessageBody") Map<String, String> idMessageBody,
+         @PayloadParam("delaySeconds") int delaySeconds);
 
    /**
     * Same as {@link #sendWithDelay(Map, int)}, except that we generate numeric
@@ -297,7 +422,14 @@ public interface MessageApi {
     *           message bodies to send
     * @see #sendWithDelay(Map, int)
     */
-   BatchResult<? extends MessageIdAndMD5> sendWithDelay(Iterable<String> messageBodies, int delaySeconds);
+   @Named("SendMessageBatch")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "SendMessageBatch")
+   @MapBinder(BindSendMessageBatchRequestEntryWithDelaysToIndexedFormParams.class)
+   @XMLResponseParser(SendMessageBatchResponseHandler.class)
+   BatchResult<? extends MessageIdAndMD5> sendWithDelay(
+         @PayloadParam("messageBodies") Iterable<String> messageBodies, @PayloadParam("delaySeconds") int delaySeconds);
 
    /**
     * The SendMessageBatch action delivers up to ten messages to the specified
@@ -329,7 +461,13 @@ public interface MessageApi {
     * @return result that contains success or errors of the operation
     * @see #send(String)
     */
-   BatchResult<? extends MessageIdAndMD5> send(Map<String, String> idMessageBody);
+   @Named("SendMessageBatch")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "SendMessageBatch")
+   @XMLResponseParser(SendMessageBatchResponseHandler.class)
+   BatchResult<? extends MessageIdAndMD5> send(
+         @BinderParam(BindSendMessageBatchRequestEntryToIndexedFormParams.class) Map<String, String> idMessageBody);
 
    /**
     * Same as {@link #send(Map)}, except that we generate numeric ids starting
@@ -339,17 +477,13 @@ public interface MessageApi {
     *           message bodies to send
     * @see #send(Map)
     */
-   BatchResult<? extends MessageIdAndMD5> send(Iterable<String> messageBodies);
-
-   /**
-    * same as {@link #sendMessage(URI, String)} except you can control options
-    * such as delay seconds.
-    * 
-    * @param options
-    *           options such as delay seconds
-    * @see #sendMessage(URI, String)
-    */
-   MessageIdAndMD5 send(String message, SendMessageOptions options);
+   @Named("SendMessageBatch")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "SendMessageBatch")
+   @XMLResponseParser(SendMessageBatchResponseHandler.class)
+   BatchResult<? extends MessageIdAndMD5> send(
+         @BinderParam(BindSendMessageBatchRequestEntryToIndexedFormParams.class) Iterable<String> messageBodies);
 
    /**
     * The ReceiveMessage action retrieves one or more messages from the
@@ -373,6 +507,11 @@ public interface MessageApi {
     *           from where you are receiving messages
     * @return message including the receipt handle you can use to delete it
     */
+   @Named("ReceiveMessage")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "ReceiveMessage")
+   @XMLResponseParser(MessageHandler.class)
    Message receive();
 
    /**
@@ -386,6 +525,11 @@ public interface MessageApi {
     *           options such as VisibilityTimeout
     * @see #receive(URI)
     */
+   @Named("ReceiveMessage")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "ReceiveMessage")
+   @XMLResponseParser(MessageHandler.class)
    Message receive(ReceiveMessageOptions options);
 
    /**
@@ -395,7 +539,12 @@ public interface MessageApi {
     *           maximum messages to receive, current limit is 10
     * @see #receive(URI)
     */
-   FluentIterable<Message> receive(int max);
+   @Named("ReceiveMessage")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "ReceiveMessage")
+   @XMLResponseParser(ReceiveMessageResponseHandler.class)
+   FluentIterable<Message> receive(@FormParam("MaxNumberOfMessages") int max);
 
    /**
     * same as {@link #receive(URI, int)} except you can provide options like
@@ -408,5 +557,12 @@ public interface MessageApi {
     *           options such as VisibilityTimeout
     * @see #receive(URI, int)
     */
-   FluentIterable<Message> receive(int max, ReceiveMessageOptions options);
+   @Named("ReceiveMessage")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "ReceiveMessage")
+   @XMLResponseParser(ReceiveMessageResponseHandler.class)
+   FluentIterable<Message> receive(@FormParam("MaxNumberOfMessages") int max,
+         ReceiveMessageOptions options);
+
 }
