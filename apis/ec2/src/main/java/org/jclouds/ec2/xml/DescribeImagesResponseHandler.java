@@ -17,6 +17,7 @@
 package org.jclouds.ec2.xml;
 
 import static org.jclouds.util.SaxUtils.currentOrNull;
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import java.util.Map;
 import java.util.Set;
@@ -54,8 +55,9 @@ import com.google.common.collect.Sets;
 public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Set<Image>> {
 
    @Inject
-   public DescribeImagesResponseHandler(@Region Supplier<String> defaultRegion) {
+   public DescribeImagesResponseHandler(@Region Supplier<String> defaultRegion, TagSetHandler tagSetHandler) {
       this.defaultRegion = defaultRegion;
+      this.tagSetHandler = tagSetHandler;
    }
 
    @Resource
@@ -64,6 +66,7 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
    protected Set<Image> contents = Sets.newLinkedHashSet();
    private StringBuilder currentText = new StringBuilder();
    private final Supplier<String> defaultRegion;
+   private final TagSetHandler tagSetHandler;
 
    private Architecture architecture;
    private String name;
@@ -81,8 +84,10 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
    private String ramdiskId;
    private boolean inProductCodes;
    private boolean inBlockDeviceMapping;
+   private boolean inTagSet;
    private RootDeviceType rootDeviceType = RootDeviceType.INSTANCE_STORE;
    private Map<String, EbsBlockDevice> ebsBlockDevices = Maps.newHashMap();
+   private Map<String, String> tags = Maps.newLinkedHashMap();
    private String deviceName;
    private String snapshotId;
    private VirtualizationType virtualizationType = VirtualizationType.PARAVIRTUAL;
@@ -102,10 +107,21 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
          inProductCodes = true;
       } else if (qName.equals("blockDeviceMapping")) {
          inBlockDeviceMapping = true;
+      } else if (equalsOrSuffix(qName, "tagSet")) {
+         inTagSet = true;
+      }
+      if (inTagSet) {
+         tagSetHandler.startElement(uri, name, qName, attrs);
       }
    }
 
    public void endElement(String uri, String name, String qName) {
+      if (equalsOrSuffix(qName, "tagSet")) {
+         inTagSet = false;
+         tags = tagSetHandler.getResult();
+      } else if (inTagSet) {
+         tagSetHandler.endElement(uri, name, qName);
+      }
       if (qName.equals("architecture")) {
          architecture = Architecture.fromValue(currentText.toString().trim());
       // Nova Diablo uses the wrong name for this field
@@ -161,14 +177,14 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
             this.snapshotId = null;
             this.volumeSize = 0;
             this.deleteOnTermination = true;
-         } else if (!inProductCodes) {
+         } else if (!inTagSet && !inProductCodes) {
             try {
                String region = getRequest() != null ? AWSUtils.findRegionInArgsOrNull(getRequest()) : null;
                if (region == null)
                   region = defaultRegion.get();
                contents.add(new Image(region, architecture, this.name, description, imageId, imageLocation,
                         imageOwnerId, imageState, rawState, imageType, isPublic, productCodes, kernelId, platform,
-                        ramdiskId, rootDeviceType, rootDeviceName, ebsBlockDevices, virtualizationType, hypervisor));
+                        ramdiskId, rootDeviceType, rootDeviceName, ebsBlockDevices, tags, virtualizationType, hypervisor));
             } catch (NullPointerException e) {
                logger.warn(e, "malformed image: %s", imageId);
             }
@@ -198,6 +214,10 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
    }
 
    public void characters(char ch[], int start, int length) {
-      currentText.append(ch, start, length);
+      if (inTagSet) {
+         tagSetHandler.characters(ch, start, length);
+      } else {
+         currentText.append(ch, start, length);
+      }
    }
 }

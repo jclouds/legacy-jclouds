@@ -59,6 +59,7 @@ public class Image implements Comparable<Image> {
    @Nullable
    private final String rootDeviceName;
    private final Map<String, EbsBlockDevice> ebsBlockDevices = Maps.newHashMap();
+   private final Map<String, String> tags = Maps.newLinkedHashMap();
    private final VirtualizationType virtualizationType;
 
    public VirtualizationType getVirtualizationType() {
@@ -76,7 +77,7 @@ public class Image implements Comparable<Image> {
             ImageType imageType, boolean isPublic, Iterable<String> productCodes, @Nullable String kernelId,
             @Nullable String platform, @Nullable String ramdiskId, RootDeviceType rootDeviceType,
             @Nullable String rootDeviceName, Map<String, EbsBlockDevice> ebsBlockDevices,
-            VirtualizationType virtualizationType, Hypervisor hypervisor) {
+            Map<String, String> tags, VirtualizationType virtualizationType, Hypervisor hypervisor) {
       this.region = checkNotNull(region, "region");
       this.architecture = architecture;
       this.imageId = checkNotNull(imageId, "imageId");
@@ -95,6 +96,7 @@ public class Image implements Comparable<Image> {
       this.ramdiskId = ramdiskId;
       this.rootDeviceType = checkNotNull(rootDeviceType, "rootDeviceType");
       this.ebsBlockDevices.putAll(checkNotNull(ebsBlockDevices, "ebsBlockDevices"));
+      this.tags.putAll(checkNotNull(tags, "tags"));
       this.virtualizationType = checkNotNull(virtualizationType, "virtualizationType");
       this.hypervisor = checkNotNull(hypervisor, "hypervisor");
    }
@@ -346,6 +348,10 @@ public class Image implements Comparable<Image> {
       return ebsBlockDevices;
    }
 
+   public Map<String, String> getTags() {
+      return tags;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -353,6 +359,7 @@ public class Image implements Comparable<Image> {
       result = prime * result + ((architecture == null) ? 0 : architecture.hashCode());
       result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((ebsBlockDevices == null) ? 0 : ebsBlockDevices.hashCode());
+      result = prime * result + ((tags == null) ? 0 : tags.hashCode());
       result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
       result = prime * result + ((imageLocation == null) ? 0 : imageLocation.hashCode());
       result = prime * result + ((imageOwnerId == null) ? 0 : imageOwnerId.hashCode());
@@ -394,6 +401,11 @@ public class Image implements Comparable<Image> {
          if (other.ebsBlockDevices != null)
             return false;
       } else if (!ebsBlockDevices.equals(other.ebsBlockDevices))
+         return false;
+      if (tags == null) {
+         if (other.tags != null)
+            return false;
+      } else if (!tags.equals(other.tags))
          return false;
       if (imageId == null) {
          if (other.imageId != null)
@@ -478,7 +490,7 @@ public class Image implements Comparable<Image> {
                + ", kernelId=" + kernelId + ", name=" + name + ", platform=" + platform + ", productCodes="
                + productCodes + ", ramdiskId=" + ramdiskId + ", region=" + region + ", rootDeviceName="
                + rootDeviceName + ", rootDeviceType=" + rootDeviceType + ", virtualizationType=" + virtualizationType
-               + ", hypervisor=" + hypervisor + "]";
+               + ", hypervisor=" + hypervisor + ", tags=" + tags + "]";
    }
 
 }

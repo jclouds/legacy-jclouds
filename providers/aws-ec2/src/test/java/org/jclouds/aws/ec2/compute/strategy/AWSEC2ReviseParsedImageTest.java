@@ -100,9 +100,12 @@ public class AWSEC2ReviseParsedImageTest {
         RootDeviceType rootDeviceType = RootDeviceType.EBS;
         String rootDeviceName = "";
         Map<String, Image.EbsBlockDevice> ebsBlockDevices = ImmutableMap.of();
+        Map<String, String> tags = ImmutableMap.of();
         VirtualizationType virtualizationType = VirtualizationType.HVM;
         Hypervisor hypervisor = Hypervisor.XEN;
-        Image from = new Image(region, architecture, imageName, description, imageId, imageOwnerId + "/" + imageName, imageOwnerId, imageState, "available", imageType, isPublic, productCodes, kernelId, platform, ramdiskId, rootDeviceType, rootDeviceName, ebsBlockDevices, virtualizationType, hypervisor);
+      Image from = new Image(region, architecture, imageName, description, imageId, imageOwnerId + "/" + imageName,
+            imageOwnerId, imageState, "available", imageType, isPublic, productCodes, kernelId, platform, ramdiskId,
+            rootDeviceType, rootDeviceName, ebsBlockDevices, tags, virtualizationType, hypervisor);
         return from;
     }
 }

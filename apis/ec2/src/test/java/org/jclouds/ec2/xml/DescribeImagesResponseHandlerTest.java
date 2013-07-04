@@ -59,7 +59,7 @@ public class DescribeImagesResponseHandlerTest {
                "ec2-public-images/fedora-8-i386-base-v1.04.manifest.xml", "206029621532", ImageState.AVAILABLE, "available",
                ImageType.MACHINE, false, Sets.<String> newHashSet("9961934F"), "aki-4438dd2d", null, "ari-4538dd2c",
                RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of(),
-               VirtualizationType.PARAVIRTUAL, Hypervisor.XEN));
+               ImmutableMap.<String, String> of(), VirtualizationType.PARAVIRTUAL, Hypervisor.XEN));
 
       Set<Image> result = parseImages("/describe_images.xml");
 
@@ -73,7 +73,7 @@ public class DescribeImagesResponseHandlerTest {
                "aws-solutions-amis/SqlSvrStd2003r2-x86_64-Win_SFWBasic5.1-v1.0.manifest.xml", "771350841976",
                ImageState.AVAILABLE, "available", ImageType.MACHINE, true, Sets.<String> newHashSet("5771E9A6"), null, "windows",
                null, RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of(),
-               VirtualizationType.PARAVIRTUAL, Hypervisor.XEN));
+               ImmutableMap.<String, String> of(), VirtualizationType.PARAVIRTUAL, Hypervisor.XEN));
 
 
       Set<Image> result = parseImages("/describe_images_windows.xml");
@@ -89,7 +89,7 @@ public class DescribeImagesResponseHandlerTest {
                ImageState.AVAILABLE, "available", ImageType.MACHINE, true, Sets.<String> newHashSet(), null, "windows", null,
                RootDeviceType.EBS, "/dev/sda1", ImmutableMap.<String, EbsBlockDevice> of("/dev/sda1",
                         new EbsBlockDevice("snap-d01272b9", 30, true), "xvdf", new EbsBlockDevice("snap-d31272ba", 250,
-                                 false)), VirtualizationType.HVM, Hypervisor.XEN));
+                                 false)), ImmutableMap.<String, String> of(), VirtualizationType.HVM, Hypervisor.XEN));
 
       Set<Image> result = parseImages("/describe_images_ebs.xml");
 
@@ -98,12 +98,29 @@ public class DescribeImagesResponseHandlerTest {
       assertEquals(get(result, 0).getRawState(), "available");
    }
    
+   public void testTags() {
+      Set<Image> contents = ImmutableSet.of(new Image("us-east-1", Architecture.I386, null, null, "ami-be3adfd7",
+            "ec2-public-images/fedora-8-i386-base-v1.04.manifest.xml", "206029621532", ImageState.AVAILABLE, "available",
+            ImageType.MACHINE, false, Sets.<String> newHashSet("9961934F"), "aki-4438dd2d", null, "ari-4538dd2c",
+            RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of(),
+            ImmutableMap.<String, String> of("Name", "Some machine name", "Second", "Second value"),
+            VirtualizationType.PARAVIRTUAL, Hypervisor.XEN));
+
+      Set<Image> result = parseImages("/describe_images_tags.xml");
+
+      assertEquals(result.toString(), contents.toString());
+      assertEquals(get(result, 0).getImageState(), ImageState.AVAILABLE);
+      assertEquals(get(result, 0).getRawState(), "available");
+      assertEquals(get(result, 0).getTags().get("Name"), "Some machine name");
+      assertEquals(get(result, 0).getTags().get("Second"), "Second value");
+   }
+
    public void testDiabloWithIncorrectDisplayNameField() {
       Set<Image> contents = ImmutableSet.of(new Image("us-east-1", Architecture.X86_64, "CentOS 6.2 Server 64-bit 20120125", "", "ami-0000054e",
                "local (CentOS 6.2 Server 64-bit 20120125)", "", ImageState.AVAILABLE, "available",
                ImageType.MACHINE, true, Sets.<String> newHashSet(), "aki-0000054c", null, "ari-0000054d",
                RootDeviceType.INSTANCE_STORE, "/dev/sda1", ImmutableMap.<String, EbsBlockDevice> of(),
-               VirtualizationType.PARAVIRTUAL, Hypervisor.XEN));
+               ImmutableMap.<String, String> of(), VirtualizationType.PARAVIRTUAL, Hypervisor.XEN));
       
       Set<Image> result = parseImages("/describe_images_nova.xml");
 

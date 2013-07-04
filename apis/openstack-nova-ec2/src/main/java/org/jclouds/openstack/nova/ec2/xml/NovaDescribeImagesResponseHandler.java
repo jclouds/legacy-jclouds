@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import org.jclouds.ec2.domain.Image;
 import org.jclouds.ec2.domain.Image.ImageType;
 import org.jclouds.ec2.xml.DescribeImagesResponseHandler;
+import org.jclouds.ec2.xml.TagSetHandler;
 import org.jclouds.location.Region;
 
 import com.google.common.base.Predicate;
@@ -37,8 +38,8 @@ import com.google.common.collect.Iterables;
  */
 public class NovaDescribeImagesResponseHandler extends DescribeImagesResponseHandler {
    @Inject
-   public NovaDescribeImagesResponseHandler(@Region Supplier<String> defaultRegion) {
-      super(defaultRegion);
+   public NovaDescribeImagesResponseHandler(@Region Supplier<String> defaultRegion, TagSetHandler tagSetHandler) {
+      super(defaultRegion, tagSetHandler);
    }
 
    public Set<Image> getResult() {
