@@ -126,6 +126,21 @@
                 "endpoints_links": []
             },
             {
+                "type": "network",
+                "name": "Quantum Service",
+                "endpoints": [
+                    {
+                        "tenantId": "3456",
+                        "adminURL": "https://csnode.jclouds.org:9696",
+                        "region": "region-a.geo-1",
+                        "versionId": "2.0",
+                        "publicURL": "https://csnode.jclouds.org:9696",
+                        "internalURL": "https://csnode.jclouds.org:9696"
+                    }
+                ],
+                "endpoints_links": []
+            },
+            {
                 "type": "volume",
                 "name": "cinder",
                 "endpoints": [
