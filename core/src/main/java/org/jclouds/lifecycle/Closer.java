@@ -25,8 +25,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.inject.Singleton;
 
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.Atomics;
 
-import static org.jclouds.lifecycle.Closer.State.*;
+import static org.jclouds.lifecycle.Closer.State.AVAILABLE;
+import static org.jclouds.lifecycle.Closer.State.DONE;
+import static org.jclouds.lifecycle.Closer.State.PROCESSING;
 
 /**
  * This will close objects in the reverse order that they were added.
@@ -47,7 +50,7 @@ public class Closer implements Closeable {
    private final AtomicReference<State> state;
 
    public Closer() {
-      this.state = new AtomicReference<State>(AVAILABLE);
+      this.state = Atomics.newReference(AVAILABLE);
    }
 
    public void addToClose(Closeable toClose) {
