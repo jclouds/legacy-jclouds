@@ -108,7 +108,7 @@ public class ParseAccessTest extends BaseItemParserTest<Access> {
                                                      .versionId("1.1")
                                                      .versionInfo("https://az-3.region-a.geo-1.compute.hpcloudsvc.com/v1.1/")
                                                      .versionList("https://az-3.region-a.geo-1.compute.hpcloudsvc.com").build()).build())
-                   .service(Service.builder().name("Quantum Service").type(NETWORK)
+                   .service(Service.builder().name("Neutron Service").type(NETWORK)
                                    .endpoint(Endpoint.builder()
                                                      .tenantId("3456")
                                                      .publicURL("https://csnode.jclouds.org:9696/v1.0/tenants/3456")

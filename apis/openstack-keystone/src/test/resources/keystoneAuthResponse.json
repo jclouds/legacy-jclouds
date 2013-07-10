@@ -112,7 +112,7 @@
             },
             {
                 "type": "network",
-                "name": "Quantum Service",
+                "name": "Neutron Service",
                 "endpoints": [
                     {
                         "tenantId": "3456",
