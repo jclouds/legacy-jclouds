@@ -24,6 +24,7 @@ import static org.jclouds.io.Payloads.newStringPayload;
 import static org.jclouds.reflect.Reflection2.method;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.io.Closeable;
@@ -42,9 +43,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-
 import javax.inject.Named;
 import javax.inject.Qualifier;
 import javax.inject.Singleton;
@@ -62,6 +63,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.eclipse.jetty.http.HttpHeaders;
+import org.jclouds.Constants;
 import org.jclouds.ContextBuilder;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
@@ -72,6 +74,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.IOExceptionRetryHandler;
+import org.jclouds.http.filters.StripExpectHeader;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.ParseSax;
@@ -851,8 +854,8 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
                Lists.<Object> newArrayList((String) null)));
          Assert.fail("call should have failed with illegal null parameter, not permitted " + request + " to be created");
       } catch (NullPointerException e) {
-         Assert.assertTrue(e.toString().indexOf("postNonnull parameter 1") >= 0,
-               "Error message should have referred to 'parameter 1': " + e);
+         assertTrue(e.toString().indexOf("postNonnull parameter 1") >= 0,
+            "Error message should have referred to 'parameter 1': " + e);
       }
    }
 
@@ -1367,6 +1370,9 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       @OverrideRequestFilters
       @RequestFilters(TestRequestFilter2.class)
       public void getOverride(HttpRequest request);
+
+      @POST
+      public void post();
    }
 
    @Test
@@ -1394,6 +1400,37 @@ public class RestAnnotationProcessorTest extends BaseRestApiTest {
       assertEquals(request.getFilters().size(), 1);
       assertEquals(request.getHeaders().size(), 1);
       assertEquals(request.getFilters().get(0).getClass(), TestRequestFilter2.class);
+   }
+
+   @Test
+   public void testRequestFilterStripExpect() {
+      // First, verify that by default, the StripExpectHeader filter is not applied
+      Invokable<?, ?> method = method(TestRequestFilter.class, "post");
+      Invocation invocation = Invocation.create(method,
+         ImmutableList.<Object>of(HttpRequest.builder().method("POST").endpoint("http://localhost")
+            .addHeader(HttpHeaders.EXPECT, "100-Continue").build()));
+      GeneratedHttpRequest request = processor.apply(invocation);
+      assertEquals(request.getFilters().size(), 1);
+      assertEquals(request.getFilters().get(0).getClass(), TestRequestFilter1.class);
+
+      // Now let's create a new injector with the property set. Use that to create the annotation processor.
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_STRIP_EXPECT_HEADER, "true");
+      Injector injector = ContextBuilder.newBuilder(
+            AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(Callee.class, AsyncCallee.class,
+               "http://localhost:9999"))
+         .modules(ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule(), new AbstractModule() {
+            protected void configure() {
+               bind(new TypeLiteral<Supplier<URI>>() {
+               }).annotatedWith(Localhost2.class).toInstance(
+                  Suppliers.ofInstance(URI.create("http://localhost:1111")));
+            }}))
+         .overrides(overrides).buildInjector();
+      RestAnnotationProcessor newProcessor = injector.getInstance(RestAnnotationProcessor.class);
+      // Verify that this time the filter is indeed applied as expected.
+      request = newProcessor.apply(invocation);
+      assertEquals(request.getFilters().size(), 2);
+      assertEquals(request.getFilters().get(1).getClass(), StripExpectHeader.class);
    }
 
    public class TestEncoding {

@@ -29,6 +29,7 @@ import static org.jclouds.Constants.PROPERTY_PRETTY_PRINT_PAYLOADS;
 import static org.jclouds.Constants.PROPERTY_SCHEDULER_THREADS;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.Constants.PROPERTY_SO_TIMEOUT;
+import static org.jclouds.Constants.PROPERTY_STRIP_EXPECT_HEADER;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 import static org.jclouds.reflect.Reflection2.typeToken;
 
@@ -46,7 +47,6 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
-
 /**
  * The BaseApiMetadata class is an abstraction of {@link ApiMetadata} to be extended by those
  * implementing ApiMetadata.
@@ -72,6 +72,7 @@ public abstract class BaseApiMetadata implements ApiMetadata {
       props.setProperty(PROPERTY_MAX_SESSION_FAILURES, 2 + "");
       props.setProperty(PROPERTY_SESSION_INTERVAL, 60 + "");
       props.setProperty(PROPERTY_PRETTY_PRINT_PAYLOADS, "true");
+      props.setProperty(PROPERTY_STRIP_EXPECT_HEADER, "false");
       return props;
    }
    

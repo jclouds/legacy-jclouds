@@ -296,4 +296,9 @@ public interface Constants {
     */
    public static final String PROPERTY_PRETTY_PRINT_PAYLOADS = "jclouds.payloads.pretty-print";
 
+   /**
+    * When true, strip the Expect: 100-continue header. Useful when interacting with
+    * providers that don't properly support Expect headers. Defaults to false.
+    */
+   public static final String PROPERTY_STRIP_EXPECT_HEADER = "jclouds.strip-expect-header";
 }

@@ -50,7 +50,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
-
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.ws.rs.FormParam;
@@ -65,6 +64,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.Uris.UriBuilder;
+import org.jclouds.http.filters.StripExpectHeader;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.Payload;
@@ -149,11 +149,13 @@ public class RestAnnotationProcessor implements Function<Invocation, HttpRequest
    private final InputParamValidator inputParamValidator;
    private final GetAcceptHeaders getAcceptHeaders;
    private final Invocation caller;
+   private final boolean stripExpectHeader;
 
    @Inject
    private RestAnnotationProcessor(Injector injector, @ApiVersion String apiVersion, @BuildVersion String buildVersion,
          HttpUtils utils, ContentMetadataCodec contentMetadataCodec, InputParamValidator inputParamValidator,
-         GetAcceptHeaders getAcceptHeaders, @Nullable @Named("caller") Invocation caller) {
+         GetAcceptHeaders getAcceptHeaders, @Nullable @Named("caller") Invocation caller,
+         @Named(Constants.PROPERTY_STRIP_EXPECT_HEADER) boolean stripExpectHeader) {
       this.injector = injector;
       this.utils = utils;
       this.contentMetadataCodec = contentMetadataCodec;
@@ -162,6 +164,7 @@ public class RestAnnotationProcessor implements Function<Invocation, HttpRequest
       this.inputParamValidator = inputParamValidator;
       this.getAcceptHeaders = getAcceptHeaders;
       this.caller = caller;
+      this.stripExpectHeader = stripExpectHeader;
    }
 
    /**
@@ -208,6 +211,9 @@ public class RestAnnotationProcessor implements Function<Invocation, HttpRequest
       }
 
       requestBuilder.filters(getFiltersIfAnnotated(invocation));
+      if (stripExpectHeader) {
+         requestBuilder.filter(new StripExpectHeader());
+      }
 
       Multimap<String, Object> tokenValues = LinkedHashMultimap.create();
 
