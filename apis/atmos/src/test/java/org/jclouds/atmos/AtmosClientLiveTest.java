@@ -56,6 +56,9 @@ import com.google.common.collect.Sets;
  */
 @Test(groups = "live", singleThreaded = true)
 public class AtmosClientLiveTest extends BaseBlobStoreIntegrationTest {
+   public AtmosClientLiveTest() {
+      provider = "atmos";
+   }
 
    public AtmosClient getApi() {
       return view.unwrap(AtmosApiMetadata.CONTEXT_TOKEN).getApi();
