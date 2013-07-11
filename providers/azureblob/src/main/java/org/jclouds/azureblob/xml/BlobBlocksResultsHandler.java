@@ -30,6 +30,7 @@ import com.google.common.collect.Lists;
 
 /**
  * Parses the following document:
+ * <pre>
  * <?xml version="1.0" encoding="utf-8"?>
  * <BlockList>
  * <CommittedBlocks>
@@ -39,6 +40,7 @@ import com.google.common.collect.Lists;
  * </Block>
  * <CommittedBlocks>
  * </BlockList>
+ * </pre>
  */
 public class BlobBlocksResultsHandler extends ParseSax.HandlerWithResult<ListBlobBlocksResponse> {
 

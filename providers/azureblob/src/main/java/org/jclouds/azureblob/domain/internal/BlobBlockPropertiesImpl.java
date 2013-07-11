@@ -19,6 +19,7 @@ package org.jclouds.azureblob.domain.internal;
 import org.jclouds.azureblob.domain.BlobBlockProperties;
 
 import com.google.common.base.Objects;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Representation of the blocks which compose a Blob
@@ -29,7 +30,7 @@ public class BlobBlockPropertiesImpl implements BlobBlockProperties {
    private final boolean committed;
 
    public BlobBlockPropertiesImpl(String blockName, long contentLength, boolean committed) {
-      this.blockName = blockName;
+      this.blockName = checkNotNull(blockName);
       this.contentLength = contentLength;
       this.committed = committed;
    }

@@ -35,6 +35,7 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * Decomposes a blob into blocks for upload and assembly through PutBlock and PutBlockList
@@ -57,7 +58,7 @@ public class AzureBlobBlockUploadStrategy implements MultipartUploadStrategy {
    public String execute(String container, Blob blob) {
       String blobName = blob.getMetadata().getName();
       Payload payload = blob.getPayload();
-      long length = payload.getContentMetadata().getContentLength();
+      Long length = payload.getContentMetadata().getContentLength();
       checkNotNull(length,
             "please invoke payload.getContentMetadata().setContentLength(length) prior to azure block upload");
       checkArgument(length <= (MAX_NUMBER_OF_BLOCKS * MAX_BLOCK_SIZE));
@@ -81,7 +82,7 @@ public class AzureBlobBlockUploadStrategy implements MultipartUploadStrategy {
          blockIds.add(blockId);
          client.putBlock(container, blobName, blockId, block);
       }
-      assert bytesWritten == length;
+      checkState(bytesWritten == length, "Wrote " + bytesWritten + " bytes, but we wanted to write " + length + " bytes");
       return client.putBlockList(container, blobName, blockIds);
    }
 }
