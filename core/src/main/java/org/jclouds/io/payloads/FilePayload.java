@@ -34,7 +34,7 @@ public class FilePayload extends BasePayload<File> {
    public FilePayload(File content) {
       super(content);
       getContentMetadata().setContentLength(content.length());
-      checkArgument(checkNotNull(content, "content").exists(), "file must exist: " + content);
+      checkNotNull(content, "content");
    }
 
    /**
