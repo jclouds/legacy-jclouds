@@ -40,6 +40,7 @@ import org.jclouds.filesystem.predicates.validators.internal.FilesystemContainer
 import org.jclouds.filesystem.utils.TestUtils;
 import org.jclouds.io.payloads.FilePayload;
 import org.jclouds.io.payloads.InputStreamPayload;
+import org.jclouds.util.Throwables2;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -384,10 +385,12 @@ public class FilesystemStorageStrategyImplTest {
 
    public void testWritePayloadOnFile_SourceFileDoesntExist() {
       File sourceFile = new File("asdfkjsadkfjasdlfasdflk.asdfasdfas");
+      FilePayload payload = new FilePayload(sourceFile);
       try {
-         new FilePayload(sourceFile);
-         fail("Exception not throwed");
+         payload.getInput();
+         fail("Exception not thrown");
       } catch (Exception ex) {
+         assertNotNull(Throwables2.getFirstThrowableOfType(ex, IOException.class));
       }
    }
 
