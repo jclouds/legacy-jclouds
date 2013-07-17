@@ -496,6 +496,7 @@
             <ignoredResource>META-INF/BCKEY.SF</ignoredResource>
           </ignoredResources>
           <failBuildInCaseOfConflict>true</failBuildInCaseOfConflict>
+          <skip>${skipDuplicateFinder}</skip>
         </configuration>
         <executions>
           <execution>
