@@ -82,7 +82,7 @@ public class AzureBlobBlockUploadStrategy implements MultipartUploadStrategy {
          blockIds.add(blockId);
          client.putBlock(container, blobName, blockId, block);
       }
-      checkState(bytesWritten == length, "Wrote " + bytesWritten + " bytes, but we wanted to write " + length + " bytes");
+      checkState(bytesWritten == length, "Wrote %s bytes, but we wanted to write %s bytes", bytesWritten, length);
       return client.putBlockList(container, blobName, blockIds);
    }
 }

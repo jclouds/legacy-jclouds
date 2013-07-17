@@ -33,7 +33,7 @@ import org.jclouds.predicates.Validator;
 @Singleton
 public class BlockIdValidator extends Validator<String> {
    @Override
-   public void validate(String s) throws IllegalArgumentException {
+   public void validate(@Nullable String s) throws IllegalArgumentException {
       if (s == null || s.length() > 64)
          throw new IllegalArgumentException("block id:" + s + "; Block Ids must be less than or equal to 64 bytes in size");
 
