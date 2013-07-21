@@ -52,6 +52,7 @@ public class FirewallApiLiveTest extends BaseCloudStackApiLiveTest {
    private VirtualMachine vm;
 
    private FirewallRule firewallRule;
+   private FirewallRule egressFirewallRule;
    private PortForwardingRule portForwardingRule;
 
    private Network network;
@@ -151,11 +152,42 @@ public class FirewallApiLiveTest extends BaseCloudStackApiLiveTest {
       }
    }
 
+   @Test(dependsOnMethods = "testCreatePortForwardingRule")
+   public void testCreateEgressFirewallRule() {
+      if (networksDisabled)
+         return;
+
+      AsyncCreateResponse job = client.getFirewallApi().createEgressFirewallRuleForIpAndProtocol(
+              ip.getId(), FirewallRule.Protocol.TCP, CreateFirewallRuleOptions.Builder.startPort(30).endPort(35));
+      assertTrue(jobComplete.apply(job.getJobId()));
+      egressFirewallRule = client.getFirewallApi().getEgressFirewallRule(job.getId());
+
+      assertEquals(egressFirewallRule.getStartPort(), 30);
+      assertEquals(egressFirewallRule.getEndPort(), 35);
+      assertEquals(egressFirewallRule.getProtocol(), FirewallRule.Protocol.TCP);
+
+      checkEgressFirewallRule(egressFirewallRule);
+   }
+
+   @Test(dependsOnMethods = "testCreateEgressFirewallRule")
+   public void testListEgressFirewallRules() {
+      Set<FirewallRule> rules = client.getFirewallApi().listEgressFirewallRules();
+
+      assert rules != null;
+      assertTrue(rules.size() > 0);
+
+      for(FirewallRule rule : rules) {
+         checkEgressFirewallRule(rule);
+      }
+   }
    @AfterGroups(groups = "live")
    @Override
    protected void tearDownContext() {
       if (firewallRule != null) {
          client.getFirewallApi().deleteFirewallRule(firewallRule.getId());
+      }
+      if (egressFirewallRule != null) {
+         client.getFirewallApi().deleteEgressFirewallRule(egressFirewallRule.getId());
       }
       if (portForwardingRule != null) {
          client.getFirewallApi().deletePortForwardingRule(portForwardingRule.getId());
@@ -172,6 +204,15 @@ public class FirewallApiLiveTest extends BaseCloudStackApiLiveTest {
    protected void checkFirewallRule(FirewallRule rule) {
       assertEquals(rule,
          client.getFirewallApi().getFirewallRule(rule.getId()));
+      assert rule.getId() != null : rule;
+      assert rule.getStartPort() > 0 : rule;
+      assert rule.getEndPort() >= rule.getStartPort() : rule;
+      assert rule.getProtocol() != null;
+   }
+
+   protected void checkEgressFirewallRule(FirewallRule rule) {
+      assertEquals(rule,
+              client.getFirewallApi().getEgressFirewallRule(rule.getId()));
       assert rule.getId() != null : rule;
       assert rule.getStartPort() > 0 : rule;
       assert rule.getEndPort() >= rule.getStartPort() : rule;

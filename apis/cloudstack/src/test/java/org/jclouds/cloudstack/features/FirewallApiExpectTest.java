@@ -281,7 +281,123 @@ public class FirewallApiExpectTest extends BaseCloudStackExpectTest<FirewallApi>
 
       client.deletePortForwardingRule("2015");
    }
-   
+
+   public void testListEgressFirewallRulesWhenResponseIs2xx() {
+      FirewallApi client = requestSendsResponse(
+              HttpRequest.builder()
+                      .method("GET")
+                      .endpoint(
+                              URI.create("http://localhost:8080/client/api?response=json&command=listEgressFirewallRules&listAll=true&" +
+                                      "apiKey=identity&signature=j3OpRXs7mEwVKs9KIb4ncRKVO9A%3D"))
+                      .addHeader("Accept", "application/json")
+                      .build(),
+              HttpResponse.builder()
+                      .statusCode(200)
+                      .payload(payloadFromResource("/listegressfirewallrulesresponse.json"))
+                      .build());
+
+      Set<String> CIDRs  = ImmutableSet.of("0.0.0.0/0");
+      assertEquals(client.listEgressFirewallRules(),
+              ImmutableSet.of(
+                      FirewallRule.builder().id("2017").protocol(FirewallRule.Protocol.TCP).startPort(30)
+                              .endPort(35).ipAddressId("2").ipAddress("10.27.27.51").state(FirewallRule.State.ACTIVE)
+                              .CIDRs(CIDRs).build(),
+                      FirewallRule.builder().id("2016").protocol(FirewallRule.Protocol.TCP).startPort(22)
+                              .endPort(22).ipAddressId("2").ipAddress("10.27.27.51").state(FirewallRule.State.ACTIVE)
+                              .CIDRs(CIDRs).build(),
+                      FirewallRule.builder().id("10").protocol(FirewallRule.Protocol.TCP).startPort(22)
+                              .endPort(22).ipAddressId("8").ipAddress("10.27.27.57").state(FirewallRule.State.ACTIVE)
+                              .CIDRs(CIDRs).build()
+              ));
+   }
+
+   public void testListEgressFirewallRulesWhenReponseIs404() {
+      FirewallApi client = requestSendsResponse(
+              HttpRequest.builder()
+                      .method("GET")
+                      .endpoint(
+                              URI.create("http://localhost:8080/client/api?response=json&command=listEgressFirewallRules&listAll=true&" +
+                                      "apiKey=identity&signature=j3OpRXs7mEwVKs9KIb4ncRKVO9A%3D"))
+                      .addHeader("Accept", "application/json")
+                      .build(),
+              HttpResponse.builder()
+                      .statusCode(404)
+                      .build());
+
+      assertEquals(client.listEgressFirewallRules(), ImmutableSet.of());
+   }
+
+   public void testGetEgressFirewallRuleWhenResponseIs2xx() {
+      FirewallApi client = requestSendsResponse(
+              HttpRequest.builder()
+                      .method("GET")
+                      .endpoint(
+                              URI.create("http://localhost:8080/client/api?response=json&command=listEgressFirewallRules&listAll=true&" +
+                                      "id=2017&apiKey=identity&signature=Hi1K5VA3yd3mk0AmgJ2F6y%2BVzMo%3D"))
+                      .addHeader("Accept", "application/json")
+                      .build(),
+              HttpResponse.builder()
+                      .statusCode(200)
+                      .payload(payloadFromResource("/getegressfirewallrulesresponse.json"))
+                      .build());
+
+      assertEquals(client.getEgressFirewallRule("2017"),
+              FirewallRule.builder().id("2017").protocol(FirewallRule.Protocol.TCP).startPort(30)
+                      .endPort(35).ipAddressId("2").ipAddress("10.27.27.51").state(FirewallRule.State.ACTIVE)
+                      .CIDRs(ImmutableSet.of("0.0.0.0/0")).build()
+      );
+   }
+
+   public void testGetEgressFirewallRuleWhenResponseIs404() {
+      FirewallApi client = requestSendsResponse(
+              HttpRequest.builder()
+                      .method("GET")
+                      .endpoint(
+                              URI.create("http://localhost:8080/client/api?response=json&command=listEgressFirewallRules&listAll=true&" +
+                                      "id=4&apiKey=identity&signature=dzb5azKxXZsuGrNRJbRHfna7FMo%3D"))
+                      .addHeader("Accept", "application/json")
+                      .build(),
+              HttpResponse.builder()
+                      .statusCode(404)
+                      .build());
+
+      assertNull(client.getEgressFirewallRule("4"));
+   }
+
+   public void testCreateEgressFirewallRuleForIpAndProtocol() {
+      FirewallApi client = requestSendsResponse(
+              HttpRequest.builder()
+                      .method("GET")
+                      .endpoint(
+                              URI.create("http://localhost:8080/client/api?response=json&command=createEgressFirewallRule&" +
+                                      "ipaddressid=2&protocol=TCP&apiKey=identity&signature=%2BlfEJ5zB7lxqRAn0rY0Rcfg9buw%3D"))
+                      .addHeader("Accept", "application/json")
+                      .build(),
+              HttpResponse.builder()
+                      .statusCode(200)
+                      .payload(payloadFromResource("/createegressfirewallrulesresponse.json"))
+                      .build());
+
+      AsyncCreateResponse response = client.createEgressFirewallRuleForIpAndProtocol("2", FirewallRule.Protocol.TCP);
+      assertEquals(response.getJobId(), "2036");
+      assertEquals(response.getId(), "2017");
+   }
+
+   public void testDeleteEgressFirewallRule() {
+      FirewallApi client = requestSendsResponse(
+              HttpRequest.builder()
+                      .method("GET")
+                      .endpoint(
+                              URI.create("http://localhost:8080/client/api?response=json&" +
+                                      "command=deleteEgressFirewallRule&id=2015&apiKey=identity&signature=S119WNmamKwc5d9qvvkIJznXytg%3D"))
+                      .build(),
+              HttpResponse.builder()
+                      .statusCode(200)
+                      .payload(payloadFromResource("/deleteegressfirewallrulesresponse.json"))
+                      .build());
+
+      client.deleteEgressFirewallRule("2015");
+   }
    @Override
    protected FirewallApi clientFrom(CloudStackContext context) {
       return context.getApi().getFirewallApi();
