@@ -50,6 +50,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
+import org.jclouds.http.utils.Queries;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.s3.util.S3Utils;
@@ -133,6 +134,13 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
    }
 
    HttpRequest replaceAuthorizationHeader(HttpRequest request, String signature) {
+      // Only add the Authorization header if the query string doesn't already contain
+      // the 'Signature' parameter, otherwise S3 will fail the request complaining about
+      // duplicate authentication methods. The 'Signature' parameter will be added for signed URLs
+      // with expiration.
+      if (Queries.queryParser().apply(request.getEndpoint().getQuery()).containsKey("Signature")) {
+         return request;
+      }
       request = request.toBuilder()
             .replaceHeader(HttpHeaders.AUTHORIZATION, authTag + " " + creds.get().identity + ":" + signature).build();
       return request;

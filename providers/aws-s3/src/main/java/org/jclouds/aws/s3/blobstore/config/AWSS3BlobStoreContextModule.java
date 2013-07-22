@@ -16,8 +16,8 @@
  */
 package org.jclouds.aws.s3.blobstore.config;
 
-import org.jclouds.aws.s3.AWSS3AsyncClient;
 import org.jclouds.aws.s3.blobstore.AWSS3AsyncBlobStore;
+import org.jclouds.aws.s3.blobstore.AWSS3BlobRequestSigner;
 import org.jclouds.aws.s3.blobstore.AWSS3BlobStore;
 import org.jclouds.aws.s3.blobstore.strategy.AsyncMultipartUploadStrategy;
 import org.jclouds.aws.s3.blobstore.strategy.MultipartUploadStrategy;
@@ -25,12 +25,10 @@ import org.jclouds.aws.s3.blobstore.strategy.internal.ParallelMultipartUploadStr
 import org.jclouds.aws.s3.blobstore.strategy.internal.SequentialMultipartUploadStrategy;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.s3.blobstore.S3AsyncBlobStore;
-import org.jclouds.s3.blobstore.S3BlobRequestSigner;
 import org.jclouds.s3.blobstore.S3BlobStore;
 import org.jclouds.s3.blobstore.config.S3BlobStoreContextModule;
 
 import com.google.inject.Scopes;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
@@ -50,7 +48,6 @@ public class AWSS3BlobStoreContextModule extends S3BlobStoreContextModule {
 
    @Override
    protected void bindRequestSigner() {
-      bind(BlobRequestSigner.class).to(new TypeLiteral<S3BlobRequestSigner<AWSS3AsyncClient>>() {
-      });
+      bind(BlobRequestSigner.class).to(AWSS3BlobRequestSigner.class);
    }
 }

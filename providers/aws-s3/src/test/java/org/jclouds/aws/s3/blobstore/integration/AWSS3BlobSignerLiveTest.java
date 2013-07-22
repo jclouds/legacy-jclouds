@@ -16,6 +16,9 @@
  */
 package org.jclouds.aws.s3.blobstore.integration;
 
+import java.util.Properties;
+
+import org.jclouds.Constants;
 import org.jclouds.s3.blobstore.integration.S3BlobSignerLiveTest;
 import org.testng.annotations.Test;
 
@@ -27,5 +30,13 @@ import org.testng.annotations.Test;
 public class AWSS3BlobSignerLiveTest extends S3BlobSignerLiveTest {
    public AWSS3BlobSignerLiveTest() {
       provider = "aws-s3";
+   }
+
+   @Override
+   protected Properties setupProperties() {
+      Properties overrides = super.setupProperties();
+      overrides.setProperty(Constants.PROPERTY_STRIP_EXPECT_HEADER, "true");
+      overrides.setProperty(Constants.PROPERTY_SESSION_INTERVAL, "1");
+      return overrides;
    }
 }

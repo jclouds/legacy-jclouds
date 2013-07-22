@@ -44,13 +44,13 @@ import com.google.common.reflect.Invokable;
  */
 @Singleton
 public class S3BlobRequestSigner<T extends S3AsyncClient> implements BlobRequestSigner {
-   private final RestAnnotationProcessor processor;
-   private final BlobToObject blobToObject;
-   private final BlobToHttpGetOptions blob2HttpGetOptions;
+   protected final RestAnnotationProcessor processor;
+   protected final BlobToObject blobToObject;
+   protected final BlobToHttpGetOptions blob2HttpGetOptions;
 
-   private final Invokable<?, ?> getMethod;
-   private final Invokable<?, ?> deleteMethod;
-   private final Invokable<?, ?> createMethod;
+   protected final Invokable<?, ?> getMethod;
+   protected final Invokable<?, ?> deleteMethod;
+   protected final Invokable<?, ?> createMethod;
 
    @Inject
    public S3BlobRequestSigner(RestAnnotationProcessor processor, BlobToObject blobToObject,
