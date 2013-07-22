@@ -50,8 +50,8 @@ public class GlobalDomainApiLiveTest extends BaseCloudStackApiLiveTest {
       });
    }
 
-   @Test
-   public void testCreateUpdateDeleteDomain() {
+   @Test(expectedExceptions = IllegalStateException.class)
+   public void testCreateUpdateDeleteDomain() throws InterruptedException {
       skipIfNotDomainAdmin();
 
       Domain domain = null;
@@ -68,6 +68,7 @@ public class GlobalDomainApiLiveTest extends BaseCloudStackApiLiveTest {
             domainClient.deleteDomainAndAttachedResources(domain.getId());
          }
       }
+      Thread.sleep(5000);
       assertNull(domainClient.getDomainById(domain.getId()));
    }
 

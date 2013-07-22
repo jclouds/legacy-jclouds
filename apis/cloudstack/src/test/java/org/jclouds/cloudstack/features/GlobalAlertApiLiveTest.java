@@ -39,7 +39,7 @@ public class GlobalAlertApiLiveTest extends BaseCloudStackApiLiveTest {
    public void testListAlerts() throws Exception {
       skipIfNotGlobalAdmin();
 
-      final Set<Alert> response = globalAdminClient.getAlertClient().listAlerts(ListAlertsOptions.Builder.id("20"));
+      final Set<Alert> response = globalAdminClient.getAlertClient().listAlerts();
       assert null != response;
       assertTrue(response.size() >= 0);
       int count = 0;

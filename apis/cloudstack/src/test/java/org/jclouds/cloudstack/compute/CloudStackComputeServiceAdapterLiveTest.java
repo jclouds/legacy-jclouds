@@ -64,7 +64,6 @@ import org.jclouds.cloudstack.suppliers.NetworksForCurrentUser;
 import org.jclouds.cloudstack.suppliers.ZoneIdToZoneSupplier;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
-import org.jclouds.compute.ComputeTestUtils;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
@@ -73,6 +72,7 @@ import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.domain.Credentials;
 import org.jclouds.location.Provider;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
+import org.jclouds.ssh.SshKeys;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -116,7 +116,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackApiLi
             CloudStackComputeServiceAdapter.class);
 
       keyPairName = prefix + "-adapter-test-keypair";
-      keyPair = ComputeTestUtils.setupKeyPair();
+      keyPair = SshKeys.generate();
 
       client.getSSHKeyPairApi().deleteSSHKeyPair(keyPairName);
       client.getSSHKeyPairApi().registerSSHKeyPair(keyPairName, keyPair.get("public"));

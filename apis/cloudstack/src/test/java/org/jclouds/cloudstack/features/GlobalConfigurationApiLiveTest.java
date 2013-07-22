@@ -53,7 +53,7 @@ public class GlobalConfigurationApiLiveTest extends BaseCloudStackApiLiveTest {
          categories.add(entry.getCategory());
       }
 
-      assert categories.containsAll(ImmutableSet.<Object>of("Network", "Advanced", "Premium",
+      assert categories.containsAll(ImmutableSet.<Object>of("Network", "Advanced",
          "Storage", "Usage", "Snapshots", "Account Defaults", "Console Proxy", "Alert"));
    }
 
@@ -82,7 +82,7 @@ public class GlobalConfigurationApiLiveTest extends BaseCloudStackApiLiveTest {
       assertEquals(entry, getEntryByName(globalAdminClient.getConfigurationApi()
          .listConfigurationEntries(name(entry.getName())), entry.getName()));
       assert entry.getCategory() != null : entry;
-      assert entry.getDescription() != null : entry;
+      // Description apparently can be null, so ... assert entry.getDescription() != null : entry;
       assert entry.getName() != null : entry;
    }
 

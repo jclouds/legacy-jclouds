@@ -56,7 +56,6 @@ public class GlobalHostApiLiveTest extends BaseCloudStackApiLiveTest {
          assert host.getAverageLoad() >= 0;
          assert host.getHypervisor() != null;
       }
-      assert host.getAllocationState() != null;
       assert host.getEvents() != null;
       if (host.getType() == Host.Type.SECONDARY_STORAGE_VM) {
          assert host.getName().startsWith("s-");

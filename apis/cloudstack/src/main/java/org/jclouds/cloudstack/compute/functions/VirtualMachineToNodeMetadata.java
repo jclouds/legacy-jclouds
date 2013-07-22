@@ -104,7 +104,9 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
       // on hosts not started with jclouds
       builder.hostname(from.getDisplayName());
       builder.location(FluentIterable.from(locations.get()).firstMatch(idEquals(from.getZoneId())).orNull());
-      builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getDisplayName()));
+      if (from.getDisplayName() != null) {
+         builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getDisplayName()));
+      }
       Image image = FluentIterable.from(images.get()).firstMatch(new Predicate<Image>() {
          @Override
          public boolean apply(Image input) {

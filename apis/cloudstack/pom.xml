@@ -55,7 +55,7 @@
     <test.cloudstack.domainAdminCredential />
     <test.cloudstack.globalAdminIdentity />
     <test.cloudstack.globalAdminCredential />
-    <test.cloudstack.template />
+    <test.cloudstack.template>osFamily=CENTOS</test.cloudstack.template>
     <jclouds.osgi.export>org.jclouds.cloudstack*;version="${project.version}"</jclouds.osgi.export>
     <jclouds.osgi.import>
       org.jclouds.compute.internal;version="${project.version}",

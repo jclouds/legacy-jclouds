@@ -43,8 +43,8 @@ public class GlobalCapacityApiLiveTest extends BaseCloudStackApiLiveTest {
       assertNotEquals(0, response.size());
       int count = 0;
       for (Capacity capacity : response) {
-         assertTrue(capacity.getCapacityTotal() > 0);
-         assertTrue(capacity.getCapacityUsed() > 0);
+         assertTrue(capacity.getCapacityTotal() >= 0);
+         assertTrue(capacity.getCapacityUsed() >= 0);
          assertTrue(capacity.getPercentUsed() >= 0);
          assertNotEquals(Capacity.Type.UNRECOGNIZED, capacity.getType());
          assertNotNull(capacity.getZoneName());

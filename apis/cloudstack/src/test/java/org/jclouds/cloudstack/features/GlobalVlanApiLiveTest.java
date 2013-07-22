@@ -89,34 +89,36 @@ public class GlobalVlanApiLiveTest extends BaseCloudStackApiLiveTest {
       skipIfNotGlobalAdmin();
 
       final Zone zone = Iterables.find(client.getZoneApi().listZones(), ZonePredicates.supportsAdvancedNetworks());
-      final NetworkOffering offering = find(client.getOfferingApi().listNetworkOfferings(),
-         NetworkOfferingPredicates.supportsGuestVirtualNetworks());
-      
-      Set<Network> suitableNetworks = Sets.filter(client.getNetworkApi().listNetworks(
-            zoneId(zone.getId()).isSystem(false).trafficType(TrafficType.GUEST)),
-         new Predicate<Network>() {
-            @Override
-            public boolean apply(Network network) {
-               return network.getNetworkOfferingId().equals(offering.getId());
-            }
-         });
+      final NetworkOffering offering = Iterables.tryFind(client.getOfferingApi().listNetworkOfferings(),
+                                                         NetworkOfferingPredicates.supportsGuestVirtualNetworks()).orNull();
 
-      if (suitableNetworks.size() > 0) {
-         network = Iterables.get(suitableNetworks, 0);
-         usingExistingNetwork = true;
+      if (offering != null) {
+         Set<Network> suitableNetworks = Sets.filter(client.getNetworkApi().listNetworks(
+                                                                                         zoneId(zone.getId()).isSystem(false).trafficType(TrafficType.GUEST)),
+                                                     new Predicate<Network>() {
+                                                        @Override
+                                                        public boolean apply(Network network) {
+                                                           return network.getNetworkOfferingId().equals(offering.getId());
+                                                        }
+                                                     });
          
-      } else if (network == null) {
-         network = client.getNetworkApi().createNetworkInZone(zone.getId(),
-            offering.getId(), "net-" + prefix, "jclouds test " + prefix);
-         usingExistingNetwork = false;
+         if (suitableNetworks.size() > 0) {
+            network = Iterables.get(suitableNetworks, 0);
+            usingExistingNetwork = true;
+         
+         } else if (network == null) {
+            network = client.getNetworkApi().createNetworkInZone(zone.getId(),
+                                                                 offering.getId(), "net-" + prefix, "jclouds test " + prefix);
+            usingExistingNetwork = false;
+         }
+         
+         range = globalAdminClient.getVlanClient().createVlanIPRange("172.19.1.1", "172.19.1.199", CreateVlanIPRangeOptions.Builder
+                                                                     .accountInDomain(user.getAccount(), user.getDomainId())
+                                                                     .forVirtualNetwork(true)
+                                                                     .vlan(1001)
+                                                                     .networkId(network.getId())
+                                                                     );
       }
-
-      range = globalAdminClient.getVlanClient().createVlanIPRange("172.19.1.1", "172.19.1.199", CreateVlanIPRangeOptions.Builder
-         .accountInDomain(user.getAccount(), user.getDomainId())
-         .forVirtualNetwork(true)
-         .vlan(1001)
-         .networkId(network.getId())
-      );
    }
 
    @AfterGroups(groups = "live")

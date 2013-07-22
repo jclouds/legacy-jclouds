@@ -181,7 +181,7 @@ public class VirtualMachineApiLiveTest extends BaseCloudStackApiLiveTest {
       if (vm.getPassword() != null) {
          conditionallyCheckSSH();
       }
-      assert in(ImmutableSet.of("NetworkFilesystem", "IscsiLUN", "VMFS", "PreSetup"))
+      assert in(ImmutableSet.of("ROOT", "NetworkFilesystem", "IscsiLUN", "VMFS", "PreSetup"))
          .apply(vm.getRootDeviceType()) : vm;
       checkVm(vm);
    }
@@ -349,7 +349,7 @@ public class VirtualMachineApiLiveTest extends BaseCloudStackApiLiveTest {
       assertEquals(vm.getId(), client.getVirtualMachineApi().getVirtualMachine(vm.getId()).getId());
       assert vm.getId() != null : vm;
       assert vm.getName() != null : vm;
-      assert vm.getDisplayName() != null : vm;
+      // vm.getDisplayName() can be null, so skip that check.
       assert vm.getAccount() != null : vm;
       assert vm.getDomain() != null : vm;
       assert vm.getDomainId() != null : vm;

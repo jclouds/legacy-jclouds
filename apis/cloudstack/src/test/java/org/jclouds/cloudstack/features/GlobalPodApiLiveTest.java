@@ -78,14 +78,14 @@ public class GlobalPodApiLiveTest extends BaseCloudStackApiLiveTest {
    public void testCreatePod() {
       skipIfNotGlobalAdmin();
 
-      zone = globalAdminClient.getZoneApi().createZone(prefix + "-zone", NetworkType.BASIC, "8.8.8.8", "10.10.10.10");
+      zone = globalAdminClient.getZoneApi().createZone(prefix + "-zone-for-pod", NetworkType.BASIC, "8.8.8.8", "10.10.10.10");
       pod = globalAdminClient.getPodClient().createPod(prefix + "-pod", zone.getId(), "172.20.0.1", "172.20.0.250", "172.20.0.254", "255.255.255.0",
       CreatePodOptions.Builder.allocationState(AllocationState.ENABLED));
 
       assertNotNull(pod);
       assertEquals(pod.getName(), prefix + "-pod");
       assertEquals(pod.getZoneId(), zone.getId());
-      assertEquals(pod.getZoneName(), prefix + "-zone");
+      assertEquals(pod.getZoneName(), prefix + "-zone-for-pod");
       assertEquals(pod.getStartIp(), "172.20.0.1");
       assertEquals(pod.getEndIp(), "172.20.0.250");
       assertEquals(pod.getGateway(), "172.20.0.254");
@@ -107,7 +107,7 @@ public class GlobalPodApiLiveTest extends BaseCloudStackApiLiveTest {
       assertNotNull(updated);
       assertEquals(updated.getName(), prefix + "-updatedpod");
       assertEquals(updated.getZoneId(), zone.getId());
-      assertEquals(updated.getZoneName(), prefix + "-zone");
+      assertEquals(updated.getZoneName(), prefix + "-zone-for-pod");
       assertEquals(updated.getStartIp(), "172.21.0.129");
       assertEquals(updated.getEndIp(), "172.21.0.250");
       assertEquals(updated.getGateway(), "172.21.0.254");

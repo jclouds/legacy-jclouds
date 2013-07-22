@@ -42,11 +42,11 @@ public class DomainAccountApiLiveTest extends BaseCloudStackApiLiveTest {
       Account testAccount = null;
       try {
          testAccount = createTestAccount(globalAdminClient, prefix);
-
+         
          AsyncCreateResponse response = domainAdminClient.getAccountApi()
             .disableAccount(testAccount.getName(), testAccount.getDomainId(), false);
          assertNotNull(response);
-         assertTrue(jobComplete.apply(response.getJobId()));
+         assertTrue(adminJobComplete.apply(response.getJobId()));
 
          AsyncJob<Account> job = domainAdminClient.getAsyncJobApi().getAsyncJob(response.getJobId());
          assertEquals(job.getResult().getState(), Account.State.DISABLED);

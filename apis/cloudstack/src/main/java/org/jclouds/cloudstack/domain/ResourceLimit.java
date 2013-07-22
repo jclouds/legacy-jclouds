@@ -60,7 +60,35 @@ public class ResourceLimit {
        * 4 - Template. Number of templates that a user can register/create.
        */
       TEMPLATE(4),
-
+      /**
+       * 5 - Projects.
+       */
+      PROJECT(5),
+      /**
+       * 6 - Networks.
+       */
+      NETWORK(6),
+      /**
+       * 7 - VPC. Number of VPC the user can own.
+       */
+      VPC(7),
+      /**
+       * 8 - CPU. The number of CPUs the user can allocate.
+       */
+      CPU(8),
+      /**
+       * 9 - Memory. The amount of memory the user can allocate.
+       */
+      MEMORY(9),
+      /**
+       * 10 - Primary storage.
+       */
+      PRIMARY_STORAGE(10),
+      /**
+       * 11 - Secondary storage.
+       */
+      SECONDARY_STORAGE(11),
+         
       UNRECOGNIZED(Integer.MAX_VALUE);
 
       private int code;
