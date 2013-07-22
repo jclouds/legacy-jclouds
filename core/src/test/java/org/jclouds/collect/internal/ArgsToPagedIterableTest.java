@@ -18,7 +18,10 @@ package org.jclouds.collect.internal;
 
 import static com.google.common.base.Throwables.propagate;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
+
+import java.util.List;
 
 import org.jclouds.collect.IterableWithMarker;
 import org.jclouds.collect.IterableWithMarkers;
@@ -28,19 +31,18 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.Invokable;
 
 /**
- * @author Adrian Cole
+ * @author Ignasi Barrera
  */
-@Test(testName = "Arg0ToPagedIterableTest")
-public class Arg0ToPagedIterableTest {
+@Test(testName = "ArgsToPagedIterableTest")
+public class ArgsToPagedIterableTest {
 
-   private abstract static class TestArg0 extends Arg0ToPagedIterable<String, TestArg0> {
-      private TestArg0(GeneratedHttpRequest in) {
+   private abstract static class TestArgs extends ArgsToPagedIterable<String, TestArgs> {
+      private TestArgs(GeneratedHttpRequest in) {
          this.setContext(in);
       }
    }
@@ -49,10 +51,10 @@ public class Arg0ToPagedIterableTest {
    public void testWhenNextMarkerAbsentDoesntAdvance() {
       GeneratedHttpRequest request = args(ImmutableList.of());
 
-      TestArg0 converter = new TestArg0(request) {
+      TestArgs converter = new TestArgs(request) {
 
          @Override
-         protected Function<Object, IterableWithMarker<String>> markerToNextForArg0(Optional<Object> arg0) {
+         protected Function<Object, IterableWithMarker<String>> markerToNextForArgs(List<Object> args) {
             fail("The Iterable should not advance");
             return null;
          }
@@ -64,15 +66,15 @@ public class Arg0ToPagedIterableTest {
    }
 
    @Test
-   public void testWhenNextMarkerPresentButNoArgsMarkerToNextForArg0ParamIsAbsent() {
+   public void testWhenNextMarkerPresentButNoArgsMarkerToNextForArgsParamIsAbsent() {
       GeneratedHttpRequest request = args(ImmutableList.of());
       final IterableWithMarker<String> next = IterableWithMarkers.from(ImmutableSet.of("baz"));
 
-      TestArg0 converter = new TestArg0(request) {
+      TestArgs converter = new TestArgs(request) {
 
          @Override
-         protected Function<Object, IterableWithMarker<String>> markerToNextForArg0(Optional<Object> arg0) {
-            assertEquals(arg0, Optional.absent());
+         protected Function<Object, IterableWithMarker<String>> markerToNextForArgs(List<Object> args) {
+            assertTrue(args.isEmpty());
             return Functions.constant(next);
          }
 
@@ -83,15 +85,15 @@ public class Arg0ToPagedIterableTest {
    }
 
    @Test
-   public void testWhenNextMarkerPresentWithArgsMarkerToNextForArg0ParamIsPresent() {
+   public void testWhenNextMarkerPresentWithArgsMarkerToNextForArgsParamIsPresent() {
       GeneratedHttpRequest request = args(ImmutableList.<Object> of("path"));
       final IterableWithMarker<String> next = IterableWithMarkers.from(ImmutableSet.of("baz"));
 
-      TestArg0 converter = new TestArg0(request) {
+      TestArgs converter = new TestArgs(request) {
 
          @Override
-         protected Function<Object, IterableWithMarker<String>> markerToNextForArg0(Optional<Object> arg0) {
-            assertEquals(arg0, Optional.of("path"));
+         protected Function<Object, IterableWithMarker<String>> markerToNextForArgs(List<Object> args) {
+            assertEquals(args.get(0), "path");
             return Functions.constant(next);
          }
 
@@ -110,22 +112,22 @@ public class Arg0ToPagedIterableTest {
       }
    }
 
-   private abstract static class TestCallerArg0 extends Arg0ToPagedIterable.FromCaller<String, TestCallerArg0> {
-      private TestCallerArg0(GeneratedHttpRequest in) {
+   private abstract static class TestCallerArgs extends ArgsToPagedIterable.FromCaller<String, TestCallerArgs> {
+      private TestCallerArgs(GeneratedHttpRequest in) {
          this.setContext(in);
       }
    }
 
    @Test
-   public void testFromCallerWhenNextMarkerPresentButNoArgsMarkerToNextForArg0ParamIsAbsent() {
+   public void testFromCallerWhenNextMarkerPresentButNoArgsMarkerToNextForArgsParamIsAbsent() {
       GeneratedHttpRequest request = callerArgs(ImmutableList.of());
       final IterableWithMarker<String> next = IterableWithMarkers.from(ImmutableSet.of("baz"));
 
-      TestCallerArg0 converter = new TestCallerArg0(request) {
+      TestCallerArgs converter = new TestCallerArgs(request) {
 
          @Override
-         protected Function<Object, IterableWithMarker<String>> markerToNextForArg0(Optional<Object> arg0) {
-            assertEquals(arg0, Optional.absent());
+         protected Function<Object, IterableWithMarker<String>> markerToNextForArgs(List<Object> args) {
+            assertTrue(args.isEmpty());
             return Functions.constant(next);
          }
 
@@ -136,15 +138,15 @@ public class Arg0ToPagedIterableTest {
    }
 
    @Test
-   public void testFromCallerWhenNextMarkerPresentWithArgsMarkerToNextForArg0ParamIsPresent() {
+   public void testFromCallerWhenNextMarkerPresentWithArgsMarkerToNextForArgsParamIsPresent() {
       GeneratedHttpRequest request = callerArgs(ImmutableList.<Object> of("path"));
       final IterableWithMarker<String> next = IterableWithMarkers.from(ImmutableSet.of("baz"));
 
-      TestCallerArg0 converter = new TestCallerArg0(request) {
+      TestCallerArgs converter = new TestCallerArgs(request) {
 
          @Override
-         protected Function<Object, IterableWithMarker<String>> markerToNextForArg0(Optional<Object> arg0) {
-            assertEquals(arg0, Optional.of("path"));
+         protected Function<Object, IterableWithMarker<String>> markerToNextForArgs(List<Object> args) {
+            assertEquals(args.get(0), "path");
             return Functions.constant(next);
          }
 
