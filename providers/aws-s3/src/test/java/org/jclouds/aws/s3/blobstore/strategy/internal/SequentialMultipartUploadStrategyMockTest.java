@@ -34,6 +34,8 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.net.HttpHeaders;
+import com.google.common.net.MediaType;
 import com.google.inject.Module;
 import com.google.mockwebserver.MockResponse;
 import com.google.mockwebserver.MockWebServer;
@@ -62,12 +64,17 @@ public class SequentialMultipartUploadStrategyMockTest {
             partSize);
 
       try {
-         assertEquals(api.execute("container", new BlobBuilderImpl().name("foo").payload(bytes).build()), "fff");
+         assertEquals(api.execute("container", new BlobBuilderImpl().name("foo").payload(bytes)
+            .contentDisposition("inline; filename=foo.mp4")
+            .contentType(MediaType.MP4_VIDEO.toString())
+            .build()), "fff");
       } finally {
 
          RecordedRequest initiate = server.takeRequest();
          assertEquals(initiate.getRequestLine(), "POST /container/foo?uploads HTTP/1.1");
          assertEquals(initiate.getHeader("Content-Length"), "0");
+         assertEquals(initiate.getHeader(HttpHeaders.CONTENT_TYPE), MediaType.MP4_VIDEO.toString());
+         assertEquals(initiate.getHeader(HttpHeaders.CONTENT_DISPOSITION), "inline; filename=foo.mp4");
 
          RecordedRequest part1 = server.takeRequest();
          assertEquals(part1.getRequestLine(), "PUT /container/foo?partNumber=1&uploadId=upload-id HTTP/1.1");

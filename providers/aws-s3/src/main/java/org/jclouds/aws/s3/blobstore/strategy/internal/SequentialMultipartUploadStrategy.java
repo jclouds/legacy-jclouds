@@ -28,6 +28,7 @@ import org.jclouds.aws.s3.blobstore.strategy.MultipartUploadStrategy;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
+import org.jclouds.io.ContentMetadata;
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadSlicer;
 import org.jclouds.logging.Logger;
@@ -72,6 +73,7 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
    @Override
    public String execute(String container, Blob blob) {
       String key = blob.getMetadata().getName();
+      ContentMetadata metadata = blob.getMetadata().getContentMetadata();
       Payload payload = blob.getPayload();
       Long length = payload.getContentMetadata().getContentLength();
       checkNotNull(length,
@@ -79,7 +81,10 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
       long chunkSize = algorithm.calculateChunkSize(length);
       int partCount = algorithm.getParts();
       if (partCount > 0) {
-         String uploadId = client.initiateMultipartUpload(container, ObjectMetadataBuilder.create().key(key).build());
+         ObjectMetadataBuilder builder = ObjectMetadataBuilder.create().key(key)
+            .contentType(metadata.getContentType())
+            .contentDisposition(metadata.getContentDisposition());
+         String uploadId = client.initiateMultipartUpload(container, builder.build());
          try {
             SortedMap<Integer, String> etags = Maps.newTreeMap();
             int part;
