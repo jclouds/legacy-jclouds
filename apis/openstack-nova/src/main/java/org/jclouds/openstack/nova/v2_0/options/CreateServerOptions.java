@@ -111,6 +111,7 @@ public class CreateServerOptions implements MapBinder {
    private List<File> personality = Lists.newArrayList();
    private byte[] userData;
    private String diskConfig;
+   private Set<String> networks = ImmutableSet.of();
 
    @Override
    public boolean equals(Object object) {
@@ -121,7 +122,8 @@ public class CreateServerOptions implements MapBinder {
          final CreateServerOptions other = CreateServerOptions.class.cast(object);
          return equal(keyName, other.keyName) && equal(securityGroupNames, other.securityGroupNames)
                   && equal(metadata, other.metadata) && equal(personality, other.personality)
-                  && equal(adminPass, other.adminPass) && equal(diskConfig, other.diskConfig);
+                  && equal(adminPass, other.adminPass) && equal(diskConfig, other.diskConfig)
+                  && equal(adminPass, other.adminPass) && equal(networks, other.networks);
       } else {
          return false;
       }
@@ -129,7 +131,7 @@ public class CreateServerOptions implements MapBinder {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(keyName, securityGroupNames, metadata, personality, adminPass);
+      return Objects.hashCode(keyName, securityGroupNames, metadata, personality, adminPass, networks);
    }
 
    protected ToStringHelper string() {
@@ -146,6 +148,8 @@ public class CreateServerOptions implements MapBinder {
       if (diskConfig != null)
          toString.add("diskConfig", diskConfig);
       toString.add("userData", userData == null ? null : new String(userData));
+      if (!networks.isEmpty())
+         toString.add("networks", networks);
       return toString;
    }
 
@@ -167,6 +171,7 @@ public class CreateServerOptions implements MapBinder {
       String user_data;
       @Named("OS-DCF:diskConfig")
       String diskConfig;
+      Set<Map<String, String>> networks;
 
       private ServerRequest(String name, String imageRef, String flavorRef) {
          this.name = name;
@@ -198,8 +203,16 @@ public class CreateServerOptions implements MapBinder {
       if (adminPass != null) {
          server.adminPass = adminPass;
       }
+
       if (diskConfig != null) {
          server.diskConfig = diskConfig;
+      }
+
+      if (!networks.isEmpty()) {
+         server.networks = Sets.newLinkedHashSet(); // ensures ordering is preserved - helps testing and more intuitive for users.
+         for (String network : networks) {
+            server.networks.add(ImmutableMap.of("uuid", network));
+         }
       }
 
       return bindToRequest(request, ImmutableMap.of("server", server));
@@ -217,7 +230,6 @@ public class CreateServerOptions implements MapBinder {
          return name;
       }
    }
-
 
    /**
     * You may further customize a cloud server by injecting data into the file
@@ -314,6 +326,17 @@ public class CreateServerOptions implements MapBinder {
    
    /**
     * 
+    * Get custom networks specified for the server.
+    * @return A set of uuids defined by Neutron (previously Quantum)
+    * @see <a href="https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Network">Neutron Networks<a/>
+    *
+    */
+   public Set<String> getNetworks() {
+      return networks;
+   }
+
+   /**
+    *
     * @see #getSecurityGroupNames
     */
    public CreateServerOptions securityGroupNames(String... securityGroupNames) {
@@ -353,6 +376,24 @@ public class CreateServerOptions implements MapBinder {
       return this;
    }
    
+   /**
+    *
+    * @see #getNetworks
+    */
+   public CreateServerOptions networks(String... networks) {
+      return networks(ImmutableSet.copyOf(networks));
+   }
+
+   /**
+    * @see #getNetworks
+    */
+   public CreateServerOptions networks(Iterable<String> networks) {
+      for (String network : checkNotNull(networks, "networks"))
+         checkNotNull(emptyToNull(network), "all networks must be non-empty");
+      this.networks = ImmutableSet.copyOf(networks);
+      return this;
+   }
+
    public static class Builder {
 
       /**
@@ -406,6 +447,22 @@ public class CreateServerOptions implements MapBinder {
       public static CreateServerOptions diskConfig(String diskConfig) {
          CreateServerOptions options = new CreateServerOptions();
          return CreateServerOptions.class.cast(options.diskConfig(diskConfig));
+      }
+
+      /**
+       * @see CreateServerOptions#getNetworks
+       */
+      public static CreateServerOptions networks(String... networks) {
+         CreateServerOptions options = new CreateServerOptions();
+         return CreateServerOptions.class.cast(options.networks(networks));
+      }
+
+      /**
+       * @see CreateServerOptions#getNetworks
+       */
+      public static CreateServerOptions networks(Iterable<String> networks) {
+         CreateServerOptions options = new CreateServerOptions();
+         return CreateServerOptions.class.cast(options.networks(networks));
       }
    }
 
