@@ -23,17 +23,20 @@ import javax.inject.Singleton;
 
 import org.jclouds.aws.s3.AWSS3AsyncClient;
 import org.jclouds.aws.s3.AWSS3Client;
+import org.jclouds.aws.s3.filters.AWSRequestAuthorizeSignature;
 import org.jclouds.aws.s3.predicates.validators.AWSS3BucketNameValidator;
 import org.jclouds.location.Region;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.config.S3RestClientModule;
+import org.jclouds.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.s3.predicates.validators.BucketNameValidator;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 
 /**
  * Configures the S3 connection.
@@ -57,7 +60,12 @@ public class AWSS3RestClientModule extends S3RestClientModule<AWSS3Client, AWSS3
       bind(BucketNameValidator.class).to(AWSS3BucketNameValidator.class);
       super.configure();
    }
-  
+
+   @Override
+   protected void bindRequestSigner() {
+      bind(RequestAuthorizeSignature.class).to(AWSRequestAuthorizeSignature.class).in(Scopes.SINGLETON);
+   }
+
    @Singleton
    @Provides
    S3Client provide(AWSS3Client in) {

@@ -162,7 +162,7 @@ public class S3RestClientModule<S extends S3Client, A extends S3AsyncClient> ext
       super.configure();
       install(new S3ObjectModule());
       install(new S3ParserModule());
-      bind(RequestAuthorizeSignature.class).in(Scopes.SINGLETON);
+      bindRequestSigner();
       bind(new TypeLiteral<Function<String, Optional<String>>>() {
       }).annotatedWith(Bucket.class).to(GetRegionForBucket.class);
       bind(new TypeLiteral<Function<Set<BucketMetadata>, PageSet<? extends StorageMetadata>>>() {
@@ -174,6 +174,10 @@ public class S3RestClientModule<S extends S3Client, A extends S3AsyncClient> ext
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ParseS3ErrorFromXmlContent.class);
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(ParseS3ErrorFromXmlContent.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ParseS3ErrorFromXmlContent.class);
+   }
+
+   protected void bindRequestSigner() {
+      bind(RequestAuthorizeSignature.class).in(Scopes.SINGLETON);
    }
 
    @Provides

@@ -45,6 +45,8 @@ import com.google.inject.Provider;
  * @author Diwaker Gupta
  */
 public class AWSS3BlobRequestSigner extends S3BlobRequestSigner<AWSS3AsyncClient> {
+   public static final String TEMPORARY_SIGNATURE_PARAM = "Signature";
+
    private final RequestAuthorizeSignature authSigner;
    private final String identity;
    private final DateService dateService;
@@ -90,7 +92,7 @@ public class AWSS3BlobRequestSigner extends S3BlobRequestSigner<AWSS3AsyncClient
       String expiration = String.valueOf(TimeUnit.MILLISECONDS.toSeconds(date.getTime()) + timeInSeconds);
       HttpRequest.Builder<?> builder = request.toBuilder().replaceHeader(HttpHeaders.DATE, expiration);
       final String signature = authSigner.sign(authSigner.createStringToSign(builder.build()));
-      return builder.addQueryParam("Signature", signature)
+      return builder.addQueryParam(TEMPORARY_SIGNATURE_PARAM, signature)
          .addQueryParam(HttpHeaders.EXPIRES, expiration)
          .addQueryParam("AWSAccessKeyId", identity)
          .build();

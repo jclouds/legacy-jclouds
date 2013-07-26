@@ -17,6 +17,7 @@
 package org.jclouds.aws.s3;
 
 import static org.jclouds.reflect.Reflection2.method;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.Map;
@@ -24,11 +25,13 @@ import java.util.Set;
 
 import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.aws.s3.config.AWSS3RestClientModule;
+import org.jclouds.aws.s3.filters.AWSRequestAuthorizeSignature;
 import org.jclouds.aws.s3.functions.ETagFromHttpResponseViaRegex;
 import org.jclouds.aws.s3.functions.UploadIdFromHttpResponseViaRegex;
 import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.fallbacks.MapHttp4xxCodesToExceptions;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
@@ -67,6 +70,12 @@ import com.google.inject.Module;
 // surefire
 @Test(groups = "unit", testName = "AWSS3AsyncClientTest")
 public class AWSS3AsyncClientTest extends S3AsyncClientTest<AWSS3AsyncClient> {
+
+   @Override
+   protected void checkFilters(HttpRequest request) {
+      assertEquals(request.getFilters().size(), 1);
+      assertEquals(request.getFilters().get(0).getClass(), AWSRequestAuthorizeSignature.class);
+   }
 
    @Override
    public void testCopyObjectInvalidName() throws ArrayIndexOutOfBoundsException, SecurityException,
