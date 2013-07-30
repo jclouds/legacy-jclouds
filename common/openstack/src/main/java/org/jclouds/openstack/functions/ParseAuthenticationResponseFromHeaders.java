@@ -56,9 +56,11 @@ public class ParseAuthenticationResponseFromHeaders implements Function<HttpResp
     */
    public AuthenticationResponse apply(HttpResponse from) {
       releasePayload(from);
+
+      // HTTP headers are case insensitive (RFC 2616) so we must allow for that when looking an header names for the URL keyword
       Builder<String, URI> builder = ImmutableMap.builder();
       for (Entry<String, String> entry : from.getHeaders().entries()) {
-         if (entry.getKey().endsWith(URL_SUFFIX))
+         if (entry.getKey().toLowerCase().endsWith(URL_SUFFIX.toLowerCase()))
             builder.put(entry.getKey(), getURI(entry.getValue()));
       }
       AuthenticationResponse response = new AuthenticationResponse(checkNotNull(from.getFirstHeaderOrNull(AUTH_TOKEN),
