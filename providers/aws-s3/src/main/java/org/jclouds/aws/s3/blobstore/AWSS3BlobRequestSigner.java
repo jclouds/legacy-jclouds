@@ -19,6 +19,8 @@ package org.jclouds.aws.s3.blobstore;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.blobstore.util.BlobStoreUtils.cleanRequest;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -35,6 +37,7 @@ import org.jclouds.s3.blobstore.S3BlobRequestSigner;
 import org.jclouds.s3.blobstore.functions.BlobToObject;
 import org.jclouds.s3.filters.RequestAuthorizeSignature;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.net.HttpHeaders;
@@ -91,10 +94,23 @@ public class AWSS3BlobRequestSigner extends S3BlobRequestSigner<AWSS3AsyncClient
       Date date = dateService.rfc1123DateParse(dateString);
       String expiration = String.valueOf(TimeUnit.MILLISECONDS.toSeconds(date.getTime()) + timeInSeconds);
       HttpRequest.Builder<?> builder = request.toBuilder().replaceHeader(HttpHeaders.DATE, expiration);
-      final String signature = authSigner.sign(authSigner.createStringToSign(builder.build()));
-      return builder.addQueryParam(TEMPORARY_SIGNATURE_PARAM, signature)
-         .addQueryParam(HttpHeaders.EXPIRES, expiration)
+      String stringToSign = authSigner.createStringToSign(builder.build());
+      // We MUST encode the signature because addQueryParam internally _always_ decodes values
+      // and if we don't encode the signature here, the decoding may change the signature. For e.g.
+      // any '+' characters in the signature will be converted to space ' ' on decoding.
+      String signature = authSigner.sign(stringToSign);
+      try {
+         signature = URLEncoder.encode(signature, Charsets.UTF_8.name());
+      } catch (UnsupportedEncodingException e) {
+         throw new IllegalStateException("Bad encoding on input: " + signature, e);
+      }
+      HttpRequest ret = builder.addQueryParam(HttpHeaders.EXPIRES, expiration)
          .addQueryParam("AWSAccessKeyId", identity)
+         // Signature MUST be the last parameter because if it isn't, even encoded '+' values in the
+         // signature will be converted to a space by a subsequent addQueryParameter.
+         // See HttpRequestTest.testAddBase64AndUrlEncodedQueryParams for more details.
+         .addQueryParam(TEMPORARY_SIGNATURE_PARAM, signature)
          .build();
+      return ret;
    }
 }

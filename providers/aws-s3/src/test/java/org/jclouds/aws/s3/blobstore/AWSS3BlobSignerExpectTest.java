@@ -35,6 +35,8 @@ import com.google.inject.Module;
  */
 @Test(groups = "unit", testName = "AWSS3BlobSignerExpectTest")
 public class AWSS3BlobSignerExpectTest extends S3BlobSignerExpectTest {
+   private static final String DATE = "Thu, 05 Jun 2008 16:38:19 GMT";
+
    public AWSS3BlobSignerExpectTest() {
       provider = "aws-s3";
    }
@@ -43,9 +45,9 @@ public class AWSS3BlobSignerExpectTest extends S3BlobSignerExpectTest {
    protected HttpRequest getBlobWithTime() {
       return HttpRequest.builder().method("GET")
          .endpoint("https://container.s3.amazonaws.com/name" +
-            "?Signature=Y4Ac4sZfBemGZmgfG78F7IX%20IFg%3D&Expires=1212683902&AWSAccessKeyId=identity")
+            "?Expires=1212683902&AWSAccessKeyId=identity&Signature=Y4Ac4sZfBemGZmgfG78F7IX%2BIFg%3D")
          .addHeader("Host", "container.s3.amazonaws.com")
-         .addHeader("Date", "Thu, 05 Jun 2008 16:38:19 GMT").build();
+         .addHeader("Date", DATE).build();
    }
 
    @Test
@@ -60,10 +62,10 @@ public class AWSS3BlobSignerExpectTest extends S3BlobSignerExpectTest {
    protected HttpRequest putBlobWithTime() {
       return HttpRequest.builder().method("PUT")
          .endpoint("https://container.s3.amazonaws.com/name" +
-            "?Signature=genkB2vLxe3AWV/bPvRTMqQts7E%3D&Expires=1212683902&AWSAccessKeyId=identity")
+            "?Expires=1212683902&AWSAccessKeyId=identity&Signature=genkB2vLxe3AWV/bPvRTMqQts7E%3D")
          .addHeader("Expect", "100-continue")
          .addHeader("Host", "container.s3.amazonaws.com")
-         .addHeader("Date", "Thu, 05 Jun 2008 16:38:19 GMT").build();
+         .addHeader("Date", DATE).build();
    }
 
    @Test
@@ -86,7 +88,7 @@ public class AWSS3BlobSignerExpectTest extends S3BlobSignerExpectTest {
       @Override
       @TimeStamp
       protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {
-         return "Thu, 05 Jun 2008 16:38:19 GMT";
+         return DATE;
       }
    }
 }
