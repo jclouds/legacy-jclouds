@@ -115,8 +115,13 @@ public class Strings2 {
    public static String urlDecode(@Nullable String in) {
       if (in == null)
          return null;
+      String input = in.toString();
+      // Don't double decode
+      if (!isUrlEncoded(input)) {
+         return input;
+      }
       try {
-         return URLDecoder.decode(in, "UTF-8");
+         return URLDecoder.decode(input, "UTF-8");
       } catch (UnsupportedEncodingException e) {
          throw new IllegalStateException("Bad encoding on input: " + in, e);
       }

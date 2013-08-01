@@ -40,7 +40,12 @@ public class Strings2Test {
             "/read-tests/%73%6f%6d%65%20%66%69%6c%65");
       assertEquals(urlEncode("/read-tests/ tep", '/'), "/read-tests/%20tep");
    }
-   
+
+   public void testNoDoubleDecode() {
+      assertEquals(urlDecode("foo%20bar%2Bbaz"), "foo bar+baz");
+      assertEquals(urlDecode("foo bar+baz"), "foo bar+baz");
+   }
+
    public void testReplaceTokens() {
       assertEquals(Strings2.replaceTokens("hello {where}", ImmutableMap.of("where", "world")), "hello world");
    }

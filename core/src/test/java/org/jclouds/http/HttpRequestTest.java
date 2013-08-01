@@ -67,45 +67,24 @@ public class HttpRequestTest {
                .builder().method("GET").endpoint("http://foo").payload(payload).build());
    }
 
-   // the following caused issues for the fgcp provider
-   // (see RequestAuthenticator#addQueryParamsToRequest)
-   // base64 symbols should be url encoded in query param
-   // note that + ends up encoded as %20 (space), not %2B (plus)
-   public void testAddingBase64EncodedQueryParamCausingPlusToUrlEncodedSpaceConversion() {
-      String base64Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-      URI uri = URI
-            .create("http://goo.com:443?header1=valueWithUrlEncoded%2BPlus");
-      HttpRequest request = HttpRequest.builder().method("GET").endpoint(uri)
-      // addQueryParam invocation causes %2B's in prev. params to
-      // convert to %20.
-            .addQueryParam("header2", base64Chars).build();
-
-      assertEquals(
-            request.getRequestLine(),
-            "GET http://goo.com:443?header1=valueWithUrlEncoded%20Plus&header2=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%20/%3D HTTP/1.1");
-   }
-
-   // note that + ends up encoded as %20 (space) in the first param, %2B (plus)
-   // in the last param and %2F converts back into slash
+   // note that + ends up encoded as %2B (plus) and %2F converts back into slash
    public void testAddBase64AndUrlEncodedQueryParams() {
       String base64Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%2B%2F%3D";
       URI uri = URI.create("http://goo.com:443?header1=" + base64Chars);
       HttpRequest request = HttpRequest.builder()
             .method("GET")
             .endpoint(uri)
-            // the addition of another param causes %2B's in prev. params to
-            // convert to %20.
             .addQueryParam("header2", base64Chars)
             .build();
 
       assertEquals(
             request.getRequestLine(),
-            "GET http://goo.com:443?header1=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%20/%3D&header2=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%2B/%3D HTTP/1.1");
+            "GET http://goo.com:443?header1=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%2B/%3D&header2=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%2B/%3D HTTP/1.1");
    }
 
    // base64 symbols with newline separator should be url encoded in query param
    public void testAddBase64EncodedQueryParamWithNewlines() {
-      String base64Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n0123456789%2B/=";
+      String base64Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n0123456789+/=";
       URI uri = URI.create("http://goo.com:443?header1=value1");
       HttpRequest request = HttpRequest.builder().method("GET").endpoint(uri)
             .addQueryParam("header2", base64Chars).build();
