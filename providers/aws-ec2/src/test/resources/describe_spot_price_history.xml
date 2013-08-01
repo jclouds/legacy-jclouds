@@ -7,18 +7,21 @@
             <productDescription>SUSE Linux</productDescription>
             <spotPrice>0.013000</spotPrice>
             <timestamp>2011-03-07T12:17:19.000Z</timestamp>
+            <availabilityZone>us-west-1a</availabilityZone>
         </item>
         <item>
             <instanceType>m1.large</instanceType>
             <productDescription>Linux/UNIX</productDescription>
             <spotPrice>0.119000</spotPrice>
             <timestamp>2011-03-07T16:29:16.000Z</timestamp>
+            <availabilityZone>us-west-1b</availabilityZone>
         </item>
         <item>
             <instanceType>t1.micro</instanceType>
             <productDescription>Windows</productDescription>
             <spotPrice>0.013000</spotPrice>
             <timestamp>2011-03-07T17:56:54.000Z</timestamp>
+            <availabilityZone>us-west-1c</availabilityZone>
         </item>
     </spotPriceHistorySet>
 </DescribeSpotPriceHistoryResponse>

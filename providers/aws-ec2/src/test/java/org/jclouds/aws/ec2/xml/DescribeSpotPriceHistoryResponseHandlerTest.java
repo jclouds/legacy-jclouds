@@ -46,12 +46,15 @@ public class DescribeSpotPriceHistoryResponseHandlerTest extends BaseHandlerTest
       InputStream is = getClass().getResourceAsStream("/describe_spot_price_history.xml");
 
       Set<Spot> expected = ImmutableSet.of(
-            Spot.builder().region("us-west-1").instanceType("t1.micro").productDescription("SUSE Linux").spotPrice(0.013f)
-                  .timestamp(new SimpleDateFormatDateService().iso8601DateParse("2011-03-07T12:17:19.000Z")).build(),
-            Spot.builder().region("us-west-1").instanceType("m1.large").productDescription("Linux/UNIX").spotPrice(0.119f)
-                  .timestamp(new SimpleDateFormatDateService().iso8601DateParse("2011-03-07T16:29:16.000Z")).build(),
-            Spot.builder().region("us-west-1").instanceType("t1.micro").productDescription("Windows").spotPrice(0.013f)
-                  .timestamp(new SimpleDateFormatDateService().iso8601DateParse("2011-03-07T17:56:54.000Z")).build()
+              Spot.builder().region("us-west-1").instanceType("t1.micro").productDescription("SUSE Linux").spotPrice(0.013f)
+                      .timestamp(new SimpleDateFormatDateService().iso8601DateParse("2011-03-07T12:17:19.000Z"))
+                      .availabilityZone("us-west-1a").build(),
+              Spot.builder().region("us-west-1").instanceType("m1.large").productDescription("Linux/UNIX").spotPrice(0.119f)
+                      .timestamp(new SimpleDateFormatDateService().iso8601DateParse("2011-03-07T16:29:16.000Z"))
+                      .availabilityZone("us-west-1b").build(),
+              Spot.builder().region("us-west-1").instanceType("t1.micro").productDescription("Windows").spotPrice(0.013f)
+                      .timestamp(new SimpleDateFormatDateService().iso8601DateParse("2011-03-07T17:56:54.000Z"))
+                      .availabilityZone("us-west-1c").build()
 
       );
 

@@ -65,6 +65,8 @@ public class SpotHandler extends ParseSax.HandlerForGeneratedRequestWithResult<S
          builder.spotPrice(Float.parseFloat(currentText.toString().trim()));
       } else if (qName.equals("timestamp")) {
          builder.timestamp(dateCodec.toDate(currentText.toString().trim()));
+      } else if (qName.equals("availabilityZone")) {
+         builder.availabilityZone(currentText.toString().trim());
       }
       currentText = new StringBuilder();
    }
