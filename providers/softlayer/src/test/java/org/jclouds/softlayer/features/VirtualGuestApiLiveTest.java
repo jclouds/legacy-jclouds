@@ -29,7 +29,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
 
-import org.jclouds.softlayer.SoftLayerClient;
+import org.jclouds.softlayer.SoftLayerApi;
 import org.jclouds.softlayer.compute.functions.ProductItems;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductItemPrice;
@@ -50,12 +50,12 @@ import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code VirtualGuestClient}
+ * Tests behavior of {@code VirtualGuestApi}
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
+public class VirtualGuestApiLiveTest extends BaseSoftLayerApiLiveTest {
 
    private static final String TEST_HOSTNAME_PREFIX = "livetest";
 
@@ -86,9 +86,9 @@ public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
          }
       }
 
-      int pkgId = Iterables.find(api.getAccountClient().getActivePackages(),
-               named(ProductPackageClientLiveTest.CLOUD_SERVER_PACKAGE_NAME)).getId();
-      ProductPackage productPackage = api.getProductPackageClient().getProductPackage(pkgId);
+      int pkgId = Iterables.find(api.getAccountApi().getActivePackages(),
+               named(ProductPackageApiLiveTest.CLOUD_SERVER_PACKAGE_NAME)).getId();
+      ProductPackage productPackage = api.getProductPackageApi().getProductPackage(pkgId);
 
       Iterable<ProductItem> ramItems = Iterables.filter(productPackage.getItems(), Predicates.and(categoryCode("ram"),
                capacity(2.0f)));
@@ -133,15 +133,15 @@ public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
    private Iterable<ProductItemPrice> defaultPrices;
 
    @Override
-   protected SoftLayerClient create(Properties props, Iterable<Module> modules) {
+   protected SoftLayerApi create(Properties props, Iterable<Module> modules) {
       Injector injector = newBuilder().modules(modules).overrides(props).buildInjector();
       defaultPrices = injector.getInstance(Key.get(new TypeLiteral<Iterable<ProductItemPrice>>() {
       }));
-      return injector.getInstance(SoftLayerClient.class);
+      return injector.getInstance(SoftLayerApi.class);
    }
 
-   private VirtualGuestClient api() {
-      return api.getVirtualGuestClient();
+   private VirtualGuestApi api() {
+      return api.getVirtualGuestApi();
    }
 
    private void checkVirtualGuest(VirtualGuest vg) {

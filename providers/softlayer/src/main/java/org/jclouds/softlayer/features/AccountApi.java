@@ -16,43 +16,44 @@
  */
 package org.jclouds.softlayer.features;
 
+import java.util.Set;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.Fallback;
-import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.softlayer.domain.ProductPackage;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
 /**
- * Provides asynchronous access to ProductPackage via their REST API.
+ * Provides synchronous access to Account.
  * <p/>
- *
- * @see ProductPackageClient
+ * 
  * @see <a href="http://sldn.softlayer.com/article/REST" />
- * @author Adrian Cole
+ * @author Jason King
  */
 @RequestFilters(BasicAuthentication.class)
 @Path("/v{jclouds.api-version}")
-public interface ProductPackageAsyncClient {
-   public static String PRODUCT_MASK = "items.prices;items.categories;locations.locationAddress;locations.regions";
+public interface AccountApi {
 
    /**
-    * @see ProductPackageClient#getProductPackage
+    * 
+    * @return Gets all the active packages.
+    * This will give you a basic description of the packages that are currently
+    * active and from which you can order a server or additional services.
+    *
+    * Calling ProductPackage.getItems() will return an empty set.
+    * Use ProductPackageApi.getProductPackage(long id) to obtain items data.
+    * @see ProductPackageApi#getProductPackage
     */
    @GET
-   @Path("/SoftLayer_Product_Package/{id}.json")
-   @QueryParams(keys = "objectMask", values = PRODUCT_MASK)
+   @Path("/SoftLayer_Account/ActivePackages.json")
    @Consumes(MediaType.APPLICATION_JSON)
-   @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<ProductPackage> getProductPackage(@PathParam("id") long id);
-
+   @Fallback(Fallbacks.NullOnNotFoundOr404.class)
+   Set<ProductPackage> getActivePackages();
 
 }

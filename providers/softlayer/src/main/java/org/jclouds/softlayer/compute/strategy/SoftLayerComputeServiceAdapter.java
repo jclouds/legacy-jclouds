@@ -48,7 +48,7 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
-import org.jclouds.softlayer.SoftLayerClient;
+import org.jclouds.softlayer.SoftLayerApi;
 import org.jclouds.softlayer.compute.functions.ProductItemToImage;
 import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
 import org.jclouds.softlayer.domain.Datacenter;
@@ -65,10 +65,9 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
-import com.google.common.collect.Iterables;
 
 /**
- * defines the connection between the {@link SoftLayerClient} implementation and
+ * defines the connection between the {@link SoftLayerApi} implementation and
  * the jclouds {@link ComputeService}
  * 
  */
@@ -80,7 +79,7 @@ public class SoftLayerComputeServiceAdapter implements
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final SoftLayerClient client;
+   private final SoftLayerApi client;
    private final Supplier<ProductPackage> productPackageSupplier;
    private final Predicate<VirtualGuest> loginDetailsTester;
    private final long guestLoginDelay;
@@ -90,7 +89,7 @@ public class SoftLayerComputeServiceAdapter implements
    private final Iterable<ProductItemPrice> prices;
 
    @Inject
-   public SoftLayerComputeServiceAdapter(SoftLayerClient client,
+   public SoftLayerComputeServiceAdapter(SoftLayerApi client,
          VirtualGuestHasLoginDetailsPresent virtualGuestHasLoginDetailsPresent,
          @Memoized Supplier<ProductPackage> productPackageSupplier, Iterable<ProductItemPrice> prices,
          @Named(PROPERTY_SOFTLAYER_VIRTUALGUEST_CPU_REGEX) String cpuRegex,
@@ -127,7 +126,7 @@ public class SoftLayerComputeServiceAdapter implements
             .virtualGuests(newGuest).build();
 
       logger.debug(">> ordering new virtualGuest domain(%s) hostname(%s)", domainName, name);
-      ProductOrderReceipt productOrderReceipt = client.getVirtualGuestClient().orderVirtualGuest(order);
+      ProductOrderReceipt productOrderReceipt = client.getVirtualGuestApi().orderVirtualGuest(order);
       VirtualGuest result = get(productOrderReceipt.getOrderDetails().getVirtualGuests(), 0);
       logger.trace("<< virtualGuest(%s)", result.getId());
 
@@ -137,7 +136,7 @@ public class SoftLayerComputeServiceAdapter implements
 
       checkState(orderInSystem, "order for guest %s doesn't have login details within %sms", result,
             Long.toString(guestLoginDelay));
-      result = client.getVirtualGuestClient().getVirtualGuest(result.getId());
+      result = client.getVirtualGuestApi().getVirtualGuest(result.getId());
 
       Password pw = get(result.getOperatingSystem().getPasswords(), 0);
       return new NodeAndInitialCredentials<VirtualGuest>(result, result.getId() + "", LoginCredentials.builder().user(pw.getUsername()).password(
@@ -197,7 +196,7 @@ public class SoftLayerComputeServiceAdapter implements
    
    @Override
    public Iterable<VirtualGuest> listNodes() {
-      return filter(client.getVirtualGuestClient().listVirtualGuests(), new Predicate<VirtualGuest>() {
+      return filter(client.getVirtualGuestApi().listVirtualGuests(), new Predicate<VirtualGuest>() {
 
          @Override
          public boolean apply(VirtualGuest arg0) {
@@ -230,7 +229,7 @@ public class SoftLayerComputeServiceAdapter implements
    @Override
    public VirtualGuest getNode(String id) {
       long serverId = Long.parseLong(id);
-      return client.getVirtualGuestClient().getVirtualGuest(serverId);
+      return client.getVirtualGuestApi().getVirtualGuest(serverId);
    }
 
    @Override
@@ -244,29 +243,29 @@ public class SoftLayerComputeServiceAdapter implements
                id));
 
       logger.debug(">> canceling service for guest(%s) billingItem(%s)", id, guest.getBillingItemId());
-      client.getVirtualGuestClient().cancelService(guest.getBillingItemId());
+      client.getVirtualGuestApi().cancelService(guest.getBillingItemId());
    }
 
    @Override
    public void rebootNode(String id) {
-      client.getVirtualGuestClient().rebootHardVirtualGuest(Long.parseLong(id));
+      client.getVirtualGuestApi().rebootHardVirtualGuest(Long.parseLong(id));
    }
 
    @Override
    public void resumeNode(String id) {
-      client.getVirtualGuestClient().resumeVirtualGuest(Long.parseLong(id));
+      client.getVirtualGuestApi().resumeVirtualGuest(Long.parseLong(id));
    }
 
    @Override
    public void suspendNode(String id) {
-      client.getVirtualGuestClient().pauseVirtualGuest(Long.parseLong(id));
+      client.getVirtualGuestApi().pauseVirtualGuest(Long.parseLong(id));
    }
 
    public static class VirtualGuestHasLoginDetailsPresent implements Predicate<VirtualGuest> {
-      private final SoftLayerClient client;
+      private final SoftLayerApi client;
 
       @Inject
-      public VirtualGuestHasLoginDetailsPresent(SoftLayerClient client) {
+      public VirtualGuestHasLoginDetailsPresent(SoftLayerApi client) {
          this.client = checkNotNull(client, "client was null");
       }
 
@@ -274,7 +273,7 @@ public class SoftLayerComputeServiceAdapter implements
       public boolean apply(VirtualGuest guest) {
          checkNotNull(guest, "virtual guest was null");
 
-         VirtualGuest newGuest = client.getVirtualGuestClient().getVirtualGuest(guest.getId());
+         VirtualGuest newGuest = client.getVirtualGuestApi().getVirtualGuest(guest.getId());
          boolean hasBackendIp = newGuest.getPrimaryBackendIpAddress() != null;
          boolean hasPrimaryIp = newGuest.getPrimaryIpAddress() != null;
          boolean hasPasswords = newGuest.getOperatingSystem() != null

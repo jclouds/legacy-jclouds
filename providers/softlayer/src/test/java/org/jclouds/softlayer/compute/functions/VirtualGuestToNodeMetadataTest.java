@@ -31,7 +31,7 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
-import org.jclouds.softlayer.SoftLayerClient;
+import org.jclouds.softlayer.SoftLayerApi;
 import org.jclouds.softlayer.domain.VirtualGuest;
 import org.jclouds.softlayer.parse.ParseBadVirtualGuest;
 import org.jclouds.softlayer.parse.ParseVirtualGuestHaltedTest;
@@ -192,7 +192,7 @@ public class VirtualGuestToNodeMetadataTest {
    private static class GetHardwareForVirtualGuestMock extends VirtualGuestToNodeMetadata.GetHardwareForVirtualGuest {
       @SuppressWarnings("unchecked")
       public GetHardwareForVirtualGuestMock() {
-         super(createNiceMock(SoftLayerClient.class), createNiceMock(Function.class));
+         super(createNiceMock(SoftLayerApi.class), createNiceMock(Function.class));
       }
 
       @Override

@@ -16,17 +16,30 @@
  */
 package org.jclouds.softlayer.features;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.Fallbacks;
+import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.QueryParams;
+import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.softlayer.domain.ProductPackage;
 
 /**
  * Provides synchronous access to ProductPackage.
  * <p/>
  * 
- * @see ProductPackageAsyncClient
  * @see <a href="http://sldn.softlayer.com/article/REST" />
  * @author Adrian Cole
  */
-public interface ProductPackageClient {
+@RequestFilters(BasicAuthentication.class)
+@Path("/v{jclouds.api-version}")
+public interface ProductPackageApi {
+   public static String PRODUCT_MASK = "items.prices;items.categories;locations.locationAddress;locations.regions";
 
    /**
     * 
@@ -34,6 +47,11 @@ public interface ProductPackageClient {
     *           id of the product package
     * @return product package or null if not found
     */
-   ProductPackage getProductPackage(long id);
+   @GET
+   @Path("/SoftLayer_Product_Package/{id}.json")
+   @QueryParams(keys = "objectMask", values = PRODUCT_MASK)
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Fallback(Fallbacks.NullOnNotFoundOr404.class)
+   ProductPackage getProductPackage(@PathParam("id") long id);
 
 }

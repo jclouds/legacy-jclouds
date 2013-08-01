@@ -21,36 +21,49 @@ import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.softlayer.domain.ProductPackage;
-
-import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.softlayer.domain.Datacenter;
 
 /**
- * Provides asynchronous access to Account via their REST API.
+ * Provides synchronous access to LocationDatacenter.
  * <p/>
  * 
- * @see AccountClient
  * @see <a href="http://sldn.softlayer.com/article/REST" />
- * @author Jason King
+ * @author Adrian Cole
  */
 @RequestFilters(BasicAuthentication.class)
 @Path("/v{jclouds.api-version}")
-public interface AccountAsyncClient {
+public interface DatacenterApi {
 
    /**
-    * @see AccountClient#getActivePackages()
+    * 
+    * @return an account's associated datacenter objects.
     */
    @GET
-   @Path("/SoftLayer_Account/ActivePackages.json")
+   @Path("/SoftLayer_Location_Datacenter/Datacenters.json")
+   @QueryParams(keys = "objectMask", values = "locationAddress;regions")
    @Consumes(MediaType.APPLICATION_JSON)
-   @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<Set<ProductPackage>> getActivePackages();
+   @Fallback(Fallbacks.EmptySetOnNotFoundOr404.class)
+   Set<Datacenter> listDatacenters();
 
+   /**
+    * 
+    * @param id
+    *           id of the datacenter
+    * @return datacenter or null if not found
+    */
+   @GET
+   @Path("/SoftLayer_Location_Datacenter/{id}.json")
+   @QueryParams(keys = "objectMask", values = "locationAddress;regions")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Fallback(Fallbacks.NullOnNotFoundOr404.class)
+   Datacenter getDatacenter(@PathParam("id") long id);
 
 }

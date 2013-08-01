@@ -34,7 +34,7 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.location.predicates.LocationPredicates;
-import org.jclouds.softlayer.SoftLayerClient;
+import org.jclouds.softlayer.SoftLayerApi;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductOrder;
 import org.jclouds.softlayer.domain.VirtualGuest;
@@ -105,13 +105,13 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
    @Singleton
    public static class GetHardwareForVirtualGuest {
 
-      private final SoftLayerClient client;
+      private final SoftLayerApi api;
       private final Function<Iterable<ProductItem>, Hardware> productItemsToHardware;
 
       @Inject
-      public GetHardwareForVirtualGuest(SoftLayerClient client,
+      public GetHardwareForVirtualGuest(SoftLayerApi api,
             Function<Iterable<ProductItem>, Hardware> productItemsToHardware) {
-         this.client = checkNotNull(client, "client");
+         this.api = checkNotNull(api, "api");
          this.productItemsToHardware = checkNotNull(productItemsToHardware, "productItemsToHardware");
 
       }
@@ -120,7 +120,7 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
          // 'bad' orders have no start cpu's and cause the order lookup to fail.
          if (guest.getStartCpus() < 1)
             return null;
-         ProductOrder order = client.getVirtualGuestClient().getOrderTemplate(guest.getId());
+         ProductOrder order = api.getVirtualGuestApi().getOrderTemplate(guest.getId());
          if (order == null)
             return null;
          Iterable<ProductItem> items = Iterables.transform(order.getPrices(), ProductItems.item());
@@ -131,18 +131,18 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
    @Singleton
    public static class GetImageForVirtualGuest {
 
-      private SoftLayerClient client;
+      private SoftLayerApi api;
 
       @Inject
-      public GetImageForVirtualGuest(SoftLayerClient client) {
-         this.client = client;
+      public GetImageForVirtualGuest(SoftLayerApi api) {
+         this.api = api;
       }
 
       public Image getImage(VirtualGuest guest) {
          // 'bad' orders have no start cpu's and cause the order lookup to fail.
          if (guest.getStartCpus() < 1)
             return null;
-         ProductOrder order = client.getVirtualGuestClient().getOrderTemplate(guest.getId());
+         ProductOrder order = api.getVirtualGuestApi().getOrderTemplate(guest.getId());
          if (order == null)
             return null;
          Iterable<ProductItem> items = Iterables.transform(order.getPrices(), ProductItems.item());

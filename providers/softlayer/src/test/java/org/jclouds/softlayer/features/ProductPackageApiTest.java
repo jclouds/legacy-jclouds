@@ -28,20 +28,20 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.Invokable;
 /**
- * Tests annotation parsing of {@code AccountAsyncClient}
- *
- * @author Jason King
+ * Tests annotation parsing of {@code ProductPackageApi}
+ * 
+ * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class AccountAsyncClientTest extends BaseSoftLayerAsyncClientTest<AccountAsyncClient> {
+public class ProductPackageApiTest extends BaseSoftLayerApiTest<ProductPackageApi> {
 
-   public void testGetActivePackages() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = method(AccountAsyncClient.class, "getActivePackages");
-      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
+   public void testGetProductPackage() throws SecurityException, NoSuchMethodException, IOException {
+      Invokable<?, ?> method = method(ProductPackageApi.class, "getProductPackage", long.class);
+      GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(1234));
 
       assertRequestLineEquals(
                httpRequest,
-                       "GET https://api.softlayer.com/rest/v3/SoftLayer_Account/ActivePackages.json HTTP/1.1");
+               "GET https://api.softlayer.com/rest/v3/SoftLayer_Product_Package/1234.json?objectMask=items.prices%3Bitems.categories%3Blocations.locationAddress%3Blocations.regions HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

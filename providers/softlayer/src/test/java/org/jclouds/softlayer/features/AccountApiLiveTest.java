@@ -24,16 +24,16 @@ import org.jclouds.softlayer.domain.ProductPackage;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code AccountClient}
+ * Tests behavior of {@code AccountApi}
  * 
  * @author Jason King
  */
 @Test(groups = "live")
-public class AccountClientLiveTest extends BaseSoftLayerClientLiveTest {
+public class AccountApiLiveTest extends BaseSoftLayerApiLiveTest {
 
    @Test
    public void testGetActivePackages() {
-      Set<ProductPackage> response = api.getAccountClient().getActivePackages();
+      Set<ProductPackage> response = api.getAccountApi().getActivePackages();
       assert null != response;
 
       assertTrue(response.size() >= 0);

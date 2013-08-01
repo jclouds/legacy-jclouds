@@ -20,40 +20,32 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.softlayer.features.BaseSoftLayerAsyncClientTest;
+import org.jclouds.softlayer.features.BaseSoftLayerApiTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code SoftLayerAsyncClient}
+ * Tests behavior of {@code SoftLayerApi}
  * 
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "unit", testName = "SoftLayerAsyncClientTest")
-public class SoftLayerAsyncClientTest extends BaseSoftLayerAsyncClientTest<SoftLayerAsyncClient> {
+@Test(groups = "unit", testName = "SoftLayerApiTest")
+public class SoftLayerApiTest extends BaseSoftLayerApiTest<SoftLayerApi> {
 
-   private SoftLayerAsyncClient asyncClient;
-   private SoftLayerClient syncClient;
+   private SoftLayerApi syncClient;
 
    public void testSync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
-      assert syncClient.getVirtualGuestClient() != null;
-      assert syncClient.getDatacenterClient() != null;
-      assert syncClient.getProductPackageClient() != null;
-   }
-
-   public void testAsync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
-      assert asyncClient.getVirtualGuestClient() != null;
-      assert asyncClient.getDatacenterClient() != null;
-      assert asyncClient.getProductPackageClient() != null;
+      assert syncClient.getVirtualGuestApi() != null;
+      assert syncClient.getDatacenterApi() != null;
+      assert syncClient.getProductPackageApi() != null;
    }
 
    @BeforeClass
    @Override
    protected void setupFactory() throws IOException {
       super.setupFactory();
-      asyncClient = injector.getInstance(SoftLayerAsyncClient.class);
-      syncClient = injector.getInstance(SoftLayerClient.class);
+      syncClient = injector.getInstance(SoftLayerApi.class);
    }
 
    @Override

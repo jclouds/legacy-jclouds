@@ -19,7 +19,7 @@ package org.jclouds.softlayer.features;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.internal.BaseRestClientExpectTest;
-import org.jclouds.softlayer.SoftLayerClient;
+import org.jclouds.softlayer.SoftLayerApi;
 import org.testng.annotations.Test;
 
 /**
@@ -27,10 +27,10 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "SoftLayerClientExpectTest")
-public class VirtualGuestClientExpectTest extends BaseRestClientExpectTest<SoftLayerClient> {
+public class VirtualGuestApiExpectTest extends BaseRestClientExpectTest<SoftLayerApi> {
 
 
-   public VirtualGuestClientExpectTest() {
+   public VirtualGuestApiExpectTest() {
       provider = "softlayer";
    }
    
@@ -43,16 +43,16 @@ public class VirtualGuestClientExpectTest extends BaseRestClientExpectTest<SoftL
 
       HttpResponse found = HttpResponse.builder().statusCode(200).build();
 
-      SoftLayerClient clientWhenServiceExists = requestSendsResponse(cancelGuest11, found);
+      SoftLayerApi clientWhenServiceExists = requestSendsResponse(cancelGuest11, found);
       
-      assert clientWhenServiceExists.getVirtualGuestClient().cancelService(11l);
+      assert clientWhenServiceExists.getVirtualGuestApi().cancelService(11l);
 
 
       HttpResponse notFound = HttpResponse.builder().statusCode(404).build();
 
-      SoftLayerClient clientWhenServiceDoesntExist = requestSendsResponse(cancelGuest11, notFound);
+      SoftLayerApi clientWhenServiceDoesntExist = requestSendsResponse(cancelGuest11, notFound);
       
-      assert !clientWhenServiceDoesntExist.getVirtualGuestClient().cancelService(11l);
+      assert !clientWhenServiceDoesntExist.getVirtualGuestApi().cancelService(11l);
 
    }
 }

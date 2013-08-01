@@ -23,12 +23,11 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.rest.internal.BaseRestApiMetadata;
+import org.jclouds.rest.internal.BaseHttpApiMetadata;
 import org.jclouds.softlayer.compute.config.SoftLayerComputeServiceContextModule;
-import org.jclouds.softlayer.config.SoftLayerRestClientModule;
+import org.jclouds.softlayer.config.SoftLayerHttpApiModule;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 
 /**
@@ -36,17 +35,9 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class SoftLayerApiMetadata extends BaseRestApiMetadata {
+public class SoftLayerApiMetadata extends BaseHttpApiMetadata<SoftLayerApi> {
 
-   /**
-    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(SoftLayerClient.class)} as
-    *             {@link SoftLayerAsyncClient} interface will be removed in jclouds 1.7.
-    */
-   @Deprecated
-   public static final TypeToken<org.jclouds.rest.RestContext<SoftLayerClient, SoftLayerAsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<SoftLayerClient, SoftLayerAsyncClient>>() {
-      private static final long serialVersionUID = 1L;
-   };
-   
+
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
@@ -61,17 +52,16 @@ public class SoftLayerApiMetadata extends BaseRestApiMetadata {
    }
 
    public static Properties defaultProperties() {
-      Properties properties = BaseRestApiMetadata.defaultProperties();
+      Properties properties = BaseHttpApiMetadata.defaultProperties();
       properties.setProperty("jclouds.ssh.max-retries", "5");
       properties.setProperty("jclouds.ssh.retry-auth", "true");
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
+   public static class Builder extends BaseHttpApiMetadata.Builder<SoftLayerApi, Builder> {
 
       @SuppressWarnings("deprecation")
       protected Builder() {
-         super(SoftLayerClient.class, SoftLayerAsyncClient.class);
          id("softlayer")
          .name("SoftLayer API")
          .identityName("API Username")
@@ -81,7 +71,7 @@ public class SoftLayerApiMetadata extends BaseRestApiMetadata {
          .defaultEndpoint("https://api.softlayer.com/rest")
          .defaultProperties(SoftLayerApiMetadata.defaultProperties())
          .view(typeToken(ComputeServiceContext.class))
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(SoftLayerRestClientModule.class, SoftLayerComputeServiceContextModule.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(SoftLayerHttpApiModule.class, SoftLayerComputeServiceContextModule.class));
       }
 
       @Override

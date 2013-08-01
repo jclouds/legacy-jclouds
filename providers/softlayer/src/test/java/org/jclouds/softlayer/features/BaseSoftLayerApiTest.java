@@ -16,19 +16,28 @@
  */
 package org.jclouds.softlayer.features;
 
-import org.jclouds.apis.BaseApiLiveTest;
-import org.jclouds.softlayer.SoftLayerClient;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
+
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
+import org.jclouds.softlayer.SoftLayerProviderMetadata;
 
 /**
- * Tests behavior of {@code SoftLayerClient}
- * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
-public class BaseSoftLayerClientLiveTest extends BaseApiLiveTest<SoftLayerClient> {
+public abstract class BaseSoftLayerApiTest<T> extends BaseAsyncClientTest<T> {
 
-   public BaseSoftLayerClientLiveTest() {
-      this.provider = "softlayer";
+   @Override
+   protected void checkFilters(HttpRequest request) {
+      assertEquals(request.getFilters().size(), 1);
+      assertEquals(request.getFilters().get(0).getClass(), BasicAuthentication.class);
    }
+
+   @Override
+   public ProviderMetadata createProviderMetadata() {
+      return new SoftLayerProviderMetadata();
+   }
+
 }

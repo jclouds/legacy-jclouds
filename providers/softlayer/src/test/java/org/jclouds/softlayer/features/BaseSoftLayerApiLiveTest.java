@@ -16,31 +16,19 @@
  */
 package org.jclouds.softlayer.features;
 
-import java.util.Set;
-import org.jclouds.softlayer.domain.Datacenter;
+import org.jclouds.apis.BaseApiLiveTest;
+import org.jclouds.softlayer.SoftLayerApi;
+import org.testng.annotations.Test;
 
 /**
- * Provides synchronous access to LocationDatacenter.
- * <p/>
+ * Tests behavior of {@code SoftLayerApi}
  * 
- * @see DatacenterAsyncClient
- * @see <a href="http://sldn.softlayer.com/article/REST" />
  * @author Adrian Cole
  */
-public interface DatacenterClient {
+@Test(groups = "live")
+public class BaseSoftLayerApiLiveTest extends BaseApiLiveTest<SoftLayerApi> {
 
-   /**
-    * 
-    * @return an account's associated datacenter objects.
-    */
-   Set<Datacenter> listDatacenters();
-
-   /**
-    * 
-    * @param id
-    *           id of the datacenter
-    * @return datacenter or null if not found
-    */
-   Datacenter getDatacenter(long id);
-
+   public BaseSoftLayerApiLiveTest() {
+      this.provider = "softlayer";
+   }
 }

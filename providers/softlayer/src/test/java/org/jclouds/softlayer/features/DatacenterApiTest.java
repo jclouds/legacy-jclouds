@@ -30,15 +30,15 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.reflect.Invokable;
 /**
- * Tests annotation parsing of {@code DatacenterAsyncClient}
+ * Tests annotation parsing of {@code DatacenterApi}
  * 
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class DatacenterAsyncClientTest extends BaseSoftLayerAsyncClientTest<DatacenterAsyncClient> {
+public class DatacenterApiTest extends BaseSoftLayerApiTest<DatacenterApi> {
 
    public void testListDatacenters() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = method(DatacenterAsyncClient.class, "listDatacenters");
+      Invokable<?, ?> method = method(DatacenterApi.class, "listDatacenters");
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,
@@ -67,7 +67,7 @@ public class DatacenterAsyncClientTest extends BaseSoftLayerAsyncClientTest<Data
    }
 
    public void testGetDatacenter() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = method(DatacenterAsyncClient.class, "getDatacenter", long.class);
+      Invokable<?, ?> method = method(DatacenterApi.class, "getDatacenter", long.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(1234));
 
       assertRequestLineEquals(httpRequest,

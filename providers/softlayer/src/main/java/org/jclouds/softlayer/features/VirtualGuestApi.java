@@ -25,10 +25,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
-import org.jclouds.Fallbacks.FalseOnNotFoundOr404;
-import org.jclouds.Fallbacks.NullOnNotFoundOr404;
-import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
+import org.jclouds.Fallbacks;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Fallback;
@@ -39,114 +36,143 @@ import org.jclouds.softlayer.domain.ProductOrder;
 import org.jclouds.softlayer.domain.ProductOrderReceipt;
 import org.jclouds.softlayer.domain.VirtualGuest;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
 /**
- * Provides asynchronous access to VirtualGuest via their REST API.
+ * Provides synchronous access to VirtualGuest.
  * <p/>
  * 
- * @see VirtualGuestClient
  * @see <a href="http://sldn.softlayer.com/article/REST" />
  * @author Adrian Cole
  */
 @RequestFilters(BasicAuthentication.class)
 @Path("/v{jclouds.api-version}")
-public interface VirtualGuestAsyncClient {
+public interface VirtualGuestApi {
    public static String LIST_GUEST_MASK = "virtualGuests.powerState;virtualGuests.networkVlans;virtualGuests.operatingSystem.passwords;virtualGuests.datacenter;virtualGuests.billingItem";
    public static String GUEST_MASK = "powerState;networkVlans;operatingSystem.passwords;datacenter;billingItem";
 
    /**
-    * @see VirtualGuestClient#listVirtualGuests
+    *
+    * @return an account's associated virtual guest objects.
     */
    @GET
    @Path("/SoftLayer_Account/VirtualGuests.json")
    @QueryParams(keys = "objectMask", values = LIST_GUEST_MASK)
    @Consumes(MediaType.APPLICATION_JSON)
-   @Fallback(EmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<VirtualGuest>> listVirtualGuests();
+   @Fallback(Fallbacks.EmptySetOnNotFoundOr404.class)
+   Set<VirtualGuest> listVirtualGuests();
 
    /**
-    * @see VirtualGuestClient#getVirtualGuest
+    *
+    * @param id
+    *           id of the virtual guest
+    * @return virtual guest or null if not found
     */
    @GET
    @Path("/SoftLayer_Virtual_Guest/{id}.json")
    @QueryParams(keys = "objectMask", values = GUEST_MASK)
    @Consumes(MediaType.APPLICATION_JSON)
-   @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<VirtualGuest> getVirtualGuest(@PathParam("id") long id);
+   @Fallback(Fallbacks.NullOnNotFoundOr404.class)
+   VirtualGuest getVirtualGuest(@PathParam("id") long id);
 
    /**
-    * @see VirtualGuestClient#rebootHardVirtualGuest
+    * hard reboot the guest.
+    *
+    * @param id
+    *           id of the virtual guest
     */
    @GET
    @Path("/SoftLayer_Virtual_Guest/{id}/rebootHard.json")
    @Consumes(MediaType.APPLICATION_JSON)
-   @Fallback(VoidOnNotFoundOr404.class)
-   ListenableFuture<Void> rebootHardVirtualGuest(@PathParam("id") long id);
+   @Fallback(Fallbacks.VoidOnNotFoundOr404.class)
+   void rebootHardVirtualGuest(@PathParam("id") long id);
 
    /**
-    * @see VirtualGuestClient#powerOffVirtualGuest
+    * Power off a guest
+    *
+    * @param id
+    *           id of the virtual guest
     */
    @GET
    @Path("/SoftLayer_Virtual_Guest/{id}/powerOff.json")
    @Consumes(MediaType.APPLICATION_JSON)
-   @Fallback(VoidOnNotFoundOr404.class)
-   ListenableFuture<Void> powerOffVirtualGuest(@PathParam("id") long id);
+   @Fallback(Fallbacks.VoidOnNotFoundOr404.class)
+   void powerOffVirtualGuest(@PathParam("id") long id);
 
    /**
-    * @see VirtualGuestClient#powerOnVirtualGuest
+    * Power on a guest
+    *
+    * @param id
+    *           id of the virtual guest
     */
    @GET
    @Path("/SoftLayer_Virtual_Guest/{id}/powerOn.json")
    @Consumes(MediaType.APPLICATION_JSON)
-   @Fallback(VoidOnNotFoundOr404.class)
-   ListenableFuture<Void> powerOnVirtualGuest(@PathParam("id") long id);
+   @Fallback(Fallbacks.VoidOnNotFoundOr404.class)
+   void powerOnVirtualGuest(@PathParam("id") long id);
 
    /**
-    * @see VirtualGuestClient#pauseVirtualGuest
+    * pause the guest.
+    *
+    * @param id
+    *           id of the virtual guest
     */
    @GET
    @Path("/SoftLayer_Virtual_Guest/{id}/pause.json")
    @Consumes(MediaType.APPLICATION_JSON)
-   @Fallback(VoidOnNotFoundOr404.class)
-   ListenableFuture<Void> pauseVirtualGuest(@PathParam("id") long id);
+   @Fallback(Fallbacks.VoidOnNotFoundOr404.class)
+   void pauseVirtualGuest(@PathParam("id") long id);
 
    /**
-    * @see VirtualGuestClient#resumeVirtualGuest
+    * resume the guest.
+    *
+    * @param id
+    *           id of the virtual guest
     */
    @GET
    @Path("/SoftLayer_Virtual_Guest/{id}/resume.json")
    @Consumes(MediaType.APPLICATION_JSON)
-   @Fallback(VoidOnNotFoundOr404.class)
-   ListenableFuture<Void> resumeVirtualGuest(@PathParam("id") long id);
+   @Fallback(Fallbacks.VoidOnNotFoundOr404.class)
+   void resumeVirtualGuest(@PathParam("id") long id);
 
    /**
-    * @see VirtualGuestClient#cancelService
+    * Cancel the resource or service for a billing Item
+    *
+    * @param id
+    *            The id of the billing item to cancel
+    * @return true or false
     */
    @GET
    @Path("/SoftLayer_Billing_Item/{id}/cancelService.json")
    @Consumes(MediaType.APPLICATION_JSON)
-   @Fallback(FalseOnNotFoundOr404.class)
-   ListenableFuture<Boolean> cancelService(@PathParam("id") long id);
+   @Fallback(Fallbacks.FalseOnNotFoundOr404.class)
+   boolean cancelService(@PathParam("id") long id);
 
    /**
-    * @see org.jclouds.softlayer.features.VirtualGuestClient#orderVirtualGuest
+    * Use this method for placing server orders and additional services orders.
+    * @param order
+    *             Details required to order.
+    * @return A receipt for the order
+    * @see <a href="http://sldn.softlayer.com/reference/services/SoftLayer_Product_Order/placeOrder" />
     */
    @POST
    @Path("/SoftLayer_Product_Order/placeOrder.json")
    @Consumes(MediaType.APPLICATION_JSON)
-   @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<ProductOrderReceipt> orderVirtualGuest(@BinderParam(ProductOrderToJson.class)ProductOrder order);
+   @Fallback(Fallbacks.NullOnNotFoundOr404.class)
+   ProductOrderReceipt orderVirtualGuest(@BinderParam(ProductOrderToJson.class)ProductOrder order);
 
    /**
-    * Throws an Internal Server Error if called on bad orders (mapped to HttpResponseException)
-    * @see VirtualGuestClient#getOrderTemplate
-    * @throws org.jclouds.http.HttpResponseException if called with a 'bad' order.
+    * Obtain an order container that is ready to be sent to the orderVirtualGuest method.
+    * This container will include all services that the selected computing instance has.
+    * If desired you may remove prices which were returned.
+    * @see <a href=" @see <a href="http://sldn.softlayer.com/reference/services/SoftLayer_Product_Order/placeOrder" />
+    * @param id
+    *          The id of the existing Virtual Guest
+    * @return
+    *          The ProductOrder used to create the VirtualGust or null if not available
     */
    @GET
    @Path("SoftLayer_Virtual_Guest/{id}/getOrderTemplate/MONTHLY.json")
    @Consumes(MediaType.APPLICATION_JSON)
-   @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<ProductOrder> getOrderTemplate(@PathParam("id") long id);
+   @Fallback(Fallbacks.NullOnNotFoundOr404.class)
+   ProductOrder getOrderTemplate(@PathParam("id") long id);
 
 }

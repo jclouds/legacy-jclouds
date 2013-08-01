@@ -30,12 +30,12 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
 /**
- * Tests behavior of {@code DatacenterClient}
+ * Tests behavior of {@code DatacenterApi}
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class DatacenterClientLiveTest extends BaseSoftLayerClientLiveTest {
+public class DatacenterApiLiveTest extends BaseSoftLayerApiLiveTest {
 
    @Test
    public void testListDatacenters() {
@@ -79,8 +79,8 @@ public class DatacenterClientLiveTest extends BaseSoftLayerClientLiveTest {
       }
    }
 
-   private DatacenterClient api() {
-      return api.getDatacenterClient();
+   private DatacenterApi api() {
+      return api.getDatacenterApi();
    }
 
    private void checkDatacenter(Datacenter dc) {

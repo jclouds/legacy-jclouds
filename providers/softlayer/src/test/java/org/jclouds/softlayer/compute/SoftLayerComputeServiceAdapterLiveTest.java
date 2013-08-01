@@ -29,12 +29,12 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.softlayer.SoftLayerClient;
+import org.jclouds.softlayer.SoftLayerApi;
 import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
 import org.jclouds.softlayer.compute.strategy.SoftLayerComputeServiceAdapter;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.VirtualGuest;
-import org.jclouds.softlayer.features.BaseSoftLayerClientLiveTest;
+import org.jclouds.softlayer.features.BaseSoftLayerApiLiveTest;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.sshj.config.SshjSshClientModule;
@@ -49,7 +49,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 @Test(groups = "live", singleThreaded = true, testName = "SoftLayerComputeServiceAdapterLiveTest")
-public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientLiveTest {
+public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerApiLiveTest {
 
    private SoftLayerComputeServiceAdapter adapter;
    private TemplateBuilder templateBuilder;
@@ -57,12 +57,12 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    private NodeAndInitialCredentials<VirtualGuest> guest;
 
    @Override
-   protected SoftLayerClient create(Properties props, Iterable<Module> modules) {
+   protected SoftLayerApi create(Properties props, Iterable<Module> modules) {
       Injector injector = newBuilder().modules(modules).overrides(props).buildInjector();
       adapter = injector.getInstance(SoftLayerComputeServiceAdapter.class);
       templateBuilder = injector.getInstance(TemplateBuilder.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
-      return injector.getInstance(SoftLayerClient.class);
+      return injector.getInstance(SoftLayerApi.class);
    }
 
    @Test

@@ -43,12 +43,12 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 /**
- * Tests behavior of {@code ProductPackageClient}
+ * Tests behavior of {@code ProductPackageApi}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", singleThreaded = true, testName = "ProductPackageClientLiveTest")
-public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
+@Test(groups = "live", singleThreaded = true, testName = "ProductPackageApiLiveTest")
+public class ProductPackageApiLiveTest extends BaseSoftLayerApiLiveTest {
 
    /**
     * Name of the package used for ordering virtual guests. For real this is
@@ -62,24 +62,24 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
    @BeforeGroups(groups = { "live" })
    public void setup() {
       super.setup();
-      client = api.getProductPackageClient();
-      accountClient = api.getAccountClient();
+      client = api.getProductPackageApi();
+      accountApi = api.getAccountApi();
 
       // This is used several times, so cache to speed up the test.
-      cloudServerPackageId = Iterables.find(accountClient.getActivePackages(), named(CLOUD_SERVER_PACKAGE_NAME))
+      cloudServerPackageId = Iterables.find(accountApi.getActivePackages(), named(CLOUD_SERVER_PACKAGE_NAME))
             .getId();
       cloudServerProductPackage = client.getProductPackage(cloudServerPackageId);
    }
 
-   private ProductPackageClient client;
-   private AccountClient accountClient;
+   private ProductPackageApi client;
+   private AccountApi accountApi;
 
    private int cloudServerPackageId;
    private ProductPackage cloudServerProductPackage;
 
    @Test
    public void testGetProductPackage() {
-      for (ProductPackage productPackage : accountClient.getActivePackages()) {
+      for (ProductPackage productPackage : accountApi.getActivePackages()) {
          ProductPackage response = client.getProductPackage(productPackage.getId());
 
          assert null != response;

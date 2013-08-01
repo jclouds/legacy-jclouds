@@ -32,15 +32,15 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.reflect.Invokable;
 /**
- * Tests annotation parsing of {@code VirtualGuestAsyncClient}
+ * Tests annotation parsing of {@code VirtualGuestApi}
  * 
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class VirtualGuestAsyncClientTest extends BaseSoftLayerAsyncClientTest<VirtualGuestAsyncClient> {
+public class VirtualGuestApiTest extends BaseSoftLayerApiTest<VirtualGuestApi> {
 
    public void testListVirtualGuests() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = method(VirtualGuestAsyncClient.class, "listVirtualGuests");
+      Invokable<?, ?> method = method(VirtualGuestApi.class, "listVirtualGuests");
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(
@@ -71,7 +71,7 @@ public class VirtualGuestAsyncClientTest extends BaseSoftLayerAsyncClientTest<Vi
    }
 
    public void testGetVirtualGuest() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = method(VirtualGuestAsyncClient.class, "getVirtualGuest", long.class);
+      Invokable<?, ?> method = method(VirtualGuestApi.class, "getVirtualGuest", long.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(1234));
 
       assertRequestLineEquals(
@@ -89,7 +89,7 @@ public class VirtualGuestAsyncClientTest extends BaseSoftLayerAsyncClientTest<Vi
    }
 
    public void testRebootHardVirtualGuest() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = method(VirtualGuestAsyncClient.class, "rebootHardVirtualGuest", long.class);
+      Invokable<?, ?> method = method(VirtualGuestApi.class, "rebootHardVirtualGuest", long.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(1234));
 
       assertRequestLineEquals(httpRequest,
@@ -106,7 +106,7 @@ public class VirtualGuestAsyncClientTest extends BaseSoftLayerAsyncClientTest<Vi
    }
 
    public void testPowerOffVirtualGuest() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = method(VirtualGuestAsyncClient.class, "powerOffVirtualGuest", long.class);
+      Invokable<?, ?> method = method(VirtualGuestApi.class, "powerOffVirtualGuest", long.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(1234));
 
       assertRequestLineEquals(httpRequest,
@@ -123,7 +123,7 @@ public class VirtualGuestAsyncClientTest extends BaseSoftLayerAsyncClientTest<Vi
    }
 
    public void testPowerOnVirtualGuest() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = method(VirtualGuestAsyncClient.class, "powerOnVirtualGuest", long.class);
+      Invokable<?, ?> method = method(VirtualGuestApi.class, "powerOnVirtualGuest", long.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(1234));
 
       assertRequestLineEquals(httpRequest,
@@ -140,7 +140,7 @@ public class VirtualGuestAsyncClientTest extends BaseSoftLayerAsyncClientTest<Vi
    }
 
    public void testPauseVirtualGuest() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = method(VirtualGuestAsyncClient.class, "pauseVirtualGuest", long.class);
+      Invokable<?, ?> method = method(VirtualGuestApi.class, "pauseVirtualGuest", long.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(1234));
 
       assertRequestLineEquals(httpRequest,
@@ -157,7 +157,7 @@ public class VirtualGuestAsyncClientTest extends BaseSoftLayerAsyncClientTest<Vi
    }
 
    public void testResumeVirtualGuest() throws SecurityException, NoSuchMethodException, IOException {
-      Invokable<?, ?> method = method(VirtualGuestAsyncClient.class, "resumeVirtualGuest", long.class);
+      Invokable<?, ?> method = method(VirtualGuestApi.class, "resumeVirtualGuest", long.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(1234));
 
       assertRequestLineEquals(httpRequest,

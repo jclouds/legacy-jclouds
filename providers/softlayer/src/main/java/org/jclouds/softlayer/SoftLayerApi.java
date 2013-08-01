@@ -19,45 +19,41 @@ package org.jclouds.softlayer;
 import java.io.Closeable;
 
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.softlayer.features.AccountAsyncClient;
-import org.jclouds.softlayer.features.DatacenterAsyncClient;
-import org.jclouds.softlayer.features.ProductPackageAsyncClient;
-import org.jclouds.softlayer.features.VirtualGuestAsyncClient;
+import org.jclouds.softlayer.features.AccountApi;
+import org.jclouds.softlayer.features.DatacenterApi;
+import org.jclouds.softlayer.features.ProductPackageApi;
+import org.jclouds.softlayer.features.VirtualGuestApi;
 
 /**
- * Provides asynchronous access to SoftLayer via their REST API.
+ * Provides synchronous access to SoftLayer.
  * <p/>
  * 
- * @see SoftLayerClient
  * @see <a href="http://sldn.softlayer.com/article/REST" />
  * @author Adrian Cole
- * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(SoftLayerClient.class)} as
- *             {@link SoftLayerAsyncClient} interface will be removed in jclouds 1.7.
  */
-@Deprecated
-public interface SoftLayerAsyncClient extends Closeable {
+public interface SoftLayerApi extends Closeable {
 
    /**
-    * Provides asynchronous access to VirtualGuest features.
+    * Provides synchronous access to VirtualGuest features.
     */
    @Delegate
-   VirtualGuestAsyncClient getVirtualGuestClient();
+   VirtualGuestApi getVirtualGuestApi();
 
    /**
-    * Provides asynchronous access to Datacenter features.
+    * Provides synchronous access to Datacenter features.
     */
    @Delegate
-   DatacenterAsyncClient getDatacenterClient();
-   
-   /**
-    * Provides asynchronous access to ProductPackage features.
-    */
-   @Delegate
-   ProductPackageAsyncClient getProductPackageClient();
+   DatacenterApi getDatacenterApi();
 
    /**
-    * Provides asynchronous access to Account features.
+    * Provides synchronous access to ProductPackage features.
     */
    @Delegate
-   AccountAsyncClient getAccountClient();
+   ProductPackageApi getProductPackageApi();
+
+   /**
+    * Provides synchronous access to Account features.
+    */
+   @Delegate
+   AccountApi getAccountApi();
 }
