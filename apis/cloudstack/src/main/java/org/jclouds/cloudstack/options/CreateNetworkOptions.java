@@ -102,6 +102,15 @@ public class CreateNetworkOptions extends AccountInDomainOptions {
       return this;
    }
 
+   /**
+    * @param projectId
+    *          the project this network will be in.
+    */
+   public CreateNetworkOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
+      return this;
+   }
+
    public static class Builder {
       /**
        * @see CreateNetworkOptions#isDefault
@@ -181,6 +190,14 @@ public class CreateNetworkOptions extends AccountInDomainOptions {
       public static CreateNetworkOptions domainId(String domainId) {
          CreateNetworkOptions options = new CreateNetworkOptions();
          return options.domainId(domainId);
+      }
+
+      /**
+       * @see CreateNetworkOptions#projectId(String)
+       */
+      public static CreateNetworkOptions projectId(String projectId) {
+         CreateNetworkOptions options = new CreateNetworkOptions();
+         return options.projectId(projectId);
       }
    }
 

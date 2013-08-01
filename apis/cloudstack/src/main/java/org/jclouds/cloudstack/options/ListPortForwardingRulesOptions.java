@@ -49,6 +49,15 @@ public class ListPortForwardingRulesOptions extends AccountInDomainOptions {
 
    }
 
+   /**
+    * @param projectId
+    *       list the rules in this project
+    */
+   public ListPortForwardingRulesOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
+      return this;
+
+   }
    public static class Builder {
 
       /**
@@ -65,6 +74,14 @@ public class ListPortForwardingRulesOptions extends AccountInDomainOptions {
       public static ListPortForwardingRulesOptions ipAddressId(String ipAddressId) {
          ListPortForwardingRulesOptions options = new ListPortForwardingRulesOptions();
          return options.ipAddressId(ipAddressId);
+      }
+
+      /**
+       * @see ListPortForwardingRulesOptions#projectId(String)
+       */
+      public static ListPortForwardingRulesOptions projectId(String projectId) {
+         ListPortForwardingRulesOptions options = new ListPortForwardingRulesOptions();
+         return options.projectId(projectId);
       }
 
       /**

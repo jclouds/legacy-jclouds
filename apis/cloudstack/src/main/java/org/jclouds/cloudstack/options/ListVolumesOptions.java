@@ -107,6 +107,15 @@ public class ListVolumesOptions extends AccountInDomainOptions {
 
    }
 
+   /**
+    * @param projectId list volumes  by projectId.
+    */
+   public ListVolumesOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
+      return this;
+
+   }
+
 
    public static class Builder {
 
@@ -197,6 +206,14 @@ public class ListVolumesOptions extends AccountInDomainOptions {
       public static ListVolumesOptions zoneId(String id) {
          ListVolumesOptions options = new ListVolumesOptions();
          return options.zoneId(id);
+      }
+
+      /**
+       * @see ListVolumesOptions#projectId(String)
+       */
+      public static ListVolumesOptions projectId(String id) {
+         ListVolumesOptions options = new ListVolumesOptions();
+         return options.projectId(id);
       }
    }
 

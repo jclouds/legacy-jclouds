@@ -57,6 +57,14 @@ public class ListVMGroupsOptions extends BaseHttpRequestOptions {
    }
 
    /**
+    * @param projectId id of the project the vm group is in
+    */
+   public ListVMGroupsOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
+      return this;
+   }
+
+   /**
     * @param keyword keyword to search on
     */
    public ListVMGroupsOptions keyword(String keyword) {
@@ -95,6 +103,14 @@ public class ListVMGroupsOptions extends BaseHttpRequestOptions {
       public static ListVMGroupsOptions domainId(String id) {
          ListVMGroupsOptions options = new ListVMGroupsOptions();
          return options.domainId(id);
+      }
+
+      /**
+       * @see org.jclouds.cloudstack.options.ListVMGroupsOptions#projectId(String)
+       */
+      public static ListVMGroupsOptions projectId(String id) {
+         ListVMGroupsOptions options = new ListVMGroupsOptions();
+         return options.projectId(id);
       }
 
       /**

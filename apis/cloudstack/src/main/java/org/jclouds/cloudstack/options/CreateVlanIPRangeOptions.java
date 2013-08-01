@@ -67,6 +67,10 @@ public class CreateVlanIPRangeOptions extends AccountInDomainOptions {
          return new CreateVlanIPRangeOptions().networkId(networkId);
       }
 
+      public static CreateVlanIPRangeOptions projectId(String projectId) {
+         return new CreateVlanIPRangeOptions().projectId(projectId);
+      }
+
    }
 
    @Override
@@ -116,6 +120,11 @@ public class CreateVlanIPRangeOptions extends AccountInDomainOptions {
 
    public CreateVlanIPRangeOptions networkId(String networkId) {
       this.queryParameters.replaceValues("networkid", ImmutableSet.of(networkId+""));
+      return this;
+   }
+
+   public CreateVlanIPRangeOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId+""));
       return this;
    }
 }

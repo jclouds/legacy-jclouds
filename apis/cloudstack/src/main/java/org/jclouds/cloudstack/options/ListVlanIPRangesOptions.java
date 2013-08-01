@@ -55,6 +55,10 @@ public class ListVlanIPRangesOptions extends AccountInDomainOptions {
          return new ListVlanIPRangesOptions().podId(podId);
       }
 
+      public static ListVlanIPRangesOptions projectId(String projectId) {
+         return new ListVlanIPRangesOptions().projectId(projectId);
+      }
+
       public static ListVlanIPRangesOptions vlan(long vlan) {
          return new ListVlanIPRangesOptions().vlan(vlan);
       }
@@ -100,6 +104,11 @@ public class ListVlanIPRangesOptions extends AccountInDomainOptions {
 
    public ListVlanIPRangesOptions podId(String podId) {
       this.queryParameters.replaceValues("podid", ImmutableSet.of(podId+""));
+      return this;
+   }
+
+   public ListVlanIPRangesOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId+""));
       return this;
    }
 

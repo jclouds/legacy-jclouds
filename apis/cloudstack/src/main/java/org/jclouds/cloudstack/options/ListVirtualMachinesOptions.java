@@ -98,6 +98,16 @@ public class ListVirtualMachinesOptions extends AccountInDomainOptions {
    }
 
    /**
+    * @param projectId
+    *           list virtual machines by projectId.
+    */
+   public ListVirtualMachinesOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
+      return this;
+
+   }
+
+   /**
     * @param zoneId
     *           list virtual machines by zoneId.
     */
@@ -189,6 +199,14 @@ public class ListVirtualMachinesOptions extends AccountInDomainOptions {
       public static ListVirtualMachinesOptions podId(String id) {
          ListVirtualMachinesOptions options = new ListVirtualMachinesOptions();
          return options.podId(id);
+      }
+
+      /**
+       * @see ListVirtualMachinesOptions#projectId(String)
+       */
+      public static ListVirtualMachinesOptions projectId(String id) {
+         ListVirtualMachinesOptions options = new ListVirtualMachinesOptions();
+         return options.projectId(id);
       }
 
       /**

@@ -60,6 +60,16 @@ public class ListPublicIPAddressesOptions extends AccountInDomainOptions {
    }
 
    /**
+    * @param projectId
+    *           list ip addresss by project.
+    */
+   public ListPublicIPAddressesOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
+      return this;
+
+   }
+
+   /**
     * @param VLANId
     *           lists all public IP addresses by VLAN ID
     */
@@ -145,6 +155,14 @@ public class ListPublicIPAddressesOptions extends AccountInDomainOptions {
       public static ListPublicIPAddressesOptions networkId(String id) {
          ListPublicIPAddressesOptions options = new ListPublicIPAddressesOptions();
          return options.networkId(id);
+      }
+
+      /**
+       * @see ListPublicIPAddressesOptions#projectId(String)
+       */
+      public static ListPublicIPAddressesOptions projectId(String id) {
+         ListPublicIPAddressesOptions options = new ListPublicIPAddressesOptions();
+         return options.projectId(id);
       }
 
       /**

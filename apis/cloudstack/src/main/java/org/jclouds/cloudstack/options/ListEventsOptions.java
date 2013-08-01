@@ -63,6 +63,11 @@ public class ListEventsOptions extends BaseHttpRequestOptions {
       return this;
    }
 
+   public ListEventsOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
+      return this;
+   }
+
    public ListEventsOptions keyword(String keyword) {
       this.queryParameters.replaceValues("keyword", ImmutableSet.of(keyword));
       return this;
@@ -108,6 +113,11 @@ public class ListEventsOptions extends BaseHttpRequestOptions {
       public static ListEventsOptions id(String id) {
          final ListEventsOptions options = new ListEventsOptions();
          return options.id(id);
+      }
+
+      public static ListEventsOptions projectId(String projectId) {
+         final ListEventsOptions options = new ListEventsOptions();
+         return options.projectId(projectId);
       }
 
       public static ListEventsOptions keyword(String keyword) {

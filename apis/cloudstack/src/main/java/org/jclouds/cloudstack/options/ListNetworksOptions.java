@@ -89,6 +89,16 @@ public class ListNetworksOptions extends AccountInDomainOptions {
    }
 
    /**
+    * @param projectId
+    *           the project ID of the network
+    */
+   public ListNetworksOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
+      return this;
+
+   }
+
+   /**
     * @param trafficType
     *           type of the traffic
     */
@@ -160,6 +170,14 @@ public class ListNetworksOptions extends AccountInDomainOptions {
       public static ListNetworksOptions zoneId(String id) {
          ListNetworksOptions options = new ListNetworksOptions();
          return options.zoneId(id);
+      }
+
+      /**
+       * @see ListNetworksOptions#projectId(String)
+       */
+      public static ListNetworksOptions projectId(String id) {
+         ListNetworksOptions options = new ListNetworksOptions();
+         return options.projectId(id);
       }
 
       /**

@@ -60,6 +60,15 @@ public class ListSecurityGroupsOptions extends AssociateIPAddressOptions {
 
    }
 
+   /**
+    * @param projectId
+    *           the ID of the project to search in.
+    */
+   public ListSecurityGroupsOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
+      return this;
+   }
+
    public static class Builder {
 
       /**
@@ -84,6 +93,14 @@ public class ListSecurityGroupsOptions extends AssociateIPAddressOptions {
       public static ListSecurityGroupsOptions virtualMachineId(String virtualMachineId) {
          ListSecurityGroupsOptions options = new ListSecurityGroupsOptions();
          return options.virtualMachineId(virtualMachineId);
+      }
+
+      /**
+       * @see ListSecurityGroupsOptions#projectId(String)
+       */
+      public static ListSecurityGroupsOptions projectId(String projectId) {
+         ListSecurityGroupsOptions options = new ListSecurityGroupsOptions();
+         return options.projectId(projectId);
       }
 
       /**

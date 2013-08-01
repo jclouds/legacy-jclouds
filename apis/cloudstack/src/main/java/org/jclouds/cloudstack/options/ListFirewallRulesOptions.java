@@ -49,6 +49,15 @@ public class ListFirewallRulesOptions extends AccountInDomainOptions {
    }
 
    /**
+    * @param projectId
+    *    List firewall rules in this project.
+    */
+   public ListFirewallRulesOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
+      return this;
+   }
+
+   /**
     * @param keyword
     *    list by keyword
     */
@@ -83,6 +92,14 @@ public class ListFirewallRulesOptions extends AccountInDomainOptions {
       public static ListFirewallRulesOptions ipAddressId(String ipAddressId) {
          ListFirewallRulesOptions options = new ListFirewallRulesOptions();
          return options.ipAddressId(ipAddressId);
+      }
+
+      /**
+       * @see ListFirewallRulesOptions#projectId(String)
+       */
+      public static ListFirewallRulesOptions projectId(String projectId) {
+         ListFirewallRulesOptions options = new ListFirewallRulesOptions();
+         return options.projectId(projectId);
       }
 
       /**

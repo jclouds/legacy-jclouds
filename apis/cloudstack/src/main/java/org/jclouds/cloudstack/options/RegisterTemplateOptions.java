@@ -47,6 +47,14 @@ public class RegisterTemplateOptions extends AccountInDomainOptions {
    }
 
    /**
+    * the project for this template.
+    */
+   public RegisterTemplateOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
+      return this;
+   }
+
+   /**
     * true if the template or its derivatives are extractable; default is true
     */
    public RegisterTemplateOptions isExtractable(boolean isExtractable) {
@@ -96,6 +104,11 @@ public class RegisterTemplateOptions extends AccountInDomainOptions {
       public static RegisterTemplateOptions checksum(String checksum) {
          RegisterTemplateOptions options = new RegisterTemplateOptions();
          return options.checksum(checksum);
+      }
+
+      public static RegisterTemplateOptions projectId(String projectId) {
+         RegisterTemplateOptions options = new RegisterTemplateOptions();
+         return options.projectId(projectId);
       }
 
       public static RegisterTemplateOptions isExtractable(boolean isExtractable) {

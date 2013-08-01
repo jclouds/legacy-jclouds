@@ -75,6 +75,14 @@ public class ListLoadBalancerRulesOptions extends AccountInDomainOptions {
    }
 
    /**
+    * @param projectId the project ID
+    */
+   public ListLoadBalancerRulesOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
+      return this;
+   }
+
+   /**
     * @param page the number of the page
     */
    public ListLoadBalancerRulesOptions page(long page) {
@@ -146,6 +154,14 @@ public class ListLoadBalancerRulesOptions extends AccountInDomainOptions {
       public static ListLoadBalancerRulesOptions zoneId(String zoneId) {
          ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions();
          return options.zoneId(zoneId);
+      }
+
+      /**
+       * @see ListLoadBalancerRulesOptions#projectId(String)
+       */
+      public static ListLoadBalancerRulesOptions projectId(String projectId) {
+         ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions();
+         return options.projectId(projectId);
       }
 
       /**

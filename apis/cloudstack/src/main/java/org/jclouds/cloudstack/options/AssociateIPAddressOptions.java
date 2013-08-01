@@ -40,6 +40,15 @@ public class AssociateIPAddressOptions extends AccountInDomainOptions {
 
    }
 
+   /**
+    * @param projectId
+    *          Project for the IP
+    */
+   public AssociateIPAddressOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
+      return this;
+   }
+
    public static class Builder {
 
       /**
@@ -64,6 +73,14 @@ public class AssociateIPAddressOptions extends AccountInDomainOptions {
       public static AssociateIPAddressOptions domainId(String domainId) {
          AssociateIPAddressOptions options = new AssociateIPAddressOptions();
          return options.domainId(domainId);
+      }
+
+      /**
+       * @see AssociateIPAddressOptions#projectId(String)
+       */
+      public static AssociateIPAddressOptions projectId(String projectId) {
+         AssociateIPAddressOptions options = new AssociateIPAddressOptions();
+         return options.projectId(projectId);
       }
    }
 

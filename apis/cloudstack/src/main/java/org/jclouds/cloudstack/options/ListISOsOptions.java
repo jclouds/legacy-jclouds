@@ -68,6 +68,14 @@ public class ListISOsOptions extends AccountInDomainOptions {
    }
 
    /**
+    * @param projectId list ISOs in the given project
+    */
+   public ListISOsOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
+      return this;
+   }
+
+   /**
     * @param isoFilter possible values are "featured", "self", "self-executable","executable", and "community".
     */
    public ListISOsOptions isoFilter(ISO.ISOFilter isoFilter) {
@@ -172,6 +180,13 @@ public class ListISOsOptions extends AccountInDomainOptions {
        */
       public static ListISOsOptions id(String id) {
          return new ListISOsOptions().id(id);
+      }
+
+      /**
+       * @param projectId list ISOs in project
+       */
+      public static ListISOsOptions projectId(String projectId) {
+         return new ListISOsOptions().projectId(projectId);
       }
 
       /**

@@ -48,6 +48,14 @@ public class CreateVMGroupOptions extends BaseHttpRequestOptions {
       return this;
    }
 
+   /**
+    * @param projectId the project the vm group will be in
+    */
+   public CreateVMGroupOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
+      return this;
+   }
+
    public static class Builder {
       /**
        * @see org.jclouds.cloudstack.options.CreateVMGroupOptions#account
@@ -63,6 +71,14 @@ public class CreateVMGroupOptions extends BaseHttpRequestOptions {
       public static CreateVMGroupOptions domainId(String id) {
          CreateVMGroupOptions options = new CreateVMGroupOptions();
          return options.domainId(id);
+      }
+
+      /**
+       * @see org.jclouds.cloudstack.options.CreateVMGroupOptions#projectId(String)
+       */
+      public static CreateVMGroupOptions projectId(String id) {
+         CreateVMGroupOptions options = new CreateVMGroupOptions();
+         return options.projectId(id);
       }
    }
 

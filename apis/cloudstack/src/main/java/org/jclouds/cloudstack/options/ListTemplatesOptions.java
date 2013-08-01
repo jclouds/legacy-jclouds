@@ -73,6 +73,16 @@ public class ListTemplatesOptions extends AccountInDomainOptions {
    }
 
    /**
+    * @param projectId
+    *           list templates by projectId.
+    */
+   public ListTemplatesOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
+      return this;
+
+   }
+
+   /**
     * @param hypervisor
     *           the hypervisor for which to restrict the search
     */
@@ -129,6 +139,14 @@ public class ListTemplatesOptions extends AccountInDomainOptions {
       public static ListTemplatesOptions zoneId(String id) {
          ListTemplatesOptions options = new ListTemplatesOptions();
          return options.zoneId(id);
+      }
+
+      /**
+       * @see ListTemplatesOptions#projectId(String)
+       */
+      public static ListTemplatesOptions projectId(String projectId) {
+         ListTemplatesOptions options = new ListTemplatesOptions();
+         return options.projectId(projectId);
       }
 
       /**

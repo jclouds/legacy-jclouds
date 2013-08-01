@@ -69,6 +69,14 @@ public class RegisterISOOptions extends AccountInDomainOptions {
       return this;
    }
 
+   /**
+    * @param projectId the project this ISO will be in.
+    */
+   public RegisterISOOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
+      return this;
+   }
+
    public static class Builder {
 
       /**
@@ -118,6 +126,13 @@ public class RegisterISOOptions extends AccountInDomainOptions {
        */
       public static RegisterISOOptions osTypeId(String osTypeId) {
          return new RegisterISOOptions().osTypeId(osTypeId);
+      }
+
+      /**
+       * @param projectId the project this ISO will be in.
+       */
+      public static RegisterISOOptions projectId(String projectId) {
+         return new RegisterISOOptions().projectId(projectId);
       }
    }
 

@@ -87,6 +87,14 @@ public class ListSnapshotsOptions extends AccountInDomainOptions {
       return this;
    }
 
+   /**
+    * @param projectId the project to list in
+    */
+   public ListSnapshotsOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
+      return this;
+   }
+
    public static class Builder {
 
       /**
@@ -151,6 +159,13 @@ public class ListSnapshotsOptions extends AccountInDomainOptions {
        */
       public static ListSnapshotsOptions volumeId(String volumeId) {
          return new ListSnapshotsOptions().volumeId(volumeId);
+      }
+
+      /**
+       * @param projectId the project to list in
+       */
+      public static ListSnapshotsOptions projectId(String projectId) {
+         return new ListSnapshotsOptions().projectId(projectId);
       }
    }
 

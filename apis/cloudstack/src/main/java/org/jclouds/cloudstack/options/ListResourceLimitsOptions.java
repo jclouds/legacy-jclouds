@@ -62,6 +62,17 @@ public class ListResourceLimitsOptions extends BaseHttpRequestOptions {
    }
 
    /**
+    * Lists resource limits by project.
+    *
+    * @param projectId the project
+    * @return ListResourceLimitsOptions
+    */
+   public ListResourceLimitsOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(String.valueOf(projectId + "")));
+      return this;
+   }
+
+   /**
     * List by keyword
     *
     * @param keyword
@@ -114,6 +125,14 @@ public class ListResourceLimitsOptions extends BaseHttpRequestOptions {
       public static ListResourceLimitsOptions id(String id) {
          ListResourceLimitsOptions options = new ListResourceLimitsOptions();
          return options.id(id);
+      }
+
+      /**
+       * @see ListResourceLimitsOptions#projectId(String)
+       */
+      public static ListResourceLimitsOptions projectId(String projectId) {
+         ListResourceLimitsOptions options = new ListResourceLimitsOptions();
+         return options.projectId(projectId);
       }
 
       /**

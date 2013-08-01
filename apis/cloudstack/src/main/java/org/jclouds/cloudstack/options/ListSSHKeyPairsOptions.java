@@ -36,6 +36,15 @@ public class ListSSHKeyPairsOptions extends BaseHttpRequestOptions {
       return this;
    }
 
+   /**
+    * @param projectId
+    *           the project to list in
+    */
+   public ListSSHKeyPairsOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectId", ImmutableSet.of(projectId + ""));
+      return this;
+   }
+
    public static class Builder {
       /**
        * @see ListSSHKeyPairsOptions#name
@@ -43,6 +52,14 @@ public class ListSSHKeyPairsOptions extends BaseHttpRequestOptions {
       public static ListSSHKeyPairsOptions name(String name) {
          ListSSHKeyPairsOptions options = new ListSSHKeyPairsOptions();
          return options.name(name);
+      }
+
+      /**
+       * @see ListSSHKeyPairsOptions#projectId(String)
+       */
+      public static ListSSHKeyPairsOptions projectId(String projectId) {
+         ListSSHKeyPairsOptions options = new ListSSHKeyPairsOptions();
+         return options.projectId(projectId);
       }
 
    }

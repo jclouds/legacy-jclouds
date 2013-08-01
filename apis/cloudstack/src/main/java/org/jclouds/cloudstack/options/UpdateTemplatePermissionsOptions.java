@@ -40,6 +40,14 @@ public class UpdateTemplatePermissionsOptions extends BaseHttpRequestOptions {
    }
 
    /**
+    * a list of projects. If specified, "op" parameter has to be passed in.
+    */
+   public UpdateTemplatePermissionsOptions projectIds(Iterable<String> projectIds) {
+      this.queryParameters.replaceValues("projectids", ImmutableSet.of(Joiner.on(',').join(projectIds)));
+      return this;
+   }
+
+   /**
     * true if the template/iso is extractable, false other wise. Can be set only by root admin
     */
    public UpdateTemplatePermissionsOptions isExtractable(boolean isExtractable) {
@@ -80,6 +88,11 @@ public class UpdateTemplatePermissionsOptions extends BaseHttpRequestOptions {
       public static UpdateTemplatePermissionsOptions accounts(Iterable<String> accounts) {
          UpdateTemplatePermissionsOptions options = new UpdateTemplatePermissionsOptions();
          return options.accounts(accounts);
+      }
+
+      public static UpdateTemplatePermissionsOptions projectIds(Iterable<String> projectIds) {
+         UpdateTemplatePermissionsOptions options = new UpdateTemplatePermissionsOptions();
+         return options.projectIds(projectIds);
       }
 
       public static UpdateTemplatePermissionsOptions isExtractable(boolean isExtractable) {

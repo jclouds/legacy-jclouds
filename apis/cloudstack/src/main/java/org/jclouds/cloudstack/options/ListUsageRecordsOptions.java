@@ -43,6 +43,11 @@ public class ListUsageRecordsOptions extends AccountInDomainOptions {
          return options.accountId(accountId);
       }
 
+      public static ListUsageRecordsOptions projectId(String projectId) {
+         ListUsageRecordsOptions options = new ListUsageRecordsOptions();
+         return options.projectId(projectId);
+      }
+
       public static ListUsageRecordsOptions keyword(String keyword) {
          ListUsageRecordsOptions options = new ListUsageRecordsOptions();
          return options.keyword(keyword);
@@ -61,6 +66,11 @@ public class ListUsageRecordsOptions extends AccountInDomainOptions {
 
    public ListUsageRecordsOptions accountId(String accountId) {
       this.queryParameters.replaceValues("accountid", ImmutableSet.of(accountId + ""));
+      return this;
+   }
+
+   public ListUsageRecordsOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
       return this;
    }
 

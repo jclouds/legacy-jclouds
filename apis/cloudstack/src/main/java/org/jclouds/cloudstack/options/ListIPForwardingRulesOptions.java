@@ -59,6 +59,16 @@ public class ListIPForwardingRulesOptions extends AccountInDomainOptions {
 
    }
 
+   /**
+    * @param projectId
+    *           Lists all rules applied to VMs in the given project.
+    */
+   public ListIPForwardingRulesOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
+      return this;
+
+   }
+
    public static class Builder {
 
       /**
@@ -99,6 +109,14 @@ public class ListIPForwardingRulesOptions extends AccountInDomainOptions {
       public static ListIPForwardingRulesOptions virtualMachineId(String virtualMachineId) {
          ListIPForwardingRulesOptions options = new ListIPForwardingRulesOptions();
          return options.virtualMachineId(virtualMachineId);
+      }
+
+      /**
+       * @see ListIPForwardingRulesOptions#projectId(String)
+       */
+      public static ListIPForwardingRulesOptions projectId(String projectId) {
+         ListIPForwardingRulesOptions options = new ListIPForwardingRulesOptions();
+         return options.projectId(projectId);
       }
    }
 

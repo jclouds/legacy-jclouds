@@ -170,6 +170,14 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
    }
 
    /**
+    * @param projectId  The project this VM will be in.
+    */
+   public DeployVirtualMachineOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
+      return this;
+   }
+
+   /**
     * @param securityGroupId
     *           security group applied to the virtual machine. Should be passed
     *           only when vm is created from a zone with Basic Network support
@@ -296,6 +304,14 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
       public static DeployVirtualMachineOptions networkIds(Iterable<String> networkIds) {
          DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
          return options.networkIds(networkIds);
+      }
+
+      /**
+       * @see DeployVirtualMachineOptions#projectId(String)
+       */
+      public static DeployVirtualMachineOptions projectId(String id) {
+         DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
+         return options.projectId(id);
       }
 
       /**
