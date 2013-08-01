@@ -392,13 +392,16 @@ public final class Uris {
       private final Multimap<String, Object> delegate = LinkedHashMultimap.create();
       private final Function<Object, Object> urlDecoder = new Function<Object, Object>() {
          public Object apply(Object in) {
-            return urlDecode(in);
+            if (in == null) {
+               return null;
+            }
+            return urlDecode(in.toString());
          }
       };
 
       @Override
       public boolean put(String key, Object value) {
-         return super.put(urlDecode(key), urlDecode(value));
+         return super.put(urlDecode(key), urlDecoder.apply(value));
       }
 
       @Override

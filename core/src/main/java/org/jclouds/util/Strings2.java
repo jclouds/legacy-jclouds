@@ -112,11 +112,11 @@ public class Strings2 {
     * @throws IllegalStateException
     *            if encoding isn't {@code UTF-8}
     */
-   public static String urlDecode(@Nullable Object in) {
+   public static String urlDecode(@Nullable String in) {
       if (in == null)
          return null;
       try {
-         return URLDecoder.decode(in.toString(), "UTF-8");
+         return URLDecoder.decode(in, "UTF-8");
       } catch (UnsupportedEncodingException e) {
          throw new IllegalStateException("Bad encoding on input: " + in, e);
       }
