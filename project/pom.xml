@@ -207,7 +207,7 @@
     <maven.site.url.base>gitsite:git@github.com/jclouds/jclouds-maven-site.git</maven.site.url.base>
     <http.proxyHost />
     <http.proxyPort />
-    <jclouds.wire.httpstream.url>http://apache.deathculture.net//commons/logging/binaries/commons-logging-1.1.1-bin.tar.gz</jclouds.wire.httpstream.url>
+    <jclouds.wire.httpstream.url>http://archive.apache.org/dist/commons/logging/binaries/commons-logging-1.1.1-bin.tar.gz</jclouds.wire.httpstream.url>
     <jclouds.wire.httpstream.md5>e5de09672af9b386c30a311654d8541a</jclouds.wire.httpstream.md5>
     <jclouds.blobstore.httpstream.url>${jclouds.wire.httpstream.url}</jclouds.blobstore.httpstream.url>
     <jclouds.blobstore.httpstream.md5>${jclouds.wire.httpstream.md5}</jclouds.blobstore.httpstream.md5>
