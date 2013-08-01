@@ -32,6 +32,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
 import org.jclouds.openstack.nova.v2_0.domain.KeyPair;
+import org.jclouds.openstack.nova.v2_0.domain.Server;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ServerInZone;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneAndName;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaComputeServiceContextExpectTest;
@@ -59,6 +60,41 @@ public class NovaComputeServiceAdapterExpectTest extends BaseNovaComputeServiceC
 
    HttpResponse serverDetailResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResource("/server_details.json")).build();
+
+   public void testCreateNodeWithGroupEncodedIntoNameWithDiskConfig() throws Exception {
+
+      HttpRequest createServer = HttpRequest
+         .builder()
+         .method("POST")
+         .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers")
+         .addHeader("Accept", "application/json")
+         .addHeader("X-Auth-Token", authToken)
+         .payload(payloadFromStringWithContentType(
+                  "{\"server\":{\"name\":\"test-e92\",\"imageRef\":\"1241\",\"flavorRef\":\"100\",\"OS-DCF:diskConfig\":\"AUTO\"}}","application/json"))
+         .build();
+
+      HttpResponse createServerResponse = HttpResponse.builder().statusCode(202).message("HTTP/1.1 202 Accepted")
+         .payload(payloadFromResourceWithContentType("/new_server_disk_config_auto.json","application/json; charset=UTF-8")).build();
+
+      Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
+               .put(keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess)
+               .put(extensionsOfNovaRequest, extensionsOfNovaResponse)
+               .put(listDetail, listDetailResponse)
+               .put(listFlavorsDetail, listFlavorsDetailResponse)
+               .put(createServer, createServerResponse)
+               .put(serverDetail, serverDetailResponse).build();
+
+      Injector forDiskConfig = requestsSendResponses(requestResponseMap);
+
+      Template template = forDiskConfig.getInstance(TemplateBuilder.class).build();
+      template.getOptions().as(NovaTemplateOptions.class).diskConfig(Server.DISK_CONFIG_AUTO);
+      
+      NovaComputeServiceAdapter adapter = forDiskConfig.getInstance(NovaComputeServiceAdapter.class);
+
+      NodeAndInitialCredentials<ServerInZone> server = adapter.createNodeWithGroupEncodedIntoName("test", "test-e92", template);
+      assertNotNull(server);
+      assertEquals(server.getNode().getServer().getDiskConfig().orNull(), Server.DISK_CONFIG_AUTO);
+   }
 
    public void testCreateNodeWithGroupEncodedIntoNameWhenSecurityGroupsArePresent() throws Exception {
 

@@ -18,6 +18,7 @@ package org.jclouds.rackspace.cloudservers.us.compute;
 
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 import java.util.Set;
 
@@ -81,6 +82,7 @@ public class CloudServersUSTemplateBuilderLiveTest extends BaseTemplateBuilderLi
       assertEquals(defaultTemplate.getImage().getLocation().getId(), "ORD");
       assertEquals(defaultTemplate.getHardware().getLocation().getId(), "ORD");
       assertEquals(defaultTemplate.getOptions().as(NovaTemplateOptions.class).shouldAutoAssignFloatingIp(), false);
+      assertNull(defaultTemplate.getOptions().as(NovaTemplateOptions.class).getDiskConfig());
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 

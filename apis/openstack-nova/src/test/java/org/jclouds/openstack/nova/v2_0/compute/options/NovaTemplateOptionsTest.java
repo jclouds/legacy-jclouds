@@ -28,6 +28,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.openstack.nova.v2_0.domain.Server;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
@@ -195,6 +196,14 @@ public class NovaTemplateOptionsTest {
        options.userData("test".getBytes());
        assertEquals(new String(options.getUserData()), "test");
    }
+
+   @Test
+   public void testDiskConfig() {
+       NovaTemplateOptions options = new NovaTemplateOptions();
+       options.diskConfig(Server.DISK_CONFIG_AUTO);
+       assertEquals(options.getDiskConfig(), Server.DISK_CONFIG_AUTO);
+   }
+   
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testblockOnPortBadFormat() {
       NovaTemplateOptions options = new NovaTemplateOptions();

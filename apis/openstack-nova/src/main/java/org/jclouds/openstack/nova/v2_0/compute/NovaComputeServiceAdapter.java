@@ -39,6 +39,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.compute.functions.RemoveFloatingIpFromNodeAndDeallocate;
 import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
+import org.jclouds.openstack.nova.v2_0.compute.strategy.ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet;
 import org.jclouds.openstack.nova.v2_0.domain.Flavor;
 import org.jclouds.openstack.nova.v2_0.domain.Image;
 import org.jclouds.openstack.nova.v2_0.domain.KeyPair;
@@ -61,7 +62,6 @@ import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
-import com.google.common.collect.Iterables;
 
 /**
  * The adapter used by the NovaComputeServiceContextModule to interface the nova-specific domain
@@ -109,6 +109,7 @@ public class NovaComputeServiceAdapter implements
       if (templateOptions.getSecurityGroupNames().isPresent())
          options.securityGroupNames(templateOptions.getSecurityGroupNames().get());
       options.userData(templateOptions.getUserData());
+      options.diskConfig(templateOptions.getDiskConfig());
 
       Optional<String> privateKey = Optional.absent();
       if (templateOptions.getKeyPairName() != null) {

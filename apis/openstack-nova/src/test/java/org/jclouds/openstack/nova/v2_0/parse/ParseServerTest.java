@@ -66,6 +66,7 @@ public class ParseServerTest extends BaseItemParserTest<Server> {
             .accessIPv4("67.23.10.132")
             .accessIPv6("::babe:67.23.10.132")
             .status(Status.BUILD)
+            .diskConfig(Server.DISK_CONFIG_AUTO)
             .image(
                   Resource
                         .builder()

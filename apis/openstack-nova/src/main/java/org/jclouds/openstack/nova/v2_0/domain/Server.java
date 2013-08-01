@@ -46,8 +46,8 @@ import com.google.common.collect.Multimap;
  *      />
  */
 public class Server extends Resource {
-   public final static String DISK_CONFIG_MANUAL = "MANUAL";
-   public final static String DISK_CONFIG_AUTO = "AUTO";
+   public static final String DISK_CONFIG_MANUAL = "MANUAL";
+   public static final String DISK_CONFIG_AUTO = "AUTO";
 
    /**
     * Servers contain a status attribute that can be used as an indication of the current server
