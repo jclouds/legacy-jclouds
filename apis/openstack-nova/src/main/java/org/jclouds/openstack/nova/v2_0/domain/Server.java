@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.inject.Named;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.openstack.nova.v2_0.options.CreateServerOptions;
 import org.jclouds.openstack.v2_0.domain.Link;
 import org.jclouds.openstack.v2_0.domain.Resource;
 
@@ -45,6 +46,8 @@ import com.google.common.collect.Multimap;
  *      />
  */
 public class Server extends Resource {
+   public final static String DISK_CONFIG_MANUAL = "MANUAL";
+   public final static String DISK_CONFIG_AUTO = "AUTO";
 
    /**
     * Servers contain a status attribute that can be used as an indication of the current server
@@ -441,12 +444,18 @@ public class Server extends Resource {
    }
 
    /**
-    * Disk config attribute from the Disk Config Extension (alias "OS-DCF")
+    * Disk config attribute from the Disk Config Extension (alias "OS-DCF").
+    * One of {@link Server#DISK_CONFIG_AUTO} or {@link Server#DISK_CONFIG_MANUAL}.
+    * This field is only present if the Disk Config extension is installed.
     * <p/>
-    * NOTE: This field is only present if the Disk Config extension is installed
+    * NOTE: Typically a field like this would be implemented as an enum but this field was
+    * originally implmented as a String and {@link Server#DISK_CONFIG_AUTO} and 
+    * {@link Server#DISK_CONFIG_MANUAL} were added later as Strings to preserve backwards
+    * compatibility.
     *
     * @see org.jclouds.openstack.nova.v2_0.features.ExtensionApi#getExtensionByAlias
     * @see org.jclouds.openstack.nova.v2_0.extensions.ExtensionNamespaces#DISK_CONFIG
+    * @see CreateServerOptions#getDiskConfig()
     */
    public Optional<String> getDiskConfig() {
       return this.diskConfig;

@@ -59,6 +59,21 @@ public class ParseCreatedServerTest extends BaseItemParserTest<ServerCreated> {
 
    }
 
+   @SelectJson("server")
+   @Consumes(MediaType.APPLICATION_JSON)
+   public ServerCreated expectedWithDiskConfig(String diskConfig) {
+      return ServerCreated
+            .builder()
+            .id("71752")
+            .name("test-e92")
+            .adminPass("ZWuHcmTMQ7eXoHeM")
+            .diskConfig(diskConfig)
+            .links(
+                     Link.create(Relation.SELF, URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/37936628937291/servers/71752")),
+                     Link.create(Relation.BOOKMARK, URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/37936628937291/servers/71752"))).build();
+
+   }
+
    protected Injector injector() {
       return Guice.createInjector(new NovaParserModule(), new GsonModule());
    }

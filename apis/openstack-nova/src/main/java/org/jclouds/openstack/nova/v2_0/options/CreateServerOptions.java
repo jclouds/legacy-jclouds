@@ -34,6 +34,7 @@ import javax.inject.Named;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
+import org.jclouds.openstack.nova.v2_0.domain.Server;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
@@ -109,6 +110,7 @@ public class CreateServerOptions implements MapBinder {
    private Map<String, String> metadata = ImmutableMap.of();
    private List<File> personality = Lists.newArrayList();
    private byte[] userData;
+   private String diskConfig;
 
    @Override
    public boolean equals(Object object) {
@@ -119,7 +121,7 @@ public class CreateServerOptions implements MapBinder {
          final CreateServerOptions other = CreateServerOptions.class.cast(object);
          return equal(keyName, other.keyName) && equal(securityGroupNames, other.securityGroupNames)
                   && equal(metadata, other.metadata) && equal(personality, other.personality)
-                  && equal(adminPass, other.adminPass);
+                  && equal(adminPass, other.adminPass) && equal(diskConfig, other.diskConfig);
       } else {
          return false;
       }
@@ -141,6 +143,8 @@ public class CreateServerOptions implements MapBinder {
          toString.add("personality", personality);
       if (adminPass != null)
          toString.add("adminPassPresent", true);
+      if (diskConfig != null)
+         toString.add("diskConfig", diskConfig);
       toString.add("userData", userData == null ? null : new String(userData));
       return toString;
    }
@@ -161,6 +165,8 @@ public class CreateServerOptions implements MapBinder {
       @Named("security_groups")
       Set<NamedThingy> securityGroupNames;
       String user_data;
+      @Named("OS-DCF:diskConfig")
+      String diskConfig;
 
       private ServerRequest(String name, String imageRef, String flavorRef) {
          this.name = name;
@@ -191,6 +197,9 @@ public class CreateServerOptions implements MapBinder {
       }
       if (adminPass != null) {
          server.adminPass = adminPass;
+      }
+      if (diskConfig != null) {
+         server.diskConfig = diskConfig;
       }
 
       return bindToRequest(request, ImmutableMap.of("server", server));
@@ -320,6 +329,29 @@ public class CreateServerOptions implements MapBinder {
       this.securityGroupNames = ImmutableSet.copyOf(securityGroupNames);
       return this;
    }
+
+   /**
+    * When you create a server from an image with the diskConfig value set to 
+    * {@link Server#DISK_CONFIG_AUTO}, the server is built with a single partition that is expanded to 
+    * the disk size of the flavor selected. When you set the diskConfig attribute to 
+    * {@link Server#DISK_CONFIG_MANUAL}, the server is built by using the partition scheme and file 
+    * system that is in the source image.
+    * <p/> 
+    * If the target flavor disk is larger, remaining disk space is left unpartitioned. A server inherits the diskConfig
+    * attribute from the image from which it is created. However, you can override the diskConfig value when you create
+    * a server. This field is only present if the Disk Config extension is installed in your OpenStack deployment.
+    */
+   public String getDiskConfig() {
+      return diskConfig;
+   }
+   
+   /**
+    * @see #getDiskConfig
+    */
+   public CreateServerOptions diskConfig(String diskConfig) {
+      this.diskConfig = diskConfig;
+      return this;
+   }
    
    public static class Builder {
 
@@ -366,6 +398,14 @@ public class CreateServerOptions implements MapBinder {
       public static CreateServerOptions securityGroupNames(Iterable<String> groupNames) {
          CreateServerOptions options = new CreateServerOptions();
          return CreateServerOptions.class.cast(options.securityGroupNames(groupNames));
+      }
+
+      /**
+       * @see CreateServerOptions#getDiskConfig
+       */
+      public static CreateServerOptions diskConfig(String diskConfig) {
+         CreateServerOptions options = new CreateServerOptions();
+         return CreateServerOptions.class.cast(options.diskConfig(diskConfig));
       }
    }
 

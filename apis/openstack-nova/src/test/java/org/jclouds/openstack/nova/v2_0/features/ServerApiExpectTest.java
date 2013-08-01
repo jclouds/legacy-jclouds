@@ -23,6 +23,7 @@ import static org.testng.Assert.fail;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
+import org.jclouds.openstack.nova.v2_0.domain.Server;
 import org.jclouds.openstack.nova.v2_0.internal.BaseNovaApiExpectTest;
 import org.jclouds.openstack.nova.v2_0.options.CreateServerOptions;
 import org.jclouds.openstack.nova.v2_0.parse.ParseCreatedServerTest;
@@ -125,6 +126,58 @@ public class ServerApiExpectTest extends BaseNovaApiExpectTest {
       assertEquals(apiWithNewServer.getServerApiForZone("az-1.region-a.geo-1").create("test-e92", "1241",
                "100", new CreateServerOptions().securityGroupNames("group1", "group2")).toString(),
               new ParseCreatedServerTest().expected().toString());
+   }
+
+   public void testCreateServerWithDiskConfigAuto() throws Exception {
+
+      HttpRequest createServer = HttpRequest
+         .builder()
+         .method("POST")
+         .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers")
+         .addHeader("Accept", "application/json")
+         .addHeader("X-Auth-Token", authToken)
+         .payload(payloadFromStringWithContentType(
+                  "{\"server\":{\"name\":\"test-e92\",\"imageRef\":\"1241\",\"flavorRef\":\"100\",\"OS-DCF:diskConfig\":\"AUTO\"}}","application/json"))
+         .build();
+
+
+      HttpResponse createServerResponse = HttpResponse.builder().statusCode(202).message("HTTP/1.1 202 Accepted")
+         .payload(payloadFromResourceWithContentType("/new_server_disk_config_auto.json","application/json; charset=UTF-8")).build();
+
+
+      NovaApi apiWithNewServer = requestsSendResponses(
+            keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess, 
+            createServer, createServerResponse);
+
+      assertEquals(apiWithNewServer.getServerApiForZone("az-1.region-a.geo-1").create("test-e92", "1241",
+               "100", new CreateServerOptions().diskConfig(Server.DISK_CONFIG_AUTO)).toString(),
+              new ParseCreatedServerTest().expectedWithDiskConfig(Server.DISK_CONFIG_AUTO).toString());
+   }
+
+   public void testCreateServerWithDiskConfigManual() throws Exception {
+
+      HttpRequest createServer = HttpRequest
+         .builder()
+         .method("POST")
+         .endpoint("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/servers")
+         .addHeader("Accept", "application/json")
+         .addHeader("X-Auth-Token", authToken)
+         .payload(payloadFromStringWithContentType(
+                  "{\"server\":{\"name\":\"test-e92\",\"imageRef\":\"1241\",\"flavorRef\":\"100\",\"OS-DCF:diskConfig\":\"MANUAL\"}}","application/json"))
+         .build();
+
+
+      HttpResponse createServerResponse = HttpResponse.builder().statusCode(202).message("HTTP/1.1 202 Accepted")
+         .payload(payloadFromResourceWithContentType("/new_server_disk_config_manual.json","application/json; charset=UTF-8")).build();
+
+
+      NovaApi apiWithNewServer = requestsSendResponses(
+            keystoneAuthWithUsernameAndPasswordAndTenantName, responseWithKeystoneAccess, 
+            createServer, createServerResponse);
+
+      assertEquals(apiWithNewServer.getServerApiForZone("az-1.region-a.geo-1").create("test-e92", "1241",
+               "100", new CreateServerOptions().diskConfig(Server.DISK_CONFIG_MANUAL)).toString(),
+              new ParseCreatedServerTest().expectedWithDiskConfig(Server.DISK_CONFIG_MANUAL).toString());
    }
 
    public void testCreateImageWhenResponseIs2xx() throws Exception {

@@ -20,6 +20,7 @@ import java.beans.ConstructorProperties;
 import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.openstack.nova.v2_0.options.CreateServerOptions;
 import org.jclouds.openstack.v2_0.domain.Link;
 import org.jclouds.openstack.v2_0.domain.Resource;
 
@@ -47,6 +48,7 @@ public class ServerCreated extends Resource {
 
    public static final class Builder extends Resource.Builder<Builder>  {
       protected String adminPass;
+      protected String diskConfig;
    
       /** 
        * @see ServerCreated#getAdminPass()
@@ -55,13 +57,21 @@ public class ServerCreated extends Resource {
          this.adminPass = adminPass;
          return self();
       }
+      
+      /** 
+       * @see ServerCreated#getDiskConfig()
+       */
+      public Builder diskConfig(String diskConfig) {
+         this.diskConfig = diskConfig;
+         return self();
+      }
 
       public ServerCreated build() {
-         return new ServerCreated(id, name, links, adminPass);
+         return new ServerCreated(id, name, links, adminPass, diskConfig);
       }
       
       public Builder fromServerCreated(ServerCreated in) {
-         return super.fromResource(in).adminPass(in.getAdminPass().orNull());
+         return super.fromResource(in).adminPass(in.getAdminPass().orNull()).diskConfig(in.getDiskConfig().orNull());
       }
 
       @Override
@@ -71,13 +81,16 @@ public class ServerCreated extends Resource {
    }
 
    private final Optional<String> adminPass;
+   private final Optional<String> diskConfig;
 
    @ConstructorProperties({
-      "id", "name", "links", "adminPass"
+      "id", "name", "links", "adminPass", "OS-DCF:diskConfig" 
    })
-   protected ServerCreated(String id, @Nullable String name, Set<Link> links, @Nullable String adminPass) {
+   protected ServerCreated(String id, @Nullable String name, Set<Link> links, @Nullable String adminPass, 
+         @Nullable String diskConfig) {
       super(id, name, links);
       this.adminPass = Optional.fromNullable(adminPass);
+      this.diskConfig = Optional.fromNullable(diskConfig);
    }
 
    /**
@@ -87,9 +100,16 @@ public class ServerCreated extends Resource {
       return this.adminPass;
    }
 
+   /**
+    * @see CreateServerOptions#getDiskConfig()
+    */
+   public Optional<String> getDiskConfig() {
+      return this.diskConfig;
+   }
+
    @Override
    public int hashCode() {
-      return Objects.hashCode(adminPass);
+      return Objects.hashCode(adminPass, diskConfig);
    }
 
    @Override
@@ -97,11 +117,12 @@ public class ServerCreated extends Resource {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
       ServerCreated that = ServerCreated.class.cast(obj);
-      return super.equals(that) && Objects.equal(this.adminPass, that.adminPass);
+      return super.equals(that) && Objects.equal(this.adminPass, that.adminPass)
+            && Objects.equal(this.diskConfig, that.diskConfig);
    }
 
    @Override
    protected ToStringHelper string() {
-      return super.string().add("adminPass", adminPass.orNull());
+      return super.string().add("adminPass", adminPass.orNull()).add("diskConfig", diskConfig.orNull());
    }
 }
