@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jclouds.gogrid.services;
+package org.jclouds.gogrid.features;
 
 import static org.jclouds.gogrid.reference.GoGridHeaders.VERSION;
 
@@ -34,38 +34,60 @@ import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
 /**
+ * Manages the customer's jobs.
+ * 
+ * @see <a href="http://wiki.gogrid.com/wiki/index.php/API#Job_Methods" />
+ * 
  * @author Oleksiy Yarmula
  */
 @RequestFilters(SharedKeyLiteAuthentication.class)
 @QueryParams(keys = VERSION, values = "{jclouds.api-version}")
-public interface GridJobAsyncClient {
+public interface GridJobApi {
 
    /**
-    * @see GridJobClient#getJobList(org.jclouds.gogrid.options.GetJobListOptions...)
+    * Returns all jobs found. The resulting set may be narrowed down by providing
+    * {@link GetJobListOptions}.
+    *
+    * By default, the result is <=100 items from the date range of 4 weeks ago to now.
+    *
+    * NOTE: this method results in a big volume of data in response
+    *
+    * @return jobs found by request
     */
    @GET
    @ResponseParser(ParseJobListFromJsonResponse.class)
    @Path("/grid/job/list")
-   ListenableFuture<Set<Job>> getJobList(GetJobListOptions... options);
+   Set<Job> getJobList(GetJobListOptions... options);
 
    /**
-    * @see GridJobClient#getJobsForObjectName(String)
+    * Returns jobs found for an object with a provided name.
+    *
+    * Usually, in GoGrid a name will uniquely identify the object, or, as the docs state, some API
+    * methods will cause errors.
+    *
+    * @param objectName
+    *           name of the object
+    * @return found jobs for the object
     */
    @GET
    @ResponseParser(ParseJobListFromJsonResponse.class)
    @Path("/grid/job/list")
-   ListenableFuture<Set<Job>> getJobsForObjectName(
-            @BinderParam(BindObjectNameToGetJobsRequestQueryParams.class) String objectName);
+   Set<Job> getJobsForObjectName(
+           @BinderParam(BindObjectNameToGetJobsRequestQueryParams.class) String objectName);
 
    /**
-    * @see GridJobClient#getJobsById
+    * Returns jobs for the corresponding id(s).
+    *
+    * NOTE: there is a 1:1 relation between a job and its ID.
+    *
+    * @param ids
+    *           ids for the jobs
+    * @return jobs found by the ids
     */
    @GET
    @ResponseParser(ParseJobListFromJsonResponse.class)
    @Path("/grid/job/get")
-   ListenableFuture<Set<Job>> getJobsById(@BinderParam(BindIdsToQueryParams.class) long... ids);
+   Set<Job> getJobsById(@BinderParam(BindIdsToQueryParams.class) long... ids);
 
 }

@@ -19,21 +19,20 @@ package org.jclouds.gogrid;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-import org.jclouds.gogrid.services.BaseGoGridAsyncClientTest;
+import org.jclouds.gogrid.features.BaseGoGridApiTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code GoGridAsyncClient}
+ * Tests behavior of {@code GoGridApi}
  * 
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "unit", testName = "GoGridAsyncClientTest")
-public class GoGridAsyncClientTest extends BaseGoGridAsyncClientTest<GoGridAsyncClient> {
+@Test(groups = "unit", testName = "GoGridApiTest")
+public class GoGridApiTest extends BaseGoGridApiTest<GoGridApi> {
 
-   private GoGridAsyncClient asyncClient;
-   private GoGridClient syncClient;
+   private GoGridApi syncClient;
 
    public void testSync() throws SecurityException, NoSuchMethodException, InterruptedException,
             ExecutionException {
@@ -44,20 +43,10 @@ public class GoGridAsyncClientTest extends BaseGoGridAsyncClientTest<GoGridAsync
       assert syncClient.getServerServices() != null;
    }
 
-   public void testAsync() throws SecurityException, NoSuchMethodException, InterruptedException,
-            ExecutionException {
-      assert asyncClient.getImageServices() != null;
-      assert asyncClient.getIpServices() != null;
-      assert asyncClient.getJobServices() != null;
-      assert asyncClient.getLoadBalancerServices() != null;
-      assert asyncClient.getServerServices() != null;
-   }
-
    @BeforeClass
    @Override
    protected void setupFactory() throws IOException {
       super.setupFactory();
-      asyncClient = injector.getInstance(GoGridAsyncClient.class);
-      syncClient = injector.getInstance(GoGridClient.class);
+      syncClient = injector.getInstance(GoGridApi.class);
    }
 }

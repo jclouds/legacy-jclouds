@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jclouds.gogrid.services;
+package org.jclouds.gogrid.features;
 
 import static org.jclouds.gogrid.options.GetJobListOptions.Builder.startDate;
 import static org.jclouds.reflect.Reflection2.method;
@@ -33,17 +33,17 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.reflect.Invokable;
 /**
- * Tests behavior of {@code GridJobAsyncClient}
+ * Tests behavior of {@code GridJobApi}
  * 
  * @author Oleksiy Yarmula
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "unit", testName = "GridJobAsyncClientTest")
-public class GridJobAsyncClientTest extends BaseGoGridAsyncClientTest<GridJobAsyncClient> {
+@Test(groups = "unit", testName = "GridJobApiTest")
+public class GridJobApiTest extends BaseGoGridApiTest<GridJobApi> {
 
    @Test
    public void testGetJobListWithOptions() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = method(GridJobAsyncClient.class, "getJobList", GetJobListOptions[].class);
+      Invokable<?, ?> method = method(GridJobApi.class, "getJobList", GetJobListOptions[].class);
       GeneratedHttpRequest httpRequest = processor
                .createRequest(method, ImmutableList.<Object> of(startDate(new Date(1267385381770L)).withEndDate(new Date(1267385382770L))
                         .onlyForObjectType(ObjectType.VIRTUAL_SERVER).onlyForState(JobState.PROCESSING)));
@@ -71,7 +71,7 @@ public class GridJobAsyncClientTest extends BaseGoGridAsyncClientTest<GridJobAsy
 
    @Test
    public void testGetJobListNoOptions() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = method(GridJobAsyncClient.class, "getJobList", GetJobListOptions[].class);
+      Invokable<?, ?> method = method(GridJobApi.class, "getJobList", GetJobListOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/job/list?v=1.5 HTTP/1.1");
@@ -81,7 +81,7 @@ public class GridJobAsyncClientTest extends BaseGoGridAsyncClientTest<GridJobAsy
 
    @Test
    public void testGetJobsForServerName() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = method(GridJobAsyncClient.class, "getJobsForObjectName", String.class);
+      Invokable<?, ?> method = method(GridJobApi.class, "getJobsForObjectName", String.class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of("MyServer"));
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/job/list?v=1.5&"
@@ -104,7 +104,7 @@ public class GridJobAsyncClientTest extends BaseGoGridAsyncClientTest<GridJobAsy
 
    @Test
    public void testGetJobsById() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = method(GridJobAsyncClient.class, "getJobsById", long[].class);
+      Invokable<?, ?> method = method(GridJobApi.class, "getJobsById", long[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(123L, 456L));
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/job/get?v=1.5&"

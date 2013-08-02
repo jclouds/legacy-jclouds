@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jclouds.gogrid.services;
+package org.jclouds.gogrid.features;
 
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.date.TimeStamp;
 import org.jclouds.gogrid.GoGridProviderMetadata;
-import org.jclouds.gogrid.config.GoGridRestClientModule;
+import org.jclouds.gogrid.config.GoGridHttpApiModule;
 import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.providers.ProviderMetadata;
@@ -36,7 +36,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public abstract class BaseGoGridAsyncClientTest<T> extends BaseAsyncClientTest<T> {
+public abstract class BaseGoGridApiTest<T> extends BaseAsyncClientTest<T> {
    @Override
    protected void checkFilters(HttpRequest request) {
       assertEquals(request.getFilters().size(), 1);
@@ -44,7 +44,7 @@ public abstract class BaseGoGridAsyncClientTest<T> extends BaseAsyncClientTest<T
    }
 
       @ConfiguresRestClient
-   protected static final class TestGoGridRestClientModule extends GoGridRestClientModule {
+   protected static final class TestGoGridHttpApiModule extends GoGridHttpApiModule {
       @Override
       protected void configure() {
          super.configure();
@@ -58,7 +58,7 @@ public abstract class BaseGoGridAsyncClientTest<T> extends BaseAsyncClientTest<T
 
    @Override
    protected Module createModule() {
-      return new TestGoGridRestClientModule();
+      return new TestGoGridHttpApiModule();
    }
 
    @Override

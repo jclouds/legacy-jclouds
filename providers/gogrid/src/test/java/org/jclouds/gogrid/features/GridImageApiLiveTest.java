@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jclouds.gogrid.services;
+package org.jclouds.gogrid.features;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jclouds.util.Predicates2.retry;
@@ -45,8 +45,8 @@ import com.google.common.collect.Iterables;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during
 // surefire
-@Test(groups = "unit", testName = "GridImageClientLiveTest")
-public class GridImageClientLiveTest extends BaseGoGridClientLiveTest {
+@Test(groups = "unit", testName = "GridImageApiLiveTest")
+public class GridImageApiLiveTest extends BaseGoGridApiLiveTest {
 
    public void testListImages() throws Exception {
       Set<ServerImage> response = api.getImageServices().getImageList();

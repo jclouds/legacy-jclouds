@@ -27,7 +27,7 @@ package org.jclouds.gogrid.domain;
  * <li>Restart</li>
  * </ul>
  * 
- * @see org.jclouds.gogrid.services.GridServerClient#power(String, PowerCommand)
+ * @see org.jclouds.gogrid.features.GridServerApi#power(String, PowerCommand)
  * @see <a href="http://wiki.gogrid.com/wiki/index.php/API:grid.server.power" />
  * 
  * @author Oleksiy Yarmula

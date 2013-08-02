@@ -25,7 +25,7 @@ import static org.testng.Assert.assertTrue;
 import org.jclouds.gogrid.domain.Job;
 import org.jclouds.gogrid.domain.JobState;
 import org.jclouds.gogrid.domain.Server;
-import org.jclouds.gogrid.services.GridJobClient;
+import org.jclouds.gogrid.features.GridJobApi;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -46,7 +46,7 @@ public class ServerLatestJobCompletedTest {
       Job job = createMock(Job.class);
       expect(job.getCurrentState()).andReturn(JobState.SUCCEEDED);
 
-      GridJobClient client = createMock(GridJobClient.class);
+      GridJobApi client = createMock(GridJobApi.class);
       expect(client.getJobList(latestJobForObjectByName(serverName))).andReturn(ImmutableSet.<Job> of(job));
 
       replay(job);

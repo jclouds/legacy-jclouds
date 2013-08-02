@@ -72,7 +72,7 @@ import com.google.inject.Guice;
  * @author Oleksiy Yarmula
  */
 @Test(enabled = false, groups = "live", singleThreaded = true, testName = "GoGridLiveTestDisabled")
-public class GoGridLiveTestDisabled extends BaseApiLiveTest<GoGridClient> {
+public class GoGridLiveTestDisabled extends BaseApiLiveTest<GoGridApi> {
 
    public GoGridLiveTestDisabled() {
       provider = "gogrid";

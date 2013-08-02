@@ -18,37 +18,24 @@ package org.jclouds.gogrid.config;
 
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 
 import org.jclouds.date.TimeStamp;
-import org.jclouds.gogrid.GoGridAsyncClient;
-import org.jclouds.gogrid.GoGridClient;
+import org.jclouds.gogrid.GoGridApi;
 import org.jclouds.gogrid.handlers.GoGridErrorHandler;
 import org.jclouds.gogrid.location.GoGridDefaultLocationSupplier;
-import org.jclouds.gogrid.services.GridImageAsyncClient;
-import org.jclouds.gogrid.services.GridImageClient;
-import org.jclouds.gogrid.services.GridIpAsyncClient;
-import org.jclouds.gogrid.services.GridIpClient;
-import org.jclouds.gogrid.services.GridJobAsyncClient;
-import org.jclouds.gogrid.services.GridJobClient;
-import org.jclouds.gogrid.services.GridLoadBalancerAsyncClient;
-import org.jclouds.gogrid.services.GridLoadBalancerClient;
-import org.jclouds.gogrid.services.GridServerAsyncClient;
-import org.jclouds.gogrid.services.GridServerClient;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.config.RestClientModule;
+import org.jclouds.rest.config.HttpApiModule;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableMap;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 
@@ -59,18 +46,7 @@ import com.google.inject.Scopes;
  * @author Oleksiy Yarmula
  */
 @ConfiguresRestClient
-public class GoGridRestClientModule extends RestClientModule<GoGridClient, GoGridAsyncClient> {
-   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(GridServerClient.class, GridServerAsyncClient.class)//
-         .put(GridJobClient.class, GridJobAsyncClient.class)//
-         .put(GridIpClient.class, GridIpAsyncClient.class)//
-         .put(GridLoadBalancerClient.class, GridLoadBalancerAsyncClient.class)//
-         .put(GridImageClient.class, GridImageAsyncClient.class)//
-         .build();
-
-   public GoGridRestClientModule() {
-      super(DELEGATE_MAP);
-   }
+public class GoGridHttpApiModule extends HttpApiModule<GoGridApi> {
 
    @Provides
    @TimeStamp

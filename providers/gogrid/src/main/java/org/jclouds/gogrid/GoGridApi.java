@@ -18,49 +18,46 @@ package org.jclouds.gogrid;
 
 import java.io.Closeable;
 
-import org.jclouds.gogrid.services.GridImageAsyncClient;
-import org.jclouds.gogrid.services.GridIpAsyncClient;
-import org.jclouds.gogrid.services.GridJobAsyncClient;
-import org.jclouds.gogrid.services.GridLoadBalancerAsyncClient;
-import org.jclouds.gogrid.services.GridServerAsyncClient;
+import org.jclouds.gogrid.features.GridImageApi;
+import org.jclouds.gogrid.features.GridIpApi;
+import org.jclouds.gogrid.features.GridJobApi;
+import org.jclouds.gogrid.features.GridLoadBalancerApi;
+import org.jclouds.gogrid.features.GridServerApi;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
  * @author Oleksiy Yarmula
- * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(GoGridClient.class)} as
- *             {@link GoGridAsyncClient} interface will be removed in jclouds 1.7.
  */
-@Deprecated
-public interface GoGridAsyncClient extends Closeable {
+public interface GoGridApi extends Closeable {
 
    /**
-    * @see GoGridClient#getServerServices()
+    * Services with methods, related to managing servers
     */
    @Delegate
-   GridServerAsyncClient getServerServices();
+   GridServerApi getServerServices();
 
    /**
-    * @see GoGridClient#getJobServices()
+    * Services with methods, related to retrieving jobs
     */
    @Delegate
-   GridJobAsyncClient getJobServices();
+   GridJobApi getJobServices();
 
    /**
-    * @see GoGridClient#getIpServices()
+    * Services with methods, related to retrieving IP addresses
     */
    @Delegate
-   GridIpAsyncClient getIpServices();
+   GridIpApi getIpServices();
 
    /**
-    * @see GoGridClient#getLoadBalancerServices()
+    * Services with methods, related to managing load balancers.
     */
    @Delegate
-   GridLoadBalancerAsyncClient getLoadBalancerServices();
+   GridLoadBalancerApi getLoadBalancerServices();
 
    /**
-    * @see GoGridClient#getImageServices()
+    * Services with methods, related to managing images.
     */
    @Delegate
-   GridImageAsyncClient getImageServices();
+   GridImageApi getImageServices();
 
 }

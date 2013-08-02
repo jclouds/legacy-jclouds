@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jclouds.gogrid.services;
+package org.jclouds.gogrid.features;
 
 import static org.jclouds.gogrid.reference.GoGridHeaders.VERSION;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.ID_KEY;
@@ -30,7 +30,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
-import org.jclouds.Fallbacks.NullOnNotFoundOr404;
+import org.jclouds.Fallbacks;
 import org.jclouds.gogrid.binders.BindIdsToQueryParams;
 import org.jclouds.gogrid.binders.BindNamesToQueryParams;
 import org.jclouds.gogrid.domain.Option;
@@ -47,81 +47,123 @@ import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
 /**
+ * Manages the server images
+ * 
+ * @see <a
+ *      href="http://wiki.gogrid.com/wiki/index.php/API#Server_Image_Methods"/>
  * @author Oleksiy Yarmula
  */
 @RequestFilters(SharedKeyLiteAuthentication.class)
 @QueryParams(keys = VERSION, values = "{jclouds.api-version}")
-public interface GridImageAsyncClient {
+public interface GridImageApi {
 
    /**
-    * @see GridImageClient#getImageList
+    * Returns all server images.
+    *
+    * @param options
+    *           options to narrow the search down
+    * @return server images found
     */
    @GET
    @ResponseParser(ParseImageListFromJsonResponse.class)
    @Path("/grid/image/list")
-   ListenableFuture<Set<ServerImage>> getImageList(GetImageListOptions... options);
+   Set<ServerImage> getImageList(GetImageListOptions... options);
 
    /**
-    * @see GridImageClient#getImagesById
+    * Returns images, found by specified ids
+    *
+    * @param ids
+    *           the ids that match existing images
+    * @return images found
     */
    @GET
    @ResponseParser(ParseImageListFromJsonResponse.class)
    @Path("/grid/image/get")
-   ListenableFuture<Set<ServerImage>> getImagesById(@BinderParam(BindIdsToQueryParams.class) Long... ids);
+   Set<ServerImage> getImagesById(@BinderParam(BindIdsToQueryParams.class) Long... ids);
 
    /**
-    * @see GridImageClient#getImagesByName
+    * Returns images, found by specified names
+    *
+    * @param names
+    *           the names that march existing images
+    * @return images found
     */
    @GET
    @ResponseParser(ParseImageListFromJsonResponse.class)
    @Path("/grid/image/get")
-   ListenableFuture<Set<ServerImage>> getImagesByName(@BinderParam(BindNamesToQueryParams.class) String... names);
+   Set<ServerImage> getImagesByName(@BinderParam(BindNamesToQueryParams.class) String... names);
 
    /**
-    * @see GridImageClient#editImageDescription
+    * Edits an existing image
+    *
+    * @param idOrName
+    *           id or name of the existing image
+    * @param newDescription
+    *           description to replace the current one
+    * @return edited server image
     */
    @GET
    @ResponseParser(ParseImageFromJsonResponse.class)
    @Path("/grid/image/edit")
-   ListenableFuture<ServerImage> editImageDescription(@QueryParam(IMAGE_KEY) String idOrName,
-         @QueryParam(IMAGE_DESCRIPTION_KEY) String newDescription);
+   ServerImage editImageDescription(@QueryParam(IMAGE_KEY) String idOrName,
+                                    @QueryParam(IMAGE_DESCRIPTION_KEY) String newDescription);
 
    /**
-    * @see GridImageClient#editImageFriendlyName
+    * Edits an existing image
+    *
+    * @param idOrName
+    *           id or name of the existing image
+    * @param newFriendlyName
+    *           friendly name to replace the current one
+    * @return edited server image
     */
    @GET
    @ResponseParser(ParseImageFromJsonResponse.class)
    @Path("/grid/image/edit")
-   ListenableFuture<ServerImage> editImageFriendlyName(@QueryParam(IMAGE_KEY) String idOrName,
-         @QueryParam(IMAGE_FRIENDLY_NAME_KEY) String newFriendlyName);
+   ServerImage editImageFriendlyName(@QueryParam(IMAGE_KEY) String idOrName,
+                                     @QueryParam(IMAGE_FRIENDLY_NAME_KEY) String newFriendlyName);
 
    /**
-    * @see GridImageClient#getDatacenters
+    * Retrieves the list of supported Datacenters to save images in. The objects
+    * will have datacenter ID, name and description. In most cases, id or name
+    * will be used for {@link #getImageList}.
+    *
+    * @return supported datacenters
     */
    @GET
    @ResponseParser(ParseOptionsFromJsonResponse.class)
    @Path("/common/lookup/list")
    @QueryParams(keys = LOOKUP_LIST_KEY, values = "datacenter")
-   ListenableFuture<Set<Option>> getDatacenters();
+   Set<Option> getDatacenters();
 
    /**
-    * @see GridImageClient#deleteById(Long)
+    * Deletes an existing image
+    *
+    * @param id
+    *           id of the existing image
     */
    @GET
    @ResponseParser(ParseImageFromJsonResponse.class)
    @Path("/grid/image/delete")
-   @Fallback(NullOnNotFoundOr404.class)
-   ListenableFuture<ServerImage> deleteById(@QueryParam(ID_KEY) long id);
+   @Fallback(Fallbacks.NullOnNotFoundOr404.class)
+   ServerImage deleteById(@QueryParam(ID_KEY) long id);
 
    /**
-    * @see GridImageClient#saveImageFromServer
+    * This call will save a private (visible to only you) server image to your
+    * library of available images. The image will be saved from an existing
+    * server.
+    *
+    * @param idOrName
+    *           id or name of the existing server
+    * @param friendlyName
+    *           friendly name of the image
+    * @return saved server image
     */
    @GET
    @ResponseParser(ParseImageFromJsonResponse.class)
    @Path("/grid/image/save")
-   ListenableFuture<ServerImage> saveImageFromServer(@QueryParam(IMAGE_FRIENDLY_NAME_KEY) String friendlyName,
-         @QueryParam(SERVER_ID_OR_NAME_KEY) String idOrName, SaveImageOptions... options);
+   ServerImage saveImageFromServer(@QueryParam(IMAGE_FRIENDLY_NAME_KEY) String friendlyName,
+                                   @QueryParam(SERVER_ID_OR_NAME_KEY) String idOrName, SaveImageOptions... options);
+
 }

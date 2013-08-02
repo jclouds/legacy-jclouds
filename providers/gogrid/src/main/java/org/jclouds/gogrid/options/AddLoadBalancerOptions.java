@@ -28,7 +28,7 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
 /**
  * Optional parameters for adding a load balancer.
  *
- * @see org.jclouds.gogrid.services.GridLoadBalancerClient#addLoadBalancer
+ * @see org.jclouds.gogrid.features.GridLoadBalancerApi#addLoadBalancer
  * @see <a href="http://wiki.gogrid.com/wiki/index.php/API:grid.loadbalancer.add"/>
  *
  * @author Oleksiy Yarmula

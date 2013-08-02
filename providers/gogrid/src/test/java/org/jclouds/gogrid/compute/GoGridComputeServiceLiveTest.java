@@ -28,7 +28,7 @@ import static org.testng.Assert.assertNotNull;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
-import org.jclouds.gogrid.GoGridClient;
+import org.jclouds.gogrid.GoGridApi;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
 import org.jclouds.sshj.config.SshjSshClientModule;
@@ -68,7 +68,7 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public void testResizeRam() throws Exception {
       String group = this.group + "ram";
-      GoGridClient api = view.utils().injector().getInstance(GoGridClient.class);
+      GoGridApi api = view.utils().injector().getInstance(GoGridApi.class);
       try {
          client.destroyNodesMatching(inGroup(group));
       } catch (Exception e) {

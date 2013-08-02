@@ -14,38 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jclouds.gogrid.services;
+package org.jclouds.gogrid.features;
 
-import org.jclouds.date.TimeStamp;
-import org.jclouds.gogrid.GoGridClient;
-import org.jclouds.gogrid.config.GoGridRestClientModule;
-import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.internal.BaseRestClientExpectTest;
-
-import com.google.common.base.Supplier;
-import com.google.inject.Module;
+import org.jclouds.apis.BaseApiLiveTest;
+import org.jclouds.gogrid.GoGridApi;
+import org.testng.annotations.Test;
 
 /**
+ * Tests behavior of {@code GoGridApi}
  * 
  * @author Adrian Cole
  */
-public class BaseGoGridRestClientExpectTest extends BaseRestClientExpectTest<GoGridClient> {
-
-   public BaseGoGridRestClientExpectTest() {
+@Test(groups = "live", singleThreaded = true, testName = "BaseGoGridApiLiveTest")
+public class BaseGoGridApiLiveTest extends BaseApiLiveTest<GoGridApi> {
+   public BaseGoGridApiLiveTest() {
       provider = "gogrid";
-   }
-
-      @ConfiguresRestClient
-   protected static final class TestGoGridRestClientModule extends GoGridRestClientModule {
-
-      @Override
-      protected Long provideTimeStamp(@TimeStamp Supplier<Long> cache) {
-         return 1267243795L;
-      }
-   }
-
-   @Override
-   protected Module createModule() {
-      return new TestGoGridRestClientModule();
    }
 }

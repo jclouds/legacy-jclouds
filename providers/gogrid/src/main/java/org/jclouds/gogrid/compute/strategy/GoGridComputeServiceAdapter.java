@@ -32,7 +32,7 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.gogrid.GoGridClient;
+import org.jclouds.gogrid.GoGridApi;
 import org.jclouds.gogrid.compute.suppliers.GoGridHardwareSupplier;
 import org.jclouds.gogrid.domain.Ip;
 import org.jclouds.gogrid.domain.IpType;
@@ -48,12 +48,11 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.primitives.Longs;
 
 /**
- * defines the connection between the {@link GoGridClient} implementation and the jclouds
+ * defines the connection between the {@link org.jclouds.gogrid.GoGridApi} implementation and the jclouds
  * {@link ComputeService}
  * 
  */
@@ -63,13 +62,13 @@ public class GoGridComputeServiceAdapter implements ComputeServiceAdapter<Server
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final GoGridClient client;
+   private final GoGridApi client;
    private final Function<Hardware, String> sizeToRam;
    private final Predicate<Server> serverLatestJobCompleted;
    private final Predicate<Server> serverLatestJobCompletedShort;
 
    @Inject
-   protected GoGridComputeServiceAdapter(GoGridClient client, Function<Hardware, String> sizeToRam, Timeouts timeouts) {
+   protected GoGridComputeServiceAdapter(GoGridApi client, Function<Hardware, String> sizeToRam, Timeouts timeouts) {
       this.client = checkNotNull(client, "client");
       this.sizeToRam = checkNotNull(sizeToRam, "sizeToRam");
       this.serverLatestJobCompleted = retry(new ServerLatestJobCompleted(client.getJobServices()),

@@ -25,7 +25,7 @@ import org.jclouds.rest.Binder;
 
 /**
  * 
- * @see org.jclouds.gogrid.services.GridJobClient#getJobsForObjectName(String)
+ * @see org.jclouds.gogrid.features.GridJobApi#getJobsForObjectName(String)
  * 
  * @author Oleksiy Yarmula
  */

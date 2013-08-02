@@ -25,7 +25,7 @@ import javax.inject.Singleton;
 import org.jclouds.gogrid.domain.Job;
 import org.jclouds.gogrid.domain.JobState;
 import org.jclouds.gogrid.domain.LoadBalancer;
-import org.jclouds.gogrid.services.GridJobClient;
+import org.jclouds.gogrid.features.GridJobApi;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
@@ -38,13 +38,13 @@ import com.google.inject.Inject;
 @Singleton
 public class LoadBalancerLatestJobCompleted implements Predicate<LoadBalancer> {
 
-   protected GridJobClient jobClient;
+   protected GridJobApi jobClient;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public LoadBalancerLatestJobCompleted(GridJobClient jobClient) {
+   public LoadBalancerLatestJobCompleted(GridJobApi jobClient) {
       this.jobClient = jobClient;
    }
 

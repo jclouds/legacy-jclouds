@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jclouds.gogrid.services;
+package org.jclouds.gogrid.features;
 
 import static org.jclouds.reflect.Reflection2.method;
 
@@ -30,17 +30,17 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.reflect.Invokable;
 /**
- * Tests behavior of {@code GridIpAsyncClient}
+ * Tests behavior of {@code GridIpApi}
  * 
  * @author Oleksiy Yarmula
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "unit", testName = "GridIpAsyncClientTest")
-public class GridIpAsyncClientTest extends BaseGoGridAsyncClientTest<GridIpAsyncClient> {
+@Test(groups = "unit", testName = "GridIpApiTest")
+public class GridIpApiTest extends BaseGoGridApiTest<GridIpApi> {
 
    @Test
    public void testGetIpListWithOptions() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = method(GridIpAsyncClient.class, "getIpList", GetIpListOptions[].class);
+      Invokable<?, ?> method = method(GridIpApi.class, "getIpList", GetIpListOptions[].class);
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.<Object> of(new GetIpListOptions()
             .onlyUnassigned().onlyWithType(IpType.PUBLIC)));
 
@@ -64,7 +64,7 @@ public class GridIpAsyncClientTest extends BaseGoGridAsyncClientTest<GridIpAsync
 
    @Test
    public void testGetAssignedIpList() throws NoSuchMethodException, IOException {
-      Invokable<?, ?> method = method(GridIpAsyncClient.class, "getAssignedIpList");
+      Invokable<?, ?> method = method(GridIpApi.class, "getAssignedIpList");
       GeneratedHttpRequest httpRequest = processor.createRequest(method, ImmutableList.of());
 
       assertRequestLineEquals(httpRequest,

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jclouds.gogrid.services;
+package org.jclouds.gogrid.features;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -22,7 +22,7 @@ import static org.testng.Assert.fail;
 
 import java.net.URI;
 
-import org.jclouds.gogrid.GoGridClient;
+import org.jclouds.gogrid.GoGridApi;
 import org.jclouds.gogrid.options.AddServerOptions;
 import org.jclouds.gogrid.options.GetServerListOptions;
 import org.jclouds.gogrid.parse.ParseServerListTest;
@@ -37,7 +37,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "GridServerClientExpectTest")
-public class GridServerClientExpectTest extends BaseGoGridRestClientExpectTest {
+public class GridServerClientExpectTest extends BaseGoGridHttpApiExpectTest {
 
    HttpRequest addServer = HttpRequest.builder().method("GET")
                                       .endpoint("https://api.gogrid.com/api/grid/server/add")
@@ -53,7 +53,7 @@ public class GridServerClientExpectTest extends BaseGoGridRestClientExpectTest {
       HttpResponse listGridServersResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResourceWithContentType("/test_get_server_list.json", "application/json")).build();
 
-      GoGridClient addServerWorked = requestSendsResponse(addServer, listGridServersResponse);
+      GoGridApi addServerWorked = requestSendsResponse(addServer, listGridServersResponse);
 
       assertEquals(addServerWorked.getServerServices().addServer("serverName", "img55", "memory", "127.0.0.1")
                .toString(), new ParseServerTest().expected().toString());
@@ -75,7 +75,7 @@ public class GridServerClientExpectTest extends BaseGoGridRestClientExpectTest {
       HttpResponse listGridServersResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResourceWithContentType("/test_get_server_list.json", "application/json")).build();
 
-      GoGridClient addServerWithOptionsWorked = requestSendsResponse(addServerOptions, listGridServersResponse);
+      GoGridApi addServerWithOptionsWorked = requestSendsResponse(addServerOptions, listGridServersResponse);
 
       assertEquals(addServerWithOptionsWorked.getServerServices().addServer("serverName", "img55", "memory",
                "127.0.0.1", new AddServerOptions().asSandboxType().withDescription("fooy")).toString(),
@@ -90,7 +90,7 @@ public class GridServerClientExpectTest extends BaseGoGridRestClientExpectTest {
       HttpResponse listGridServersResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResourceWithContentType("/test_get_server_list.json", "application/json")).build();
 
-      GoGridClient clientWhenGridServersExist = requestSendsResponse(listGridServers, listGridServersResponse);
+      GoGridApi clientWhenGridServersExist = requestSendsResponse(listGridServers, listGridServersResponse);
 
       assertEquals(clientWhenGridServersExist.getServerServices().getServerList().toString(), new ParseServerListTest()
                .expected().toString());
@@ -104,7 +104,7 @@ public class GridServerClientExpectTest extends BaseGoGridRestClientExpectTest {
       HttpResponse listGridServersResponse = HttpResponse.builder().statusCode(404).payload(
                payloadFromResourceWithContentType("/test_error_handler.json", "application/json")).build();
 
-      GoGridClient clientWhenNoGridServersExist = requestSendsResponse(listGridServers, listGridServersResponse);
+      GoGridApi clientWhenNoGridServersExist = requestSendsResponse(listGridServers, listGridServersResponse);
 
       assertTrue(clientWhenNoGridServersExist.getServerServices().getServerList().isEmpty());
    }
@@ -117,7 +117,7 @@ public class GridServerClientExpectTest extends BaseGoGridRestClientExpectTest {
       HttpResponse listGridServersResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResourceWithContentType("/test_get_server_list.json", "application/json")).build();
 
-      GoGridClient clientWhenGridServersExist = requestSendsResponse(listGridServers, listGridServersResponse);
+      GoGridApi clientWhenGridServersExist = requestSendsResponse(listGridServers, listGridServersResponse);
 
       assertEquals(clientWhenGridServersExist.getServerServices().getServerList(
                new GetServerListOptions.Builder().onlySandboxServers()).toString(), new ParseServerListTest()
@@ -132,7 +132,7 @@ public class GridServerClientExpectTest extends BaseGoGridRestClientExpectTest {
       HttpResponse listGridServersResponse = HttpResponse.builder().statusCode(400).payload(
                payloadFromResourceWithContentType("/test_error_handler.json", "application/json")).build();
 
-      GoGridClient clientWhenGridServersNotFound = requestSendsResponse(listGridServers, listGridServersResponse);
+      GoGridApi clientWhenGridServersNotFound = requestSendsResponse(listGridServers, listGridServersResponse);
       try {
          clientWhenGridServersNotFound.getServerServices().getServerCredentials(11);
          fail("should have failed");

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jclouds.gogrid.services;
+package org.jclouds.gogrid.features;
 
 import static org.testng.Assert.assertEquals;
 
@@ -31,8 +31,8 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "unit", testName = "GridJobClientLiveTest")
-public class GridJobClientLiveTest extends BaseGoGridClientLiveTest {
+@Test(groups = "unit", testName = "GridJobApiLiveTest")
+public class GridJobApiLiveTest extends BaseGoGridApiLiveTest {
 
    public void testListJobs() throws Exception {
       Set<Job> response = api.getJobServices().getJobList(GetJobListOptions.Builder.maxItems(10));
