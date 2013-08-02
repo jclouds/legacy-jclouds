@@ -29,7 +29,6 @@ import org.jclouds.rest.annotations.Delegate;
  * Provides synchronous access to GleSYS.
  * <p/>
  * 
- * @see GleSYSAsyncApi
  * @see <a href="https://customer.glesys.com/api.php" />
  * @author Adrian Cole
  */

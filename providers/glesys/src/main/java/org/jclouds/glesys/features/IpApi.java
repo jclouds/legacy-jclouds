@@ -16,8 +16,23 @@
  */
 package org.jclouds.glesys.features;
 
+import javax.inject.Named;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.Fallbacks;
 import org.jclouds.glesys.domain.IpDetails;
 import org.jclouds.glesys.options.ListIpOptions;
+import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.FormParams;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SelectJson;
 
 import com.google.common.collect.FluentIterable;
 
@@ -26,9 +41,9 @@ import com.google.common.collect.FluentIterable;
  * <p/>
  *
  * @author Adrian Cole, Mattias Holmqvist, Adam Lowe
- * @see IpAsyncApi
  * @see <a href="https://github.com/GleSYS/API/wiki/API-Documentation" />
  */
+@RequestFilters(BasicAuthentication.class)
 public interface IpApi {
    /**
     * Get a set of all IP addresses that are available and not used on any account or server.
@@ -38,7 +53,15 @@ public interface IpApi {
     * @param platform   the platform
     * @return a set of free IP addresses
     */
-   FluentIterable<String> listFree(int ipVersion, String datacenter, String platform);
+   @Named("ip:listfree")
+   @GET
+   @Path("/ip/listfree/ipversion/{ipversion}/datacenter/{datacenter}/platform/{platform}/format/json")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @SelectJson("ipaddresses")
+   @Fallback(Fallbacks.EmptyFluentIterableOnNotFoundOr404.class)
+   FluentIterable<String> listFree(@PathParam("ipversion") int ipVersion,
+                                   @PathParam("datacenter") String datacenter,
+                                   @PathParam("platform") String platform);
 
    /**
     * Take a free IP address and add it to this account. You can list free IP addresses with the function listFree().
@@ -46,7 +69,12 @@ public interface IpApi {
     *
     * @param ipAddress the IP address to be add to this account (reserve)
     */
-   IpDetails take(String ipAddress);
+   @Named("ip:take")
+   @POST
+   @Path("/ip/take/format/json")
+   @SelectJson("details")
+   @Consumes(MediaType.APPLICATION_JSON)
+   IpDetails take(@FormParam("ipaddress") String ipAddress);
 
    /**
     * Return an unused IP address to the pool of free ips. If the IP address is allocated to a server,
@@ -54,7 +82,12 @@ public interface IpApi {
     *
     * @param ipAddress the IP address to be released
     */
-   IpDetails release(String ipAddress);
+   @Named("ip:release")
+   @POST
+   @Path("/ip/release/format/json")
+   @SelectJson("details")
+   @Consumes(MediaType.APPLICATION_JSON)
+   IpDetails release(@FormParam("ipaddress") String ipAddress);
 
    /**
     * Get IP addresses associated with your account (reserved, assigned to servers, etc)
@@ -62,6 +95,12 @@ public interface IpApi {
     * @param options options to filter the results (by IPV4/6, serverId, etc)
     * @return the set of IP addresses
     */
+   @Named("ip:listown")
+   @GET
+   @Path("/ip/listown/format/json")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @SelectJson("iplist")
+   @Fallback(Fallbacks.EmptyFluentIterableOnNotFoundOr404.class)
    FluentIterable<IpDetails> list(ListIpOptions... options);
 
    /**
@@ -71,7 +110,13 @@ public interface IpApi {
     * @param ipAddress the ip address
     * @return details about the given IP address
     */
-   IpDetails get(String ipAddress);
+   @Named("ip:details")
+   @GET
+   @Path("/ip/details/ipaddress/{ipaddress}/format/json")
+   @SelectJson("details")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Fallback(Fallbacks.NullOnNotFoundOr404.class)
+   IpDetails get(@PathParam("ipaddress") String ipAddress);
 
    /**
     * Add an IP address to an server. The IP has to be free, but reserved to this account. You are able to list such addresses
@@ -82,7 +127,13 @@ public interface IpApi {
     * @param ipAddress the IP address to remove
     * @param serverId  the server to add the IP address to
     */
-   IpDetails addToServer(String ipAddress, String serverId);
+   @Named("ip:add")
+   @POST
+   @Path("/ip/add/format/json")
+   @SelectJson("details")
+   @Consumes(MediaType.APPLICATION_JSON)
+   IpDetails addToServer(@FormParam("ipaddress") String ipAddress,
+                         @FormParam("serverid") String serverId);
 
    /**
     * Remove an IP address from a server. This does not release it back to GleSYS pool of free ips. The address will be
@@ -93,7 +144,13 @@ public interface IpApi {
     * @param serverId  the server to remove the IP address from
     * @see #removeFromServerAndRelease
     */
-   IpDetails removeFromServer(String ipAddress, String serverId);
+   @Named("ip:remove")
+   @POST
+   @Path("/ip/remove/format/json")
+   @SelectJson("details")
+   @Consumes(MediaType.APPLICATION_JSON)
+   IpDetails removeFromServer(@FormParam("ipaddress") String ipAddress,
+                              @FormParam("serverid") String serverId);
 
    /**
     * Remove an IP address from a server and release it back to GleSYS pool of free ips.
@@ -102,16 +159,34 @@ public interface IpApi {
     * @param serverId  the server to remove the IP address from
     * @see #removeFromServer
     */
-   IpDetails removeFromServerAndRelease(String ipAddress, String serverId);
+   @Named("ip:remove:release")
+   @POST
+   @FormParams(keys = "release", values = "true")
+   @Path("/ip/remove/format/json")
+   @SelectJson("details")
+   @Consumes(MediaType.APPLICATION_JSON)
+   IpDetails removeFromServerAndRelease(@FormParam("ipaddress") String ipAddress,
+                                        @FormParam("serverid") String serverId);
 
    /**
     * Sets PTR data for an IP. Use ip/listown or ip/details to get current PTR data
     */
-   IpDetails setPtr(String ipAddress, String ptr);
+   @Named("ip:setptr")
+   @POST
+   @Path("/ip/setptr/format/json")
+   @SelectJson("details")
+   @Consumes(MediaType.APPLICATION_JSON)
+   IpDetails setPtr(@FormParam("ipaddress") String ipAddress,
+                    @FormParam("data") String ptr);
 
    /**
     * Resets PTR data for an IP back to the default value
     */
-   IpDetails resetPtr(String ipAddress);
+   @Named("ip:resetptr")
+   @POST
+   @Path("/ip/resetptr/format/json")
+   @SelectJson("details")
+   @Consumes(MediaType.APPLICATION_JSON)
+   IpDetails resetPtr(@FormParam("ipaddress") String ipAddress);
 
 }

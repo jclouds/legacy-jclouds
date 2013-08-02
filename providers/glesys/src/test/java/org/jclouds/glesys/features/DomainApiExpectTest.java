@@ -39,7 +39,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
- * Tests annotation parsing of {@code DomainAsyncApi}
+ * Tests annotation parsing of {@code DomainApi}
  *
  * @author Adam Lowe
  */

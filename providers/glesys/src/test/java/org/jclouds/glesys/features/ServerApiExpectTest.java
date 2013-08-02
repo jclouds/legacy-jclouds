@@ -55,12 +55,12 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
 /**
- * Tests annotation parsing of {@code ServerAsyncApi}
+ * Tests annotation parsing of {@code ServerApi}
  *
  * @author Adrian Cole
  * @author Adam Lowe
  */
-@Test(groups = "unit", testName = "ServerAsyncApiTest")
+@Test(groups = "unit", testName = "ServerApiTest")
 public class ServerApiExpectTest extends BaseGleSYSApiExpectTest {
 
    public void testListServersWhenResponseIs2xx() throws Exception {

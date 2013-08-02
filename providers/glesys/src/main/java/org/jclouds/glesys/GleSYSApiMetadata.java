@@ -24,11 +24,10 @@ import java.util.Properties;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.glesys.compute.config.GleSYSComputeServiceContextModule;
-import org.jclouds.glesys.config.GleSYSRestClientModule;
-import org.jclouds.rest.internal.BaseRestApiMetadata;
+import org.jclouds.glesys.config.GleSYSHttpApiModule;
+import org.jclouds.rest.internal.BaseHttpApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 
 /**
@@ -36,17 +35,8 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class GleSYSApiMetadata extends BaseRestApiMetadata {
+public class GleSYSApiMetadata extends BaseHttpApiMetadata {
 
-   /**
-    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(GleSYSApi.class)} as
-    *             {@link GleSYSAsyncApi} interface will be removed in jclouds 1.7.
-    */
-   @Deprecated
-   public static final TypeToken<org.jclouds.rest.RestContext<GleSYSApi, GleSYSAsyncApi>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<GleSYSApi, GleSYSAsyncApi>>() {
-      private static final long serialVersionUID = 1L;
-   };
-   
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
@@ -61,17 +51,16 @@ public class GleSYSApiMetadata extends BaseRestApiMetadata {
    }
 
    public static Properties defaultProperties() {
-      Properties properties = BaseRestApiMetadata.defaultProperties();
+      Properties properties = BaseHttpApiMetadata.defaultProperties();
       properties.setProperty("jclouds.ssh.max-retries", "5");
       properties.setProperty("jclouds.ssh.retry-auth", "true");
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
+   public static class Builder extends BaseHttpApiMetadata.Builder<GleSYSApi, Builder> {
 
       @SuppressWarnings("deprecation")
       protected Builder() {
-         super(GleSYSApi.class, GleSYSAsyncApi.class);
          id("glesys")
          .name("GleSYS API")
          .identityName("Username")
@@ -82,7 +71,7 @@ public class GleSYSApiMetadata extends BaseRestApiMetadata {
          .defaultEndpoint("https://api.glesys.com")
          .defaultProperties(GleSYSApiMetadata.defaultProperties())
          .view(typeToken(ComputeServiceContext.class))
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(GleSYSComputeServiceContextModule.class, GleSYSRestClientModule.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(GleSYSComputeServiceContextModule.class, GleSYSHttpApiModule.class));
       }
 
       @Override

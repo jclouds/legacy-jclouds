@@ -16,20 +16,7 @@
  */
 package org.jclouds.glesys.config;
 
-import java.util.Map;
-
 import org.jclouds.glesys.GleSYSApi;
-import org.jclouds.glesys.GleSYSAsyncApi;
-import org.jclouds.glesys.features.ArchiveApi;
-import org.jclouds.glesys.features.ArchiveAsyncApi;
-import org.jclouds.glesys.features.DomainApi;
-import org.jclouds.glesys.features.DomainAsyncApi;
-import org.jclouds.glesys.features.EmailAccountApi;
-import org.jclouds.glesys.features.EmailAccountAsyncApi;
-import org.jclouds.glesys.features.IpApi;
-import org.jclouds.glesys.features.IpAsyncApi;
-import org.jclouds.glesys.features.ServerApi;
-import org.jclouds.glesys.features.ServerAsyncApi;
 import org.jclouds.glesys.handlers.GleSYSErrorHandler;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
@@ -40,9 +27,8 @@ import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 import org.jclouds.location.suppliers.implicit.OnlyLocationOrFirstZone;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.config.RestClientModule;
+import org.jclouds.rest.config.HttpApiModule;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.inject.Scopes;
 
 /**
@@ -51,19 +37,7 @@ import com.google.inject.Scopes;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class GleSYSRestClientModule extends RestClientModule<GleSYSApi, GleSYSAsyncApi> {
-
-   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(ServerApi.class, ServerAsyncApi.class)//
-         .put(IpApi.class, IpAsyncApi.class)//
-         .put(ArchiveApi.class, ArchiveAsyncApi.class)//
-         .put(DomainApi.class, DomainAsyncApi.class)//
-         .put(EmailAccountApi.class, EmailAccountAsyncApi.class)//
-         .build();
-
-   public GleSYSRestClientModule() {
-      super(DELEGATE_MAP);
-   }
+public class GleSYSHttpApiModule extends HttpApiModule<GleSYSApi> {
 
    @Override
    protected void configure() {

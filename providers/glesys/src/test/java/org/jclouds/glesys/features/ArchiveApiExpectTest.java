@@ -35,7 +35,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Tests parsing of {@code ArchiveAsyncApi}
+ * Tests parsing of {@code ArchiveApi}
  *
  * @author Adam Lowe
  */

@@ -17,12 +17,25 @@
 package org.jclouds.glesys.features;
 
 import java.util.Set;
+
+import javax.inject.Named;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.Fallbacks;
 import org.jclouds.glesys.domain.Domain;
 import org.jclouds.glesys.domain.DomainRecord;
 import org.jclouds.glesys.options.AddDomainOptions;
 import org.jclouds.glesys.options.AddRecordOptions;
 import org.jclouds.glesys.options.DomainOptions;
 import org.jclouds.glesys.options.UpdateRecordOptions;
+import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SelectJson;
 
 import com.google.common.collect.FluentIterable;
 
@@ -31,9 +44,9 @@ import com.google.common.collect.FluentIterable;
  * <p/>
  *
  * @author Adam Lowe
- * @see DomainAsyncApi
  * @see <a href="https://github.com/GleSYS/API/wiki/API-Documentation" />
  */
+@RequestFilters(BasicAuthentication.class)
 public interface DomainApi {
 
    /**
@@ -41,6 +54,12 @@ public interface DomainApi {
     *
     * @return an account's associated domain objects.
     */
+   @Named("domain:list")
+   @POST
+   @Path("/domain/list/format/json")
+   @SelectJson("domains")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Fallback(Fallbacks.EmptyFluentIterableOnNotFoundOr404.class)
    FluentIterable<Domain> list();
 
    /**
@@ -48,16 +67,27 @@ public interface DomainApi {
     *
     * @return the requested domain object.
     */
-   Domain get(String domain);
+   @Named("domain:details")
+   @POST
+   @Path("/domain/details/format/json")
+   @SelectJson("domain")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Fallback(Fallbacks.NullOnNotFoundOr404.class)
+   Domain get(@FormParam("domainname") String name);
 
    /**
     * Add a domain to the Glesys dns-system
     *
-    * @param domain  the name of the domain to add.
+    * @param name  the name of the domain to add.
     * @param options optional parameters
     * @return information about the added domain
     */
-   Domain create(String domain, AddDomainOptions... options);
+   @Named("domain:add")
+   @POST
+   @Path("/domain/add/format/json")
+   @SelectJson("domain")
+   @Consumes(MediaType.APPLICATION_JSON)
+   Domain create(@FormParam("domainname") String name, AddDomainOptions... options);
 
    /**
     * Update a domain to the Glesys dns-system
@@ -66,21 +96,34 @@ public interface DomainApi {
     * @param options optional parameters
     * @return information about the modified domain
     */
-   Domain update(String domain, DomainOptions options);
+   @Named("domain:edit")
+   @POST
+   @Path("/domain/edit/format/json")
+   @SelectJson("domain")
+   @Consumes(MediaType.APPLICATION_JSON)
+   Domain update(@FormParam("domainname") String domain, DomainOptions options);
 
    /**
     * Remove a domain to the Glesys dns-system
     *
     * @param domain the name of the domain to remove
     */
-   void delete(String domain);
+   @Named("domain:delete")
+   @POST
+   @Path("/domain/delete/format/json")
+   void delete(@FormParam("domainname") String domain);
 
    /**
     * Retrieve the DNS records for a given domain
     *
     * @param domain the name of the domain to retrieve records for
     */
-   Set<DomainRecord> listRecords(String domain);
+   @Named("domain:listrecords")
+   @POST
+   @Path("/domain/listrecords/format/json")
+   @SelectJson("records")
+   @Consumes(MediaType.APPLICATION_JSON)
+   Set<DomainRecord> listRecords(@FormParam("domainname") String domain);
 
    /**
     * Add a DNS Record
@@ -88,7 +131,14 @@ public interface DomainApi {
     * @param domain  the domain to add the record to
     * @param options optional settings for the record
     */
-   DomainRecord createRecord(String domain, String host, String type, String data, AddRecordOptions... options);
+   @Named("domain:addrecord")
+   @POST
+   @Path("/domain/addrecord/format/json")
+   @SelectJson("record")
+   @Consumes(MediaType.APPLICATION_JSON)
+   DomainRecord createRecord(@FormParam("domainname") String domain, @FormParam("host") String host,
+                                               @FormParam("type") String type, @FormParam("data") String data,
+                                               AddRecordOptions... options);
 
    /**
     * Modify a specific DNS Record
@@ -97,7 +147,12 @@ public interface DomainApi {
     * @param options  the settings to change
     * @see #listRecords to retrieve the necessary ids
     */
-   DomainRecord updateRecord(String recordId, UpdateRecordOptions options);
+   @Named("domain:updaterecord")
+   @POST
+   @Path("/domain/updaterecord/format/json")
+   @SelectJson("record")
+   @Consumes(MediaType.APPLICATION_JSON)
+   DomainRecord updateRecord(@FormParam("recordid") String recordId, UpdateRecordOptions options);
 
    /**
     * Delete a DNS record
@@ -105,6 +160,9 @@ public interface DomainApi {
     * @param recordId the id for the record to delete
     * @see #listRecords to retrieve the necessary ids
     */
-   void deleteRecord(String recordId);
+   @Named("domain:deleterecord")
+   @POST
+   @Path("/domain/deleterecord/format/json")
+   void deleteRecord(@FormParam("recordid") String recordId);
 
 }

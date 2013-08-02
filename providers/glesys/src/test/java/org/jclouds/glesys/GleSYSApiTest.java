@@ -26,15 +26,14 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code GleSYSAsyncApi}
+ * Tests behavior of {@code GleSYSApi}
  * 
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during
 // surefire
-@Test(groups = "unit", testName = "GleSYSAsyncApiTest")
-public class GleSYSAsyncApiTest extends BaseAsyncApiTest<GleSYSAsyncApi> {
-   private GleSYSAsyncApi asyncApi;
+@Test(groups = "unit", testName = "GleSYSApiTest")
+public class GleSYSApiTest extends BaseAsyncApiTest<GleSYSApi> {
    private GleSYSApi syncApi;
 
    @Override
@@ -49,18 +48,10 @@ public class GleSYSAsyncApiTest extends BaseAsyncApiTest<GleSYSAsyncApi> {
       assert syncApi.getArchiveApi() != null;
    }
 
-   public void testAsync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
-      assert asyncApi.getServerApi() != null;
-      assert asyncApi.getIpApi() != null;
-      assert asyncApi.getDomainApi() != null;
-      assert asyncApi.getArchiveApi() != null;
-   }
-
    @BeforeClass
    @Override
    protected void setupFactory() throws IOException {
       super.setupFactory();
-      asyncApi = injector.getInstance(GleSYSAsyncApi.class);
       syncApi = injector.getInstance(GleSYSApi.class);
    }
 
