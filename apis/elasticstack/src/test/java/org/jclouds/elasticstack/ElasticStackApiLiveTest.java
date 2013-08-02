@@ -58,21 +58,21 @@ import com.google.gson.Gson;
 import com.google.inject.Guice;
 
 /**
- * Tests behavior of {@code ElasticStackClient}
+ * Tests behavior of {@code ElasticStackApi}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", singleThreaded = true, testName = "ElasticStackClientLiveTest")
-public class ElasticStackClientLiveTest extends BaseComputeServiceContextLiveTest {
+@Test(groups = "live", singleThreaded = true, testName = "ElasticStackApiLiveTest")
+public class ElasticStackApiLiveTest extends BaseComputeServiceContextLiveTest {
 
-   public ElasticStackClientLiveTest() {
+   public ElasticStackApiLiveTest() {
       provider = "elasticstack";
    }
 
    protected long driveSize = 1 * 1024 * 1024 * 1024l;
    protected int maxDriveImageTime = 360;
    protected String vncPassword = "Il0veVNC";
-   protected ElasticStackClient client;
+   protected ElasticStackApi client;
    protected Predicate<HostAndPort> socketTester;
    protected Predicate<DriveInfo> driveNotClaimed;
    protected String imageId;
@@ -83,7 +83,7 @@ public class ElasticStackClientLiveTest extends BaseComputeServiceContextLiveTes
       super.setupContext();
       imageId = view.getComputeService().templateBuilder().build().getImage().getId();
          
-      client = view.utils().injector().getInstance(ElasticStackClient.class);
+      client = view.utils().injector().getInstance(ElasticStackApi.class);
       driveNotClaimed = retry(Predicates.not(new DriveClaimed(client)), maxDriveImageTime, 1, SECONDS);
       SocketOpen socketOpen = context.utils().injector().getInstance(SocketOpen.class);
       socketTester = retry(socketOpen, maxDriveImageTime, 1, SECONDS);

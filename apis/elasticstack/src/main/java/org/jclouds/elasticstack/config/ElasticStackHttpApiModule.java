@@ -19,8 +19,7 @@ package org.jclouds.elasticstack.config;
 import java.util.List;
 import java.util.Map;
 
-import org.jclouds.elasticstack.ElasticStackAsyncClient;
-import org.jclouds.elasticstack.ElasticStackClient;
+import org.jclouds.elasticstack.ElasticStackApi;
 import org.jclouds.elasticstack.domain.Device;
 import org.jclouds.elasticstack.domain.Drive;
 import org.jclouds.elasticstack.domain.DriveData;
@@ -31,18 +30,18 @@ import org.jclouds.elasticstack.domain.ServerMetrics;
 import org.jclouds.elasticstack.functions.CreateDriveRequestToMap;
 import org.jclouds.elasticstack.functions.DriveDataToMap;
 import org.jclouds.elasticstack.functions.MapToDevices;
+import org.jclouds.elasticstack.functions.MapToDevices.DeviceToId;
 import org.jclouds.elasticstack.functions.MapToDriveMetrics;
 import org.jclouds.elasticstack.functions.MapToNICs;
 import org.jclouds.elasticstack.functions.MapToServerMetrics;
 import org.jclouds.elasticstack.functions.ServerToMap;
-import org.jclouds.elasticstack.functions.MapToDevices.DeviceToId;
 import org.jclouds.elasticstack.handlers.ElasticStackErrorHandler;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.config.RestClientModule;
+import org.jclouds.rest.config.HttpApiModule;
 
 import com.google.common.base.Function;
 import com.google.inject.TypeLiteral;
@@ -53,7 +52,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class ElasticStackRestClientModule extends RestClientModule<ElasticStackClient, ElasticStackAsyncClient> {
+public class ElasticStackHttpApiModule extends HttpApiModule<ElasticStackApi> {
 
    @Override
    protected void configure() {

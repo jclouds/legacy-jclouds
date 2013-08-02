@@ -14,18 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jclouds.go2cloud;
+package org.jclouds.elastichosts;
 
-import org.jclouds.elasticstack.ElasticStackClientLiveTest;
+import org.jclouds.elasticstack.ElasticStackApiLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", singleThreaded = true, testName = "Go2CloudJohannesburg1ClientLiveTest")
-public class Go2CloudJohannesburg1ClientLiveTest extends ElasticStackClientLiveTest {
-   public Go2CloudJohannesburg1ClientLiveTest() {
-      provider = "go2cloud-jhb1";
+@Test(groups = "live", singleThreaded = true, testName = "ElasticHostsPeer1LosAngelesApiLiveTest")
+public class ElasticHostsPeer1LosAngelesApiLiveTest extends ElasticStackApiLiveTest {
+   public ElasticHostsPeer1LosAngelesApiLiveTest() {
+      provider = "elastichosts-lax-p";
    }
+   
 }

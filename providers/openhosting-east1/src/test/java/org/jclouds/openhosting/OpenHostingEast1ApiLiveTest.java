@@ -14,18 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jclouds.elastichosts;
+package org.jclouds.openhosting;
 
-import org.jclouds.elasticstack.ElasticStackClientLiveTest;
+import org.jclouds.elasticstack.ElasticStackApiLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", singleThreaded = true, testName = "ElasticHostsPeer1LondonClientLiveTest")
-public class ElasticHostsPeer1LondonClientLiveTest extends ElasticStackClientLiveTest {
-   public ElasticHostsPeer1LondonClientLiveTest() {
-      provider = "elastichosts-lon-p";
+@Test(groups = "live", singleThreaded = true, testName = "OpenHostingEast1ApiLiveTest")
+public class OpenHostingEast1ApiLiveTest extends ElasticStackApiLiveTest {
+   public OpenHostingEast1ApiLiveTest() {
+      provider = "openhosting-east1";
    }
 }

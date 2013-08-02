@@ -16,16 +16,16 @@
  */
 package org.jclouds.elastichosts;
 
-import org.jclouds.elasticstack.ElasticStackClientLiveTest;
+import org.jclouds.elasticstack.ElasticStackApiLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", singleThreaded = true, testName = "ElasticHostsBlueSquareLondonClientLiveTest")
-public class ElasticHostsBlueSquareLondonClientLiveTest extends ElasticStackClientLiveTest {
-   public ElasticHostsBlueSquareLondonClientLiveTest() {
-      provider = "elastichosts-lon-b";
+@Test(groups = "live", singleThreaded = true, testName = "ElasticHostsPeer1TorontoApiLiveTest")
+public class ElasticHostsPeer1TorontoApiLiveTest extends ElasticStackApiLiveTest {
+   public ElasticHostsPeer1TorontoApiLiveTest() {
+      provider = "elastichosts-tor-p";
    }
 }

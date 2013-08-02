@@ -34,7 +34,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.Location;
-import org.jclouds.elasticstack.ElasticStackClient;
+import org.jclouds.elasticstack.ElasticStackApi;
 import org.jclouds.elasticstack.compute.ElasticStackComputeServiceAdapter;
 import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata;
 import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata.DeviceToVolume;
@@ -98,10 +98,10 @@ public class ElasticStackComputeServiceContextModule extends
 
    @Singleton
    public static class GetDrive extends CacheLoader<String, DriveInfo> {
-      private final ElasticStackClient client;
+      private final ElasticStackApi client;
 
       @Inject
-      public GetDrive(ElasticStackClient client) {
+      public GetDrive(ElasticStackApi client) {
          this.client = client;
       }
 

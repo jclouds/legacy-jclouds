@@ -14,18 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jclouds.skalicloud;
+package org.jclouds.serverlove;
 
-import org.jclouds.elasticstack.ElasticStackClientLiveTest;
+import org.jclouds.domain.LoginCredentials;
+import org.jclouds.elasticstack.ElasticStackApiLiveTest;
+import org.jclouds.elasticstack.domain.Server;
 import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", singleThreaded = true, testName = "SkaliCloudMalaysiaClientLiveTest")
-public class SkaliCloudMalaysiaClientLiveTest extends ElasticStackClientLiveTest {
-   public SkaliCloudMalaysiaClientLiveTest() {
-      provider = "skalicloud-sdg-my";
+@Test(groups = "live", singleThreaded = true, testName = "ServerloveManchesterApiLiveTest")
+public class ServerloveManchesterApiLiveTest extends ElasticStackApiLiveTest {
+   public ServerloveManchesterApiLiveTest() {
+      provider = "serverlove-z1-man";
+   }
+
+   @Override
+   protected LoginCredentials getSshCredentials(Server server) {
+      return LoginCredentials.builder().user("root").password(server.getVnc().getPassword()).build();
    }
 }

@@ -22,7 +22,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.elasticstack.ElasticStackClient;
+import org.jclouds.elasticstack.ElasticStackApi;
 import org.jclouds.elasticstack.domain.DriveInfo;
 import org.jclouds.logging.Logger;
 
@@ -35,13 +35,13 @@ import com.google.common.base.Predicate;
 @Singleton
 public class DriveClaimed implements Predicate<DriveInfo> {
 
-   private final ElasticStackClient client;
+   private final ElasticStackApi client;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public DriveClaimed(ElasticStackClient client) {
+   public DriveClaimed(ElasticStackApi client) {
       this.client = client;
    }
 
