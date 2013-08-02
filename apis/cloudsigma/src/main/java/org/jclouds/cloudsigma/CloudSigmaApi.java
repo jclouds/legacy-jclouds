@@ -62,199 +62,269 @@ import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
 /**
- * Provides asynchronous access to CloudSigma via their REST API.
+ * Provides synchronous access to CloudSigma via their REST API.
  * <p/>
- * 
- * @see CloudSigmaClient
+ *
  * @see <a href="http://cloudsigma.com/en/platform-details/the-api" />
  * @author Adrian Cole
- * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(CloudSigmaClient.class)} as
- *             {@link CloudSigmaAsyncClient} interface will be removed in jclouds 1.7.
  */
-@Deprecated
 @RequestFilters(BasicAuthentication.class)
 @Consumes(MediaType.TEXT_PLAIN)
-public interface CloudSigmaAsyncClient extends Closeable {
+public interface CloudSigmaApi extends Closeable {
 
    /**
-    * @see CloudSigmaClient#listStandardDrives
+    * list of drive uuids that are in the library
+    *
+    * @return or empty set if no drives are found
     */
    @GET
    @Path("/drives/standard/list")
    @ResponseParser(SplitNewlines.class)
-   ListenableFuture<Set<String>> listStandardDrives();
+   Set<String> listStandardDrives();
 
    /**
-    * @see CloudSigmaClient#listStandardCds
+    * list of cd uuids that are in the library
+    *
+    * @return or empty set if no cds are found
     */
    @GET
    @Path("/drives/standard/cd/list")
    @ResponseParser(SplitNewlines.class)
-   ListenableFuture<Set<String>> listStandardCds();
+   Set<String> listStandardCds();
 
    /**
-    * @see CloudSigmaClient#listStandardImages
+    * list of image uuids that are in the library
+    *
+    * @return or empty set if no images are found
     */
    @GET
    @Path("/drives/standard/img/list")
    @ResponseParser(SplitNewlines.class)
-   ListenableFuture<Set<String>> listStandardImages();
+   Set<String> listStandardImages();
 
    /**
-    * @see CloudSigmaClient#cloneDrive
+    * Clone an existing drive. By default, the size is the same as the source
+    *
+    * @param sourceUuid
+    *           source to clone
+    * @param newName
+    *           name of the resulting drive
+    * @param options
+    *           options to control size
+    * @return new drive
     */
    @POST
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/{uuid}/clone")
    @MapBinder(BindCloneDriveOptionsToPlainTextString.class)
-   ListenableFuture<DriveInfo> cloneDrive(@PathParam("uuid") String sourceUuid, @PayloadParam("name") String newName,
-         CloneDriveOptions... options);
+   DriveInfo cloneDrive(@PathParam("uuid") String sourceUuid, @PayloadParam("name") String newName,
+                                          CloneDriveOptions... options);
 
    /**
-    * @see CloudSigmaClient#getProfileInfo
+    * Get profile info
+    *
+    * @return info or null, if not found
     */
    @GET
    @Path("/profile/info")
    @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToProfileInfo.class)
-   ListenableFuture<ProfileInfo> getProfileInfo();
+   ProfileInfo getProfileInfo();
 
    /**
-    * @see CloudSigmaClient#listDriveInfo
+    * Get all drives info
+    *
+    * @return or empty set if no drives are found
     */
    @GET
    @Path("/drives/info")
    @ResponseParser(ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet.class)
-   ListenableFuture<Set<DriveInfo>> listDriveInfo();
+   Set<DriveInfo> listDriveInfo();
 
    /**
-    * @see CloudSigmaClient#getDriveInfo
+    * @param uuid
+    *           what to get
+    * @return null, if not found
     */
    @GET
    @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/{uuid}/info")
-   ListenableFuture<DriveInfo> getDriveInfo(@PathParam("uuid") String uuid);
+   DriveInfo getDriveInfo(@PathParam("uuid") String uuid);
 
    /**
-    * @see CloudSigmaClient#createDrive
+    * create a new drive
+    *
+    * @param createDrive
+    *           required parameters: name, size
+    * @return newly created drive
     */
    @POST
    @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/create")
-   ListenableFuture<DriveInfo> createDrive(@BinderParam(BindDriveToPlainTextString.class) Drive createDrive);
+   DriveInfo createDrive(@BinderParam(BindDriveToPlainTextString.class) Drive createDrive);
 
    /**
-    * @see CloudSigmaClient#setDriveData
+    * set extra drive data
+    *
+    * @param uuid
+    *           what drive to change
+    * @param createDrive
+    *           what values to change
+    * @return new data
     */
    @POST
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/{uuid}/set")
-   ListenableFuture<DriveInfo> setDriveData(@PathParam("uuid") String uuid,
-         @BinderParam(BindDriveDataToPlainTextString.class) DriveData createDrive);
+   DriveInfo setDriveData(@PathParam("uuid") String uuid,
+                                            @BinderParam(BindDriveDataToPlainTextString.class) DriveData createDrive);
 
    /**
-    * @see CloudSigmaClient#createServer
+    * create a new server
+    *
+    * @param createServer
+    * @return newly created server
     */
    @POST
    @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
    @Path("/servers/create")
-   ListenableFuture<ServerInfo> createServer(@BinderParam(BindServerToPlainTextString.class) Server createServer);
+   ServerInfo createServer(@BinderParam(BindServerToPlainTextString.class) Server createServer);
 
    /**
-    * @see CloudSigmaClient#listServerInfo
+    * Get all servers info
+    *
+    * @return or empty set if no servers are found
     */
    @GET
    @Path("/servers/info")
    @ResponseParser(ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet.class)
-   ListenableFuture<Set<ServerInfo>> listServerInfo();
+   Set<ServerInfo> listServerInfo();
 
    /**
-    * @see CloudSigmaClient#getServerInfo
+    * @param uuid
+    *           what to get
+    * @return null, if not found
     */
    @GET
    @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
    @Path("/servers/{uuid}/info")
-   ListenableFuture<ServerInfo> getServerInfo(@PathParam("uuid") String uuid);
+   ServerInfo getServerInfo(@PathParam("uuid") String uuid);
 
    /**
-    * @see CloudSigmaClient#setServerConfiguration
+    * set server configuration
+    *
+    * @param uuid
+    *           what server to change
+    * @param setServer
+    *           what values to change
+    * @return new data
     */
    @POST
    @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
    @Path("/servers/{uuid}/set")
-   ListenableFuture<ServerInfo> setServerConfiguration(@PathParam("uuid") String uuid,
-         @BinderParam(BindServerToPlainTextString.class) Server setServer);
+   ServerInfo setServerConfiguration(@PathParam("uuid") String uuid,
+                                                       @BinderParam(BindServerToPlainTextString.class) Server setServer);
 
    /**
-    * @see CloudSigmaClient#listServers
+    * list of server uuids in your account
+    *
+    * @return or empty set if no servers are found
     */
    @GET
    @Path("/servers/list")
    @ResponseParser(SplitNewlines.class)
-   ListenableFuture<Set<String>> listServers();
+   Set<String> listServers();
 
    /**
-    * @see CloudSigmaClient#destroyServer
+    * Destroy a server
+    *
+    * @param uuid
+    *           what to destroy
     */
    @GET
    @Path("/servers/{uuid}/destroy")
    @Fallback(VoidOnNotFoundOr404.class)
-   ListenableFuture<Void> destroyServer(@PathParam("uuid") String uuid);
+   void destroyServer(@PathParam("uuid") String uuid);
 
    /**
-    * @see CloudSigmaClient#startServer
+    * Start a server
+    *
+    * @param uuid
+    *           what to start
     */
    @POST
    @Path("/servers/{uuid}/start")
-   ListenableFuture<Void> startServer(@PathParam("uuid") String uuid);
+   void startServer(@PathParam("uuid") String uuid);
 
    /**
-    * @see CloudSigmaClient#stopServer
+    * Stop a server
+    * <p/>
+    * Kills the server immediately, equivalent to a power failure. Server reverts to a stopped
+    * status if it is persistent and is automatically destroyed otherwise.
+    *
+    * @param uuid
+    *           what to stop
     */
    @POST
    @Path("/servers/{uuid}/stop")
-   ListenableFuture<Void> stopServer(@PathParam("uuid") String uuid);
+   void stopServer(@PathParam("uuid") String uuid);
 
    /**
-    * @see CloudSigmaClient#shutdownServer
+    * Shutdown a server
+    * <p/>
+    * Sends the server an ACPI power-down event. Server reverts to a stopped status if it is
+    * persistent and is automatically destroyed otherwise.
+    * <h4>note</h4> behaviour on shutdown depends on how your server OS is set up to respond to an
+    * ACPI power button signal.
+    *
+    * @param uuid
+    *           what to shutdown
     */
    @POST
    @Path("/servers/{uuid}/shutdown")
-   ListenableFuture<Void> shutdownServer(@PathParam("uuid") String uuid);
+   void shutdownServer(@PathParam("uuid") String uuid);
 
    /**
-    * @see CloudSigmaClient#resetServer
+    * Reset a server
+    *
+    * @param uuid
+    *           what to reset
     */
    @POST
    @Path("/servers/{uuid}/reset")
-   ListenableFuture<Void> resetServer(@PathParam("uuid") String uuid);
+   void resetServer(@PathParam("uuid") String uuid);
 
    /**
-    * @see CloudSigmaClient#listDrives
+    * list of drive uuids in your account
+    *
+    * @return or empty set if no drives are found
     */
    @GET
    @Path("/drives/list")
    @ResponseParser(SplitNewlines.class)
-   ListenableFuture<Set<String>> listDrives();
+   Set<String> listDrives();
 
    /**
-    * @see CloudSigmaClient#destroyDrive
+    * Destroy a drive
+    *
+    * @param uuid
+    *           what to delete
     */
    @GET
    @Path("/drives/{uuid}/destroy")
    @Fallback(VoidOnNotFoundOr404.class)
-   ListenableFuture<Void> destroyDrive(@PathParam("uuid") String uuid);
+   void destroyDrive(@PathParam("uuid") String uuid);
 
    /**
-    * @see CloudSigmaClient#createVLAN
+    * create a new vlan
+    *
+    * @param name
+    * @return newly created vlan
     */
    @POST
    @Fallback(NullOnNotFoundOr404.class)
@@ -262,91 +332,117 @@ public interface CloudSigmaAsyncClient extends Closeable {
    @Path("/resources/vlan/create")
    @Payload("name {name}\n")
    @Produces(MediaType.TEXT_PLAIN)
-   ListenableFuture<VLANInfo> createVLAN(@PayloadParam("name") String name);
+   VLANInfo createVLAN(@PayloadParam("name") String name);
 
    /**
-    * @see CloudSigmaClient#listVLANInfo
+    * Get all vlans info
+    *
+    * @return or empty set if no vlans are found
     */
    @GET
    @Path("/resources/vlan/info")
    @ResponseParser(ListOfKeyValuesDelimitedByBlankLinesToVLANInfoSet.class)
-   ListenableFuture<Set<VLANInfo>> listVLANInfo();
+   Set<VLANInfo> listVLANInfo();
 
    /**
-    * @see CloudSigmaClient#getVLANInfo
+    * @param uuid
+    *           what to get
+    * @return null, if not found
     */
    @GET
    @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToVLANInfo.class)
    @Path("/resources/vlan/{uuid}/info")
-   ListenableFuture<VLANInfo> getVLANInfo(@PathParam("uuid") String uuid);
+   VLANInfo getVLANInfo(@PathParam("uuid") String uuid);
 
    /**
-    * @see CloudSigmaClient#setVLANConfiguration
+    * set vlan configuration
+    *
+    * @param uuid
+    *           what vlan to change
+    * @param name
+    *           what the new name is
+    * @return new data
     */
    @POST
    @ResponseParser(KeyValuesDelimitedByBlankLinesToVLANInfo.class)
    @Path("/resources/vlan/{uuid}/set")
    @Payload("name {name}\n")
    @Produces(MediaType.TEXT_PLAIN)
-   ListenableFuture<VLANInfo> renameVLAN(@PathParam("uuid") String uuid, @PayloadParam("name") String name);
+   VLANInfo renameVLAN(@PathParam("uuid") String uuid, @PayloadParam("name") String name);
 
    /**
-    * @see CloudSigmaClient#listVLANs
+    * list of vlan uuids in your account
+    *
+    * @return or empty set if no vlans are found
     */
    @GET
    @Path("/resources/vlan/list")
    @ResponseParser(SplitNewlinesAndReturnSecondField.class)
-   ListenableFuture<Set<String>> listVLANs();
+   Set<String> listVLANs();
 
    /**
-    * @see CloudSigmaClient#destroyVLAN
+    * Destroy a vlan
+    *
+    * @param uuid
+    *           what to destroy
     */
    @GET
    @Path("/resources/vlan/{uuid}/destroy")
    @Fallback(VoidOnNotFoundOr404.class)
-   ListenableFuture<Void> destroyVLAN(@PathParam("uuid") String uuid);
+   void destroyVLAN(@PathParam("uuid") String uuid);
 
    /**
-    * @see CloudSigmaClient#createStaticIP
+    * create a new ip
+    *
+    * @return newly created ip
     */
    @POST
    @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToStaticIPInfo.class)
    @Path("/resources/ip/create")
-   ListenableFuture<StaticIPInfo> createStaticIP();
+   StaticIPInfo createStaticIP();
 
    /**
-    * @see CloudSigmaClient#listStaticIPInfo
+    * Get all ips info
+    *
+    * @return or empty set if no ips are found
     */
    @GET
    @Path("/resources/ip/info")
    @ResponseParser(ListOfKeyValuesDelimitedByBlankLinesToStaticIPInfoSet.class)
-   ListenableFuture<Set<StaticIPInfo>> listStaticIPInfo();
+   Set<StaticIPInfo> listStaticIPInfo();
 
    /**
-    * @see CloudSigmaClient#getStaticIPInfo
+    * @param uuid
+    *           what to get
+    * @return null, if not found
     */
    @GET
    @Fallback(NullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToStaticIPInfo.class)
    @Path("/resources/ip/{uuid}/info")
-   ListenableFuture<StaticIPInfo> getStaticIPInfo(@PathParam("uuid") String uuid);
+   StaticIPInfo getStaticIPInfo(@PathParam("uuid") String uuid);
 
    /**
-    * @see CloudSigmaClient#listStaticIPs
+    * list of ip uuids in your account
+    *
+    * @return or empty set if no ips are found
     */
    @GET
    @Path("/resources/ip/list")
    @ResponseParser(SplitNewlinesAndReturnSecondField.class)
-   ListenableFuture<Set<String>> listStaticIPs();
+   Set<String> listStaticIPs();
 
    /**
-    * @see CloudSigmaClient#destroyStaticIP
+    * Destroy a ip
+    *
+    * @param uuid
+    *           what to destroy
     */
    @GET
    @Path("/resources/ip/{uuid}/destroy")
    @Fallback(VoidOnNotFoundOr404.class)
-   ListenableFuture<Void> destroyStaticIP(@PathParam("uuid") String uuid);
+   void destroyStaticIP(@PathParam("uuid") String uuid);
 
 }

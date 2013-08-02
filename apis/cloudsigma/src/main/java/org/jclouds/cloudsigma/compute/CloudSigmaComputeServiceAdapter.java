@@ -28,7 +28,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.cloudsigma.CloudSigmaClient;
+import org.jclouds.cloudsigma.CloudSigmaApi;
 import org.jclouds.cloudsigma.compute.options.CloudSigmaTemplateOptions;
 import org.jclouds.cloudsigma.domain.AffinityType;
 import org.jclouds.cloudsigma.domain.Device;
@@ -62,14 +62,13 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
-import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**
- * defines the connection between the {@link CloudSigmaClient} implementation
+ * defines the connection between the {@link org.jclouds.cloudsigma.CloudSigmaApi} implementation
  * and the jclouds {@link ComputeService}
  *
  */
@@ -85,7 +84,7 @@ public class CloudSigmaComputeServiceAdapter implements
             }
 
          });
-   private final CloudSigmaClient client;
+   private final CloudSigmaApi client;
    private final Predicate<DriveInfo> driveNotClaimed;
    private final String defaultVncPassword;
    private final LoadingCache<String, DriveInfo> cache;
@@ -96,7 +95,7 @@ public class CloudSigmaComputeServiceAdapter implements
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public CloudSigmaComputeServiceAdapter(CloudSigmaClient client, Predicate<DriveInfo> driveNotClaimed,
+   public CloudSigmaComputeServiceAdapter(CloudSigmaApi client, Predicate<DriveInfo> driveNotClaimed,
          @Named(CloudSigmaConstants.PROPERTY_VNC_PASSWORD) String defaultVncPassword,
          LoadingCache<String, DriveInfo> cache, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
       this.client = checkNotNull(client, "client");

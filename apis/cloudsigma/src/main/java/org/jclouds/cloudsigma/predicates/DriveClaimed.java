@@ -22,7 +22,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.cloudsigma.CloudSigmaClient;
+import org.jclouds.cloudsigma.CloudSigmaApi;
 import org.jclouds.cloudsigma.domain.DriveInfo;
 import org.jclouds.logging.Logger;
 
@@ -35,13 +35,13 @@ import com.google.common.base.Predicate;
 @Singleton
 public class DriveClaimed implements Predicate<DriveInfo> {
 
-   private final CloudSigmaClient client;
+   private final CloudSigmaApi client;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public DriveClaimed(CloudSigmaClient client) {
+   public DriveClaimed(CloudSigmaApi client) {
       this.client = client;
    }
 

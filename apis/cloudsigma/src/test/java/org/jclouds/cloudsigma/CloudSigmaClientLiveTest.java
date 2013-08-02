@@ -60,7 +60,7 @@ import com.google.gson.Gson;
 import com.google.inject.Guice;
 
 /**
- * Tests behavior of {@code CloudSigmaClient}
+ * Tests behavior of {@code CloudSigmaApi}
  * 
  * @author Adrian Cole
  */
@@ -74,7 +74,7 @@ public class CloudSigmaClientLiveTest extends BaseComputeServiceContextLiveTest 
    protected long driveSize = 8 * 1024 * 1024 * 1024l;
    protected int maxDriveImageTime = 300;
    protected String vncPassword = "Il0veVNC";
-   protected CloudSigmaClient client;
+   protected CloudSigmaApi client;
    protected Predicate<HostAndPort> socketTester;
 
    protected Predicate<DriveInfo> driveNotClaimed;
@@ -85,7 +85,7 @@ public class CloudSigmaClientLiveTest extends BaseComputeServiceContextLiveTest 
    public void setupContext() {
       super.setupContext();
 
-      client = view.utils().injector().getInstance(CloudSigmaClient.class);
+      client = view.utils().injector().getInstance(CloudSigmaApi.class);
       driveNotClaimed = retry(Predicates.not(new DriveClaimed(client)), maxDriveImageTime, 1, SECONDS);
       SocketOpen socketOpten = context.utils().injector().getInstance(SocketOpen.class);
       socketTester = retry(socketOpten, maxDriveImageTime, 1, SECONDS);

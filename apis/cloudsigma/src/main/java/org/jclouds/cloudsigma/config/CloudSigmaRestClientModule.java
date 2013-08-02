@@ -19,8 +19,7 @@ package org.jclouds.cloudsigma.config;
 import java.util.List;
 import java.util.Map;
 
-import org.jclouds.cloudsigma.CloudSigmaAsyncClient;
-import org.jclouds.cloudsigma.CloudSigmaClient;
+import org.jclouds.cloudsigma.CloudSigmaApi;
 import org.jclouds.cloudsigma.domain.Device;
 import org.jclouds.cloudsigma.domain.Drive;
 import org.jclouds.cloudsigma.domain.DriveData;
@@ -42,7 +41,7 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.config.RestClientModule;
+import org.jclouds.rest.config.HttpApiModule;
 
 import com.google.common.base.Function;
 import com.google.inject.TypeLiteral;
@@ -53,7 +52,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class CloudSigmaRestClientModule extends RestClientModule<CloudSigmaClient, CloudSigmaAsyncClient> {
+public class CloudSigmaRestClientModule extends HttpApiModule<CloudSigmaApi> {
 
    @Override
    protected void bindErrorHandlers() {

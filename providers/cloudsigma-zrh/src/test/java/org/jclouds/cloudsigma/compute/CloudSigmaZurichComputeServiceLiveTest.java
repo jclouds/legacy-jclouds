@@ -24,8 +24,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
-import org.jclouds.cloudsigma.CloudSigmaApiMetadata;
-import org.jclouds.cloudsigma.CloudSigmaClient;
+import org.jclouds.cloudsigma.CloudSigmaApi;
 import org.jclouds.cloudsigma.compute.options.CloudSigmaTemplateOptions;
 import org.jclouds.cloudsigma.domain.AffinityType;
 import org.jclouds.cloudsigma.domain.Device;
@@ -62,8 +61,7 @@ public class CloudSigmaZurichComputeServiceLiveTest extends CloudSigmaComputeSer
          Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, template);
          NodeMetadata node = get(nodes, 0);
 
-         CloudSigmaClient api = CloudSigmaClient.class.cast(client.getContext().unwrap(
-                  CloudSigmaApiMetadata.CONTEXT_TOKEN).getApi());
+         CloudSigmaApi api = CloudSigmaApi.class.cast(client.getContext());
 
          // Note: I wanted to use node.getHardware().getVolumes() but there is no
          // way to go from a Volume to a DriveInfo

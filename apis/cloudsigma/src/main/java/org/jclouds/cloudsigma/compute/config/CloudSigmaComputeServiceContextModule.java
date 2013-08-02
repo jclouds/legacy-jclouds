@@ -22,7 +22,7 @@ import static org.jclouds.util.Predicates2.retry;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.cloudsigma.CloudSigmaClient;
+import org.jclouds.cloudsigma.CloudSigmaApi;
 import org.jclouds.cloudsigma.compute.CloudSigmaComputeServiceAdapter;
 import org.jclouds.cloudsigma.compute.CloudSigmaTemplateBuilderImpl;
 import org.jclouds.cloudsigma.compute.functions.ParseOsFamilyVersion64BitFromImageName;
@@ -97,10 +97,10 @@ public class CloudSigmaComputeServiceContextModule extends
 
    @Singleton
    public static class GetDrive extends CacheLoader<String, DriveInfo> {
-      private final CloudSigmaClient client;
+      private final CloudSigmaApi client;
 
       @Inject
-      public GetDrive(CloudSigmaClient client) {
+      public GetDrive(CloudSigmaApi client) {
          this.client = client;
       }
 

@@ -26,10 +26,9 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.cloudsigma.compute.config.CloudSigmaComputeServiceContextModule;
 import org.jclouds.cloudsigma.config.CloudSigmaRestClientModule;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.rest.internal.BaseRestApiMetadata;
+import org.jclouds.rest.internal.BaseHttpApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 
 /**
@@ -37,17 +36,9 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class CloudSigmaApiMetadata extends BaseRestApiMetadata {
+public class CloudSigmaApiMetadata extends BaseHttpApiMetadata<CloudSigmaApi> {
 
-   /**
-    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(CloudSigmaClient.class)} as
-    *             {@link CloudSigmaAsyncClient} interface will be removed in jclouds 1.7.
-    */
-   @Deprecated
-   public static final TypeToken<org.jclouds.rest.RestContext<CloudSigmaClient, CloudSigmaAsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<CloudSigmaClient, CloudSigmaAsyncClient>>() {
-      private static final long serialVersionUID = 1L;
-   };
-   
+
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
@@ -62,7 +53,7 @@ public class CloudSigmaApiMetadata extends BaseRestApiMetadata {
    }
 
    public static Properties defaultProperties() {
-      Properties properties = BaseRestApiMetadata.defaultProperties();
+      Properties properties = BaseHttpApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_VNC_PASSWORD, "IL9vs34d");
       // passwords are set post-boot, so auth failures are possible
       // from a race condition applying the password set script
@@ -72,11 +63,9 @@ public class CloudSigmaApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
+   public static class Builder extends BaseHttpApiMetadata.Builder<CloudSigmaApi, Builder> {
 
-      @SuppressWarnings("deprecation")
       protected Builder() {
-         super(CloudSigmaClient.class, CloudSigmaAsyncClient.class);
          id("cloudsigma")
          .name("CloudSigma API")
          .identityName("Email")

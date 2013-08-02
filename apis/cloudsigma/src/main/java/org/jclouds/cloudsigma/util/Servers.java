@@ -16,7 +16,6 @@
  */
 package org.jclouds.cloudsigma.util;
 
-import org.jclouds.cloudsigma.CloudSigmaClient;
 import org.jclouds.cloudsigma.domain.IDEDevice;
 import org.jclouds.cloudsigma.domain.Model;
 import org.jclouds.cloudsigma.domain.NIC;
@@ -69,7 +68,7 @@ public class Servers {
 
    /**
     * Takes the input server and changes its primary ip to a new address. To make this happen,
-    * you'll need to invoke {@link CloudSigmaClient#setServerConfiguration}
+    * you'll need to invoke {@link org.jclouds.cloudsigma.CloudSigmaApi#setServerConfiguration}
     * 
     * @param in
     *           server to change
