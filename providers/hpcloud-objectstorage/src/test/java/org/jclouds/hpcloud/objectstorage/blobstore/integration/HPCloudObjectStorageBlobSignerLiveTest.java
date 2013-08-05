@@ -30,21 +30,4 @@ public class HPCloudObjectStorageBlobSignerLiveTest extends SwiftBlobSignerLiveT
    public HPCloudObjectStorageBlobSignerLiveTest() {
       provider = "hpcloud-objectstorage";
    }
-
-   // hp doesn't yet support time-bound request signing
-   // https://api-docs.hpcloud.com/hpcloud-object-storage/1.0/content/ch_object-storage-dev-overview.html
-   @Override
-   @Test(expectedExceptions = AuthorizationException.class)
-   public void testSignGetUrlWithTime() throws InterruptedException, IOException {
-      super.testSignGetUrlWithTime();
-   }
-
-   // hp doesn't yet support time-bound request signing
-   // https://api-docs.hpcloud.com/hpcloud-object-storage/1.0/content/ch_object-storage-dev-overview.html
-   @Override
-   @Test(expectedExceptions = AuthorizationException.class)
-   public void testSignPutUrlWithTime() throws Exception {
-      super.testSignPutUrlWithTime();
-   }
-
 }
