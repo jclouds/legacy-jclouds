@@ -19,10 +19,13 @@ package org.jclouds.azureblob.blobstore.integration;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
+import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
+import org.jclouds.azureblob.blobstore.strategy.MultipartUploadStrategy;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
@@ -95,4 +98,53 @@ public class AzureBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
          returnContainer(containerName);
       }
    }
+
+   public void testMultipartChunkedFileStreamPowerOfTwoSize() throws IOException, InterruptedException {
+      final long limit = MultipartUploadStrategy.MAX_BLOCK_SIZE;
+      InputSupplier<InputStream> input = new InputSupplier<InputStream>() {
+         @Override
+         public InputStream getInput() throws IOException {
+            return ByteStreams.limit(ZERO_INPUT_STREAM, limit);
+         }
+      };
+      File file = new File("target/const.txt");
+      Files.copy(input, file);
+      String containerName = getContainerName();
+
+      try {
+         BlobStore blobStore = view.getBlobStore();
+         blobStore.createContainerInLocation(null, containerName);
+         Blob blob = blobStore.blobBuilder("const.txt").payload(file).build();
+         String expected = blobStore.putBlob(containerName, blob, PutOptions.Builder.multipart());
+         String etag = blobStore.blobMetadata(containerName, "const.txt").getETag();
+         assertEquals(etag, expected);
+      } finally {
+         returnContainer(containerName);
+      }
+   }
+
+   /** An infinite-length zero byte InputStream. */
+   // Guava feature request:
+   // https://code.google.com/p/guava-libraries/issues/detail?id=1370
+   private static final InputStream ZERO_INPUT_STREAM = new InputStream() {
+      @Override
+      public int read() {
+         return 0;
+      }
+
+      @Override
+      public int read(final byte[] b) {
+         return read(b, 0, b.length);
+      }
+
+      @Override
+      public int read(final byte[] b, final int off, final int len) {
+         if (off < 0 || len < 0 || len > b.length - off) {
+            throw new IndexOutOfBoundsException();
+         }
+         int length = Math.min(len, b.length - off);
+         Arrays.fill(b, off, length, (byte) 0);
+         return length;
+      }
+   };
 }
