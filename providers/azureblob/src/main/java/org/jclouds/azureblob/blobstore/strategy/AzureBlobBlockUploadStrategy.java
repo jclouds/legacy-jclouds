@@ -70,7 +70,7 @@ public class AzureBlobBlockUploadStrategy implements MultipartUploadStrategy {
       while (offset < length) {
          blockCount++;
          long chunkSize = MAX_BLOCK_SIZE;
-         if (blockCount >= totalBlocks) {
+         if (length - offset < MAX_BLOCK_SIZE) {
             chunkSize = length % MAX_BLOCK_SIZE;
          }
          bytesWritten += chunkSize;
