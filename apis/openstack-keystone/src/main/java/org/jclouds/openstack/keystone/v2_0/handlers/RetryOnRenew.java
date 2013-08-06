@@ -64,8 +64,8 @@ public class RetryOnRenew implements HttpRetryHandler {
                   retry = false;
                } else {
                   byte[] content = closeClientButKeepContentStream(response);
-                  // Error when the session token expires: HTTP/1.1 401 Unauthorized, no body (or provider-specific response body)
-                  if (content != null) {
+                  //TODO: what is the error when the session token expires??
+                  if (content != null && new String(content).contains("lease renew")) {
                      logger.debug("invalidating authentication token");
                      authenticationResponseCache.invalidateAll();
                      retry = true;

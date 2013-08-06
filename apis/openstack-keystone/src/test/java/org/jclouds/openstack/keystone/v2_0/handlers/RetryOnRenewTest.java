@@ -53,7 +53,7 @@ public class RetryOnRenewTest {
       cache.invalidateAll();
       expectLastCall();
 
-      expect(response.getPayload()).andReturn(Payloads.newStringPayload("")).anyTimes();
+      expect(response.getPayload()).andReturn(Payloads.newStringPayload("token expired, please renew")).anyTimes();
       expect(response.getStatusCode()).andReturn(401).atLeastOnce();
 
       replay(command);
