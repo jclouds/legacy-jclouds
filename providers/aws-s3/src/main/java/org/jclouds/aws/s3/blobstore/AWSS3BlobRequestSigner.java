@@ -72,17 +72,14 @@ public class AWSS3BlobRequestSigner extends S3BlobRequestSigner<AWSS3AsyncClient
    public HttpRequest signGetBlob(String container, String name, long timeInSeconds) {
       checkNotNull(container, "container");
       checkNotNull(name, "name");
-      HttpRequest request = processor.apply(Invocation.create(getMethod, ImmutableList.<Object> of(container, name)));
-      return cleanRequest(signForTemporaryAccess(request, timeInSeconds));
+      throw new UnsupportedOperationException();
    }
 
    @Override
    public HttpRequest signPutBlob(String container, Blob blob, long timeInSeconds) {
       checkNotNull(container, "container");
       checkNotNull(blob, "blob");
-      HttpRequest request = processor.apply(Invocation.create(createMethod,
-         ImmutableList.<Object>of(container, blobToObject.apply(blob))));
-      return cleanRequest(signForTemporaryAccess(request, timeInSeconds));
+      throw new UnsupportedOperationException();
    }
 
    private HttpRequest signForTemporaryAccess(HttpRequest request, long timeInSeconds) {
