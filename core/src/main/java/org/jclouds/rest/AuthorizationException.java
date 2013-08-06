@@ -30,11 +30,15 @@ public class AuthorizationException extends RuntimeException {
       super();
    }
 
-   public AuthorizationException(String arg0, Throwable arg1) {
-      super(arg0, arg1);
+   public AuthorizationException(String message, Throwable cause) {
+      super(message, cause);
    }
 
-   public AuthorizationException(Throwable arg0) {
-      super(arg0);
+   public AuthorizationException(Throwable cause) {
+      super(cause);
+   }
+
+   public AuthorizationException(String message) {
+      super(message);
    }
 }
