@@ -196,6 +196,13 @@ public class CloudStackComputeServiceAdapter implements
          options.keyPair(keyPair.getName());
       }
 
+      if (templateOptions.getDiskOfferingId() != null) {
+         options.diskOfferingId(templateOptions.getDiskOfferingId());
+         if (templateOptions.getDataDiskSize() > 0) {
+            options.dataDiskSize(templateOptions.getDataDiskSize());
+         }
+      }
+
       if (supportsSecurityGroups().apply(zone)) {
          List<Integer> inboundPorts = Ints.asList(templateOptions.getInboundPorts());
 

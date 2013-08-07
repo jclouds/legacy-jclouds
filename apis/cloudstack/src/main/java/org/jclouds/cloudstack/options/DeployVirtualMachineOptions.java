@@ -199,11 +199,9 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
 
    /**
     * @param dataDiskSize
-    *           the arbitrary size for the DATADISK volume. Mutually exclusive
-    *           with diskOfferingId
+    *           the arbitrary size for the DATADISK volume.
     */
    public DeployVirtualMachineOptions dataDiskSize(long dataDiskSize) {
-      checkArgument(!queryParameters.containsKey("diskofferingid"), "Mutually exclusive with diskOfferingId");
       this.queryParameters.replaceValues("size", ImmutableSet.of(dataDiskSize + ""));
       return this;
    }

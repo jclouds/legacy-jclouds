@@ -60,6 +60,8 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
    protected String domainId;
    protected boolean generateKeyPair = false;
    protected boolean generateSecurityGroup = false;
+   protected String diskOfferingId;
+   protected int dataDiskSize;
    
    @Override
    public CloudStackTemplateOptions clone() {
@@ -83,7 +85,33 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
          eTo.account(this.account);
          eTo.domainId(this.domainId);
          eTo.setupStaticNat(setupStaticNat);
+         eTo.diskOfferingId(diskOfferingId);
+         eTo.dataDiskSize(dataDiskSize);
       }
+   }
+
+   /**
+    * @see org.jclouds.cloudstack.options.DeployVirtualMachineOptions#diskOfferingId
+    */
+   public CloudStackTemplateOptions diskOfferingId(String diskOfferingId) {
+      this.diskOfferingId = diskOfferingId;
+      return this;
+   }
+
+   public String getDiskOfferingId() {
+      return diskOfferingId;
+   }
+
+   /**
+    * @see DeployVirtualMachineOptions#dataDiskSize
+    */
+   public CloudStackTemplateOptions dataDiskSize(int dataDiskSize) {
+      this.dataDiskSize = dataDiskSize;
+      return this;
+   }
+
+   public int getDataDiskSize() {
+      return dataDiskSize;
    }
 
    /**
@@ -229,6 +257,22 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
    public static final CloudStackTemplateOptions NONE = new CloudStackTemplateOptions();
 
    public static class Builder {
+
+      /**
+       * @see CloudStackTemplateOptions#diskOfferingId
+       */
+      public static CloudStackTemplateOptions diskOfferingId(String diskOfferingId) {
+         CloudStackTemplateOptions options = new CloudStackTemplateOptions();
+         return options.diskOfferingId(diskOfferingId);
+      }
+
+      /**
+       * @see CloudStackTemplateOptions#dataDiskSize
+       */
+      public static CloudStackTemplateOptions dataDiskSize(int dataDiskSize) {
+         CloudStackTemplateOptions options = new CloudStackTemplateOptions();
+         return options.dataDiskSize(dataDiskSize);
+      }
 
       /**
        * @see CloudStackTemplateOptions#securityGroupId

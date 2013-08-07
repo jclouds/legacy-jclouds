@@ -17,6 +17,8 @@
 package org.jclouds.cloudstack.compute.options;
 
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.account;
+import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.dataDiskSize;
+import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.diskOfferingId;
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.domainId;
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.generateKeyPair;
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.generateSecurityGroup;
@@ -218,6 +220,24 @@ public class CloudStackTemplateOptionsTest {
    public void testKeyPair() {
       TemplateOptions options = keyPair("test");
       assertEquals(options.as(CloudStackTemplateOptions.class).getKeyPair(), "test");
+   }
+
+   @Test
+   public void testDiskOfferingId() {
+      TemplateOptions options = diskOfferingId("test");
+      assertEquals(options.as(CloudStackTemplateOptions.class).getDiskOfferingId(), "test");
+   }
+
+   @Test
+   public void testDataDiskSizeDefault() {
+      TemplateOptions options = new CloudStackTemplateOptions();
+      assertEquals(options.as(CloudStackTemplateOptions.class).getDataDiskSize(), 0);
+   }
+
+   @Test
+   public void testDataDiskSize() {
+      TemplateOptions options = dataDiskSize(10);
+      assertEquals(options.as(CloudStackTemplateOptions.class).getDataDiskSize(), 10);
    }
 
    @Test
