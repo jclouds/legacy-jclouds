@@ -345,7 +345,7 @@ public class UsageRecord {
                          @Nullable String releaseDate, @Nullable String zoneId, @Nullable String virtualMachineId, @Nullable String virtualMachineName,
                          @Nullable String serviceOfferingId, @Nullable String templateId, @Nullable String ipAddress,
                          boolean isSourceNAT, double rawUsageHours, @Nullable String usage, @Nullable String type, @Nullable UsageType usageType) {
-      this.id = checkNotNull(id, "id");
+      this.id = id;
       this.description = description;
       this.accountId = accountId;
       this.accountName = accountName;

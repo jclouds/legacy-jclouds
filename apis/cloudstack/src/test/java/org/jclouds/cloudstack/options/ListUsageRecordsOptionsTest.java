@@ -20,6 +20,9 @@ import static org.jclouds.cloudstack.options.ListUsageRecordsOptions.Builder.acc
 import static org.jclouds.cloudstack.options.ListUsageRecordsOptions.Builder.accountInDomain;
 import static org.jclouds.cloudstack.options.ListUsageRecordsOptions.Builder.domainId;
 import static org.jclouds.cloudstack.options.ListUsageRecordsOptions.Builder.keyword;
+import static org.jclouds.cloudstack.options.ListUsageRecordsOptions.Builder.page;
+import static org.jclouds.cloudstack.options.ListUsageRecordsOptions.Builder.pageSize;
+import static org.jclouds.cloudstack.options.ListUsageRecordsOptions.Builder.type;
 import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
@@ -75,4 +78,20 @@ public class ListUsageRecordsOptionsTest {
       ListUsageRecordsOptions options = keyword("bob");
       assertEquals(ImmutableSet.of("bob"), options.buildQueryParameters().get("keyword"));
    }
+   
+       public void testTypeStatic() {
+        ListUsageRecordsOptions options = type("3");
+        assertEquals(ImmutableSet.of("3"), options.buildQueryParameters().get("type"));
+    }
+
+    public void testPageStatic() {
+        ListUsageRecordsOptions options = page("1");
+        assertEquals(ImmutableSet.of("1"), options.buildQueryParameters().get("page"));
+    }
+
+    public void testPageSizeStatic() {
+        ListUsageRecordsOptions options = pageSize("500");
+        assertEquals(ImmutableSet.of("500"), options.buildQueryParameters().get("pagesize"));
+    }
+	
 }

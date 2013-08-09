@@ -52,6 +52,22 @@ public class ListUsageRecordsOptions extends AccountInDomainOptions {
          ListUsageRecordsOptions options = new ListUsageRecordsOptions();
          return options.keyword(keyword);
       }
+	  
+      public static ListUsageRecordsOptions type(String type) {
+         ListUsageRecordsOptions options = new ListUsageRecordsOptions();
+         return options.type(type);
+      }
+      
+      public static ListUsageRecordsOptions page(String page) {
+         ListUsageRecordsOptions options = new ListUsageRecordsOptions();
+         return options.page(page);
+      }
+      
+      public static ListUsageRecordsOptions pageSize(String pageSize) {
+         ListUsageRecordsOptions options = new ListUsageRecordsOptions();
+         return options.pageSize(pageSize);
+      }
+
    }
 
    @Override
@@ -78,4 +94,20 @@ public class ListUsageRecordsOptions extends AccountInDomainOptions {
       this.queryParameters.replaceValues("keyword", ImmutableSet.of(keyword));
       return this;
    }
+   
+   public ListUsageRecordsOptions type(String type) {
+      this.queryParameters.replaceValues("type", ImmutableSet.of(type));
+      return this;
+   }
+   
+   public ListUsageRecordsOptions page(String page) {
+      this.queryParameters.replaceValues("page", ImmutableSet.of(page));
+      return this;
+   }
+   
+   public ListUsageRecordsOptions pageSize(String pageSize) {
+      this.queryParameters.replaceValues("pagesize", ImmutableSet.of(pageSize));
+      return this;
+   }
+	
 }
