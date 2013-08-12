@@ -16,7 +16,10 @@
  */
 package org.jclouds.rackspace.cloudfiles.blobstore.integration;
 
+import java.io.IOException;
+
 import org.jclouds.cloudfiles.blobstore.integration.CloudFilesBlobSignerLiveTest;
+import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 /**
@@ -29,4 +32,15 @@ public class CloudFilesUKBlobSignerLiveTest extends CloudFilesBlobSignerLiveTest
       provider = "cloudfiles-uk";
    }
 
+   @Override
+   @Test
+   public void testSignGetUrlWithTime() throws InterruptedException, IOException {
+      throw new SkipException("not yet implemented");
+   }
+
+   @Override
+   @Test
+   public void testSignPutUrlWithTime() throws InterruptedException, IOException {
+      throw new SkipException("not yet implemented");
+   }
 }
