@@ -117,8 +117,9 @@ public class AWSEC2CreateSecurityGroupIfNeeded extends CacheLoader<RegionAndName
          Set<IpPermission> perms = permissions.build();
 
          if (perms.size() > 0) {
+            String id = Iterables.get(securityApi.describeSecurityGroupsInRegion(region, name), 0).getId();
             logger.debug(">> authorizing securityGroup region(%s) name(%s) IpPermissions(%s)", region, name, perms);
-            securityApi.authorizeSecurityGroupIngressInRegion(region, name, perms);
+            securityApi.authorizeSecurityGroupIngressInRegion(region, id, perms);
             logger.debug("<< authorized securityGroup(%s)", name);
          }            
 

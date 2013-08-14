@@ -65,7 +65,7 @@ public abstract class BaseAWSEC2ComputeServiceExpectTest extends BaseEC2ComputeS
                            .endpoint("https://ec2." + region + ".amazonaws.com/")
                            .addHeader("Host", "ec2." + region + ".amazonaws.com")
                            .addFormParam("Action", "AuthorizeSecurityGroupIngress")
-                           .addFormParam("GroupId", "jclouds#test")
+                           .addFormParam("GroupId", "sg-3c6ef654")
                            .addFormParam("IpPermissions.0.FromPort", "22")
                            .addFormParam("IpPermissions.0.ToPort", "22")
                            .addFormParam("IpPermissions.0.IpRanges.0.CidrIp", "0.0.0.0/0")
