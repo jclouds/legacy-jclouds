@@ -178,6 +178,7 @@ public class BlobBuilderImpl implements BlobBuilder {
 
       @Override
       public PayloadBlobBuilder contentLength(long contentLength) {
+         checkArgument(contentLength >= 0, "content length must be non-negative");
          payload.getContentMetadata().setContentLength(contentLength);
          return this;
       }
