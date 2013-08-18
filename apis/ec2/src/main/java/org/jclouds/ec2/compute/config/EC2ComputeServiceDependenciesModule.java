@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.jclouds.ec2.compute.config;
+
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_TIMEOUT_SECURITYGROUP_PRESENT;
 import static org.jclouds.util.Predicates2.retry;
@@ -44,6 +45,7 @@ import org.jclouds.ec2.compute.functions.AddElasticIpsToNodemetadata;
 import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.ec2.compute.functions.CredentialsForInstance;
 import org.jclouds.ec2.compute.functions.EC2ImageParser;
+import org.jclouds.ec2.compute.functions.EC2SecurityGroupIdFromName;
 import org.jclouds.ec2.compute.functions.EC2SecurityGroupToSecurityGroup;
 import org.jclouds.ec2.compute.functions.PasswordCredentialsFromWindowsInstance;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
@@ -126,7 +128,9 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
       }).annotatedWith(Names.named("SECURITY")).to(CreateSecurityGroupIfNeeded.class);
       bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
-      }).annotatedWith(Names.named("ELASTICIP")).to(LoadPublicIpForInstanceOrNull.class);   
+      }).annotatedWith(Names.named("ELASTICIP")).to(LoadPublicIpForInstanceOrNull.class);
+      bind(new TypeLiteral<Function<String, String>>() {
+      }).annotatedWith(Names.named("SECGROUP_NAME_TO_ID")).to(EC2SecurityGroupIdFromName.class);
       bind(new TypeLiteral<Function<PasswordDataAndPrivateKey, LoginCredentials>>() {
       }).to(WindowsLoginCredentialsFromEncryptedData.class);
       bind(new TypeLiteral<Function<RunningInstance, LoginCredentials>>() {
@@ -147,7 +151,7 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
    @Provides
    @Singleton
    public Function<RunningInstance, NodeMetadata> bindNodeConverter(RunningInstanceToNodeMetadata baseConverter,
-            AddElasticIpsToNodemetadata addElasticIpsToNodemetadata,
+              AddElasticIpsToNodemetadata addElasticIpsToNodemetadata,
             @Named(EC2Constants.PROPERTY_EC2_AUTO_ALLOCATE_ELASTIC_IPS) boolean autoAllocateElasticIps) {
       if (!autoAllocateElasticIps)
          return baseConverter;

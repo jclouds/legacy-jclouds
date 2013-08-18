@@ -29,8 +29,8 @@ import java.util.concurrent.ExecutionException;
 import org.jclouds.aws.ec2.features.AWSSecurityGroupApi;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
+import org.jclouds.ec2.compute.functions.EC2SecurityGroupIdFromName;
 import org.jclouds.ec2.domain.SecurityGroup;
-import org.jclouds.ec2.domain.UserIdGroupPair;
 import org.jclouds.net.domain.IpPermission;
 import org.jclouds.net.domain.IpProtocol;
 import org.testng.annotations.Test;
@@ -56,6 +56,8 @@ public class AWSEC2CreateSecurityGroupIfNeededTest {
       SecurityGroup group = createNiceMock(SecurityGroup.class);
       Set<SecurityGroup> groups = ImmutableSet.<SecurityGroup> of(group);
 
+      EC2SecurityGroupIdFromName groupIdFromName = createMock(EC2SecurityGroupIdFromName.class);
+
       ImmutableSet.Builder<IpPermission> permissions = ImmutableSet.builder();
 
       permissions.add(IpPermission.builder()
@@ -80,21 +82,22 @@ public class AWSEC2CreateSecurityGroupIfNeededTest {
       
       client.createSecurityGroupInRegion("region", "group", "group");
       expect(group.getOwnerId()).andReturn("ownerId");
-      expect(group.getId()).andReturn("sg-123456");
-      expect(client.describeSecurityGroupsInRegion("region", "group")).andReturn(Set.class.cast(groups));
+      expect(groupIdFromName.apply("region/group")).andReturn("sg-123456");
       client.authorizeSecurityGroupIngressInRegion("region", "sg-123456", permissions.build());
       expect(client.describeSecurityGroupsInRegion("region", "group")).andReturn(Set.class.cast(groups));
 
 
       replay(client);
       replay(group);
+      replay(groupIdFromName);
 
-      AWSEC2CreateSecurityGroupIfNeeded function = new AWSEC2CreateSecurityGroupIfNeeded(client, tester);
+      AWSEC2CreateSecurityGroupIfNeeded function = new AWSEC2CreateSecurityGroupIfNeeded(client, groupIdFromName, tester);
 
       assertEquals("group", function.load(new RegionNameAndIngressRules("region", "group", new int[] { 22 }, true)));
 
       verify(client);
       verify(group);
+      verify(groupIdFromName);
 
    }
 }

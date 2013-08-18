@@ -32,11 +32,11 @@ import org.jclouds.aws.ec2.features.AWSSecurityGroupApi;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
-import org.jclouds.ec2.domain.UserIdGroupPair;
 import org.jclouds.logging.Logger;
 import org.jclouds.net.domain.IpPermission;
 import org.jclouds.net.domain.IpProtocol;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableSet;
@@ -54,16 +54,19 @@ public class AWSEC2CreateSecurityGroupIfNeeded extends CacheLoader<RegionAndName
    protected Logger logger = Logger.NULL;
    protected final AWSSecurityGroupApi securityApi;
    protected final Predicate<RegionAndName> securityGroupEventualConsistencyDelay;
-
+   protected final Function<String, String> groupNameToId;
    @Inject
    public AWSEC2CreateSecurityGroupIfNeeded(AWSEC2Api ec2Api,
-         @Named("SECURITY") Predicate<RegionAndName> securityGroupEventualConsistencyDelay) {
-      this(checkNotNull(ec2Api, "ec2Api").getSecurityGroupApi().get(), securityGroupEventualConsistencyDelay);
+                                            @Named("SECGROUP_NAME_TO_ID") Function<String, String> groupNameToId,
+                                            @Named("SECURITY") Predicate<RegionAndName> securityGroupEventualConsistencyDelay) {
+      this(checkNotNull(ec2Api, "ec2Api").getSecurityGroupApi().get(), groupNameToId, securityGroupEventualConsistencyDelay);
    }
 
    public AWSEC2CreateSecurityGroupIfNeeded(AWSSecurityGroupApi securityApi,
-         @Named("SECURITY") Predicate<RegionAndName> securityGroupEventualConsistencyDelay) {
+                                            @Named("SECGROUP_NAME_TO_ID") Function<String, String> groupNameToId,
+                                            @Named("SECURITY") Predicate<RegionAndName> securityGroupEventualConsistencyDelay) {
       this.securityApi = checkNotNull(securityApi, "securityApi");
+      this.groupNameToId = checkNotNull(groupNameToId, "groupNameToId");
       this.securityGroupEventualConsistencyDelay = checkNotNull(securityGroupEventualConsistencyDelay,
             "securityGroupEventualConsistencyDelay");
    }
@@ -117,7 +120,7 @@ public class AWSEC2CreateSecurityGroupIfNeeded extends CacheLoader<RegionAndName
          Set<IpPermission> perms = permissions.build();
 
          if (perms.size() > 0) {
-            String id = Iterables.get(securityApi.describeSecurityGroupsInRegion(region, name), 0).getId();
+            String id = groupNameToId.apply(new RegionAndName(region, name).slashEncode());
             logger.debug(">> authorizing securityGroup region(%s) name(%s) IpPermissions(%s)", region, name, perms);
             securityApi.authorizeSecurityGroupIngressInRegion(region, id, perms);
             logger.debug("<< authorized securityGroup(%s)", name);
