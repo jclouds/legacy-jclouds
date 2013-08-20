@@ -16,6 +16,7 @@
  */
 package org.jclouds.openstack.swift.functions;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import org.jclouds.http.HttpResponse;
@@ -26,7 +27,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableList;
 
 /**
- * Tests behavior of {@code ParseContainerListFromJsonResponse}
+ * Tests behavior of {@code ParseObjectInfoFromHeaders}
  * 
  * @author Adrian Cole
  */
@@ -34,17 +35,30 @@ import com.google.common.collect.ImmutableList;
 public class ParseObjectInfoFromHeadersTest extends BasePayloadTest {
 
    public void testEtagCaseIssue() {
+      assertETagCanBeParsed("feb1",
+                            new byte[] { (byte) 0xfe, (byte) 0xb1 }
+      );
+   }
+
+   public void testParseEtagWithQuotes() {
+      assertETagCanBeParsed("\"feb1\"",
+                            new byte[] { (byte) 0xfe, (byte) 0xb1 }
+      );
+   }
+
+   private void assertETagCanBeParsed(String etag, byte[] expectedHash) {
       ParseObjectInfoFromHeaders parser = i.getInstance(ParseObjectInfoFromHeaders.class);
-      
+
       parser.setContext(requestForArgs(ImmutableList.<Object> of("container", "key")));
 
       HttpResponse response = HttpResponse.builder().statusCode(200).message("ok").payload("")
                                           .addHeader("Last-Modified", "Fri, 12 Jun 2007 13:40:18 GMT")
                                           .addHeader("Content-Length", "0")
-                                          .addHeader("Etag", "feb1").build();
+                                          .addHeader("Etag", etag).build();
 
       response.getPayload().getContentMetadata().setContentType("text/plain");
       MutableObjectInfoWithMetadata md = parser.apply(response);
       assertNotNull(md.getHash());
+      assertEquals(md.getHash(), expectedHash);
    }
 }

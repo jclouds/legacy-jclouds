@@ -16,8 +16,6 @@
  */
 package org.jclouds.openstack.swift.blobstore.functions;
 
-import static com.google.common.io.BaseEncoding.base16;
-
 import java.util.Map.Entry;
 
 import javax.inject.Singleton;
@@ -29,6 +27,7 @@ import org.jclouds.openstack.swift.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.openstack.swift.domain.internal.MutableObjectInfoWithMetadataImpl;
 
 import com.google.common.base.Function;
+import org.jclouds.openstack.swift.utils.ETagUtils;
 
 /**
  * @author Adrian Cole
@@ -48,7 +47,7 @@ public class ResourceToObjectInfo implements Function<StorageMetadata, MutableOb
          to.setContentType("application/directory");
       }
       if (from.getETag() != null && to.getHash() == null)
-         to.setHash(base16().lowerCase().decode(from.getETag()));
+         to.setHash(ETagUtils.convertHexETagToByteArray(from.getETag()));
       to.setName(from.getName());
       to.setLastModified(from.getLastModified());
       if (from.getUserMetadata() != null) {
@@ -57,5 +56,4 @@ public class ResourceToObjectInfo implements Function<StorageMetadata, MutableOb
       }
       return to;
    }
-
 }
