@@ -199,7 +199,9 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
          if (payload.getRawContent() instanceof File)
             Files.copy((File) payload.getRawContent(), outputFile);
          else {
-            payload = Payloads.newPayload(ByteStreams.toByteArray(payload));
+            if (!payload.isRepeatable()) {
+               payload = Payloads.newPayload(ByteStreams.toByteArray(payload));
+            }
             Files.copy(payload, outputFile);
          }
          Payloads.calculateMD5(payload);
