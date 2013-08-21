@@ -267,7 +267,7 @@ public interface CommonSwiftAsyncClient extends Closeable {
    @PUT
    @Path("/{container}/{name}")
    @ResponseParser(ParseETagHeader.class)
-   @Headers(keys = "X-Object-Manifest", values="{container}/{name}")
+   @Headers(keys = "X-Object-Manifest", values="{container}/{name}/")
    ListenableFuture<String> putObjectManifest(@PathParam("container") String container,
                                               @PathParam("name") String name);
 }
