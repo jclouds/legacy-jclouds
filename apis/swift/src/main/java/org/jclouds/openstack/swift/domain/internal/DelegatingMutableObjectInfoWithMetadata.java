@@ -147,4 +147,14 @@ public class DelegatingMutableObjectInfoWithMetadata extends BaseMutableContentM
    public URI getUri() {
       return delegate.getUri();
    }
+
+   @Override
+   public void setObjectManifest(String objectManifest) {
+      delegate.setObjectManifest(objectManifest);
+   }
+
+   @Override
+   public String getObjectManifest() {
+      return delegate.getObjectManifest();
+   }
 }

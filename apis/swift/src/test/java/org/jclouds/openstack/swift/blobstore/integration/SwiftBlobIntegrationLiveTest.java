@@ -21,11 +21,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import com.google.common.io.ByteStreams;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
 import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
+import org.jclouds.openstack.swift.blobstore.strategy.MultipartUpload;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -34,6 +36,9 @@ import org.testng.annotations.Test;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertTrue;
+
 /**
  * 
  * @author James Murty
@@ -41,15 +46,21 @@ import com.google.common.io.InputSupplier;
  */
 @Test(groups = "live")
 public class SwiftBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
+   /**
+    * Use the minimum part size to minimise the file size that we have to
+    * upload to get a multipart blob thereby make the test run faster
+    */
+   private static final long PART_SIZE = MultipartUpload.MIN_PART_SIZE;
+
    @Override
    protected Properties setupProperties() {
       Properties props = super.setupProperties();
       setIfTestSystemPropertyPresent(props, KeystoneProperties.CREDENTIAL_TYPE);
+      props.setProperty("jclouds.mpu.parts.size", String.valueOf(PART_SIZE));
       return props;
    }
    
    private InputSupplier<InputStream> oneHundredOneConstitutions;
-   private byte[] oneHundredOneConstitutionsMD5;
 
    public SwiftBlobIntegrationLiveTest() {
       provider = System.getProperty("test.swift.provider", "swift");
@@ -66,7 +77,6 @@ public class SwiftBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
     public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
         super.setUpResourcesOnThisThread(testContext);
         oneHundredOneConstitutions = getTestDataSupplier();
-        oneHundredOneConstitutionsMD5 = md5Supplier(oneHundredOneConstitutions);
     }
 
    @Override
@@ -91,18 +101,51 @@ public class SwiftBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
                { "asteri*k" }, { "{great<r}" }, { "lesst>en" }, { "p|pe" } };
    }
     
+   @Test(groups = { "integration", "live" })
    public void testMultipartChunkedFileStream() throws IOException, InterruptedException {
-       Files.copy(oneHundredOneConstitutions, new File("target/const.txt"));
-       String containerName = getContainerName();
+      String containerName = getContainerName();
+      try {
+         BlobStore blobStore = view.getBlobStore();
+         long countBefore = blobStore.countBlobs(containerName);
 
-       try {
-           BlobStore blobStore = view.getBlobStore();
-           blobStore.createContainerInLocation(null, containerName);
-           Blob blob = blobStore.blobBuilder("const.txt")
-                   .payload(new File("target/const.txt")).contentMD5(oneHundredOneConstitutionsMD5).build();
-           blobStore.putBlob(containerName, blob, PutOptions.Builder.multipart());
-       } finally {
-           returnContainer(containerName);
-       }
+         addMultipartBlobToContainer(containerName, "const.txt");
+
+         long countAfter = blobStore.countBlobs(containerName);
+         assertNotEquals(countBefore, countAfter,
+                         "No blob was created");
+         assertTrue(countAfter - countBefore > 1,
+                    "A multipart blob wasn't actually created - " +
+                    "there was only 1 extra blob but there should be one manifest blob and multiple chunk blobs");
+      } finally {
+          returnContainer(containerName);
+      }
+   }
+
+   protected void addMultipartBlobToContainer(String containerName, String key) throws IOException {
+      File fileToUpload = createFileBiggerThan(PART_SIZE);
+
+      BlobStore blobStore = view.getBlobStore();
+      blobStore.createContainerInLocation(null, containerName);
+      Blob blob = blobStore.blobBuilder(key)
+         .payload(fileToUpload)
+         .build();
+      blobStore.putBlob(containerName, blob, PutOptions.Builder.multipart());
+   }
+
+   @SuppressWarnings("unchecked")
+   private File createFileBiggerThan(long partSize) throws IOException {
+      long copiesNeeded = (partSize / getOneHundredOneConstitutionsLength()) + 1;
+
+      InputSupplier<InputStream> temp = ByteStreams.join(oneHundredOneConstitutions);
+
+      for (int i = 0; i < copiesNeeded; i++) {
+         temp = ByteStreams.join(temp, oneHundredOneConstitutions);
+      }
+
+      File fileToUpload = new File("target/lots-of-const.txt");
+      Files.copy(temp, fileToUpload);
+
+      assertTrue(fileToUpload.length() > partSize);
+      return fileToUpload;
    }
 }

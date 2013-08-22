@@ -119,6 +119,13 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       return temp;
    }
 
+   public static long getOneHundredOneConstitutionsLength() throws IOException {
+      if (oneHundredOneConstitutionsLength == 0) {
+         getTestDataSupplier();
+      }
+      return oneHundredOneConstitutionsLength;
+   }
+
    /**
     * Attempt to capture the issue detailed in
     * http://groups.google.com/group/jclouds/browse_thread/thread/4a7c8d58530b287f

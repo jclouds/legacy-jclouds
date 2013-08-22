@@ -16,8 +16,10 @@
  */
 package org.jclouds.openstack.swift.blobstore;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.blobstore.util.BlobStoreUtils.createParentIfNeededAsync;
+import static org.jclouds.openstack.swift.options.ListContainerOptions.Builder.withPrefix;
 
 import java.util.Set;
 
@@ -25,6 +27,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -50,8 +53,11 @@ import org.jclouds.openstack.swift.blobstore.functions.ObjectToBlob;
 import org.jclouds.openstack.swift.blobstore.functions.ObjectToBlobMetadata;
 import org.jclouds.openstack.swift.blobstore.strategy.internal.MultipartUploadStrategy;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;
+import org.jclouds.openstack.swift.domain.MutableObjectInfoWithMetadata;
+import org.jclouds.openstack.swift.domain.ObjectInfo;
 
 import com.google.common.base.Function;
+import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 
@@ -118,7 +124,7 @@ public class SwiftBlobStore extends BaseBlobStore {
    }
 
    /**
-    * This implementation invokes {@link CommonSwiftClient#putBucketInRegion}
+    * This implementation invokes {@link CommonSwiftClient#createContainer}
     * 
     * @param location
     *           currently ignored
@@ -145,7 +151,7 @@ public class SwiftBlobStore extends BaseBlobStore {
    }
 
    /**
-    * This implementation invokes {@link CommonSwiftClient#blobExists}
+    * This implementation invokes {@link CommonSwiftClient#objectExists}
     * 
     * @param container
     *           container name
@@ -225,7 +231,53 @@ public class SwiftBlobStore extends BaseBlobStore {
     */
    @Override
    public void removeBlob(String container, String key) {
+      String objectManifest = getObjectManifestOrNull(container, key);
+
       sync.removeObject(container, key);
+
+      if (!Strings.isNullOrEmpty(objectManifest)) {
+         removeObjectsWithPrefix(objectManifest);
+      }
+   }
+
+   private String getObjectManifestOrNull(String container, String key) {
+      MutableObjectInfoWithMetadata objectInfo = sync.getObjectInfo(container, key);
+      return objectInfo == null ? null : objectInfo.getObjectManifest();
+   }
+
+   private void removeObjectsWithPrefix(String containerAndPrefix) {
+      String[] parts = splitContainerAndKey(containerAndPrefix);
+
+      String container = parts[0];
+      String prefix = parts[1];
+
+      removeObjectsWithPrefix(container, prefix);
+   }
+
+   @VisibleForTesting
+   static String[] splitContainerAndKey(String containerAndKey) {
+      String[] parts = containerAndKey.split("/", 2);
+      checkArgument(parts.length == 2,
+                    "No / separator found in \"%s\"",
+                    containerAndKey);
+      return parts;
+   }
+
+   private void removeObjectsWithPrefix(String container, String prefix) {
+      String nextMarker = null;
+      do {
+         org.jclouds.openstack.swift.options.ListContainerOptions listContainerOptions =
+            withPrefix(prefix);
+         if (nextMarker != null) {
+            listContainerOptions = listContainerOptions.afterMarker(nextMarker);
+         }
+
+         PageSet<ObjectInfo> chunks = sync.listObjects(container, listContainerOptions);
+         for (ObjectInfo chunk : chunks) {
+            sync.removeObject(container, chunk.getName());
+         }
+         nextMarker = chunks.getNextMarker();
+      } while (nextMarker != null);
    }
 
    @Override

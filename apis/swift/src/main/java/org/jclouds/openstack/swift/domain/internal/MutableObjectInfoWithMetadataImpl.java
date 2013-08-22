@@ -41,6 +41,7 @@ public class MutableObjectInfoWithMetadataImpl implements MutableObjectInfoWithM
    private byte[] hash;
    private String contentType = MediaType.APPLICATION_OCTET_STREAM;
    private Date lastModified;
+   private String objectManifest;
    private final Map<String, String> metadata = Maps.newLinkedHashMap();
 
    /**
@@ -121,6 +122,7 @@ public class MutableObjectInfoWithMetadataImpl implements MutableObjectInfoWithM
       int result = 1;
       result = prime * result + ((container == null) ? 0 : container.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((objectManifest == null) ? 0 : objectManifest.hashCode());
       return result;
    }
 
@@ -142,6 +144,11 @@ public class MutableObjectInfoWithMetadataImpl implements MutableObjectInfoWithM
          if (other.name != null)
             return false;
       } else if (!name.equals(other.name))
+         return false;
+      if (objectManifest == null) {
+         if (other.objectManifest != null)
+            return false;
+      } else if (!objectManifest.equals(other.objectManifest))
          return false;
       return true;
    }
@@ -197,9 +204,19 @@ public class MutableObjectInfoWithMetadataImpl implements MutableObjectInfoWithM
    }
 
    @Override
+   public String getObjectManifest() {
+      return objectManifest;
+   }
+
+   @Override
+   public void setObjectManifest(String objectManifest) {
+      this.objectManifest = objectManifest;
+   }
+
+   @Override
    public String toString() {
-      return String.format("[name=%s, container=%s, uri=%s, bytes=%s, contentType=%s, lastModified=%s, hash=%s]", name,
-               container, uri, bytes, contentType, lastModified, Arrays.toString(hash));
+      return String.format("[name=%s, container=%s, uri=%s, bytes=%s, contentType=%s, lastModified=%s, hash=%s, objectManifest=%s]",
+               name, container, uri, bytes, contentType, lastModified, Arrays.toString(hash), objectManifest);
    }
 
 }

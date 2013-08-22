@@ -16,9 +16,14 @@
  */
 package org.jclouds.cloudfiles.blobstore.integration;
 
+import java.io.IOException;
+
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * 
@@ -38,4 +43,22 @@ public class CloudFilesBlobIntegrationLiveTest extends SwiftBlobIntegrationLiveT
                .getMetadata().getContentMetadata().getContentDisposition();
    }
 
+   @Test(groups = { "integration", "live" })
+   public void testChunksAreDeletedWhenMultipartBlobIsDeleted() throws IOException, InterruptedException {
+      String containerName = getContainerName();
+      try {
+         BlobStore blobStore = view.getBlobStore();
+
+         long countBefore = blobStore.countBlobs(containerName);
+         String blobName = "deleteme.txt";
+         addMultipartBlobToContainer(containerName, blobName);
+
+         blobStore.removeBlob(containerName, blobName);
+         long countAfter = blobStore.countBlobs(containerName);
+
+         assertEquals(countAfter, countBefore);
+      } finally {
+          returnContainer(containerName);
+      }
+   }
 }
