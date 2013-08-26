@@ -34,7 +34,7 @@ import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.logging.Logger;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudApi;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType;
 import org.jclouds.trmk.vcloud_0_8.compute.functions.FindLocationForResource;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
@@ -46,7 +46,6 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
@@ -60,7 +59,7 @@ public class TerremarkVCloudListNodesStrategy implements ListNodesStrategy {
    @Named(COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
    protected final TerremarkVCloudGetNodeMetadataStrategy getNodeMetadata;
-   protected final TerremarkVCloudClient client;
+   protected final TerremarkVCloudApi client;
    protected final FindLocationForResource findLocationForResourceInVDC;
    Set<String> blackListVAppNames = ImmutableSet.<String> of();
 
@@ -73,7 +72,7 @@ public class TerremarkVCloudListNodesStrategy implements ListNodesStrategy {
    private final Supplier<Map<String, ReferenceType>> orgNameToEndpoint;
 
    @Inject
-   protected TerremarkVCloudListNodesStrategy(TerremarkVCloudClient client,
+   protected TerremarkVCloudListNodesStrategy(TerremarkVCloudApi client,
          @Org Supplier<Map<String, ReferenceType>> orgNameToEndpoint,
          TerremarkVCloudGetNodeMetadataStrategy getNodeMetadata, FindLocationForResource findLocationForResourceInVDC) {
       this.client = client;

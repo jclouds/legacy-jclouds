@@ -26,7 +26,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudApi;
 import org.jclouds.trmk.vcloud_0_8.compute.domain.OrgAndName;
 import org.jclouds.trmk.vcloud_0_8.domain.Org;
 import org.jclouds.trmk.vcloud_0_8.endpoints.VDC;
@@ -48,10 +48,10 @@ public class NodeMetadataToOrgAndName implements Function<NodeMetadata, OrgAndNa
 
    final Supplier<Map<String, String>> vdcToOrg;
 
-   private final TerremarkVCloudClient client;
+   private final TerremarkVCloudApi client;
 
    @Inject
-   NodeMetadataToOrgAndName(TerremarkVCloudClient client, @VDC Supplier<Map<String, String>> vdcToOrg) {
+   NodeMetadataToOrgAndName(TerremarkVCloudApi client, @VDC Supplier<Map<String, String>> vdcToOrg) {
       this.vdcToOrg = vdcToOrg;
       this.client = client;
    }

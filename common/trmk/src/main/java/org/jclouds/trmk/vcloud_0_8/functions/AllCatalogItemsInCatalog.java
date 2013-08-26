@@ -17,16 +17,14 @@
 package org.jclouds.trmk.vcloud_0_8.functions;
 
 import static com.google.common.collect.Iterables.filter;
-import static org.jclouds.concurrent.FutureIterables.transformParallel;
+import static com.google.common.collect.Iterables.transform;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.logging.Logger;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudApi;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType;
 import org.jclouds.trmk.vcloud_0_8.domain.Catalog;
 import org.jclouds.trmk.vcloud_0_8.domain.CatalogItem;
@@ -34,8 +32,6 @@ import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Adrian Cole
@@ -45,27 +41,24 @@ public class AllCatalogItemsInCatalog implements Function<Catalog, Iterable<? ex
    @Resource
    public Logger logger = Logger.NULL;
 
-   private final TerremarkVCloudAsyncClient aclient;
-   private final ListeningExecutorService userExecutor;
+   private final TerremarkVCloudApi aclient;
 
    @Inject
-   AllCatalogItemsInCatalog(TerremarkVCloudAsyncClient aclient,
-            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
+   AllCatalogItemsInCatalog(TerremarkVCloudApi aclient) {
       this.aclient = aclient;
-      this.userExecutor = userExecutor;
    }
 
    @Override
    public Iterable<? extends CatalogItem> apply(Catalog from) {
-      return transformParallel(filter(from.values(), new Predicate<ReferenceType>() {
+      return transform(filter(from.values(), new Predicate<ReferenceType>() {
          public boolean apply(ReferenceType input) {
             return input.getType().equals(TerremarkVCloudMediaType.CATALOGITEM_XML);
          }
-      }), new Function<ReferenceType, ListenableFuture<? extends CatalogItem>>() {
-         public ListenableFuture<? extends CatalogItem> apply(ReferenceType from) {
+      }), new Function<ReferenceType, CatalogItem>() {
+         public CatalogItem apply(ReferenceType from) {
             return aclient.getCatalogItem(from.getHref());
          }
-      }, userExecutor, null, logger, "catalogItems in " + from.getHref());
+      });
    }
 
 }

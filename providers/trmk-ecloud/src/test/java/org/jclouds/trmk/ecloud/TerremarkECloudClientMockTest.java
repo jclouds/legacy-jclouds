@@ -47,7 +47,7 @@ public class TerremarkECloudClientMockTest {
    private static final Set<Module> modules = ImmutableSet.<Module> of(
          new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()));
 
-   static TerremarkECloudClient mockTerremarkECloudClient(String uri) {
+   static TerremarkECloudApi mockTerremarkECloudClient(String uri) {
       Properties overrides = new Properties();
       overrides.setProperty(PROPERTY_MAX_RETRIES, "1");
       return ContextBuilder.newBuilder("trmk-ecloud")
@@ -55,7 +55,7 @@ public class TerremarkECloudClientMockTest {
                            .endpoint(uri)
                            .overrides(overrides)
                            .modules(modules)
-                           .buildApi(TerremarkECloudClient.class);
+                           .buildApi(TerremarkECloudApi.class);
    }
 
    String versionXML = "<SupportedVersions><VersionInfo><Version>0.8b-ext2.8</Version><LoginUrl>URLv0.8/login</LoginUrl></VersionInfo></SupportedVersions>";
@@ -70,7 +70,7 @@ public class TerremarkECloudClientMockTest {
                                        .addHeader("x-vcloud-authorization", "cookie")
                                        .setBody("<OrgList />"));
 
-      TerremarkECloudClient api = mockTerremarkECloudClient(server.getUrl("/").toString());
+      TerremarkECloudApi api = mockTerremarkECloudClient(server.getUrl("/").toString());
 
       try {
          api.listOrgs();

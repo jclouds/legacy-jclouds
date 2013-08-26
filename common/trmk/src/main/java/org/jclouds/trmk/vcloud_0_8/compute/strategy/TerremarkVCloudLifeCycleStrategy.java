@@ -32,7 +32,7 @@ import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.logging.Logger;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudApi;
 import org.jclouds.trmk.vcloud_0_8.domain.Task;
 
 import com.google.common.base.Predicate;
@@ -46,12 +46,12 @@ public class TerremarkVCloudLifeCycleStrategy implements RebootNodeStrategy, Res
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final TerremarkVCloudClient client;
+   private final TerremarkVCloudApi client;
    protected final Predicate<URI> taskTester;
    protected final GetNodeMetadataStrategy getNode;
 
    @Inject
-   protected TerremarkVCloudLifeCycleStrategy(TerremarkVCloudClient client, Predicate<URI> taskTester,
+   protected TerremarkVCloudLifeCycleStrategy(TerremarkVCloudApi client, Predicate<URI> taskTester,
             GetNodeMetadataStrategy getNode) {
       this.client = client;
       this.taskTester = taskTester;

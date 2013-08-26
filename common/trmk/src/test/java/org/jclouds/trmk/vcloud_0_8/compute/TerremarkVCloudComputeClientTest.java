@@ -33,7 +33,7 @@ import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudApi;
 import org.jclouds.trmk.vcloud_0_8.domain.Status;
 import org.jclouds.trmk.vcloud_0_8.domain.Task;
 import org.jclouds.trmk.vcloud_0_8.domain.VApp;
@@ -64,7 +64,7 @@ public class TerremarkVCloudComputeClientTest {
       URI vdcURI = URI.create("vdc");
 
       expect(template.getDescription()).andReturn(description).atLeastOnce();
-      TerremarkVCloudClient client = createMock(TerremarkVCloudClient.class);
+      TerremarkVCloudApi client = createMock(TerremarkVCloudApi.class);
       VApp vApp = createMock(VApp.class);
       InternetServiceAndPublicIpAddressSupplier supplier = createMock(InternetServiceAndPublicIpAddressSupplier.class);
       expect(client.getVAppTemplate(templateURI)).andReturn(template);

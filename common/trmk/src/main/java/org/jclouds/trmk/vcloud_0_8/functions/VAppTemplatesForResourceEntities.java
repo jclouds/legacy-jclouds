@@ -18,25 +18,22 @@ package org.jclouds.trmk.vcloud_0_8.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.filter;
-import static org.jclouds.concurrent.FutureIterables.transformParallel;
+import static com.google.common.collect.Iterables.transform;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudApi;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Adrian Cole
@@ -47,27 +44,24 @@ public class VAppTemplatesForResourceEntities implements
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
-   private final TerremarkVCloudAsyncClient aclient;
-   private final ListeningExecutorService userExecutor;
+   private final TerremarkVCloudApi aclient;
 
    @Inject
-   VAppTemplatesForResourceEntities(TerremarkVCloudAsyncClient aclient,
-            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
+   VAppTemplatesForResourceEntities(TerremarkVCloudApi aclient) {
       this.aclient = aclient;
-      this.userExecutor = userExecutor;
    }
 
    @Override
    public Iterable<? extends VAppTemplate> apply(Iterable<? extends ReferenceType> from) {
-      return transformParallel(filter(checkNotNull(from, "named resources"), new Predicate<ReferenceType>() {
+      return transform(filter(checkNotNull(from, "named resources"), new Predicate<ReferenceType>() {
          public boolean apply(ReferenceType input) {
             return input.getType().equals(TerremarkVCloudMediaType.VAPPTEMPLATE_XML);
          }
-      }), new Function<ReferenceType, ListenableFuture<? extends VAppTemplate>>() {
-         public ListenableFuture<? extends VAppTemplate> apply(ReferenceType from) {
+      }), new Function<ReferenceType, VAppTemplate>() {
+         public VAppTemplate apply(ReferenceType from) {
             return aclient.getVAppTemplate(from.getHref());
          }
-      }, userExecutor, null, logger, "vappTemplates in");
+      });
    }
 
 }

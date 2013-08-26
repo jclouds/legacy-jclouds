@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.VCloudApi;
 import org.jclouds.vcloud.domain.VAppTemplate;
 
 import com.google.common.cache.CacheLoader;
@@ -33,10 +33,10 @@ public class VAppTemplateLoader extends CacheLoader<URI, VAppTemplate> {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final VCloudClient client;
+   private final VCloudApi client;
 
    @Inject
-   VAppTemplateLoader(VCloudClient client) {
+   VAppTemplateLoader(VCloudApi client) {
       this.client = client;
    }
 

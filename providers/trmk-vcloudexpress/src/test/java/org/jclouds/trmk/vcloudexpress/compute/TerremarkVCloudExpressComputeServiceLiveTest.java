@@ -29,7 +29,7 @@ import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.domain.Credentials;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.trmk.vcloud_0_8.domain.VApp;
-import org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClient;
+import org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressApi;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -92,7 +92,7 @@ public class TerremarkVCloudExpressComputeServiceLiveTest extends BaseComputeSer
          assertEquals(node.getType(), ComputeType.NODE);
          NodeMetadata allData = client.getNodeMetadata(node.getId());
          System.out.println(allData.getHardware());
-         TerremarkVCloudExpressClient api = view.utils().injector().getInstance(TerremarkVCloudExpressClient.class);
+         TerremarkVCloudExpressApi api = view.utils().injector().getInstance(TerremarkVCloudExpressApi.class);
          VApp vApp = api.findVAppInOrgVDCNamed(null, null, allData.getName());
          assertEquals(vApp.getName(), allData.getName());
       }

@@ -42,7 +42,7 @@ import org.jclouds.ovf.Network;
 import org.jclouds.predicates.validators.DnsNameValidator;
 import org.jclouds.rest.annotations.BuildVersion;
 import org.jclouds.vcloud.TaskStillRunningException;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.VCloudApi;
 import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
 import org.jclouds.vcloud.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.domain.NetworkConnection;
@@ -71,7 +71,7 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   protected final VCloudClient client;
+   protected final VCloudApi client;
    protected final Predicate<URI> successTester;
    protected final LoadingCache<URI, VAppTemplate> vAppTemplates;
    protected final NetworkConfigurationForNetworkAndOptions networkConfigurationForNetworkAndOptions;
@@ -79,7 +79,7 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
 
 
    @Inject
-   protected InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn(VCloudClient client,
+   protected InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn(VCloudApi client,
             Predicate<URI> successTester, LoadingCache<URI, VAppTemplate> vAppTemplates, NetworkConfigurationForNetworkAndOptions networkConfigurationForNetworkAndOptions,
             @BuildVersion String buildVersion) {
       this.client = client;

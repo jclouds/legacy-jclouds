@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 import org.jclouds.domain.Credentials;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudApi;
 import org.jclouds.trmk.vcloud_0_8.compute.domain.OrgAndName;
 import org.jclouds.trmk.vcloud_0_8.domain.KeyPair;
 import org.testng.annotations.Test;
@@ -124,7 +124,7 @@ public class DeleteKeyPairTest {
    @SuppressWarnings("unchecked")
    private DeleteKeyPair setupStrategy() {
       Map<String, Credentials> credentialStore = createMock(ConcurrentMap.class);
-      TerremarkVCloudClient terremarkClient = createMock(TerremarkVCloudClient.class);
+      TerremarkVCloudApi terremarkClient = createMock(TerremarkVCloudApi.class);
 
       return new DeleteKeyPair(terremarkClient, credentialStore);
    }

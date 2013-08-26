@@ -28,7 +28,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudApi;
 import org.jclouds.trmk.vcloud_0_8.compute.domain.OrgAndName;
 import org.jclouds.trmk.vcloud_0_8.domain.KeyPair;
 import org.jclouds.util.Throwables2;
@@ -45,11 +45,11 @@ public class CreateUniqueKeyPair implements Function<OrgAndName, KeyPair> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   protected final TerremarkVCloudClient trmkClient;
+   protected final TerremarkVCloudApi trmkClient;
    protected Supplier<String> randomSuffix;
 
    @Inject
-   CreateUniqueKeyPair(TerremarkVCloudClient trmkClient, Supplier<String> randomSuffix) {
+   CreateUniqueKeyPair(TerremarkVCloudApi trmkClient, Supplier<String> randomSuffix) {
       this.trmkClient = trmkClient;
       this.randomSuffix = randomSuffix;
    }

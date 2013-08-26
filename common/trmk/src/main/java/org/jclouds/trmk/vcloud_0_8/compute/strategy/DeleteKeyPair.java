@@ -26,7 +26,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudApi;
 import org.jclouds.trmk.vcloud_0_8.compute.domain.OrgAndName;
 import org.jclouds.trmk.vcloud_0_8.domain.KeyPair;
 
@@ -41,11 +41,11 @@ public class DeleteKeyPair {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   final TerremarkVCloudClient terremarkClient;
+   final TerremarkVCloudApi terremarkClient;
    final Map<String, Credentials> credentialStore;
 
    @Inject
-   DeleteKeyPair(TerremarkVCloudClient terremarkClient, Map<String, Credentials> credentialStore) {
+   DeleteKeyPair(TerremarkVCloudApi terremarkClient, Map<String, Credentials> credentialStore) {
       this.terremarkClient = terremarkClient;
       this.credentialStore = credentialStore;
    }

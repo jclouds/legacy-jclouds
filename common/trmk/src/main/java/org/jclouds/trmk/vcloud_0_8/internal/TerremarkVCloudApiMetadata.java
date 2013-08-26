@@ -31,21 +31,22 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.rest.internal.BaseRestApiMetadata;
+import org.jclouds.rest.internal.BaseHttpApiMetadata;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudApi;
 
 /**
  * Implementation of {@link ApiMetadata} for Terremark's VCloud api.
 
  * @author Adrian Cole
  */
-public abstract class TerremarkVCloudApiMetadata extends BaseRestApiMetadata {
+public abstract class TerremarkVCloudApiMetadata extends BaseHttpApiMetadata<TerremarkVCloudApi> {
 
    protected TerremarkVCloudApiMetadata(Builder<?> builder) {
       super(builder);
    }
 
    public static Properties defaultProperties() {
-      Properties properties = BaseRestApiMetadata.defaultProperties();
+      Properties properties = BaseHttpApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_VCLOUD_VERSION_SCHEMA, "0.8");
       properties.setProperty(PROPERTY_SESSION_INTERVAL, 8 * 60 + "");
       properties.setProperty(PROPERTY_VCLOUD_XML_SCHEMA, "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
@@ -61,10 +62,9 @@ public abstract class TerremarkVCloudApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public abstract static class Builder<B extends Builder<B>> extends BaseRestApiMetadata.Builder<B> {
+   public abstract static class Builder<B extends Builder<B>> extends BaseHttpApiMetadata.Builder<TerremarkVCloudApi, B> {
 
-      protected Builder(Class<?> syncClient, Class<?> asyncClient) {
-         super(syncClient, asyncClient);
+      protected Builder() {
          identityName("Email")
          .credentialName("Password")
          .version("0.8")

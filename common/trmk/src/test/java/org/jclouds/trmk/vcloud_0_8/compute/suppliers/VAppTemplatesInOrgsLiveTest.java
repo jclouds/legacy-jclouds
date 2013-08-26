@@ -22,7 +22,7 @@ import java.util.Set;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudApi;
 import org.jclouds.trmk.vcloud_0_8.domain.CatalogItem;
 import org.jclouds.trmk.vcloud_0_8.functions.AllCatalogItemsInOrg;
 import org.testng.annotations.BeforeClass;
@@ -44,7 +44,7 @@ extends BaseComputeServiceContextLiveTest {
       provider = "trmk-vcloudexpress";
    }
 
-   private TerremarkVCloudClient tmClient;
+   private TerremarkVCloudApi tmClient;
    private VAppTemplatesInOrgs parser;
    private AllCatalogItemsInOrg allCatalogItemsInOrg;
 
@@ -54,7 +54,7 @@ extends BaseComputeServiceContextLiveTest {
       super.setupContext();
       Injector injector = view.utils().injector();
 
-      tmClient = injector.getInstance(TerremarkVCloudClient.class);
+      tmClient = injector.getInstance(TerremarkVCloudApi.class);
       allCatalogItemsInOrg = injector.getInstance(AllCatalogItemsInOrg.class);
       parser = injector.getInstance(VAppTemplatesInOrgs.class);
    }

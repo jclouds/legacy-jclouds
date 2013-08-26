@@ -16,23 +16,19 @@
  */
 package org.jclouds.vcloud.functions;
 
-import static org.jclouds.concurrent.FutureIterables.transformParallel;
+import static com.google.common.collect.Iterables.transform;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.VCloudAsyncClient;
+import org.jclouds.vcloud.VCloudApi;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.network.OrgNetwork;
 
 import com.google.common.base.Function;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Adrian Cole
@@ -42,22 +38,20 @@ public class NetworksInOrg implements Function<Org, Iterable<OrgNetwork>> {
    @Resource
    public Logger logger = Logger.NULL;
 
-   private final VCloudAsyncClient aclient;
-   private final ListeningExecutorService userExecutor;
+   private final VCloudApi aclient;
 
    @Inject
-   NetworksInOrg(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
+   NetworksInOrg(VCloudApi aclient) {
       this.aclient = aclient;
-      this.userExecutor = userExecutor;
    }
 
    @Override
    public Iterable<OrgNetwork> apply(final Org org) {
-      return transformParallel(org.getNetworks().values(), new Function<ReferenceType, ListenableFuture<? extends OrgNetwork>>() {
-         public ListenableFuture<? extends OrgNetwork> apply(ReferenceType from) {
+      return transform(org.getNetworks().values(), new Function<ReferenceType, OrgNetwork>() {
+         public OrgNetwork apply(ReferenceType from) {
             return aclient.getNetworkClient().getNetwork(from.getHref());
          }
-      }, userExecutor, null, logger, "OrgNetworks in org " + org.getName());
+      });
    }
 
 }

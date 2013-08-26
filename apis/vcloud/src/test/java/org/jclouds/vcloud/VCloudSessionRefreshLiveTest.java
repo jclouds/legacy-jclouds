@@ -16,7 +16,7 @@
  */
 package org.jclouds.vcloud;
 
-import org.jclouds.vcloud.internal.BaseVCloudClientLiveTest;
+import org.jclouds.vcloud.internal.BaseVCloudApiLiveTest;
 import org.testng.annotations.Test;
 
 /**
@@ -25,14 +25,13 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true)
-public class VCloudSessionRefreshLiveTest extends BaseVCloudClientLiveTest {
+public class VCloudSessionRefreshLiveTest extends BaseVCloudApiLiveTest {
 
    private static final int timeOut = 40;
 
    @Test
    public void testSessionRefresh() throws Exception {
-      VCloudClient connection = VCloudClient.class.cast(client.getContext().unwrap(VCloudApiMetadata.CONTEXT_TOKEN)
-               .getApi());
+      VCloudApi connection = view.unwrapApi(VCloudApi.class);
 
       connection.getOrgClient().findOrgNamed(null);
       Thread.sleep(timeOut * 1000);

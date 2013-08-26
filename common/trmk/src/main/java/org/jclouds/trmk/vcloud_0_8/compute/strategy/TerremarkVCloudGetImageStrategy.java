@@ -25,7 +25,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.strategy.GetImageStrategy;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudApi;
 import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
 
 import com.google.common.base.Function;
@@ -36,11 +36,11 @@ import com.google.common.base.Function;
 @Singleton
 public class TerremarkVCloudGetImageStrategy implements GetImageStrategy {
 
-   protected final TerremarkVCloudClient client;
+   protected final TerremarkVCloudApi client;
    protected final Function<VAppTemplate, Image> vAppToImage;
 
    @Inject
-   protected TerremarkVCloudGetImageStrategy(TerremarkVCloudClient client, Function<VAppTemplate, Image> vAppToImage) {
+   protected TerremarkVCloudGetImageStrategy(TerremarkVCloudApi client, Function<VAppTemplate, Image> vAppToImage) {
       this.client = checkNotNull(client, "client");
       this.vAppToImage = vAppToImage;
    }

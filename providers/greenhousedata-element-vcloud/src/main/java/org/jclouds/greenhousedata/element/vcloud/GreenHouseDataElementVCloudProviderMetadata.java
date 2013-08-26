@@ -25,7 +25,7 @@ import org.jclouds.greenhousedata.element.vcloud.config.GreenHouseDataElementVCl
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 import org.jclouds.vcloud.VCloudApiMetadata;
-import org.jclouds.vcloud.config.VCloudRestClientModule;
+import org.jclouds.vcloud.config.VCloudHttpApiModule;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
@@ -68,7 +68,7 @@ public class GreenHouseDataElementVCloudProviderMetadata extends BaseProviderMet
                .apiMetadata(
                      new VCloudApiMetadata().toBuilder()
                      .buildVersion("1.5.0.464915")
-                     .defaultModules(ImmutableSet.<Class<? extends Module>>of(VCloudRestClientModule.class, GreenHouseDataElementVCloudComputeServiceContextModule.class))
+                     .defaultModules(ImmutableSet.<Class<? extends Module>>of(VCloudHttpApiModule.class, GreenHouseDataElementVCloudComputeServiceContextModule.class))
                      .build())
          .homepage(URI.create("http://www.greenhousedata.com/element-cloud-hosting/vcloud-services/"))
          .console(URI.create("https://mycloud.greenhousedata.com/cloud/org/YOUR_ORG_HERE"))

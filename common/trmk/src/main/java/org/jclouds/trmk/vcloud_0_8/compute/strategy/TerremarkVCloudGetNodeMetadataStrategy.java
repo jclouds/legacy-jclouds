@@ -25,7 +25,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudApi;
 import org.jclouds.trmk.vcloud_0_8.domain.VApp;
 
 import com.google.common.base.Function;
@@ -36,11 +36,11 @@ import com.google.common.base.Function;
 @Singleton
 public class TerremarkVCloudGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
 
-   protected final TerremarkVCloudClient client;
+   protected final TerremarkVCloudApi client;
    protected final Function<VApp, NodeMetadata> vAppToNodeMetadata;
 
    @Inject
-   protected TerremarkVCloudGetNodeMetadataStrategy(TerremarkVCloudClient client,
+   protected TerremarkVCloudGetNodeMetadataStrategy(TerremarkVCloudApi client,
          Function<VApp, NodeMetadata> vAppToNodeMetadata) {
       this.client = checkNotNull(client, "client");
       this.vAppToNodeMetadata = vAppToNodeMetadata;

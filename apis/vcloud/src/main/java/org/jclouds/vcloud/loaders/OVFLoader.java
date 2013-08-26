@@ -24,7 +24,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
 import org.jclouds.ovf.Envelope;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.VCloudApi;
 
 import com.google.common.cache.CacheLoader;
 
@@ -33,10 +33,10 @@ public class OVFLoader extends CacheLoader<URI, Envelope> {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final VCloudClient client;
+   private final VCloudApi client;
 
    @Inject
-   OVFLoader(VCloudClient client) {
+   OVFLoader(VCloudApi client) {
       this.client = client;
    }
 

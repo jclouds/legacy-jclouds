@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Sets;
 
 /**
- * Tests behavior of {@code TerremarkVCloudClient}
+ * Tests behavior of {@code TerremarkVCloudApi}
  * 
  * @author Adrian Cole
  */
@@ -44,7 +44,7 @@ public class InternetServiceLiveTest
       provider = "trmk-vcloudexpress";
    }
 
-   TerremarkVCloudExpressClient tmClient;
+   TerremarkVCloudExpressApi tmClient;
 
    private Set<InternetService> services = Sets.newLinkedHashSet();
 
@@ -86,7 +86,7 @@ public class InternetServiceLiveTest
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      tmClient = view.unwrap(TerremarkVCloudExpressApiMetadata.CONTEXT_TOKEN).getApi();
+      tmClient = view.unwrapApi(TerremarkVCloudExpressApi.class);
 
    }
 

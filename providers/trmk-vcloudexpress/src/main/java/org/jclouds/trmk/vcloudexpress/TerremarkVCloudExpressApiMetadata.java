@@ -25,10 +25,9 @@ import java.util.Properties;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudApiMetadata;
 import org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceContextModule;
-import org.jclouds.trmk.vcloudexpress.config.TerremarkVCloudExpressRestClientModule;
+import org.jclouds.trmk.vcloudexpress.config.TerremarkVCloudExpressHttpApiModule;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 
 /**
@@ -38,15 +37,7 @@ import com.google.inject.Module;
  */
 public class TerremarkVCloudExpressApiMetadata extends TerremarkVCloudApiMetadata {
 
-   /**
-    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(TerremarkVCloudExpressClient.class)} as
-    *             {@link TerremarkVCloudExpressAsyncClient} interface will be removed in jclouds 1.7.
-    */
-   @Deprecated
-   public static final TypeToken<org.jclouds.rest.RestContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient>>() {
-      private static final long serialVersionUID = 1L;
-   };
-   
+
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
@@ -71,7 +62,6 @@ public class TerremarkVCloudExpressApiMetadata extends TerremarkVCloudApiMetadat
 
       @SuppressWarnings("deprecation")
       protected Builder() {
-         super(TerremarkVCloudExpressClient.class, TerremarkVCloudExpressAsyncClient.class);
          id("trmk-vcloudexpress")
          .name("Terremark vCloud Express API")
          .identityName("Email")
@@ -80,7 +70,7 @@ public class TerremarkVCloudExpressApiMetadata extends TerremarkVCloudApiMetadat
          .defaultEndpoint("https://services.vcloudexpress.terremark.com/api")
          .documentation(URI.create("https://community.vcloudexpress.terremark.com/en-us/product_docs/m/vcefiles/2342.aspx"))
          .defaultProperties(TerremarkVCloudExpressApiMetadata.defaultProperties())
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(TerremarkVCloudExpressRestClientModule.class, TerremarkVCloudExpressComputeServiceContextModule.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(TerremarkVCloudExpressHttpApiModule.class, TerremarkVCloudExpressComputeServiceContextModule.class));
       }
 
       @Override

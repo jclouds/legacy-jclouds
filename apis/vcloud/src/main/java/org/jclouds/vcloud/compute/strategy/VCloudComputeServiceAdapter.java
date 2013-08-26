@@ -38,7 +38,7 @@ import org.jclouds.ovf.Envelope;
 import org.jclouds.util.Throwables2;
 import org.jclouds.vcloud.TaskInErrorStateException;
 import org.jclouds.vcloud.TaskStillRunningException;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.VCloudApi;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
@@ -54,10 +54,9 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
-import com.google.common.collect.Iterables;
 
 /**
- * defines the connection between the {@link VCloudClient} implementation and the jclouds
+ * defines the connection between the {@link org.jclouds.vcloud.VCloudApi} implementation and the jclouds
  * {@link ComputeService}
  * 
  */
@@ -68,7 +67,7 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   protected final VCloudClient client;
+   protected final VCloudApi client;
    protected final Predicate<URI> successTester;
    protected final InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn booter;
    protected final Supplier<Map<String, Org>> nameToOrg;
@@ -76,7 +75,7 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
    protected final Function<VAppTemplate, Envelope> templateToEnvelope;
 
    @Inject
-   protected VCloudComputeServiceAdapter(VCloudClient client, Predicate<URI> successTester,
+   protected VCloudComputeServiceAdapter(VCloudApi client, Predicate<URI> successTester,
             InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn booter,
             Supplier<Map<String, Org>> nameToOrg, VAppTemplatesSupplier templates,
             Function<VAppTemplate, Envelope> templateToEnvelope) {

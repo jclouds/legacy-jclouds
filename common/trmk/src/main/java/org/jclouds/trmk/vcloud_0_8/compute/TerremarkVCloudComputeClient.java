@@ -40,7 +40,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudApi;
 import org.jclouds.trmk.vcloud_0_8.domain.InternetService;
 import org.jclouds.trmk.vcloud_0_8.domain.Node;
 import org.jclouds.trmk.vcloud_0_8.domain.Protocol;
@@ -67,14 +67,14 @@ public class TerremarkVCloudComputeClient {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   protected final TerremarkVCloudClient client;
+   protected final TerremarkVCloudApi client;
    protected final Provider<String> passwordGenerator;
    protected final InternetServiceAndPublicIpAddressSupplier internetServiceAndPublicIpAddressSupplier;
    protected final Map<Status, NodeMetadata.Status> vAppStatusToNodeStatus;
    protected final Predicate<URI> taskTester;
 
    @Inject
-   protected TerremarkVCloudComputeClient(TerremarkVCloudClient client,
+   protected TerremarkVCloudComputeClient(TerremarkVCloudApi client,
          @Named("PASSWORD") Provider<String> passwordGenerator, Predicate<URI> successTester,
          Map<Status, NodeMetadata.Status> vAppStatusToNodeStatus, Map<String, Credentials> credentialStore,
          InternetServiceAndPublicIpAddressSupplier internetServiceAndPublicIpAddressSupplier) {

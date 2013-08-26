@@ -24,11 +24,10 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.trmk.ecloud.compute.config.TerremarkECloudComputeServiceContextModule;
-import org.jclouds.trmk.ecloud.config.TerremarkECloudRestClientModule;
+import org.jclouds.trmk.ecloud.config.TerremarkECloudHttpApiModule;
 import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 
 /**
@@ -38,15 +37,7 @@ import com.google.inject.Module;
  */
 public class TerremarkECloudApiMetadata extends TerremarkVCloudApiMetadata {
 
-   /**
-    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(TerremarkECloudClient.class)} as
-    *             {@link TerremarkECloudAsyncClient} interface will be removed in jclouds 1.7.
-    */
-   @Deprecated
-   public static final TypeToken<org.jclouds.rest.RestContext<TerremarkECloudClient, TerremarkECloudAsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<TerremarkECloudClient, TerremarkECloudAsyncClient>>() {
-      private static final long serialVersionUID = 1L;
-   };
-   
+
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
@@ -69,16 +60,14 @@ public class TerremarkECloudApiMetadata extends TerremarkVCloudApiMetadata {
 
    public static class Builder extends TerremarkVCloudApiMetadata.Builder<Builder> {
 
-      @SuppressWarnings("deprecation")
       protected Builder() {
-         super(TerremarkECloudClient.class, TerremarkECloudAsyncClient.class);
          id("trmk-ecloud")
          .name("Terremark Enterprise Cloud v2.8 API")
          .version("0.8b-ext2.8")
          .defaultEndpoint("https://services.enterprisecloud.terremark.com/api")
          .documentation(URI.create("http://support.theenterprisecloud.com/kb/default.asp?id=533&Lang=1&SID="))
          .defaultProperties(TerremarkECloudApiMetadata.defaultProperties())
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(TerremarkECloudRestClientModule.class, TerremarkECloudComputeServiceContextModule.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(TerremarkECloudHttpApiModule.class, TerremarkECloudComputeServiceContextModule.class));
       }
 
       @Override

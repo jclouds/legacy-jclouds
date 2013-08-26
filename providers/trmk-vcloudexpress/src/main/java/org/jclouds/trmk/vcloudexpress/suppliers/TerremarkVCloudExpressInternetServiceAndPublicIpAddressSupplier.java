@@ -33,7 +33,7 @@ import org.jclouds.trmk.vcloud_0_8.domain.Protocol;
 import org.jclouds.trmk.vcloud_0_8.domain.PublicIpAddress;
 import org.jclouds.trmk.vcloud_0_8.domain.VApp;
 import org.jclouds.trmk.vcloud_0_8.suppliers.InternetServiceAndPublicIpAddressSupplier;
-import org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClient;
+import org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressApi;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -48,10 +48,10 @@ public class TerremarkVCloudExpressInternetServiceAndPublicIpAddressSupplier imp
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
-   protected final TerremarkVCloudExpressClient client;
+   protected final TerremarkVCloudExpressApi client;
 
    @Inject
-   public TerremarkVCloudExpressInternetServiceAndPublicIpAddressSupplier(TerremarkVCloudExpressClient client) {
+   public TerremarkVCloudExpressInternetServiceAndPublicIpAddressSupplier(TerremarkVCloudExpressApi client) {
       this.client = client;
    }
 

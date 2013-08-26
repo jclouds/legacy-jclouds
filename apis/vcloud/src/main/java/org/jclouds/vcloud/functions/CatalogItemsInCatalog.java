@@ -17,16 +17,14 @@
 package org.jclouds.vcloud.functions;
 
 import static com.google.common.collect.Iterables.filter;
-import static org.jclouds.concurrent.FutureIterables.transformParallel;
+import static com.google.common.collect.Iterables.transform;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.VCloudAsyncClient;
+import org.jclouds.vcloud.VCloudApi;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
@@ -34,8 +32,6 @@ import org.jclouds.vcloud.domain.ReferenceType;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * @author Adrian Cole
@@ -45,26 +41,24 @@ public class CatalogItemsInCatalog implements Function<Catalog, Iterable<Catalog
    @Resource
    public Logger logger = Logger.NULL;
 
-   private final VCloudAsyncClient aclient;
-   private final ListeningExecutorService userExecutor;
+   private final VCloudApi aclient;
 
    @Inject
-   CatalogItemsInCatalog(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {
+   CatalogItemsInCatalog(VCloudApi aclient) {
       this.aclient = aclient;
-      this.userExecutor = userExecutor;
    }
 
    @Override
    public Iterable<CatalogItem> apply(Catalog from) {
-      return transformParallel(filter(from.values(), new Predicate<ReferenceType>() {
+      return transform(filter(from.values(), new Predicate<ReferenceType>() {
          public boolean apply(ReferenceType input) {
             return input.getType().equals(VCloudMediaType.CATALOGITEM_XML);
          }
-      }), new Function<ReferenceType, ListenableFuture<? extends CatalogItem>>() {
-         public ListenableFuture<CatalogItem> apply(ReferenceType from) {
+      }), new Function<ReferenceType, CatalogItem>() {
+         public CatalogItem apply(ReferenceType from) {
             return aclient.getCatalogClient().getCatalogItem(from.getHref());
          }
-      }, userExecutor, null, logger, "catalogItems in " + from.getHref());
+      });
    }
 
 }

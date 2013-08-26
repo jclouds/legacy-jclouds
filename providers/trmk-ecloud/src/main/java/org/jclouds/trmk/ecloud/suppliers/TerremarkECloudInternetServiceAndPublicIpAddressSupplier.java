@@ -30,7 +30,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.InsufficientResourcesException;
-import org.jclouds.trmk.ecloud.TerremarkECloudClient;
+import org.jclouds.trmk.ecloud.TerremarkECloudApi;
 import org.jclouds.trmk.vcloud_0_8.domain.InternetService;
 import org.jclouds.trmk.vcloud_0_8.domain.Protocol;
 import org.jclouds.trmk.vcloud_0_8.domain.PublicIpAddress;
@@ -50,10 +50,10 @@ public class TerremarkECloudInternetServiceAndPublicIpAddressSupplier implements
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
-   protected final TerremarkECloudClient client;
+   protected final TerremarkECloudApi client;
 
    @Inject
-   public TerremarkECloudInternetServiceAndPublicIpAddressSupplier(TerremarkECloudClient client) {
+   public TerremarkECloudInternetServiceAndPublicIpAddressSupplier(TerremarkECloudApi client) {
       this.client = client;
    }
 
