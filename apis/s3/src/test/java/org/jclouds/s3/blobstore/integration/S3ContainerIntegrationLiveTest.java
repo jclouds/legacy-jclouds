@@ -18,6 +18,7 @@ package org.jclouds.s3.blobstore.integration;
 
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.blobstore.integration.internal.BaseContainerIntegrationTest;
+import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 /**
@@ -30,5 +31,12 @@ public class S3ContainerIntegrationLiveTest extends BaseContainerIntegrationTest
    public S3ContainerIntegrationLiveTest() {
       provider = "s3";
       BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
+   }
+
+   @Override
+   public void testDirectory() throws InterruptedException {
+      // S3 does not support directories, rather it supports prefixes which look
+      // like directories.  We should filter out the fake RELATIVE_PATH.
+      throw new SkipException("not yet implemented");
    }
 }
