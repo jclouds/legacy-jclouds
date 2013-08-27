@@ -499,7 +499,7 @@ public class BaseBlobStoreIntegrationTest extends BaseViewLiveTest<BlobStoreCont
             deleteContainerOrWarnIfUnable(view, container);
          }
       });
-      String newScratchContainer = container + new SecureRandom().nextLong();
+      String newScratchContainer = CONTAINER_PREFIX + new SecureRandom().nextLong();
       System.err.printf("*** allocated new container %s...%n", container);
       return newScratchContainer;
    }
