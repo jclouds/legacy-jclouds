@@ -20,6 +20,7 @@ import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.reflect.Reflection2.method;
 import static org.testng.Assert.assertEquals;
 
+import java.net.URI;
 import java.util.Properties;
 
 import javax.ws.rs.core.HttpHeaders;
@@ -48,6 +49,7 @@ import com.google.common.collect.TreeMultimap;
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "RequestAuthorizeSignatureTest")
 public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest<S3AsyncClient> {
+   String bucketName = "bucket";
 
    @DataProvider(parallel = true)
    public Object[][] dataProvider() throws NoSuchMethodException {
@@ -89,7 +91,7 @@ public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest<S3Async
             ImmutableList.<Object> of("bucket"));
       StringBuilder builder = new StringBuilder();
       filter.appendBucketName(request, builder);
-      assertEquals(builder.toString(), "/bucket");
+      assertEquals(builder.toString(), "");
    }
 
    @Test
@@ -97,7 +99,7 @@ public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest<S3Async
       HttpRequest request = putBucketAcl();
       StringBuilder builder = new StringBuilder();
       filter.appendUriPath(request, builder);
-      assertEquals(builder.toString(), "/?acl");
+      assertEquals(builder.toString(), "/" + bucketName + "?acl");
    }
 
    private GeneratedHttpRequest putBucketAcl() throws NoSuchMethodException {
@@ -140,11 +142,13 @@ public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest<S3Async
    }
 
    @Test
-   void testAppendBucketNameURIHost() throws SecurityException, NoSuchMethodException {
+   void testAppendBucketNameInURIPath() throws SecurityException, NoSuchMethodException {
       GeneratedHttpRequest request = processor.createRequest(
             method(S3AsyncClient.class, "getBucketLocation", String.class),
-            ImmutableList.<Object> of("bucket"));
-      assertEquals(request.getEndpoint().getHost(), "bucket.s3.amazonaws.com");
+            ImmutableList.<Object> of(bucketName));
+      URI uri = request.getEndpoint();
+      assertEquals(uri.getHost(), "s3.amazonaws.com");
+      assertEquals(uri.getPath(), "/" + bucketName);
    }
 
    @Override

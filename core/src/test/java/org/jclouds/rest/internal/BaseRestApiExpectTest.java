@@ -103,8 +103,8 @@ import com.google.inject.TypeLiteral;
  * <pre>
  * 
  * HttpRequest bucketFooExists = HttpRequest.builder().method(&quot;HEAD&quot;).endpoint(
- *          URI.create(&quot;https://foo.s3.amazonaws.com/?max-keys=0&quot;)).headers(
- *          ImmutableMultimap.&lt;String, String&gt; builder().put(&quot;Host&quot;, &quot;foo.s3.amazonaws.com&quot;).put(&quot;Date&quot;, CONSTANT_DATE)
+ *          URI.create(&quot;https://s3.amazonaws.com/foo?max-keys=0&quot;)).headers(
+ *          ImmutableMultimap.&lt;String, String&gt; builder().put(&quot;Date&quot;, CONSTANT_DATE)
  *                   .put(&quot;Authorization&quot;, &quot;AWS identity:86P4BBb7xT+gBqq7jxM8Tc28ktY=&quot;).build()).build();
  * 
  * S3Client clientWhenBucketExists = requestSendsResponse(bucketFooExists, HttpResponse.builder().statusCode(200).build());

@@ -79,14 +79,14 @@ public class RequestAuthorizeSignatureWithSessionCredentialsTest {
 
    HttpRequest bucketFooExists = GeneratedHttpRequest.builder().method("GET")
                                             .invocation(invocation)
-                                            .endpoint("https://foo.s3.amazonaws.com/?max-keys=0")
-                                            .addHeader("Host", "foo.s3.amazonaws.com").build();
+                                            .endpoint("https://s3.amazonaws.com/foo?max-keys=0")
+                                            .build();
 
    @Test
    void testAddsSecurityToken() {
       HttpRequest filtered = filter(temporaryCredentials).filter(bucketFooExists);
       assertEquals(filtered.getFirstHeaderOrNull("Authorization"),
-            "AWS AKIAIOSFODNN7EXAMPLE:0fUhWTaRBcIvIAndg2C+5eLfE24=");
+            "AWS AKIAIOSFODNN7EXAMPLE:sbAAy3Gh/sD1zwO7Ut75YJFCs4U=");
       assertEquals(filtered.getFirstHeaderOrNull("x-amz-security-token"), temporaryCredentials.getSessionToken());
    }
 }

@@ -36,9 +36,19 @@ import com.google.inject.Module;
 @Test(groups = "unit", testName = "AWSS3BlobSignerExpectTest")
 public class AWSS3BlobSignerExpectTest extends S3BlobSignerExpectTest {
    private static final String DATE = "Thu, 05 Jun 2008 16:38:19 GMT";
+   private static final String HOST = "container.s3.amazonaws.com";
 
    public AWSS3BlobSignerExpectTest() {
       provider = "aws-s3";
+   }
+
+   @Override
+   protected HttpRequest getBlob() {
+      return HttpRequest.builder().method("GET")
+            .endpoint("https://container.s3.amazonaws.com/name")
+            .addHeader("Host", HOST)
+            .addHeader("Date", "Thu, 05 Jun 2008 16:38:19 GMT")
+            .addHeader("Authorization", "AWS identity:0uvBv1wEskuhFHYJF/L6kEV9A7o=").build();
    }
 
    @Override
@@ -50,12 +60,32 @@ public class AWSS3BlobSignerExpectTest extends S3BlobSignerExpectTest {
          .addHeader("Date", DATE).build();
    }
 
+   @Override
+   protected HttpRequest getBlobWithOptions() {
+      return HttpRequest.builder().method("GET")
+            .endpoint("https://container.s3.amazonaws.com/name")
+            .addHeader("Host", HOST)
+            .addHeader("Range", "bytes=0-1")
+            .addHeader("Date", "Thu, 05 Jun 2008 16:38:19 GMT")
+            .addHeader("Authorization", "AWS identity:0uvBv1wEskuhFHYJF/L6kEV9A7o=").build();
+   }
+
    @Test
    public void testSignGetBlobWithTime() {
       BlobStore getBlobWithTime = requestsSendResponses(init());
       HttpRequest compare = getBlobWithTime();
       assertEquals(getBlobWithTime.getContext().getSigner().signGetBlob(container, name, 3l /* seconds */),
          compare);
+   }
+
+   @Override
+   protected HttpRequest putBlob() {
+      return HttpRequest.builder().method("PUT")
+            .endpoint("https://container.s3.amazonaws.com/name")
+            .addHeader("Host", HOST)
+            .addHeader("Expect", "100-continue")
+            .addHeader("Date", "Thu, 05 Jun 2008 16:38:19 GMT")
+            .addHeader("Authorization", "AWS identity:j9Dy/lmmvlCKjA4lkqZenLxMkR4=").build();
    }
 
    @Override
@@ -66,6 +96,15 @@ public class AWSS3BlobSignerExpectTest extends S3BlobSignerExpectTest {
          .addHeader("Expect", "100-continue")
          .addHeader("Host", "container.s3.amazonaws.com")
          .addHeader("Date", DATE).build();
+   }
+
+   @Override
+   protected HttpRequest removeBlob() {
+      return HttpRequest.builder().method("DELETE")
+            .endpoint("https://container.s3.amazonaws.com/name")
+            .addHeader("Host", HOST)
+            .addHeader("Date", "Thu, 05 Jun 2008 16:38:19 GMT")
+            .addHeader("Authorization", "AWS identity:4FnyjdX/ULdDMRbVlLNjZfEo9RQ=").build();
    }
 
    @Test

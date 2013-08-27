@@ -85,7 +85,7 @@ public class S3ApiMetadata extends BaseRestApiMetadata {
       properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
       properties.setProperty(PROPERTY_HEADER_TAG, S3Headers.DEFAULT_AMAZON_HEADERTAG);
       properties.setProperty(PROPERTY_S3_SERVICE_PATH, "/");
-      properties.setProperty(PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "true");
+      properties.setProperty(PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "false");
       properties.setProperty(PROPERTY_RELAX_HOSTNAME, "true");
       properties.setProperty(PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX, "/");
       properties.setProperty(PROPERTY_USER_METADATA_PREFIX, String.format("x-${%s}-meta-", PROPERTY_HEADER_TAG));

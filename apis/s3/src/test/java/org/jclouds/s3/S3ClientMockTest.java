@@ -54,7 +54,6 @@ public class S3ClientMockTest {
 
    static S3Client getS3Client(URL server) {
       Properties overrides = new Properties();
-      overrides.setProperty(PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "false");
       // prevent expect-100 bug http://code.google.com/p/mockwebserver/issues/detail?id=6
       overrides.setProperty(PROPERTY_SO_TIMEOUT, "0");
       overrides.setProperty(PROPERTY_MAX_RETRIES, "1");

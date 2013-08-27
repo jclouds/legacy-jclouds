@@ -36,17 +36,17 @@ public class S3RedirectionRetryHandlerExpectTest extends BaseS3ClientExpectTest 
    public void testRedirectOnHeadBucketChangesRequestToGetBucket() {
 
       HttpRequest bucketFooExists = HttpRequest.builder().method("HEAD").endpoint(
-               URI.create("https://foo.s3.amazonaws.com/?max-keys=0")).headers(
-               ImmutableMultimap.<String, String> builder().put("Host", "foo.s3.amazonaws.com").put("Date",
-                        CONSTANT_DATE).put("Authorization", "AWS identity:86P4BBb7xT+gBqq7jxM8Tc28ktY=").build())
+               URI.create("https://s3.amazonaws.com/foo?max-keys=0")).headers(
+               ImmutableMultimap.<String, String> builder().put("Date",
+                        CONSTANT_DATE).put("Authorization", "AWS identity:p32RsBr2inawMBeCkkiA228BT2w=").build())
                .build();
 
       HttpResponse redirectResponse = HttpResponse.builder().statusCode(301).build();
 
       HttpRequest bucketFooExistsNowUsesGET = HttpRequest.builder().method("GET").endpoint(
-               URI.create("https://foo.s3.amazonaws.com/?max-keys=0")).headers(
-               ImmutableMultimap.<String, String> builder().put("Host", "foo.s3.amazonaws.com").put("Date",
-                        CONSTANT_DATE).put("Authorization", "AWS identity:ZWVz2v/jGB+ZMmijoyfH9mFMPo0=").build())
+               URI.create("https://s3.amazonaws.com/foo?max-keys=0")).headers(
+               ImmutableMultimap.<String, String> builder().put("Date",
+                        CONSTANT_DATE).put("Authorization", "AWS identity:p32RsBr2inawMBeCkkiA228BT2w=").build())
                .build();
 
       HttpResponse success = HttpResponse.builder().statusCode(200).build();
