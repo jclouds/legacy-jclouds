@@ -116,7 +116,8 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactoryTest
       }
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class, expectedExceptionsMessageRegExp = "duplicate key: foo")
+   @Test(expectedExceptions = IllegalArgumentException.class,
+         expectedExceptionsMessageRegExp = "Multiple entries with same key: foo.*")
    public void testNoDuplicateSerializedNamesRequiredOnAllParameters() {
       parameterizedCtorFactory.create(gson, TypeToken.get(DuplicateSerializedNames.class));
    }

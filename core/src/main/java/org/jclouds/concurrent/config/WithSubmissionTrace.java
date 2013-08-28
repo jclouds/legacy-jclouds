@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -113,7 +114,8 @@ public class WithSubmissionTrace {
 
    private static final Set<String> stackTracesToTrim = ImmutableSet.of(WithSubmissionTrace.class.getName(),
          ListeningExecutorService.class.getName(), ListenableFuture.class.getName(),
-         ListeningScheduledExecutorService.class.getName(), ScheduledFuture.class.getName());
+         ListeningScheduledExecutorService.class.getName(), ScheduledFuture.class.getName(),
+         ListenableScheduledFuture.class.getName());
 
    /** returns the stack trace at the caller */
    private static StackTraceElement[] getStackTraceHere() {
@@ -182,25 +184,25 @@ public class WithSubmissionTrace {
 
       @SuppressWarnings({ "rawtypes", "unchecked" })
       @Override
-      public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
-         return new ScheduledFuture(delegate().schedule(command, delay, unit));
+      public ListenableScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
+         return new ListenableScheduledFuture(delegate().schedule(command, delay, unit));
       }
 
       @Override
-      public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
-         return new ScheduledFuture<V>(delegate().schedule(callable, delay, unit));
-      }
-
-      @SuppressWarnings({ "rawtypes", "unchecked" })
-      @Override
-      public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) {
-         return new ScheduledFuture(delegate().scheduleAtFixedRate(command, initialDelay, period, unit));
+      public <V> ListenableScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
+         return new ListenableScheduledFuture(delegate().schedule(callable, delay, unit));
       }
 
       @SuppressWarnings({ "rawtypes", "unchecked" })
       @Override
-      public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit) {
-         return new ScheduledFuture(delegate().scheduleWithFixedDelay(command, initialDelay, delay, unit));
+      public ListenableScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) {
+         return new ListenableScheduledFuture(delegate().scheduleAtFixedRate(command, initialDelay, period, unit));
+      }
+
+      @SuppressWarnings({ "rawtypes", "unchecked" })
+      @Override
+      public ListenableScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit) {
+         return new ListenableScheduledFuture(delegate().scheduleWithFixedDelay(command, initialDelay, delay, unit));
       }
 
    }
@@ -250,4 +252,15 @@ public class WithSubmissionTrace {
       }
    }
 
+   private static class ListenableScheduledFuture<T> extends ScheduledFuture<T>
+         implements com.google.common.util.concurrent.ListenableScheduledFuture<T> {
+      private ListenableScheduledFuture(com.google.common.util.concurrent.ListenableScheduledFuture<T> delegate) {
+         super(delegate);
+      }
+
+      @Override
+      public void addListener(Runnable listener, Executor executor) {
+         ((com.google.common.util.concurrent.ListenableScheduledFuture<T>) delegate()).addListener(listener, executor);
+      }
+   }
 }
