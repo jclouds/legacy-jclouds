@@ -71,7 +71,7 @@ public class AtmosAsyncClientTest extends BaseAsyncClientTest<AtmosAsyncClient> 
       Invokable<?, ?> method = method(AtmosAsyncClient.class, "listDirectories", ListOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.of());
 
-      assertRequestLineEquals(request, "GET https://accesspoint.atmosonline.com/rest/namespace HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://accesspoint.atmosonline.com/rest/namespace/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT + ": text/xml\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -101,7 +101,7 @@ public class AtmosAsyncClientTest extends BaseAsyncClientTest<AtmosAsyncClient> 
       Invokable<?, ?> method = method(AtmosAsyncClient.class, "listDirectories", ListOptions[].class);
       GeneratedHttpRequest request = processor.createRequest(method, ImmutableList.<Object> of(new ListOptions().limit(1).token("asda")));
 
-      assertRequestLineEquals(request, "GET https://accesspoint.atmosonline.com/rest/namespace HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://accesspoint.atmosonline.com/rest/namespace/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT + ": text/xml\nx-emc-limit: 1\nx-emc-token: asda\n");
       assertPayloadEquals(request, null, null, false);
 

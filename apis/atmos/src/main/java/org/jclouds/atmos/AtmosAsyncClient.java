@@ -92,6 +92,7 @@ public interface AtmosAsyncClient extends Closeable {
     */
    @Named("ListDirectory")
    @GET
+   @Path("/")
    @ResponseParser(ParseDirectoryListFromContentAndHeaders.class)
    @Consumes(MediaType.TEXT_XML)
    ListenableFuture<BoundedSet<? extends DirectoryEntry>> listDirectories(ListOptions... options);
