@@ -50,7 +50,7 @@ public class AWSS3BlobSignerExpectTest extends S3BlobSignerExpectTest {
          .addHeader("Date", DATE).build();
    }
 
-   @Test(expectedExceptions = UnsupportedOperationException.class)
+   @Test
    public void testSignGetBlobWithTime() {
       BlobStore getBlobWithTime = requestsSendResponses(init());
       HttpRequest compare = getBlobWithTime();
@@ -68,7 +68,7 @@ public class AWSS3BlobSignerExpectTest extends S3BlobSignerExpectTest {
          .addHeader("Date", DATE).build();
    }
 
-   @Test(expectedExceptions = UnsupportedOperationException.class)
+   @Test
    public void testSignPutBlobWithTime() throws Exception {
       BlobStore signPutBloblWithTime = requestsSendResponses(init());
       Blob blob = signPutBloblWithTime.blobBuilder(name).payload(text).contentType("text/plain").build();
