@@ -44,48 +44,48 @@ public interface VCloudApi extends Closeable {
     * 
     */
    @Delegate
-   VAppTemplateApi getVAppTemplateClient();
+   VAppTemplateApi getVAppTemplateApi();
 
    /**
     * Provides synchronous access to VApp features.
     */
    @Delegate
-   VAppApi getVAppClient();
+   VAppApi getVAppApi();
 
    /**
     * Provides synchronous access to Vm features.
     */
    @Delegate
-   VmApi getVmClient();
+   VmApi getVmApi();
 
    /**
     * Provides synchronous access to Catalog features.
     */
    @Delegate
-   CatalogApi getCatalogClient();
+   CatalogApi getCatalogApi();
 
    /**
     * Provides synchronous access to Task features.
     */
    @Delegate
-   TaskApi getTaskClient();
+   TaskApi getTaskApi();
 
    /**
     * Provides synchronous access to VDC features.
     */
    @Delegate
-   VDCApi getVDCClient();
+   VDCApi getVDCApi();
 
    /**
     * Provides synchronous access to Network features.
     */
    @Delegate
-   NetworkApi getNetworkClient();
+   NetworkApi getNetworkApi();
 
    /**
     * Provides synchronous access to Org features.
     */
    @Delegate
-   OrgApi getOrgClient();
+   OrgApi getOrgApi();
 
 }

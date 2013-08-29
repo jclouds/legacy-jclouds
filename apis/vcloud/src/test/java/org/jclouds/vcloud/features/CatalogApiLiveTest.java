@@ -36,10 +36,10 @@ import com.google.inject.Key;
 public class CatalogApiLiveTest extends BaseVCloudApiLiveTest {
    @Test
    public void testGetCatalog() throws Exception {
-      Org org = getVCloudApi().getOrgClient().findOrgNamed(null);
+      Org org = getVCloudApi().getOrgApi().findOrgNamed(null);
       for (ReferenceType catalog : org.getCatalogs().values()) {
          assertEquals(catalog.getType(), VCloudMediaType.CATALOG_XML);
-         assertNotNull(getVCloudApi().getCatalogClient().getCatalog(catalog.getHref()));
+         assertNotNull(getVCloudApi().getCatalogApi().getCatalog(catalog.getHref()));
       }
    }
 
@@ -48,6 +48,6 @@ public class CatalogApiLiveTest extends BaseVCloudApiLiveTest {
       // when we are in vCloud 1.0.0 public catalogs don't work, so our default
       // catalog is private
       if (!view.utils().injector().getInstance(Key.get(String.class, ApiVersion.class)).startsWith("1.5"))
-         assertTrue(getVCloudApi().getCatalogClient().findCatalogInOrgNamed(null, null).isReadOnly());
+         assertTrue(getVCloudApi().getCatalogApi().findCatalogInOrgNamed(null, null).isReadOnly());
    }
 }

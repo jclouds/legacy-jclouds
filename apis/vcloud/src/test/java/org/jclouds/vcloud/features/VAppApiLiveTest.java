@@ -35,13 +35,13 @@ public class VAppApiLiveTest extends BaseVCloudApiLiveTest {
 
    @Test
    public void testGetVApp() throws Exception {
-      Org org = getVCloudApi().getOrgClient().findOrgNamed(null);
+      Org org = getVCloudApi().getOrgApi().findOrgNamed(null);
       for (ReferenceType vdc : org.getVDCs().values()) {
-         VDC response = getVCloudApi().getVDCClient().getVDC(vdc.getHref());
+         VDC response = getVCloudApi().getVDCApi().getVDC(vdc.getHref());
          for (ReferenceType item : response.getResourceEntities().values()) {
             if (item.getType().equals(VCloudMediaType.VAPP_XML)) {
                try {
-                  VApp app = getVCloudApi().getVAppClient().getVApp(item.getHref());
+                  VApp app = getVCloudApi().getVAppApi().getVApp(item.getHref());
                   assertNotNull(app);
                } catch (RuntimeException e) {
 

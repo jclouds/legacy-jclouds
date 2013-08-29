@@ -48,7 +48,7 @@ public class OrgsForNames implements Function<Iterable<String>, Iterable<Org>> {
    public Iterable<Org> apply(Iterable<String> from) {
       return Iterables.filter(transform(from, new Function<String, Org>() {
          public Org apply(String from) {
-            return aclient.getOrgClient().findOrgNamed(from);
+            return aclient.getOrgApi().findOrgNamed(from);
          }
       }), Predicates.notNull());
    }

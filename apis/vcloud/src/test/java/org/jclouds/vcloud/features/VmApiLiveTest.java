@@ -53,16 +53,16 @@ public class VmApiLiveTest extends BaseVCloudApiLiveTest {
 
    @Test
    public void testGetThumbnailOfVm() throws Exception {
-      Org org = getVCloudApi().getOrgClient().findOrgNamed(null);
+      Org org = getVCloudApi().getOrgApi().findOrgNamed(null);
       for (ReferenceType vdc : org.getVDCs().values()) {
-         VDC response = getVCloudApi().getVDCClient().getVDC(vdc.getHref());
+         VDC response = getVCloudApi().getVDCApi().getVDC(vdc.getHref());
          for (ReferenceType item : response.getResourceEntities().values()) {
             if (item.getType().equals(VCloudMediaType.VAPP_XML)) {
                try {
-                  VApp app = getVCloudApi().getVAppClient().getVApp(item.getHref());
+                  VApp app = getVCloudApi().getVAppApi().getVApp(item.getHref());
                   assertNotNull(app);
                   for (Vm vm : app.getChildren()) {
-                     assert getVCloudApi().getVmClient().getScreenThumbnailForVm(vm.getHref()) != null;
+                     assert getVCloudApi().getVmApi().getScreenThumbnailForVm(vm.getHref()) != null;
                   }
                } catch (RuntimeException e) {
 
@@ -74,16 +74,16 @@ public class VmApiLiveTest extends BaseVCloudApiLiveTest {
 
    @Test
    public void testGetVm() throws Exception {
-      Org org = getVCloudApi().getOrgClient().findOrgNamed(null);
+      Org org = getVCloudApi().getOrgApi().findOrgNamed(null);
       for (ReferenceType vdc : org.getVDCs().values()) {
-         VDC response = getVCloudApi().getVDCClient().getVDC(vdc.getHref());
+         VDC response = getVCloudApi().getVDCApi().getVDC(vdc.getHref());
          for (ReferenceType item : response.getResourceEntities().values()) {
             if (item.getType().equals(VCloudMediaType.VAPP_XML)) {
                try {
-                  VApp app = getVCloudApi().getVAppClient().getVApp(item.getHref());
+                  VApp app = getVCloudApi().getVAppApi().getVApp(item.getHref());
                   assertNotNull(app);
                   for (Vm vm : app.getChildren()) {
-                     assertEquals(getVCloudApi().getVmClient().getVm(vm.getHref()).getHref(), vm.getHref());
+                     assertEquals(getVCloudApi().getVmApi().getVm(vm.getHref()).getHref(), vm.getHref());
                   }
                } catch (RuntimeException e) {
 
@@ -108,7 +108,7 @@ public class VmApiLiveTest extends BaseVCloudApiLiveTest {
          options.as(VCloudTemplateOptions.class).description(group);
          node = getOnlyElement(client.createNodesInGroup(group, 1, options));
 
-         VApp vapp = client.getContext().unwrapApi(VCloudApi.class).getVAppClient().getVApp(
+         VApp vapp = client.getContext().unwrapApi(VCloudApi.class).getVAppApi().getVApp(
                  node.getUri());
          assertEquals(vapp.getDescription(), group);
 

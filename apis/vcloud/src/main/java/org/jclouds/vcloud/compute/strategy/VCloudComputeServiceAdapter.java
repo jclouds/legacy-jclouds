@@ -134,7 +134,7 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
       Builder<VApp> nodes = ImmutableSet.builder();
       for (Org org : nameToOrg.get().values()) {
          for (ReferenceType vdc : org.getVDCs().values()) {
-            for (ReferenceType resource : client.getVDCClient().getVDC(vdc.getHref()).getResourceEntities().values()) {
+            for (ReferenceType resource : client.getVDCApi().getVDC(vdc.getHref()).getResourceEntities().values()) {
                if (resource.getType().equals(VCloudMediaType.VAPP_XML)) {
                   addVAppToSetRetryingIfNotYetPresent(nodes, vdc, resource);
                }
@@ -161,7 +161,7 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
       int i = 0;
       while (node == null && i++ < 3) {
          try {
-            node = client.getVAppClient().getVApp(resource.getHref());
+            node = client.getVAppApi().getVApp(resource.getHref());
             nodes.add(node);
          } catch (NullPointerException e) {
             logger.warn("vApp %s not yet present in vdc %s", resource.getName(), vdc.getName());
@@ -178,13 +178,13 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
    @Override
    public VApp getNode(String in) {
       URI id = URI.create(in);
-      return client.getVAppClient().getVApp(id);
+      return client.getVAppApi().getVApp(id);
    }
    
    @Override
    public VAppTemplate getImage(String in) {
       URI id = URI.create(in);
-      return client.getVAppTemplateClient().getVAppTemplate(id);
+      return client.getVAppTemplateApi().getVAppTemplate(id);
    }
    
    @Override
@@ -194,47 +194,47 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
       if (vApp.getStatus() != Status.OFF) {
          logger.debug(">> powering off VApp vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
          try {
-            waitForTask(client.getVAppClient().powerOffVApp(vApp.getHref()));
-            vApp = client.getVAppClient().getVApp(vApp.getHref());
+            waitForTask(client.getVAppApi().powerOffVApp(vApp.getHref()));
+            vApp = client.getVAppApi().getVApp(vApp.getHref());
             logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
          } catch (IllegalStateException e) {
             logger.warn(e, "<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
          }
          logger.debug(">> undeploying vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
          try {
-            waitForTask(client.getVAppClient().undeployVApp(vApp.getHref()));
-            vApp = client.getVAppClient().getVApp(vApp.getHref());
+            waitForTask(client.getVAppApi().undeployVApp(vApp.getHref()));
+            vApp = client.getVAppApi().getVApp(vApp.getHref());
             logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
          } catch (IllegalStateException e) {
             logger.warn(e, "<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
          }
       }
       logger.debug(">> deleting vApp(%s)", vApp.getHref());
-      waitForTask(client.getVAppClient().deleteVApp(vApp.getHref()));
+      waitForTask(client.getVAppApi().deleteVApp(vApp.getHref()));
       logger.debug("<< deleted vApp(%s)", vApp.getHref());
    }
 
    VApp waitForPendingTasksToComplete(URI vappId) {
-      VApp vApp = client.getVAppClient().getVApp(vappId);
+      VApp vApp = client.getVAppApi().getVApp(vappId);
       if (vApp.getTasks().size() == 0)
          return vApp;
       for (Task task : vApp.getTasks())
          waitForTask(task);
-      return client.getVAppClient().getVApp(vappId);
+      return client.getVAppApi().getVApp(vappId);
    }
 
    VApp cancelAnyRunningTasks(URI vappId) {
-      VApp vApp = client.getVAppClient().getVApp(vappId);
+      VApp vApp = client.getVAppApi().getVApp(vappId);
       if (vApp.getTasks().size() == 0)
          return vApp;
       for (Task task : vApp.getTasks()) {
          try {
-            client.getTaskClient().cancelTask(task.getHref());
+            client.getTaskApi().cancelTask(task.getHref());
             waitForTask(task);
          } catch (TaskInErrorStateException e) {
          }
       }
-      return client.getVAppClient().getVApp(vappId);
+      return client.getVAppApi().getVApp(vappId);
 
    }
 
@@ -246,18 +246,18 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
    @Override
    public void rebootNode(String in) {
       URI id = URI.create(checkNotNull(in, "node.id"));
-      waitForTask(client.getVAppClient().resetVApp(id));
+      waitForTask(client.getVAppApi().resetVApp(id));
    }
 
    @Override
    public void resumeNode(String in) {
       URI id = URI.create(checkNotNull(in, "node.id"));
-      waitForTask(client.getVAppClient().powerOnVApp(id));
+      waitForTask(client.getVAppApi().powerOnVApp(id));
    }
 
    @Override
    public void suspendNode(String in) {
       URI id = URI.create(checkNotNull(in, "node.id"));
-      waitForTask(client.getVAppClient().powerOffVApp(id));
+      waitForTask(client.getVAppApi().powerOffVApp(id));
    }
 }

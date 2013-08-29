@@ -58,7 +58,7 @@ public class VAppTemplatesForCatalogItems implements Function<Iterable<CatalogIt
          }
       }), new Function<CatalogItem, VAppTemplate>() {
          public VAppTemplate apply(CatalogItem from) {
-            return aclient.getVAppTemplateClient().getVAppTemplate(from.getEntity().getHref());
+            return aclient.getVAppTemplateApi().getVAppTemplate(from.getEntity().getHref());
          }
       }), Predicates.notNull());
    }

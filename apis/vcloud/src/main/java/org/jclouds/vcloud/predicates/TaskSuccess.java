@@ -52,7 +52,7 @@ public class TaskSuccess implements Predicate<URI> {
    public boolean apply(URI taskId) {
       logger.trace("looking for status on task %s", taskId);
 
-      Task task = client.getTaskClient().getTask(taskId);
+      Task task = client.getTaskApi().getTask(taskId);
       // perhaps task isn't available, yet
       if (task == null)
          return false;

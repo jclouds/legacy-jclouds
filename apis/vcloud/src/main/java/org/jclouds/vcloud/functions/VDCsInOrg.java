@@ -49,7 +49,7 @@ public class VDCsInOrg implements Function<Org, Iterable<VDC>> {
    public Iterable<VDC> apply(final Org org) {
       return transform(org.getVDCs().values(), new Function<ReferenceType, VDC>() {
          public VDC apply(ReferenceType from) {
-            return aclient.getVDCClient().getVDC(from.getHref());
+            return aclient.getVDCApi().getVDC(from.getHref());
          }
       });
    }

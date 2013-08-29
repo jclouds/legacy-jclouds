@@ -49,7 +49,7 @@ public class NetworksInOrg implements Function<Org, Iterable<OrgNetwork>> {
    public Iterable<OrgNetwork> apply(final Org org) {
       return transform(org.getNetworks().values(), new Function<ReferenceType, OrgNetwork>() {
          public OrgNetwork apply(ReferenceType from) {
-            return aclient.getNetworkClient().getNetwork(from.getHref());
+            return aclient.getNetworkApi().getNetwork(from.getHref());
          }
       });
    }

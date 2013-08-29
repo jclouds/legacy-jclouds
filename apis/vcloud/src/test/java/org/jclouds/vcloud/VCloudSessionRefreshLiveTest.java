@@ -33,9 +33,9 @@ public class VCloudSessionRefreshLiveTest extends BaseVCloudApiLiveTest {
    public void testSessionRefresh() throws Exception {
       VCloudApi connection = view.unwrapApi(VCloudApi.class);
 
-      connection.getOrgClient().findOrgNamed(null);
+      connection.getOrgApi().findOrgNamed(null);
       Thread.sleep(timeOut * 1000);
-      connection.getOrgClient().findOrgNamed(null);
+      connection.getOrgApi().findOrgNamed(null);
    }
 
 }

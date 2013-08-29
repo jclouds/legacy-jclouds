@@ -56,7 +56,7 @@ public class CatalogItemsInCatalog implements Function<Catalog, Iterable<Catalog
          }
       }), new Function<ReferenceType, CatalogItem>() {
          public CatalogItem apply(ReferenceType from) {
-            return aclient.getCatalogClient().getCatalogItem(from.getHref());
+            return aclient.getCatalogApi().getCatalogItem(from.getHref());
          }
       });
    }

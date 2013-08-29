@@ -31,12 +31,12 @@ public class OrgApiLiveTest extends BaseVCloudApiLiveTest {
 
    @Test
    public void testListOrgs() throws Exception {
-      for (ReferenceType response : getVCloudApi().getOrgClient().listOrgs().values()) {
+      for (ReferenceType response : getVCloudApi().getOrgApi().listOrgs().values()) {
          assertNotNull(response);
          assertNotNull(response.getName());
          assertNotNull(response.getHref());
-         assertEquals(getVCloudApi().getOrgClient().getOrg(response.getHref()).getName(), response.getName());
-         assertEquals(getVCloudApi().getOrgClient().findOrgNamed(response.getName()).getName(), response.getName());
+         assertEquals(getVCloudApi().getOrgApi().getOrg(response.getHref()).getName(), response.getName());
+         assertEquals(getVCloudApi().getOrgApi().findOrgNamed(response.getName()).getName(), response.getName());
       }
    }
 }

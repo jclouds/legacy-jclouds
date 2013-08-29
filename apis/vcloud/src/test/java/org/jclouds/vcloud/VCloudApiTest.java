@@ -38,14 +38,14 @@ public class VCloudApiTest extends BaseVCloudApiTest<VCloudApi> {
    private VCloudApi syncClient;
 
    public void testSync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
-      assert syncClient.getVAppClient() != null;
-      assert syncClient.getCatalogClient() != null;
-      assert syncClient.getVmClient() != null;
-      assert syncClient.getVAppTemplateClient() != null;
-      assert syncClient.getTaskClient() != null;
-      assert syncClient.getVDCClient() != null;
-      assert syncClient.getNetworkClient() != null;
-      assert syncClient.getOrgClient() != null;
+      assert syncClient.getVAppApi() != null;
+      assert syncClient.getCatalogApi() != null;
+      assert syncClient.getVmApi() != null;
+      assert syncClient.getVAppTemplateApi() != null;
+      assert syncClient.getTaskApi() != null;
+      assert syncClient.getVDCApi() != null;
+      assert syncClient.getNetworkApi() != null;
+      assert syncClient.getOrgApi() != null;
    }
 
    @BeforeClass

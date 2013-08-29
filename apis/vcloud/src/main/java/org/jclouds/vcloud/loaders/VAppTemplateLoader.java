@@ -42,6 +42,6 @@ public class VAppTemplateLoader extends CacheLoader<URI, VAppTemplate> {
 
    @Override
    public VAppTemplate load(URI template) {
-      return client.getVAppTemplateClient().getVAppTemplate(template);
+      return client.getVAppTemplateApi().getVAppTemplate(template);
    }
 }

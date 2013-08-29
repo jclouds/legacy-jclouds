@@ -49,14 +49,14 @@ import com.google.common.collect.ImmutableMap;
 public class VAppTemplateApiLiveTest extends BaseVCloudApiLiveTest {
    @Test
    public void testGetVAppTemplate() throws Exception {
-      Org org = getVCloudApi().getOrgClient().findOrgNamed(null);
+      Org org = getVCloudApi().getOrgApi().findOrgNamed(null);
       for (ReferenceType cat : org.getCatalogs().values()) {
-         Catalog response = getVCloudApi().getCatalogClient().getCatalog(cat.getHref());
+         Catalog response = getVCloudApi().getCatalogApi().getCatalog(cat.getHref());
          for (ReferenceType resource : response.values()) {
             if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
-               CatalogItem item = getVCloudApi().getCatalogClient().getCatalogItem(resource.getHref());
+               CatalogItem item = getVCloudApi().getCatalogApi().getCatalogItem(resource.getHref());
                if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
-                  VAppTemplate template = getVCloudApi().getVAppTemplateClient().getVAppTemplate(item.getEntity().getHref());
+                  VAppTemplate template = getVCloudApi().getVAppTemplateApi().getVAppTemplate(item.getEntity().getHref());
                   if (template != null) {
                      // the UUID in the href is the only way to actually link templates
                      assertEquals(template.getHref(), item.getEntity().getHref());
@@ -71,14 +71,14 @@ public class VAppTemplateApiLiveTest extends BaseVCloudApiLiveTest {
 
    @Test
    public void testGetOvfEnvelopeForVAppTemplate() throws Exception {
-      Org org = getVCloudApi().getOrgClient().findOrgNamed(null);
+      Org org = getVCloudApi().getOrgApi().findOrgNamed(null);
       for (ReferenceType cat : org.getCatalogs().values()) {
-         Catalog response = getVCloudApi().getCatalogClient().getCatalog(cat.getHref());
+         Catalog response = getVCloudApi().getCatalogApi().getCatalog(cat.getHref());
          for (ReferenceType resource : response.values()) {
             if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
-               CatalogItem item = getVCloudApi().getCatalogClient().getCatalogItem(resource.getHref());
+               CatalogItem item = getVCloudApi().getCatalogApi().getCatalogItem(resource.getHref());
                if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
-                  getVCloudApi().getVAppTemplateClient().getOvfEnvelopeForVAppTemplate(item.getEntity().getHref());
+                  getVCloudApi().getVAppTemplateApi().getOvfEnvelopeForVAppTemplate(item.getEntity().getHref());
                   // null can be no longer available or auth exception
                }
             }
@@ -88,14 +88,14 @@ public class VAppTemplateApiLiveTest extends BaseVCloudApiLiveTest {
 
    @Test
    public void testFindVAppTemplate() throws Exception {
-      Org org = getVCloudApi().getOrgClient().findOrgNamed(null);
+      Org org = getVCloudApi().getOrgApi().findOrgNamed(null);
       for (ReferenceType cat : org.getCatalogs().values()) {
-         Catalog response = getVCloudApi().getCatalogClient().getCatalog(cat.getHref());
+         Catalog response = getVCloudApi().getCatalogApi().getCatalog(cat.getHref());
          for (ReferenceType resource : response.values()) {
             if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
-               CatalogItem item = getVCloudApi().getCatalogClient().getCatalogItem(resource.getHref());
+               CatalogItem item = getVCloudApi().getCatalogApi().getCatalogItem(resource.getHref());
                if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
-                  VAppTemplate template = getVCloudApi().getVAppTemplateClient().findVAppTemplateInOrgCatalogNamed(
+                  VAppTemplate template = getVCloudApi().getVAppTemplateApi().findVAppTemplateInOrgCatalogNamed(
                            org.getName(), response.getName(), item.getEntity().getName());
                   if (template != null) {
                      // the UUID in the href is the only way to actually link templates
@@ -122,19 +122,19 @@ public class VAppTemplateApiLiveTest extends BaseVCloudApiLiveTest {
          Predicate<URI> taskTester = retry(new TaskSuccess(getVCloudApi()), 600, 5, SECONDS);
 
          // I have to undeploy first
-         Task task = getVCloudApi().getVAppClient().undeployVApp(URI.create(node.getId()));
+         Task task = getVCloudApi().getVAppApi().undeployVApp(URI.create(node.getId()));
 
          // wait up to ten minutes per above
          assert taskTester.apply(task.getHref()) : node;
 
-         VApp vApp = getVCloudApi().getVAppClient().getVApp(URI.create(node.getId()));
+         VApp vApp = getVCloudApi().getVAppApi().getVApp(URI.create(node.getId()));
 
          // wait up to ten minutes per above
          assertEquals(vApp.getStatus(), Status.OFF);
 
          // vdc is equiv to the node's location
          // vapp uri is the same as the node's id
-         vappTemplate = getVCloudApi().getVAppTemplateClient().captureVAppAsTemplateInVDC(URI.create(node.getId()),
+         vappTemplate = getVCloudApi().getVAppTemplateApi().captureVAppAsTemplateInVDC(URI.create(node.getId()),
                   group, URI.create(node.getLocation().getId()));
 
          assertEquals(vappTemplate.getName(), group);
@@ -144,9 +144,9 @@ public class VAppTemplateApiLiveTest extends BaseVCloudApiLiveTest {
          // wait up to ten minutes per above
          assert taskTester.apply(task.getHref()) : vappTemplate;
 
-         item = getVCloudApi().getCatalogClient().addVAppTemplateOrMediaImageToCatalogAndNameItem(
+         item = getVCloudApi().getCatalogApi().addVAppTemplateOrMediaImageToCatalogAndNameItem(
                   vappTemplate.getHref(),
-                  getVCloudApi().getCatalogClient().findCatalogInOrgNamed(null, null).getHref(), "fooname",
+                  getVCloudApi().getCatalogApi().findCatalogInOrgNamed(null, null).getHref(), "fooname",
                   CatalogItemOptions.Builder.description("description").properties(ImmutableMap.of("foo", "bar")));
 
          assertEquals(item.getName(), "fooname");
@@ -158,9 +158,9 @@ public class VAppTemplateApiLiveTest extends BaseVCloudApiLiveTest {
 
       } finally {
          if (item != null)
-            getVCloudApi().getCatalogClient().deleteCatalogItem(item.getHref());
+            getVCloudApi().getCatalogApi().deleteCatalogItem(item.getHref());
          if (vappTemplate != null)
-            getVCloudApi().getVAppTemplateClient().deleteVAppTemplate(vappTemplate.getHref());
+            getVCloudApi().getVAppTemplateApi().deleteVAppTemplate(vappTemplate.getHref());
          if (node != null)
             client.destroyNode(node.getId());
       }

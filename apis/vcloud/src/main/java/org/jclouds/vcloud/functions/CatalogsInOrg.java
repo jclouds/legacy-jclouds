@@ -49,7 +49,7 @@ public class CatalogsInOrg implements Function<Org, Iterable<Catalog>> {
    public Iterable<Catalog> apply(final Org org) {
       return transform(org.getCatalogs().values(), new Function<ReferenceType, Catalog>() {
          public Catalog apply(ReferenceType from) {
-            return aclient.getCatalogClient().getCatalog(from.getHref());
+            return aclient.getCatalogApi().getCatalog(from.getHref());
          }
       });
    }

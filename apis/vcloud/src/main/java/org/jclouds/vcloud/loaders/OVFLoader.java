@@ -42,6 +42,6 @@ public class OVFLoader extends CacheLoader<URI, Envelope> {
 
    @Override
    public Envelope load(URI template) {
-      return client.getVAppTemplateClient().getOvfEnvelopeForVAppTemplate(template);
+      return client.getVAppTemplateApi().getOvfEnvelopeForVAppTemplate(template);
    }
 }

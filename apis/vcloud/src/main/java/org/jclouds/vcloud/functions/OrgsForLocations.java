@@ -65,7 +65,7 @@ public class OrgsForLocations implements Function<Iterable<Location>, Iterable<O
       });
       return transform(uris, new Function<URI, Org>() {
          public Org apply(URI from) {
-            return aclient.getOrgClient().getOrg(from);
+            return aclient.getOrgApi().getOrg(from);
          }
       });
    }
