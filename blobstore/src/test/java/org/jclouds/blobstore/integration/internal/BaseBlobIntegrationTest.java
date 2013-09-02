@@ -134,7 +134,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    public void testPutFileParallel() throws InterruptedException, IOException, TimeoutException {
 
       File payloadFile = File.createTempFile("testPutFileParallel", "png");
-      Files.write(createTestInput(), payloadFile);
+      Files.write(createTestInput(32 * 1024), payloadFile);
       
       final Payload testPayload = Payloads.newFilePayload(payloadFile);
       final byte[] md5 = md5Supplier(testPayload);
@@ -611,9 +611,9 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       assertEquals(metadata.getContentMetadata().getContentMD5(), md5().hashString(TEST_STRING, UTF_8).asBytes());
    }
 
-   private byte[] createTestInput() throws IOException {
+   private static byte[] createTestInput(int length) throws IOException {
       Random random = new Random();
-      byte[] buffer = new byte[random.nextInt(2 * 1024 * 1024)];
+      byte[] buffer = new byte[random.nextInt(length)];
       random.nextBytes(buffer);
       return buffer;
    }
