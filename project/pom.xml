@@ -602,6 +602,15 @@
           <encoding>${project.build.sourceEncoding}</encoding>
           <source>${maven.compile.source}</source>
           <target>${maven.compile.target}</target>
+            <showDeprecation>false</showDeprecation>
+            <showWarnings>true</showWarnings>
+            <compilerArguments>
+              <Xlint />
+              <Xlint:-deprecation />
+              <Xlint:-rawtypes />
+              <Xlint:-serial />
+              <Xlint:-unchecked />
+            </compilerArguments>
         </configuration>
       </plugin>
       <plugin>

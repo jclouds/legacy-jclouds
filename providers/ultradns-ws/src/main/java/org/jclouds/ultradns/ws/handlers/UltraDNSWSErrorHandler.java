@@ -139,6 +139,7 @@ public class UltraDNSWSErrorHandler implements HttpErrorHandler {
             return exception;
          if (exception.getError().getDescription().get().indexOf("Cannot find") == -1)
             return exception;
+         return new ResourceNotFoundException(message, exception);
       case ErrorCodes.ZONE_NOT_FOUND:
       case ErrorCodes.RESOURCE_RECORD_NOT_FOUND:
       case ErrorCodes.ACCOUNT_NOT_FOUND:

@@ -70,6 +70,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters(RequestAuthorizeSignature.class)
 @BlobScope(CONTAINER)
+@Deprecated
 public interface AWSS3AsyncClient extends S3AsyncClient {
    
    /**

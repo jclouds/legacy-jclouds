@@ -38,6 +38,7 @@ import com.google.common.reflect.TypeToken;
  *             async interface will be removed in jclouds 1.7.
  */
 @Beta
+@Deprecated
 public abstract class BaseRestApiMetadata extends BaseApiMetadata implements RestApiMetadata {
 
    protected final Class<?> api;

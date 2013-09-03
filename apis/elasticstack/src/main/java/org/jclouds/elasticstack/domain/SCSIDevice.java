@@ -64,8 +64,6 @@ public class SCSIDevice extends Device {
       if (getClass() != obj.getClass())
          return false;
       SCSIDevice other = (SCSIDevice) obj;
-      if (bus != other.bus)
-         return false;
       if (unit != other.unit)
          return false;
       return true;

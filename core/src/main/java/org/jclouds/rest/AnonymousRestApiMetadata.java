@@ -31,6 +31,7 @@ import com.google.common.annotations.Beta;
  *             async interface will be removed in jclouds 1.7.
  */
 @Beta
+@Deprecated
 public class AnonymousRestApiMetadata extends BaseRestApiMetadata {
 
    public static AnonymousRestApiMetadata forClientMappedToAsyncClient(Class<?> client, Class<?> asyncClient) {

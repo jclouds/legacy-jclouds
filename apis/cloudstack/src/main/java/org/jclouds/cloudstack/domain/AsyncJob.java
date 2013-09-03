@@ -257,7 +257,7 @@ public class AsyncJob<S> {
                .error(in.getError());
       }
 
-      public static Builder<?, Object> fromAsyncJobUntyped(AsyncJob in) {
+      public static Builder<?, Object> fromAsyncJobUntyped(AsyncJob<?> in) {
          return new ConcreteBuilder().fromAsyncJob(in);
       }
    }
@@ -426,7 +426,7 @@ public class AsyncJob<S> {
    public boolean equals(Object obj) {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
-      AsyncJob that = AsyncJob.class.cast(obj);
+      AsyncJob<?> that = AsyncJob.class.cast(obj);
       return Objects.equal(this.accountId, that.accountId)
             && Objects.equal(this.cmd, that.cmd)
             && Objects.equal(this.created, that.created)
