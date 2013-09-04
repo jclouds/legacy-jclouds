@@ -76,7 +76,7 @@ public class BaseContainerLiveTest extends BaseBlobStoreIntegrationTest {
 
       } finally {
          // this container is now public, so we can't reuse it directly
-         recycleContainer(containerName);
+         recycleContainerAndAddToPool(containerName);
       }
    }
 
@@ -129,7 +129,7 @@ public class BaseContainerLiveTest extends BaseBlobStoreIntegrationTest {
 
       } finally {
          // this container is now public, so we can't reuse it directly
-         recycleContainer(containerName);
+         recycleContainerAndAddToPool(containerName);
       }
    }
 

@@ -52,6 +52,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test(groups = { "integration", "live" })
+   // TODO: the test name does not describe its behavior
    public void testPutTwiceIsOkAndDoesntOverwrite() throws InterruptedException {
       String containerName = getContainerName();
       try {
@@ -275,7 +276,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
          view.getBlobStore().deleteContainer(containerName);
          assertNotExists(containerName);
       } finally {
-         recycleContainer(containerName);
+         recycleContainerAndAddToPool(containerName);
       }
    }
 
@@ -287,7 +288,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
          assertNotExists(containerName);
       } finally {
          // this container is now deleted, so we can't reuse it directly
-         recycleContainer(containerName);
+         recycleContainerAndAddToPool(containerName);
       }
    }
 

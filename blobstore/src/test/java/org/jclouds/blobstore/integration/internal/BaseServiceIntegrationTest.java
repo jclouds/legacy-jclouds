@@ -68,7 +68,7 @@ public class BaseServiceIntegrationTest extends BaseBlobStoreIntegrationTest {
 
             });
          } finally {
-            recycleContainer(containerName);
+            recycleContainerAndAddToPool(containerName);
          }
       }
    }

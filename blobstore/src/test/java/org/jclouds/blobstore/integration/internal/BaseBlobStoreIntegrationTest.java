@@ -50,6 +50,7 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.util.Strings2;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 
@@ -98,6 +99,15 @@ public class BaseBlobStoreIntegrationTest extends BaseViewLiveTest<BlobStoreCont
    public void setUpResourcesForAllThreads(ITestContext testContext) throws Exception {
       setupContext();
       createContainersSharedByAllThreads(view, testContext);
+      view.close();
+      view = null;
+   }
+
+   @AfterSuite(groups = { "integration", "live" })
+   protected void destroyResources() throws Exception {
+      setupContext();
+      deleteEverything(view);
+
       view.close();
       view = null;
    }
@@ -499,7 +509,7 @@ public class BaseBlobStoreIntegrationTest extends BaseViewLiveTest<BlobStoreCont
          }
       });
       String newScratchContainer = CONTAINER_PREFIX + new SecureRandom().nextLong();
-      System.err.printf("*** allocated new container %s...%n", container);
+      System.err.printf("*** allocated new container %s...%n", newScratchContainer);
       return newScratchContainer;
    }
 
