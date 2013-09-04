@@ -46,6 +46,7 @@ import org.jclouds.rest.annotations.ParamValidators;
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
@@ -182,6 +183,7 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
          Throwables.propagateIfPossible(e);
       }
       Blob blob = builder.build();
+      blob.getMetadata().setContainer(container);
       if (blob.getPayload().getContentMetadata().getContentMD5() != null)
          blob.getMetadata().setETag(base16().lowerCase().encode(blob.getPayload().getContentMetadata().getContentMD5()));
       return blob;
@@ -290,8 +292,12 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
    }
 
    public long countBlobs(String container, ListContainerOptions options) {
-      // TODO
-      throw new UnsupportedOperationException("Not supported yet.");
+      // TODO: honor options
+      try {
+         return Iterables.size(getBlobKeysInsideContainer(container));
+      } catch (IOException ioe) {
+         throw Throwables.propagate(ioe);
+      }
    }
 
    // ---------------------------------------------------------- Private methods
@@ -299,7 +305,7 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
    private boolean buildPathAndChecksIfFileExists(String... tokens) {
       String path = buildPathStartingFromBaseDir(tokens);
       File file = new File(path);
-      boolean exists = file.exists() || file.isFile();
+      boolean exists = file.exists() && file.isFile();
       return exists;
    }
 
@@ -442,6 +448,7 @@ public class FilesystemStorageStrategyImpl implements LocalStorageStrategy {
          if (child.isFile()) {
             blobNames.add(function.apply(child.getAbsolutePath()));
          } else if (child.isDirectory()) {
+            blobNames.add(function.apply(child.getAbsolutePath()));
             populateBlobKeysInContainer(child, blobNames, function);
          }
       }

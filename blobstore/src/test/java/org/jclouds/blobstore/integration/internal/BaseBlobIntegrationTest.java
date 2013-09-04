@@ -177,7 +177,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test(groups = { "integration", "live" })
-   public void testBigFileGets() throws InterruptedException, IOException, TimeoutException {
+   public void testBigFileGets() throws Exception {
       final String expectedContentDisposition = "attachment; filename=constit.txt";
       final String container = getContainerName();
       try {
@@ -206,7 +206,9 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
          }
          Map<Integer, Exception> exceptions = awaitCompletion(responses, exec, 30000l, Logger.CONSOLE,
                   "get constitution");
-         assert exceptions.size() == 0 : exceptions;
+         if (!exceptions.isEmpty()) {
+            throw exceptions.values().iterator().next();
+         }
 
       } finally {
          returnContainer(container);
@@ -511,7 +513,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       }
    }
 
-   private void checkContentMetadata(Blob blob) {
+   protected void checkContentMetadata(Blob blob) {
       checkContentType(blob, "text/csv");
       checkContentDisposition(blob, "attachment; filename=photo.jpg");
       checkContentEncoding(blob, "gzip");

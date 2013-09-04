@@ -16,13 +16,18 @@
  */
 package org.jclouds.filesystem.integration;
 
+import java.io.IOException;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jclouds.filesystem.utils.TestUtils;
 import org.testng.annotations.Test;
+import org.testng.SkipException;
 
 /**
  * 
@@ -30,8 +35,8 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = { "integration" }, singleThreaded = true,  testName = "blobstore.FilesystemBlobIntegrationTest")
-public class FilesystemBlobIntegrationTestDisabled extends BaseBlobIntegrationTest {
-   public FilesystemBlobIntegrationTestDisabled() {
+public class FilesystemBlobIntegrationTest extends BaseBlobIntegrationTest {
+   public FilesystemBlobIntegrationTest() {
       provider = "filesystem";
       BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
    }
@@ -43,4 +48,38 @@ public class FilesystemBlobIntegrationTestDisabled extends BaseBlobIntegrationTe
       return props;
    }
 
+   @Override
+   public void checkContentMetadata(Blob blob) {
+      // TODO: not yet implemented
+   }
+
+   @Override
+   protected void checkContentDisposition(Blob blob, String contentDisposition) {
+      // TODO: not yet implemented
+   }
+
+   @Override
+   protected void validateMetadata(BlobMetadata metadata) throws IOException {
+      // TODO: not yet implemented
+   }
+
+   @Override
+   public void testCreateBlobWithExpiry() throws InterruptedException {
+      throw new SkipException("not yet implemented");
+   }
+
+   @Override
+   public void testGetIfModifiedSince() throws InterruptedException {
+      throw new SkipException("not yet implemented");
+   }
+
+   @Override
+   public void testGetIfUnmodifiedSince() throws InterruptedException {
+      throw new SkipException("not yet implemented");
+   }
+
+   @Override
+   public void testPutObjectStream() throws InterruptedException, IOException, ExecutionException {
+      throw new SkipException("not yet implemented");
+   }
 }

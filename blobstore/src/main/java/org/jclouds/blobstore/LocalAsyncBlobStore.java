@@ -51,6 +51,7 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
+import org.jclouds.blobstore.domain.internal.StorageMetadataImpl;
 import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.options.CreateContainerOptions;
 import org.jclouds.blobstore.options.GetOptions;
@@ -75,6 +76,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -140,6 +142,12 @@ public class LocalAsyncBlobStore extends BaseAsyncBlobStore {
       SortedSet<StorageMetadata> contents = newTreeSet(transform(blobBelongingToContainer,
             new Function<String, StorageMetadata>() {
                public StorageMetadata apply(String key) {
+                  if (!storageStrategy.blobExists(container, key)) {
+                     // handle directory
+                     return new StorageMetadataImpl(StorageType.FOLDER, /*id=*/ null, key,
+                           /*location=*/ null, /*uri=*/ null, /*eTag=*/ null, /*creationDate=*/ null,
+                           /*lastModified=*/ null, ImmutableMap.<String, String>of());
+                  }
                   Blob oldBlob = loadBlob(container, key);
                   checkState(oldBlob != null, "blob " + key + " is not present although it was in the list of "
                         + container);

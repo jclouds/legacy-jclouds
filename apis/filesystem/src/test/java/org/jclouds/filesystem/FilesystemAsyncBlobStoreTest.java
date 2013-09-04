@@ -30,6 +30,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 
@@ -293,11 +294,7 @@ public class FilesystemAsyncBlobStoreTest {
      * {@link FilesystemAsyncBlobStore} class
      */
     public void testCountBlobs_NotExistingContainer() {
-        try {
-            blobStore.countBlobs(PROVIDER);
-            fail("Magically the method was implemented... Wow!");
-        } catch (UnsupportedOperationException e) {
-        }
+        blobStore.countBlobs(PROVIDER);
     }
 
     /**
@@ -306,11 +303,7 @@ public class FilesystemAsyncBlobStoreTest {
      */
     public void testCountBlobs_NoOptionsEmptyContainer() {
         blobStore.createContainerInLocation(null, CONTAINER_NAME);
-        try {
-            blobStore.countBlobs(PROVIDER);
-            fail("Magically the method was implemented... Wow!");
-        } catch (UnsupportedOperationException e) {
-        }
+        blobStore.countBlobs(PROVIDER);
     }
 
     /**
@@ -319,11 +312,7 @@ public class FilesystemAsyncBlobStoreTest {
      */
     public void testCountBlobs_NoOptions() {
         blobStore.createContainerInLocation(null, CONTAINER_NAME);
-        try {
-            blobStore.countBlobs(PROVIDER);
-            fail("Magically the method was implemented... Wow!");
-        } catch (UnsupportedOperationException e) {
-        }
+        blobStore.countBlobs(PROVIDER);
     }
 
     public void testRemoveBlob_SimpleBlobKey() throws IOException {
@@ -825,6 +814,12 @@ public class FilesystemAsyncBlobStoreTest {
             options.inDirectory(inDirectory);
 
         PageSet<? extends StorageMetadata> blobsRetrieved = blobStore.list(containerName, options);
+        for (Iterator<? extends StorageMetadata> it = blobsRetrieved.iterator(); it.hasNext();) {
+           // TODO: FluentIterable
+           if (it.next().getType() != StorageType.BLOB) {
+              it.remove();
+           }
+        }
 
         // nothing expected
         if (null == expectedBlobKeys || 0 == expectedBlobKeys.size()) {

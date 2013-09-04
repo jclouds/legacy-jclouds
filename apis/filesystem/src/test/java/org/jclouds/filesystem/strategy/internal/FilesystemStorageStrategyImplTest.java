@@ -506,18 +506,14 @@ public class FilesystemStorageStrategyImplTest {
       while (containersIterator.hasNext()) {
          retrievedBlobKeys.add(containersIterator.next());
       }
-      assertEquals(retrievedBlobKeys.size(), createBlobKeys.size(), "Different blobs number");
+      assertEquals(retrievedBlobKeys.size() - 2, createBlobKeys.size(), "Different blobs number");
       for (String createdBlobKey : createBlobKeys) {
          assertTrue(retrievedBlobKeys.contains(createdBlobKey), "Blob " + createdBlobKey + " not found");
       }
    }
 
    public void testCountsBlob() {
-      try {
-         storageStrategy.countBlobs(CONTAINER_NAME, ListContainerOptions.NONE);
-         fail("Magically the method was implemented... Wow!");
-      } catch (UnsupportedOperationException e) {
-      }
+      storageStrategy.countBlobs(CONTAINER_NAME, ListContainerOptions.NONE);
    }
 
    public void testInvalidBlobKey() {

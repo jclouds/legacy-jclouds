@@ -19,6 +19,7 @@ package org.jclouds.filesystem.integration;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.maxResults;
 import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
 import java.util.Properties;
 
 import javax.ws.rs.core.MediaType;
@@ -32,6 +33,7 @@ import org.jclouds.blobstore.integration.internal.BaseContainerIntegrationTest;
 import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jclouds.filesystem.utils.TestUtils;
 import org.testng.annotations.Test;
+import org.testng.SkipException;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -41,8 +43,8 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Test(groups = { "integration", "live" }, testName = "blobstore.FilesystemContainerIntegrationTest")
-public class FilesystemContainerIntegrationTestDisabled extends BaseContainerIntegrationTest {
-   public FilesystemContainerIntegrationTestDisabled() {
+public class FilesystemContainerIntegrationTest extends BaseContainerIntegrationTest {
+   public FilesystemContainerIntegrationTest() {
       provider = "filesystem";
       BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
    }
@@ -77,5 +79,20 @@ public class FilesystemContainerIntegrationTestDisabled extends BaseContainerInt
       } finally {
          returnContainer(containerName);
       }
+   }
+
+   @Override
+   public void testClearWhenContentsUnderPath() throws InterruptedException {
+      throw new SkipException("not yet implemented");
+   }
+
+   @Override
+   public void testDirectory() throws InterruptedException {
+      throw new SkipException("not yet implemented");
+   }
+
+   @Override
+   public void testWithDetails() throws InterruptedException, IOException {
+      throw new SkipException("not yet implemented");
    }
 }
