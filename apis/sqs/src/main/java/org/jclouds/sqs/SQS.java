@@ -17,7 +17,7 @@
 package org.jclouds.sqs;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import org.jclouds.collect.AdvanceUntilEmptyIterable;
 import org.jclouds.javax.annotation.Nullable;
@@ -26,7 +26,7 @@ import org.jclouds.sqs.features.MessageApi;
 import org.jclouds.sqs.options.ReceiveMessageOptions;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Optional;
+import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
 import com.google.common.collect.FluentIterable;
 
@@ -68,9 +68,9 @@ public class SQS {
 
       private MoreMessages(MessageApi api, int max, @Nullable ReceiveMessageOptions options) {
          this.api = checkNotNull(api, "message api");
-         checkState(max > 0, "max messages per request must be a positive number");
+         checkArgument(max > 0, "max messages per request must be a positive number");
          this.max = max;
-         this.options = Optional.fromNullable(options).or(NO_OPTIONS);
+         this.options = Objects.firstNonNull(options, NO_OPTIONS);
       }
 
       @Override
