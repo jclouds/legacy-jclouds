@@ -506,7 +506,8 @@ public class FilesystemStorageStrategyImplTest {
       while (containersIterator.hasNext()) {
          retrievedBlobKeys.add(containersIterator.next());
       }
-      assertEquals(retrievedBlobKeys.size() - 2, createBlobKeys.size(), "Different blobs number");
+      int expectedBlobs = retrievedBlobKeys.size() - 2;  // ignore two directories
+      assertEquals(expectedBlobs, createBlobKeys.size(), "Different blobs number");
       for (String createdBlobKey : createBlobKeys) {
          assertTrue(retrievedBlobKeys.contains(createdBlobKey), "Blob " + createdBlobKey + " not found");
       }
