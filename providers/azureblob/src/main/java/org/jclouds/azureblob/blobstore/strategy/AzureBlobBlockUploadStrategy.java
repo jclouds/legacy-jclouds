@@ -64,11 +64,8 @@ public class AzureBlobBlockUploadStrategy implements MultipartUploadStrategy {
       checkArgument(length <= (MAX_NUMBER_OF_BLOCKS * MAX_BLOCK_SIZE));
       long offset = 0L;
       List<String> blockIds = Lists.newArrayList();
-      int blockCount = 0;
-      int totalBlocks = (int) Math.ceil(((double)length) / MAX_BLOCK_SIZE);
       long bytesWritten = 0;
       while (offset < length) {
-         blockCount++;
          long chunkSize = MAX_BLOCK_SIZE;
          if (length - offset < MAX_BLOCK_SIZE) {
             chunkSize = length % MAX_BLOCK_SIZE;
