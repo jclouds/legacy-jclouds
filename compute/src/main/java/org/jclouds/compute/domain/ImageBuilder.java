@@ -62,8 +62,8 @@ public class ImageBuilder extends ComputeMetadataBuilder {
       return this;
    }
 
-   public ImageBuilder description(String description) {
-      this.description = checkNotNull(description, "description");
+   public ImageBuilder description(@Nullable String description) {
+      this.description = description;
       return this;
    }
 

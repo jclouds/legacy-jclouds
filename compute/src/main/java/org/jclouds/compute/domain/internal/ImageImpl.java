@@ -46,14 +46,14 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
 
    public ImageImpl(String providerId, String name, String id, Location location, URI uri,
             Map<String, String> userMetadata, Set<String> tags, OperatingSystem operatingSystem, Image.Status status,
-            @Nullable String backendStatus, String description, @Nullable String version,
+            @Nullable String backendStatus, @Nullable String description, @Nullable String version,
             @Nullable LoginCredentials defaultCredentials) {
       super(ComputeType.IMAGE, providerId, name, id, location, uri, userMetadata, tags);
       this.operatingSystem = checkNotNull(operatingSystem, "operatingSystem");
       this.status = checkNotNull(status, "status");
       this.backendStatus = backendStatus;
       this.version = version;
-      this.description = checkNotNull(description, "description");
+      this.description = description;
       this.defaultCredentials = defaultCredentials;
    }
 

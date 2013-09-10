@@ -18,6 +18,7 @@ package org.jclouds.compute.domain;
 
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
 import com.google.inject.ImplementedBy;
@@ -68,6 +69,7 @@ public interface Image extends ComputeMetadataIncludingStatus<Image.Status> {
    /**
     * Description of the image.
     */
+   @Nullable
    String getDescription();
 
    /**
