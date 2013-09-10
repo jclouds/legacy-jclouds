@@ -101,7 +101,7 @@ public class ProductItemsToHardwareTest {
       assertEquals(1, processors.size());
       assertEquals(2.0, processors.get(0).getCores());
 
-      assertEquals(2, hardware.getRam());
+      assertEquals(2048, hardware.getRam());
 
       List<? extends Volume> volumes = hardware.getVolumes();
       assertEquals(1, volumes.size());
@@ -127,7 +127,7 @@ public class ProductItemsToHardwareTest {
      assertEquals(1, processors.size());
      assertEquals(2.0, processors.get(0).getCores());
 
-     assertEquals(2, hardware.getRam());
+     assertEquals(2048, hardware.getRam());
 
      List<? extends Volume> volumes = hardware.getVolumes();
      assertEquals(1, volumes.size());

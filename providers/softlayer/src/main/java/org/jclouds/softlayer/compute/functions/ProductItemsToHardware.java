@@ -85,11 +85,10 @@ public class ProductItemsToHardware implements Function<Iterable<ProductItem>, H
       double cores = ProductItems.capacity().apply(coresItem).doubleValue();
       Matcher cpuMatcher = cpuDescriptionRegex.matcher(coresItem.getDescription());
       double coreSpeed = (cpuMatcher.matches()) ? Double.parseDouble(cpuMatcher.group(cpuMatcher.groupCount())) : DEFAULT_CORE_SPEED;
-      int ram = ProductItems.capacity().apply(ramItem).intValue();
+      int ram = ProductItems.capacity().apply(ramItem).intValue() * 1024;
 
-      return new HardwareBuilder().ids(hardwareId).processors(ImmutableList.of(new Processor(cores, coreSpeed))).ram(
-               ram)
-               .hypervisor("XenServer")
+      return new HardwareBuilder().ids(hardwareId).processors(ImmutableList.of(new Processor(cores, coreSpeed)))
+               .ram(ram).hypervisor("XenServer")
                .volumes(
                   Iterables.transform(filter(items, categoryCodeMatches(diskCategoryRegex)),
                         new Function<ProductItem, Volume>() {

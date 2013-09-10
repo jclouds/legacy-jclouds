@@ -87,7 +87,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
-      assertEquals(defaultTemplate.getHardware().getRam(), 1);
+      assertEquals(defaultTemplate.getHardware().getRam(), 1*1024);
       assertEquals(getSpace(defaultTemplate.getHardware()), 25.0d);
       assertEquals(defaultTemplate.getHardware().getVolumes().get(0).getType(), Volume.Type.LOCAL);
       // test that we bound the correct templateoptions in guice
@@ -141,7 +141,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
 
          Template template = context.getComputeService().templateBuilder().biggest().build();
          assertEquals(getCores(template.getHardware()), 16.0d);
-         assertEquals(template.getHardware().getRam(), 16);
+         assertEquals(template.getHardware().getRam(), 16*1024);
          assertEquals(getSpace(template.getHardware()), 100.0d);
          assertEquals(template.getHardware().getVolumes().get(0).getType(), Volume.Type.SAN);
       } finally {
@@ -161,7 +161,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
 
          Template template = context.getComputeService().templateBuilder().build();
          assertEquals(getCores(template.getHardware()), 1.0d);
-         assertEquals(template.getHardware().getRam(), 1);
+         assertEquals(template.getHardware().getRam(), 1*1024);
          assertEquals(getSpace(template.getHardware()), 25.0d);
          assertEquals(template.getHardware().getVolumes().get(0).getType(), Volume.Type.LOCAL);
       } finally {
@@ -181,7 +181,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
          
          Template template = context.getComputeService().templateBuilder().biggest().build();
          assertEquals(getCores(template.getHardware()), 8.0d);
-         assertEquals(template.getHardware().getRam(), 16);
+         assertEquals(template.getHardware().getRam(), 16*1024);
          assertEquals(getSpace(template.getHardware()), 100.0d);
          assertEquals(template.getHardware().getVolumes().get(0).getType(), Volume.Type.LOCAL);
       } finally {
@@ -194,7 +194,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
    public void testFastestTemplateBuilder() throws IOException {
       Template template = view.getComputeService().templateBuilder().fastest().build();
       assertEquals(getCores(template.getHardware()), 16.0d);
-      assertEquals(template.getHardware().getRam(), 1);
+      assertEquals(template.getHardware().getRam(), 1*1024);
       assertEquals(getSpace(template.getHardware()), 25.0d);
       assertEquals(template.getHardware().getVolumes().get(0).getType(), Volume.Type.LOCAL);
    }
@@ -203,7 +203,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
    public void testBiggestTemplateBuilder() throws IOException {
       Template template = view.getComputeService().templateBuilder().biggest().build();
       assertEquals(getCores(template.getHardware()), 16.0d);
-      assertEquals(template.getHardware().getRam(), 16);
+      assertEquals(template.getHardware().getRam(), 16*1024);
       assertEquals(getSpace(template.getHardware()), 100.0d);
       assertEquals(template.getHardware().getVolumes().get(0).getType(), Volume.Type.LOCAL);
    }
