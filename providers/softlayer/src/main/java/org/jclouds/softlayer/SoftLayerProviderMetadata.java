@@ -91,7 +91,7 @@ public class SoftLayerProviderMetadata extends BaseProviderMetadata {
          .apiMetadata(new SoftLayerApiMetadata())
          .homepage(URI.create("http://www.softlayer.com"))
          .console(URI.create("https://manage.softlayer.com"))
-         .iso3166Codes("SG","US-CA","US-TX","US-VA","US-WA","US-TX")
+         .iso3166Codes("SG","US-CA","US-TX","US-VA","US-WA","US-TX", "NL")
          .endpoint("https://api.softlayer.com/rest")
          .defaultProperties(SoftLayerProviderMetadata.defaultProperties());
       }
