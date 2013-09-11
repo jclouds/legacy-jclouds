@@ -121,6 +121,11 @@ public class SwiftBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
       }
    }
 
+   @Override
+   protected int getIncorrectContentMD5StatusCode() {
+      return 422;
+   }
+
    protected void addMultipartBlobToContainer(String containerName, String key) throws IOException {
       File fileToUpload = createFileBiggerThan(PART_SIZE);
 

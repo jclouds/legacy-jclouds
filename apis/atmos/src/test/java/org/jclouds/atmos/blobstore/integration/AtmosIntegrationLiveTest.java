@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutionException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
+import org.testng.SkipException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -110,6 +111,11 @@ public class AtmosIntegrationLiveTest extends BaseBlobIntegrationTest {
    @Override
    protected void checkMD5(BlobMetadata metadata) throws IOException {
       assertEquals(metadata.getContentMetadata().getContentMD5(), null);
+   }
+
+   @Override
+   public void testPutIncorrectContentMD5() throws InterruptedException, IOException {
+      throw new SkipException("not yet implemented");
    }
 
    @Test(enabled = false)

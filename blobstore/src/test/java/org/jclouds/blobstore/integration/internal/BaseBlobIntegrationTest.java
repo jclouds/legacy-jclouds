@@ -28,6 +28,7 @@ import static org.jclouds.io.ByteSources.asByteSource;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -79,6 +80,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.hash.HashCode;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
@@ -274,7 +276,48 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
          returnContainer(container);
       }
    }
-   
+
+   private void putBlobWithMd5(byte[] payload, HashCode contentMD5) throws InterruptedException, IOException {
+      String container = getContainerName();
+      BlobStore blobStore = view.getBlobStore();
+      try {
+         String blobName = "putBlobWithMd5-" + new Random().nextLong();
+         Blob blob = blobStore
+            .blobBuilder(blobName)
+            .payload(payload)
+            .contentMD5(contentMD5.asBytes())
+            .build();
+         blobStore.putBlob(container, blob);
+      } finally {
+         returnContainer(container);
+      }
+   }
+
+   protected int getIncorrectContentMD5StatusCode() {
+      return 400;
+   }
+
+   @Test(groups = { "integration", "live" })
+   public void testPutCorrectContentMD5() throws InterruptedException, IOException {
+      byte[] payload = ByteStreams.toByteArray(createTestInput(1024));
+      HashCode contentMD5 = md5().hashBytes(payload);
+      putBlobWithMd5(payload, contentMD5);
+   }
+
+   @Test(groups = { "integration", "live" })
+   public void testPutIncorrectContentMD5() throws InterruptedException, IOException {
+      byte[] payload = ByteStreams.toByteArray(createTestInput(1024));
+      HashCode contentMD5 = md5().hashBytes(new byte[0]);
+      try {
+         putBlobWithMd5(payload, contentMD5);
+         fail();
+      } catch (HttpResponseException hre) {
+         if (hre.getResponse().getStatusCode() != getIncorrectContentMD5StatusCode()) {
+            throw hre;
+         }
+      }
+   }
+
    @Test(groups = { "integration", "live" })
    public void testGetIfUnmodifiedSince() throws InterruptedException {
       String container = getContainerName();
