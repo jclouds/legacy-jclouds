@@ -18,19 +18,13 @@ package org.jclouds.openstack.nova.v2_0.compute.functions;
 
 import static com.google.common.collect.Iterables.transform;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
-import java.util.Set;
 
 import org.jclouds.compute.domain.SecurityGroup;
-import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.net.domain.IpPermission;
 import org.jclouds.net.domain.IpProtocol;
 import org.jclouds.openstack.nova.v2_0.domain.SecurityGroupRule;
 import org.jclouds.openstack.nova.v2_0.domain.TenantIdAndName;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -40,32 +34,59 @@ import com.google.common.collect.ImmutableSet;
 public class NovaSecurityGroupToSecurityGroupTest {
 
    private static final SecurityGroupRuleToIpPermission ruleConverter = new SecurityGroupRuleToIpPermission();
-   
-   @Test
-   public void testApplyWithGroup() {
+
+   public static org.jclouds.openstack.nova.v2_0.domain.SecurityGroup securityGroupWithGroup() {
       TenantIdAndName group = TenantIdAndName.builder().tenantId("tenant").name("name").build();
-      
+
       SecurityGroupRule ruleToConvert = SecurityGroupRule.builder()
-         .id("some-id")
-         .ipProtocol(IpProtocol.TCP)
-         .fromPort(10)
-         .toPort(20)
-         .group(group)
-         .parentGroupId("some-other-id")
-         .build();
+              .id("some-id")
+              .ipProtocol(IpProtocol.TCP)
+              .fromPort(10)
+              .toPort(20)
+              .group(group)
+              .parentGroupId("some-other-id")
+              .build();
 
       org.jclouds.openstack.nova.v2_0.domain.SecurityGroup origGroup = org.jclouds.openstack.nova.v2_0.domain.SecurityGroup.builder()
-         .tenantId("tenant")
-         .id("some-id")
-         .name("some-group")
-         .description("some-description")
-         .rules(ruleToConvert)
-         .build();
+              .tenantId("tenant")
+              .id("some-id")
+              .name("some-group")
+              .description("some-description")
+              .rules(ruleToConvert)
+              .build();
 
+      return origGroup;
+   }
+
+   public static org.jclouds.openstack.nova.v2_0.domain.SecurityGroup securityGroupWithCidr() {
+      SecurityGroupRule ruleToConvert = SecurityGroupRule.builder()
+              .id("some-id")
+              .ipProtocol(IpProtocol.TCP)
+              .fromPort(10)
+              .toPort(20)
+              .ipRange("0.0.0.0/0")
+              .parentGroupId("some-other-id")
+              .build();
+
+      org.jclouds.openstack.nova.v2_0.domain.SecurityGroup origGroup = org.jclouds.openstack.nova.v2_0.domain.SecurityGroup.builder()
+              .tenantId("tenant")
+              .id("some-id")
+              .name("some-group")
+              .description("some-description")
+              .rules(ruleToConvert)
+              .build();
+
+      return origGroup;
+   }
+
+   @Test
+   public void testApplyWithGroup() {
       NovaSecurityGroupToSecurityGroup parser = createGroupParser();
 
+      org.jclouds.openstack.nova.v2_0.domain.SecurityGroup origGroup = securityGroupWithGroup();
+
       SecurityGroup newGroup = parser.apply(origGroup);
-      
+
       assertEquals(newGroup.getId(), origGroup.getId());
       assertEquals(newGroup.getProviderId(), origGroup.getId());
       assertEquals(newGroup.getName(), origGroup.getName());
@@ -75,27 +96,13 @@ public class NovaSecurityGroupToSecurityGroupTest {
 
    @Test
    public void testApplyWithCidr() {
-      SecurityGroupRule ruleToConvert = SecurityGroupRule.builder()
-         .id("some-id")
-         .ipProtocol(IpProtocol.TCP)
-         .fromPort(10)
-         .toPort(20)
-         .ipRange("0.0.0.0/0")
-         .parentGroupId("some-other-id")
-         .build();
-
-      org.jclouds.openstack.nova.v2_0.domain.SecurityGroup origGroup = org.jclouds.openstack.nova.v2_0.domain.SecurityGroup.builder()
-         .tenantId("tenant")
-         .id("some-id")
-         .name("some-group")
-         .description("some-description")
-         .rules(ruleToConvert)
-         .build();
 
       NovaSecurityGroupToSecurityGroup parser = createGroupParser();
 
+      org.jclouds.openstack.nova.v2_0.domain.SecurityGroup origGroup = securityGroupWithCidr();
+
       SecurityGroup group = parser.apply(origGroup);
-      
+
       assertEquals(group.getId(), origGroup.getId());
       assertEquals(group.getProviderId(), origGroup.getId());
       assertEquals(group.getName(), origGroup.getName());

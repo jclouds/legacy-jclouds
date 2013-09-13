@@ -16,7 +16,10 @@
  */
 package org.jclouds.openstack.nova.v2_0.compute.functions;
 
-import static com.google.common.collect.Iterables.transform;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -25,11 +28,12 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.SecurityGroup;
 import org.jclouds.compute.domain.SecurityGroupBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
-import org.jclouds.net.domain.IpPermission;
-import org.jclouds.openstack.nova.v2_0.domain.SecurityGroupRule;
+import org.jclouds.openstack.nova.v2_0.domain.zonescoped.SecurityGroupInZone;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.inject.Inject;
 
 
@@ -40,29 +44,29 @@ import com.google.inject.Inject;
  * @author Andrew Bayer
  */
 @Singleton
-public class NovaSecurityGroupToSecurityGroup implements Function<org.jclouds.openstack.nova.v2_0.domain.SecurityGroup, SecurityGroup> {
+public class NovaSecurityGroupInZoneToSecurityGroup implements Function<SecurityGroupInZone, SecurityGroup> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   protected Function<SecurityGroupRule,IpPermission> ruleToPermission;
-   
+   protected final Function<org.jclouds.openstack.nova.v2_0.domain.SecurityGroup, SecurityGroup> baseConverter;
+   protected final Supplier<Map<String, Location>> locationIndex;
+
    @Inject
-   public NovaSecurityGroupToSecurityGroup(Function<SecurityGroupRule,IpPermission> ruleToPermission) {
-      this.ruleToPermission = ruleToPermission;
+   public NovaSecurityGroupInZoneToSecurityGroup(Function<org.jclouds.openstack.nova.v2_0.domain.SecurityGroup, SecurityGroup> baseConverter,
+                                                 Supplier<Map<String, Location>> locationIndex) {
+      this.baseConverter = checkNotNull(baseConverter, "baseConverter");
+      this.locationIndex = checkNotNull(locationIndex, "locationIndex");
    }
 
    @Override
-   public SecurityGroup apply(org.jclouds.openstack.nova.v2_0.domain.SecurityGroup group) {
-      SecurityGroupBuilder builder = new SecurityGroupBuilder();
-      
-      builder.id(group.getId());
-      builder.providerId(group.getId());
-      builder.ownerId(group.getTenantId());
-      builder.name(group.getName());
-      if (group.getRules() != null) {
-         builder.ipPermissions(transform(group.getRules(), ruleToPermission));
-      }
+   public SecurityGroup apply(SecurityGroupInZone group) {
+      SecurityGroupBuilder builder = SecurityGroupBuilder.fromSecurityGroup(baseConverter.apply(group.getSecurityGroup()));
+
+      Location zone = locationIndex.get().get(group.getZone());
+      checkState(zone != null, "location %s not in locationIndex: %s", group.getZone(), locationIndex.get());
+
+      builder.location(zone);
 
       return builder.build();
    }

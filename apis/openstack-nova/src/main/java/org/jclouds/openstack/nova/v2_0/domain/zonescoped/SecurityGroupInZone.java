@@ -31,7 +31,7 @@ public class SecurityGroupInZone extends ZoneAndName {
       this.securityGroup = securityGroup;
    }
 
-   public SecurityGroup getServer() {
+   public SecurityGroup getSecurityGroup() {
       return securityGroup;
    }
 

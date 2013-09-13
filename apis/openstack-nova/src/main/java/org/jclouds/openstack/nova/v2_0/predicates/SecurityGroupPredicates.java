@@ -18,9 +18,14 @@ package org.jclouds.openstack.nova.v2_0.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Set;
+
+import org.jclouds.net.domain.IpProtocol;
 import org.jclouds.openstack.nova.v2_0.domain.SecurityGroup;
+import org.jclouds.openstack.nova.v2_0.domain.SecurityGroupRule;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 /**
  * Predicates handy when working with SecurityGroups
@@ -32,7 +37,7 @@ public class SecurityGroupPredicates {
 
    /**
     * matches name of the given security group
-    * 
+    *
     * @param name
     * @return predicate that matches name
     */
@@ -48,6 +53,28 @@ public class SecurityGroupPredicates {
          @Override
          public String toString() {
             return "nameEquals(" + name + ")";
+         }
+      };
+   }
+
+   /**
+    * matches name of the given security group against a list
+    *
+    * @param names
+    * @return predicate that matches one of the names
+    */
+   public static Predicate<SecurityGroup> nameIn(final Set<String> names) {
+      checkNotNull(names, "names must be defined");
+
+      return new Predicate<SecurityGroup>() {
+         @Override
+         public boolean apply(SecurityGroup ext) {
+            return Predicates.in(names).apply(ext.getName());
+         }
+
+         @Override
+         public String toString() {
+            return "nameIn(" + names + ")";
          }
       };
    }
@@ -70,6 +97,116 @@ public class SecurityGroupPredicates {
          @Override
          public String toString() {
             return "nameMatches(" + name + ")";
+         }
+      };
+   }
+
+   /**
+    * matches a security group rule by its cidr
+    *
+    * @param cidr
+    * @return predicate that matches cidr
+    */
+   public static Predicate<SecurityGroupRule> ruleCidr(final String cidr) {
+      checkNotNull(cidr, "cidr must be defined");
+
+      return new Predicate<SecurityGroupRule>() {
+         @Override
+         public boolean apply(SecurityGroupRule ext) {
+            return cidr.equals(ext.getIpRange());
+         }
+
+         @Override
+         public String toString() {
+            return "cidr(" + cidr + ")";
+         }
+      };
+   }
+
+   /**
+    * matches a security group rule by the security group it allows
+    *
+    * @param groupName
+    * @return predicate that matches group
+    */
+   public static Predicate<SecurityGroupRule> ruleGroup(final String groupName) {
+      checkNotNull(groupName, "groupName must be defined");
+
+      return new Predicate<SecurityGroupRule>() {
+         @Override
+         public boolean apply(SecurityGroupRule ext) {
+            return ext.getGroup() != null && groupName.equals(ext.getGroup().getName());
+         }
+
+         @Override
+         public String toString() {
+            return "ruleGroup(" + groupName + ")";
+         }
+      };
+   }
+
+   /**
+    * matches a security group rule by the protocol
+    *
+    * @param protocol
+    * @return predicate that matches protocol
+    */
+   public static Predicate<SecurityGroupRule> ruleProtocol(final IpProtocol protocol) {
+      checkNotNull(protocol, "protocol must be defined");
+
+      return new Predicate<SecurityGroupRule>() {
+         @Override
+         public boolean apply(SecurityGroupRule ext) {
+            return protocol.equals(ext.getIpProtocol());
+         }
+
+         @Override
+         public String toString() {
+            return "ruleProtocol(" + protocol + ")";
+         }
+      };
+   }
+
+   /**
+    * matches a security group rule by the start port
+    *
+    * @param startPort
+    * @return predicate that matches startPort
+    */
+   public static Predicate<SecurityGroupRule> ruleStartPort(final int startPort) {
+      checkNotNull(startPort, "startPort must be defined");
+
+      return new Predicate<SecurityGroupRule>() {
+         @Override
+         public boolean apply(SecurityGroupRule ext) {
+            return startPort == ext.getFromPort();
+         }
+
+         @Override
+         public String toString() {
+            return "ruleStartPort(" + startPort + ")";
+         }
+      };
+   }
+
+   /**
+    * matches a security group rule by the end port
+    *
+    * @param endPort
+    * @return predicate that matches endPort
+    */
+   public static Predicate<SecurityGroupRule> ruleEndPort(final int endPort) {
+      checkNotNull(endPort, "endPort must be defined");
+
+      return new Predicate<SecurityGroupRule>() {
+         @Override
+         public boolean apply(SecurityGroupRule ext) {
+            return endPort == ext.getToPort();
+         }
+
+         @Override
+         public String toString() {
+            return "ruleEndPort(" + endPort + ")";
          }
       };
    }

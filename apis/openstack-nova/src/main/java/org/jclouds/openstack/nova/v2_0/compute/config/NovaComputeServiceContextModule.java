@@ -40,6 +40,7 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.SecurityGroup;
 import org.jclouds.compute.extensions.ImageExtension;
+import org.jclouds.compute.extensions.SecurityGroupExtension;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.strategy.impl.CreateNodesWithGroupEncodedIntoNameThenAddToSet;
 import org.jclouds.domain.Location;
@@ -49,10 +50,12 @@ import org.jclouds.net.domain.IpPermission;
 import org.jclouds.openstack.nova.v2_0.compute.NovaComputeService;
 import org.jclouds.openstack.nova.v2_0.compute.NovaComputeServiceAdapter;
 import org.jclouds.openstack.nova.v2_0.compute.extensions.NovaImageExtension;
+import org.jclouds.openstack.nova.v2_0.compute.extensions.NovaSecurityGroupExtension;
 import org.jclouds.openstack.nova.v2_0.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.openstack.nova.v2_0.compute.functions.FlavorInZoneToHardware;
 import org.jclouds.openstack.nova.v2_0.compute.functions.ImageInZoneToImage;
 import org.jclouds.openstack.nova.v2_0.compute.functions.ImageToOperatingSystem;
+import org.jclouds.openstack.nova.v2_0.compute.functions.NovaSecurityGroupInZoneToSecurityGroup;
 import org.jclouds.openstack.nova.v2_0.compute.functions.NovaSecurityGroupToSecurityGroup;
 import org.jclouds.openstack.nova.v2_0.compute.functions.OrphanedGroupsByZoneId;
 import org.jclouds.openstack.nova.v2_0.compute.functions.SecurityGroupRuleToIpPermission;
@@ -119,6 +122,9 @@ public class NovaComputeServiceContextModule extends
       bind(new TypeLiteral<Function<org.jclouds.openstack.nova.v2_0.domain.SecurityGroup, SecurityGroup>>() {
       }).to(NovaSecurityGroupToSecurityGroup.class);
 
+      bind(new TypeLiteral<Function<SecurityGroupInZone, SecurityGroup>>() {
+      }).to(NovaSecurityGroupInZoneToSecurityGroup.class);
+
       bind(new TypeLiteral<Function<Set<? extends NodeMetadata>,  Multimap<String, String>>>() {
       }).to(OrphanedGroupsByZoneId.class);
 
@@ -153,6 +159,9 @@ public class NovaComputeServiceContextModule extends
       
       bind(new TypeLiteral<ImageExtension>() {
       }).to(NovaImageExtension.class);
+
+      bind(new TypeLiteral<SecurityGroupExtension>() {
+      }).to(NovaSecurityGroupExtension.class);
    }
 
    @Override
@@ -187,7 +196,7 @@ public class NovaComputeServiceContextModule extends
 
    @Provides
    @Singleton
-   @Named(TIMEOUT_SECURITYGROUP_PRESENT)
+   @Named("SECURITYGROUP_PRESENT")
    protected Predicate<AtomicReference<ZoneAndName>> securityGroupEventualConsistencyDelay(
             FindSecurityGroupWithNameAndReturnTrue in,
             @Named(TIMEOUT_SECURITYGROUP_PRESENT) long msDelay) {
@@ -268,5 +277,10 @@ public class NovaComputeServiceContextModule extends
    @Override
    protected Optional<ImageExtension> provideImageExtension(Injector i) {
       return Optional.of(i.getInstance(ImageExtension.class));
+   }
+
+   @Override
+   protected Optional<SecurityGroupExtension> provideSecurityGroupExtension(Injector i) {
+      return Optional.of(i.getInstance(SecurityGroupExtension.class));
    }
 }

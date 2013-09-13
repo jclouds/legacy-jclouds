@@ -1,0 +1,13 @@
+{
+    "security_group_rule": {
+        "from_port": 22,
+        "group": {},
+        "ip_protocol": "tcp",
+        "to_port": 22,
+        "parent_group_id": 160,
+        "ip_range": {
+            "cidr": "10.2.6.0/24"
+        },
+        "id": 108
+    }
+}

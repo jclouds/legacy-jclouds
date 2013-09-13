@@ -77,7 +77,7 @@ public interface SecurityGroupApi {
     * @return a new Security Group Rule
     */
    SecurityGroupRule createRuleAllowingSecurityGroupId(String parentGroup, Ingress ingress,
-            String sourceCidr);
+            String groupId);
 
    /**
     * Delete a Security Group Rule.
