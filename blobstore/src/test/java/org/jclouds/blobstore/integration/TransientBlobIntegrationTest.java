@@ -16,7 +16,10 @@
  */
 package org.jclouds.blobstore.integration;
 
+import java.io.IOException;
+
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
+import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 /**
@@ -28,5 +31,10 @@ import org.testng.annotations.Test;
 public class TransientBlobIntegrationTest extends BaseBlobIntegrationTest {
    public TransientBlobIntegrationTest() {
       provider = "transient";
+   }
+
+   @Override
+   public void testPutIncorrectContentMD5() throws InterruptedException, IOException {
+      throw new SkipException("not yet implemented");
    }
 }
