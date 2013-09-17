@@ -31,6 +31,8 @@ import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.domain.chef.DataBag;
 import org.jclouds.scriptbuilder.domain.chef.Role;
 import org.jclouds.scriptbuilder.domain.chef.RunList;
+import org.jclouds.scriptbuilder.statements.ruby.InstallRuby;
+import org.jclouds.scriptbuilder.statements.ruby.InstallRubyGems;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -45,6 +47,10 @@ import com.google.common.collect.Lists;
  * Bootstraps a node using Chef Solo.
  * 
  * @author Ignasi Barrera
+ * 
+ * @see InstallChefGems
+ * @see InstallRuby
+ * @see InstallRubyGems
  */
 public class ChefSolo implements Statement {
 

@@ -21,14 +21,24 @@ import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.scriptbuilder.statements.ruby.InstallRuby;
+import org.jclouds.scriptbuilder.statements.ruby.InstallRubyGems;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 
 /**
  * Installs Chef gems onto a host.
+ * <p>
+ * If you only want to install the Chef client and don't care about the version
+ * of Ruby and Rubygems, use the {@link InstallChefUsingOmnibus} statement
+ * instead.
  * 
  * @author Ignasi Barrera
+ * 
+ * @see InstallChefUsingOmnibus
+ * @see InstallRuby
+ * @see InstallRubyGems
  */
 public class InstallChefGems implements Statement {
 
