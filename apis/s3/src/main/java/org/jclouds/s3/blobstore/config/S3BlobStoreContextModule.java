@@ -26,7 +26,6 @@ import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.attr.ConsistencyModel;
-import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.domain.Location;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.blobstore.S3AsyncBlobStore;
@@ -53,7 +52,6 @@ public class S3BlobStoreContextModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      install(new BlobStoreMapModule());
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.EVENTUAL);
       bind(AsyncBlobStore.class).to(S3AsyncBlobStore.class).in(SINGLETON);
       bind(BlobStore.class).to(S3BlobStore.class).in(SINGLETON);

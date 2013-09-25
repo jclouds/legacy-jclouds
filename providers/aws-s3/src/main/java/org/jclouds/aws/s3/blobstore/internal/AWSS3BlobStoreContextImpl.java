@@ -24,10 +24,8 @@ import org.jclouds.aws.s3.blobstore.AWSS3AsyncBlobStore;
 import org.jclouds.aws.s3.blobstore.AWSS3BlobStore;
 import org.jclouds.aws.s3.blobstore.AWSS3BlobStoreContext;
 import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.location.Provider;
 import org.jclouds.rest.Utils;
@@ -43,10 +41,10 @@ public class AWSS3BlobStoreContextImpl extends S3BlobStoreContextImpl implements
 
    @Inject
    public AWSS3BlobStoreContextImpl(@Provider Context backend, @Provider TypeToken<? extends Context> backendType,
-            BlobMap.Factory blobMapFactory, Utils utils, ConsistencyModel consistencyModel,
-            InputStreamMap.Factory inputStreamMapFactory, AsyncBlobStore ablobStore, BlobStore blobStore,
+            Utils utils, ConsistencyModel consistencyModel,
+            AsyncBlobStore ablobStore, BlobStore blobStore,
             BlobRequestSigner blobRequestSigner) {
-      super(backend, backendType, blobMapFactory, utils, consistencyModel, inputStreamMapFactory, ablobStore,
+      super(backend, backendType, utils, consistencyModel, ablobStore,
                blobStore, blobRequestSigner);
    }
 

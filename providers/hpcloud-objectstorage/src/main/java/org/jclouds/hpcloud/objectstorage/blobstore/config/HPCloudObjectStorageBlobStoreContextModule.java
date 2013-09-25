@@ -29,7 +29,6 @@ import javax.inject.Singleton;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.attr.ConsistencyModel;
-import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageApi;
 import org.jclouds.hpcloud.objectstorage.blobstore.HPCloudObjectStorageAsyncBlobStore;
 import org.jclouds.hpcloud.objectstorage.blobstore.HPCloudObjectStorageBlobStore;
@@ -98,7 +97,6 @@ public class HPCloudObjectStorageBlobStoreContextModule extends SwiftBlobStoreCo
 
    @Override
    protected void configure() {
-      install(new BlobStoreMapModule());
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
       bind(AsyncBlobStore.class).to(HPCloudObjectStorageAsyncBlobStore.class);
       bind(BlobStore.class).to(HPCloudObjectStorageBlobStore.class);

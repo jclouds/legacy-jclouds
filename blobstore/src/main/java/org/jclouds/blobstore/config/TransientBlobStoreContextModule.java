@@ -41,7 +41,6 @@ public class TransientBlobStoreContextModule extends AbstractModule {
       // forward all requests from TransientBlobStore to TransientAsyncBlobStore.  needs above binding as cannot proxy a class
       bindSyncToAsyncApi(binder(), LocalBlobStore.class, AsyncBlobStore.class);
       install(new BlobStoreObjectModule());
-      install(new BlobStoreMapModule());
       bind(BlobStore.class).to(LocalBlobStore.class);
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
       bind(LocalStorageStrategy.class).to(TransientStorageStrategy.class);

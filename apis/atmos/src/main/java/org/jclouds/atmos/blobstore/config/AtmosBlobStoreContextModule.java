@@ -29,7 +29,6 @@ import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.attr.ConsistencyModel;
-import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 
 import com.google.common.cache.CacheBuilder;
@@ -48,7 +47,6 @@ public class AtmosBlobStoreContextModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      install(new BlobStoreMapModule());
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.EVENTUAL);
       bind(AsyncBlobStore.class).to(AtmosAsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(AtmosBlobStore.class).in(Scopes.SINGLETON);

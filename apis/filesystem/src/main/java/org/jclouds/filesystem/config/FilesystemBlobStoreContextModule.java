@@ -25,7 +25,6 @@ import org.jclouds.blobstore.LocalAsyncBlobStore;
 import org.jclouds.blobstore.LocalBlobRequestSigner;
 import org.jclouds.blobstore.LocalStorageStrategy;
 import org.jclouds.blobstore.attr.ConsistencyModel;
-import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.config.LocalBlobStore;
 import org.jclouds.blobstore.util.BlobUtils;
@@ -52,7 +51,6 @@ public class FilesystemBlobStoreContextModule extends AbstractModule {
       bind(BlobStore.class).to(LocalBlobStore.class);
 
       install(new BlobStoreObjectModule());
-      install(new BlobStoreMapModule());
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
       bind(LocalStorageStrategy.class).to(FilesystemStorageStrategyImpl.class);
       bind(BlobUtils.class).to(FileSystemBlobUtilsImpl.class);

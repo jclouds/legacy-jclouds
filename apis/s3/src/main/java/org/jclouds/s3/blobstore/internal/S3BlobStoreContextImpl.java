@@ -21,10 +21,8 @@ import javax.inject.Singleton;
 
 import org.jclouds.Context;
 import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.location.Provider;
@@ -43,10 +41,10 @@ public class S3BlobStoreContextImpl extends BlobStoreContextImpl implements S3Bl
 
    @Inject
    public S3BlobStoreContextImpl(@Provider Context backend, @Provider TypeToken<? extends Context> backendType,
-            BlobMap.Factory blobMapFactory, Utils utils, ConsistencyModel consistencyModel,
-            InputStreamMap.Factory inputStreamMapFactory, AsyncBlobStore ablobStore, BlobStore blobStore,
+            Utils utils, ConsistencyModel consistencyModel,
+            AsyncBlobStore ablobStore, BlobStore blobStore,
             BlobRequestSigner blobRequestSigner) {
-      super(backend, backendType, blobMapFactory, utils, consistencyModel, inputStreamMapFactory, ablobStore,
+      super(backend, backendType, utils, consistencyModel, ablobStore,
                blobStore, blobRequestSigner);
    }
 

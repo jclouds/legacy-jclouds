@@ -23,11 +23,9 @@ import javax.inject.Singleton;
 
 import org.jclouds.Context;
 import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.internal.BaseView;
@@ -43,8 +41,6 @@ import com.google.common.reflect.TypeToken;
  */
 @Singleton
 public class BlobStoreContextImpl extends BaseView implements BlobStoreContext {
-   private final BlobMap.Factory blobMapFactory;
-   private final InputStreamMap.Factory inputStreamMapFactory;
    private final AsyncBlobStore ablobStore;
    private final BlobStore blobStore;
    private final ConsistencyModel consistencyModel;
@@ -53,13 +49,11 @@ public class BlobStoreContextImpl extends BaseView implements BlobStoreContext {
 
    @Inject
    public BlobStoreContextImpl(@Provider Context backend, @Provider TypeToken<? extends Context> backendType,
-            BlobMap.Factory blobMapFactory, Utils utils, ConsistencyModel consistencyModel,
-            InputStreamMap.Factory inputStreamMapFactory, AsyncBlobStore ablobStore, BlobStore blobStore,
+            Utils utils, ConsistencyModel consistencyModel,
+            AsyncBlobStore ablobStore, BlobStore blobStore,
             BlobRequestSigner blobRequestSigner) {
       super(backend, backendType);
       this.consistencyModel = checkNotNull(consistencyModel, "consistencyModel");
-      this.blobMapFactory = checkNotNull(blobMapFactory, "blobMapFactory");
-      this.inputStreamMapFactory = checkNotNull(inputStreamMapFactory, "inputStreamMapFactory");
       this.ablobStore = checkNotNull(ablobStore, "ablobStore");
       this.blobStore = checkNotNull(blobStore, "blobStore");
       this.utils = checkNotNull(utils, "utils");
@@ -69,26 +63,6 @@ public class BlobStoreContextImpl extends BaseView implements BlobStoreContext {
    @Override
    public ConsistencyModel getConsistencyModel() {
       return consistencyModel;
-   }
-
-   @Override
-   public BlobMap createBlobMap(String container, ListContainerOptions options) {
-      return blobMapFactory.create(container, options);
-   }
-
-   @Override
-   public BlobMap createBlobMap(String container) {
-      return blobMapFactory.create(container, ListContainerOptions.NONE);
-   }
-
-   @Override
-   public InputStreamMap createInputStreamMap(String container, ListContainerOptions options) {
-      return inputStreamMapFactory.create(container, options);
-   }
-
-   @Override
-   public InputStreamMap createInputStreamMap(String container) {
-      return inputStreamMapFactory.create(container, ListContainerOptions.NONE);
    }
 
    @Override
