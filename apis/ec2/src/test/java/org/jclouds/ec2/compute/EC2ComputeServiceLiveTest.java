@@ -35,7 +35,6 @@ import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.domain.BlockDevice;
@@ -45,11 +44,11 @@ import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.domain.Snapshot;
 import org.jclouds.ec2.domain.Volume;
-import org.jclouds.ec2.reference.EC2Constants;
 import org.jclouds.ec2.features.ElasticBlockStoreApi;
 import org.jclouds.ec2.features.InstanceApi;
 import org.jclouds.ec2.features.KeyPairApi;
 import org.jclouds.ec2.features.SecurityGroupApi;
+import org.jclouds.ec2.reference.EC2Constants;
 import org.jclouds.net.domain.IpProtocol;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.sshj.config.SshjSshClientModule;
@@ -59,9 +58,9 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 import com.google.common.net.HostAndPort;
 import com.google.inject.Module;
 
@@ -88,9 +87,19 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       if (view.unwrapApi(EC2Api.class).getTagApi().isPresent()) {
          super.checkUserMetadataContains(node, userMetadata);
       } else {
-         assertTrue(node.getUserMetadata().isEmpty(), "not expecting metadata when tag extension isn't present" + node);
+         assertTrue(node.getUserMetadata().isEmpty(), "not expecting metadata when tag extension isn't present: " + node);
       }
    }
+
+   @Override
+   protected void checkTagsInNodeEquals(NodeMetadata node, ImmutableSet<String> tags) {
+      if (view.unwrapApi(EC2Api.class).getTagApi().isPresent()) {
+         super.checkTagsInNodeEquals(node, tags);
+      } else {
+         assertTrue(node.getTags().isEmpty(), "not expecting tags when tag extension isn't present: " + node);
+      }
+   }
+
 
    @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
    public void testImagesResolveCorrectly() {
@@ -150,12 +159,11 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          assertEquals(instance.getKeyName(), group);
 
          // make sure we made our dummy group and also let in the user's group
-         assertEquals(Sets.newTreeSet(instance.getGroupNames()), ImmutableSortedSet.<String> of("jclouds#" + group + "#"
-                  + instance.getRegion(), group));
+         assertEquals(ImmutableSortedSet.copyOf(instance.getGroupNames()), ImmutableSortedSet.<String> of("jclouds#" + group, group));
 
          // make sure our dummy group has no rules
          SecurityGroup secgroup = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(null,
-                  "jclouds#" + group + "#" + instance.getRegion()));
+                  "jclouds#" + group));
          assert secgroup.size() == 0 : secgroup;
 
          // try to run a script with the original keyPair
@@ -184,9 +192,14 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
          context = createView(overrides, setupModules());
 
+         TemplateOptions options = client.templateOptions();
+
+         options.blockOnPort(22, 300);
+         options.inboundPorts(22);
+
          // create a node
          Set<? extends NodeMetadata> nodes =
-               context.getComputeService().createNodesInGroup(group, 1);
+               context.getComputeService().createNodesInGroup(group, 1, options);
          assertEquals(nodes.size(), 1, "One node should have been created");
 
          // Get public IPs (We should get 1)
@@ -269,6 +282,9 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
       // create volume only to make a snapshot
       Volume volume = ebsClient.createVolumeInAvailabilityZone(zone.getId(), 4);
+      // Sleep for 5 seconds to make sure the volume creation finishes.
+      Thread.sleep(5000);
+
       Snapshot snapshot = ebsClient.createSnapshotInRegion(volume.getRegion(), volume.getId());
       ebsClient.deleteVolumeInRegion(volume.getRegion(), volume.getId());
 

@@ -24,8 +24,8 @@ import java.util.SortedSet;
 
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.ec2.EC2Api;
-import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.domain.KeyPair;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -92,6 +92,19 @@ public class KeyPairApiLiveTest extends BaseComputeServiceContextLiveTest {
       KeyPair listPair = twoResults.iterator().next();
       assertEquals(listPair.getKeyName(), result.getKeyName());
       assertEquals(listPair.getSha1OfPrivateKey(), result.getSha1OfPrivateKey());
+   }
+
+   @AfterClass(groups = { "integration", "live" })
+   @Override
+   protected void tearDownContext() {
+      String keyName = PREFIX + "1";
+      try {
+         client.deleteKeyPairInRegion(null, keyName);
+      } catch (Exception e) {
+
+      }
+
+      super.tearDownContext();
    }
 
 }

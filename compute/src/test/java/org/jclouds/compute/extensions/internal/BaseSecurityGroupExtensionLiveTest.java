@@ -16,14 +16,9 @@
  */
 package org.jclouds.compute.extensions.internal;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.compute.predicates.NodePredicates.inGroup;
-import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
@@ -34,20 +29,16 @@ import javax.inject.Named;
 
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.RunNodesException;
-import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.SecurityGroup;
-import org.jclouds.compute.domain.SecurityGroupBuilder;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.extensions.SecurityGroupExtension;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
-import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.net.domain.IpPermission;
 import org.jclouds.net.domain.IpProtocol;
-import org.jclouds.ssh.SshClient;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
@@ -62,7 +53,7 @@ import com.google.common.collect.Sets;
 /**
  * Base test for {@link SecurityGroupExtension} implementations.
  * 
- * @author David Alves
+ * @author Andrew Bayer
  * 
  */
 public abstract class BaseSecurityGroupExtensionLiveTest extends BaseComputeServiceContextLiveTest {
@@ -71,18 +62,19 @@ public abstract class BaseSecurityGroupExtensionLiveTest extends BaseComputeServ
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
+   protected final String secGroupName = "test-create-security-group";
+   protected final String nodeGroup = "test-create-node-with-group";
+
    protected String groupId;
 
    /**
     * Returns the template for the base node, override to test different templates.
-    * 
+    *
     * @return
     */
    public Template getNodeTemplate() {
       return view.getComputeService().templateBuilder().build();
    }
-
-      
 
    @Test(groups = { "integration", "live" }, singleThreaded = true)
    public void testCreateSecurityGroup() throws RunNodesException, InterruptedException, ExecutionException {
@@ -95,11 +87,11 @@ public abstract class BaseSecurityGroupExtensionLiveTest extends BaseComputeServ
 
       assertTrue(securityGroupExtension.isPresent(), "security extension was not present");
 
-      SecurityGroup group = securityGroupExtension.get().createSecurityGroup("test-create-security-group", location);
+      SecurityGroup group = securityGroupExtension.get().createSecurityGroup(secGroupName, location);
 
       logger.info("Group created: %s", group);
 
-      assertTrue(group.getName().contains("test-create-security-group"));
+      assertTrue(group.getName().contains(secGroupName));
 
       groupId = group.getId();
    }
@@ -119,7 +111,7 @@ public abstract class BaseSecurityGroupExtensionLiveTest extends BaseComputeServ
 
       logger.info("Group found: %s", group);
 
-      assertTrue(group.getName().contains("test-create-security-group"));
+      assertTrue(group.getName().contains(secGroupName));
    }
 
    @Test(groups = { "integration", "live" }, singleThreaded = true, dependsOnMethods = "testGetSecurityGroupById")
@@ -273,7 +265,8 @@ public abstract class BaseSecurityGroupExtensionLiveTest extends BaseComputeServ
          assertTrue(thirdNewGroup.getIpPermissions().contains(thirdPerm)); 
       }
    }
-   
+
+   /*
    @Test(groups = { "integration", "live" }, singleThreaded = true, dependsOnMethods = "testAddIpPermissionsFromSpec")
    public void testCreateNodeWithSecurityGroup() throws RunNodesException, InterruptedException, ExecutionException {
 
@@ -287,7 +280,7 @@ public abstract class BaseSecurityGroupExtensionLiveTest extends BaseComputeServ
          .options(TemplateOptions.Builder.securityGroups(groupId))
          .build();
       
-      NodeMetadata node = Iterables.getOnlyElement(computeService.createNodesInGroup("test-create-node-with-group", 1, template));
+      NodeMetadata node = Iterables.getOnlyElement(computeService.createNodesInGroup(nodeGroup, 1, template));
 
       Set<SecurityGroup> groups = securityGroupExtension.get().listSecurityGroupsForNode(node.getId());
 
@@ -307,11 +300,10 @@ public abstract class BaseSecurityGroupExtensionLiveTest extends BaseComputeServ
 
       
    }
-
+*/
    // testDeleteSecurityGroup currently disabled until I can find a way to get it to delete the security group while a terminated
    // instance is still floating around in EC2. - abayer, 6/14/13
-   /*
-   @Test(groups = { "integration", "live" }, singleThreaded = true, dependsOnMethods = "testCreateNodeWithSecurityGroup")
+   @Test(groups = { "integration", "live" }, singleThreaded = true, dependsOnMethods = "testAddIpPermissionsFromSpec")
    public void testDeleteSecurityGroup() {
 
       ComputeService computeService = view.getComputeService();
@@ -327,7 +319,6 @@ public abstract class BaseSecurityGroupExtensionLiveTest extends BaseComputeServ
 
       assertTrue(securityGroupExtension.get().removeSecurityGroup(group.getId()));
    }
-   */
    
    private Multimap<String, String> emptyMultimap() {
       return LinkedHashMultimap.create();
@@ -345,4 +336,42 @@ public abstract class BaseSecurityGroupExtensionLiveTest extends BaseComputeServ
          }
       });
    }
+
+
+   private void cleanup() {
+      ComputeService computeService = view.getComputeService();
+
+      Location location = getNodeTemplate().getLocation();
+
+      Optional<SecurityGroupExtension> securityGroupExtension = computeService.getSecurityGroupExtension();
+
+      if (securityGroupExtension.isPresent()) {
+         SecurityGroup group = Iterables.getFirst(filter(securityGroupExtension.get().listSecurityGroups(),
+                 new Predicate<SecurityGroup>() {
+                    @Override
+                    public boolean apply(SecurityGroup input) {
+                       return secGroupName.equals(input.getName());
+                    }
+                 }), null);
+
+         if (group != null) {
+            securityGroupExtension.get().removeSecurityGroup(group.getId());
+         }
+      }
+   }
+
+
+   @AfterClass(groups = { "integration", "live" })
+   @Override
+   protected void tearDownContext() {
+      try {
+         view.getComputeService().destroyNodesMatching(inGroup(nodeGroup));
+
+         cleanup();
+      } catch (Exception e) {
+
+      }
+      super.tearDownContext();
+   }
+
 }

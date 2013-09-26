@@ -148,6 +148,7 @@ public class EC2ComputeService extends BaseComputeService {
             throws RunNodesException {
       Set<? extends NodeMetadata> nodes = super.createNodesInGroup(group, count, template);
       String region = AWSUtils.getRegionFromLocationOrNull(template.getLocation());
+
       if (client.getTagApiForRegion(region).isPresent()) {
          Map<String, String> common = metadataAndTagsAsValuesOfEmptyString(template.getOptions());
          if (common.size() > 0 || generateInstanceNames) {

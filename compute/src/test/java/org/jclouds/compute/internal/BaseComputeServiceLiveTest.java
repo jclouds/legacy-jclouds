@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.jclouds.compute.internal;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
@@ -343,7 +344,8 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
          nodes = newTreeSet(concat(e.getSuccessfulNodes(), e.getNodeErrors().keySet()));
          throw e;
       }
-      assertEquals(nodes.size(), 2);
+
+      assertEquals(nodes.size(), 2, "expected two nodes but was " + nodes);
       checkNodes(nodes, group, "bootstrap");
       NodeMetadata node1 = nodes.first();
       NodeMetadata node2 = nodes.last();
@@ -855,8 +857,12 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
    @AfterClass(groups = { "integration", "live" })
    @Override
    protected void tearDownContext() {
-      if (nodes != null) {
-         testDestroyNodes();
+      try {
+         if (nodes != null) {
+            client.destroyNodesMatching(inGroup(group));
+         }
+      } catch (Exception e) {
+
       }
       super.tearDownContext();
    }

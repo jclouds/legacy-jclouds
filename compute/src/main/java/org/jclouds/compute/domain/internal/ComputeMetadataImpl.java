@@ -18,6 +18,8 @@ package org.jclouds.compute.domain.internal;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.ComparisonChain.start;
+import static com.google.common.collect.Ordering.natural;
 
 import java.net.URI;
 import java.util.Map;
@@ -26,6 +28,7 @@ import java.util.Set;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.ResourceMetadata;
 import org.jclouds.domain.internal.ResourceMetadataImpl;
 
 import com.google.common.base.Objects;
@@ -72,6 +75,23 @@ public class ComputeMetadataImpl extends ResourceMetadataImpl<ComputeType> imple
    @Override
    public Set<String> getTags() {
       return tags;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public int compareTo(ResourceMetadata<ComputeType> that) {
+      if (that instanceof ComputeMetadata) {
+         ComputeMetadata thatMetadata = ComputeMetadata.class.cast(that);
+         return start()
+                 .compare(this.getId(), thatMetadata.getId())
+                 .compare(this.getType(), thatMetadata.getType())
+                 .compare(this.getName(), that.getName(), natural().nullsLast())
+                 .result();
+      } else {
+         return super.compareTo(that);
+      }
    }
 
    @Override

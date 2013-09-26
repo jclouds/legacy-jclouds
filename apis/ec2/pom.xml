@@ -37,8 +37,10 @@
     <test.ec2.build-version />
     <test.ec2.identity>${test.aws.identity}</test.ec2.identity>
     <test.ec2.credential>${test.aws.credential}</test.ec2.credential>
-    <test.ec2.template />
-    <test.ec2.ebs-template>hardwareId=m1.small,imageId=us-west-2/ami-38c64a08</test.ec2.ebs-template>
+    <!-- default template pattern gets a problematic Ubuntu 10.04 AMI -->
+    <test.ec2.template>hardwareId=m1.small,imageId=us-east-1/ami-1ab3ce73</test.ec2.template>
+    <!-- Active EBS template as of 9/25/2013 -->
+    <test.ec2.ebs-template>hardwareId=m1.small,imageId=us-east-1/ami-53b1ff3a</test.ec2.ebs-template>
     <!-- Windows_Server-2008-R2 with WinRM enabled (setup instructions at http://www.frontiertown.co.uk/2011/12/overthere-control-windows-from-java/) -->
     <test.ec2.windows-template>hardwareId=m1.small,imageId=us-east-1/ami-0cb76d65</test.ec2.windows-template>
     <jclouds.osgi.export>org.jclouds.ec2*;version="${project.version}"</jclouds.osgi.export>

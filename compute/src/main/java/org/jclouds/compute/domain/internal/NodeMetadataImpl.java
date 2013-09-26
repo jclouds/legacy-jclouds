@@ -165,7 +165,6 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       return hostname;
    }
 
-
    // equals and toString from super are sufficient to establish identity equivalence
 
    protected ToStringHelper string() {

@@ -27,12 +27,12 @@ import java.util.SortedSet;
 
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.ec2.EC2Api;
-import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.ec2.domain.Snapshot;
 import org.jclouds.ec2.domain.Volume;
 import org.jclouds.ec2.predicates.SnapshotCompleted;
 import org.jclouds.ec2.predicates.VolumeAvailable;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -218,6 +218,19 @@ public class ElasticBlockStoreApiLiveTest extends BaseComputeServiceContextLiveT
    void testDeleteSnapshotInRegion() {
       client.deleteSnapshotInRegion(snapshot.getRegion(), snapshot.getId());
       assert client.describeSnapshotsInRegion(snapshot.getRegion(), snapshotIds(snapshot.getId())).size() == 0;
+   }
+
+   @AfterClass(groups = { "integration", "live" })
+   @Override
+   protected void tearDownContext() {
+      try {
+         client.deleteSnapshotInRegion(snapshot.getRegion(), snapshot.getId());
+         client.deleteVolumeInRegion(defaultRegion, volumeId);
+      } catch (Exception e) {
+         // we don't really care about any exception here, so just delete away.
+      }
+
+      super.tearDownContext();
    }
 
 }
