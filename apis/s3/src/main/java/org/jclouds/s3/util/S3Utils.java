@@ -30,6 +30,8 @@ import org.jclouds.s3.Bucket;
 import org.jclouds.s3.S3Client;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.Parameter;
 
 /**
  * Encryption, Hashing, and IO Utilities needed to sign and verify S3 requests and responses.
@@ -75,9 +77,9 @@ public class S3Utils {
 
       String bucketName = null;
 
-      for (int i = 0; i < request.getInvocation().getInvokable().getParameters().size(); i++) {
-         if (any(Arrays.asList(request.getInvocation().getInvokable().getParameters().get(i).getAnnotations()),
-               ANNOTATIONTYPE_BUCKET)) {
+      ImmutableList<Parameter> parameters = request.getInvocation().getInvokable().getParameters();
+      for (int i = 0; i < parameters.size(); i++) {
+         if (any(Arrays.asList(parameters.get(i).getAnnotations()), ANNOTATIONTYPE_BUCKET)) {
             bucketName = (String) request.getInvocation().getArgs().get(i);
             break;
          }

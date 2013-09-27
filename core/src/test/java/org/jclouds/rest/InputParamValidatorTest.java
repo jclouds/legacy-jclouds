@@ -101,7 +101,7 @@ public class InputParamValidatorTest {
    public void testWrongPredicateTypeLiteral() throws Exception {
       Invocation invocation = Invocation.create(method(WrongValidator.class, "method", Integer.class),
             ImmutableList.<Object> of(55));
-      new InputParamValidator(injector).validateMethodParametersOrThrow(invocation);
+      new InputParamValidator(injector).validateMethodParametersOrThrow(invocation, invocation.getInvokable().getParameters());
    }
 
    Injector injector;

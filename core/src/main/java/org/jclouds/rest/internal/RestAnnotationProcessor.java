@@ -150,6 +150,13 @@ public class RestAnnotationProcessor implements Function<Invocation, HttpRequest
    private final GetAcceptHeaders getAcceptHeaders;
    private final Invocation caller;
    private final boolean stripExpectHeader;
+   private static final LoadingCache<Invokable<?, ?>, ImmutableList<Parameter>> invokableParamsCache =
+       CacheBuilder.newBuilder().maximumSize(100).build(new CacheLoader<Invokable<?, ?>, ImmutableList<Parameter>>() {
+               @Override
+               public ImmutableList<Parameter> load(Invokable<?, ?> invokable) {
+                   return invokable.getParameters();
+               }
+           });
 
    @Inject
    private RestAnnotationProcessor(Injector injector, @ApiVersion String apiVersion, @BuildVersion String buildVersion,
@@ -179,7 +186,7 @@ public class RestAnnotationProcessor implements Function<Invocation, HttpRequest
    @Override
    public GeneratedHttpRequest apply(Invocation invocation) {
       checkNotNull(invocation, "invocation");
-      inputParamValidator.validateMethodParametersOrThrow(invocation);
+      inputParamValidator.validateMethodParametersOrThrow(invocation, invokableParamsCache.getUnchecked(invocation.getInvokable()));
 
       Optional<URI> endpoint = Optional.absent();
       HttpRequest r = findOrNull(invocation.getArgs(), HttpRequest.class);
@@ -499,7 +506,7 @@ public class RestAnnotationProcessor implements Function<Invocation, HttpRequest
 
    private static Collection<Parameter> parametersWithAnnotation(Invokable<?, ?> invokable,
          final Class<? extends Annotation> annotationType) {
-      return filter(invokable.getParameters(), new Predicate<Parameter>() {
+      return filter(invokableParamsCache.getUnchecked(invokable), new Predicate<Parameter>() {
          public boolean apply(Parameter in) {
             return in.isAnnotationPresent(annotationType);
          }
