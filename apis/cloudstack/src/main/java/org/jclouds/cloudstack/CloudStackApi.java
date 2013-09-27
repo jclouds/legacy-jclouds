@@ -16,6 +16,8 @@
  */
 package org.jclouds.cloudstack;
 
+import java.io.Closeable;
+
 import org.jclouds.cloudstack.features.AccountApi;
 import org.jclouds.cloudstack.features.AddressApi;
 import org.jclouds.cloudstack.features.AsyncJobApi;
@@ -48,7 +50,7 @@ import org.jclouds.rest.annotations.Delegate;
  * @author Adrian Cole
  * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
  */
-public interface CloudStackApi {
+public interface CloudStackApi extends Closeable {
    /**
     * Provides synchronous access to Zone features.
     */
