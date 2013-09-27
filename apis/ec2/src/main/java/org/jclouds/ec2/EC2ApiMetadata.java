@@ -35,39 +35,20 @@ import org.jclouds.ec2.config.EC2HttpApiModule;
 import org.jclouds.rest.internal.BaseHttpApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 
-/**
- * Implementation of {@link ApiMetadata} for Amazon's EC2 api.
- * 
- * <h3>note</h3>
- * <p/>
- * This class allows overriding of types {@code S}(client) and {@code A}
- * (asyncClient), so that children can add additional methods not declared here,
- * such as new features from AWS.
- * <p/>
- * 
- * As this is a popular api, we also allow overrides for type {@code C}
- * (context). This allows subtypes to add in new feature groups or extensions,
- * not present in the base api. For example, you could make a subtype for
- * context, that exposes admin operations.
- * 
- * @author Adrian Cole
- */
-public class EC2ApiMetadata extends BaseHttpApiMetadata<EC2Api> {
-
+public final class EC2ApiMetadata extends BaseHttpApiMetadata<EC2Api> {
 
    @Override
-   public Builder<?> toBuilder() {
-      return new ConcreteBuilder().fromApiMetadata(this);
+   public Builder toBuilder() {
+      return new Builder().fromApiMetadata(this);
    }
 
    public EC2ApiMetadata() {
-      this(new ConcreteBuilder());
+      super(new Builder());
    }
 
-   protected EC2ApiMetadata(Builder<?> builder) {
+   protected EC2ApiMetadata(Builder builder) {
       super(builder);
    }
 
@@ -83,8 +64,8 @@ public class EC2ApiMetadata extends BaseHttpApiMetadata<EC2Api> {
       return properties;
    }
 
-   public abstract static class Builder<T extends Builder<T>> extends BaseHttpApiMetadata.Builder<EC2Api, T> {
-      protected Builder() {
+   public final static class Builder extends BaseHttpApiMetadata.Builder<EC2Api, Builder> {
+      public Builder() {
          id("ec2")
          .name("Amazon Elastic Compute Cloud (EC2) API")
          .identityName("Access Key ID")
@@ -101,11 +82,9 @@ public class EC2ApiMetadata extends BaseHttpApiMetadata<EC2Api> {
       public ApiMetadata build() {
          return new EC2ApiMetadata(this);
       }
-   }
-   
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
       @Override
-      protected ConcreteBuilder self() {
+      protected Builder self() {
          return this;
       }
    }

@@ -18,25 +18,20 @@ package org.jclouds.aws.ec2;
 
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
+import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.apis.ApiMetadata;
 import org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceContext;
 import org.jclouds.aws.ec2.compute.config.AWSEC2ComputeServiceContextModule;
 import org.jclouds.aws.ec2.config.AWSEC2HttpApiModule;
 import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.compute.config.EC2ResolveImagesModule;
+import org.jclouds.rest.internal.BaseHttpApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 
-/**
- * Implementation of {@link ApiMetadata} for the Amazon-specific EC2 API
- * 
- * @author Adrian Cole
- */
-public class AWSEC2ApiMetadata extends EC2ApiMetadata {
+public final class AWSEC2ApiMetadata extends BaseHttpApiMetadata<AWSEC2Api> {
 
    @Override
    public Builder toBuilder() {
@@ -44,13 +39,13 @@ public class AWSEC2ApiMetadata extends EC2ApiMetadata {
    }
 
    public AWSEC2ApiMetadata() {
-      this(new Builder());
+      super(new Builder());
    }
 
    protected AWSEC2ApiMetadata(Builder builder) {
       super(builder);
    }
-   
+
    public static Properties defaultProperties() {
       Properties properties = EC2ApiMetadata.defaultProperties();
       properties.remove(PROPERTY_EC2_AMI_OWNERS);
@@ -61,17 +56,20 @@ public class AWSEC2ApiMetadata extends EC2ApiMetadata {
       return properties;
    }
 
-   public static class Builder extends EC2ApiMetadata.Builder<Builder> {
-      @SuppressWarnings("deprecation")
-      protected Builder(){
+   public final static class Builder extends BaseHttpApiMetadata.Builder<AWSEC2Api, Builder> {
+      public Builder() {
          id("aws-ec2")
          .version("2012-06-01")
          .name("Amazon-specific EC2 API")
-         .view(AWSEC2ComputeServiceContext.class)
+         .identityName("Access Key ID")
+         .credentialName("Secret Access Key")
+         .defaultEndpoint("https://ec2.us-east-1.amazonaws.com")
+         .documentation(URI.create("http://docs.amazonwebservices.com/AWSEC2/latest/APIReference"))
          .defaultProperties(AWSEC2ApiMetadata.defaultProperties())
+         .view(AWSEC2ComputeServiceContext.class)
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(AWSEC2HttpApiModule.class, EC2ResolveImagesModule.class, AWSEC2ComputeServiceContextModule.class));
       }
-      
+
       @Override
       public AWSEC2ApiMetadata build() {
          return new AWSEC2ApiMetadata(this);

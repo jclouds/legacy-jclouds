@@ -18,13 +18,17 @@ package org.jclouds.aws.ec2;
 
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_AMI_QUERY;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
+import static org.jclouds.reflect.Reflection2.typeToken;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Map;
 import java.util.Properties;
 
 import org.jclouds.ContextBuilder;
+import org.jclouds.View;
 import org.jclouds.aws.ec2.compute.config.ImageQuery;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.ec2.EC2Api;
 import org.testng.annotations.Test;
 
 import com.google.inject.Key;
@@ -39,6 +43,13 @@ public class AWSEC2ContextBuilderTest {
       return ContextBuilder.newBuilder(new AWSEC2ProviderMetadata()).overrides(input).credentials("foo", "bar")
                .buildInjector().getInstance(Key.get(new TypeLiteral<Map<String, String>>() {
                }, ImageQuery.class));
+   }
+
+   public void testAssignability() {
+      View view = ContextBuilder.newBuilder(new AWSEC2ProviderMetadata()).credentials("foo", "bar")
+              .buildView(typeToken(ComputeServiceContext.class));
+      view.unwrapApi(EC2Api.class);
+      view.unwrapApi(AWSEC2Api.class);
    }
 
    public void testConvertImageSyntax() {
