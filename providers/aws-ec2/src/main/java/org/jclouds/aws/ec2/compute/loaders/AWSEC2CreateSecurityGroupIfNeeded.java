@@ -82,6 +82,7 @@ public class AWSEC2CreateSecurityGroupIfNeeded extends CacheLoader<RegionAndName
       checkNotNull(region, "region");
       checkNotNull(name, "name");
       logger.debug(">> creating securityGroup region(%s) name(%s)", region, name);
+
       try {
          securityApi.createSecurityGroupInRegion(region, name, name);
          boolean created = securityGroupEventualConsistencyDelay.apply(new RegionAndName(region, name));
@@ -91,6 +92,12 @@ public class AWSEC2CreateSecurityGroupIfNeeded extends CacheLoader<RegionAndName
          logger.debug("<< created securityGroup(%s)", name);
 
          ImmutableSet.Builder<IpPermission> permissions = ImmutableSet.builder();
+         String id;
+         if (name.startsWith("sg-")) {
+            id = name;
+         } else {
+            id = groupNameToId.apply(new RegionAndName(region, name).slashEncode());
+         }
 
          if (ports.length > 0) {
             for (Map.Entry<Integer, Integer> range : getPortRangesFromList(ports).entrySet()) {
@@ -107,20 +114,19 @@ public class AWSEC2CreateSecurityGroupIfNeeded extends CacheLoader<RegionAndName
                             .fromPort(0)
                             .toPort(65535)
                             .ipProtocol(IpProtocol.TCP)
-                            .tenantIdGroupNamePair(myOwnerId, name)
+                            .tenantIdGroupNamePair(myOwnerId, id)
                             .build());
             permissions.add(IpPermission.builder()
                             .fromPort(0)
                             .toPort(65535)
                             .ipProtocol(IpProtocol.UDP)
-                            .tenantIdGroupNamePair(myOwnerId, name)
+                            .tenantIdGroupNamePair(myOwnerId, id)
                             .build());
          }
 
          Set<IpPermission> perms = permissions.build();
 
          if (perms.size() > 0) {
-            String id = groupNameToId.apply(new RegionAndName(region, name).slashEncode());
             logger.debug(">> authorizing securityGroup region(%s) name(%s) IpPermissions(%s)", region, name, perms);
             securityApi.authorizeSecurityGroupIngressInRegion(region, id, perms);
             logger.debug("<< authorized securityGroup(%s)", name);

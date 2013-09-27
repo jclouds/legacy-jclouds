@@ -71,13 +71,13 @@ public class AWSEC2CreateSecurityGroupIfNeededTest {
                       .fromPort(0)
                       .toPort(65535)
                       .ipProtocol(IpProtocol.TCP)
-                      .tenantIdGroupNamePair("ownerId", "group")
+                      .tenantIdGroupNamePair("ownerId", "sg-123456")
                       .build());
       permissions.add(IpPermission.builder()
                       .fromPort(0)
                       .toPort(65535)
                       .ipProtocol(IpProtocol.UDP)
-                      .tenantIdGroupNamePair("ownerId", "group")
+                      .tenantIdGroupNamePair("ownerId", "sg-123456")
                       .build());
       
       client.createSecurityGroupInRegion("region", "group", "group");

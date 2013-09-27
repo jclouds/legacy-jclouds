@@ -101,6 +101,6 @@ public class IpPermissionsTest {
             "groupId");
       assertEquals(
             IpPermissions.buildFormParametersForIndex(0, authorization).toString(),
-            "{IpPermissions.0.IpProtocol=[icmp], IpPermissions.0.FromPort=[-1], IpPermissions.0.ToPort=[-1], IpPermissions.0.Groups.0.UserId=[userId], IpPermissions.0.Groups.0.GroupName=[groupId]}");
+            "{IpPermissions.0.IpProtocol=[icmp], IpPermissions.0.FromPort=[-1], IpPermissions.0.ToPort=[-1], IpPermissions.0.Groups.0.UserId=[userId], IpPermissions.0.Groups.0.GroupId=[groupId]}");
    }
 }

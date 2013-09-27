@@ -168,6 +168,12 @@ public interface SecurityGroupExtension {
    boolean supportsTenantIdGroupNamePairs();
 
    /**
+    * Returns true if this SecurityGroupExtension supports tenant ID + group ID pairs.
+    */
+   boolean supportsTenantIdGroupIdPairs();
+
+
+   /**
     * Returns true if this SecurityGroupExtension supports group IDs.
     */
    boolean supportsGroupIds();

@@ -17,6 +17,10 @@
 package org.jclouds.aws.ec2.compute.extensions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.notNull;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.Iterables.transform;
 
 import java.util.Set;
 
@@ -31,6 +35,7 @@ import org.jclouds.compute.domain.SecurityGroup;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.ec2.compute.extensions.EC2SecurityGroupExtension;
 import org.jclouds.location.Region;
 import org.jclouds.net.domain.IpPermission;
@@ -67,16 +72,59 @@ public class AWSEC2SecurityGroupExtension extends EC2SecurityGroupExtension {
       this.groupNameToId = checkNotNull(groupNameToId, "groupNameToId");
    }
 
+   @Override
+   public SecurityGroup createSecurityGroup(String name, String region) {
+      String markerGroup = namingConvention.create().sharedNameForGroup(name);
+      RegionNameAndIngressRules regionAndName = new RegionNameAndIngressRules(region, markerGroup, new int[] {},
+              false);
+
+      groupCreator.getUnchecked(regionAndName);
+      String groupId = groupNameToId.apply(markerGroup);
+      return getSecurityGroupById(regionAndName.getRegion() + "/" + groupId);
+   }
+
+   @Override
+   public SecurityGroup getSecurityGroupById(String id) {
+      checkNotNull(id, "id");
+      String[] parts = AWSUtils.parseHandle(id);
+      String region = parts[0];
+      String groupId = parts[1];
+
+      Set<? extends org.jclouds.ec2.domain.SecurityGroup> rawGroups =
+              client.getSecurityGroupApi().get().describeSecurityGroupsInRegionById(region, groupId);
+
+      return getOnlyElement(transform(filter(rawGroups, notNull()), groupConverter));
+   }
+
+   @Override
+   public boolean removeSecurityGroup(String id) {
+      checkNotNull(id, "id");
+      String[] parts = AWSUtils.parseHandle(id);
+      String region = parts[0];
+      String groupId = parts[1];
+
+      org.jclouds.ec2.domain.SecurityGroup group = Iterables.getFirst(
+              client.getSecurityGroupApi().get().describeSecurityGroupsInRegionById(region, groupId),
+              null);
+
+      if (group != null) {
+         client.getSecurityGroupApi().get().deleteSecurityGroupInRegionById(region, groupId);
+         // TODO: test this clear happens
+         groupCreator.invalidate(new RegionNameAndIngressRules(region, group.getName(), null, false));
+         return true;
+      }
+
+      return false;
+   }
 
    @Override
    public SecurityGroup addIpPermission(IpPermission ipPermission, SecurityGroup group) {
       String region = AWSUtils.getRegionFromLocationOrNull(group.getLocation());
-      String name = group.getName();
-      String id = groupNameToId.apply(new RegionAndName(region, name).slashEncode());
+      String id = group.getProviderId();
 
       client.getSecurityGroupApi().get().authorizeSecurityGroupIngressInRegion(region, id, ipPermission);
 
-      return getSecurityGroupById(new RegionAndName(region, group.getName()).slashEncode());
+      return getSecurityGroupById(group.getId());
    }
 
    @Override
@@ -85,8 +133,7 @@ public class AWSEC2SecurityGroupExtension extends EC2SecurityGroupExtension {
                                         Iterable<String> ipRanges,
                                         Iterable<String> groupIds, SecurityGroup group) {
       String region = AWSUtils.getRegionFromLocationOrNull(group.getLocation());
-      String name = group.getName();
-      String id = groupNameToId.apply(new RegionAndName(region, name).slashEncode());
+      String id = group.getProviderId();
 
       IpPermission.Builder builder = IpPermission.builder();
 
@@ -102,26 +149,27 @@ public class AWSEC2SecurityGroupExtension extends EC2SecurityGroupExtension {
 
       if (tenantIdGroupNamePairs.size() > 0) {
          for (String userId : tenantIdGroupNamePairs.keySet()) {
-            for (String groupName : tenantIdGroupNamePairs.get(userId)) {
-               builder.tenantIdGroupNamePair(userId, groupName);
+            for (String groupString : tenantIdGroupNamePairs.get(userId)) {
+               String[] parts = AWSUtils.parseHandle(groupString);
+               String groupId = parts[1];
+               builder.tenantIdGroupNamePair(userId, groupId);
             }
          }
       }
 
       client.getSecurityGroupApi().get().authorizeSecurityGroupIngressInRegion(region, id, builder.build());
 
-      return getSecurityGroupById(new RegionAndName(region, group.getName()).slashEncode());
+      return getSecurityGroupById(group.getId());
    }
       
    @Override
    public SecurityGroup removeIpPermission(IpPermission ipPermission, SecurityGroup group) {
       String region = AWSUtils.getRegionFromLocationOrNull(group.getLocation());
-      String name = group.getName();
-      String id = groupNameToId.apply(new RegionAndName(region, name).slashEncode());
+      String id = group.getProviderId();
 
       client.getSecurityGroupApi().get().revokeSecurityGroupIngressInRegion(region, id, ipPermission);
 
-      return getSecurityGroupById(new RegionAndName(region, group.getName()).slashEncode());
+      return getSecurityGroupById(group.getId());
    }
 
    @Override
@@ -130,8 +178,7 @@ public class AWSEC2SecurityGroupExtension extends EC2SecurityGroupExtension {
                                            Iterable<String> ipRanges,
                                            Iterable<String> groupIds, SecurityGroup group) {
       String region = AWSUtils.getRegionFromLocationOrNull(group.getLocation());
-      String name = group.getName();
-      String id = groupNameToId.apply(new RegionAndName(region, name).slashEncode());
+      String id = group.getProviderId();
 
       IpPermission.Builder builder = IpPermission.builder();
 
@@ -147,14 +194,27 @@ public class AWSEC2SecurityGroupExtension extends EC2SecurityGroupExtension {
 
       if (tenantIdGroupNamePairs.size() > 0) {
          for (String userId : tenantIdGroupNamePairs.keySet()) {
-            for (String groupName : tenantIdGroupNamePairs.get(userId)) {
-               builder.tenantIdGroupNamePair(userId, groupName);
+            for (String groupString : tenantIdGroupNamePairs.get(userId)) {
+               String[] parts = AWSUtils.parseHandle(groupString);
+               String groupId = parts[1];
+               builder.tenantIdGroupNamePair(userId, groupId);
             }
          }
       }
 
       client.getSecurityGroupApi().get().revokeSecurityGroupIngressInRegion(region, id, builder.build());
 
-      return getSecurityGroupById(new RegionAndName(region, group.getName()).slashEncode());
+      return getSecurityGroupById(group.getId());
    }
+
+   @Override
+   public boolean supportsTenantIdGroupNamePairs() {
+      return false;
+   }
+
+   @Override
+   public boolean supportsTenantIdGroupIdPairs() {
+      return true;
+   }
+
 }

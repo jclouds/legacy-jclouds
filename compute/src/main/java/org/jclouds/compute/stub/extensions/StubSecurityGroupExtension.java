@@ -42,8 +42,6 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
@@ -241,6 +239,11 @@ public class StubSecurityGroupExtension implements SecurityGroupExtension {
 
    @Override
    public boolean supportsTenantIdGroupNamePairs() {
+      return false;
+   }
+
+   @Override
+   public boolean supportsTenantIdGroupIdPairs() {
       return false;
    }
 

@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.ContextBuilder;
 import org.jclouds.aws.cloudwatch.AWSCloudWatchProviderMetadata;
-import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
 import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.MonitoringState;
@@ -46,7 +45,6 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.EC2ComputeServiceLiveTest;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.SecurityGroup;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jclouds.ec2.compute.functions;
+package org.jclouds.aws.ec2.compute.functions;
 
 import static org.testng.Assert.assertEquals;
 
@@ -34,8 +34,8 @@ import com.google.common.collect.ImmutableSet;
 /**
  * @author Andrew Bayer
  */
-@Test(groups = "unit", testName = "EC2SecurityGroupToSecurityGroupTest")
-public class EC2SecurityGroupToSecurityGroupTest {
+@Test(groups = "unit", testName = "AWSEC2SecurityGroupToSecurityGroupTest")
+public class AWSEC2SecurityGroupToSecurityGroupTest {
 
    static Location provider = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1")
          .description("us-east-1").build();
@@ -53,19 +53,19 @@ public class EC2SecurityGroupToSecurityGroupTest {
          .ipPermission(authorization)
          .build();
 
-      EC2SecurityGroupToSecurityGroup parser = createGroupParser(ImmutableSet.of(provider));
+      AWSEC2SecurityGroupToSecurityGroup parser = createGroupParser(ImmutableSet.of(provider));
 
       SecurityGroup group = parser.apply(origGroup);
       
       assertEquals(group.getLocation(), provider);
-      assertEquals(group.getId(), provider.getId() + "/" + origGroup.getName());
+      assertEquals(group.getId(), provider.getId() + "/" + origGroup.getId());
       assertEquals(group.getProviderId(), origGroup.getId());
       assertEquals(group.getName(), origGroup.getName());
       assertEquals(group.getIpPermissions(), (Set<IpPermission>)origGroup);
       assertEquals(group.getOwnerId(), origGroup.getOwnerId());
    }
 
-   private EC2SecurityGroupToSecurityGroup createGroupParser(final ImmutableSet<Location> locations) {
+   private AWSEC2SecurityGroupToSecurityGroup createGroupParser(final ImmutableSet<Location> locations) {
       Supplier<Set<? extends Location>> locationSupplier = new Supplier<Set<? extends Location>>() {
 
          @Override
@@ -75,7 +75,7 @@ public class EC2SecurityGroupToSecurityGroupTest {
 
       };
 
-      EC2SecurityGroupToSecurityGroup parser = new EC2SecurityGroupToSecurityGroup(locationSupplier);
+      AWSEC2SecurityGroupToSecurityGroup parser = new AWSEC2SecurityGroupToSecurityGroup(locationSupplier);
 
       return parser;
    }

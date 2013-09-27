@@ -28,14 +28,15 @@ import javax.ws.rs.Path;
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
 import org.jclouds.aws.ec2.options.CreateSecurityGroupOptions;
+import org.jclouds.aws.ec2.xml.AWSEC2DescribeSecurityGroupsResponseHandler;
 import org.jclouds.aws.ec2.xml.CreateSecurityGroupResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.ec2.binders.BindGroupIdsToIndexedFormParams;
+import org.jclouds.ec2.binders.BindGroupNamesToIndexedFormParams;
 import org.jclouds.ec2.binders.BindIpPermissionToIndexedFormParams;
 import org.jclouds.ec2.binders.BindIpPermissionsToIndexedFormParams;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.features.SecurityGroupApi;
-import org.jclouds.ec2.xml.DescribeSecurityGroupsResponseHandler;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.net.domain.IpPermission;
@@ -116,10 +117,19 @@ public interface AWSSecurityGroupApi extends SecurityGroupApi {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeSecurityGroups")
-   @XMLResponseParser(DescribeSecurityGroupsResponseHandler.class)
+   @XMLResponseParser(AWSEC2DescribeSecurityGroupsResponseHandler.class)
    @Fallback(EmptySetOnNotFoundOr404.class)
    Set<SecurityGroup> describeSecurityGroupsInRegionById(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @BinderParam(BindGroupIdsToIndexedFormParams.class) String... securityGroupNames);
 
+   @Named("DescribeSecurityGroups")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "DescribeSecurityGroups")
+   @XMLResponseParser(AWSEC2DescribeSecurityGroupsResponseHandler.class)
+   @Fallback(EmptySetOnNotFoundOr404.class)
+   Set<SecurityGroup> describeSecurityGroupsInRegion(
+           @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
+           @BinderParam(BindGroupNamesToIndexedFormParams.class) String... securityGroupNames);
 }

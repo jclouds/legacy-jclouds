@@ -41,6 +41,8 @@ import com.google.inject.TypeLiteral;
  */
 public abstract class BaseAWSEC2ComputeServiceExpectTest extends BaseEC2ComputeServiceExpectTest {
 
+   protected HttpRequest describeSecurityGroupByIdRequest;
+
    public BaseAWSEC2ComputeServiceExpectTest() {
       provider = "aws-ec2";
    }
@@ -59,6 +61,24 @@ public abstract class BaseAWSEC2ComputeServiceExpectTest extends BaseEC2ComputeS
    protected void setupDefaultRequests() {
       super.setupDefaultRequests();
 
+      describeSecurityGroupByIdRequest =
+              formSigner.filter(HttpRequest.builder()
+                      .method("POST")
+                      .endpoint("https://ec2." + region + ".amazonaws.com/")
+                      .addHeader("Host", "ec2." + region + ".amazonaws.com")
+                      .addFormParam("Action", "DescribeSecurityGroups")
+                      .addFormParam("GroupId.1", "sg-3c6ef654").build());
+
+      authorizeSecurityGroupIngressRequestGroup =
+              formSigner.filter(HttpRequest.builder()
+                      .method("POST")
+                      .endpoint("https://ec2." + region + ".amazonaws.com/")
+                      .addHeader("Host", "ec2." + region + ".amazonaws.com")
+                      .addFormParam("Action", "AuthorizeSecurityGroupIngress")
+                      .addFormParam("SourceSecurityGroupId", "sg-3c6ef654")
+                      .addFormParam("SourceSecurityGroupOwnerId", "993194456877")
+                      .addFormParam("GroupName", "jclouds#test").build());
+
       authorizeSecurityGroupIngressRequest22 = 
          formSigner.filter(HttpRequest.builder()
                            .method("POST")
@@ -72,12 +92,12 @@ public abstract class BaseAWSEC2ComputeServiceExpectTest extends BaseEC2ComputeS
                            .addFormParam("IpPermissions.0.IpProtocol", "tcp")
                            .addFormParam("IpPermissions.1.FromPort", "0")
                            .addFormParam("IpPermissions.1.ToPort", "65535")
-                           .addFormParam("IpPermissions.1.Groups.0.GroupName", "jclouds#test")
+                           .addFormParam("IpPermissions.1.Groups.0.GroupId", "sg-3c6ef654")
                            .addFormParam("IpPermissions.1.Groups.0.UserId", "993194456877")
                            .addFormParam("IpPermissions.1.IpProtocol", "tcp")
                            .addFormParam("IpPermissions.2.FromPort", "0")
                            .addFormParam("IpPermissions.2.ToPort", "65535")
-                           .addFormParam("IpPermissions.2.Groups.0.GroupName", "jclouds#test")
+                           .addFormParam("IpPermissions.2.Groups.0.GroupId", "sg-3c6ef654")
                            .addFormParam("IpPermissions.2.Groups.0.UserId", "993194456877")
                            .addFormParam("IpPermissions.2.IpProtocol", "udp")
                            .build());

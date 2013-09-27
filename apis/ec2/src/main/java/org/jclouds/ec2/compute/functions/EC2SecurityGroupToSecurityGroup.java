@@ -31,7 +31,6 @@ import org.jclouds.compute.domain.SecurityGroupBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
-import org.jclouds.net.domain.IpPermission;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -64,13 +63,17 @@ public class EC2SecurityGroupToSecurityGroup implements Function<org.jclouds.ec2
       SecurityGroupBuilder builder = new SecurityGroupBuilder();
       Location location = findLocationWithId(group.getRegion());
       builder.location(location);
-      builder.id(group.getName());
+      builder.id(group.getRegion() + "/" + idOrName(group));
       builder.providerId(group.getId());
       builder.name(group.getName());
       builder.ipPermissions(group);
       builder.ownerId(group.getOwnerId());
       
       return builder.build();
+   }
+
+   protected String idOrName(org.jclouds.ec2.domain.SecurityGroup group) {
+      return group.getName();
    }
 
    private Location findLocationWithId(final String locationId) {

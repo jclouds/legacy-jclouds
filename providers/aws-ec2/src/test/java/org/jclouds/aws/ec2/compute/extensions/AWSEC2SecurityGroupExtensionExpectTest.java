@@ -59,7 +59,7 @@ public class AWSEC2SecurityGroupExtensionExpectTest extends BaseAWSEC2ComputeSer
                            .endpoint("https://ec2." + region + ".amazonaws.com/")
                            .addHeader("Host", "ec2." + region + ".amazonaws.com")
                            .addFormParam("Action", "DescribeSecurityGroups")
-                           .addFormParam("GroupName.1", "jclouds#some-group").build());
+                           .addFormParam("GroupId.1", "sg-3c6ef654").build());
       
       HttpResponse describeSecurityGroupsSingleResponse = 
          HttpResponse.builder().statusCode(200)
@@ -101,7 +101,7 @@ public class AWSEC2SecurityGroupExtensionExpectTest extends BaseAWSEC2ComputeSer
       SecurityGroupExtension extension = requestsSendResponses(requestResponseMap.build()).getSecurityGroupExtension().get();
 
       SecurityGroupBuilder groupBuilder = new SecurityGroupBuilder();
-      groupBuilder.id("jclouds#some-group");
+      groupBuilder.id("us-east-1/sg-3c6ef654");
       groupBuilder.providerId("sg-3c6ef654");
       groupBuilder.name("jclouds#some-group");
       groupBuilder.location(new LocationBuilder()
@@ -133,7 +133,7 @@ public class AWSEC2SecurityGroupExtensionExpectTest extends BaseAWSEC2ComputeSer
                            .endpoint("https://ec2." + region + ".amazonaws.com/")
                            .addHeader("Host", "ec2." + region + ".amazonaws.com")
                            .addFormParam("Action", "DescribeSecurityGroups")
-                           .addFormParam("GroupName.1", "jclouds#some-group").build());
+                           .addFormParam("GroupId.1", "sg-3c6ef654").build());
       
       HttpResponse describeSecurityGroupsSingleResponse = 
          HttpResponse.builder().statusCode(200)
@@ -166,7 +166,7 @@ public class AWSEC2SecurityGroupExtensionExpectTest extends BaseAWSEC2ComputeSer
       SecurityGroupExtension extension = requestsSendResponses(requestResponseMap.build()).getSecurityGroupExtension().get();
 
       SecurityGroupBuilder groupBuilder = new SecurityGroupBuilder();
-      groupBuilder.id("jclouds#some-group");
+      groupBuilder.id("us-east-1/sg-3c6ef654");
       groupBuilder.providerId("sg-3c6ef654");
       groupBuilder.name("jclouds#some-group");
       groupBuilder.location(new LocationBuilder()
@@ -204,7 +204,7 @@ public class AWSEC2SecurityGroupExtensionExpectTest extends BaseAWSEC2ComputeSer
                            .endpoint("https://ec2." + region + ".amazonaws.com/")
                            .addHeader("Host", "ec2." + region + ".amazonaws.com")
                            .addFormParam("Action", "DescribeSecurityGroups")
-                           .addFormParam("GroupName.1", "jclouds#some-group").build());
+                           .addFormParam("GroupId.1", "sg-3c6ef654").build());
       
       HttpResponse describeSecurityGroupsSingleResponse = 
          HttpResponse.builder().statusCode(200)
@@ -220,7 +220,7 @@ public class AWSEC2SecurityGroupExtensionExpectTest extends BaseAWSEC2ComputeSer
                                  .addFormParam("Action", "AuthorizeSecurityGroupIngress")
                                  .addFormParam("GroupId", "sg-3c6ef654")
                                  .addFormParam("IpPermissions.0.FromPort", "22")
-                                 .addFormParam("IpPermissions.0.Groups.0.GroupName", "jclouds#some-group")
+                                 .addFormParam("IpPermissions.0.Groups.0.GroupId", "sg-3c6ef654")
                                  .addFormParam("IpPermissions.0.Groups.0.UserId", "993194456877")
                                  .addFormParam("IpPermissions.0.IpProtocol", "tcp")
                                  .addFormParam("IpPermissions.0.ToPort", "40")
@@ -240,14 +240,14 @@ public class AWSEC2SecurityGroupExtensionExpectTest extends BaseAWSEC2ComputeSer
       builder.ipProtocol(IpProtocol.TCP);
       builder.fromPort(22);
       builder.toPort(40);
-      builder.tenantIdGroupNamePair("993194456877", "jclouds#some-group");
+      builder.tenantIdGroupNamePair("993194456877", "sg-3c6ef654");
 
       IpPermission perm = builder.build();
 
       SecurityGroupExtension extension = requestsSendResponses(requestResponseMap.build()).getSecurityGroupExtension().get();
 
       SecurityGroupBuilder groupBuilder = new SecurityGroupBuilder();
-      groupBuilder.id("jclouds#some-group");
+      groupBuilder.id("us-east-1/sg-3c6ef654");
       groupBuilder.providerId("sg-3c6ef654");
       groupBuilder.name("jclouds#some-group");
       groupBuilder.location(new LocationBuilder()
@@ -272,7 +272,7 @@ public class AWSEC2SecurityGroupExtensionExpectTest extends BaseAWSEC2ComputeSer
       assertEquals(0, newPerm.getCidrBlocks().size());
       assertEquals(1, newPerm.getTenantIdGroupNamePairs().size());
       assertTrue(newPerm.getTenantIdGroupNamePairs().keySet().contains(origGroup.getOwnerId()));
-      assertTrue(newPerm.getTenantIdGroupNamePairs().values().contains(origGroup.getName()));
+      assertTrue(newPerm.getTenantIdGroupNamePairs().values().contains(origGroup.getProviderId()));
    }
 
 
@@ -283,7 +283,7 @@ public class AWSEC2SecurityGroupExtensionExpectTest extends BaseAWSEC2ComputeSer
                            .endpoint("https://ec2." + region + ".amazonaws.com/")
                            .addHeader("Host", "ec2." + region + ".amazonaws.com")
                            .addFormParam("Action", "DescribeSecurityGroups")
-                           .addFormParam("GroupName.1", "jclouds#some-group").build());
+                           .addFormParam("GroupId.1", "sg-3c6ef654").build());
       
       HttpResponse describeSecurityGroupsSingleResponse = 
          HttpResponse.builder().statusCode(200)
@@ -299,7 +299,7 @@ public class AWSEC2SecurityGroupExtensionExpectTest extends BaseAWSEC2ComputeSer
                                  .addFormParam("Action", "AuthorizeSecurityGroupIngress")
                                  .addFormParam("GroupId", "sg-3c6ef654")
                                  .addFormParam("IpPermissions.0.FromPort", "22")
-                                 .addFormParam("IpPermissions.0.Groups.0.GroupName", "jclouds#some-group")
+                                 .addFormParam("IpPermissions.0.Groups.0.GroupId", "sg-3c6ef654")
                                  .addFormParam("IpPermissions.0.Groups.0.UserId", "993194456877")
                                  .addFormParam("IpPermissions.0.IpProtocol", "tcp")
                                  .addFormParam("IpPermissions.0.ToPort", "40")
@@ -317,7 +317,7 @@ public class AWSEC2SecurityGroupExtensionExpectTest extends BaseAWSEC2ComputeSer
       SecurityGroupExtension extension = requestsSendResponses(requestResponseMap.build()).getSecurityGroupExtension().get();
 
       SecurityGroupBuilder groupBuilder = new SecurityGroupBuilder();
-      groupBuilder.id("jclouds#some-group");
+      groupBuilder.id("us-east-1/sg-3c6ef654");
       groupBuilder.providerId("sg-3c6ef654");
       groupBuilder.name("jclouds#some-group");
       groupBuilder.ownerId("993194456877");
@@ -330,7 +330,7 @@ public class AWSEC2SecurityGroupExtensionExpectTest extends BaseAWSEC2ComputeSer
       SecurityGroup origGroup = groupBuilder.build();
 
       ImmutableMultimap.Builder<String, String> permBuilder = ImmutableMultimap.builder();
-      permBuilder.put(origGroup.getOwnerId(), origGroup.getName());
+      permBuilder.put(origGroup.getOwnerId(), origGroup.getId());
       
       SecurityGroup newGroup = extension.addIpPermission(IpProtocol.TCP,
                                                          22,
@@ -351,7 +351,7 @@ public class AWSEC2SecurityGroupExtensionExpectTest extends BaseAWSEC2ComputeSer
       assertEquals(0, newPerm.getCidrBlocks().size());
       assertEquals(1, newPerm.getTenantIdGroupNamePairs().size());
       assertTrue(newPerm.getTenantIdGroupNamePairs().keySet().contains(origGroup.getOwnerId()));
-      assertTrue(newPerm.getTenantIdGroupNamePairs().values().contains(origGroup.getName()));
+      assertTrue(newPerm.getTenantIdGroupNamePairs().values().contains(origGroup.getProviderId()));
    }
 
    private Multimap<String, String> emptyMultimap() {

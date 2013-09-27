@@ -22,8 +22,8 @@ import java.io.IOException;
 
 import org.jclouds.Fallbacks.EmptySetOnNotFoundOr404;
 import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
+import org.jclouds.aws.ec2.xml.AWSEC2DescribeSecurityGroupsResponseHandler;
 import org.jclouds.ec2.util.IpPermissions;
-import org.jclouds.ec2.xml.DescribeSecurityGroupsResponseHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
@@ -76,7 +76,7 @@ public class AWSSecurityGroupApiTest extends BaseAWSEC2ApiTest<AWSSecurityGroupA
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, DescribeSecurityGroupsResponseHandler.class);
+      assertSaxResponseParserClassEquals(method, AWSEC2DescribeSecurityGroupsResponseHandler.class);
       assertFallbackClassEquals(method, EmptySetOnNotFoundOr404.class);
 
       checkFilters(request);
@@ -93,7 +93,7 @@ public class AWSSecurityGroupApiTest extends BaseAWSEC2ApiTest<AWSSecurityGroupA
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, DescribeSecurityGroupsResponseHandler.class);
+      assertSaxResponseParserClassEquals(method, AWSEC2DescribeSecurityGroupsResponseHandler.class);
       assertFallbackClassEquals(method, EmptySetOnNotFoundOr404.class);
 
       checkFilters(request);

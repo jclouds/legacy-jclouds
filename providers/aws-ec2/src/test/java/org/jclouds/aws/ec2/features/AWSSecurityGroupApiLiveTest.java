@@ -22,6 +22,7 @@ import static org.testng.Assert.assertNotNull;
 import java.util.Set;
 
 import org.jclouds.ec2.domain.SecurityGroup;
+import org.jclouds.ec2.domain.UserIdGroupPair;
 import org.jclouds.ec2.features.SecurityGroupApiLiveTest;
 import org.jclouds.ec2.util.IpPermissions;
 import org.jclouds.net.domain.IpPermission;
@@ -42,15 +43,52 @@ public class AWSSecurityGroupApiLiveTest extends SecurityGroupApiLiveTest {
    }
 
    @Test
+   void testAuthorizeSecurityGroupIngressSourceGroup() {
+      final String group1Name = PREFIX + "ingress1";
+      String group2Name = PREFIX + "ingress2";
+      cleanupAndSleep(group2Name);
+      cleanupAndSleep(group1Name);
+      try {
+         final String group1Id = AWSSecurityGroupApi.class.cast(client).createSecurityGroupInRegionAndReturnId(null,
+                 group1Name, group1Name);
+         String group2Id = AWSSecurityGroupApi.class.cast(client).createSecurityGroupInRegionAndReturnId(null,
+                 group2Name, group2Name);
+         ensureGroupsExist(group1Name, group2Name);
+         client.authorizeSecurityGroupIngressInRegion(null, group1Name, IpProtocol.TCP, 80, 80, "0.0.0.0/0");
+         assertEventually(new GroupHasPermission(client, group1Name, new TCPPort80AllIPs()));
+         Set<SecurityGroup> oneResult = client.describeSecurityGroupsInRegion(null, group1Name);
+         assertNotNull(oneResult);
+         assertEquals(oneResult.size(), 1);
+         final SecurityGroup group = oneResult.iterator().next();
+         assertEquals(group.getName(), group1Name);
+         final UserIdGroupPair to = new UserIdGroupPair(group.getOwnerId(), group1Name);
+         client.authorizeSecurityGroupIngressInRegion(null, group2Name, to);
+         assertEventually(new GroupHasPermission(client, group2Name, new Predicate<IpPermission>() {
+            @Override
+            public boolean apply(IpPermission arg0) {
+               return arg0.getTenantIdGroupNamePairs().equals(ImmutableMultimap.of(group.getOwnerId(), group1Id));
+            }
+         }));
+
+         client.revokeSecurityGroupIngressInRegion(null, group2Name,
+                 new UserIdGroupPair(group.getOwnerId(), group1Name));
+         assertEventually(new GroupHasNoPermissions(client, group2Name));
+      } finally {
+         client.deleteSecurityGroupInRegion(null, group2Name);
+         client.deleteSecurityGroupInRegion(null, group1Name);
+      }
+   }
+
+   @Test
    void testAuthorizeSecurityGroupIngressIpPermission() throws InterruptedException {
       final String group1Name = PREFIX + "ingress11";
       String group2Name = PREFIX + "ingress12";
       cleanupAndSleep(group2Name);
       cleanupAndSleep(group1Name);
       try {
-         String group1Id = AWSSecurityGroupApi.class.cast(client).createSecurityGroupInRegionAndReturnId(null,
+         final String group1Id = AWSSecurityGroupApi.class.cast(client).createSecurityGroupInRegionAndReturnId(null,
                group1Name, group1Name);
-         String group2Id = AWSSecurityGroupApi.class.cast(client).createSecurityGroupInRegionAndReturnId(null,
+         final String group2Id = AWSSecurityGroupApi.class.cast(client).createSecurityGroupInRegionAndReturnId(null,
                group2Name, group2Name);
          Thread.sleep(100);// eventual consistent
          ensureGroupsExist(group1Name, group2Name);
@@ -69,7 +107,7 @@ public class AWSSecurityGroupApiLiveTest extends SecurityGroupApiLiveTest {
          assertEventually(new GroupHasPermission(client, group2Name, new Predicate<IpPermission>() {
             @Override
             public boolean apply(IpPermission arg0) {
-               return arg0.getTenantIdGroupNamePairs().equals(ImmutableMultimap.of(group.getOwnerId(), group1Name))
+               return arg0.getTenantIdGroupNamePairs().equals(ImmutableMultimap.of(group.getOwnerId(), group1Id))
                      && arg0.getFromPort() == 80 && arg0.getToPort() == 80 && arg0.getIpProtocol() == IpProtocol.TCP;
             }
          }));

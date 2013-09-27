@@ -31,7 +31,6 @@ import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
 import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.LaunchSpecification;
@@ -107,7 +106,7 @@ public class SpotInstanceApiLiveTest  extends BaseComputeServiceContextLiveTest 
             assert in(
                      ImmutableSet.of("c1.medium", "c1.xlarge", "cc1.4xlarge", "cg1.4xlarge", "cc2.8xlarge", "m1.large",
                               "m1.small", "m1.medium", "m1.xlarge", "m2.2xlarge", "m2.4xlarge", "m2.xlarge", "m3.xlarge", 
-                              "m3.2xlarge", "t1.micro")).apply(
+                              "m3.2xlarge", "t1.micro", "cr1.8xlarge")).apply(
                      spot.getInstanceType()) : spot;
 
          }

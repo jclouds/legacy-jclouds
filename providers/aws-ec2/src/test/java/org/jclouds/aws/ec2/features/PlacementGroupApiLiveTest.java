@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
 import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.domain.PlacementGroup.State;
@@ -63,7 +62,8 @@ import com.google.inject.Module;
  */
 @Test(groups = "live", singleThreaded = true, testName = "PlacementGroupApiLiveTest")
 public class PlacementGroupApiLiveTest extends BaseComputeServiceContextLiveTest {
-   ArrayList<String> supportedRegions = newArrayList(Region.US_EAST_1, Region.US_WEST_2, Region.EU_WEST_1);
+   ArrayList<String> supportedRegions = newArrayList(Region.US_EAST_1, Region.US_WEST_2, Region.EU_WEST_1,
+           Region.US_WEST_2, Region.AP_NORTHEAST_1, Region.AP_SOUTHEAST_1, Region.AP_SOUTHEAST_2);
 
    public PlacementGroupApiLiveTest() {
       provider = "aws-ec2";
@@ -78,7 +78,7 @@ public class PlacementGroupApiLiveTest extends BaseComputeServiceContextLiveTest
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = view.unwrapApi(AWSEC2Api.class);;
+      client = view.unwrapApi(AWSEC2Api.class);
       availableTester = retry(new PlacementGroupAvailable(client), 60, 1, SECONDS);
       deletedTester = retry(new PlacementGroupDeleted(client), 60, 1, SECONDS);
    }

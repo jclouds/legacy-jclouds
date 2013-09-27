@@ -27,7 +27,6 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.compute.domain.SecurityGroup;
 import org.jclouds.compute.domain.SecurityGroupBuilder;
 import org.jclouds.compute.extensions.SecurityGroupExtension;
-import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.ec2.compute.domain.RegionAndName;
@@ -46,7 +45,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.Futures;
 
 /**
  * 
@@ -189,7 +187,7 @@ public class EC2SecurityGroupExtensionExpectTest extends BaseEC2ComputeServiceEx
       
       SecurityGroup group = extension.getSecurityGroupById(new RegionAndName(region, "jclouds#some-group").slashEncode());
       assertEquals("sg-3c6ef654", group.getProviderId());
-      assertEquals("jclouds#some-group", group.getId());
+      assertEquals(region + "/jclouds#some-group", group.getId());
    }
 
    public void testCreateSecurityGroup() {
@@ -236,7 +234,7 @@ public class EC2SecurityGroupExtensionExpectTest extends BaseEC2ComputeServiceEx
                                                           .build());
       
       assertEquals("sg-3c6ef654", group.getProviderId());
-      assertEquals("jclouds#some-group", group.getId());
+      assertEquals(region + "/jclouds#some-group", group.getId());
    }
 
    public void testRemoveSecurityGroup() {

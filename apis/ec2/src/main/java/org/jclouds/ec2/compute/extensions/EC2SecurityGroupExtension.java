@@ -221,7 +221,7 @@ public class EC2SecurityGroupExtension implements SecurityGroupExtension {
             }
          }
       }
-      System.out.println("group: " + group);
+
       return getSecurityGroupById(new RegionAndName(region, group.getName()).slashEncode());
    }
 
@@ -327,6 +327,11 @@ public class EC2SecurityGroupExtension implements SecurityGroupExtension {
    @Override
    public boolean supportsTenantIdGroupNamePairs() {
       return true;
+   }
+
+   @Override
+   public boolean supportsTenantIdGroupIdPairs() {
+      return false;
    }
 
    @Override

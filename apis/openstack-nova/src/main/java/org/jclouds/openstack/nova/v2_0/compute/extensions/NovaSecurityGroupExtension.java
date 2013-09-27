@@ -372,6 +372,11 @@ public class NovaSecurityGroupExtension implements SecurityGroupExtension {
    }
 
    @Override
+   public boolean supportsTenantIdGroupIdPairs() {
+      return false;
+   }
+
+   @Override
    public boolean supportsGroupIds() {
       return true;
    }

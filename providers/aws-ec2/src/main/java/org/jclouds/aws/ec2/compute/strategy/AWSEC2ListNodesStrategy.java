@@ -22,9 +22,7 @@ import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.toArray;
 import static com.google.common.collect.Iterables.transform;
-import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.inject.Named;
@@ -42,9 +40,7 @@ import org.jclouds.location.Region;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Inject;
 
@@ -83,8 +79,10 @@ public class AWSEC2ListNodesStrategy extends EC2ListNodesStrategy {
                                                                                        spotInstancesByIdInRegion(idsByRegions))),
 
                                                                       spotConverter), notNull());
-
-      return concat(super.pollRunningInstancesByRegionsAndIds(idsByRegions), spots);
+      System.err.println("spots: " + spots);
+      Iterable<? extends RunningInstance> superInsts = super.pollRunningInstancesByRegionsAndIds(idsByRegions);
+      System.err.println("superInsts: " + superInsts);
+      return concat(superInsts, spots);
    }
 
    protected Function<String, Set<SpotInstanceRequest>> allSpotInstancesInRegion() {

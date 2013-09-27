@@ -16,8 +16,6 @@
  */
 package org.jclouds.compute.extensions.internal;
 
-import static com.google.common.collect.Iterables.filter;
-import static org.jclouds.compute.predicates.NodePredicates.inGroup;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -234,7 +232,8 @@ public abstract class BaseSecurityGroupExtensionLiveTest extends BaseComputeServ
          assertTrue(secondNewGroup.getIpPermissions().contains(secondPerm)); 
       }
 
-      if (securityGroupExtension.get().supportsTenantIdGroupNamePairs()) {
+      if (securityGroupExtension.get().supportsTenantIdGroupNamePairs()
+              || securityGroupExtension.get().supportsTenantIdGroupIdPairs()) {
          IpPermission.Builder thirdBuilder = IpPermission.builder();
 
          int fromPort;
@@ -250,8 +249,12 @@ public abstract class BaseSecurityGroupExtensionLiveTest extends BaseComputeServ
          thirdBuilder.ipProtocol(IpProtocol.TCP);
          thirdBuilder.fromPort(fromPort);
          thirdBuilder.toPort(toPort);
-         thirdBuilder.tenantIdGroupNamePair(group.getOwnerId(), group.getId());
-         
+         if (securityGroupExtension.get().supportsTenantIdGroupIdPairs()) {
+            thirdBuilder.tenantIdGroupNamePair(group.getOwnerId(), group.getProviderId());
+         } else if (securityGroupExtension.get().supportsTenantIdGroupNamePairs()) {
+            thirdBuilder.tenantIdGroupNamePair(group.getOwnerId(), group.getName());
+         }
+
          IpPermission thirdPerm = thirdBuilder.build();
 
          SecurityGroup thirdNewGroup = securityGroupExtension.get().addIpPermission(IpProtocol.TCP,
@@ -262,7 +265,7 @@ public abstract class BaseSecurityGroupExtensionLiveTest extends BaseComputeServ
                                                                                     emptyStringSet(),
                                                                                     newGroup);
 
-         assertTrue(thirdNewGroup.getIpPermissions().contains(thirdPerm)); 
+         assertTrue(thirdNewGroup.getIpPermissions().contains(thirdPerm));
       }
    }
 
@@ -316,7 +319,6 @@ public abstract class BaseSecurityGroupExtensionLiveTest extends BaseComputeServ
       assertTrue(optGroup.isPresent());
 
       SecurityGroup group = optGroup.get();
-
       assertTrue(securityGroupExtension.get().removeSecurityGroup(group.getId()));
    }
    
@@ -346,16 +348,10 @@ public abstract class BaseSecurityGroupExtensionLiveTest extends BaseComputeServ
       Optional<SecurityGroupExtension> securityGroupExtension = computeService.getSecurityGroupExtension();
 
       if (securityGroupExtension.isPresent()) {
-         SecurityGroup group = Iterables.getFirst(filter(securityGroupExtension.get().listSecurityGroups(),
-                 new Predicate<SecurityGroup>() {
-                    @Override
-                    public boolean apply(SecurityGroup input) {
-                       return secGroupName.equals(input.getName());
-                    }
-                 }), null);
+         Optional<SecurityGroup> group = getGroup(securityGroupExtension.get());
 
-         if (group != null) {
-            securityGroupExtension.get().removeSecurityGroup(group.getId());
+         if (group.isPresent()) {
+            securityGroupExtension.get().removeSecurityGroup(group.get().getId());
          }
       }
    }
@@ -365,8 +361,6 @@ public abstract class BaseSecurityGroupExtensionLiveTest extends BaseComputeServ
    @Override
    protected void tearDownContext() {
       try {
-         view.getComputeService().destroyNodesMatching(inGroup(nodeGroup));
-
          cleanup();
       } catch (Exception e) {
 

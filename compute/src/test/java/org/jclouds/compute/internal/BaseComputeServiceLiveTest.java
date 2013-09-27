@@ -45,6 +45,7 @@ import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.io.IOException;
@@ -102,6 +103,7 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -573,9 +575,11 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
             }
             
          }));
-      
+
+      SortedSet<NodeMetadata> listedNodes = ImmutableSortedSet.copyOf(client.listNodesByIds(nodeIds));
       // newTreeSet is here because elementsEqual cares about ordering.
-      assert Iterables.elementsEqual(nodes, newTreeSet(client.listNodesByIds(nodeIds))); 
+      assertTrue(Iterables.elementsEqual(nodes, listedNodes),
+              "nodes and listNodesByIds should be identical: was " + listedNodes + " but should be " + nodes);
    }
 
    @Test(enabled = true, dependsOnMethods = "testSuspendResume")
