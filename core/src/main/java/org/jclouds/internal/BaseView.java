@@ -70,7 +70,7 @@ public abstract class BaseView extends ForwardingObject implements View {
    public <A extends Closeable> A unwrapApi(Class<A> apiClass) {
       checkArgument(ApiContext.class.isAssignableFrom(backendType.getRawType()),
             "backend type: %s should be an ApiContext", backendType);
-      TypeToken<ApiContext<A>> contextToken = new TypeToken<ApiContext<A>>(delegate().getClass()) {
+      TypeToken<ApiContext<? extends A>> contextToken = new TypeToken<ApiContext<? extends A>>(delegate().getClass()) {
          private static final long serialVersionUID = 1L;
       }.where(new TypeParameter<A>() {
       }, TypeToken.of(apiClass));
