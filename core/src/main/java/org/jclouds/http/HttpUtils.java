@@ -225,36 +225,36 @@ public class HttpUtils {
    public void checkRequestHasRequiredProperties(HttpRequest message) {
       checkArgument(
             message.getPayload() == null || message.getFirstHeaderOrNull(CONTENT_TYPE) == null,
-            "configuration error please use request.getPayload().getContentMetadata().setContentType(value) as opposed to adding a content type header: "
-                  + message);
+            "configuration error please use request.getPayload().getContentMetadata().setContentType(value) as opposed to adding a content type header: %s",
+                  message);
       checkArgument(
             message.getPayload() == null || message.getFirstHeaderOrNull(CONTENT_LENGTH) == null,
-            "configuration error please use request.getPayload().getContentMetadata().setContentLength(value) as opposed to adding a content length header: "
-                  + message);
+            "configuration error please use request.getPayload().getContentMetadata().setContentLength(value) as opposed to adding a content length header: %s",
+                  message);
       checkArgument(
             message.getPayload() == null || message.getPayload().getContentMetadata().getContentLength() != null
                   || "chunked".equalsIgnoreCase(message.getFirstHeaderOrNull("Transfer-Encoding")),
-            "either chunked encoding must be set on the http request or contentlength set on the payload: " + message);
+            "either chunked encoding must be set on the http request or contentlength set on the payload: %s", message);
       checkArgument(
             message.getPayload() == null || message.getFirstHeaderOrNull("Content-MD5") == null,
-            "configuration error please use request.getPayload().getContentMetadata().setContentMD5(value) as opposed to adding a content md5 header: "
-                  + message);
+            "configuration error please use request.getPayload().getContentMetadata().setContentMD5(value) as opposed to adding a content md5 header: %s",
+                  message);
       checkArgument(
             message.getPayload() == null || message.getFirstHeaderOrNull("Content-Disposition") == null,
-            "configuration error please use request.getPayload().getContentMetadata().setContentDisposition(value) as opposed to adding a content disposition header: "
-                  + message);
+            "configuration error please use request.getPayload().getContentMetadata().setContentDisposition(value) as opposed to adding a content disposition header: %s",
+                  message);
       checkArgument(
             message.getPayload() == null || message.getFirstHeaderOrNull(CONTENT_ENCODING) == null,
-            "configuration error please use request.getPayload().getContentMetadata().setContentEncoding(value) as opposed to adding a content encoding header: "
-                  + message);
+            "configuration error please use request.getPayload().getContentMetadata().setContentEncoding(value) as opposed to adding a content encoding header: %s",
+                  message);
       checkArgument(
             message.getPayload() == null || message.getFirstHeaderOrNull(CONTENT_LANGUAGE) == null,
-            "configuration error please use request.getPayload().getContentMetadata().setContentLanguage(value) as opposed to adding a content language header: "
-                  + message);
+            "configuration error please use request.getPayload().getContentMetadata().setContentLanguage(value) as opposed to adding a content language header: %s",
+                  message);
       checkArgument(
             message.getPayload() == null || message.getFirstHeaderOrNull(EXPIRES) == null,
-            "configuration error please use request.getPayload().getContentMetadata().setExpires(value) as opposed to adding an expires header: "
-                  + message);
+            "configuration error please use request.getPayload().getContentMetadata().setExpires(value) as opposed to adding an expires header: %s",
+                  message);
    }
 
    public static void releasePayload(HttpMessage from) {
