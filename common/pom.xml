@@ -32,6 +32,5 @@
   <modules>
     <module>azure</module>
     <module>openstack</module>
-    <module>trmk</module>
   </modules>
 </project>

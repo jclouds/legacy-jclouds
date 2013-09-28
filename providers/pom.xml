@@ -41,8 +41,6 @@
     <module>ninefold-storage</module>
     <module>cloudonestorage</module>
     <module>bluelock-vcloud-zone01</module>
-    <module>trmk-ecloud</module>
-    <module>trmk-vcloudexpress</module>
     <module>elastichosts-lon-p</module>
     <module>elastichosts-sat-p</module>
     <module>elastichosts-lon-b</module>

@@ -1,7 +1,0 @@
-<SupportedVersions xmlns="http://www.vmware.com/vcloud/versions"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-    <VersionInfo>
-        <Version>0.8</Version>
-        <LoginUrl>https://services.vcloudexpress.terremark.com/api/v0.8/login</LoginUrl>
-    </VersionInfo>
-</SupportedVersions>

@@ -1,6 +1,0 @@
-<CustomizationParameters xmlns="urn:tmrk:vCloudExpress-1.0"
-	xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-	<CustomizeNetwork>true</CustomizeNetwork>
-	<CustomizePassword>false</CustomizePassword>
-	<CustomizeSSH>false</CustomizeSSH>
-</CustomizationParameters>
