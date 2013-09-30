@@ -16,22 +16,28 @@
  */
 package org.jclouds.hpcloud.objectstorage;
 
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERVICE_TYPE;
 import static org.jclouds.rest.config.BinderUtils.bindSyncToAsyncHttpApi;
 
 import java.net.URI;
 import java.util.Properties;
 
+import javax.inject.Named;
+
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.hpcloud.objectstorage.blobstore.HPCloudObjectStorageBlobRequestSigner;
 import org.jclouds.hpcloud.objectstorage.blobstore.config.HPCloudObjectStorageBlobStoreContextModule;
 import org.jclouds.hpcloud.objectstorage.config.HPCloudObjectStorageRestClientModule;
-import org.jclouds.openstack.keystone.v2_0.config.MappedAuthenticationApiModule;
+import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule.RegionModule;
+import org.jclouds.openstack.keystone.v2_0.config.MappedAuthenticationApiModule;
+import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToAdminURISupplier;
 import org.jclouds.openstack.swift.SwiftKeystoneApiMetadata;
 import org.jclouds.openstack.swift.blobstore.config.TemporaryUrlExtensionModule;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule.KeystoneStorageEndpointModule;
 import org.jclouds.openstack.swift.extensions.KeystoneTemporaryUrlKeyAsyncApi;
 import org.jclouds.openstack.swift.extensions.TemporaryUrlKeyApi;
+import org.jclouds.rest.annotations.ApiVersion;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
@@ -84,7 +90,7 @@ public class HPCloudObjectStorageApiMetadata extends SwiftKeystoneApiMetadata {
          .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
                                      .add(MappedAuthenticationApiModule.class)
                                      .add(KeystoneStorageEndpointModule.class)
-                                     .add(RegionModule.class)
+                                     .add(IgnoreRegionVersionsModule.class)
                                      .add(HPCloudObjectStorageRestClientModule.class)
                                      .add(HPCloudObjectStorageBlobStoreContextModule.class)
                                      .add(HPCloudObjectStorageTemporaryUrlExtensionModule.class).build());
@@ -113,6 +119,27 @@ public class HPCloudObjectStorageApiMetadata extends SwiftKeystoneApiMetadata {
       @Override
       protected void bindTemporaryUrlKeyApi() {
          bindSyncToAsyncHttpApi(binder(), TemporaryUrlKeyApi.class, KeystoneTemporaryUrlKeyAsyncApi.class);
+      }
+   }
+
+   /**
+    * Use this when the keystone configuration incorrectly mismatches api
+    * versions across regions.
+    */
+   public static class IgnoreRegionVersionsModule extends RegionModule {
+
+      @Override
+      protected RegionIdToURISupplier provideRegionIdToURISupplierForApiVersion(
+            @Named(SERVICE_TYPE) String serviceType, @ApiVersion String apiVersion,
+            RegionIdToURISupplier.Factory factory) {
+         return factory.createForApiTypeAndVersion(serviceType, null);
+      }
+
+      @Override
+      protected RegionIdToAdminURISupplier provideRegionIdToAdminURISupplierForApiVersion(
+            @Named(SERVICE_TYPE) String serviceType, @ApiVersion String apiVersion,
+            RegionIdToAdminURISupplier.Factory factory) {
+         return factory.createForApiTypeAndVersion(serviceType, null);
       }
    }
 }
