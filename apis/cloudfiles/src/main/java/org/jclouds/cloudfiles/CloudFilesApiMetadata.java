@@ -69,7 +69,7 @@ public class CloudFilesApiMetadata extends SwiftApiMetadata {
 
    public static class Builder extends SwiftApiMetadata.Builder<Builder> {
       @SuppressWarnings("deprecation")
-      protected Builder(){
+      protected Builder() {
          super(CloudFilesClient.class, CloudFilesAsyncClient.class);
          id("cloudfiles")
          .name("Rackspace Cloud Files API")

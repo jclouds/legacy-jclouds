@@ -76,7 +76,7 @@ public class HPCloudComputeProviderMetadata extends BaseProviderMetadata {
    
    public static class Builder extends BaseProviderMetadata.Builder {
 
-      protected Builder(){
+      protected Builder() {
          id("hpcloud-compute")
          .name("HP Cloud Compute Services")
          .apiMetadata(new NovaApiMetadata().toBuilder()

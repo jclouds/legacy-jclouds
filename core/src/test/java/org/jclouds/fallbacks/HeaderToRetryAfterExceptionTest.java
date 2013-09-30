@@ -38,19 +38,19 @@ import com.google.common.net.HttpHeaders;
 public class HeaderToRetryAfterExceptionTest {
 
    @Test(expectedExceptions = RuntimeException.class)
-   public void testArbitraryExceptionDoesntConvert(){
+   public void testArbitraryExceptionDoesntConvert() {
       fn.create(new RuntimeException());
    }
    
-   public void testHttpResponseExceptionWithoutResponseDoesntPropagate(){
+   public void testHttpResponseExceptionWithoutResponseDoesntPropagate() {
       fn.create(new HttpResponseException("message", command, null));
    }
 
-   public void testHttpResponseExceptionWithoutRetryAfterHeaderDoesntPropagate(){
+   public void testHttpResponseExceptionWithoutRetryAfterHeaderDoesntPropagate() {
       fn.create(new HttpResponseException(command, HttpResponse.builder().statusCode(500).build()));
    }
 
-   public void testHttpResponseExceptionWithMalformedRetryAfterHeaderDoesntConvert(){
+   public void testHttpResponseExceptionWithMalformedRetryAfterHeaderDoesntConvert() {
       fn.create(new HttpResponseException(command, 
             HttpResponse.builder()
                         .statusCode(503)
@@ -66,7 +66,7 @@ public class HeaderToRetryAfterExceptionTest {
    }
    
    @Test(expectedExceptions = RetryAfterException.class, expectedExceptionsMessageRegExp = "retry in 700 seconds")
-   public void testHttpResponseExceptionWithRetryAfterOffset(){
+   public void testHttpResponseExceptionWithRetryAfterOffset() {
       fn.create(new HttpResponseException(command, 
             HttpResponse.builder()
                         .statusCode(503)
@@ -74,7 +74,7 @@ public class HeaderToRetryAfterExceptionTest {
    }
    
    @Test(expectedExceptions = RetryAfterException.class, expectedExceptionsMessageRegExp = "retry in 86400 seconds")
-   public void testHttpResponseExceptionWithRetryAfterPastIsZero(){
+   public void testHttpResponseExceptionWithRetryAfterPastIsZero() {
       fn.create(new HttpResponseException(command, 
             HttpResponse.builder()
                         .statusCode(503)
@@ -85,7 +85,7 @@ public class HeaderToRetryAfterExceptionTest {
 
    static DateCodec rfc822 = new DateServiceRfc822Codec(new SimpleDateFormatDateService());
    
-   static Ticker y2k = new Ticker(){
+   static Ticker y2k = new Ticker() {
 
       @Override
       public long read() {

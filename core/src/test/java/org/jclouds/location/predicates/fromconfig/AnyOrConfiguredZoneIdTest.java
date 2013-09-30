@@ -42,7 +42,7 @@ public class AnyOrConfiguredZoneIdTest {
    public void testWithoutConfigAllIdsMatch() {
       Set<String> zoneIds = ImmutableSet.of("us-east-1a", "us-east-1b");
      
-      ZoneIdFilter filter = Guice.createInjector(new AbstractModule(){
+      ZoneIdFilter filter = Guice.createInjector(new AbstractModule() {
 
          @Override
          protected void configure() {
@@ -57,7 +57,7 @@ public class AnyOrConfiguredZoneIdTest {
    public void testWithConfigOnlyMatchingIds() {
       Set<String> zoneIds = ImmutableSet.of("us-east-1a", "us-east-1b");
      
-      ZoneIdFilter filter = Guice.createInjector(new AbstractModule(){
+      ZoneIdFilter filter = Guice.createInjector(new AbstractModule() {
 
          @Override
          protected void configure() {

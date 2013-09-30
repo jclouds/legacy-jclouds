@@ -42,7 +42,7 @@ public class ContainerNameValidatorTest {
             //double dash - should fail
             validator.validate("adasd-ab--baba");
             throw new RuntimeException("to be converted to TestException later");
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             // supposed to happen - continue
         }
 
@@ -50,7 +50,7 @@ public class ContainerNameValidatorTest {
             // dots - should fail
             validator.validate("abc.zz.la");
             throw new RuntimeException("to be converted to TestException later");
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             // supposed to happen - continue
         }
 
@@ -58,14 +58,14 @@ public class ContainerNameValidatorTest {
             // uppercase - should fail
             validator.validate("abcZZla");
             throw new RuntimeException("to be converted to TestException later");
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             // supposed to happen - continue
         }
 
         try {
             validator.validate("zz");
             throw new RuntimeException("to be converted to TestException later");
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             // supposed to happen - continue
         }
 
@@ -73,7 +73,7 @@ public class ContainerNameValidatorTest {
             // non-ASCII - should fail
             validator.validate("a????");
             throw new RuntimeException("to be converted to TestException later");
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             // supposed to happen - continue
         }
 
@@ -81,7 +81,7 @@ public class ContainerNameValidatorTest {
             // starts with dash - should fail
             validator.validate("-adasd");
             throw new RuntimeException("to be converted to TestException later");
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             // supposed to happen - continue
         }
 
@@ -89,7 +89,7 @@ public class ContainerNameValidatorTest {
             // ends with dash - should fail
             validator.validate("adasd-");
             throw new RuntimeException("to be converted to TestException later");
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             // supposed to happen - continue
         }
 

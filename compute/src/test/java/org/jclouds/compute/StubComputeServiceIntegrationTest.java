@@ -83,7 +83,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
 
       socketTester = retry(socketOpen, 1, 1, MILLISECONDS);
       
-      openSocketFinder = new OpenSocketFinder(){
+      openSocketFinder = new OpenSocketFinder() {
 
          @Override
          public HostAndPort findOpenSocketOnNode(NodeMetadata node, int port, long timeoutValue, TimeUnit timeUnits) {

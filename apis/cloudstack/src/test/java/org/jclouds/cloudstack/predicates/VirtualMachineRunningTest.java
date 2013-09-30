@@ -49,7 +49,7 @@ public class VirtualMachineRunningTest {
 
    @DataProvider(name = "virtualMachineStates")
    public Object[][] virtualMachineStates() {
-      return new Object[][]{
+      return new Object[][] {
          {State.RUNNING, true},
          {State.STARTING, false},
          {State.STOPPING, false},

@@ -128,7 +128,7 @@ public abstract class BaseAWSEC2ApiTest<T> extends BaseAsyncApiTest<T> {
    protected String provider = "aws-ec2";
 
    @Override
-   public AWSEC2ProviderMetadata createProviderMetadata(){
+   public AWSEC2ProviderMetadata createProviderMetadata() {
       return new AWSEC2ProviderMetadata();
    }
 

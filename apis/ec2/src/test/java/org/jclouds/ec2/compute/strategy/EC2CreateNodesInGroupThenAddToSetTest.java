@@ -313,7 +313,7 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       RunningInstanceToNodeMetadata runningInstanceToNodeMetadata = createMock(RunningInstanceToNodeMetadata.class);
       LoadingCache<RunningInstance, Optional<LoginCredentials>> instanceToCredentials = createMock(LoadingCache.class);
       LoadingCache<RegionAndName, String> elasticIpCache = createMock(LoadingCache.class);
-      GetNodeMetadataStrategy nodeRunning = new GetNodeMetadataStrategy(){
+      GetNodeMetadataStrategy nodeRunning = new GetNodeMetadataStrategy() {
 
          @Override
          public NodeMetadata getNode(String input) {

@@ -117,7 +117,7 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
       install(new FactoryModuleBuilder().build(BlockUntilInitScriptStatusIsZeroThenReturnOutput.Factory.class));
    }
 
-   protected void bindCredentialsOverriderFunction(){
+   protected void bindCredentialsOverriderFunction() {
       bind(new TypeLiteral<Function<Template, LoginCredentials>>() {
       }).to(DefaultCredentialsFromImageOrOverridingCredentials.class);
    }
@@ -303,13 +303,13 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    
    @Provides
    @Singleton
-   protected Optional<ImageExtension> provideImageExtension(Injector i){
+   protected Optional<ImageExtension> provideImageExtension(Injector i) {
       return Optional.absent();
    }
    
    @Provides
    @Singleton
-   protected Optional<SecurityGroupExtension> provideSecurityGroupExtension(Injector i){
+   protected Optional<SecurityGroupExtension> provideSecurityGroupExtension(Injector i) {
       return Optional.absent();
    }
    

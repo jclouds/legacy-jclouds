@@ -62,7 +62,7 @@ public class GreenHouseDataElementVCloudProviderMetadata extends BaseProviderMet
    
    public static class Builder extends BaseProviderMetadata.Builder {
 
-      protected Builder(){
+      protected Builder() {
          id("greenhousedata-element-vcloud")
          .name("Green House Data Element vCloud")
                .apiMetadata(

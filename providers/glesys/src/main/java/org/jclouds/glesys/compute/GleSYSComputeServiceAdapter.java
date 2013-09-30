@@ -192,7 +192,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
    // cheat until we have a getTemplate command
    @Override
    public OSTemplate getImage(final String id) {
-      return find(listImages(), new Predicate<OSTemplate>(){
+      return find(listImages(), new Predicate<OSTemplate>() {
 
          @Override
          public boolean apply(OSTemplate input) {

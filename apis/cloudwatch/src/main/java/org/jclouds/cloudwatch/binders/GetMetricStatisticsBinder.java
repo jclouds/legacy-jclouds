@@ -43,7 +43,7 @@ public class GetMetricStatisticsBinder implements org.jclouds.rest.Binder {
    private final DateService dateService;
    
    @Inject
-   protected GetMetricStatisticsBinder(DateService dateService){
+   protected GetMetricStatisticsBinder(DateService dateService) {
       this.dateService = dateService;
    }
    

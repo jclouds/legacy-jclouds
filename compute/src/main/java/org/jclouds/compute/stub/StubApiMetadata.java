@@ -44,7 +44,7 @@ public class StubApiMetadata extends BaseApiMetadata {
 
    public static class Builder extends BaseApiMetadata.Builder<Builder> {
 
-      protected Builder(){
+      protected Builder() {
          id("stub")
          .name("in-memory (Stub) API")
          .identityName("Unused")

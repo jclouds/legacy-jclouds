@@ -44,7 +44,7 @@ public class ServerManagerApiMetadata extends BaseApiMetadata {
 
    public static class Builder extends BaseApiMetadata.Builder<Builder> {
 
-      protected Builder(){
+      protected Builder() {
          id("servermanager")
          .name("ServerManager API")
          .identityName("Unused")

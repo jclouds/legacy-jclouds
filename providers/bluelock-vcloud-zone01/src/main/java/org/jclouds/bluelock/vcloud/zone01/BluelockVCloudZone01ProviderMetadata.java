@@ -57,7 +57,7 @@ public class BluelockVCloudZone01ProviderMetadata extends BaseProviderMetadata {
    
    public static class Builder extends BaseProviderMetadata.Builder {
 
-      protected Builder(){
+      protected Builder() {
          id("bluelock-vcloud-zone01")
          .name("Bluelock vCloud Zone 1")
                .apiMetadata(

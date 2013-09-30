@@ -29,7 +29,7 @@ public enum LoadBalancerOs {
     public static LoadBalancerOs fromValue(String value) {
         try {
             return valueOf(checkNotNull(value));
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return UNRECOGNIZED;
         }
     }

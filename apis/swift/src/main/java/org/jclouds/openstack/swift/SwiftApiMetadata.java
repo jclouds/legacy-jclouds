@@ -82,7 +82,7 @@ public class SwiftApiMetadata extends BaseRestApiMetadata {
          this(SwiftClient.class, SwiftAsyncClient.class);
       }
       
-      protected Builder(Class<?> syncClient, Class<?> asyncClient){
+      protected Builder(Class<?> syncClient, Class<?> asyncClient) {
          super(syncClient, asyncClient);
          id("swift")
          .name("OpenStack Swift with SwiftAuth")

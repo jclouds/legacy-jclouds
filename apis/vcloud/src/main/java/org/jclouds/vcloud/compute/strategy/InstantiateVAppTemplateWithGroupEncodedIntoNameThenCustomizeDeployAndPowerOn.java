@@ -101,7 +101,7 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
       
       private DnsNameValidator validator;
 
-      ComputerNameValidator(){
+      ComputerNameValidator() {
          this.validator = new  DnsNameValidator(3, 15);
       }
       

@@ -75,7 +75,7 @@ public class AWSCloudWatchProviderMetadata extends BaseProviderMetadata {
    
    public static class Builder extends BaseProviderMetadata.Builder {
 
-      protected Builder(){
+      protected Builder() {
          id("aws-cloudwatch")
          .name("Amazon CloudWatch")
          .endpoint("https://monitoring.us-east-1.amazonaws.com")

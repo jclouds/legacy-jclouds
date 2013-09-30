@@ -49,7 +49,7 @@ public class JcloudsTestYetAnotherComputeProviderMetadata extends BaseProviderMe
 
    public static class Builder extends BaseProviderMetadata.Builder {
 
-      protected Builder(){
+      protected Builder() {
          id("test-yet-another-compute-provider")
          .name("Test Yet Another Compute Provider")
          .endpoint("mem3")

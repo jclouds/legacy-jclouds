@@ -39,8 +39,8 @@ public enum ServerImageState {
     }
 
     public static ServerImageState fromValue(String type) {
-        for(ServerImageState serverImageState : values()) {
-            if(serverImageState.type.equals(checkNotNull(type))) return serverImageState;
+        for (ServerImageState serverImageState : values()) {
+            if (serverImageState.type.equals(checkNotNull(type))) return serverImageState;
         }
         return UNRECOGNIZED;
     }

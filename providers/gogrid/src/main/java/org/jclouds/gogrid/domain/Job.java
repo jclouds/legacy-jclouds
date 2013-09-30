@@ -276,7 +276,7 @@ public class Job implements Comparable<Job> {
 
    @Override
    public int compareTo(Job o) {
-      if(createdOn != null && o.getCreatedOn() != null)
+      if (createdOn != null && o.getCreatedOn() != null)
          return Longs.compare(createdOn.getTime(), o.getCreatedOn().getTime());
       return Longs.compare(id, o.getId());
    }

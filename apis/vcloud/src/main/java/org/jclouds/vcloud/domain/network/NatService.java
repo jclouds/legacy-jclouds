@@ -108,7 +108,7 @@ public class NatService {
    public String toString() {
       ToStringHelper helper = Objects.toStringHelper("").omitNullValues().add("enabled", enabled)
             .add("type", type).add("policy", policy);
-      if (natRules.size() >0)
+      if (natRules.size() > 0)
          helper.add("natRules", natRules);
       return helper.toString();
    }

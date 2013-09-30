@@ -31,7 +31,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public abstract class BaseViewLiveTest<V extends View> extends BaseContextLiveTest<Context>{
+public abstract class BaseViewLiveTest<V extends View> extends BaseContextLiveTest<Context> {
 
    protected volatile V view;
 

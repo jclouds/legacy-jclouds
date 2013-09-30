@@ -49,7 +49,7 @@ public class GoGridResponseException extends HttpResponseException {
         StringBuilder builder = new StringBuilder();
         builder.append(format("command %s failed with code %s. ", command.toString(),
                 response.getStatusCode()));
-        for(ErrorResponse error : errors) {
+        for (ErrorResponse error : errors) {
             builder.append(format("Error [%s]: %s. ", error.getErrorCode(), error.getMessage()));
         }
         return builder.toString();

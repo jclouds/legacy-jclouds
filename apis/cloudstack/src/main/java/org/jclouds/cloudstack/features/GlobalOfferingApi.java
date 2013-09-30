@@ -171,7 +171,7 @@ public interface GlobalOfferingApi extends OfferingApi {
     */
    @Named("updateNetworkOffering")
    @GET
-   @QueryParams(keys = "command", values ="updateNetworkOffering")
+   @QueryParams(keys = "command", values = "updateNetworkOffering")
    @SelectJson("networkoffering")
    @Consumes(MediaType.APPLICATION_JSON)
    @Fallback(NullOnNotFoundOr404.class)

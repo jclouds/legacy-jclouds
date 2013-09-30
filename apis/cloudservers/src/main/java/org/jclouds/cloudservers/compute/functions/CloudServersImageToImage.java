@@ -40,7 +40,7 @@ public class CloudServersImageToImage implements Function<org.jclouds.cloudserve
 
    @Inject
    CloudServersImageToImage(Map<ImageStatus, Image.Status> toPortableImageStatus, Function<org.jclouds.cloudservers.domain.Image, OperatingSystem> imageToOs) {
-      this.toPortableImageStatus=toPortableImageStatus;
+      this.toPortableImageStatus = toPortableImageStatus;
       this.imageToOs = imageToOs;
    }
    

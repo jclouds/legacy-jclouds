@@ -75,7 +75,7 @@ public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
    
    public static class Builder extends BaseProviderMetadata.Builder {
 
-      protected Builder(){
+      protected Builder() {
          id("rackspace-cloudservers-us")
          .name("Rackspace Next Generation Cloud Servers US")
          .apiMetadata(new NovaApiMetadata().toBuilder()

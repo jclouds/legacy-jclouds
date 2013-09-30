@@ -81,7 +81,7 @@ public class ArchiveApiLiveTest extends BaseGleSYSApiLiveTest {
    public void testCreateArchive() throws Exception {
       try {
          archiveApi.delete(archiveUser);
-      } catch(Exception ex) {
+      } catch (Exception ex) {
       }
       
       int before = archiveApi.list().size();

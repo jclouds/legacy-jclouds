@@ -146,7 +146,7 @@ public final class Zone {
       }
 
       @Override
-      public String toString(){
+      public String toString() {
          return this.name().toLowerCase();
       }
 

@@ -66,7 +66,7 @@ public class ParseSwiftErrorFromHttpResponse implements HttpErrorHandler {
         	
             if (sourcePath != null) {
             	String path = command.getCurrentRequest().getEndpoint().getPath();
-            	int startOfDestinationPath = path.lastIndexOf("/", path.lastIndexOf("/")-1);
+            	int startOfDestinationPath = path.lastIndexOf("/", path.lastIndexOf("/") - 1);
             	String destinationPath = path.substring(startOfDestinationPath);
             	
                 exception = new CopyObjectException(sourcePath, destinationPath, message);

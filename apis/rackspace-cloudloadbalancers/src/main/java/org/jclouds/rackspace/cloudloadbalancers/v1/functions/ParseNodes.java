@@ -77,9 +77,9 @@ public class ParseNodes extends ParseJson<Nodes> {
       public ToPagedIterable setContext(HttpRequest request) {
          String path = request.getEndpoint().getPath();
          int lastSlash = path.lastIndexOf('/');
-         int secondLastSlash = path.lastIndexOf('/', lastSlash-1);
+         int secondLastSlash = path.lastIndexOf('/', lastSlash - 1);
          
-         lbId = Integer.valueOf(path.substring(secondLastSlash+1, lastSlash));
+         lbId = Integer.valueOf(path.substring(secondLastSlash + 1, lastSlash));
          
          return super.setContext(request);
       }

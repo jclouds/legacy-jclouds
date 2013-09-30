@@ -105,7 +105,7 @@ public class GetJobListOptions extends BaseHttpRequestOptions {
          return new GetJobListOptions().maxItemsNumber(maxNumber);
       }
       
-      public static GetJobListOptions startDate(Date startDate){
+      public static GetJobListOptions startDate(Date startDate) {
          return new GetJobListOptions().withStartDate(startDate);
       }
 

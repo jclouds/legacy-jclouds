@@ -37,7 +37,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 import com.google.inject.assistedinject.Assisted;
 
 @Singleton
-public class LocationIdToURIFromConfigurationOrDefaultToProvider implements Supplier<Map<String, Supplier<URI>>>{
+public class LocationIdToURIFromConfigurationOrDefaultToProvider implements Supplier<Map<String, Supplier<URI>>> {
 
    @Resource
    protected Logger logger = Logger.NULL;

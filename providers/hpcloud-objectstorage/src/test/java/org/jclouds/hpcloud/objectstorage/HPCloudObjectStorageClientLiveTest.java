@@ -37,7 +37,7 @@ import com.google.common.collect.FluentIterable;
 @Test(groups = "live", testName = "HPCloudObjectStorageClientLiveTest")
 public class HPCloudObjectStorageClientLiveTest extends CommonSwiftClientLiveTest<HPCloudObjectStorageApi> {
    
-   public HPCloudObjectStorageClientLiveTest(){
+   public HPCloudObjectStorageClientLiveTest() {
       provider = "hpcloud-objectstorage";
    }
    

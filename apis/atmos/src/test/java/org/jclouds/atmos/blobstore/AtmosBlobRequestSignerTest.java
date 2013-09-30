@@ -48,7 +48,7 @@ import com.google.inject.Module;
 @Test(groups = "unit", testName = "AtmosBlobRequestSignerTest")
 public class AtmosBlobRequestSignerTest extends BaseAsyncClientTest<AtmosAsyncClient> {
 
-   public AtmosBlobRequestSignerTest(){
+   public AtmosBlobRequestSignerTest() {
       // this is base64 decoded in the signer;
       credential = "aaaabbbb"; 
    }

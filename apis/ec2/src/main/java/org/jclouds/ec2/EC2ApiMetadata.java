@@ -64,7 +64,7 @@ public final class EC2ApiMetadata extends BaseHttpApiMetadata<EC2Api> {
       return properties;
    }
 
-   public final static class Builder extends BaseHttpApiMetadata.Builder<EC2Api, Builder> {
+   public static final class Builder extends BaseHttpApiMetadata.Builder<EC2Api, Builder> {
       public Builder() {
          id("ec2")
          .name("Amazon Elastic Compute Cloud (EC2) API")

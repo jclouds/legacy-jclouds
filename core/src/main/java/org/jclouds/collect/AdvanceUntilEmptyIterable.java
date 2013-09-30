@@ -36,7 +36,7 @@ import com.google.common.collect.UnmodifiableIterator;
 @Beta
 public class AdvanceUntilEmptyIterable<E> extends FluentIterable<FluentIterable<E>> {
 
-   public static <E> AdvanceUntilEmptyIterable<E> create(Supplier<FluentIterable<E>> nextIterable){
+   public static <E> AdvanceUntilEmptyIterable<E> create(Supplier<FluentIterable<E>> nextIterable) {
       return new AdvanceUntilEmptyIterable<E>(nextIterable);
    }
    

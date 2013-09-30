@@ -31,7 +31,7 @@ import static org.testng.Assert.assertEquals;
  */
 @Test(groups = "live")
 public class CloudFilesBlobIntegrationLiveTest extends SwiftBlobIntegrationLiveTest {
-   public CloudFilesBlobIntegrationLiveTest(){
+   public CloudFilesBlobIntegrationLiveTest() {
       provider = "cloudfiles";
    }
    

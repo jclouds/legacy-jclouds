@@ -113,7 +113,7 @@ public class Address {
    })
    protected Address(int id, String country, @Nullable String state, @Nullable String description) {
       this.id = id;
-      this.country = checkNotNull(emptyToNull(country),"country cannot be null or empty:"+country);
+      this.country = checkNotNull(emptyToNull(country), "country cannot be null or empty:" + country);
       this.state = state;
       this.description = description;
    }

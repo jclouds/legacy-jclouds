@@ -46,7 +46,7 @@ import com.google.common.collect.ImmutableSet;
 @Test(singleThreaded = true, testName = "UserApiExpectTest")
 public class UserApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi> {
    
-   public UserApiExpectTest(){
+   public UserApiExpectTest() {
       endpoint = "https://csnode.jclouds.org:35357";
    }
    

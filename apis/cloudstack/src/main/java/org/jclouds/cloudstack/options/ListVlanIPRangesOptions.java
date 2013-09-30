@@ -64,7 +64,7 @@ public class ListVlanIPRangesOptions extends AccountInDomainOptions {
       }
 
       public static ListVlanIPRangesOptions vlan(String vlan) {
-         return new ListVlanIPRangesOptions().vlan(vlan+"");
+         return new ListVlanIPRangesOptions().vlan(vlan + "");
       }
 
       public static ListVlanIPRangesOptions zoneId(String zoneId) {
@@ -83,12 +83,12 @@ public class ListVlanIPRangesOptions extends AccountInDomainOptions {
    }
 
    public ListVlanIPRangesOptions forVirtualNetwork(boolean forVirtualNetwork) {
-      this.queryParameters.replaceValues("forvirtualnetwork", ImmutableSet.of(forVirtualNetwork+""));
+      this.queryParameters.replaceValues("forvirtualnetwork", ImmutableSet.of(forVirtualNetwork + ""));
       return this;
    }
 
    public ListVlanIPRangesOptions id(String id) {
-      this.queryParameters.replaceValues("id", ImmutableSet.of(id+""));
+      this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
 
@@ -98,17 +98,17 @@ public class ListVlanIPRangesOptions extends AccountInDomainOptions {
    }
 
    public ListVlanIPRangesOptions networkId(String networkId) {
-      this.queryParameters.replaceValues("networkid", ImmutableSet.of(networkId+""));
+      this.queryParameters.replaceValues("networkid", ImmutableSet.of(networkId + ""));
       return this;
    }
 
    public ListVlanIPRangesOptions podId(String podId) {
-      this.queryParameters.replaceValues("podid", ImmutableSet.of(podId+""));
+      this.queryParameters.replaceValues("podid", ImmutableSet.of(podId + ""));
       return this;
    }
 
    public ListVlanIPRangesOptions projectId(String projectId) {
-      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId+""));
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
       return this;
    }
 
@@ -118,12 +118,12 @@ public class ListVlanIPRangesOptions extends AccountInDomainOptions {
    }
 
    public ListVlanIPRangesOptions vlan(long vlan) {
-      this.queryParameters.replaceValues("vlan", ImmutableSet.of(vlan+""));
+      this.queryParameters.replaceValues("vlan", ImmutableSet.of(vlan + ""));
       return this;
    }
 
    public ListVlanIPRangesOptions zoneId(String zoneId) {
-      this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId+""));
+      this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
    }
 }

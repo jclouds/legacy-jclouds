@@ -38,8 +38,8 @@ public enum ServerImageType {
     }
 
     public static ServerImageType fromValue(String type) {
-        for(ServerImageType serverImageType : values()) {
-            if(serverImageType.type.equals(checkNotNull(type))) return serverImageType;
+        for (ServerImageType serverImageType : values()) {
+            if (serverImageType.type.equals(checkNotNull(type))) return serverImageType;
         }
         return UNRECOGNIZED;
     }

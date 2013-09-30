@@ -84,25 +84,25 @@ public class ProvidesAnnotationExpectTest extends BaseRestClientExpectTest<Provi
    }
 
    @Test
-   public void testProvidesWithGeneric(){
+   public void testProvidesWithGeneric() {
       ProvidingApi client = requestsSendResponses(ImmutableMap.<HttpRequest, HttpResponse> of());
       assertEquals(client.set(), ImmutableSet.of("foo"));
    }
 
    @Test
-   public void testProvidesWithGenericQualified(){
+   public void testProvidesWithGenericQualified() {
       ProvidingApi client = requestsSendResponses(ImmutableMap.<HttpRequest, HttpResponse> of());
       assertEquals(client.foo(), ImmutableSet.of("bar"));
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
-   public void testProvidesWithGenericQualifiedAuthorizationException(){
+   public void testProvidesWithGenericQualifiedAuthorizationException() {
       ProvidingApi client = requestsSendResponses(ImmutableMap.<HttpRequest, HttpResponse> of());
       client.exception();
    }
 
    @Test(expectedExceptions = NoSuchElementException.class)
-   public void testProvidesWithGenericQualifiedNoSuchElementException(){
+   public void testProvidesWithGenericQualifiedNoSuchElementException() {
       ProvidingApi client = requestsSendResponses(ImmutableMap.<HttpRequest, HttpResponse> of());
       client.noSuchElementException();
    }

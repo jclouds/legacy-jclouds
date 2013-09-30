@@ -72,7 +72,7 @@ public class HPCloudObjectStorageApiMetadata extends SwiftKeystoneApiMetadata {
 
    public static class Builder extends SwiftKeystoneApiMetadata.Builder<Builder> {
       @SuppressWarnings("deprecation")
-      protected Builder(){
+      protected Builder() {
          super(HPCloudObjectStorageApi.class, HPCloudObjectStorageAsyncApi.class);
          id("hpcloud-objectstorage")
          .endpointName("identity service url ending in /v2.0/")

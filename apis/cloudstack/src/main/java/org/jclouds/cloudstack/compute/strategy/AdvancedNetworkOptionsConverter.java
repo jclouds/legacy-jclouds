@@ -48,7 +48,7 @@ public class AdvancedNetworkOptionsConverter implements OptionsConverter {
       } else if (templateOptions.getIpsToNetworks().isEmpty()) {
          checkArgument(!networks.isEmpty(), "please setup a network for zone: " + zoneId);
          Network defaultNetworkInZone = Iterables.getFirst(filter(networks.values(), and(defaultNetworkInZone(zoneId), supportsStaticNAT())), null);
-         if(defaultNetworkInZone == null) {
+         if (defaultNetworkInZone == null) {
              defaultNetworkInZone = Iterables.getFirst(filter(networks.values(), isIsolatedNetwork()), null);
          }
          if (defaultNetworkInZone == null) {

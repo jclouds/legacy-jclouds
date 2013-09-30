@@ -77,7 +77,7 @@ public class AtmosUtils {
       try {
          sync.createFile(container, object, options);
          
-      } catch(KeyAlreadyExistsException e) {
+      } catch (KeyAlreadyExistsException e) {
          deletePathAndEnsureGone(sync, path);
          sync.createFile(container, object, options);
       }

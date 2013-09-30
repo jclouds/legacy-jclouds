@@ -58,7 +58,7 @@ public class RegionToEndpointOrProviderIfNull implements Function<Object, URI> {
          return defaultUri.get();
       checkArgument(from instanceof String, "region is a String argument");
       Map<String, Supplier<URI>> regionToEndpoint = regionToEndpointSupplier.get();
-      if (from.equals(defaultProvider)){
+      if (from.equals(defaultProvider)) {
          if (regionToEndpoint.containsKey(from))
             return regionToEndpoint.get(from).get();
          return defaultUri.get();

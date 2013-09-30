@@ -42,7 +42,7 @@ public class AnyOrConfiguredRegionIdTest {
    public void testWithoutConfigAllIdsMatch() {
       Set<String> regionIds = ImmutableSet.of("us-east-1", "eu-west-1");
      
-      RegionIdFilter filter = Guice.createInjector(new AbstractModule(){
+      RegionIdFilter filter = Guice.createInjector(new AbstractModule() {
 
          @Override
          protected void configure() {
@@ -57,7 +57,7 @@ public class AnyOrConfiguredRegionIdTest {
    public void testWithConfigOnlyMatchingIds() {
       Set<String> regionIds = ImmutableSet.of("us-east-1", "eu-west-1");
      
-      RegionIdFilter filter = Guice.createInjector(new AbstractModule(){
+      RegionIdFilter filter = Guice.createInjector(new AbstractModule() {
 
          @Override
          protected void configure() {

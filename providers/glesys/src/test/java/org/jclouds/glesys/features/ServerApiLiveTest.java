@@ -108,7 +108,7 @@ public class ServerApiLiveTest extends BaseGleSYSApiWithAServerLiveTest {
    public void testListTemplates() throws Exception {
       FluentIterable<OSTemplate> oSTemplates = serverApi.listTemplates();
 
-      for(OSTemplate oSTemplate : oSTemplates) {
+      for (OSTemplate oSTemplate : oSTemplates) {
          checkTemplate(oSTemplate);
       }
    }

@@ -131,7 +131,7 @@ public class LocationModule extends AbstractModule {
                Suppliers.compose(new FilterStrings(filter), uncached), seconds, TimeUnit.SECONDS);
    }
 
-   static class FilterStrings implements Function<Set<String>, Set<String>>{
+   static class FilterStrings implements Function<Set<String>, Set<String>> {
       public final Predicate<String> filter;
 
       public FilterStrings(Predicate<String> filter) {

@@ -55,7 +55,7 @@ public class BaseHPCloudObjectStorageBlobStoreExpectTest extends BaseRestClientE
        return createInjector(fn, module, props).getInstance(BlobStore.class);
     }
     
-    @Override public ProviderMetadata createProviderMetadata(){
+    @Override public ProviderMetadata createProviderMetadata() {
        return new HPCloudObjectStorageProviderMetadata();
     }
 }

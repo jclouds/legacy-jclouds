@@ -60,7 +60,7 @@ public class OptionsConverterTest {
 
       try {
          converter.apply(optionsIn, EMPTY_NETWORKS_MAP, ZONE_ID, DeployVirtualMachineOptions.NONE);
-      } catch(IllegalArgumentException e) {
+      } catch (IllegalArgumentException e) {
          exceptionThrown = true;
       }
 
@@ -95,7 +95,7 @@ public class OptionsConverterTest {
       boolean exceptionThrown = false;
       try {
          converter.apply(CloudStackTemplateOptions.NONE, EMPTY_NETWORKS_MAP, ZONE_ID, DeployVirtualMachineOptions.NONE);
-      } catch(IllegalArgumentException e) {
+      } catch (IllegalArgumentException e) {
          exceptionThrown = true;
       }
       assertTrue(exceptionThrown);
@@ -111,7 +111,7 @@ public class OptionsConverterTest {
       boolean exceptionThrown = false;
       try {
          converter.apply(CloudStackTemplateOptions.NONE, ImmutableMap.of(unsuitableNetwork.getId(), unsuitableNetwork), ZONE_ID, DeployVirtualMachineOptions.NONE);
-      } catch(IllegalArgumentException e) {
+      } catch (IllegalArgumentException e) {
          exceptionThrown = true;
       }
       assertTrue(exceptionThrown);

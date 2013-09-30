@@ -69,7 +69,7 @@ public class CreateSecurityGroupIfNeededTest extends BaseNovaApiExpectTest {
       
       int ruleId = 10331;
       
-      for (int port : ImmutableList.of(22,8080)){
+      for (int port : ImmutableList.of(22,8080)) {
          
          HttpRequest createCidrRule = HttpRequest.builder().method("POST").endpoint(
                   URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/3456/os-security-group-rules")).headers(

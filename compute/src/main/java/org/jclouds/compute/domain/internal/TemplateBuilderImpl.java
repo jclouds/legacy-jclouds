@@ -163,7 +163,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       };
    } 
 
-   final Predicate<ComputeMetadata> locationPredicate = new NullEqualToIsParentOrIsGrandparentOfCurrentLocation(new Supplier<Location>(){
+   final Predicate<ComputeMetadata> locationPredicate = new NullEqualToIsParentOrIsGrandparentOfCurrentLocation(new Supplier<Location>() {
 
       @Override
       public Location get() {
@@ -1079,13 +1079,13 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       toString.add("imageVersion", imageVersion);
       if (location != null)
          toString.add("locationId", location.getId());
-      if (minCores >0) //TODO: make non-primitive
+      if (minCores > 0) //TODO: make non-primitive
          toString.add("minCores", minCores);
-      if (minRam >0) //TODO: make non-primitive
+      if (minRam > 0) //TODO: make non-primitive
          toString.add("minRam", minRam);
-      if (minRam >0) //TODO: make non-primitive
+      if (minRam > 0) //TODO: make non-primitive
          toString.add("minRam", minRam);
-      if (minDisk >0) //TODO: make non-primitive
+      if (minDisk > 0) //TODO: make non-primitive
          toString.add("minDisk", minDisk);
       toString.add("osFamily", osFamily);
       toString.add("osName", osName);

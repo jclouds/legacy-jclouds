@@ -64,7 +64,7 @@ public class AWSEC2ProviderMetadata extends BaseProviderMetadata {
       properties.setProperty(PROPERTY_EC2_AMI_QUERY,
                "owner-id=137112412989,801119661308,063491364108,099720109477,411009282317;state=available;image-type=machine");
       // amis that work with the cluster instances
-      properties.setProperty(PROPERTY_EC2_CC_REGIONS, Region.US_EAST_1 + "," + Region.US_WEST_2 + ","+ Region.EU_WEST_1);
+      properties.setProperty(PROPERTY_EC2_CC_REGIONS, Region.US_EAST_1 + "," + Region.US_WEST_2 + "," + Region.EU_WEST_1);
       properties
                .setProperty(
                         PROPERTY_EC2_CC_AMI_QUERY,
@@ -75,7 +75,7 @@ public class AWSEC2ProviderMetadata extends BaseProviderMetadata {
    
    public static class Builder extends BaseProviderMetadata.Builder {
 
-      protected Builder(){
+      protected Builder() {
          id("aws-ec2")
          .name("Amazon Elastic Compute Cloud (EC2)")
          .apiMetadata(new AWSEC2ApiMetadata())

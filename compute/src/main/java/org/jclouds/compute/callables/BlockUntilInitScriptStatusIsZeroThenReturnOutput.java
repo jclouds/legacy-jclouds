@@ -112,7 +112,7 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutput extends AbstractFu
     */
    static Predicate<String> loopUntilTrueOrThrowCancellationException(Predicate<String> predicate, long period, long maxPeriod,
          final AbstractFuture<ExecResponse> futureWhichMightBeCancelled) {
-      return retry(Predicates.<String> and(predicate, new Predicate<String>(){
+      return retry(Predicates.<String> and(predicate, new Predicate<String>() {
          public boolean apply(String in) {
             if (futureWhichMightBeCancelled.isCancelled())
                throw new CancellationException(futureWhichMightBeCancelled + " is cancelled");

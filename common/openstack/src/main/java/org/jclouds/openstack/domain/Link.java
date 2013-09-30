@@ -124,7 +124,7 @@ public class Link {
          return this;
       }
 
-      public Link build(){
+      public Link build() {
          return new Link(relation, type, href);
       }
       

@@ -80,7 +80,7 @@ public class ISOApiLiveTest extends BaseCloudStackApiLiveTest {
    public void testRegisterISO() throws Exception {
       Optional<OSType> guestOSTypeOptional = Iterables.tryFind(client.getGuestOSApi().listOSTypes(), Predicates.notNull());
       Optional<Zone> zoneOptional = Iterables.tryFind(client.getZoneApi().listZones(available(true)), Predicates.notNull());
-      if(guestOSTypeOptional.isPresent() && zoneOptional.isPresent()) {
+      if (guestOSTypeOptional.isPresent() && zoneOptional.isPresent()) {
          String osTypeId = guestOSTypeOptional.get().getId();
          String zoneId = zoneOptional.get().getId();
          ISO iso = client.getISOApi().registerISO(isoName, "", url, zoneId, RegisterISOOptions.Builder.isPublic(true).osTypeId(osTypeId));
@@ -89,7 +89,7 @@ public class ISOApiLiveTest extends BaseCloudStackApiLiveTest {
              assertEquals(iso.getName(), isoName);
       } else {
          String skipMessage = String.format("Cannot register the iso with url: %s", url);
-         if(zoneOptional.isPresent())
+         if (zoneOptional.isPresent())
              skipMessage += " without a valid zone";
          else
              skipMessage += " without a valid guest OS type";

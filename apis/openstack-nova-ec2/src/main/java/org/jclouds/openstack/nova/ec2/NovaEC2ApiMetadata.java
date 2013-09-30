@@ -69,7 +69,7 @@ public final class NovaEC2ApiMetadata extends BaseHttpApiMetadata<NovaEC2Api> {
       return properties;
    }
 
-   public final static class Builder extends BaseHttpApiMetadata.Builder<NovaEC2Api, Builder> {
+   public static final class Builder extends BaseHttpApiMetadata.Builder<NovaEC2Api, Builder> {
       public Builder() {
          id("openstack-nova-ec2")
          .name("OpenStack Nova's EC2-clone API")

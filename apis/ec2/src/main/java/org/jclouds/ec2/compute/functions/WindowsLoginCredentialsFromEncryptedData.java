@@ -72,7 +72,7 @@ public class WindowsLoginCredentialsFromEncryptedData implements Function<Passwo
                                 .password(password)
                                 .noPrivateKey()
                                 .build();
-      } catch(Exception e) {
+      } catch (Exception e) {
          throw Throwables.propagate(e);
       }
    }

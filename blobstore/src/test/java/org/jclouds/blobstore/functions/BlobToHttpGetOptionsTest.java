@@ -89,7 +89,7 @@ public class BlobToHttpGetOptionsTest {
    }
 
    @Test
-   public void testRanges(){
+   public void testRanges() {
       org.jclouds.blobstore.options.GetOptions in = new org.jclouds.blobstore.options.GetOptions();
       in.range(0,1024);
       in.startAt(2048);
@@ -103,7 +103,7 @@ public class BlobToHttpGetOptionsTest {
    }
 
    @Test
-   public void testRangesTail(){
+   public void testRangesTail() {
       org.jclouds.blobstore.options.GetOptions in = new org.jclouds.blobstore.options.GetOptions();
       in.tail(1024);
 
@@ -114,7 +114,7 @@ public class BlobToHttpGetOptionsTest {
 
    }
    @Test
-   public void testRangesStart(){
+   public void testRangesStart() {
       org.jclouds.blobstore.options.GetOptions in = new org.jclouds.blobstore.options.GetOptions();
       in.startAt(1024);
 

@@ -191,7 +191,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
       }
 
       String host = request.getEndpoint().getHost();
-      if(request.getEndpoint().getPort() != -1) {
+      if (request.getEndpoint().getPort() != -1) {
          host += ":" + request.getEndpoint().getPort();
       }
       connection.setRequestProperty(HOST, host);

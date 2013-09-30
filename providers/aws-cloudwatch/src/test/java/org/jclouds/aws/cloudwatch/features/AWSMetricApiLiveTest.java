@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", testName = "AWSMetricApiLiveTest")
 public class AWSMetricApiLiveTest extends MetricApiLiveTest {
-   public AWSMetricApiLiveTest(){
+   public AWSMetricApiLiveTest() {
       provider = "aws-cloudwatch";
    }
 

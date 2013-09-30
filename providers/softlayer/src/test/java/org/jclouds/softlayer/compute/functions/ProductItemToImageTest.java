@@ -101,7 +101,7 @@ public class ProductItemToImageTest {
 
    @Test
    public void testConversion() {
-      for( String description : operatingSystems )
+      for ( String description : operatingSystems )
       {
          ProductItem item = ProductItem.builder()
                                        .description(description)

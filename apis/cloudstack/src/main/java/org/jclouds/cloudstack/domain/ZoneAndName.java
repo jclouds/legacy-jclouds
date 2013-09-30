@@ -33,7 +33,7 @@ import com.google.common.collect.Iterables;
  */
 public class ZoneAndName {
    
-   public static final Function<ZoneAndName, String> NAME_FUNCTION = new Function<ZoneAndName, String>(){
+   public static final Function<ZoneAndName, String> NAME_FUNCTION = new Function<ZoneAndName, String>() {
 
       @Override
       public String apply(ZoneAndName input) {
@@ -42,7 +42,7 @@ public class ZoneAndName {
       
    };
    
-   public static final Function<ZoneAndName, String> ZONE_FUNCTION = new Function<ZoneAndName, String>(){
+   public static final Function<ZoneAndName, String> ZONE_FUNCTION = new Function<ZoneAndName, String>() {
 
       @Override
       public String apply(ZoneAndName input) {

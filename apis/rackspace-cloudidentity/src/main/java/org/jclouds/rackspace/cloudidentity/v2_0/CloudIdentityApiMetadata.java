@@ -75,7 +75,7 @@ public class CloudIdentityApiMetadata extends KeystoneApiMetadata {
 
    public static class Builder extends KeystoneApiMetadata.Builder<Builder> {
       @SuppressWarnings("deprecation")
-      protected Builder(){
+      protected Builder() {
          super(KeystoneApi.class, KeystoneAsyncApi.class);
          id("rackspace-cloudidentity")
          .name("Rackspace Cloud Identity Service")

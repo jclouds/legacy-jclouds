@@ -57,7 +57,7 @@ public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
    
    public static class Builder extends BaseProviderMetadata.Builder {
 
-      protected Builder(){
+      protected Builder() {
          id("cloudservers-us")
          .name("Rackspace Cloud Servers US")
          .apiMetadata(new CloudServersApiMetadata())

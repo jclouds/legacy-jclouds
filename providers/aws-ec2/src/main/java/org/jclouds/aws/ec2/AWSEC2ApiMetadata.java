@@ -56,7 +56,7 @@ public final class AWSEC2ApiMetadata extends BaseHttpApiMetadata<AWSEC2Api> {
       return properties;
    }
 
-   public final static class Builder extends BaseHttpApiMetadata.Builder<AWSEC2Api, Builder> {
+   public static final class Builder extends BaseHttpApiMetadata.Builder<AWSEC2Api, Builder> {
       public Builder() {
          id("aws-ec2")
          .version("2012-06-01")

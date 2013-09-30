@@ -44,7 +44,7 @@ public class GlobalStoragePoolApiLiveTest extends BaseCloudStackApiLiveTest {
       Set<StoragePool> result = globalAdminClient.getStoragePoolClient().listStoragePools();
       assertNotNull(result);
       assertTrue(result.size() > 0);
-      for(StoragePool pool : result) {
+      for (StoragePool pool : result) {
          assertNotNull(pool.getId());
          assertFalse(Strings.isNullOrEmpty(pool.getName()));
          assertFalse(Strings.isNullOrEmpty(pool.getPath()));

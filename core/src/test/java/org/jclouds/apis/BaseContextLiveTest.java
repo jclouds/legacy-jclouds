@@ -123,7 +123,7 @@ public abstract class BaseContextLiveTest<C extends Context> {
       if (provider != null)
          try {
             return ContextBuilder.newBuilder(provider);
-         } catch (NoSuchElementException e){
+         } catch (NoSuchElementException e) {
             Logger.getAnonymousLogger()
                   .warning("provider ["
                         + provider

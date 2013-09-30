@@ -34,7 +34,7 @@ public class CreateRecordBinder implements Binder {
    private final Json json;
 
    @Inject
-   CreateRecordBinder(Json json){
+   CreateRecordBinder(Json json) {
       this.json = checkNotNull(json, "json");
    }
 

@@ -42,7 +42,7 @@ public enum LoadBalancerState {
     public static LoadBalancerState fromValue(String state) {
         try {
             return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return UNRECOGNIZED;
         }
     }

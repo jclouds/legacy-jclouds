@@ -184,7 +184,7 @@ public class SoftLayerComputeServiceAdapter implements
    // cheat until we have a getProductItem command
    @Override
    public ProductItem getImage(final String id) {
-      return find(listImages(), new Predicate<ProductItem>(){
+      return find(listImages(), new Predicate<ProductItem>() {
 
          @Override
          public boolean apply(ProductItem input) {

@@ -37,11 +37,11 @@ import com.google.common.net.HttpHeaders;
 public enum KeystoneFixture {
    INSTANCE;
 
-   public String getTenantName(){
+   public String getTenantName() {
       return "12346637803162";
    }
 
-   public HttpRequest initialAuthWithUsernameAndPassword(String username, String password){
+   public HttpRequest initialAuthWithUsernameAndPassword(String username, String password) {
       return HttpRequest.builder()
             .method("POST")
             .endpoint("https://region-a.geo-1.identity.hpcloudsvc.com:35357/v2.0/tokens")
@@ -53,7 +53,7 @@ public enum KeystoneFixture {
                                        username, password, getTenantName()), "application/json")).build();
    }
   
-   public HttpRequest initialAuthWithAccessKeyAndSecretKey(String accessKey, String secretKey){
+   public HttpRequest initialAuthWithAccessKeyAndSecretKey(String accessKey, String secretKey) {
       return HttpRequest.builder()
             .method("POST")
             .endpoint("https://region-a.geo-1.identity.hpcloudsvc.com:35357/v2.0/tokens")
@@ -65,11 +65,11 @@ public enum KeystoneFixture {
                                        accessKey, secretKey, getTenantName()), "application/json")).build();
    }
 
-   public String getAuthToken(){
+   public String getAuthToken() {
       return  "Auth_4f173437e4b013bee56d1007";
    }
 
-   public HttpResponse responseWithAccess(){
+   public HttpResponse responseWithAccess() {
       return HttpResponse.builder().statusCode(200).message("HTTP/1.1 200").payload(
             payloadFromResourceWithContentType("/keystoneAuthResponse.json", "application/json")).build();
    }

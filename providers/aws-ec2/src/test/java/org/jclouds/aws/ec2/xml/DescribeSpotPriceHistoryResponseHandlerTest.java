@@ -58,7 +58,7 @@ public class DescribeSpotPriceHistoryResponseHandlerTest extends BaseHandlerTest
 
       );
 
-      Set<Spot> result = factory.create(injector.createChildInjector(new AbstractModule(){
+      Set<Spot> result = factory.create(injector.createChildInjector(new AbstractModule() {
 
          @Override
          protected void configure() {

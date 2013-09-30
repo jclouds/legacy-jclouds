@@ -47,7 +47,7 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
 
    String ns = "http://www.vmware.com/vcloud/v1";
    Properties outputProperties;
-   public InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOnExpectTest(){
+   public InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOnExpectTest() {
       outputProperties = new Properties();
       outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
    }

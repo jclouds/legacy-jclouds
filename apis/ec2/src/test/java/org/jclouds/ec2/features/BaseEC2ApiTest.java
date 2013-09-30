@@ -68,7 +68,7 @@ public abstract class BaseEC2ApiTest<T> extends BaseAsyncApiTest<T> {
 
       @Provides
       @Singleton
-      LoadingCache<RegionAndName, Image> provide(){
+      LoadingCache<RegionAndName, Image> provide() {
          return CacheBuilder.newBuilder().build(new CacheLoader<RegionAndName, Image>() {
 
             @Override

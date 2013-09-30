@@ -47,22 +47,22 @@ public class FilesystemContainerNameValidatorTest {
         try {
             validator.validate("");
             fail("Container name value incorrect, but was not recognized");
-        } catch(IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {}
 
         try {
             validator.validate(null);
             fail("Container name value incorrect, but was not recognized");
-        } catch(IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {}
 
         try {
             validator.validate(File.separator + "is" + File.separator + "" + "ok");
             fail("Container name value incorrect, but was not recognized");
-        } catch(IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {}
 
         try {
             validator.validate("all" + File.separator + "is" + File.separator);
             fail("Container name value incorrect, but was not recognized");
-        } catch(IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {}
     }
 
 

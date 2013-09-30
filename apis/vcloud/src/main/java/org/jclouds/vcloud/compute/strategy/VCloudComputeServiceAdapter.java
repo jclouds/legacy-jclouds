@@ -105,13 +105,13 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
          public boolean apply(VAppTemplate from) {
             try {
                templateToEnvelope.apply(from);
-            } catch (IllegalArgumentException e){
-               logger.warn("Unsupported: "+ e.getMessage());
+            } catch (IllegalArgumentException e) {
+               logger.warn("Unsupported: " + e.getMessage());
                return false;
             } catch (RuntimeException e) {
                IllegalArgumentException e2 = Throwables2.getFirstThrowableOfType(e, IllegalArgumentException.class);
                if (e2 != null) {
-                  logger.warn("Unsupported: "+ e2.getMessage());
+                  logger.warn("Unsupported: " + e2.getMessage());
                   return false;
                } else {
                   throw e;

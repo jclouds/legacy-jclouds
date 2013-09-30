@@ -233,7 +233,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
       // the only S3 implementation configured to allow uppercase payload/bucket/container names.
       //
       // http://code.google.com/p/jclouds/issues/detail?id=992
-      if (isVhostStyle && bucketName!= null && bucketName.equals(bucketName.toLowerCase()))
+      if (isVhostStyle && bucketName != null && bucketName.equals(bucketName.toLowerCase()))
          toSign.append(servicePath).append(bucketName);
    }
 

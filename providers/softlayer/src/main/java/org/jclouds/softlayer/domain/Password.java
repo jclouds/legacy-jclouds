@@ -100,7 +100,7 @@ public class Password {
    @ConstructorProperties({"id", "username", "password"})
    public Password(int id, String username, @Nullable String password) {
       this.id = id;
-      this.username = checkNotNull(emptyToNull(username),"username cannot be null or empty:"+username);
+      this.username = checkNotNull(emptyToNull(username), "username cannot be null or empty:" + username);
       this.password = password;
    }
 

@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
 @Test(groups = "live", testName = "SwiftKeystoneClientLiveTest")
 public class SwiftKeystoneClientLiveTest extends CommonSwiftClientLiveTest<CommonSwiftClient> {
    
-   public SwiftKeystoneClientLiveTest(){
+   public SwiftKeystoneClientLiveTest() {
       provider = System.getProperty("test.swift.provider", "swift-keystone");
    }
    

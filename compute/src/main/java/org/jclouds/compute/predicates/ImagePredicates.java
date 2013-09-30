@@ -97,7 +97,7 @@ public class ImagePredicates {
 
          @Override
          public String toString() {
-            return "metadataContains(" + key +", "+value + ")";
+            return "metadataContains(" + key + ", " + value + ")";
          }
       };
    }

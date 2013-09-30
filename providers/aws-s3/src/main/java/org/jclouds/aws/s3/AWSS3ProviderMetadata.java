@@ -80,7 +80,7 @@ public class AWSS3ProviderMetadata extends BaseProviderMetadata {
    
    public static class Builder extends BaseProviderMetadata.Builder {
 
-      protected Builder(){
+      protected Builder() {
          id("aws-s3")
          .name("Amazon Simple Storage Service (S3)")
          .apiMetadata(new AWSS3ApiMetadata())

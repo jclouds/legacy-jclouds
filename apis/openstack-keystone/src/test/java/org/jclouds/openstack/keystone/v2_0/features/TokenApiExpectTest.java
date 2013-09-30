@@ -50,7 +50,7 @@ import com.google.common.collect.ImmutableSet;
 @Test(testName = "TokenApiExpectTest")
 public class TokenApiExpectTest extends BaseKeystoneRestApiExpectTest<KeystoneApi> {
 
-   public TokenApiExpectTest(){
+   public TokenApiExpectTest() {
       endpoint = "https://csnode.jclouds.org:35357";
    }
 

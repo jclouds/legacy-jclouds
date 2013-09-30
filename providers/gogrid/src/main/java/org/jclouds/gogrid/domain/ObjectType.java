@@ -43,10 +43,10 @@ public enum ObjectType {
     }
 
     public static ObjectType fromValue(String type) {
-        if("StorageDNS".equals(type)) return STORAGE_DNS;
+        if ("StorageDNS".equals(type)) return STORAGE_DNS;
         try {
             return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(type, "type")));
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return UNRECOGNIZED;
         }
     }

@@ -61,7 +61,7 @@ public class FlavorExtraSpecsApiLiveTest extends BaseNovaApiLiveTest {
    @Override
    protected void tearDown() {
       if (apiOption.isPresent() && testFlavor != null) {
-         for(String key : testSpecs.keySet()) {
+         for (String key : testSpecs.keySet()) {
             assertTrue(apiOption.get().deleteMetadataKey(testFlavor.getId(), key));
          }
       }

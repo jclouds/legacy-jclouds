@@ -46,7 +46,7 @@ import com.google.inject.Module;
 @Test(groups = "unit", testName = "AzureBlobRequestSignerTest")
 public class AzureBlobRequestSignerTest extends BaseAsyncClientTest<AzureBlobAsyncClient> {
 
-   public AzureBlobRequestSignerTest(){
+   public AzureBlobRequestSignerTest() {
       // this is base64 decoded in the signer;
       credential = "aaaabbbb"; 
    }

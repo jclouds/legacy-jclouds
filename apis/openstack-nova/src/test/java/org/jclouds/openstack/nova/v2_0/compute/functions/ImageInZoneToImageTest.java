@@ -89,7 +89,7 @@ public class ImageInZoneToImageTest {
    }
 
    @SuppressWarnings("unchecked")
-   private static Function<Image, OperatingSystem> constant(OperatingSystem operatingSystem){
+   private static Function<Image, OperatingSystem> constant(OperatingSystem operatingSystem) {
       return Function.class.cast(Functions.constant(operatingSystem));
    }
 }

@@ -84,17 +84,17 @@ public class CreateVlanIPRangeOptions extends AccountInDomainOptions {
    }
 
    public CreateVlanIPRangeOptions forVirtualNetwork(boolean forVirtualNetwork) {
-      this.queryParameters.replaceValues("forvirtualnetwork", ImmutableSet.of(forVirtualNetwork+""));
+      this.queryParameters.replaceValues("forvirtualnetwork", ImmutableSet.of(forVirtualNetwork + ""));
       return this;
    }
 
    public CreateVlanIPRangeOptions zoneId(String zoneId) {
-      this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId+""));
+      this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
       return this;
    }
 
    public CreateVlanIPRangeOptions vlan(long vlan) {
-      this.queryParameters.replaceValues("vlan", ImmutableSet.of(vlan+""));
+      this.queryParameters.replaceValues("vlan", ImmutableSet.of(vlan + ""));
       return this;
    }
 
@@ -104,7 +104,7 @@ public class CreateVlanIPRangeOptions extends AccountInDomainOptions {
    }
 
    public CreateVlanIPRangeOptions podId(String podId) {
-      this.queryParameters.replaceValues("podid", ImmutableSet.of(podId+""));
+      this.queryParameters.replaceValues("podid", ImmutableSet.of(podId + ""));
       return this;
    }
 
@@ -119,12 +119,12 @@ public class CreateVlanIPRangeOptions extends AccountInDomainOptions {
    }
 
    public CreateVlanIPRangeOptions networkId(String networkId) {
-      this.queryParameters.replaceValues("networkid", ImmutableSet.of(networkId+""));
+      this.queryParameters.replaceValues("networkid", ImmutableSet.of(networkId + ""));
       return this;
    }
 
    public CreateVlanIPRangeOptions projectId(String projectId) {
-      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId+""));
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
       return this;
    }
 }

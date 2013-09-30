@@ -73,7 +73,7 @@ public class AzureBlobApiMetadata extends BaseRestApiMetadata {
    
    public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
       @SuppressWarnings("deprecation")
-      protected Builder(){
+      protected Builder() {
          super(AzureBlobClient.class, AzureBlobAsyncClient.class);
          id("azureblob")
          .name("Microsoft Azure Blob Service API")

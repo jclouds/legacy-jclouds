@@ -55,7 +55,7 @@ public class CloudOneStorageProviderMetadata extends BaseProviderMetadata {
    
    public static class Builder extends BaseProviderMetadata.Builder {
 
-      protected Builder(){
+      protected Builder() {
          id("cloudonestorage")
          .name("PEER1 CloudOne Storage")
          .apiMetadata(new AtmosApiMetadata())

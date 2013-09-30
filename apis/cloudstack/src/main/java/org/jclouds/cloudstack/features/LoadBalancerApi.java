@@ -124,7 +124,7 @@ public interface LoadBalancerApi {
     */
    @Named("updateLoadBalancerRule")
    @GET
-   @QueryParams(keys = "command", values ="updateLoadBalancerRule")
+   @QueryParams(keys = "command", values = "updateLoadBalancerRule")
    @SelectJson("loadbalancerrule")
    @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)

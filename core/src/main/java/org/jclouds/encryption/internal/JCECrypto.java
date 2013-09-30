@@ -63,15 +63,15 @@ public class JCECrypto implements Crypto {
    @Override
    public Mac hmac(String algorithm, byte[] key) throws NoSuchAlgorithmException, InvalidKeyException {
       Mac mac = null;
-      if(provider != null) {
+      if (provider != null) {
           try {
           mac = Mac.getInstance(algorithm, provider);
-          } catch(Exception e) {
+          } catch (Exception e) {
               //Provider does not function.
               //Do nothing and let it fallback to the default way.
           }
       }
-      if(mac == null) {
+      if (mac == null) {
          mac = Mac.getInstance(algorithm);
       }
       SecretKeySpec signingKey = new SecretKeySpec(key, algorithm);

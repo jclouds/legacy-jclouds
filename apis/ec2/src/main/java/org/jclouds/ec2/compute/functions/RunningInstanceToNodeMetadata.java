@@ -189,7 +189,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    @VisibleForTesting
    String getGroupForInstance(final RunningInstance instance) {
       String group = parseGroupFrom(instance, instance.getGroupNames());
-      if(group == null && instance.getKeyName() != null) {
+      if (group == null && instance.getKeyName() != null) {
          // when not using a generated security group, e.g. in VPC, try from key:
          group = parseGroupFrom(instance, Sets.newHashSet(instance.getKeyName()));
       }

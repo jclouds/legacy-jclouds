@@ -52,7 +52,7 @@ public class VAppTemplatesInOrg implements Function<Org, Iterable<VAppTemplate>>
    public Iterable<VAppTemplate> apply(Org from) {
       Iterable<CatalogItem> catalogs = allCatalogItemsInOrg.apply(from);
       Iterable<VAppTemplate> vAppTemplates = vAppTemplatesForCatalogItems.apply(catalogs);
-      return filter(vAppTemplates, and(notNull(), new Predicate<VAppTemplate>(){
+      return filter(vAppTemplates, and(notNull(), new Predicate<VAppTemplate>() {
          @Override
          public boolean apply(VAppTemplate input) {
             if (input == null)

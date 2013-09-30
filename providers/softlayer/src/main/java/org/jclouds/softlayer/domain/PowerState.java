@@ -76,7 +76,7 @@ public class PowerState {
 
    @ConstructorProperties("keyName")
    public PowerState(VirtualGuest.State keyName) {
-      this.keyName = checkNotNull(keyName,"keyName cannot be null or empty:"+keyName);
+      this.keyName = checkNotNull(keyName, "keyName cannot be null or empty:" + keyName);
    }
 
    /**

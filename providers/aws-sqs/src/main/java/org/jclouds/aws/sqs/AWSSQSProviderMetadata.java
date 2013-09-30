@@ -83,7 +83,7 @@ public class AWSSQSProviderMetadata extends BaseProviderMetadata {
    
    public static class Builder extends BaseProviderMetadata.Builder {
 
-      protected Builder(){
+      protected Builder() {
          id("aws-sqs")
          .name("Amazon Simple Queue Service")
          .endpoint("https://sqs.us-east-1.amazonaws.com")

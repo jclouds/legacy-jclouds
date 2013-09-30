@@ -52,7 +52,7 @@ public class RegionAndIdToImage extends CacheLoader<RegionAndName, Image> {
    }
 
    @Override
-   public Image load(RegionAndName key) throws ExecutionException{
+   public Image load(RegionAndName key) throws ExecutionException {
       try {
          org.jclouds.ec2.domain.Image image = Iterables.getOnlyElement(sync.getAMIApi().get()
                .describeImagesInRegion(key.getRegion(), imageIds(key.getName())));

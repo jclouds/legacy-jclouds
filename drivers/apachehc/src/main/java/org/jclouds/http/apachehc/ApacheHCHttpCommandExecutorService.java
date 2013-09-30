@@ -71,7 +71,7 @@ public class ApacheHCHttpCommandExecutorService extends BaseHttpCommandExecutorS
    @Override
    protected HttpUriRequest convert(HttpRequest request) throws IOException {
       HttpUriRequest returnVal = apacheHCUtils.convertToApacheRequest(request);
-      if (request.getPayload() != null && request.getPayload().getContentMetadata().getContentMD5() != null){
+      if (request.getPayload() != null && request.getPayload().getContentMetadata().getContentMD5() != null) {
          String md5 = base64().encode(asByteSource(request.getPayload().getInput()).hash(md5()).asBytes());
          returnVal.addHeader("Content-MD5", md5);
       }

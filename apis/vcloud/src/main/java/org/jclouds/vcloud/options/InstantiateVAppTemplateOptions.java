@@ -159,7 +159,7 @@ public class InstantiateVAppTemplateOptions {
    }
    
    @Override
-   public String toString(){
+   public String toString() {
       return string().toString();
    }
    

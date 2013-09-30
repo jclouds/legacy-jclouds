@@ -60,7 +60,7 @@ public class Reflection2CoreJavaClassesTest {
                try {
                   // generate a stacktrace
                   throw new Exception();
-               } catch(Exception exception) {
+               } catch (Exception exception) {
                   // fail *only* if being called from this test
                   for (StackTraceElement element : exception.getStackTrace()) {
                      if (element.getMethodName().equals(testMethod.getName())) {

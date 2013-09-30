@@ -169,7 +169,7 @@ public class AWSRunningInstanceToNodeMetadataTest {
 
       final Map<RegionAndName, ? extends Image> backing = ImagesToRegionAndIdMap.imagesToMap(images);
 
-      LoadingCache<RegionAndName, Image> instanceToImage = CacheBuilder.newBuilder().build(new CacheLoader<RegionAndName, Image> (){
+      LoadingCache<RegionAndName, Image> instanceToImage = CacheBuilder.newBuilder().build(new CacheLoader<RegionAndName, Image>() {
     
          @Override
          public Image load(RegionAndName key) throws Exception {

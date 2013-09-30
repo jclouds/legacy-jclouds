@@ -68,7 +68,7 @@ public class AWSS3ApiMetadata extends S3ApiMetadata {
 
    public static class Builder extends S3ApiMetadata.Builder<Builder> {
       @SuppressWarnings("deprecation")
-      protected Builder(){
+      protected Builder() {
          super(AWSS3Client.class, AWSS3AsyncClient.class);
          id("aws-s3")
          .name("Amazon-specific S3 API")

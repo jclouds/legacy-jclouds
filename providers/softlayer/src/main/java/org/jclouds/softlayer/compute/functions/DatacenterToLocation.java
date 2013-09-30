@@ -57,7 +57,7 @@ public class DatacenterToLocation implements Function<Datacenter,Location> {
    }
 
    private Iterable<String> createIso3166Codes(Address address) {
-      if (address== null) return ImmutableSet.<String> of();
+      if (address == null) return ImmutableSet.<String> of();
 
       final String country = nullToEmpty(address.getCountry()).trim();
       if (country.isEmpty()) return ImmutableSet.<String> of();

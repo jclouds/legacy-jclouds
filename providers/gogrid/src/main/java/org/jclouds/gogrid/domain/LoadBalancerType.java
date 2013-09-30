@@ -38,8 +38,8 @@ public enum LoadBalancerType {
     }
 
     public static LoadBalancerType fromValue(String type) {
-        for(LoadBalancerType persistenceType : values()) {
-            if(persistenceType.type.equals(checkNotNull(type))) return persistenceType;
+        for (LoadBalancerType persistenceType : values()) {
+            if (persistenceType.type.equals(checkNotNull(type))) return persistenceType;
         }
         return UNRECOGNIZED;
     }

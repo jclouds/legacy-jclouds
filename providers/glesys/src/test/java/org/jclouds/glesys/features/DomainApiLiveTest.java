@@ -104,7 +104,7 @@ public class DomainApiLiveTest extends BaseGleSYSApiLiveTest {
 
       assertTrue(recordCounter.apply(before + 1));
 
-      for(DomainRecord record : domainApi.listRecords(testDomain)) {
+      for (DomainRecord record : domainApi.listRecords(testDomain)) {
          if ("test".equals(record.getHost())) {
             assertEquals(record.getType(), "A");
             assertEquals(record.getData(), "127.0.0.1");
@@ -121,7 +121,7 @@ public class DomainApiLiveTest extends BaseGleSYSApiLiveTest {
       assertTrue(recordCounter.apply(before + 1));
 
       String recordId = null;
-      for(DomainRecord record : domainApi.listRecords(testDomain)) {
+      for (DomainRecord record : domainApi.listRecords(testDomain)) {
          if ("testeditbefore".equals(record.getHost())) {
             assertEquals(record.getType(), "A");
             assertEquals(record.getData(), "127.0.0.1");
@@ -134,7 +134,7 @@ public class DomainApiLiveTest extends BaseGleSYSApiLiveTest {
       domainApi.updateRecord(recordId, UpdateRecordOptions.Builder.host("testeditafter"));
 
       boolean found = false;
-      for(DomainRecord record : domainApi.listRecords(testDomain)) {
+      for (DomainRecord record : domainApi.listRecords(testDomain)) {
          if (recordId.equals(record.getId())) {
             assertEquals(record.getHost(), "testeditafter");
             assertEquals(record.getType(), "A");

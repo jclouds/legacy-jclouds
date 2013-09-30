@@ -39,7 +39,7 @@ import com.google.inject.Module;
 @Beta
 public interface ApiMetadata {
 
-   public static interface Builder<B extends Builder<B>>{
+   public static interface Builder<B extends Builder<B>> {
       /**
        * @see ApiMetadata#getId()
        */

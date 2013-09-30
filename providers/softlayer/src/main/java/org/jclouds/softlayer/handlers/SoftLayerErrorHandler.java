@@ -59,7 +59,7 @@ public class SoftLayerErrorHandler implements HttpErrorHandler {
                }
                break;
             case 500:
-               if (message != null ){
+               if (message != null ) {
                   if (message.indexOf("Unable to determine package for") != -1) {
                      exception = new ResourceNotFoundException(message, exception);
                   } else if (message.indexOf("currently an active transaction") != -1) {

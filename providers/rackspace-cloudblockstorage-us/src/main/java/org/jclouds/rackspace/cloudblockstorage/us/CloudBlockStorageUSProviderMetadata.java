@@ -74,7 +74,7 @@ public class CloudBlockStorageUSProviderMetadata extends BaseProviderMetadata {
    
    public static class Builder extends BaseProviderMetadata.Builder {
 
-      protected Builder(){
+      protected Builder() {
          id("rackspace-cloudblockstorage-us")
          .name("Rackspace Next Generation Cloud Block Storage US")
          .apiMetadata(new CinderApiMetadata().toBuilder()

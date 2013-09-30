@@ -78,7 +78,7 @@ public class PresentInstances implements Function<Set<RegionAndName>, Set<Runnin
    }
    
    @Override
-   public String toString(){
+   public String toString() {
       return "presentInstances()";
    }
 }

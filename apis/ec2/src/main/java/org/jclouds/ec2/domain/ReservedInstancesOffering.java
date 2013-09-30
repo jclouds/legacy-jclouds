@@ -34,7 +34,7 @@ public class ReservedInstancesOffering implements Comparable<ReservedInstancesOf
 
    public ReservedInstancesOffering(String region, String availabilityZone, long duration, float fixedPrice, String instanceType,
          String productDescription, String reservedInstancesOfferingId, float usagePrice) {
-      this.region=region;
+      this.region = region;
       this.availabilityZone = availabilityZone;
       this.duration = duration;
       this.fixedPrice = fixedPrice;

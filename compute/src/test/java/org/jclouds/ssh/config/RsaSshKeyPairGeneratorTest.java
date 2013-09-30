@@ -80,7 +80,7 @@ public class RsaSshKeyPairGeneratorTest {
 
       replay(crypto, rsaKeyPairGenerator, secureRandom);
 
-      RsaSshKeyPairGenerator supplier = Guice.createInjector(new AbstractModule(){
+      RsaSshKeyPairGenerator supplier = Guice.createInjector(new AbstractModule() {
          protected void configure() {
             bind(Crypto.class).toInstance(crypto);
             bind(SecureRandom.class).toInstance(secureRandom);

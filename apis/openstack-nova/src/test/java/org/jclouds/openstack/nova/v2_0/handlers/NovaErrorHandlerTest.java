@@ -49,7 +49,7 @@ public class NovaErrorHandlerTest {
    private HttpCommand command;
 
    @BeforeTest
-   void setupCommand(){
+   void setupCommand() {
       command = command();
    }
    
@@ -206,7 +206,7 @@ public class NovaErrorHandlerTest {
    
    DateCodec iso8601Seconds = new DateServiceIso8601SecondsCodec(new SimpleDateFormatDateService());
    
-   Ticker y2k = new Ticker(){
+   Ticker y2k = new Ticker() {
 
       @Override
       public long read() {

@@ -55,7 +55,7 @@ public class NinefoldStorageProviderMetadata extends BaseProviderMetadata {
    
    public static class Builder extends BaseProviderMetadata.Builder {
 
-      protected Builder(){
+      protected Builder() {
           id("ninefold-storage")
          .name("Ninefold Storage")
          .apiMetadata(new AtmosApiMetadata())

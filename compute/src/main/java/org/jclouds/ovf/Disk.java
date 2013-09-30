@@ -22,7 +22,7 @@ import java.net.URI;
  * 
  * @author Adrian Cole
  */
-public class Disk implements Comparable<Disk>{
+public class Disk implements Comparable<Disk> {
    public static Builder builder() {
       return new Builder();
    }

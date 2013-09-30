@@ -159,9 +159,9 @@ public class IpScope {
    public String toString() {
       ToStringHelper helper = Objects.toStringHelper("").omitNullValues().add("inherited", inherited).add("gateway", gateway)
             .add("netmask", netmask).add("dns1", dns1).add("dns2", dns2).add("dnsSuffix", dnsSuffix);
-      if (ipRanges.size() >0)
+      if (ipRanges.size() > 0)
          helper.add("ipRanges", ipRanges);
-      if (allocatedIpAddresses.size() >0)
+      if (allocatedIpAddresses.size() > 0)
          helper.add("allocatedIpAddresses", allocatedIpAddresses);
       return helper.toString();
    }

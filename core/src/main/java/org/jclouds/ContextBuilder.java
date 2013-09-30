@@ -408,11 +408,11 @@ public class ContextBuilder {
    }
 
    static Properties resolveProperties(Properties mutable, String providerId, Set<String> keys, Set<String> optionalKeys) throws NoSuchElementException {
-      for (String key : keys){
+      for (String key : keys) {
          try {
             String scopedProperty = ImmutableList.copyOf(Splitter.on('.').split(key)).get(1);
             mutable.setProperty(key, searchPropertiesForProviderScopedProperty(mutable, providerId,scopedProperty));
-         } catch (NoSuchElementException e){
+         } catch (NoSuchElementException e) {
             if (!optionalKeys.contains(key))
                throw e;
          }

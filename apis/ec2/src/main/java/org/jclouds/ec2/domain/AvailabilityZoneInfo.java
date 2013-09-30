@@ -29,7 +29,7 @@ import com.google.common.collect.Sets;
  *      />
  * @author Adrian Cole
  */
-public class AvailabilityZoneInfo implements Comparable<AvailabilityZoneInfo>{
+public class AvailabilityZoneInfo implements Comparable<AvailabilityZoneInfo> {
 
    private final String zone;
    private final String state;

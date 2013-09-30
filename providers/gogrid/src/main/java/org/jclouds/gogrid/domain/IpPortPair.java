@@ -125,7 +125,7 @@ public class IpPortPair implements Comparable<IpPortPair> {
 
    @Override
    public int compareTo(IpPortPair o) {
-      if(ip != null && o.getIp() != null) return Longs.compare(ip.getId(), o.getIp().getId());
+      if (ip != null && o.getIp() != null) return Longs.compare(ip.getId(), o.getIp().getId());
       return Ints.compare(port, o.getPort());
    }
 }

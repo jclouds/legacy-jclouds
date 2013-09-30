@@ -53,7 +53,7 @@ public class LocationIdToURIFromAccessForTypeAndVersionTest {
       @Override
       protected void configure() {
          bindConstant().annotatedWith(Provider.class).to("openstack-keystone");
-         bind(new TypeLiteral<Supplier<URI>>(){
+         bind(new TypeLiteral<Supplier<URI>>() {
          }).annotatedWith(Provider.class).toInstance(Suppliers.ofInstance(URI.create("https://identity")));
          bind(new TypeLiteral<Function<Endpoint, String>>(){}).to(EndpointToRegion.class);
          install(new FactoryModuleBuilder().implement(LocationIdToURIFromAccessForTypeAndVersion.class,

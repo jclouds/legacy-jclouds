@@ -124,7 +124,7 @@ public abstract class BaseApiLiveTest<A extends Closeable> {
       if (provider != null)
          try {
             return ContextBuilder.newBuilder(provider);
-         } catch (NoSuchElementException e){
+         } catch (NoSuchElementException e) {
             Logger.getAnonymousLogger()
                   .warning("provider ["
                         + provider

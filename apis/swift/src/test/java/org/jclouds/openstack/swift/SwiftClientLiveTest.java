@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
 @Test(groups = "live", testName = "SwiftClientLiveTest")
 public class SwiftClientLiveTest extends CommonSwiftClientLiveTest<CommonSwiftClient> {
    
-   public SwiftClientLiveTest(){
+   public SwiftClientLiveTest() {
       provider = System.getProperty("test.swift.provider", "swift");
    }
    

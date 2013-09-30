@@ -63,7 +63,7 @@ public class FindSecurityGroupOrCreateTest {
    public void testWhenFoundReturnsSecurityGroupFromAtomicReferenceValueUpdatedDuringPredicateCheck() throws Exception {
       final SecurityGroupInZone securityGroupInZone = createMock(SecurityGroupInZone.class);
 
-      Predicate<AtomicReference<ZoneAndName>> returnSecurityGroupExistsInZone = new Predicate<AtomicReference<ZoneAndName>>(){
+      Predicate<AtomicReference<ZoneAndName>> returnSecurityGroupExistsInZone = new Predicate<AtomicReference<ZoneAndName>>() {
 
          @Override
          public boolean apply(AtomicReference<ZoneAndName> input) {

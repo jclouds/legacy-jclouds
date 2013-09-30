@@ -98,7 +98,7 @@ public class S3ApiMetadata extends BaseRestApiMetadata {
          this(S3Client.class, S3AsyncClient.class);
       }
 
-      protected Builder(Class<?> syncClient, Class<?> asyncClient){
+      protected Builder(Class<?> syncClient, Class<?> asyncClient) {
          super(syncClient, asyncClient);
          id("s3")
          .name("Amazon Simple Storage Service (S3) API")

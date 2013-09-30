@@ -68,7 +68,7 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
       super.configure();
    }
    
-   protected void installDependencies(){
+   protected void installDependencies() {
       install(new EC2ComputeServiceDependenciesModule());
    }
    

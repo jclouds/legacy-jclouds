@@ -41,7 +41,7 @@ import com.google.common.collect.Iterables;
 @Test(groups = "live")
 public class CloudFilesClientLiveTest extends CommonSwiftClientLiveTest<CloudFilesClient> {
 
-   public CloudFilesClientLiveTest(){
+   public CloudFilesClientLiveTest() {
       provider = "cloudfiles";
    }
    

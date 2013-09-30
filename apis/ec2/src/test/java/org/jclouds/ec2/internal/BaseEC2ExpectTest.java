@@ -65,7 +65,7 @@ public abstract class BaseEC2ExpectTest<T> extends BaseRestClientExpectTest<T> {
                .addFormParam("Action", "DescribeRegions").build());
       
       Builder<HttpRequest, HttpResponse> builder = ImmutableMap.<HttpRequest, HttpResponse> builder();
-      for (String region : ImmutableSet.of("ap-northeast-1", "ap-southeast-1", "eu-west-1", "sa-east-1", "us-east-1", "us-west-1", "us-west-2")){
+      for (String region : ImmutableSet.of("ap-northeast-1", "ap-southeast-1", "eu-west-1", "sa-east-1", "us-east-1", "us-west-1", "us-west-2")) {
          builder.put(
                formSigner.filter(HttpRequest.builder()
                           .method("POST")

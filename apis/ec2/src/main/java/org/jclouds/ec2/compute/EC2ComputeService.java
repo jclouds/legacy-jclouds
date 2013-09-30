@@ -287,7 +287,7 @@ public class EC2ComputeService extends BaseComputeService {
       }
    }
 
-   protected void cleanUpIncidentalResources(final String region, final String group){
+   protected void cleanUpIncidentalResources(final String region, final String group) {
       // For issue #445, tries to delete security groups first: ec2 throws exception if in use, but
       // deleting a key pair does not.
       // This is "belt-and-braces" because deleteKeyPair also does extractIdsFromInstances & usingKeyPairAndNotDead

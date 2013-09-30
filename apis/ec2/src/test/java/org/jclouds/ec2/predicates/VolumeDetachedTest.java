@@ -65,7 +65,7 @@ public class VolumeDetachedTest {
 
    @DataProvider(name = "notDetachedStatuses")
    public Object[][] provideNotDetachedStatuses() {
-      return new Object[][]{
+      return new Object[][] {
          {Status.ATTACHED},
          {Status.ATTACHING},
          {Status.BUSY},

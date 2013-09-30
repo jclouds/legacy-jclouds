@@ -35,7 +35,7 @@ import com.google.common.collect.Ordering;
  *      />
  * @author Adrian Cole
  */
-public class Reservation<T extends RunningInstance> extends ForwardingSet<T> implements Comparable<Reservation<T>>{
+public class Reservation<T extends RunningInstance> extends ForwardingSet<T> implements Comparable<Reservation<T>> {
 
    public static <T extends RunningInstance> Builder<T> builder() {
       return new Builder<T>();

@@ -200,14 +200,14 @@ public class VirtualMachineApiLiveTest extends BaseCloudStackApiLiveTest {
 
          Set<Network> allSafeNetworksInZone = adminClient.getNetworkApi().listNetworks(
             ListNetworksOptions.Builder.zoneId(template.getZoneId()).isSystem(false));
-         for(Network net : allSafeNetworksInZone) {
-            if(net.getName().equals(prefix + "-ip-network")) {
+         for (Network net : allSafeNetworksInZone) {
+            if (net.getName().equals(prefix + "-ip-network")) {
                logger.info("Deleting VMs in network: " + net);
 
                Set<VirtualMachine> machinesInNetwork = adminClient.getVirtualMachineApi().listVirtualMachines(
                   ListVirtualMachinesOptions.Builder.networkId(net.getId()));
 
-               for(VirtualMachine machine : machinesInNetwork) {
+               for (VirtualMachine machine : machinesInNetwork) {
                   if (machine.getState().equals(VirtualMachine.State.RUNNING)) {
                      logger.info("Deleting VM: " + machine);
                      destroyMachine(machine);
@@ -252,7 +252,7 @@ public class VirtualMachineApiLiveTest extends BaseCloudStackApiLiveTest {
          logger.info("Created VM: " + vm);
 
          boolean hasStaticIpNic = false;
-         for(NIC nic : vm.getNICs()) {
+         for (NIC nic : vm.getNICs()) {
             if (nic.getNetworkId() == network.getId()) {
                hasStaticIpNic = true;
                assertEquals(nic.getIPAddress(), ipAddress);

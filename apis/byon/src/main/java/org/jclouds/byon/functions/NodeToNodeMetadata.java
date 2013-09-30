@@ -102,7 +102,7 @@ public class NodeToNodeMetadata implements Function<Node, NodeMetadata> {
          } else if (from.getCredential() != null) {
             credBuilder.credential(from.getCredential());
          }
-         if (from.getSudoPassword() != null){
+         if (from.getSudoPassword() != null) {
             credBuilder.password(from.getSudoPassword());
             credBuilder.authenticateSudo(true);
          }
