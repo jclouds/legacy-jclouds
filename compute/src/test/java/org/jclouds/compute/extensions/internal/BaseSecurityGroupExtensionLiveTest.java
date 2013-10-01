@@ -137,7 +137,8 @@ public abstract class BaseSecurityGroupExtensionLiveTest extends BaseComputeServ
 
       SecurityGroup newGroup = securityGroupExtension.get().addIpPermission(perm, group);
 
-      assertEquals(perm, Iterables.getOnlyElement(newGroup.getIpPermissions())); 
+      assertEquals(Iterables.getOnlyElement(newGroup.getIpPermissions()), perm,
+              "Expecting IpPermission " + perm + " but group was " + newGroup);
    }
    
    @Test(groups = { "integration", "live" }, singleThreaded = true, dependsOnMethods = "testAddIpPermission")
@@ -165,7 +166,8 @@ public abstract class BaseSecurityGroupExtensionLiveTest extends BaseComputeServ
 
       SecurityGroup newGroup = securityGroupExtension.get().removeIpPermission(perm, group);
 
-      assertEquals(0, Iterables.size(newGroup.getIpPermissions())); 
+      assertEquals(Iterables.size(newGroup.getIpPermissions()), 0,
+              "Group should have no permissions, but has " + Iterables.size(newGroup.getIpPermissions()));
    }
 
    @Test(groups = { "integration", "live" }, singleThreaded = true, dependsOnMethods = "testRemoveIpPermission")
