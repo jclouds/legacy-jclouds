@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.ec2.xml;
 
@@ -23,10 +21,10 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.Set;
 
-import org.jclouds.ec2.domain.IpPermission;
-import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.net.domain.IpPermission;
+import org.jclouds.net.domain.IpProtocol;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -48,10 +46,10 @@ public class DescribeSecurityGroupsResponseHandlerTest extends BaseEC2HandlerTes
       InputStream is = getClass().getResourceAsStream("/describe_securitygroups.xml");
 
       Set<SecurityGroup> expected = ImmutableSet.of(
-            new SecurityGroup(defaultRegion, null, "WebServers", "UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM", "Web Servers",
+            new SecurityGroup(defaultRegion, "sg-3c6ef654", "WebServers", "UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM", "Web Servers",
                   ImmutableSet.of(new IpPermission(IpProtocol.TCP, 80, 80, ImmutableMultimap.<String, String> of(),
                         ImmutableSet.<String> of(), ImmutableSet.of("0.0.0.0/0")))),
-            new SecurityGroup(defaultRegion, null, "RangedPortsBySource", "UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM", "Group A",
+            new SecurityGroup(defaultRegion, "sg-867309ab", "RangedPortsBySource", "UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM", "Group A",
                   ImmutableSet.of(new IpPermission(IpProtocol.TCP, 6000, 7000, ImmutableMultimap
                         .<String, String> of(), ImmutableSet.<String> of(), ImmutableSet.<String> of()))));
 
@@ -71,7 +69,7 @@ public class DescribeSecurityGroupsResponseHandlerTest extends BaseEC2HandlerTes
       userIdGroupPairs.put("UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM", "jclouds#cluster#world");
 
       Set<SecurityGroup> expected = ImmutableSet.of(
-            new SecurityGroup(defaultRegion, null, "jclouds#cluster#world", "UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM", "Cluster",
+            new SecurityGroup(defaultRegion, "sg-3c6ef654", "jclouds#cluster#world", "UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM", "Cluster",
                   ImmutableSet.of(
                         new IpPermission(IpProtocol.TCP, 22, 22, ImmutableMultimap.<String, String> of(),
                               ImmutableSet.<String> of(), ImmutableSet.of("0.0.0.0/0")),

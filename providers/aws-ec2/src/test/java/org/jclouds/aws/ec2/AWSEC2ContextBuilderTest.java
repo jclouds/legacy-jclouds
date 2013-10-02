@@ -1,32 +1,34 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.aws.ec2;
 
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_AMI_QUERY;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
+import static org.jclouds.reflect.Reflection2.typeToken;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Map;
 import java.util.Properties;
 
 import org.jclouds.ContextBuilder;
+import org.jclouds.View;
 import org.jclouds.aws.ec2.compute.config.ImageQuery;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.ec2.EC2Api;
 import org.testng.annotations.Test;
 
 import com.google.inject.Key;
@@ -41,6 +43,13 @@ public class AWSEC2ContextBuilderTest {
       return ContextBuilder.newBuilder(new AWSEC2ProviderMetadata()).overrides(input).credentials("foo", "bar")
                .buildInjector().getInstance(Key.get(new TypeLiteral<Map<String, String>>() {
                }, ImageQuery.class));
+   }
+
+   public void testAssignability() {
+      View view = ContextBuilder.newBuilder(new AWSEC2ProviderMetadata()).credentials("foo", "bar")
+              .buildView(typeToken(ComputeServiceContext.class));
+      view.unwrapApi(EC2Api.class);
+      view.unwrapApi(AWSEC2Api.class);
    }
 
    public void testConvertImageSyntax() {

@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.openstack.nova.ec2;
 
@@ -25,34 +23,21 @@ import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AUTO_ALLOCATE_ELASTIC_IPS;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
+import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.apis.ApiMetadata;
 import org.jclouds.ec2.EC2ApiMetadata;
+import org.jclouds.ec2.compute.EC2ComputeServiceContext;
 import org.jclouds.ec2.compute.config.EC2ResolveImagesModule;
 import org.jclouds.openstack.nova.ec2.config.HyphenToNullIso8601Module;
 import org.jclouds.openstack.nova.ec2.config.NovaEC2ComputeServiceContextModule;
-import org.jclouds.openstack.nova.ec2.config.NovaEC2RestClientModule;
+import org.jclouds.openstack.nova.ec2.config.NovaEC2HttpApiModule;
+import org.jclouds.rest.internal.BaseHttpApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 
-/**
- * Implementation of {@link ApiMetadata} for the OpenStack Nova's EC2-clone API
- * 
- * @author Adrian Cole
- */
-public class NovaEC2ApiMetadata extends EC2ApiMetadata {
-
-   /**
-    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(NovaEC2Client.class)} as
-    *             {@link NovaEC2AsyncClient} interface will be removed in jclouds 1.7.
-    */
-   @Deprecated
-   public static final TypeToken<org.jclouds.rest.RestContext<NovaEC2Client, NovaEC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<NovaEC2Client, NovaEC2AsyncClient>>() {
-      private static final long serialVersionUID = 1L;
-   };
+public final class NovaEC2ApiMetadata extends BaseHttpApiMetadata<NovaEC2Api> {
 
    @Override
    public Builder toBuilder() {
@@ -60,13 +45,13 @@ public class NovaEC2ApiMetadata extends EC2ApiMetadata {
    }
 
    public NovaEC2ApiMetadata() {
-      this(new Builder());
+      super(new Builder());
    }
 
    protected NovaEC2ApiMetadata(Builder builder) {
       super(builder);
    }
-   
+
    public static Properties defaultProperties() {
       Properties properties = EC2ApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_REGIONS, "nova");
@@ -84,23 +69,24 @@ public class NovaEC2ApiMetadata extends EC2ApiMetadata {
       return properties;
    }
 
-   public static class Builder extends EC2ApiMetadata.Builder<Builder> {
-      @SuppressWarnings("deprecation")
-      protected Builder(){
-         super(NovaEC2Client.class, NovaEC2AsyncClient.class);
+   public static final class Builder extends BaseHttpApiMetadata.Builder<NovaEC2Api, Builder> {
+      public Builder() {
          id("openstack-nova-ec2")
          .name("OpenStack Nova's EC2-clone API")
          .version("2009-04-04")
+         .identityName("Access Key ID")
+         .credentialName("Secret Access Key")
          .defaultEndpoint("http://localhost:8773/services/Cloud")
+         .documentation(URI.create("http://docs.amazonwebservices.com/AWSEC2/latest/APIReference"))
          .defaultProperties(NovaEC2ApiMetadata.defaultProperties())
-         .context(CONTEXT_TOKEN)
+         .view(EC2ComputeServiceContext.class)
          .defaultModules(ImmutableSet.<Class<? extends Module>>builder()
-                                     .add(NovaEC2RestClientModule.class)
+                                     .add(NovaEC2HttpApiModule.class)
                                      .add(EC2ResolveImagesModule.class)
                                      .add(NovaEC2ComputeServiceContextModule.class)
                                      .add(HyphenToNullIso8601Module.class).build());
       }
-      
+
       @Override
       public NovaEC2ApiMetadata build() {
          return new NovaEC2ApiMetadata(this);

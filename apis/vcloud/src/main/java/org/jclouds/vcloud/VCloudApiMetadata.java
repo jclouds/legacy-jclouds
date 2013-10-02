@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.vcloud;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
@@ -31,13 +29,12 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.rest.internal.BaseRestApiMetadata;
+import org.jclouds.rest.internal.BaseHttpApiMetadata;
 import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
-import org.jclouds.vcloud.config.VCloudRestClientModule;
+import org.jclouds.vcloud.config.VCloudHttpApiModule;
 import org.jclouds.vcloud.domain.network.FenceMode;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 
 /**
@@ -45,17 +42,9 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class VCloudApiMetadata extends BaseRestApiMetadata {
+public class VCloudApiMetadata extends BaseHttpApiMetadata<VCloudApi> {
 
-   /**
-    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(VCloudClient.class)} as
-    *             {@link VCloudAsyncClient} interface will be removed in jclouds 1.7.
-    */
-   @Deprecated
-   public static final TypeToken<org.jclouds.rest.RestContext<VCloudClient, VCloudAsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<VCloudClient, VCloudAsyncClient>>() {
-      private static final long serialVersionUID = 1L;
-   };
-   
+
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
@@ -70,7 +59,7 @@ public class VCloudApiMetadata extends BaseRestApiMetadata {
    }
 
    public static Properties defaultProperties() {
-      Properties properties = BaseRestApiMetadata.defaultProperties();
+      Properties properties = BaseHttpApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_VCLOUD_VERSION_SCHEMA, "1");
       properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE,
             String.format("http://www.vmware.com/vcloud/v${%s}", PROPERTY_VCLOUD_VERSION_SCHEMA));
@@ -89,11 +78,8 @@ public class VCloudApiMetadata extends BaseRestApiMetadata {
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
-
-      @SuppressWarnings("deprecation")
+   public static class Builder extends BaseHttpApiMetadata.Builder<VCloudApi, Builder> {
       protected Builder() {
-         super(VCloudClient.class, VCloudAsyncClient.class);
           id("vcloud")
          .name("VCloud 1.0 API")
          .identityName("User at Organization (user@org)")
@@ -102,7 +88,7 @@ public class VCloudApiMetadata extends BaseRestApiMetadata {
          .version("1.0")
          .defaultProperties(VCloudApiMetadata.defaultProperties())
          .view(typeToken(ComputeServiceContext.class))
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(VCloudRestClientModule.class, VCloudComputeServiceContextModule.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(VCloudHttpApiModule.class, VCloudComputeServiceContextModule.class));
       }
 
       @Override

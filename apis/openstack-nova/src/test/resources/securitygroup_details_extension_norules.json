@@ -1,0 +1,10 @@
+{
+    "security_group":
+        {
+          "rules": [],
+          "tenant_id": "tenant0",
+          "id": 160,
+          "name": "name0",
+          "description": "description0"
+        }
+}

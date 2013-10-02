@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.glesys.compute;
 
@@ -26,7 +24,6 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.io.BaseEncoding.base16;
 import static org.jclouds.compute.util.ComputeServiceUtils.metadataAndTagsAsCommaDelimitedValue;
-import static org.jclouds.concurrent.FutureIterables.transformParallel;
 import static org.jclouds.util.Predicates2.retry;
 
 import java.util.Map;
@@ -55,7 +52,6 @@ import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.glesys.GleSYSApi;
-import org.jclouds.glesys.GleSYSAsyncApi;
 import org.jclouds.glesys.compute.options.GleSYSTemplateOptions;
 import org.jclouds.glesys.domain.AllowedArgumentsForCreateServer;
 import org.jclouds.glesys.domain.OSTemplate;
@@ -74,8 +70,6 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
@@ -91,17 +85,15 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
    protected Logger logger = Logger.NULL;
 
    private final GleSYSApi api;
-   private final GleSYSAsyncApi aapi;
    private final ListeningExecutorService userExecutor;
    private final Timeouts timeouts;
    private final Supplier<Set<? extends Location>> locations;
 
    @Inject
-   public GleSYSComputeServiceAdapter(GleSYSApi api, GleSYSAsyncApi aapi,
+   public GleSYSComputeServiceAdapter(GleSYSApi api,
          @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, Timeouts timeouts,
          @Memoized Supplier<Set<? extends Location>> locations) {
       this.api = checkNotNull(api, "api");
-      this.aapi = checkNotNull(aapi, "aapi");
       this.userExecutor = checkNotNull(userExecutor, "userExecutor");
       this.timeouts = checkNotNull(timeouts, "timeouts");
       this.locations = checkNotNull(locations, "locations");
@@ -200,7 +192,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
    // cheat until we have a getTemplate command
    @Override
    public OSTemplate getImage(final String id) {
-      return find(listImages(), new Predicate<OSTemplate>(){
+      return find(listImages(), new Predicate<OSTemplate>() {
 
          @Override
          public boolean apply(OSTemplate input) {
@@ -212,11 +204,11 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
    
    @Override
    public Iterable<ServerDetails> listNodes() {
-      return transformParallel(api.getServerApi().list(), new Function<Server, ListenableFuture<? extends ServerDetails>>() {
-         public ListenableFuture<ServerDetails> apply(Server from) {
-            return aapi.getServerApi().get(from.getId());
+      return api.getServerApi().list().transform(new Function<Server, ServerDetails>() {
+         public ServerDetails apply(Server from) {
+            return api.getServerApi().get(from.getId());
          }
-      }, userExecutor, null, logger, "server details");
+      });
    }
 
    @Override

@@ -1,33 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-  Licensed to jclouds, Inc. (jclouds) under one or more
-  contributor license agreements.  See the NOTICE file
-  distributed with this work for additional information
-  regarding copyright ownership.  jclouds licenses this file
-  to you under the Apache License, Version 2.0 (the
-  "License"); you may not use this file except in compliance
-  with the License.  You may obtain a copy of the License at
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        http://www.apache.org/licenses/LICENSE-2.0
 
-  Unless required by applicable law or agreed to in writing,
-  software distributed under the License is distributed on an
-  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-  KIND, either express or implied.  See the License for the
-  specific language governing permissions and limitations
-  under the License.
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.jclouds</groupId>
+    <groupId>org.apache.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
     <version>1.7.0-SNAPSHOT</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
-  <groupId>org.jclouds.provider</groupId>
+  <groupId>org.apache.jclouds.provider</groupId>
   <artifactId>rackspace-cloudblockstorage-us</artifactId>
   <name>jclouds Rackspace Next Generation Cloud Block Storage US provider</name>
   <description>OpenStack Cinder implementation targeted to Rackspace Next Generation Cloud Block Storage US</description>
@@ -51,55 +49,55 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.jclouds</groupId>
+      <groupId>org.apache.jclouds</groupId>
       <artifactId>jclouds-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.jclouds.api</groupId>
+      <groupId>org.apache.jclouds.api</groupId>
       <artifactId>openstack-cinder</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.jclouds.api</groupId>
+      <groupId>org.apache.jclouds.api</groupId>
       <artifactId>openstack-keystone</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.jclouds.api</groupId>
+      <groupId>org.apache.jclouds.api</groupId>
       <artifactId>rackspace-cloudidentity</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.jclouds</groupId>
+      <groupId>org.apache.jclouds</groupId>
       <artifactId>jclouds-core</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jclouds.api</groupId>
+      <groupId>org.apache.jclouds.api</groupId>
       <artifactId>openstack-cinder</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jclouds.api</groupId>
+      <groupId>org.apache.jclouds.api</groupId>
       <artifactId>openstack-keystone</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jclouds.api</groupId>
+      <groupId>org.apache.jclouds.api</groupId>
       <artifactId>rackspace-cloudidentity</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jclouds.driver</groupId>
+      <groupId>org.apache.jclouds.driver</groupId>
       <artifactId>jclouds-slf4j</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>

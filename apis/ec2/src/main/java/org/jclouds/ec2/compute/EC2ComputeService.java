@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.ec2.compute;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -57,6 +55,7 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.extensions.ImageExtension;
+import org.jclouds.compute.extensions.SecurityGroupExtension;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.functions.GroupNamingConvention.Factory;
 import org.jclouds.compute.internal.BaseComputeService;
@@ -74,7 +73,7 @@ import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
@@ -105,7 +104,7 @@ import com.google.inject.Inject;
  */
 @Singleton
 public class EC2ComputeService extends BaseComputeService {
-   private final EC2Client client;
+   private final EC2Api client;
    private final ConcurrentMap<RegionAndName, KeyPair> credentialsMap;
    private final LoadingCache<RegionAndName, String> securityGroupMap;
    private final Factory namingConvention;
@@ -126,16 +125,17 @@ public class EC2ComputeService extends BaseComputeService {
             InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
             RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
             PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
-            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, EC2Client client,
+            @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, EC2Api client,
             ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
             @Named("SECURITY") LoadingCache<RegionAndName, String> securityGroupMap,
             Optional<ImageExtension> imageExtension, GroupNamingConvention.Factory namingConvention,
-            @Named(PROPERTY_EC2_GENERATE_INSTANCE_NAMES) boolean generateInstanceNames) {
+            @Named(PROPERTY_EC2_GENERATE_INSTANCE_NAMES) boolean generateInstanceNames,
+            Optional<SecurityGroupExtension> securityGroupExtension) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getImageStrategy,
                getNodeMetadataStrategy, runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy,
                startNodeStrategy, stopNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning,
                nodeTerminated, nodeSuspended, initScriptRunnerFactory, initAdminAccess, runScriptOnNodeFactory,
-               persistNodeCredentials, timeouts, userExecutor, imageExtension);
+               persistNodeCredentials, timeouts, userExecutor, imageExtension, securityGroupExtension);
       this.client = client;
       this.credentialsMap = credentialsMap;
       this.securityGroupMap = securityGroupMap;
@@ -148,6 +148,7 @@ public class EC2ComputeService extends BaseComputeService {
             throws RunNodesException {
       Set<? extends NodeMetadata> nodes = super.createNodesInGroup(group, count, template);
       String region = AWSUtils.getRegionFromLocationOrNull(template.getLocation());
+
       if (client.getTagApiForRegion(region).isPresent()) {
          Map<String, String> common = metadataAndTagsAsValuesOfEmptyString(template.getOptions());
          if (common.size() > 0 || generateInstanceNames) {
@@ -212,9 +213,9 @@ public class EC2ComputeService extends BaseComputeService {
       checkNotNull(emptyToNull(group), "group must be defined");
       String groupName = namingConvention.create().sharedNameForGroup(group);
       
-      if (client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, groupName).size() > 0) {
+      if (client.getSecurityGroupApi().get().describeSecurityGroupsInRegion(region, groupName).size() > 0) {
          logger.debug(">> deleting securityGroup(%s)", groupName);
-         client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, groupName);
+         client.getSecurityGroupApi().get().deleteSecurityGroupInRegion(region, groupName);
          // TODO: test this clear happens
          securityGroupMap.invalidate(new RegionNameAndIngressRules(region, groupName, null, false));
          logger.debug("<< deleted securityGroup(%s)", groupName);
@@ -223,20 +224,20 @@ public class EC2ComputeService extends BaseComputeService {
 
    @VisibleForTesting
    void deleteKeyPair(String region, String group) {
-      for (KeyPair keyPair : client.getKeyPairServices().describeKeyPairsInRegion(region)) {
+      for (KeyPair keyPair : client.getKeyPairApi().get().describeKeyPairsInRegion(region)) {
          String keyName = keyPair.getKeyName();
          Predicate<String> keyNameMatcher = namingConvention.create().containsGroup(group);
          String oldKeyNameRegex = String.format("jclouds#%s#%s#%s", group, region, "[0-9a-f]+").replace('#', delimiter);
          // old keypair pattern too verbose as it has an unnecessary region qualifier
          
          if (keyNameMatcher.apply(keyName) || keyName.matches(oldKeyNameRegex)) {
-            Set<String> instancesUsingKeyPair = extractIdsFromInstances(filter(concat(client.getInstanceServices()
+            Set<String> instancesUsingKeyPair = extractIdsFromInstances(filter(concat(client.getInstanceApi().get()
                   .describeInstancesInRegion(region)), usingKeyPairAndNotDead(keyPair)));
             if (instancesUsingKeyPair.size() > 0) {
                logger.debug("<< inUse keyPair(%s), by (%s)", keyPair.getKeyName(), instancesUsingKeyPair);
             } else {
                logger.debug(">> deleting keyPair(%s)", keyPair.getKeyName());
-               client.getKeyPairServices().deleteKeyPairInRegion(region, keyPair.getKeyName());
+               client.getKeyPairApi().get().deleteKeyPairInRegion(region, keyPair.getKeyName());
                // TODO: test this clear happens
                credentialsMap.remove(new RegionAndName(region, keyPair.getKeyName()));
                credentialsMap.remove(new RegionAndName(region, group));
@@ -286,7 +287,7 @@ public class EC2ComputeService extends BaseComputeService {
       }
    }
 
-   protected void cleanUpIncidentalResources(final String region, final String group){
+   protected void cleanUpIncidentalResources(final String region, final String group) {
       // For issue #445, tries to delete security groups first: ec2 throws exception if in use, but
       // deleting a key pair does not.
       // This is "belt-and-braces" because deleteKeyPair also does extractIdsFromInstances & usingKeyPairAndNotDead

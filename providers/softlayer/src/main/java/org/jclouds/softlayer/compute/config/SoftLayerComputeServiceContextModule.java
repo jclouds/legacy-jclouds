@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.softlayer.compute.config;
 
@@ -39,7 +37,7 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
-import org.jclouds.softlayer.SoftLayerClient;
+import org.jclouds.softlayer.SoftLayerApi;
 import org.jclouds.softlayer.compute.functions.DatacenterToLocation;
 import org.jclouds.softlayer.compute.functions.ProductItemToImage;
 import org.jclouds.softlayer.compute.functions.ProductItemsToHardware;
@@ -51,8 +49,8 @@ import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductItemPrice;
 import org.jclouds.softlayer.domain.ProductPackage;
 import org.jclouds.softlayer.domain.VirtualGuest;
-import org.jclouds.softlayer.features.AccountClient;
-import org.jclouds.softlayer.features.ProductPackageClient;
+import org.jclouds.softlayer.features.AccountApi;
+import org.jclouds.softlayer.features.ProductPackageApi;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
@@ -95,16 +93,16 @@ public class SoftLayerComputeServiceContextModule extends
    @Singleton
    @Memoized
    public Supplier<ProductPackage> getProductPackage(AtomicReference<AuthorizationException> authException,
-            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final SoftLayerClient client,
+            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final SoftLayerApi client,
             @Named(PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME) final String virtualGuestPackageName) {
       return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException,
                new Supplier<ProductPackage>() {
                   @Override
                   public ProductPackage get() {
-                     AccountClient accountClient = client.getAccountClient();
-                     ProductPackageClient productPackageClient = client.getProductPackageClient();
-                     ProductPackage p = find(accountClient.getActivePackages(), named(virtualGuestPackageName));
-                     return productPackageClient.getProductPackage(p.getId());
+                     AccountApi accountApi = client.getAccountApi();
+                     ProductPackageApi productPackageApi = client.getProductPackageApi();
+                     ProductPackage p = find(accountApi.getActivePackages(), named(virtualGuestPackageName));
+                     return productPackageApi.getProductPackage(p.getId());
                   }
                   
                   @Override

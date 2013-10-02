@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.compute.domain.internal;
 
@@ -25,6 +23,7 @@ import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -48,6 +47,8 @@ import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
@@ -71,6 +72,24 @@ public class TemplateBuilderImplTest {
       assertEquals(TemplateBuilderImpl.multiMax(Ordering.natural(), values), ImmutableList.of("3"));
    }
    
+   public void testMultiMax2() {
+       // check with max buried in the middle
+       Iterable<String> values = ImmutableList.of("1", "3", "2", "2");
+       assertEquals(TemplateBuilderImpl.multiMax(Ordering.natural(), values), ImmutableList.of("3"));
+   }
+
+   public void testMultiMaxNull() {
+       // we rely on checking nulls in some Orderings, so assert it also does what we expect
+       // (unfortunately can't use ImmutableList here as that doesn't allow nulls)
+       Iterable<String> values = Arrays.asList("1", "3", null, "2", "2");
+       assertEquals(TemplateBuilderImpl.multiMax(Ordering.natural().nullsLast(), values), Arrays.asList((Object)null));
+   }
+   
+   public void testMultiMaxNull1() {
+       Iterable<String> values = Arrays.asList("1", "3", null, "2", "2", null);
+       assertEquals(TemplateBuilderImpl.multiMax(Ordering.natural().nullsLast(), values), Arrays.asList((Object)null, null));
+   }
+    
    protected Location provider = new LocationBuilder().scope(LocationScope.PROVIDER).id("aws-ec2").description("aws-ec2").build();
 
    protected Location region = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1")
@@ -86,7 +105,11 @@ public class TemplateBuilderImplTest {
             .description("imageDescription").version("imageVersion").operatingSystem(os).status(Image.Status.AVAILABLE)
             .location(region).build();
 
-   protected Image image2 = ImageBuilder.fromImage(image).operatingSystem(os.toBuilder().arch("X86_64").build()).build();
+   protected Image image64bit = ImageBuilder.fromImage(image).operatingSystem(os.toBuilder().arch("X86_64").build()).build();
+   
+   protected Image imageArchNull = ImageBuilder.fromImage(image).operatingSystem(os.toBuilder().arch(null).build()).build();
+   
+   protected Image imageNameAlt = ImageBuilder.fromImage(image).name("alternateImageName").build();
    
    @SuppressWarnings("unchecked")
    public void testLocationPredicateWhenComputeMetadataIsNotLocationBound() {
@@ -113,16 +136,12 @@ public class TemplateBuilderImplTest {
    }
    
    @SuppressWarnings("unchecked")
-   @Test
-   public void testResolveImages() {
-
-
+   protected void doTestResolveImages(Supplier<Set<? extends Image>> images, Image expectedBest, 
+           Function<TemplateBuilderImpl, TemplateBuilderImpl> builderCustomisation) {
       Hardware hardware = new HardwareBuilder().id("hardwareId").build();
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
                .<Location> of(region));
-      Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(
-               image, image2));
       Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
                .<Hardware> of(hardware));
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
@@ -133,10 +152,66 @@ public class TemplateBuilderImplTest {
 
       TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, region,
                optionsProvider, templateBuilderProvider);
+      template = builderCustomisation.apply(template);
 
-      assertEquals(template.resolveImage(hardware, images.get()), image2);
+      assertEquals(template.resolveImage(hardware, images.get()), expectedBest);
 
       verify(defaultTemplate, optionsProvider, templateBuilderProvider);
+   }
+
+   public void testResolveImagesSimple() {
+       doTestResolveImages(Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(
+                   image, image64bit)),
+               image64bit, Functions.<TemplateBuilderImpl>identity());
+   }
+   
+   public void testResolveImagesPrefersNull() {
+       // preferring null has been the default behaviour; not sure if this is ideal
+       // (would make more sense to prefer nonNull) but don't change behaviour by default
+       doTestResolveImages(Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(
+                   image, imageArchNull, image64bit)), 
+               imageArchNull, Functions.<TemplateBuilderImpl>identity());
+   }
+
+   public void testResolveImagesCustomSorterPreferringNonNull() {
+       // preferring null has been the default behaviour; 
+       // see comments in TemplateBuilderImpl.DEFAULT_IMAGE_ORDERING
+       doTestResolveImages(Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(
+                image, imageArchNull, image64bit)),
+             image64bit, new Function<TemplateBuilderImpl,TemplateBuilderImpl>() {
+                @Override
+                public TemplateBuilderImpl apply(TemplateBuilderImpl input) {
+                    return input.imageSorter(input.imageSorter().nullsFirst());
+                }
+             });
+   }
+
+   public void testResolveImagesPrefersImageABecauseNameIsLastAlphabetically() {
+       // preferring that which comes later alphabetically is the default behaviour;
+       // see comments in TemplateBuilderImpl.DEFAULT_IMAGE_ORDERING
+       doTestResolveImages(Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(
+                   imageNameAlt, image)),
+               image, Functions.<TemplateBuilderImpl>identity());
+   }
+
+   public void testResolveImagesCustomSorterPreferringImageB() {
+       doTestResolveImages(Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(
+                imageNameAlt, image, imageArchNull, image64bit)),
+             imageNameAlt, new Function<TemplateBuilderImpl,TemplateBuilderImpl>() {
+                @Override
+                public TemplateBuilderImpl apply(TemplateBuilderImpl input) {
+                    return input.imageSorter(new Ordering<Image>() {
+                        private int score(Image img) {
+                            if (img.getName().contains("alternate")) return 10;
+                            return 0;
+                        }
+                        @Override
+                        public int compare(Image left, Image right) {
+                            return score(left) - score(right);
+                        }
+                    });
+                }
+             });
    }
 
    @SuppressWarnings("unchecked")
@@ -148,7 +223,7 @@ public class TemplateBuilderImplTest {
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
                .<Location> of(region));
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(
-               image, image2));
+               image, image64bit));
       Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
                .<Hardware> of(hardware));
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);

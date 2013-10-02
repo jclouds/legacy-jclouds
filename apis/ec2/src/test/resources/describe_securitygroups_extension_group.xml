@@ -1,0 +1,26 @@
+<DescribeSecurityGroupsResponse
+	xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
+	<securityGroupInfo>
+		<item>
+                  <ownerId>993194456877</ownerId>
+                  <groupName>jclouds#some-group</groupName>
+                  <groupDescription>jclouds#some-group</groupDescription>
+                  <groupId>sg-3c6ef654</groupId>
+                  <ipPermissions>
+                    <item>
+                      <ipProtocol>tcp</ipProtocol>
+                      <fromPort>22</fromPort>
+                      <toPort>40</toPort>
+                      <groups>
+                        <item>
+                          <userId>993194456877</userId>
+                          <groupId>sg-3c6ef654</groupId>
+                          <groupName>jclouds#some-group</groupName>
+                        </item>
+                      </groups>
+                      <ipRanges/>
+                    </item>
+                  </ipPermissions>
+		</item>
+	</securityGroupInfo>
+</DescribeSecurityGroupsResponse>

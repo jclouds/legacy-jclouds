@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.compute.options;
 
@@ -72,6 +70,8 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
          to.inboundPorts(this.getInboundPorts());
       if (this.getRunScript() != null)
          to.runScript(this.getRunScript());
+      if (this.getGroups().size() > 0)
+         to.securityGroups(this.getGroups());
       if (this.getPrivateKey() != null)
          to.installPrivateKey(this.getPrivateKey());
       if (this.getPublicKey() != null)
@@ -297,6 +297,21 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       }
 
       @Override
+      public Set<String> getGroups() {
+         return delegate.getGroups();
+      }
+
+      @Override
+      public TemplateOptions securityGroups(Iterable<String> securityGroups) {
+         throw new IllegalArgumentException("tags are immutable");
+      }
+
+      @Override
+      public TemplateOptions securityGroups(String... securityGroups) {
+         throw new IllegalArgumentException("tags are immutable");
+      }
+
+      @Override
       public TemplateOptions userMetadata(Map<String, String> userMetadata) {
          throw new IllegalArgumentException("userMetadata is immutable");
       }
@@ -323,6 +338,8 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
 
    protected Set<String> tags = ImmutableSet.of();
 
+   protected Set<String> securityGroups = ImmutableSet.of();
+
    protected String privateKey;
 
    protected String publicKey;
@@ -341,13 +358,13 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       return super.equals(that) && equal(this.inboundPorts, that.inboundPorts) && equal(this.script, that.script)
             && equal(this.publicKey, that.publicKey) && equal(this.privateKey, that.privateKey)
             && equal(this.blockUntilRunning, that.blockUntilRunning) && equal(this.tags, that.tags)
-            && equal(this.userMetadata, that.userMetadata);
+            && equal(this.securityGroups, that.securityGroups) && equal(this.userMetadata, that.userMetadata);
    }
 
    @Override
    public int hashCode() {
       return Objects.hashCode(super.hashCode(), inboundPorts, script, publicKey, privateKey, blockUntilRunning, tags,
-            userMetadata);
+                              securityGroups, userMetadata);
    }
 
    @Override
@@ -365,6 +382,8 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
          toString.add("blockUntilRunning", blockUntilRunning);
       if (tags.size() != 0)
          toString.add("tags", tags);
+      if (securityGroups.size() != 0)
+         toString.add("securityGroups", securityGroups);
       if (userMetadata.size() != 0)
          toString.add("userMetadata", userMetadata);
       return toString;
@@ -380,6 +399,10 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
 
    public Set<String> getTags() {
       return tags;
+   }
+
+   public Set<String> getGroups() {
+      return securityGroups;
    }
 
    public String getPrivateKey() {
@@ -453,6 +476,21 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
    }
 
    /**
+    * assigns the created nodes to these security groups
+    */
+   public TemplateOptions securityGroups(Iterable<String> securityGroups) {
+      this.securityGroups = ImmutableSet.copyOf(checkNotNull(securityGroups, "securityGroups"));
+      return this;
+   }
+
+   /**
+    * @see TemplateOptions#securityGroups(Iterable<String>)
+    */
+   public TemplateOptions securityGroups(String... securityGroups) {
+      return securityGroups(ImmutableSet.copyOf(securityGroups));
+   }
+
+   /**
     * Opens the set of ports to public access.
     */
    public TemplateOptions inboundPorts(int... ports) {
@@ -521,6 +559,22 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       public static TemplateOptions tags(Iterable<String> tags) {
          TemplateOptions options = new TemplateOptions();
          return options.tags(tags);
+      }
+
+      /**
+       * @see TemplateOptions#securityGroups
+       */
+      public static TemplateOptions securityGroups(Iterable<String> securityGroups) {
+         TemplateOptions options = new TemplateOptions();
+         return options.securityGroups(securityGroups);
+      }
+
+      /**
+       * @see TemplateOptions#securityGroups
+       */
+      public static TemplateOptions securityGroups(String... securityGroups) {
+         TemplateOptions options = new TemplateOptions();
+         return options.securityGroups(securityGroups);
       }
 
       /**

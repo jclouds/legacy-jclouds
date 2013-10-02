@@ -1,20 +1,18 @@
 /*
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.cloudstack.domain;
 
@@ -259,7 +257,7 @@ public class AsyncJob<S> {
                .error(in.getError());
       }
 
-      public static Builder<?, Object> fromAsyncJobUntyped(AsyncJob in) {
+      public static Builder<?, Object> fromAsyncJobUntyped(AsyncJob<?> in) {
          return new ConcreteBuilder().fromAsyncJob(in);
       }
    }
@@ -428,7 +426,7 @@ public class AsyncJob<S> {
    public boolean equals(Object obj) {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
-      AsyncJob that = AsyncJob.class.cast(obj);
+      AsyncJob<?> that = AsyncJob.class.cast(obj);
       return Objects.equal(this.accountId, that.accountId)
             && Objects.equal(this.cmd, that.cmd)
             && Objects.equal(this.created, that.created)

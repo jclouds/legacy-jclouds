@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.aws.ec2.compute.functions;
 
@@ -35,7 +33,7 @@ import java.util.Set;
 
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
 import org.jclouds.aws.ec2.functions.SpotInstanceRequestToAWSRunningInstance;
@@ -58,11 +56,11 @@ import com.google.inject.Inject;
 @Singleton
 public class PresentSpotRequestsAndInstances extends PresentInstances {
 
-   private final AWSEC2Client client;
+   private final AWSEC2Api client;
    private final Function<SpotInstanceRequest, AWSRunningInstance> spotConverter;
 
    @Inject
-   public PresentSpotRequestsAndInstances(AWSEC2Client client, Function<SpotInstanceRequest, AWSRunningInstance> spotConverter) {
+   public PresentSpotRequestsAndInstances(AWSEC2Api client, Function<SpotInstanceRequest, AWSRunningInstance> spotConverter) {
       super(client);
       this.client = checkNotNull(client, "client");
       this.spotConverter = checkNotNull(spotConverter, "spotConverter");
@@ -85,7 +83,7 @@ public class PresentSpotRequestsAndInstances extends PresentInstances {
          Collection<String> spotIds = entry.getValue();
          logger.trace("looking for spots %s in region %s", spotIds, region);
          builder.addAll(transform(
-               client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(region,
+                                  client.getSpotInstanceApi().get().describeSpotInstanceRequestsInRegion(region,
                      toArray(spotIds, String.class)), spotConverter));
       }
       return builder.build();

@@ -1,22 +1,21 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.compute.internal;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
@@ -46,6 +45,7 @@ import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.io.IOException;
@@ -103,6 +103,7 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -345,7 +346,8 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
          nodes = newTreeSet(concat(e.getSuccessfulNodes(), e.getNodeErrors().keySet()));
          throw e;
       }
-      assertEquals(nodes.size(), 2);
+
+      assertEquals(nodes.size(), 2, "expected two nodes but was " + nodes);
       checkNodes(nodes, group, "bootstrap");
       NodeMetadata node1 = nodes.first();
       NodeMetadata node2 = nodes.last();
@@ -573,9 +575,11 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
             }
             
          }));
-      
+
+      SortedSet<NodeMetadata> listedNodes = ImmutableSortedSet.copyOf(client.listNodesByIds(nodeIds));
       // newTreeSet is here because elementsEqual cares about ordering.
-      assert Iterables.elementsEqual(nodes, newTreeSet(client.listNodesByIds(nodeIds))); 
+      assertTrue(Iterables.elementsEqual(nodes, listedNodes),
+              "nodes and listNodesByIds should be identical: was " + listedNodes + " but should be " + nodes);
    }
 
    @Test(enabled = true, dependsOnMethods = "testSuspendResume")
@@ -635,7 +639,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
       
       HostAndPort socket = null;
       try {
-         socket = openSocketFinder.findOpenSocketOnNode(node, 8080, 60, TimeUnit.SECONDS);
+         socket = openSocketFinder.findOpenSocketOnNode(node, 8080, 600, TimeUnit.SECONDS);
       } catch (NoSuchElementException e) {
          throw new NoSuchElementException(format("%s%n%s%s", e.getMessage(), exec.getOutput(), exec.getError()));
       }
@@ -857,8 +861,12 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
    @AfterClass(groups = { "integration", "live" })
    @Override
    protected void tearDownContext() {
-      if (nodes != null) {
-         testDestroyNodes();
+      try {
+         if (nodes != null) {
+            client.destroyNodesMatching(inGroup(group));
+         }
+      } catch (Exception e) {
+
       }
       super.tearDownContext();
    }

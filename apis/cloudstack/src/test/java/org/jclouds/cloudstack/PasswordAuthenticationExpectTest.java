@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.cloudstack;
 
@@ -23,7 +21,7 @@ import static org.testng.Assert.assertNotNull;
 import java.util.Properties;
 
 import org.jclouds.cloudstack.config.CloudStackProperties;
-import org.jclouds.cloudstack.features.AccountClient;
+import org.jclouds.cloudstack.features.AccountApi;
 import org.jclouds.cloudstack.internal.BaseCloudStackExpectTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -38,7 +36,7 @@ import com.google.common.net.HttpHeaders;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "PasswordAuthenticationExpectTest")
-public class PasswordAuthenticationExpectTest extends BaseCloudStackExpectTest<AccountClient> {
+public class PasswordAuthenticationExpectTest extends BaseCloudStackExpectTest<AccountApi> {
 
    /**
     * this reflects the properties that a user would pass to createContext
@@ -52,7 +50,7 @@ public class PasswordAuthenticationExpectTest extends BaseCloudStackExpectTest<A
 
    public void testLoginWithPasswordSetsSessionKeyAndCookie() {
       
-      AccountClient client = requestsSendResponses(
+      AccountApi client = requestsSendResponses(
                login, loginResponse, 
          HttpRequest.builder()
             .method("GET")
@@ -70,7 +68,7 @@ public class PasswordAuthenticationExpectTest extends BaseCloudStackExpectTest<A
    }
 
    @Override
-   protected AccountClient clientFrom(CloudStackContext context) {
-      return context.unwrap(CloudStackApiMetadata.CONTEXT_TOKEN).getApi().getAccountClient();
+   protected AccountApi clientFrom(CloudStackContext context) {
+      return context.getApi().getAccountApi();
    }
 }

@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.openstack.nova.v2_0.options;
 
@@ -36,6 +34,7 @@ import javax.inject.Named;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
+import org.jclouds.openstack.nova.v2_0.domain.Server;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
@@ -111,6 +110,8 @@ public class CreateServerOptions implements MapBinder {
    private Map<String, String> metadata = ImmutableMap.of();
    private List<File> personality = Lists.newArrayList();
    private byte[] userData;
+   private String diskConfig;
+   private Set<String> networks = ImmutableSet.of();
 
    @Override
    public boolean equals(Object object) {
@@ -121,7 +122,8 @@ public class CreateServerOptions implements MapBinder {
          final CreateServerOptions other = CreateServerOptions.class.cast(object);
          return equal(keyName, other.keyName) && equal(securityGroupNames, other.securityGroupNames)
                   && equal(metadata, other.metadata) && equal(personality, other.personality)
-                  && equal(adminPass, other.adminPass);
+                  && equal(adminPass, other.adminPass) && equal(diskConfig, other.diskConfig)
+                  && equal(adminPass, other.adminPass) && equal(networks, other.networks);
       } else {
          return false;
       }
@@ -129,7 +131,7 @@ public class CreateServerOptions implements MapBinder {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(keyName, securityGroupNames, metadata, personality, adminPass);
+      return Objects.hashCode(keyName, securityGroupNames, metadata, personality, adminPass, networks);
    }
 
    protected ToStringHelper string() {
@@ -143,7 +145,11 @@ public class CreateServerOptions implements MapBinder {
          toString.add("personality", personality);
       if (adminPass != null)
          toString.add("adminPassPresent", true);
+      if (diskConfig != null)
+         toString.add("diskConfig", diskConfig);
       toString.add("userData", userData == null ? null : new String(userData));
+      if (!networks.isEmpty())
+         toString.add("networks", networks);
       return toString;
    }
 
@@ -163,6 +169,9 @@ public class CreateServerOptions implements MapBinder {
       @Named("security_groups")
       Set<NamedThingy> securityGroupNames;
       String user_data;
+      @Named("OS-DCF:diskConfig")
+      String diskConfig;
+      Set<Map<String, String>> networks;
 
       private ServerRequest(String name, String imageRef, String flavorRef) {
          this.name = name;
@@ -195,6 +204,17 @@ public class CreateServerOptions implements MapBinder {
          server.adminPass = adminPass;
       }
 
+      if (diskConfig != null) {
+         server.diskConfig = diskConfig;
+      }
+
+      if (!networks.isEmpty()) {
+         server.networks = Sets.newLinkedHashSet(); // ensures ordering is preserved - helps testing and more intuitive for users.
+         for (String network : networks) {
+            server.networks.add(ImmutableMap.of("uuid", network));
+         }
+      }
+
       return bindToRequest(request, ImmutableMap.of("server", server));
    }
 
@@ -210,7 +230,6 @@ public class CreateServerOptions implements MapBinder {
          return name;
       }
    }
-
 
    /**
     * You may further customize a cloud server by injecting data into the file
@@ -307,6 +326,17 @@ public class CreateServerOptions implements MapBinder {
    
    /**
     * 
+    * Get custom networks specified for the server.
+    * @return A set of uuids defined by Neutron (previously Quantum)
+    * @see <a href="https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Network">Neutron Networks<a/>
+    *
+    */
+   public Set<String> getNetworks() {
+      return networks;
+   }
+
+   /**
+    *
     * @see #getSecurityGroupNames
     */
    public CreateServerOptions securityGroupNames(String... securityGroupNames) {
@@ -322,7 +352,48 @@ public class CreateServerOptions implements MapBinder {
       this.securityGroupNames = ImmutableSet.copyOf(securityGroupNames);
       return this;
    }
+
+   /**
+    * When you create a server from an image with the diskConfig value set to 
+    * {@link Server#DISK_CONFIG_AUTO}, the server is built with a single partition that is expanded to 
+    * the disk size of the flavor selected. When you set the diskConfig attribute to 
+    * {@link Server#DISK_CONFIG_MANUAL}, the server is built by using the partition scheme and file 
+    * system that is in the source image.
+    * <p/> 
+    * If the target flavor disk is larger, remaining disk space is left unpartitioned. A server inherits the diskConfig
+    * attribute from the image from which it is created. However, you can override the diskConfig value when you create
+    * a server. This field is only present if the Disk Config extension is installed in your OpenStack deployment.
+    */
+   public String getDiskConfig() {
+      return diskConfig;
+   }
    
+   /**
+    * @see #getDiskConfig
+    */
+   public CreateServerOptions diskConfig(String diskConfig) {
+      this.diskConfig = diskConfig;
+      return this;
+   }
+   
+   /**
+    *
+    * @see #getNetworks
+    */
+   public CreateServerOptions networks(String... networks) {
+      return networks(ImmutableSet.copyOf(networks));
+   }
+
+   /**
+    * @see #getNetworks
+    */
+   public CreateServerOptions networks(Iterable<String> networks) {
+      for (String network : checkNotNull(networks, "networks"))
+         checkNotNull(emptyToNull(network), "all networks must be non-empty");
+      this.networks = ImmutableSet.copyOf(networks);
+      return this;
+   }
+
    public static class Builder {
 
       /**
@@ -368,6 +439,30 @@ public class CreateServerOptions implements MapBinder {
       public static CreateServerOptions securityGroupNames(Iterable<String> groupNames) {
          CreateServerOptions options = new CreateServerOptions();
          return CreateServerOptions.class.cast(options.securityGroupNames(groupNames));
+      }
+
+      /**
+       * @see CreateServerOptions#getDiskConfig
+       */
+      public static CreateServerOptions diskConfig(String diskConfig) {
+         CreateServerOptions options = new CreateServerOptions();
+         return CreateServerOptions.class.cast(options.diskConfig(diskConfig));
+      }
+
+      /**
+       * @see CreateServerOptions#getNetworks
+       */
+      public static CreateServerOptions networks(String... networks) {
+         CreateServerOptions options = new CreateServerOptions();
+         return CreateServerOptions.class.cast(options.networks(networks));
+      }
+
+      /**
+       * @see CreateServerOptions#getNetworks
+       */
+      public static CreateServerOptions networks(Iterable<String> networks) {
+         CreateServerOptions options = new CreateServerOptions();
+         return CreateServerOptions.class.cast(options.networks(networks));
       }
    }
 

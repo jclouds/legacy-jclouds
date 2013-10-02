@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.openstack.nova.v2_0.compute.options;
 
@@ -30,6 +28,7 @@ import java.util.Set;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
+import org.jclouds.openstack.nova.v2_0.options.CreateServerOptions;
 import org.jclouds.scriptbuilder.domain.Statement;
 
 import com.google.common.base.Objects;
@@ -74,6 +73,9 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
          if (getUserData() != null) {
              eTo.userData(getUserData());
          }
+         if (getDiskConfig() != null) {
+            eTo.diskConfig(getDiskConfig());
+        }
       }
    }
 
@@ -82,6 +84,7 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
    protected boolean generateKeyPair = false;
    protected String keyPairName;
    protected byte[] userData;
+   protected String diskConfig;
 
    @Override
    public boolean equals(Object o) {
@@ -94,12 +97,13 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
             && equal(this.securityGroupNames, that.securityGroupNames)
             && equal(this.generateKeyPair, that.generateKeyPair)
             && equal(this.keyPairName, that.keyPairName)
-            && Arrays.equals(this.userData, that.userData);
+            && Arrays.equals(this.userData, that.userData)
+            && equal(this.diskConfig, that.diskConfig);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), autoAssignFloatingIp, securityGroupNames, generateKeyPair, keyPairName, userData);
+      return Objects.hashCode(super.hashCode(), autoAssignFloatingIp, securityGroupNames, generateKeyPair, keyPairName, userData, diskConfig);
    }
 
    @Override
@@ -113,6 +117,7 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
          toString.add("generateKeyPair", generateKeyPair);
       toString.add("keyPairName", keyPairName);
       toString.add("userData", userData);
+      toString.add("diskConfig", diskConfig);
       return toString;
    }
 
@@ -204,6 +209,13 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
 
    public byte[] getUserData() {
        return userData;
+    }
+
+   /**
+    * @see CreateServerOptions#getDiskConfig()
+    */
+   public String getDiskConfig() {
+       return diskConfig;
     }
 
    public static class Builder {
@@ -342,7 +354,14 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
          NovaTemplateOptions options = new NovaTemplateOptions();
          return NovaTemplateOptions.class.cast(options.userData(userData));
       }
-
+      
+      /**
+       * @see org.jclouds.openstack.nova.v2_0.options.CreateServerOptions#getDiskConfig()
+       */
+      public static NovaTemplateOptions diskConfig(String diskConfig) {
+         NovaTemplateOptions options = new NovaTemplateOptions();
+         return NovaTemplateOptions.class.cast(options.diskConfig(diskConfig));
+      }
    }
 
    // methods that only facilitate returning the correct object type
@@ -486,4 +505,11 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
        return this;
    }
 
+   /**
+    * @see CreateServerOptions#getDiskConfig()
+    */
+   public NovaTemplateOptions diskConfig(String diskConfig) {
+      this.diskConfig = diskConfig;
+      return this;
+  }
 }

@@ -1,22 +1,19 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.jclouds.ec2.compute.extensions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -47,7 +44,7 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.extensions.ImageExtension;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.options.CreateImageOptions;
@@ -72,16 +69,16 @@ public class EC2ImageExtension implements ImageExtension {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   private final EC2Client ec2Client;
+   private final EC2Api ec2Api;
    private final ListeningExecutorService userExecutor;
    private final Supplier<Set<? extends Location>> locations;
    private final Predicate<AtomicReference<Image>> imageAvailablePredicate;
    
    @Inject
-   public EC2ImageExtension(EC2Client ec2Client, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
+   public EC2ImageExtension(EC2Api ec2Api, @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
          @Memoized Supplier<Set<? extends Location>> locations,
          @Named(TIMEOUT_IMAGE_AVAILABLE) Predicate<AtomicReference<Image>> imageAvailablePredicate) {
-      this.ec2Client = checkNotNull(ec2Client, "ec2Client");
+      this.ec2Api = checkNotNull(ec2Api, "ec2Api");
       this.userExecutor = checkNotNull(userExecutor, "userExecutor");
       this.locations = checkNotNull(locations, "locations");
       this.imageAvailablePredicate = checkNotNull(imageAvailablePredicate, "imageAvailablePredicate");
@@ -92,7 +89,7 @@ public class EC2ImageExtension implements ImageExtension {
       String[] parts = AWSUtils.parseHandle(id);
       String region = parts[0];
       String instanceId = parts[1];
-      Reservation<? extends RunningInstance> instance = getOnlyElement(ec2Client.getInstanceServices()
+      Reservation<? extends RunningInstance> instance = getOnlyElement(ec2Api.getInstanceApi().get()
             .describeInstancesInRegion(region, instanceId));
       if (instance == null)
          throw new NoSuchElementException("Cannot find server with id: " + id);
@@ -108,7 +105,7 @@ public class EC2ImageExtension implements ImageExtension {
       String region = parts[0];
       String instanceId = parts[1];
 
-      String imageId = ec2Client.getAMIServices().createImageInRegion(region, cloneTemplate.getName(), instanceId,
+      String imageId = ec2Api.getAMIApi().get().createImageInRegion(region, cloneTemplate.getName(), instanceId,
             CreateImageOptions.NONE);
 
       final AtomicReference<Image> image = Atomics.newReference(new ImageBuilder()
@@ -136,7 +133,7 @@ public class EC2ImageExtension implements ImageExtension {
       String region = parts[0];
       String instanceId = parts[1];
       try {
-         ec2Client.getAMIServices().deregisterImageInRegion(region, instanceId);
+         ec2Api.getAMIApi().get().deregisterImageInRegion(region, instanceId);
          return true;
       } catch (Exception e) {
          return false;

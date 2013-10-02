@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.aws.ec2.compute.config;
 
@@ -33,6 +31,9 @@ import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.compute.AWSEC2ComputeService;
 import org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions;
+import org.jclouds.aws.ec2.compute.extensions.AWSEC2SecurityGroupExtension;
+import org.jclouds.aws.ec2.compute.functions.AWSEC2SecurityGroupToSecurityGroup;
+import org.jclouds.aws.ec2.compute.loaders.AWSEC2CreateSecurityGroupIfNeeded;
 import org.jclouds.aws.ec2.compute.suppliers.CallForImages;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.domain.RegionNameAndPublicKeyMaterial;
@@ -42,8 +43,10 @@ import org.jclouds.aws.ec2.predicates.PlacementGroupAvailable;
 import org.jclouds.aws.ec2.predicates.PlacementGroupDeleted;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.SecurityGroup;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.extensions.ImageExtension;
+import org.jclouds.compute.extensions.SecurityGroupExtension;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.domain.LoginCredentials;
@@ -54,10 +57,10 @@ import org.jclouds.ec2.compute.extensions.EC2ImageExtension;
 import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.ec2.compute.functions.CredentialsForInstance;
 import org.jclouds.ec2.compute.functions.EC2ImageParser;
+import org.jclouds.ec2.compute.functions.EC2SecurityGroupIdFromName;
 import org.jclouds.ec2.compute.functions.PasswordCredentialsFromWindowsInstance;
 import org.jclouds.ec2.compute.functions.WindowsLoginCredentialsFromEncryptedData;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
-import org.jclouds.ec2.compute.loaders.CreateSecurityGroupIfNeeded;
 import org.jclouds.ec2.compute.loaders.LoadPublicIpForInstanceOrNull;
 import org.jclouds.ec2.compute.loaders.RegionAndIdToImage;
 import org.jclouds.ec2.domain.KeyPair;
@@ -91,9 +94,11 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
       bind(new TypeLiteral<CacheLoader<RunningInstance, Optional<LoginCredentials>>>() {
       }).to(CredentialsForInstance.class);
       bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
-      }).annotatedWith(Names.named("SECURITY")).to(CreateSecurityGroupIfNeeded.class);
+      }).annotatedWith(Names.named("SECURITY")).to(AWSEC2CreateSecurityGroupIfNeeded.class);
       bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
-      }).annotatedWith(Names.named("ELASTICIP")).to(LoadPublicIpForInstanceOrNull.class);   
+      }).annotatedWith(Names.named("ELASTICIP")).to(LoadPublicIpForInstanceOrNull.class);
+      bind(new TypeLiteral<Function<String, String>>() {
+      }).annotatedWith(Names.named("SECGROUP_NAME_TO_ID")).to(EC2SecurityGroupIdFromName.class);
       bind(new TypeLiteral<Function<PasswordDataAndPrivateKey, LoginCredentials>>() {
       }).to(WindowsLoginCredentialsFromEncryptedData.class);
       bind(new TypeLiteral<Function<RunningInstance, LoginCredentials>>() {
@@ -107,8 +112,12 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
       install(new FactoryModuleBuilder().build(CallForImages.Factory.class));
       bind(new TypeLiteral<Function<org.jclouds.ec2.domain.Image, Image>>() {
       }).to(EC2ImageParser.class);
+      bind(new TypeLiteral<Function<org.jclouds.ec2.domain.SecurityGroup, SecurityGroup>>() {
+      }).to(AWSEC2SecurityGroupToSecurityGroup.class);
       bind(new TypeLiteral<ImageExtension>() {
       }).to(EC2ImageExtension.class);
+      bind(new TypeLiteral<SecurityGroupExtension>() {
+      }).to(AWSEC2SecurityGroupExtension.class);
    }
 
    @Provides

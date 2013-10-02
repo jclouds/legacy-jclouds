@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.elasticstack.compute;
 
@@ -46,7 +44,7 @@ import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.elasticstack.ElasticStackClient;
+import org.jclouds.elasticstack.ElasticStackApi;
 import org.jclouds.elasticstack.domain.Device;
 import org.jclouds.elasticstack.domain.Drive;
 import org.jclouds.elasticstack.domain.DriveInfo;
@@ -66,21 +64,20 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
-import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**
- * defines the connection between the {@link ElasticStackClient} implementation
+ * defines the connection between the {@link org.jclouds.elasticstack.ElasticStackApi} implementation
  * and the jclouds {@link ComputeService}
  * 
  */
 @Singleton
 public class ElasticStackComputeServiceAdapter implements
       ComputeServiceAdapter<ServerInfo, Hardware, DriveInfo, Location> {
-   private final ElasticStackClient client;
+   private final ElasticStackApi client;
    private final Predicate<DriveInfo> driveNotClaimed;
    private final Map<String, WellKnownImage> preinstalledImages;
    private final LoadingCache<String, DriveInfo> cache;
@@ -92,7 +89,7 @@ public class ElasticStackComputeServiceAdapter implements
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public ElasticStackComputeServiceAdapter(ElasticStackClient client, Predicate<DriveInfo> driveNotClaimed,
+   public ElasticStackComputeServiceAdapter(ElasticStackApi client, Predicate<DriveInfo> driveNotClaimed,
          Map<String, WellKnownImage> preinstalledImages, LoadingCache<String, DriveInfo> cache,
          @Named(ElasticStackConstants.PROPERTY_VNC_PASSWORD) String defaultVncPassword,
          @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor) {

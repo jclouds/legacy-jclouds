@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.s3.filters;
 
@@ -134,7 +132,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
       return request.toBuilder().replaceHeader("x-amz-security-token", current.getSessionToken()).build();
    }
 
-   HttpRequest replaceAuthorizationHeader(HttpRequest request, String signature) {
+   protected HttpRequest replaceAuthorizationHeader(HttpRequest request, String signature) {
       request = request.toBuilder()
             .replaceHeader(HttpHeaders.AUTHORIZATION, authTag + " " + creds.get().identity + ":" + signature).build();
       return request;
@@ -235,7 +233,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
       // the only S3 implementation configured to allow uppercase payload/bucket/container names.
       //
       // http://code.google.com/p/jclouds/issues/detail?id=992
-      if (isVhostStyle && bucketName!= null && bucketName.equals(bucketName.toLowerCase()))
+      if (isVhostStyle && bucketName != null && bucketName.equals(bucketName.toLowerCase()))
          toSign.append(servicePath).append(bucketName);
    }
 

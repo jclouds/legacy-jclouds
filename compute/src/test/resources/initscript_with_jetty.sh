@@ -228,7 +228,7 @@ END_OF_JCLOUDS_SCRIPT
 	iptables -I INPUT 1 -p tcp --dport 8080 -j ACCEPT
 	iptables-save
 	mkdir /tmp/$$
-	curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://download.eclipse.org/jetty/8.1.8.v20121106/dist/jetty-distribution-8.1.8.v20121106.tar.gz |(mkdir -p /tmp/$$ &&cd /tmp/$$ &&tar -xpzf -)
+	curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://archive.eclipse.org/jetty/8.1.8.v20121106/dist/jetty-distribution-8.1.8.v20121106.tar.gz |(mkdir -p /tmp/$$ &&cd /tmp/$$ &&tar -xpzf -)
 	mkdir -p /usr/local/jetty
 	mv /tmp/$$/*/* /usr/local/jetty
 	rm -rf /tmp/$$

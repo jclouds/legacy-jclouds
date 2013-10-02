@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.openstack.keystone.v2_0.parse;
 
@@ -110,7 +108,7 @@ public class ParseAccessTest extends BaseItemParserTest<Access> {
                                                      .versionId("1.1")
                                                      .versionInfo("https://az-3.region-a.geo-1.compute.hpcloudsvc.com/v1.1/")
                                                      .versionList("https://az-3.region-a.geo-1.compute.hpcloudsvc.com").build()).build())
-                   .service(Service.builder().name("Quantum Service").type(NETWORK)
+                   .service(Service.builder().name("Neutron Service").type(NETWORK)
                                    .endpoint(Endpoint.builder()
                                                      .tenantId("3456")
                                                      .publicURL("https://csnode.jclouds.org:9696/v1.0/tenants/3456")
@@ -118,6 +116,15 @@ public class ParseAccessTest extends BaseItemParserTest<Access> {
                                                      .adminURL("https://csnode.jclouds.org:9696/v1.0")
                                                      .region("region-a.geo-1")
                                                      .versionId("1.0").build()).build())
+                   .service(Service.builder().name("Quantum Service").type(NETWORK)
+                                   .endpoint(Endpoint.builder()
+                                                     .tenantId("3456")
+                                                     .publicURL("https://csnode.jclouds.org:9696")
+                                                     .internalURL("https://csnode.jclouds.org:9696")
+                                                     .adminURL("https://csnode.jclouds.org:9696")
+                                                     .region("region-a.geo-1")
+                                                     .versionId("2.0").build()).build())
+
                   .service(Service.builder().name("cinder").type(BLOCK_STORAGE)
                         .endpoint(Endpoint.builder()
                                           .id("08330c2dcbfc4c6c8dc7a0949fbf5da7")

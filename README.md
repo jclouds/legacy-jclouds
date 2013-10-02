@@ -60,7 +60,7 @@ BlobStore Example (Clojure):
 
 ```clojure
 (use 'org.jclouds.blobstore2)
-(def *blobstore* (blobstore "azureblob" account encodedkey))
+(def ^:dynamic *blobstore* (blobstore "azureblob" account encodedkey))
 (create-container *blobstore* "mycontainer")
 (put-blob *blobstore* "mycontainer" (blob "test" :payload "testdata"))
 ```
@@ -132,6 +132,6 @@ Resources
 
 License
 -------
-Copyright (C) 2009-2012 jclouds, Inc.
+Copyright (C) 2009-2013 The Apache Software Foundation
 
 Licensed under the Apache License, Version 2.0

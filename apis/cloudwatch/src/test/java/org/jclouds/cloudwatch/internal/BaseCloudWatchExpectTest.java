@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.cloudwatch.internal;
 
@@ -24,11 +22,11 @@ import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.cloudwatch.config.CloudWatchRestClientModule;
+import org.jclouds.cloudwatch.config.CloudWatchHttpApiModule;
 import org.jclouds.date.DateService;
 import org.jclouds.location.config.LocationModule;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
-import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.ConfiguresHttpApi;
 import org.jclouds.rest.internal.BaseRestApiExpectTest;
 import org.jclouds.util.Suppliers2;
 
@@ -46,8 +44,8 @@ public class BaseCloudWatchExpectTest<T> extends BaseRestApiExpectTest<T> {
       provider = "cloudwatch";
    }
    
-   @ConfiguresRestClient
-   private static final class TestMonitoringRestClientModule extends CloudWatchRestClientModule {
+   @ConfiguresHttpApi
+   private static final class TestMonitoringHttpApiModule extends CloudWatchHttpApiModule {
 
       @Override
       protected void installLocations() {
@@ -73,6 +71,6 @@ public class BaseCloudWatchExpectTest<T> extends BaseRestApiExpectTest<T> {
 
    @Override
    protected Module createModule() {
-      return new TestMonitoringRestClientModule();
+      return new TestMonitoringHttpApiModule();
    }
 }

@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.aws.ec2.compute.strategy;
 
@@ -24,16 +22,14 @@ import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.toArray;
 import static com.google.common.collect.Iterables.transform;
-import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
 import org.jclouds.aws.ec2.functions.SpotInstanceRequestToAWSRunningInstance;
@@ -44,9 +40,7 @@ import org.jclouds.location.Region;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.inject.Inject;
 
@@ -57,11 +51,11 @@ import com.google.inject.Inject;
 @Singleton
 public class AWSEC2ListNodesStrategy extends EC2ListNodesStrategy {
 
-   protected final AWSEC2Client client;
+   protected final AWSEC2Api client;
    protected final SpotInstanceRequestToAWSRunningInstance spotConverter;
 
    @Inject
-   protected AWSEC2ListNodesStrategy(AWSEC2Client client, @Region Supplier<Set<String>> regions,
+   protected AWSEC2ListNodesStrategy(AWSEC2Api client, @Region Supplier<Set<String>> regions,
             Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
             @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
             SpotInstanceRequestToAWSRunningInstance spotConverter) {
@@ -85,8 +79,10 @@ public class AWSEC2ListNodesStrategy extends EC2ListNodesStrategy {
                                                                                        spotInstancesByIdInRegion(idsByRegions))),
 
                                                                       spotConverter), notNull());
-
-      return concat(super.pollRunningInstancesByRegionsAndIds(idsByRegions), spots);
+      System.err.println("spots: " + spots);
+      Iterable<? extends RunningInstance> superInsts = super.pollRunningInstancesByRegionsAndIds(idsByRegions);
+      System.err.println("superInsts: " + superInsts);
+      return concat(superInsts, spots);
    }
 
    protected Function<String, Set<SpotInstanceRequest>> allSpotInstancesInRegion() {
@@ -94,7 +90,7 @@ public class AWSEC2ListNodesStrategy extends EC2ListNodesStrategy {
 
          @Override
          public Set<SpotInstanceRequest> apply(String from) {
-            return client.getSpotInstanceServices().describeSpotInstanceRequestsInRegion(from);
+            return client.getSpotInstanceApi().get().describeSpotInstanceRequestsInRegion(from);
          }
       };
    }
@@ -104,7 +100,7 @@ public class AWSEC2ListNodesStrategy extends EC2ListNodesStrategy {
 
          @Override
          public Set<SpotInstanceRequest> apply(String from) {
-            return client.getSpotInstanceServices()
+            return client.getSpotInstanceApi().get()
                .describeSpotInstanceRequestsInRegion(from, toArray(idsByRegions.get(from), String.class));
          }
       };

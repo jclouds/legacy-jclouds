@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.softlayer.compute.functions;
 
@@ -36,7 +34,7 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.location.predicates.LocationPredicates;
-import org.jclouds.softlayer.SoftLayerClient;
+import org.jclouds.softlayer.SoftLayerApi;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductOrder;
 import org.jclouds.softlayer.domain.VirtualGuest;
@@ -107,13 +105,13 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
    @Singleton
    public static class GetHardwareForVirtualGuest {
 
-      private final SoftLayerClient client;
+      private final SoftLayerApi api;
       private final Function<Iterable<ProductItem>, Hardware> productItemsToHardware;
 
       @Inject
-      public GetHardwareForVirtualGuest(SoftLayerClient client,
+      public GetHardwareForVirtualGuest(SoftLayerApi api,
             Function<Iterable<ProductItem>, Hardware> productItemsToHardware) {
-         this.client = checkNotNull(client, "client");
+         this.api = checkNotNull(api, "api");
          this.productItemsToHardware = checkNotNull(productItemsToHardware, "productItemsToHardware");
 
       }
@@ -122,7 +120,7 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
          // 'bad' orders have no start cpu's and cause the order lookup to fail.
          if (guest.getStartCpus() < 1)
             return null;
-         ProductOrder order = client.getVirtualGuestClient().getOrderTemplate(guest.getId());
+         ProductOrder order = api.getVirtualGuestApi().getOrderTemplate(guest.getId());
          if (order == null)
             return null;
          Iterable<ProductItem> items = Iterables.transform(order.getPrices(), ProductItems.item());
@@ -133,18 +131,18 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
    @Singleton
    public static class GetImageForVirtualGuest {
 
-      private SoftLayerClient client;
+      private SoftLayerApi api;
 
       @Inject
-      public GetImageForVirtualGuest(SoftLayerClient client) {
-         this.client = client;
+      public GetImageForVirtualGuest(SoftLayerApi api) {
+         this.api = api;
       }
 
       public Image getImage(VirtualGuest guest) {
          // 'bad' orders have no start cpu's and cause the order lookup to fail.
          if (guest.getStartCpus() < 1)
             return null;
-         ProductOrder order = client.getVirtualGuestClient().getOrderTemplate(guest.getId());
+         ProductOrder order = api.getVirtualGuestApi().getOrderTemplate(guest.getId());
          if (order == null)
             return null;
          Iterable<ProductItem> items = Iterables.transform(order.getPrices(), ProductItems.item());

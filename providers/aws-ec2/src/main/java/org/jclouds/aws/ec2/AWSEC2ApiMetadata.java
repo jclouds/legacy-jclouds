@@ -1,53 +1,37 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.aws.ec2;
 
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
+import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.apis.ApiMetadata;
 import org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceContext;
 import org.jclouds.aws.ec2.compute.config.AWSEC2ComputeServiceContextModule;
-import org.jclouds.aws.ec2.config.AWSEC2RestClientModule;
+import org.jclouds.aws.ec2.config.AWSEC2HttpApiModule;
 import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.compute.config.EC2ResolveImagesModule;
+import org.jclouds.rest.internal.BaseHttpApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 
-/**
- * Implementation of {@link ApiMetadata} for the Amazon-specific EC2 API
- * 
- * @author Adrian Cole
- */
-public class AWSEC2ApiMetadata extends EC2ApiMetadata {
-
-   /**
-    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(AWSEC2Client.class)} as
-    *             {@link AWSEC2AsyncClient} interface will be removed in jclouds 1.7.
-    */
-   @Deprecated
-   public static final TypeToken<org.jclouds.rest.RestContext<AWSEC2Client, AWSEC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<AWSEC2Client, AWSEC2AsyncClient>>() {
-      private static final long serialVersionUID = 1L;
-   };
+public final class AWSEC2ApiMetadata extends BaseHttpApiMetadata<AWSEC2Api> {
 
    @Override
    public Builder toBuilder() {
@@ -55,13 +39,13 @@ public class AWSEC2ApiMetadata extends EC2ApiMetadata {
    }
 
    public AWSEC2ApiMetadata() {
-      this(new Builder());
+      super(new Builder());
    }
 
    protected AWSEC2ApiMetadata(Builder builder) {
       super(builder);
    }
-   
+
    public static Properties defaultProperties() {
       Properties properties = EC2ApiMetadata.defaultProperties();
       properties.remove(PROPERTY_EC2_AMI_OWNERS);
@@ -72,19 +56,20 @@ public class AWSEC2ApiMetadata extends EC2ApiMetadata {
       return properties;
    }
 
-   public static class Builder extends EC2ApiMetadata.Builder<Builder> {
-      @SuppressWarnings("deprecation")
-      protected Builder(){
-         super(AWSEC2Client.class, AWSEC2AsyncClient.class);
+   public static final class Builder extends BaseHttpApiMetadata.Builder<AWSEC2Api, Builder> {
+      public Builder() {
          id("aws-ec2")
          .version("2012-06-01")
          .name("Amazon-specific EC2 API")
-         .view(AWSEC2ComputeServiceContext.class)
-         .context(CONTEXT_TOKEN)
+         .identityName("Access Key ID")
+         .credentialName("Secret Access Key")
+         .defaultEndpoint("https://ec2.us-east-1.amazonaws.com")
+         .documentation(URI.create("http://docs.amazonwebservices.com/AWSEC2/latest/APIReference"))
          .defaultProperties(AWSEC2ApiMetadata.defaultProperties())
-         .defaultModules(ImmutableSet.<Class<? extends Module>>of(AWSEC2RestClientModule.class, EC2ResolveImagesModule.class, AWSEC2ComputeServiceContextModule.class));
+         .view(AWSEC2ComputeServiceContext.class)
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(AWSEC2HttpApiModule.class, EC2ResolveImagesModule.class, AWSEC2ComputeServiceContextModule.class));
       }
-      
+
       @Override
       public AWSEC2ApiMetadata build() {
          return new AWSEC2ApiMetadata(this);

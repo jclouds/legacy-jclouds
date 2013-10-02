@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.aws.ec2.compute.strategy;
 
@@ -658,7 +656,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       String group = "group";
       String generatedMarkerGroup = "jclouds#group";
       Set<String> groupNames = ImmutableSet.<String> of();
-      int[] ports = new int[] {};
+      int[] ports = {};
       boolean shouldAuthorizeSelf = true;
       Set<String> returnVal = ImmutableSet.<String> of(generatedMarkerGroup);
 
@@ -692,7 +690,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       String group = "group";
       String generatedMarkerGroup = "jclouds#group";
       Set<String> groupNames = ImmutableSet.<String> of();
-      int[] ports = new int[] { 22, 80 };
+      int[] ports = { 22, 80 };
       boolean shouldAuthorizeSelf = true;
       Set<String> returnVal = ImmutableSet.<String> of(generatedMarkerGroup);
 
@@ -726,7 +724,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       String group = "group";
       String generatedMarkerGroup = "jclouds#group";
       Set<String> groupNames = ImmutableSet.<String> of();
-      int[] ports = new int[] {};
+      int[] ports = {};
       boolean shouldAuthorizeSelf = true;
       Set<String> returnVal = ImmutableSet.<String> of(generatedMarkerGroup);
 
@@ -760,7 +758,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       String group = "group";
       String generatedMarkerGroup = "jclouds#group";
       Set<String> groupNames = ImmutableSet.<String> of("group1", "group2");
-      int[] ports = new int[] {};
+      int[] ports = {};
       boolean shouldAuthorizeSelf = true;
       boolean groupExisted = true;
       Set<String> returnVal = ImmutableSet.<String> of(generatedMarkerGroup, "group1", "group2");
@@ -796,7 +794,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       String group = "group";
       String generatedMarkerGroup = "jclouds#group";
       Set<String> groupNames = ImmutableSet.<String> of();
-      int[] ports = new int[] {};
+      int[] ports = {};
       boolean shouldAuthorizeSelf = true;
       boolean groupExisted = true;
       Set<String> returnVal = ImmutableSet.<String> of(generatedMarkerGroup);

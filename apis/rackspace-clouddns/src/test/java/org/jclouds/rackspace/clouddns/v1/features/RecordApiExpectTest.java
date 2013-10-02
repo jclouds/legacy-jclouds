@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.rackspace.clouddns.v1.features;
 
@@ -127,6 +125,26 @@ public class RecordApiExpectTest extends BaseCloudDNSApiExpectTest<CloudDNSApi> 
 
       ImmutableList<RecordDetail> records = api.list().concat().toList();
       assertEquals(records.size(), 4); // 2 created above + 2 nameserver (NS) records
+      
+      for (RecordDetail record: records) {
+         assertTrue(record.getName().contains(JCLOUDS_EXAMPLE));
+      }
+   }
+
+   public void testListRecordsPagination() {
+      URI endpointPage1 = URI.create("https://dns.api.rackspacecloud.com/v1.0/123123/domains/3650908/records");
+      URI endpointPage2 = URI.create("https://dns.api.rackspacecloud.com/v1.0/123123/domains/3650908/records?limit=4&offset=4");
+      RecordApi api = requestsSendResponses(
+            rackspaceAuthWithUsernameAndApiKey, 
+            responseWithAccess,
+            authenticatedGET().endpoint(endpointPage1).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/record-list-page1.json")).build(),
+            authenticatedGET().endpoint(endpointPage2).build(),
+            HttpResponse.builder().statusCode(OK.getStatusCode()).payload(payloadFromResource("/record-list-page2.json")).build())
+         .getRecordApiForDomain(3650908);
+
+      ImmutableList<RecordDetail> records = api.list().concat().toList();
+      assertEquals(records.size(), 8);
       
       for (RecordDetail record: records) {
          assertTrue(record.getName().contains(JCLOUDS_EXAMPLE));

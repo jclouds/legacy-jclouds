@@ -1,20 +1,18 @@
 /*
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.openstack.nova.v2_0.domain;
 
@@ -27,6 +25,7 @@ import java.util.Map;
 import javax.inject.Named;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.openstack.nova.v2_0.options.CreateServerOptions;
 import org.jclouds.openstack.v2_0.domain.Link;
 import org.jclouds.openstack.v2_0.domain.Resource;
 
@@ -47,6 +46,8 @@ import com.google.common.collect.Multimap;
  *      />
  */
 public class Server extends Resource {
+   public static final String DISK_CONFIG_MANUAL = "MANUAL";
+   public static final String DISK_CONFIG_AUTO = "AUTO";
 
    /**
     * Servers contain a status attribute that can be used as an indication of the current server
@@ -443,12 +444,18 @@ public class Server extends Resource {
    }
 
    /**
-    * Disk config attribute from the Disk Config Extension (alias "OS-DCF")
+    * Disk config attribute from the Disk Config Extension (alias "OS-DCF").
+    * One of {@link Server#DISK_CONFIG_AUTO} or {@link Server#DISK_CONFIG_MANUAL}.
+    * This field is only present if the Disk Config extension is installed.
     * <p/>
-    * NOTE: This field is only present if the Disk Config extension is installed
+    * NOTE: Typically a field like this would be implemented as an enum but this field was
+    * originally implmented as a String and {@link Server#DISK_CONFIG_AUTO} and 
+    * {@link Server#DISK_CONFIG_MANUAL} were added later as Strings to preserve backwards
+    * compatibility.
     *
     * @see org.jclouds.openstack.nova.v2_0.features.ExtensionApi#getExtensionByAlias
     * @see org.jclouds.openstack.nova.v2_0.extensions.ExtensionNamespaces#DISK_CONFIG
+    * @see CreateServerOptions#getDiskConfig()
     */
    public Optional<String> getDiskConfig() {
       return this.diskConfig;

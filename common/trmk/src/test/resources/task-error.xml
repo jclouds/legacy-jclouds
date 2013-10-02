@@ -1,9 +1,0 @@
-<Task href="http://10.150.4.49/api/v0.8/task/23" type="application/vnd.vmware.vcloud.task+xml"
-	status="error" startTime="2009-12-07T19:05:02" endTime="2009-12-10T14:40:32">
-	<Owner href="http://10.150.4.49/api/v0.8/org/1" type="application/vnd.vmware.vcloud.org+xml"
-		name="APIOrg" />
-	<Result href="http://10.150.4.49/api/v0.8/vapp/1" type="application/vnd.vmware.vcloud.vApp+xml"
-		name="testapp1" />
-	<Error message="Error processing job" majorErrorCode="500"
-		minorErrorCode=" Error in runDailySummaries date used:2009-12-09 19:40:30.577326+00:00" />
-</Task>

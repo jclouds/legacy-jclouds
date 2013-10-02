@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.aws.ec2;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_AMI_QUERY;
@@ -66,7 +64,7 @@ public class AWSEC2ProviderMetadata extends BaseProviderMetadata {
       properties.setProperty(PROPERTY_EC2_AMI_QUERY,
                "owner-id=137112412989,801119661308,063491364108,099720109477,411009282317;state=available;image-type=machine");
       // amis that work with the cluster instances
-      properties.setProperty(PROPERTY_EC2_CC_REGIONS, Region.US_EAST_1 + "," + Region.US_WEST_2 + ","+ Region.EU_WEST_1);
+      properties.setProperty(PROPERTY_EC2_CC_REGIONS, Region.US_EAST_1 + "," + Region.US_WEST_2 + "," + Region.EU_WEST_1);
       properties
                .setProperty(
                         PROPERTY_EC2_CC_AMI_QUERY,
@@ -77,7 +75,7 @@ public class AWSEC2ProviderMetadata extends BaseProviderMetadata {
    
    public static class Builder extends BaseProviderMetadata.Builder {
 
-      protected Builder(){
+      protected Builder() {
          id("aws-ec2")
          .name("Amazon Elastic Compute Cloud (EC2)")
          .apiMetadata(new AWSEC2ApiMetadata())

@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.openstack.nova.v2_0.compute.config;
 
@@ -40,20 +38,27 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.SecurityGroup;
 import org.jclouds.compute.extensions.ImageExtension;
+import org.jclouds.compute.extensions.SecurityGroupExtension;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.strategy.impl.CreateNodesWithGroupEncodedIntoNameThenAddToSet;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.functions.IdentityFunction;
+import org.jclouds.net.domain.IpPermission;
 import org.jclouds.openstack.nova.v2_0.compute.NovaComputeService;
 import org.jclouds.openstack.nova.v2_0.compute.NovaComputeServiceAdapter;
 import org.jclouds.openstack.nova.v2_0.compute.extensions.NovaImageExtension;
+import org.jclouds.openstack.nova.v2_0.compute.extensions.NovaSecurityGroupExtension;
 import org.jclouds.openstack.nova.v2_0.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.openstack.nova.v2_0.compute.functions.FlavorInZoneToHardware;
 import org.jclouds.openstack.nova.v2_0.compute.functions.ImageInZoneToImage;
 import org.jclouds.openstack.nova.v2_0.compute.functions.ImageToOperatingSystem;
+import org.jclouds.openstack.nova.v2_0.compute.functions.NovaSecurityGroupInZoneToSecurityGroup;
+import org.jclouds.openstack.nova.v2_0.compute.functions.NovaSecurityGroupToSecurityGroup;
 import org.jclouds.openstack.nova.v2_0.compute.functions.OrphanedGroupsByZoneId;
+import org.jclouds.openstack.nova.v2_0.compute.functions.SecurityGroupRuleToIpPermission;
 import org.jclouds.openstack.nova.v2_0.compute.functions.ServerInZoneToNodeMetadata;
 import org.jclouds.openstack.nova.v2_0.compute.loaders.CreateUniqueKeyPair;
 import org.jclouds.openstack.nova.v2_0.compute.loaders.FindSecurityGroupOrCreate;
@@ -62,6 +67,7 @@ import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
 import org.jclouds.openstack.nova.v2_0.compute.strategy.ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet;
 import org.jclouds.openstack.nova.v2_0.domain.FloatingIP;
 import org.jclouds.openstack.nova.v2_0.domain.KeyPair;
+import org.jclouds.openstack.nova.v2_0.domain.SecurityGroupRule;
 import org.jclouds.openstack.nova.v2_0.domain.Server;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.FlavorInZone;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ImageInZone;
@@ -110,6 +116,15 @@ public class NovaComputeServiceContextModule extends
       bind(new TypeLiteral<Function<ServerInZone, NodeMetadata>>() {
       }).to(ServerInZoneToNodeMetadata.class);
 
+      bind(new TypeLiteral<Function<SecurityGroupRule, IpPermission>>() {
+      }).to(SecurityGroupRuleToIpPermission.class);
+
+      bind(new TypeLiteral<Function<org.jclouds.openstack.nova.v2_0.domain.SecurityGroup, SecurityGroup>>() {
+      }).to(NovaSecurityGroupToSecurityGroup.class);
+
+      bind(new TypeLiteral<Function<SecurityGroupInZone, SecurityGroup>>() {
+      }).to(NovaSecurityGroupInZoneToSecurityGroup.class);
+
       bind(new TypeLiteral<Function<Set<? extends NodeMetadata>,  Multimap<String, String>>>() {
       }).to(OrphanedGroupsByZoneId.class);
 
@@ -144,6 +159,9 @@ public class NovaComputeServiceContextModule extends
       
       bind(new TypeLiteral<ImageExtension>() {
       }).to(NovaImageExtension.class);
+
+      bind(new TypeLiteral<SecurityGroupExtension>() {
+      }).to(NovaSecurityGroupExtension.class);
    }
 
    @Override
@@ -178,7 +196,7 @@ public class NovaComputeServiceContextModule extends
 
    @Provides
    @Singleton
-   @Named(TIMEOUT_SECURITYGROUP_PRESENT)
+   @Named("SECURITYGROUP_PRESENT")
    protected Predicate<AtomicReference<ZoneAndName>> securityGroupEventualConsistencyDelay(
             FindSecurityGroupWithNameAndReturnTrue in,
             @Named(TIMEOUT_SECURITYGROUP_PRESENT) long msDelay) {
@@ -259,5 +277,10 @@ public class NovaComputeServiceContextModule extends
    @Override
    protected Optional<ImageExtension> provideImageExtension(Injector i) {
       return Optional.of(i.getInstance(ImageExtension.class));
+   }
+
+   @Override
+   protected Optional<SecurityGroupExtension> provideSecurityGroupExtension(Injector i) {
+      return Optional.of(i.getInstance(SecurityGroupExtension.class));
    }
 }

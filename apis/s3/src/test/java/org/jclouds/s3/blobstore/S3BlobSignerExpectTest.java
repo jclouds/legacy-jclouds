@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.s3.blobstore;
 
@@ -46,8 +44,7 @@ public class S3BlobSignerExpectTest extends BaseBlobSignerExpectTest {
    @Override
    protected HttpRequest getBlob() {
       return HttpRequest.builder().method("GET")
-                        .endpoint("https://container.s3.amazonaws.com/name")
-                        .addHeader("Host", "container.s3.amazonaws.com")
+                        .endpoint("https://s3.amazonaws.com/container/name")
                         .addHeader("Date", "Thu, 05 Jun 2008 16:38:19 GMT")
                         .addHeader("Authorization", "AWS identity:0uvBv1wEskuhFHYJF/L6kEV9A7o=").build();
    }
@@ -62,8 +59,7 @@ public class S3BlobSignerExpectTest extends BaseBlobSignerExpectTest {
    @Override
    protected HttpRequest getBlobWithTime() {
       return HttpRequest.builder().method("GET")
-            .endpoint("https://container.s3.amazonaws.com/name")
-            .addHeader("Host", "container.s3.amazonaws.com")
+            .endpoint("https://s3.amazonaws.com/container/name")
             .addHeader("Date", "Thu, 05 Jun 2008 16:38:19 GMT")
             .addHeader("Authorization", "AWS identity:0uvBv1wEskuhFHYJF/L6kEV9A7o=").build();
    }
@@ -71,9 +67,8 @@ public class S3BlobSignerExpectTest extends BaseBlobSignerExpectTest {
    @Override
    protected HttpRequest getBlobWithOptions() {
       return HttpRequest.builder().method("GET")
-            .endpoint("https://container.s3.amazonaws.com/name")
+            .endpoint("https://s3.amazonaws.com/container/name")
             .addHeader("Range", "bytes=0-1")
-            .addHeader("Host", "container.s3.amazonaws.com")
             .addHeader("Date", "Thu, 05 Jun 2008 16:38:19 GMT")
             .addHeader("Authorization", "AWS identity:0uvBv1wEskuhFHYJF/L6kEV9A7o=").build();
    }
@@ -81,9 +76,8 @@ public class S3BlobSignerExpectTest extends BaseBlobSignerExpectTest {
    @Override
    protected HttpRequest putBlob() {
       return HttpRequest.builder().method("PUT")
-            .endpoint("https://container.s3.amazonaws.com/name")
+            .endpoint("https://s3.amazonaws.com/container/name")
             .addHeader("Expect", "100-continue")
-            .addHeader("Host", "container.s3.amazonaws.com")
             .addHeader("Date", "Thu, 05 Jun 2008 16:38:19 GMT")
             .addHeader("Authorization", "AWS identity:j9Dy/lmmvlCKjA4lkqZenLxMkR4=").build();
    }
@@ -98,9 +92,8 @@ public class S3BlobSignerExpectTest extends BaseBlobSignerExpectTest {
    @Override
    protected HttpRequest putBlobWithTime() {
       return HttpRequest.builder().method("PUT")
-            .endpoint("https://container.s3.amazonaws.com/name")
+            .endpoint("https://s3.amazonaws.com/container/name")
             .addHeader("Expect", "100-continue")
-            .addHeader("Host", "container.s3.amazonaws.com")
             .addHeader("Date", "Thu, 05 Jun 2008 16:38:19 GMT")
             .addHeader("Authorization", "AWS identity:0uvBv1wEskuhFHYJF/L6kEV9A7o=").build();
    }
@@ -108,8 +101,7 @@ public class S3BlobSignerExpectTest extends BaseBlobSignerExpectTest {
    @Override
    protected HttpRequest removeBlob() {
       return HttpRequest.builder().method("DELETE")
-            .endpoint("https://container.s3.amazonaws.com/name")
-            .addHeader("Host", "container.s3.amazonaws.com")
+            .endpoint("https://s3.amazonaws.com/container/name")
             .addHeader("Date", "Thu, 05 Jun 2008 16:38:19 GMT")
             .addHeader("Authorization", "AWS identity:4FnyjdX/ULdDMRbVlLNjZfEo9RQ=").build();
    }

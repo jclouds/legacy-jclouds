@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.blobstore.strategy.internal;
 
@@ -32,7 +30,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
@@ -60,9 +58,9 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
    protected Logger logger = Logger.NULL;
 
    protected final BackoffLimitedRetryHandler retryHandler;
-   private final ListeningExecutorService userExecutor;
+   private final ListeningExecutorService executorService;
 
-   protected final AsyncBlobStore connection;
+   protected final BlobStore blobStore;
 
    /** Maximum duration in milliseconds of a request. */
    protected long maxTime = Long.MAX_VALUE;
@@ -71,10 +69,10 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
    protected int maxErrors = 3;
 
    @Inject
-   DeleteAllKeysInList(@Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor,
-         AsyncBlobStore connection, BackoffLimitedRetryHandler retryHandler) {
-      this.userExecutor = userExecutor;
-      this.connection = connection;
+   DeleteAllKeysInList(@Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService executorService,
+         BlobStore blobStore, BackoffLimitedRetryHandler retryHandler) {
+      this.executorService = executorService;
+      this.blobStore = blobStore;
       this.retryHandler = retryHandler;
    }
 
@@ -103,31 +101,8 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
       Map<StorageMetadata, Exception> exceptions = Maps.newHashMap();
       for (int numErrors = 0; numErrors < maxErrors; ) {
          // fetch partial directory listing
-         PageSet<? extends StorageMetadata> listing;
-         ListenableFuture<PageSet<? extends StorageMetadata>> listFuture =
-               connection.list(containerName, options);
-         try {
-            listing = listFuture.get(maxTime, TimeUnit.MILLISECONDS);
-         } catch (InterruptedException ie) {
-            Thread.currentThread().interrupt();
-            break;
-         } catch (ExecutionException ee) {
-            ++numErrors;
-            if (numErrors == maxErrors) {
-               throw propagate(ee.getCause());
-            }
-            retryHandler.imposeBackoffExponentialDelay(numErrors, message);
-            continue;
-         } catch (TimeoutException te) {
-            ++numErrors;
-            if (numErrors == maxErrors) {
-               throw propagate(te);
-            }
-            retryHandler.imposeBackoffExponentialDelay(numErrors, message);
-            continue;
-         } finally {
-            listFuture.cancel(true);
-         }
+         PageSet<? extends StorageMetadata> listing =
+               blobStore.list(containerName, options);
 
          // recurse on subdirectories
          if (options.isRecursive()) {
@@ -151,21 +126,36 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
 
          // remove blobs and now-empty subdirectories
          Map<StorageMetadata, ListenableFuture<?>> responses = Maps.newHashMap();
-         for (StorageMetadata md : listing) {
-            String fullPath = parentIsFolder(options, md) ? options.getDir() + "/"
+         for (final StorageMetadata md : listing) {
+            final String fullPath = parentIsFolder(options, md) ? options.getDir() + "/"
                      + md.getName() : md.getName();
             switch (md.getType()) {
                case BLOB:
-                  responses.put(md, connection.removeBlob(containerName, fullPath));
+                  responses.put(md, executorService.submit(new Runnable() {
+                     @Override
+                     public void run() {
+                        blobStore.removeBlob(containerName, fullPath);
+                     }
+                  }));
                   break;
                case FOLDER:
                   if (options.isRecursive()) {
-                     responses.put(md, connection.deleteDirectory(containerName, fullPath));
+                     responses.put(md, executorService.submit(new Runnable() {
+                        @Override
+                        public void run() {
+                           blobStore.deleteDirectory(containerName, fullPath);
+                        }
+                     }));
                   }
                   break;
                case RELATIVE_PATH:
                   if (options.isRecursive()) {
-                     responses.put(md, connection.deleteDirectory(containerName, md.getName()));
+                     responses.put(md, executorService.submit(new Runnable() {
+                        @Override
+                        public void run() {
+                           blobStore.deleteDirectory(containerName, md.getName());
+                        }
+                     }));
                   }
                   break;
                case CONTAINER:
@@ -174,7 +164,7 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
          }
 
          try {
-            exceptions = awaitCompletion(responses, userExecutor, maxTime, logger, message);
+            exceptions = awaitCompletion(responses, executorService, maxTime, logger, message);
          } catch (TimeoutException te) {
             ++numErrors;
             if (numErrors == maxErrors) {

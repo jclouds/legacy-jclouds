@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.blobstore.integration.internal;
 
@@ -30,6 +28,7 @@ import static org.jclouds.io.ByteSources.asByteSource;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -66,6 +65,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.io.WriteTo;
+import org.jclouds.io.payloads.InputStreamSupplierPayload;
 import org.jclouds.io.payloads.StreamingPayload;
 import org.jclouds.logging.Logger;
 import org.testng.ITestContext;
@@ -80,6 +80,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.hash.HashCode;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
@@ -102,7 +103,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       oneHundredOneConstitutionsMD5 = md5Supplier(oneHundredOneConstitutions);
    }
 
-   protected static byte[] md5Supplier(InputSupplier<InputStream> supplier) throws IOException {
+   protected static byte[] md5Supplier(InputSupplier<? extends InputStream> supplier) throws IOException {
       return asByteSource(supplier.getInput()).hash(md5()).asBytes();
    }
 
@@ -121,6 +122,13 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       return temp;
    }
 
+   public static long getOneHundredOneConstitutionsLength() throws IOException {
+      if (oneHundredOneConstitutionsLength == 0) {
+         getTestDataSupplier();
+      }
+      return oneHundredOneConstitutionsLength;
+   }
+
    /**
     * Attempt to capture the issue detailed in
     * http://groups.google.com/group/jclouds/browse_thread/thread/4a7c8d58530b287f
@@ -129,8 +137,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    public void testPutFileParallel() throws InterruptedException, IOException, TimeoutException {
 
       File payloadFile = File.createTempFile("testPutFileParallel", "png");
-      Files.copy(createTestInput(), payloadFile);
-      payloadFile.deleteOnExit();
+      Files.copy(createTestInput(32 * 1024), payloadFile);
       
       final Payload testPayload = Payloads.newFilePayload(payloadFile);
       final byte[] md5 = md5Supplier(testPayload);
@@ -167,18 +174,20 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
          assert exceptions.size() == 0 : exceptions;
 
       } finally {
+         payloadFile.delete();
          returnContainer(container);
       }
    }
 
    @Test(groups = { "integration", "live" })
-   public void testBigFileGets() throws InterruptedException, IOException, TimeoutException {
+   public void testFileGetParallel() throws Exception {
+      final InputSupplier<? extends InputStream> supplier = createTestInput(32 * 1024);
       final String expectedContentDisposition = "attachment; filename=constit.txt";
       final String container = getContainerName();
       try {
          final String name = "constitution.txt";
 
-         uploadConstitution(container, name, expectedContentDisposition);
+         uploadInputSupplier(container, name, expectedContentDisposition, supplier);
          Map<Integer, ListenableFuture<?>> responses = Maps.newHashMap();
          for (int i = 0; i < 10; i++) {
 
@@ -189,7 +198,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
                         public Void apply(Blob from) {
                            try {
                               validateMetadata(from.getMetadata(), container, name);
-                              assertEquals(md5Supplier(from.getPayload()), oneHundredOneConstitutionsMD5);
+                              assertEquals(md5Supplier(from.getPayload()), md5Supplier(supplier));
                               checkContentDisposition(from, expectedContentDisposition);
                            } catch (IOException e) {
                               Throwables.propagate(e);
@@ -201,7 +210,9 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
          }
          Map<Integer, Exception> exceptions = awaitCompletion(responses, exec, 30000l, Logger.CONSOLE,
                   "get constitution");
-         assert exceptions.size() == 0 : exceptions;
+         if (!exceptions.isEmpty()) {
+            throw exceptions.values().iterator().next();
+         }
 
       } finally {
          returnContainer(container);
@@ -209,12 +220,16 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    }
 
-   private void uploadConstitution(String container, String name, String contentDisposition) throws IOException {
-      view.getBlobStore().putBlob(
-               container,
-               view.getBlobStore().blobBuilder(name).payload(oneHundredOneConstitutions.getInput()).contentType(
-                        "text/plain").contentMD5(oneHundredOneConstitutionsMD5).contentLength(
-                        oneHundredOneConstitutionsLength).contentDisposition(contentDisposition).build());
+   private void uploadInputSupplier(String container, String name, String contentDisposition,
+         InputSupplier<? extends InputStream> supplier) throws IOException {
+      BlobStore blobStore = view.getBlobStore();
+      blobStore.putBlob(container, blobStore.blobBuilder(name)
+            .payload(new InputStreamSupplierPayload(supplier))
+            .contentType("text/plain")
+            .contentMD5(md5Supplier(supplier))
+            .contentLength(ByteStreams.length(supplier))
+            .contentDisposition(contentDisposition)
+            .build());
    }
 
    @Test(groups = { "integration", "live" })
@@ -261,7 +276,48 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
          returnContainer(container);
       }
    }
-   
+
+   private void putBlobWithMd5(byte[] payload, HashCode contentMD5) throws InterruptedException, IOException {
+      String container = getContainerName();
+      BlobStore blobStore = view.getBlobStore();
+      try {
+         String blobName = "putBlobWithMd5-" + new Random().nextLong();
+         Blob blob = blobStore
+            .blobBuilder(blobName)
+            .payload(payload)
+            .contentMD5(contentMD5.asBytes())
+            .build();
+         blobStore.putBlob(container, blob);
+      } finally {
+         returnContainer(container);
+      }
+   }
+
+   protected int getIncorrectContentMD5StatusCode() {
+      return 400;
+   }
+
+   @Test(groups = { "integration", "live" })
+   public void testPutCorrectContentMD5() throws InterruptedException, IOException {
+      byte[] payload = ByteStreams.toByteArray(createTestInput(1024));
+      HashCode contentMD5 = md5().hashBytes(payload);
+      putBlobWithMd5(payload, contentMD5);
+   }
+
+   @Test(groups = { "integration", "live" })
+   public void testPutIncorrectContentMD5() throws InterruptedException, IOException {
+      byte[] payload = ByteStreams.toByteArray(createTestInput(1024));
+      HashCode contentMD5 = md5().hashBytes(new byte[0]);
+      try {
+         putBlobWithMd5(payload, contentMD5);
+         fail();
+      } catch (HttpResponseException hre) {
+         if (hre.getResponse().getStatusCode() != getIncorrectContentMD5StatusCode()) {
+            throw hre;
+         }
+      }
+   }
+
    @Test(groups = { "integration", "live" })
    public void testGetIfUnmodifiedSince() throws InterruptedException {
       String container = getContainerName();
@@ -506,7 +562,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       }
    }
 
-   private void checkContentMetadata(Blob blob) {
+   protected void checkContentMetadata(Blob blob) {
       checkContentType(blob, "text/csv");
       checkContentDisposition(blob, "attachment; filename=photo.jpg");
       checkContentEncoding(blob, "gzip");
@@ -606,13 +662,12 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       assertEquals(metadata.getContentMetadata().getContentMD5(), md5().hashString(TEST_STRING, UTF_8).asBytes());
    }
 
-   private File createTestInput() throws IOException {
-      File file = File.createTempFile("testimg", "png");
-      file.deleteOnExit();
+   /** @return InputSupplier containing a random length 0..length of random bytes. */
+   @SuppressWarnings("unchecked")
+   private static InputSupplier<? extends InputStream> createTestInput(int length) {
       Random random = new Random();
-      byte[] buffer = new byte[random.nextInt(2 * 1024 * 1024)];
+      byte[] buffer = new byte[random.nextInt(length)];
       random.nextBytes(buffer);
-      Files.copy(ByteStreams.newInputStreamSupplier(buffer), file);
-      return file;
+      return ByteStreams.newInputStreamSupplier(buffer);
    }
 }

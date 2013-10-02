@@ -1,9 +1,0 @@
-<CreateNodeServiceRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="urn:tmrk:vCloudExpressExtensions-1.6">
-	<IpAddress>172.16.20.3</IpAddress>
-	<Name>Node for Jim</Name>
-	<Port>80</Port>
-	<Enabled>false</Enabled>
-	
-    <Description>Some test node</Description>
-</CreateNodeServiceRequest>

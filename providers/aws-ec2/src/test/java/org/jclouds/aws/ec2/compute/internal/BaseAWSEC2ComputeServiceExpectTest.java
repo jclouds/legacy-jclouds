@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.aws.ec2.compute.internal;
 
@@ -24,11 +22,11 @@ import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_GENERATE_INSTA
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jclouds.aws.ec2.config.AWSEC2RestClientModule;
+import org.jclouds.aws.ec2.config.AWSEC2HttpApiModule;
 import org.jclouds.date.DateService;
 import org.jclouds.ec2.compute.internal.BaseEC2ComputeServiceExpectTest;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.ConfiguresHttpApi;
 import org.testng.annotations.BeforeClass;
 
 import com.google.common.base.Supplier;
@@ -42,6 +40,8 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 public abstract class BaseAWSEC2ComputeServiceExpectTest extends BaseEC2ComputeServiceExpectTest {
+
+   protected HttpRequest describeSecurityGroupByIdRequest;
 
    public BaseAWSEC2ComputeServiceExpectTest() {
       provider = "aws-ec2";
@@ -61,6 +61,47 @@ public abstract class BaseAWSEC2ComputeServiceExpectTest extends BaseEC2ComputeS
    protected void setupDefaultRequests() {
       super.setupDefaultRequests();
 
+      describeSecurityGroupByIdRequest =
+              formSigner.filter(HttpRequest.builder()
+                      .method("POST")
+                      .endpoint("https://ec2." + region + ".amazonaws.com/")
+                      .addHeader("Host", "ec2." + region + ".amazonaws.com")
+                      .addFormParam("Action", "DescribeSecurityGroups")
+                      .addFormParam("GroupId.1", "sg-3c6ef654").build());
+
+      authorizeSecurityGroupIngressRequestGroup =
+              formSigner.filter(HttpRequest.builder()
+                      .method("POST")
+                      .endpoint("https://ec2." + region + ".amazonaws.com/")
+                      .addHeader("Host", "ec2." + region + ".amazonaws.com")
+                      .addFormParam("Action", "AuthorizeSecurityGroupIngress")
+                      .addFormParam("SourceSecurityGroupId", "sg-3c6ef654")
+                      .addFormParam("SourceSecurityGroupOwnerId", "993194456877")
+                      .addFormParam("GroupName", "jclouds#test").build());
+
+      authorizeSecurityGroupIngressRequest22 = 
+         formSigner.filter(HttpRequest.builder()
+                           .method("POST")
+                           .endpoint("https://ec2." + region + ".amazonaws.com/")
+                           .addHeader("Host", "ec2." + region + ".amazonaws.com")
+                           .addFormParam("Action", "AuthorizeSecurityGroupIngress")
+                           .addFormParam("GroupId", "sg-3c6ef654")
+                           .addFormParam("IpPermissions.0.FromPort", "22")
+                           .addFormParam("IpPermissions.0.ToPort", "22")
+                           .addFormParam("IpPermissions.0.IpRanges.0.CidrIp", "0.0.0.0/0")
+                           .addFormParam("IpPermissions.0.IpProtocol", "tcp")
+                           .addFormParam("IpPermissions.1.FromPort", "0")
+                           .addFormParam("IpPermissions.1.ToPort", "65535")
+                           .addFormParam("IpPermissions.1.Groups.0.GroupId", "sg-3c6ef654")
+                           .addFormParam("IpPermissions.1.Groups.0.UserId", "993194456877")
+                           .addFormParam("IpPermissions.1.IpProtocol", "tcp")
+                           .addFormParam("IpPermissions.2.FromPort", "0")
+                           .addFormParam("IpPermissions.2.ToPort", "65535")
+                           .addFormParam("IpPermissions.2.Groups.0.GroupId", "sg-3c6ef654")
+                           .addFormParam("IpPermissions.2.Groups.0.UserId", "993194456877")
+                           .addFormParam("IpPermissions.2.IpProtocol", "udp")
+                           .build());
+
       describeImagesRequest = 
                formSigner.filter(HttpRequest.builder()
                           .method("POST")
@@ -79,8 +120,8 @@ public abstract class BaseAWSEC2ComputeServiceExpectTest extends BaseEC2ComputeS
                           .addFormParam("Filter.3.Value.1", "machine").build());
    }
 
-   @ConfiguresRestClient
-   protected static class TestAWSEC2RestClientModule extends AWSEC2RestClientModule {
+   @ConfiguresHttpApi
+   protected static class TestAWSEC2HttpApiModule extends AWSEC2HttpApiModule {
 
       @Override
       protected void configure() {
@@ -107,6 +148,6 @@ public abstract class BaseAWSEC2ComputeServiceExpectTest extends BaseEC2ComputeS
 
    @Override
    protected Module createModule() {
-      return new TestAWSEC2RestClientModule();
+      return new TestAWSEC2HttpApiModule();
    }
 }

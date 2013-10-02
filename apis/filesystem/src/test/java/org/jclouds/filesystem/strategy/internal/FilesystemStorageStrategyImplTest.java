@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.filesystem.strategy.internal;
 
@@ -42,6 +40,7 @@ import org.jclouds.filesystem.predicates.validators.internal.FilesystemContainer
 import org.jclouds.filesystem.utils.TestUtils;
 import org.jclouds.io.payloads.FilePayload;
 import org.jclouds.io.payloads.InputStreamPayload;
+import org.jclouds.util.Throwables2;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -386,10 +385,12 @@ public class FilesystemStorageStrategyImplTest {
 
    public void testWritePayloadOnFile_SourceFileDoesntExist() {
       File sourceFile = new File("asdfkjsadkfjasdlfasdflk.asdfasdfas");
+      FilePayload payload = new FilePayload(sourceFile);
       try {
-         new FilePayload(sourceFile);
-         fail("Exception not throwed");
+         payload.getInput();
+         fail("Exception not thrown");
       } catch (Exception ex) {
+         assertNotNull(Throwables2.getFirstThrowableOfType(ex, IOException.class));
       }
    }
 
@@ -436,7 +437,7 @@ public class FilesystemStorageStrategyImplTest {
    }
 
    public void testBlobExists() throws IOException {
-      String[] sourceBlobKeys = new String[] { TestUtils.createRandomBlobKey("blobExists-", ".jpg"),
+      String[] sourceBlobKeys = { TestUtils.createRandomBlobKey("blobExists-", ".jpg"),
                TestUtils.createRandomBlobKey("blobExists-", ".jpg"),
                TestUtils.createRandomBlobKey("afasd" + FS + "asdma" + FS + "blobExists-", ".jpg") };
 
@@ -505,18 +506,15 @@ public class FilesystemStorageStrategyImplTest {
       while (containersIterator.hasNext()) {
          retrievedBlobKeys.add(containersIterator.next());
       }
-      assertEquals(retrievedBlobKeys.size(), createBlobKeys.size(), "Different blobs number");
+      int expectedBlobs = retrievedBlobKeys.size() - 2;  // ignore two directories
+      assertEquals(expectedBlobs, createBlobKeys.size(), "Different blobs number");
       for (String createdBlobKey : createBlobKeys) {
          assertTrue(retrievedBlobKeys.contains(createdBlobKey), "Blob " + createdBlobKey + " not found");
       }
    }
 
    public void testCountsBlob() {
-      try {
-         storageStrategy.countBlobs(CONTAINER_NAME, ListContainerOptions.NONE);
-         fail("Magically the method was implemented... Wow!");
-      } catch (UnsupportedOperationException e) {
-      }
+      storageStrategy.countBlobs(CONTAINER_NAME, ListContainerOptions.NONE);
    }
 
    public void testInvalidBlobKey() {

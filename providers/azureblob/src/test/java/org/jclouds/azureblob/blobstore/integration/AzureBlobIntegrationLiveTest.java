@@ -1,30 +1,41 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.azureblob.blobstore.integration;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
+import org.jclouds.azureblob.blobstore.strategy.MultipartUploadStrategy;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
+import org.jclouds.blobstore.options.PutOptions;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
+
+import static com.google.common.hash.Hashing.md5;
+import static org.jclouds.io.ByteSources.asByteSource;
 
 /**
  * 
@@ -32,12 +43,20 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class AzureBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
+    private InputSupplier<InputStream> oneHundredOneConstitutions;
+    private byte[] oneHundredOneConstitutionsMD5;
+
    public AzureBlobIntegrationLiveTest() {
       provider = "azureblob";
    }
    @Override
    public void testGetIfMatch() throws InterruptedException {
       // this currently fails
+   }
+
+    @Override
+    public void testGetIfModifiedSince() throws InterruptedException {
+       // this currently fails!
    }
 
    public void testCreateBlobWithExpiry() throws InterruptedException {
@@ -57,4 +76,75 @@ public class AzureBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
       assert blob.getPayload().getContentMetadata().getContentDisposition() == null;
       assert blob.getMetadata().getContentMetadata().getContentDisposition() == null;
    }
+
+   /**
+    * Essentially copied from the AWS multipart chucked stream test
+    */
+   public void testMultipartChunkedFileStream() throws IOException, InterruptedException {
+      oneHundredOneConstitutions = getTestDataSupplier();
+      oneHundredOneConstitutionsMD5 = asByteSource(oneHundredOneConstitutions.getInput()).hash(md5()).asBytes();
+      File file = new File("target/const.txt");
+      Files.copy(oneHundredOneConstitutions, file);
+      String containerName = getContainerName();
+
+      try {
+         BlobStore blobStore = view.getBlobStore();
+         blobStore.createContainerInLocation(null, containerName);
+         Blob blob = blobStore.blobBuilder("const.txt").payload(file).build();
+         String expected = blobStore.putBlob(containerName, blob, PutOptions.Builder.multipart());
+         String etag = blobStore.blobMetadata(containerName, "const.txt").getETag();
+         assertEquals(etag, expected);
+      } finally {
+         returnContainer(containerName);
+      }
+   }
+
+   public void testMultipartChunkedFileStreamPowerOfTwoSize() throws IOException, InterruptedException {
+      final long limit = MultipartUploadStrategy.MAX_BLOCK_SIZE;
+      InputSupplier<InputStream> input = new InputSupplier<InputStream>() {
+         @Override
+         public InputStream getInput() throws IOException {
+            return ByteStreams.limit(ZERO_INPUT_STREAM, limit);
+         }
+      };
+      File file = new File("target/const.txt");
+      Files.copy(input, file);
+      String containerName = getContainerName();
+
+      try {
+         BlobStore blobStore = view.getBlobStore();
+         blobStore.createContainerInLocation(null, containerName);
+         Blob blob = blobStore.blobBuilder("const.txt").payload(file).build();
+         String expected = blobStore.putBlob(containerName, blob, PutOptions.Builder.multipart());
+         String etag = blobStore.blobMetadata(containerName, "const.txt").getETag();
+         assertEquals(etag, expected);
+      } finally {
+         returnContainer(containerName);
+      }
+   }
+
+   /** An infinite-length zero byte InputStream. */
+   // Guava feature request:
+   // https://code.google.com/p/guava-libraries/issues/detail?id=1370
+   private static final InputStream ZERO_INPUT_STREAM = new InputStream() {
+      @Override
+      public int read() {
+         return 0;
+      }
+
+      @Override
+      public int read(final byte[] b) {
+         return read(b, 0, b.length);
+      }
+
+      @Override
+      public int read(final byte[] b, final int off, final int len) {
+         if (off < 0 || len < 0 || len > b.length - off) {
+            throw new IndexOutOfBoundsException();
+         }
+         int length = Math.min(len, b.length - off);
+         Arrays.fill(b, off, length, (byte) 0);
+         return length;
+      }
+   };
 }

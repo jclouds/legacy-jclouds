@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.aws.ec2.domain;
 
@@ -39,6 +37,7 @@ public class Spot implements Comparable<Spot> {
       private String productDescription;
       private float spotPrice;
       private Date timestamp;
+      private String availabilityZone;
 
       public void clear() {
          this.region = null;
@@ -46,6 +45,7 @@ public class Spot implements Comparable<Spot> {
          this.productDescription = null;
          this.spotPrice = 0.0f;
          this.timestamp = null;
+         this.availabilityZone = null;
       }
 
       public Builder region(String region) {
@@ -73,8 +73,13 @@ public class Spot implements Comparable<Spot> {
          return this;
       }
 
+      public Builder availabilityZone(String availabilityZone) {
+         this.availabilityZone = availabilityZone;
+         return this;
+      }
+
       public Spot build() {
-         return new Spot(region, instanceType, productDescription, spotPrice, timestamp);
+         return new Spot(region, instanceType, productDescription, spotPrice, timestamp, availabilityZone);
       }
    }
 
@@ -83,13 +88,16 @@ public class Spot implements Comparable<Spot> {
    private final String productDescription;
    private final float spotPrice;
    private final Date timestamp;
+   private final String availabilityZone;
 
-   public Spot(String region, String instanceType, String productDescription, float spotPrice, Date timestamp) {
+   public Spot(String region, String instanceType, String productDescription, float spotPrice, Date timestamp,
+               String availabilityZone) {
       this.region = checkNotNull(region, "region");
       this.instanceType = checkNotNull(instanceType, "instanceType");
       this.productDescription = checkNotNull(productDescription, "productDescription");
       this.spotPrice = spotPrice;
       this.timestamp = checkNotNull(timestamp, "timestamp");
+      this.availabilityZone = checkNotNull(availabilityZone, "availabilityZone");
    }
 
    /**
@@ -119,6 +127,10 @@ public class Spot implements Comparable<Spot> {
       return timestamp;
    }
 
+   public String getAvailabilityZone() {
+      return availabilityZone;
+   }
+
    @Override
    public int compareTo(Spot o) {
       return Float.compare(spotPrice, o.spotPrice);
@@ -133,6 +145,7 @@ public class Spot implements Comparable<Spot> {
       result = prime * result + ((region == null) ? 0 : region.hashCode());
       result = prime * result + Float.floatToIntBits(spotPrice);
       result = prime * result + ((timestamp == null) ? 0 : timestamp.hashCode());
+      result = prime * result + ((availabilityZone == null) ? 0 : availabilityZone.hashCode());
       return result;
    }
 
@@ -167,13 +180,20 @@ public class Spot implements Comparable<Spot> {
             return false;
       } else if (!timestamp.equals(other.timestamp))
          return false;
+      if (availabilityZone == null) {
+         if (other.availabilityZone != null)
+            return false;
+      } else if (!availabilityZone.equals(other.availabilityZone)) {
+         return false;
+      }
       return true;
    }
 
    @Override
    public String toString() {
       return "[region=" + region + ", instanceType=" + instanceType + ", productDescription=" + productDescription
-            + ", spotPrice=" + spotPrice + ", timestamp=" + timestamp + "]";
+            + ", spotPrice=" + spotPrice + ", timestamp=" + timestamp + ", availabilityZone="
+              + availabilityZone + "]";
    }
 
 }

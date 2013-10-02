@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.aws.ec2.compute;
 
@@ -37,7 +35,7 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.domain.PlacementGroup.State;
 import org.jclouds.collect.Memoized;
@@ -48,6 +46,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.extensions.ImageExtension;
+import org.jclouds.compute.extensions.SecurityGroupExtension;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.internal.PersistNodeCredentials;
 import org.jclouds.compute.options.TemplateOptions;
@@ -83,7 +82,7 @@ public class AWSEC2ComputeService extends EC2ComputeService {
 
    private final LoadingCache<RegionAndName, String> placementGroupMap;
    private final Predicate<PlacementGroup> placementGroupDeleted;
-   private final AWSEC2Client client;
+   private final AWSEC2Api client;
 
    @Inject
    protected AWSEC2ComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
@@ -100,19 +99,20 @@ public class AWSEC2ComputeService extends EC2ComputeService {
          InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
          RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
          PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
-         @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, AWSEC2Client client,
+         @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, AWSEC2Api client,
          ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
          @Named("SECURITY") LoadingCache<RegionAndName, String> securityGroupMap,
          @Named("PLACEMENT") LoadingCache<RegionAndName, String> placementGroupMap,
          @Named("DELETED") Predicate<PlacementGroup> placementGroupDeleted, Optional<ImageExtension> imageExtension,
          GroupNamingConvention.Factory namingConvention,
-         @Named(PROPERTY_EC2_GENERATE_INSTANCE_NAMES) boolean generateInstanceNames) {
+         @Named(PROPERTY_EC2_GENERATE_INSTANCE_NAMES) boolean generateInstanceNames,
+         Optional<SecurityGroupExtension> securityGroupExtension) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getImageStrategy,
             getNodeMetadataStrategy, runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy,
             startNodeStrategy, stopNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning,
             nodeTerminated, nodeSuspended, initScriptRunnerFactory, runScriptOnNodeFactory, initAdminAccess,
             persistNodeCredentials, timeouts, userExecutor, client, credentialsMap, securityGroupMap, imageExtension,
-            namingConvention, generateInstanceNames);
+            namingConvention, generateInstanceNames, securityGroupExtension);
       this.client = client;
       this.placementGroupMap = placementGroupMap;
       this.placementGroupDeleted = placementGroupDeleted;
@@ -125,10 +125,10 @@ public class AWSEC2ComputeService extends EC2ComputeService {
       // http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/index.html?using_cluster_computing.html
       String placementGroup = String.format("jclouds#%s#%s", group, region);
       try {
-         if (client.getPlacementGroupServices().describePlacementGroupsInRegion(region, placementGroup).size() > 0) {
+         if (client.getPlacementGroupApi().get().describePlacementGroupsInRegion(region, placementGroup).size() > 0) {
             logger.debug(">> deleting placementGroup(%s)", placementGroup);
             try {
-               client.getPlacementGroupServices().deletePlacementGroupInRegion(region, placementGroup);
+               client.getPlacementGroupApi().get().deletePlacementGroupInRegion(region, placementGroup);
                checkState(placementGroupDeleted.apply(new PlacementGroup(region, placementGroup, "cluster",
                         State.PENDING)), String.format("placementGroup region(%s) name(%s) failed to delete", region,
                         placementGroup));

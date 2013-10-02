@@ -1,22 +1,19 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.jclouds.cloudstack.options;
 
 import org.jclouds.http.options.BaseHttpRequestOptions;
@@ -61,6 +58,17 @@ public class ListResourceLimitsOptions extends BaseHttpRequestOptions {
     */
    public ListResourceLimitsOptions id(String id) {
       this.queryParameters.replaceValues("account", ImmutableSet.of(String.valueOf(id)));
+      return this;
+   }
+
+   /**
+    * Lists resource limits by project.
+    *
+    * @param projectId the project
+    * @return ListResourceLimitsOptions
+    */
+   public ListResourceLimitsOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(String.valueOf(projectId + "")));
       return this;
    }
 
@@ -117,6 +125,14 @@ public class ListResourceLimitsOptions extends BaseHttpRequestOptions {
       public static ListResourceLimitsOptions id(String id) {
          ListResourceLimitsOptions options = new ListResourceLimitsOptions();
          return options.id(id);
+      }
+
+      /**
+       * @see ListResourceLimitsOptions#projectId(String)
+       */
+      public static ListResourceLimitsOptions projectId(String projectId) {
+         ListResourceLimitsOptions options = new ListResourceLimitsOptions();
+         return options.projectId(projectId);
       }
 
       /**

@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.http;
 
@@ -227,36 +225,36 @@ public class HttpUtils {
    public void checkRequestHasRequiredProperties(HttpRequest message) {
       checkArgument(
             message.getPayload() == null || message.getFirstHeaderOrNull(CONTENT_TYPE) == null,
-            "configuration error please use request.getPayload().getContentMetadata().setContentType(value) as opposed to adding a content type header: "
-                  + message);
+            "configuration error please use request.getPayload().getContentMetadata().setContentType(value) as opposed to adding a content type header: %s",
+                  message);
       checkArgument(
             message.getPayload() == null || message.getFirstHeaderOrNull(CONTENT_LENGTH) == null,
-            "configuration error please use request.getPayload().getContentMetadata().setContentLength(value) as opposed to adding a content length header: "
-                  + message);
+            "configuration error please use request.getPayload().getContentMetadata().setContentLength(value) as opposed to adding a content length header: %s",
+                  message);
       checkArgument(
             message.getPayload() == null || message.getPayload().getContentMetadata().getContentLength() != null
                   || "chunked".equalsIgnoreCase(message.getFirstHeaderOrNull("Transfer-Encoding")),
-            "either chunked encoding must be set on the http request or contentlength set on the payload: " + message);
+            "either chunked encoding must be set on the http request or contentlength set on the payload: %s", message);
       checkArgument(
             message.getPayload() == null || message.getFirstHeaderOrNull("Content-MD5") == null,
-            "configuration error please use request.getPayload().getContentMetadata().setContentMD5(value) as opposed to adding a content md5 header: "
-                  + message);
+            "configuration error please use request.getPayload().getContentMetadata().setContentMD5(value) as opposed to adding a content md5 header: %s",
+                  message);
       checkArgument(
             message.getPayload() == null || message.getFirstHeaderOrNull("Content-Disposition") == null,
-            "configuration error please use request.getPayload().getContentMetadata().setContentDisposition(value) as opposed to adding a content disposition header: "
-                  + message);
+            "configuration error please use request.getPayload().getContentMetadata().setContentDisposition(value) as opposed to adding a content disposition header: %s",
+                  message);
       checkArgument(
             message.getPayload() == null || message.getFirstHeaderOrNull(CONTENT_ENCODING) == null,
-            "configuration error please use request.getPayload().getContentMetadata().setContentEncoding(value) as opposed to adding a content encoding header: "
-                  + message);
+            "configuration error please use request.getPayload().getContentMetadata().setContentEncoding(value) as opposed to adding a content encoding header: %s",
+                  message);
       checkArgument(
             message.getPayload() == null || message.getFirstHeaderOrNull(CONTENT_LANGUAGE) == null,
-            "configuration error please use request.getPayload().getContentMetadata().setContentLanguage(value) as opposed to adding a content language header: "
-                  + message);
+            "configuration error please use request.getPayload().getContentMetadata().setContentLanguage(value) as opposed to adding a content language header: %s",
+                  message);
       checkArgument(
             message.getPayload() == null || message.getFirstHeaderOrNull(EXPIRES) == null,
-            "configuration error please use request.getPayload().getContentMetadata().setExpires(value) as opposed to adding an expires header: "
-                  + message);
+            "configuration error please use request.getPayload().getContentMetadata().setExpires(value) as opposed to adding an expires header: %s",
+                  message);
    }
 
    public static void releasePayload(HttpMessage from) {

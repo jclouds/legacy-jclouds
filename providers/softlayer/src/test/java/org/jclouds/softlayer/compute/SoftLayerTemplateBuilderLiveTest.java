@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.softlayer.compute;
 
@@ -89,7 +87,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
-      assertEquals(defaultTemplate.getHardware().getRam(), 1);
+      assertEquals(defaultTemplate.getHardware().getRam(), 1*1024);
       assertEquals(getSpace(defaultTemplate.getHardware()), 25.0d);
       assertEquals(defaultTemplate.getHardware().getVolumes().get(0).getType(), Volume.Type.LOCAL);
       // test that we bound the correct templateoptions in guice
@@ -143,7 +141,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
 
          Template template = context.getComputeService().templateBuilder().biggest().build();
          assertEquals(getCores(template.getHardware()), 16.0d);
-         assertEquals(template.getHardware().getRam(), 16);
+         assertEquals(template.getHardware().getRam(), 16*1024);
          assertEquals(getSpace(template.getHardware()), 100.0d);
          assertEquals(template.getHardware().getVolumes().get(0).getType(), Volume.Type.SAN);
       } finally {
@@ -163,7 +161,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
 
          Template template = context.getComputeService().templateBuilder().build();
          assertEquals(getCores(template.getHardware()), 1.0d);
-         assertEquals(template.getHardware().getRam(), 1);
+         assertEquals(template.getHardware().getRam(), 1*1024);
          assertEquals(getSpace(template.getHardware()), 25.0d);
          assertEquals(template.getHardware().getVolumes().get(0).getType(), Volume.Type.LOCAL);
       } finally {
@@ -183,7 +181,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
          
          Template template = context.getComputeService().templateBuilder().biggest().build();
          assertEquals(getCores(template.getHardware()), 8.0d);
-         assertEquals(template.getHardware().getRam(), 16);
+         assertEquals(template.getHardware().getRam(), 16*1024);
          assertEquals(getSpace(template.getHardware()), 100.0d);
          assertEquals(template.getHardware().getVolumes().get(0).getType(), Volume.Type.LOCAL);
       } finally {
@@ -196,7 +194,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
    public void testFastestTemplateBuilder() throws IOException {
       Template template = view.getComputeService().templateBuilder().fastest().build();
       assertEquals(getCores(template.getHardware()), 16.0d);
-      assertEquals(template.getHardware().getRam(), 1);
+      assertEquals(template.getHardware().getRam(), 1*1024);
       assertEquals(getSpace(template.getHardware()), 25.0d);
       assertEquals(template.getHardware().getVolumes().get(0).getType(), Volume.Type.LOCAL);
    }
@@ -205,14 +203,14 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
    public void testBiggestTemplateBuilder() throws IOException {
       Template template = view.getComputeService().templateBuilder().biggest().build();
       assertEquals(getCores(template.getHardware()), 16.0d);
-      assertEquals(template.getHardware().getRam(), 16);
+      assertEquals(template.getHardware().getRam(), 16*1024);
       assertEquals(getSpace(template.getHardware()), 100.0d);
       assertEquals(template.getHardware().getVolumes().get(0).getType(), Volume.Type.LOCAL);
    }
 
    @Override
    protected Set<String> getIso3166Codes() {
-      return ImmutableSet.<String> of("SG", "US-CA", "US-TX", "US-VA", "US-WA");
+      return ImmutableSet.<String> of("SG", "US-CA", "US-TX", "US-VA", "US-WA", "NL");
    }
 
 }

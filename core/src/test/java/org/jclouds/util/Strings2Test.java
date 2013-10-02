@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.util;
 
@@ -42,7 +40,12 @@ public class Strings2Test {
             "/read-tests/%73%6f%6d%65%20%66%69%6c%65");
       assertEquals(urlEncode("/read-tests/ tep", '/'), "/read-tests/%20tep");
    }
-   
+
+   public void testNoDoubleDecode() {
+      assertEquals(urlDecode("foo%20bar%2Bbaz"), "foo bar+baz");
+      assertEquals(urlDecode("foo bar+baz"), "foo bar+baz");
+   }
+
    public void testReplaceTokens() {
       assertEquals(Strings2.replaceTokens("hello {where}", ImmutableMap.of("where", "world")), "hello world");
    }
@@ -55,4 +58,12 @@ public class Strings2Test {
       assertEquals(actual, urlDecode(urlEncode(actual)));
    }
 
+   public void testIsCidrFormat() {
+      assert Strings2.isCidrFormat("1.2.3.4/5");
+      assert Strings2.isCidrFormat("0.0.0.0/0");
+      assert !Strings2.isCidrFormat("banana");
+      assert !Strings2.isCidrFormat("1.2.3.4");
+      assert !Strings2.isCidrFormat("500.500.500.500/2423");
+   }
+      
 }

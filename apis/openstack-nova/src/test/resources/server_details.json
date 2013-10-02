@@ -11,6 +11,7 @@
         "accessIPv6" : "::babe:67.23.10.132",
         "status": "BUILD(scheduling)",
         "progress": 60,
+        "OS-DCF:diskConfig": "AUTO",        
         "image" : {
             "id": "52415800-8b69-11e0-9b19-734f6f006e54",
             "links": [

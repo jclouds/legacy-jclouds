@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.blobstore.integration.internal;
 
@@ -52,6 +50,7 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.util.Strings2;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 
@@ -100,6 +99,15 @@ public class BaseBlobStoreIntegrationTest extends BaseViewLiveTest<BlobStoreCont
    public void setUpResourcesForAllThreads(ITestContext testContext) throws Exception {
       setupContext();
       createContainersSharedByAllThreads(view, testContext);
+      view.close();
+      view = null;
+   }
+
+   @AfterSuite(groups = { "integration", "live" })
+   protected void destroyResources() throws Exception {
+      setupContext();
+      deleteEverything(view);
+
       view.close();
       view = null;
    }
@@ -277,7 +285,6 @@ public class BaseBlobStoreIntegrationTest extends BaseViewLiveTest<BlobStoreCont
    protected <T extends BlobMetadata> T validateMetadata(T md, String container, String name) {
       assertEquals(md.getName(), name);
       assertEquals(md.getContainer(), container);
-      assert md.getUri() != null;
       return md;
    }
 
@@ -501,8 +508,8 @@ public class BaseBlobStoreIntegrationTest extends BaseViewLiveTest<BlobStoreCont
             deleteContainerOrWarnIfUnable(view, container);
          }
       });
-      String newScratchContainer = container + new SecureRandom().nextLong();
-      System.err.printf("*** allocated new container %s...%n", container);
+      String newScratchContainer = CONTAINER_PREFIX + new SecureRandom().nextLong();
+      System.err.printf("*** allocated new container %s...%n", newScratchContainer);
       return newScratchContainer;
    }
 

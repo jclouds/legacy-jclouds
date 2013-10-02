@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.openstack.keystone.v2_0.internal;
 import static java.lang.String.format;
@@ -38,15 +36,15 @@ import com.google.common.net.HttpHeaders;
 public enum KeystoneFixture {
    INSTANCE;
 
-   public String getTenantId(){
+   public String getTenantId() {
       return "12346637803162";
    }
    
-   public String getTenantName(){
+   public String getTenantName() {
 	      return "adrian@jclouds.org";
 	   }
 
-   public HttpRequest initialAuthWithUsernameAndPassword(String username, String password){
+   public HttpRequest initialAuthWithUsernameAndPassword(String username, String password) {
       return HttpRequest.builder().method("POST")
             .endpoint("http://localhost:5000/v2.0/tokens")
             .addHeader(HttpHeaders.ACCEPT, "application/json")
@@ -57,7 +55,7 @@ public enum KeystoneFixture {
                                        username, password), "application/json")).build();
    }
   
-   public HttpRequest initialAuthWithUsernameAndPasswordAndTenantName(String username, String password){
+   public HttpRequest initialAuthWithUsernameAndPasswordAndTenantName(String username, String password) {
       return HttpRequest.builder().method("POST")
             .endpoint("http://localhost:5000/v2.0/tokens")
             .addHeader(HttpHeaders.ACCEPT, "application/json")
@@ -68,7 +66,7 @@ public enum KeystoneFixture {
                                        username, password, getTenantName()), "application/json")).build();
    }
   
-   public HttpRequest initialAuthWithAccessKeyAndSecretKeyAndTenantName(String accessKey, String secretKey){
+   public HttpRequest initialAuthWithAccessKeyAndSecretKeyAndTenantName(String accessKey, String secretKey) {
       return HttpRequest.builder().method("POST")
             .endpoint("http://localhost:5000/v2.0/tokens")
             .addHeader(HttpHeaders.ACCEPT, "application/json")
@@ -79,7 +77,7 @@ public enum KeystoneFixture {
                                        accessKey, secretKey, getTenantName()), "application/json")).build();
    }
    
-   public HttpRequest initialAuthWithAccessKeyAndSecretKeyAndTenantId(String accessKey, String secretKey){
+   public HttpRequest initialAuthWithAccessKeyAndSecretKeyAndTenantId(String accessKey, String secretKey) {
       return HttpRequest.builder().method("POST")
 
 	            .endpoint("http://localhost:5000/v2.0/tokens")
@@ -91,11 +89,11 @@ public enum KeystoneFixture {
 	                                       accessKey, secretKey, getTenantId()), "application/json")).build();
 	   }
 
-   public String getAuthToken(){
+   public String getAuthToken() {
       return  "Auth_4f173437e4b013bee56d1007";
    }
 
-   public HttpResponse responseWithAccess(){
+   public HttpResponse responseWithAccess() {
       return HttpResponse.builder().statusCode(200).message("HTTP/1.1 200").payload(
             payloadFromResourceWithContentType("/keystoneAuthResponse.json", "application/json")).build();
    }

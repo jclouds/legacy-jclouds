@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.vcloud.compute.strategy;
 
@@ -40,7 +38,7 @@ import org.jclouds.ovf.Envelope;
 import org.jclouds.util.Throwables2;
 import org.jclouds.vcloud.TaskInErrorStateException;
 import org.jclouds.vcloud.TaskStillRunningException;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.VCloudApi;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
@@ -56,10 +54,9 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
-import com.google.common.collect.Iterables;
 
 /**
- * defines the connection between the {@link VCloudClient} implementation and the jclouds
+ * defines the connection between the {@link org.jclouds.vcloud.VCloudApi} implementation and the jclouds
  * {@link ComputeService}
  * 
  */
@@ -70,7 +67,7 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   protected final VCloudClient client;
+   protected final VCloudApi client;
    protected final Predicate<URI> successTester;
    protected final InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn booter;
    protected final Supplier<Map<String, Org>> nameToOrg;
@@ -78,7 +75,7 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
    protected final Function<VAppTemplate, Envelope> templateToEnvelope;
 
    @Inject
-   protected VCloudComputeServiceAdapter(VCloudClient client, Predicate<URI> successTester,
+   protected VCloudComputeServiceAdapter(VCloudApi client, Predicate<URI> successTester,
             InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn booter,
             Supplier<Map<String, Org>> nameToOrg, VAppTemplatesSupplier templates,
             Function<VAppTemplate, Envelope> templateToEnvelope) {
@@ -108,13 +105,13 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
          public boolean apply(VAppTemplate from) {
             try {
                templateToEnvelope.apply(from);
-            } catch (IllegalArgumentException e){
-               logger.warn("Unsupported: "+ e.getMessage());
+            } catch (IllegalArgumentException e) {
+               logger.warn("Unsupported: " + e.getMessage());
                return false;
             } catch (RuntimeException e) {
                IllegalArgumentException e2 = Throwables2.getFirstThrowableOfType(e, IllegalArgumentException.class);
                if (e2 != null) {
-                  logger.warn("Unsupported: "+ e2.getMessage());
+                  logger.warn("Unsupported: " + e2.getMessage());
                   return false;
                } else {
                   throw e;
@@ -137,7 +134,7 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
       Builder<VApp> nodes = ImmutableSet.builder();
       for (Org org : nameToOrg.get().values()) {
          for (ReferenceType vdc : org.getVDCs().values()) {
-            for (ReferenceType resource : client.getVDCClient().getVDC(vdc.getHref()).getResourceEntities().values()) {
+            for (ReferenceType resource : client.getVDCApi().getVDC(vdc.getHref()).getResourceEntities().values()) {
                if (resource.getType().equals(VCloudMediaType.VAPP_XML)) {
                   addVAppToSetRetryingIfNotYetPresent(nodes, vdc, resource);
                }
@@ -164,7 +161,7 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
       int i = 0;
       while (node == null && i++ < 3) {
          try {
-            node = client.getVAppClient().getVApp(resource.getHref());
+            node = client.getVAppApi().getVApp(resource.getHref());
             nodes.add(node);
          } catch (NullPointerException e) {
             logger.warn("vApp %s not yet present in vdc %s", resource.getName(), vdc.getName());
@@ -181,13 +178,13 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
    @Override
    public VApp getNode(String in) {
       URI id = URI.create(in);
-      return client.getVAppClient().getVApp(id);
+      return client.getVAppApi().getVApp(id);
    }
    
    @Override
    public VAppTemplate getImage(String in) {
       URI id = URI.create(in);
-      return client.getVAppTemplateClient().getVAppTemplate(id);
+      return client.getVAppTemplateApi().getVAppTemplate(id);
    }
    
    @Override
@@ -197,47 +194,47 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
       if (vApp.getStatus() != Status.OFF) {
          logger.debug(">> powering off VApp vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
          try {
-            waitForTask(client.getVAppClient().powerOffVApp(vApp.getHref()));
-            vApp = client.getVAppClient().getVApp(vApp.getHref());
+            waitForTask(client.getVAppApi().powerOffVApp(vApp.getHref()));
+            vApp = client.getVAppApi().getVApp(vApp.getHref());
             logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
          } catch (IllegalStateException e) {
             logger.warn(e, "<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
          }
          logger.debug(">> undeploying vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
          try {
-            waitForTask(client.getVAppClient().undeployVApp(vApp.getHref()));
-            vApp = client.getVAppClient().getVApp(vApp.getHref());
+            waitForTask(client.getVAppApi().undeployVApp(vApp.getHref()));
+            vApp = client.getVAppApi().getVApp(vApp.getHref());
             logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
          } catch (IllegalStateException e) {
             logger.warn(e, "<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
          }
       }
       logger.debug(">> deleting vApp(%s)", vApp.getHref());
-      waitForTask(client.getVAppClient().deleteVApp(vApp.getHref()));
+      waitForTask(client.getVAppApi().deleteVApp(vApp.getHref()));
       logger.debug("<< deleted vApp(%s)", vApp.getHref());
    }
 
    VApp waitForPendingTasksToComplete(URI vappId) {
-      VApp vApp = client.getVAppClient().getVApp(vappId);
+      VApp vApp = client.getVAppApi().getVApp(vappId);
       if (vApp.getTasks().size() == 0)
          return vApp;
       for (Task task : vApp.getTasks())
          waitForTask(task);
-      return client.getVAppClient().getVApp(vappId);
+      return client.getVAppApi().getVApp(vappId);
    }
 
    VApp cancelAnyRunningTasks(URI vappId) {
-      VApp vApp = client.getVAppClient().getVApp(vappId);
+      VApp vApp = client.getVAppApi().getVApp(vappId);
       if (vApp.getTasks().size() == 0)
          return vApp;
       for (Task task : vApp.getTasks()) {
          try {
-            client.getTaskClient().cancelTask(task.getHref());
+            client.getTaskApi().cancelTask(task.getHref());
             waitForTask(task);
          } catch (TaskInErrorStateException e) {
          }
       }
-      return client.getVAppClient().getVApp(vappId);
+      return client.getVAppApi().getVApp(vappId);
 
    }
 
@@ -249,18 +246,18 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
    @Override
    public void rebootNode(String in) {
       URI id = URI.create(checkNotNull(in, "node.id"));
-      waitForTask(client.getVAppClient().resetVApp(id));
+      waitForTask(client.getVAppApi().resetVApp(id));
    }
 
    @Override
    public void resumeNode(String in) {
       URI id = URI.create(checkNotNull(in, "node.id"));
-      waitForTask(client.getVAppClient().powerOnVApp(id));
+      waitForTask(client.getVAppApi().powerOnVApp(id));
    }
 
    @Override
    public void suspendNode(String in) {
       URI id = URI.create(checkNotNull(in, "node.id"));
-      waitForTask(client.getVAppClient().powerOffVApp(id));
+      waitForTask(client.getVAppApi().powerOffVApp(id));
    }
 }

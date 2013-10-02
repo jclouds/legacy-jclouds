@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.vcloud.compute.strategy;
 
@@ -44,7 +42,7 @@ import org.jclouds.ovf.Network;
 import org.jclouds.predicates.validators.DnsNameValidator;
 import org.jclouds.rest.annotations.BuildVersion;
 import org.jclouds.vcloud.TaskStillRunningException;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.VCloudApi;
 import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
 import org.jclouds.vcloud.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.domain.NetworkConnection;
@@ -73,7 +71,7 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   protected final VCloudClient client;
+   protected final VCloudApi client;
    protected final Predicate<URI> successTester;
    protected final LoadingCache<URI, VAppTemplate> vAppTemplates;
    protected final NetworkConfigurationForNetworkAndOptions networkConfigurationForNetworkAndOptions;
@@ -81,7 +79,7 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
 
 
    @Inject
-   protected InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn(VCloudClient client,
+   protected InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn(VCloudApi client,
             Predicate<URI> successTester, LoadingCache<URI, VAppTemplate> vAppTemplates, NetworkConfigurationForNetworkAndOptions networkConfigurationForNetworkAndOptions,
             @BuildVersion String buildVersion) {
       this.client = client;
@@ -103,7 +101,7 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
       
       private DnsNameValidator validator;
 
-      ComputerNameValidator(){
+      ComputerNameValidator() {
          this.validator = new  DnsNameValidator(3, 15);
       }
       
@@ -121,7 +119,7 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getName());
 
       // vm data is available after instantiate completes
-      vAppResponse = client.getVAppClient().getVApp(vAppResponse.getHref());
+      vAppResponse = client.getVAppApi().getVApp(vAppResponse.getHref());
 
       // per above check, we know there is only a single VM
       Vm vm = get(vAppResponse.getChildren(), 0);
@@ -147,14 +145,14 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
       waitForTask(updateMemoryMBOfVm(vm, memoryMB));
       logger.trace("<< updated memoryMB vm(%s)", vm.getName());
       logger.trace(">> deploying vApp(%s)", vAppResponse.getName());
-      waitForTask(client.getVAppClient().deployVApp(vAppResponse.getHref()));
+      waitForTask(client.getVAppApi().deployVApp(vAppResponse.getHref()));
       logger.trace("<< deployed vApp(%s)", vAppResponse.getName());
 
       // only after deploy is the password valid
-      vAppResponse = client.getVAppClient().getVApp(vAppResponse.getHref());
+      vAppResponse = client.getVAppApi().getVApp(vAppResponse.getHref());
 
       logger.trace(">> powering on vApp(%s)", vAppResponse.getName());
-      client.getVAppClient().powerOnVApp(vAppResponse.getHref());
+      client.getVAppApi().powerOnVApp(vAppResponse.getHref());
 
       return new NodeAndInitialCredentials<VApp>(vAppResponse, vAppResponse.getHref().toASCIIString(),
                getCredentialsFrom(vAppResponse));
@@ -205,7 +203,7 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
 
       logger.debug(">> instantiating vApp vDC(%s) template(%s) name(%s) options(%s) ", VDC, templateId, name, options);
 
-      VApp vAppResponse = client.getVAppTemplateClient().createVAppInVDCByInstantiatingTemplate(name, VDC, templateId,
+      VApp vAppResponse = client.getVAppTemplateApi().createVAppInVDCByInstantiatingTemplate(name, VDC, templateId,
                options);
       return vAppResponse;
    }
@@ -246,7 +244,7 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
 
          guestConfiguration.setCustomizationScript(customizationScript);
       }
-      return client.getVmClient().updateGuestCustomizationOfVm(guestConfiguration, vm.getHref());
+      return client.getVmApi().updateGuestCustomizationOfVm(guestConfiguration, vm.getHref());
    }
 
    public void ensureVmHasAllocationModeOrPooled(VApp vApp, @Nullable IpAddressAllocationMode ipAllocationMode) {
@@ -275,7 +273,7 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
                   .ipAddressAllocationMode(ipAllocationMode).build()));
          logger.trace(">> updating networkConnection vm(%s)", vm.getName());
 
-         waitForTask(client.getVmClient().updateNetworkConnectionOfVm(builder.build(), vm.getHref()));
+         waitForTask(client.getVmApi().updateNetworkConnectionOfVm(builder.build(), vm.getHref()));
          logger.trace("<< updated networkConnection vm(%s)", vm.getName());
 
       }
@@ -294,10 +292,10 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
    }
 
    public Task updateCPUCountOfVm(Vm vm, int cpuCount) {
-      return client.getVmClient().updateCPUCountOfVm(cpuCount, vm.getHref());
+      return client.getVmApi().updateCPUCountOfVm(cpuCount, vm.getHref());
    }
 
    public Task updateMemoryMBOfVm(Vm vm, int memoryInMB) {
-      return client.getVmClient().updateMemoryMBOfVm(memoryInMB, vm.getHref());
+      return client.getVmApi().updateMemoryMBOfVm(memoryInMB, vm.getHref());
    }
 }

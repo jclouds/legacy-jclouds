@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.greenhousedata.element.vcloud;
 
@@ -27,7 +25,7 @@ import org.jclouds.greenhousedata.element.vcloud.config.GreenHouseDataElementVCl
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 import org.jclouds.vcloud.VCloudApiMetadata;
-import org.jclouds.vcloud.config.VCloudRestClientModule;
+import org.jclouds.vcloud.config.VCloudHttpApiModule;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
@@ -64,13 +62,13 @@ public class GreenHouseDataElementVCloudProviderMetadata extends BaseProviderMet
    
    public static class Builder extends BaseProviderMetadata.Builder {
 
-      protected Builder(){
+      protected Builder() {
          id("greenhousedata-element-vcloud")
          .name("Green House Data Element vCloud")
                .apiMetadata(
                      new VCloudApiMetadata().toBuilder()
                      .buildVersion("1.5.0.464915")
-                     .defaultModules(ImmutableSet.<Class<? extends Module>>of(VCloudRestClientModule.class, GreenHouseDataElementVCloudComputeServiceContextModule.class))
+                     .defaultModules(ImmutableSet.<Class<? extends Module>>of(VCloudHttpApiModule.class, GreenHouseDataElementVCloudComputeServiceContextModule.class))
                      .build())
          .homepage(URI.create("http://www.greenhousedata.com/element-cloud-hosting/vcloud-services/"))
          .console(URI.create("https://mycloud.greenhousedata.com/cloud/org/YOUR_ORG_HERE"))

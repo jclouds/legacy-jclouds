@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds;
 
@@ -70,6 +68,16 @@ public class JcloudsVersionTest {
         new JcloudsVersion("1.2.3-rc.4-SNAPSHOT");
     }
 
+    @Test(expectedExceptions = { IllegalArgumentException.class })
+    public void testFailsIfIncubatingSnapshot() {
+        new JcloudsVersion("1.2.3-incubating-SNAPSHOT");
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class })
+    public void testFailsIfNumberedIncubating() {
+        new JcloudsVersion("1.2.3-incubating.1");
+    }
+
     @Test
     public void testExtractsVersionFromResourceFile() {
         JcloudsVersion version = new JcloudsVersion();
@@ -101,9 +109,21 @@ public class JcloudsVersionTest {
         JcloudsVersion version = new JcloudsVersion("1.2.3");
         assertFalse(version.alpha, "Expected non-alpha");
         assertFalse(version.beta, "Expected non-beta");
+        assertFalse(version.releaseCandidate, "Expected non-release candidate");
         assertNull(version.alphaVersion);
         assertNull(version.betaVersion);
+        assertNull(version.releaseCandidateVersion);
+    }
+
+    @Test
+    public void testSupportsIncubatingReleaseVersion() {
+        // *not* a semver-compliant release version!
+        JcloudsVersion version = new JcloudsVersion("1.2.3-incubating");
+        assertFalse(version.alpha, "Expected non-alpha");
+        assertFalse(version.beta, "Expected non-beta");
         assertFalse(version.releaseCandidate, "Expected non-release candidate");
+        assertNull(version.alphaVersion);
+        assertNull(version.betaVersion);
         assertNull(version.releaseCandidateVersion);
     }
 

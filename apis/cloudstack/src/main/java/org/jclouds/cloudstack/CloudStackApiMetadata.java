@@ -1,22 +1,21 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.cloudstack;
+import static org.jclouds.cloudstack.config.CloudStackProperties.AUTO_GENERATE_KEYPAIRS;
 import static org.jclouds.reflect.Reflection2.typeToken;
 
 import java.net.URI;
@@ -25,8 +24,8 @@ import java.util.Properties;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.cloudstack.compute.config.CloudStackComputeServiceContextModule;
 import org.jclouds.cloudstack.config.CloudStackParserModule;
-import org.jclouds.cloudstack.config.CloudStackRestClientModule;
-import org.jclouds.rest.internal.BaseRestApiMetadata;
+import org.jclouds.cloudstack.config.CloudStackHttpApiModule;
+import org.jclouds.rest.internal.BaseHttpApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
@@ -36,16 +35,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class CloudStackApiMetadata extends BaseRestApiMetadata {
-   
-   /**
-    * @deprecated please use {@code org.jclouds.ContextBuilder#buildApi(CloudStackClient.class)} as
-    *             {@link CloudStackAsyncClient} interface will be removed in jclouds 1.7.
-    */
-   @Deprecated
-   public static final TypeToken<org.jclouds.rest.RestContext<CloudStackClient, CloudStackAsyncClient>> CONTEXT_TOKEN = new TypeToken<org.jclouds.rest.RestContext<CloudStackClient, CloudStackAsyncClient>>() {
-      private static final long serialVersionUID = 1L;
-   };
+public class CloudStackApiMetadata extends BaseHttpApiMetadata<CloudStackApi> {
    
    @Override
    public Builder toBuilder() {
@@ -61,17 +51,17 @@ public class CloudStackApiMetadata extends BaseRestApiMetadata {
    }
 
    public static Properties defaultProperties() {
-      Properties properties = BaseRestApiMetadata.defaultProperties();
+      Properties properties = BaseHttpApiMetadata.defaultProperties();
       properties.setProperty("jclouds.ssh.max-retries", "7");
       properties.setProperty("jclouds.ssh.retry-auth", "true");
+      properties.setProperty(AUTO_GENERATE_KEYPAIRS, "false");
       return properties;
    }
 
-   public static class Builder extends BaseRestApiMetadata.Builder<Builder> {
+   public static class Builder extends BaseHttpApiMetadata.Builder<CloudStackApi, Builder> {
 
       @SuppressWarnings("deprecation")
       protected Builder() {
-         super(CloudStackClient.class, CloudStackAsyncClient.class);
          id("cloudstack")
          .name("Citrix CloudStack API")
          .identityName("API Key")
@@ -83,7 +73,7 @@ public class CloudStackApiMetadata extends BaseRestApiMetadata {
          .defaultProperties(CloudStackApiMetadata.defaultProperties())
          .defaultModules(ImmutableSet.<Class<? extends Module>> builder()
                                      .add(CloudStackParserModule.class)
-                                     .add(CloudStackRestClientModule.class)
+                                     .add(CloudStackHttpApiModule.class)
                                      .add(CloudStackComputeServiceContextModule.class).build());
       }
       

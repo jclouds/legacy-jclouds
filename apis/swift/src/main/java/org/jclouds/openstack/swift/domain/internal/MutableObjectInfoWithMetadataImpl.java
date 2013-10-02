@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.openstack.swift.domain.internal;
 
@@ -43,6 +41,7 @@ public class MutableObjectInfoWithMetadataImpl implements MutableObjectInfoWithM
    private byte[] hash;
    private String contentType = MediaType.APPLICATION_OCTET_STREAM;
    private Date lastModified;
+   private String objectManifest;
    private final Map<String, String> metadata = Maps.newLinkedHashMap();
 
    /**
@@ -123,6 +122,7 @@ public class MutableObjectInfoWithMetadataImpl implements MutableObjectInfoWithM
       int result = 1;
       result = prime * result + ((container == null) ? 0 : container.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((objectManifest == null) ? 0 : objectManifest.hashCode());
       return result;
    }
 
@@ -144,6 +144,11 @@ public class MutableObjectInfoWithMetadataImpl implements MutableObjectInfoWithM
          if (other.name != null)
             return false;
       } else if (!name.equals(other.name))
+         return false;
+      if (objectManifest == null) {
+         if (other.objectManifest != null)
+            return false;
+      } else if (!objectManifest.equals(other.objectManifest))
          return false;
       return true;
    }
@@ -199,9 +204,19 @@ public class MutableObjectInfoWithMetadataImpl implements MutableObjectInfoWithM
    }
 
    @Override
+   public String getObjectManifest() {
+      return objectManifest;
+   }
+
+   @Override
+   public void setObjectManifest(String objectManifest) {
+      this.objectManifest = objectManifest;
+   }
+
+   @Override
    public String toString() {
-      return String.format("[name=%s, container=%s, uri=%s, bytes=%s, contentType=%s, lastModified=%s, hash=%s]", name,
-               container, uri, bytes, contentType, lastModified, Arrays.toString(hash));
+      return String.format("[name=%s, container=%s, uri=%s, bytes=%s, contentType=%s, lastModified=%s, hash=%s, objectManifest=%s]",
+               name, container, uri, bytes, contentType, lastModified, Arrays.toString(hash), objectManifest);
    }
 
 }

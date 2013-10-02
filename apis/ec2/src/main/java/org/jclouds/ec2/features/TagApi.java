@@ -1,45 +1,60 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.ec2.features;
 
+import static org.jclouds.aws.reference.FormParameters.ACTION;
+
 import java.util.Map;
+
+import javax.inject.Named;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+
+import org.jclouds.Fallbacks.EmptyFluentIterableOnNotFoundOr404;
+import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.ec2.binders.BindFiltersToIndexedFormParams;
+import org.jclouds.ec2.binders.BindResourceIdsToIndexedFormParams;
+import org.jclouds.ec2.binders.BindTagKeysToIndexedFormParams;
+import org.jclouds.ec2.binders.BindTagsToIndexedFormParams;
 import org.jclouds.ec2.domain.Tag;
-import org.jclouds.ec2.util.TagFilterBuilder;
+import org.jclouds.ec2.xml.DescribeTagsResponseHandler;
+import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.Fallback;
+import org.jclouds.rest.annotations.FormParams;
+import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SinceApiVersion;
+import org.jclouds.rest.annotations.VirtualHost;
+import org.jclouds.rest.annotations.XMLResponseParser;
 
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Multimap;
-
 /**
- * To help you manage your Amazon EC2 instances, images, and other Amazon EC2
- * resources, you can assign your own metadata to each resource in the form of
- * tags.
+ * Provides access to Amazon EC2 via the Query API
+ * <p/>
  * 
  * @see <a
- *      href="http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/Using_Tags.html"
+ *      href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeTags.html"
  *      >doc</a>
- * @see TagAsyncApi
  * @author Adrian Cole
  */
 @SinceApiVersion("2010-08-31")
+@RequestFilters(FormSigner.class)
+@VirtualHost
 public interface TagApi {
-
    /**
     * Adds or overwrites one or more tags for the specified resource or
     * resources. Each resource can have a maximum of 10 tags. Each tag consists
@@ -60,7 +75,12 @@ public interface TagApi {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateTags.html"
     *      >docs</href>
     */
-   void applyToResources(Map<String, String> tags, Iterable<String> resourceIds);
+   @Named("CreateTags")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "CreateTags")
+   void applyToResources(@BinderParam(BindTagsToIndexedFormParams.class) Iterable<String> tags,
+         @BinderParam(BindResourceIdsToIndexedFormParams.class) Iterable<String> resourceIds);
 
    /**
     * like {@link #applyToResources(Map, Iterable)} except that the tags have no
@@ -74,7 +94,12 @@ public interface TagApi {
     * 
     * @see #applyToResources(Map, Iterable)
     */
-   void applyToResources(Iterable<String> tags, Iterable<String> resourceIds);
+   @Named("CreateTags")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "CreateTags")
+   void applyToResources(@BinderParam(BindTagsToIndexedFormParams.class) Map<String, String> tags,
+         @BinderParam(BindResourceIdsToIndexedFormParams.class) Iterable<String> resourceIds);
 
    /**
     * Describes all of your tags for your EC2 resources.
@@ -84,6 +109,12 @@ public interface TagApi {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeTags.html"
     *      >docs</href>
     */
+   @Named("DescribeTags")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "DescribeTags")
+   @XMLResponseParser(DescribeTagsResponseHandler.class)
+   @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
    FluentIterable<Tag> list();
 
    /**
@@ -102,7 +133,14 @@ public interface TagApi {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeTags.html"
     *      >docs</href>
     */
-   FluentIterable<Tag> filter(Multimap<String, String> filter);
+   @Named("DescribeTags")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "DescribeTags")
+   @XMLResponseParser(DescribeTagsResponseHandler.class)
+   @Fallback(EmptyFluentIterableOnNotFoundOr404.class)
+   FluentIterable<Tag> filter(
+         @BinderParam(BindFiltersToIndexedFormParams.class) Multimap<String, String> filter);
 
    /**
     * Deletes a specific set of tags from a specific set of resources. This call
@@ -126,7 +164,13 @@ public interface TagApi {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteTags.html"
     *      >docs</href>
     */
-   void deleteFromResources(Iterable<String> tags, Iterable<String> resourceIds);
+   @Named("DeleteTags")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "DeleteTags")
+   void deleteFromResources(
+         @BinderParam(BindTagKeysToIndexedFormParams.class) Iterable<String> tags,
+         @BinderParam(BindResourceIdsToIndexedFormParams.class) Iterable<String> resourceIds);
 
    /**
     * like {@link #deleteFromResources(Iterable, Iterable)}, except that the
@@ -146,6 +190,12 @@ public interface TagApi {
     *           {@code ami-1a2b3c4d}
     * @see #deleteFromResources(Iterable, Iterable)
     */
-   void conditionallyDeleteFromResources(Map<String, String> conditionalTagValues, Iterable<String> resourceIds);
+   @Named("DeleteTags")
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "DeleteTags")
+   void conditionallyDeleteFromResources(
+         @BinderParam(BindTagsToIndexedFormParams.class) Map<String, String> conditionalTagValues,
+         @BinderParam(BindResourceIdsToIndexedFormParams.class) Iterable<String> resourceIds);
 
 }

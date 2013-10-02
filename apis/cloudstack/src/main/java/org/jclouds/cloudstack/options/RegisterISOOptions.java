@@ -1,39 +1,19 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-/**
-   * Licensed to jclouds, Inc. (jclouds) under one or more
-   * contributor license agreements.  See the NOTICE file
-   * distributed with this work for additional information
-   * regarding copyright ownership.  jclouds licenses this file
-   * to you under the Apache License, Version 2.0 (the
-   * "License"); you may not use this file except in compliance
-   * with the License.  You may obtain a copy of the License at
-   *
-   *   http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing,
-   * software distributed under the License is distributed on an
-   * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-   * KIND, either express or implied.  See the License for the
-   * specific language governing permissions and limitations
-   * under the License.
-   */
 package org.jclouds.cloudstack.options;
 
 import com.google.common.collect.ImmutableSet;
@@ -41,8 +21,8 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Options for the ISO registerISO method.
  *
- * @see org.jclouds.cloudstack.features.ISOClient#registerISO
- * @see org.jclouds.cloudstack.features.ISOAsyncClient#registerISO
+ * @see org.jclouds.cloudstack.features.ISOApi#registerISO
+ * @see org.jclouds.cloudstack.features.ISOApi#registerISO
  * @author Richard Downer
  */
 public class RegisterISOOptions extends AccountInDomainOptions {
@@ -86,6 +66,14 @@ public class RegisterISOOptions extends AccountInDomainOptions {
     */
    public RegisterISOOptions osTypeId(String osTypeId) {
       this.queryParameters.replaceValues("ostypeid", ImmutableSet.of(osTypeId + ""));
+      return this;
+   }
+
+   /**
+    * @param projectId the project this ISO will be in.
+    */
+   public RegisterISOOptions projectId(String projectId) {
+      this.queryParameters.replaceValues("projectid", ImmutableSet.of(projectId + ""));
       return this;
    }
 
@@ -138,6 +126,13 @@ public class RegisterISOOptions extends AccountInDomainOptions {
        */
       public static RegisterISOOptions osTypeId(String osTypeId) {
          return new RegisterISOOptions().osTypeId(osTypeId);
+      }
+
+      /**
+       * @param projectId the project this ISO will be in.
+       */
+      public static RegisterISOOptions projectId(String projectId) {
+         return new RegisterISOOptions().projectId(projectId);
       }
    }
 

@@ -1,25 +1,27 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.cloudstack.compute.options;
 
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.account;
+import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.dataDiskSize;
+import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.diskOfferingId;
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.domainId;
+import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.generateKeyPair;
+import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.generateSecurityGroup;
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.ipOnDefaultNetwork;
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.ipsToNetworks;
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.keyPair;
@@ -87,6 +89,27 @@ public class CloudStackTemplateOptionsTest {
    public void testSecurityGroupIdsStatic() {
       TemplateOptions options = securityGroupIds(ImmutableSet.of("3"));
       assertEquals(options.as(CloudStackTemplateOptions.class).getSecurityGroupIds(), ImmutableSet.of("3"));
+   }
+
+   @Test
+   public void testGenerateSecurityGroupDefaultsFalse() {
+      TemplateOptions options = new CloudStackTemplateOptions();
+      assertFalse(options.as(CloudStackTemplateOptions.class)
+         .shouldGenerateSecurityGroup());
+   }
+
+   @Test
+   public void testGenerateSecurityGroup() {
+      TemplateOptions options = new CloudStackTemplateOptions().generateSecurityGroup(true);
+      assertTrue(options.as(CloudStackTemplateOptions.class)
+         .shouldGenerateSecurityGroup());
+   }
+
+   @Test
+   public void testGenerateSecurityGroupStatic() {
+      TemplateOptions options = generateSecurityGroup(true);
+      assertTrue(options.as(CloudStackTemplateOptions.class)
+         .shouldGenerateSecurityGroup());
    }
 
    @Test
@@ -173,9 +196,48 @@ public class CloudStackTemplateOptionsTest {
    }
 
    @Test
+   public void testGenerateKeyPairDefaultsFalse() {
+      TemplateOptions options = new CloudStackTemplateOptions();
+      assertFalse(options.as(CloudStackTemplateOptions.class)
+         .shouldGenerateKeyPair());
+   }
+
+   @Test
+   public void testGenerateKeyPair() {
+      TemplateOptions options = new CloudStackTemplateOptions().generateKeyPair(true);
+      assertTrue(options.as(CloudStackTemplateOptions.class)
+         .shouldGenerateKeyPair());
+   }
+
+   @Test
+   public void testGenerateKeyPairStatic() {
+      TemplateOptions options = generateKeyPair(true);
+      assertTrue(options.as(CloudStackTemplateOptions.class)
+         .shouldGenerateKeyPair());
+   }
+
+   @Test
    public void testKeyPair() {
       TemplateOptions options = keyPair("test");
       assertEquals(options.as(CloudStackTemplateOptions.class).getKeyPair(), "test");
+   }
+
+   @Test
+   public void testDiskOfferingId() {
+      TemplateOptions options = diskOfferingId("test");
+      assertEquals(options.as(CloudStackTemplateOptions.class).getDiskOfferingId(), "test");
+   }
+
+   @Test
+   public void testDataDiskSizeDefault() {
+      TemplateOptions options = new CloudStackTemplateOptions();
+      assertEquals(options.as(CloudStackTemplateOptions.class).getDataDiskSize(), 0);
+   }
+
+   @Test
+   public void testDataDiskSize() {
+      TemplateOptions options = dataDiskSize(10);
+      assertEquals(options.as(CloudStackTemplateOptions.class).getDataDiskSize(), 10);
    }
 
    @Test

@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.ec2.compute.functions;
 
@@ -33,7 +31,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.domain.PasswordDataAndPrivateKey;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.domain.KeyPair;
@@ -61,20 +59,20 @@ public class PasswordCredentialsFromWindowsInstance implements Function<RunningI
    protected Logger logger = Logger.NULL;
 
    private final ConcurrentMap<RegionAndName, KeyPair> credentialsMap;
-   private final EC2Client ec2Client;
+   private final EC2Api ec2Api;
    private final Function<PasswordDataAndPrivateKey, LoginCredentials> pwDataToLoginCredentials;
 
    @Inject
    protected PasswordCredentialsFromWindowsInstance(ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
-            EC2Client ec2Client, Function<PasswordDataAndPrivateKey, LoginCredentials> pwDataToLoginCredentials) {
+            EC2Api ec2Api, Function<PasswordDataAndPrivateKey, LoginCredentials> pwDataToLoginCredentials) {
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
-      this.ec2Client = checkNotNull(ec2Client, "ec2Client");
+      this.ec2Api = checkNotNull(ec2Api, "ec2Api");
       this.pwDataToLoginCredentials = checkNotNull(pwDataToLoginCredentials, "pwDataToLoginCredentials");
    }
 
    @Override
    public LoginCredentials apply(final RunningInstance instance) {
-      Optional<? extends WindowsApi> windowsOption = ec2Client.getWindowsApiForRegion(instance.getRegion());
+      Optional<? extends WindowsApi> windowsOption = ec2Api.getWindowsApiForRegion(instance.getRegion());
       checkState(windowsOption.isPresent(), "windows feature not present in region %s", instance.getRegion());
       
       final WindowsApi windowsApi = windowsOption.get();

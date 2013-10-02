@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.encryption.internal;
 
@@ -65,15 +63,15 @@ public class JCECrypto implements Crypto {
    @Override
    public Mac hmac(String algorithm, byte[] key) throws NoSuchAlgorithmException, InvalidKeyException {
       Mac mac = null;
-      if(provider != null) {
+      if (provider != null) {
           try {
           mac = Mac.getInstance(algorithm, provider);
-          } catch(Exception e) {
+          } catch (Exception e) {
               //Provider does not function.
               //Do nothing and let it fallback to the default way.
           }
       }
-      if(mac == null) {
+      if (mac == null) {
          mac = Mac.getInstance(algorithm);
       }
       SecretKeySpec signingKey = new SecretKeySpec(key, algorithm);

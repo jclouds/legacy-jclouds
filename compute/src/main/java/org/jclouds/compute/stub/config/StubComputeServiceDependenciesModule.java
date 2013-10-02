@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.compute.stub.config;
 
@@ -31,8 +29,11 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.Processor;
+import org.jclouds.compute.domain.SecurityGroup;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.VolumeImpl;
+import org.jclouds.compute.extensions.SecurityGroupExtension;
+import org.jclouds.compute.stub.extensions.StubSecurityGroupExtension;
 import org.jclouds.domain.Credentials;
 import org.jclouds.location.Provider;
 import org.jclouds.predicates.SocketOpen;
@@ -42,9 +43,12 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.net.HostAndPort;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * 
@@ -54,6 +58,8 @@ public class StubComputeServiceDependenciesModule extends AbstractModule {
 
    @Override
    protected void configure() {
+      bind(new TypeLiteral<SecurityGroupExtension>() {
+      }).to(StubSecurityGroupExtension.class);
 
    }
 
@@ -75,6 +81,40 @@ public class StubComputeServiceDependenciesModule extends AbstractModule {
       return backing.get(creds.get().identity);
    }
 
+   protected static final LoadingCache<String, ConcurrentMap<String, SecurityGroup>> groupBacking = CacheBuilder.newBuilder()
+            .build(new CacheLoader<String, ConcurrentMap<String, SecurityGroup>>() {
+
+               @Override
+               public ConcurrentMap<String, SecurityGroup> load(String arg0) throws Exception {
+                  return new ConcurrentHashMap<String, SecurityGroup>();
+               }
+
+            });
+
+   @Provides
+   @Singleton
+   protected ConcurrentMap<String, SecurityGroup> provideGroups(@Provider Supplier<Credentials> creds)
+            throws ExecutionException {
+      return groupBacking.get(creds.get().identity);
+   }
+
+   protected static final LoadingCache<String, Multimap<String, SecurityGroup>> groupsForNodeBacking = CacheBuilder.newBuilder()
+            .build(new CacheLoader<String, Multimap<String, SecurityGroup>>() {
+
+               @Override
+               public Multimap<String, SecurityGroup> load(String arg0) throws Exception {
+                  return LinkedHashMultimap.create();
+               }
+
+            });
+
+   @Provides
+   @Singleton
+   protected Multimap<String, SecurityGroup> provideGroupsForNode(@Provider Supplier<Credentials> creds)
+            throws ExecutionException {
+      return groupsForNodeBacking.get(creds.get().identity);
+   }
+
    protected static final LoadingCache<String, AtomicInteger> nodeIds = CacheBuilder.newBuilder().build(
             new CacheLoader<String, AtomicInteger>() {
 
@@ -89,6 +129,22 @@ public class StubComputeServiceDependenciesModule extends AbstractModule {
    @Named("NODE_ID")
    protected Integer provideNodeIdForIdentity(@Provider Supplier<Credentials> creds) throws ExecutionException {
       return nodeIds.get(creds.get().identity).incrementAndGet();
+   }
+
+   protected static final LoadingCache<String, AtomicInteger> groupIds = CacheBuilder.newBuilder().build(
+            new CacheLoader<String, AtomicInteger>() {
+
+               @Override
+               public AtomicInteger load(String arg0) throws Exception {
+                  return new AtomicInteger(0);
+               }
+
+            });
+
+   @Provides
+   @Named("GROUP_ID")
+   protected Integer provideGroupIdForIdentity(@Provider Supplier<Credentials> creds) throws ExecutionException {
+      return groupIds.get(creds.get().identity).incrementAndGet();
    }
 
    @Singleton

@@ -1,25 +1,23 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.jclouds.compute.extensions.internal;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.jclouds.compute.predicates.NodePredicates.inGroup;
 import static org.jclouds.util.Predicates2.retry;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -40,6 +38,7 @@ import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.ssh.SshClient;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
@@ -58,6 +57,8 @@ public abstract class BaseImageExtensionLiveTest extends BaseComputeServiceConte
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
+
+   protected final String imageGroup = "test-create-image";
 
    protected String imageId;
 
@@ -101,20 +102,20 @@ public abstract class BaseImageExtensionLiveTest extends BaseComputeServiceConte
 
       Template template = getNodeTemplate();
 
-      NodeMetadata node = Iterables.getOnlyElement(computeService.createNodesInGroup("test-create-image", 1, template));
+      NodeMetadata node = Iterables.getOnlyElement(computeService.createNodesInGroup(imageGroup, 1, template));
 
       checkReachable(node);
 
       logger.info("Creating image from node %s, started with template: %s", node, template);
 
-      ImageTemplate newImageTemplate = imageExtension.get().buildImageTemplateFromNode("test-create-image",
-               node.getId());
+      ImageTemplate newImageTemplate = imageExtension.get().buildImageTemplateFromNode(imageGroup,
+              node.getId());
 
       Image image = imageExtension.get().createImage(newImageTemplate).get();
 
       logger.info("Image created: %s", image);
 
-      assertEquals("test-create-image", image.getName());
+      assertEquals(imageGroup, image.getName());
 
       imageId = image.getId();
 
@@ -123,7 +124,6 @@ public abstract class BaseImageExtensionLiveTest extends BaseComputeServiceConte
       Optional<? extends Image> optImage = getImage();
 
       assertTrue(optImage.isPresent());
-
    }
 
    @Test(groups = { "integration", "live" }, singleThreaded = true, dependsOnMethods = "testCreateImage")
@@ -135,7 +135,7 @@ public abstract class BaseImageExtensionLiveTest extends BaseComputeServiceConte
 
       assertTrue(optImage.isPresent());
 
-      NodeMetadata node = Iterables.getOnlyElement(computeService.createNodesInGroup("test-create-image", 1, view
+      NodeMetadata node = Iterables.getOnlyElement(computeService.createNodesInGroup(imageGroup, 1, view
                .getComputeService()
                // fromImage does not use the arg image's id (but we do need to set location)
                .templateBuilder().imageId(optImage.get().getId()).fromImage(optImage.get()).build()));
@@ -185,5 +185,27 @@ public abstract class BaseImageExtensionLiveTest extends BaseComputeServiceConte
             return false;
          }
       }, getSpawnNodeMaxWait(), 1l, SECONDS).apply(client));
+   }
+
+   @AfterClass(groups = { "integration", "live" })
+   @Override
+   protected void tearDownContext() {
+      try {
+         view.getComputeService().destroyNodesMatching(inGroup(imageGroup));
+
+         Optional<? extends Image> image = getImage();
+
+         if (image.isPresent() && image.get().getStatus() != Image.Status.DELETED) {
+            Optional<ImageExtension> imageExtension = view.getComputeService().getImageExtension();
+            if (imageExtension.isPresent()) {
+               imageExtension.get().deleteImage(image.get().getId());
+            }
+         }
+      } catch (Exception e) {
+         // Any exception is most likely due to nodes/images not existing, which is the desired result
+         // anyway, so discarding the exception.
+      }
+
+      super.tearDownContext();
    }
 }

@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.util;
 
@@ -89,7 +87,16 @@ public class Strings2 {
                }
             }
          });
+   
+   private static final String IP_ADDRESS = "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})";
+   private static final String SLASH_FORMAT = IP_ADDRESS + "/(\\d{1,3})";
+   private static final Pattern ADDRESS_PATTERN = Pattern.compile(IP_ADDRESS);
+   private static final Pattern CIDR_PATTERN = Pattern.compile(SLASH_FORMAT);
 
+   public static boolean isCidrFormat(String in) {
+      return CIDR_PATTERN.matcher(in).matches();
+   }
+      
    private static final Pattern URL_ENCODED_PATTERN = Pattern.compile(".*%[a-fA-F0-9][a-fA-F0-9].*");
 
    public static boolean isUrlEncoded(String in) {
@@ -105,41 +112,21 @@ public class Strings2 {
     * @throws IllegalStateException
     *            if encoding isn't {@code UTF-8}
     */
-   public static String urlDecode(@Nullable Object in) {
+   public static String urlDecode(@Nullable String in) {
       if (in == null)
          return null;
+      String input = in.toString();
+      // Don't double decode
+      if (!isUrlEncoded(input)) {
+         return input;
+      }
       try {
-         return URLDecoder.decode(in.toString(), "UTF-8");
+         return URLDecoder.decode(input, "UTF-8");
       } catch (UnsupportedEncodingException e) {
          throw new IllegalStateException("Bad encoding on input: " + in, e);
       }
    }
 
-   public static String replaceAll(String returnVal, Pattern pattern, String replace) {
-      Matcher m = pattern.matcher(returnVal);
-      returnVal = m.replaceAll(replace);
-      return returnVal;
-   }
-
-   public static String replaceAll(String input, char match, String replacement) {
-      if (input.indexOf(match) != -1) {
-         try {
-            input = CHAR_TO_PATTERN.get(match).matcher(input).replaceAll(replacement);
-         } catch (ExecutionException e) {
-            throw new IllegalStateException("error creating pattern: " + match, e);
-         }
-      }
-      return input;
-   }
-
-   private static final LoadingCache<Character, Pattern> CHAR_TO_PATTERN = CacheBuilder.newBuilder()
-         .<Character, Pattern> build(new CacheLoader<Character, Pattern>() {
-            @Override
-            public Pattern load(Character plain) {
-               return Pattern.compile(plain + "");
-            }
-         });
-   
    public static String toString(InputSupplier<? extends InputStream> supplier)
          throws IOException {
       return CharStreams.toString(CharStreams.newReaderSupplier(supplier,
@@ -194,7 +181,7 @@ public class Strings2 {
    public static String replaceTokens(String input, Multimap<String, ?> tokenValues) {
       for (Entry<String, ?> tokenValue : tokenValues.entries()) {
          Pattern pattern = TOKEN_TO_PATTERN.getUnchecked(tokenValue.getKey());
-         input = replaceAll(input, pattern, tokenValue.getValue().toString());
+         input = pattern.matcher(input).replaceAll(tokenValue.getValue().toString());
       }
       return input;
    }

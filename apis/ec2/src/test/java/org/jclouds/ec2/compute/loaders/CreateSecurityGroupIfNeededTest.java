@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.ec2.compute.loaders;
 
@@ -31,10 +29,10 @@ import java.util.concurrent.ExecutionException;
 
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
-import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.domain.UserIdGroupPair;
-import org.jclouds.ec2.services.SecurityGroupClient;
+import org.jclouds.ec2.features.SecurityGroupApi;
+import org.jclouds.net.domain.IpProtocol;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -51,7 +49,7 @@ public class CreateSecurityGroupIfNeededTest {
    @Test
    public void testWhenPort22AndToItselfAuthorizesIngressTwice() throws ExecutionException {
 
-      SecurityGroupClient client = createMock(SecurityGroupClient.class);
+      SecurityGroupApi client = createMock(SecurityGroupApi.class);
       Predicate<RegionAndName> tester = Predicates.alwaysTrue();
 
       SecurityGroup group = createNiceMock(SecurityGroup.class);
@@ -78,7 +76,7 @@ public class CreateSecurityGroupIfNeededTest {
    @Test
    public void testIllegalStateExceptionCreatingGroupJustReturns() throws ExecutionException {
 
-      SecurityGroupClient client = createMock(SecurityGroupClient.class);
+      SecurityGroupApi client = createMock(SecurityGroupApi.class);
       Predicate<RegionAndName> tester = Predicates.alwaysTrue();
 
       client.createSecurityGroupInRegion("region", "group", "group");
@@ -97,7 +95,7 @@ public class CreateSecurityGroupIfNeededTest {
    @Test(expectedExceptions = RuntimeException.class)
    public void testWhenEventualConsistencyExpiresIllegalStateException() throws ExecutionException {
 
-      SecurityGroupClient client = createMock(SecurityGroupClient.class);
+      SecurityGroupApi client = createMock(SecurityGroupApi.class);
       Predicate<RegionAndName> tester = Predicates.alwaysFalse();
 
       client.createSecurityGroupInRegion("region", "group", "group");

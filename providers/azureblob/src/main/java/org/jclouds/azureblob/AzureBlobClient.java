@@ -1,29 +1,29 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.azureblob;
 
+import java.util.List;
 import java.util.Map;
 import org.jclouds.azure.storage.domain.BoundedSet;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azureblob.domain.AzureBlob;
 import org.jclouds.azureblob.domain.BlobProperties;
 import org.jclouds.azureblob.domain.ContainerProperties;
+import org.jclouds.azureblob.domain.ListBlobBlocksResponse;
 import org.jclouds.azureblob.domain.ListBlobsResponse;
 import org.jclouds.azureblob.domain.PublicAccess;
 import org.jclouds.azureblob.options.CreateContainerOptions;
@@ -31,6 +31,7 @@ import org.jclouds.azureblob.options.ListBlobsOptions;
 import org.jclouds.http.options.GetOptions;
 
 import com.google.inject.Provides;
+import org.jclouds.io.Payload;
 
 /**
  * Provides access to Azure Blob via their REST API.
@@ -208,6 +209,31 @@ public interface AzureBlobClient {
     * properties.
     */
    AzureBlob getBlob(String container, String name, GetOptions... options);
+
+   /**
+    *  The Put Block operation creates a block blob on Azure which can be later assembled into
+    *  a single, large blob object with the Put Block List operation.
+    *
+    *  @see <a href="http://msdn.microsoft.com/en-us/library/windowsazure/dd135726.aspx">Put Blob</a>
+    */
+   void putBlock(String container, String name, String blockId, Payload object);
+
+
+   /**
+    *  The Put Block List assembles a list of blocks previously uploaded with Put Block into a single
+    *  blob. Blocks are either already committed to a blob or uncommitted. The blocks ids passed here
+    *  are searched for first in the uncommitted block list; then committed using the "latest" strategy.
+    *
+    *  @see <a href="http://msdn.microsoft.com/en-us/library/windowsazure/dd179467.aspx">Put Block List</a>
+    */
+   String putBlockList(String container, String name, List<String> blockIdList);
+
+   /**
+    * Get Block ID List for a blob
+    *
+    * @see <a href="http://msdn.microsoft.com/en-us/library/windowsazure/dd179400.aspx">Get Block List</a>
+    */
+   ListBlobBlocksResponse getBlockList(String container, String name);
 
    /**
     * The Get Blob Properties operation returns all user-defined metadata, standard HTTP properties,

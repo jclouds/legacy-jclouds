@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.http.internal;
 import static com.google.common.base.Preconditions.checkArgument;
@@ -193,7 +191,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
       }
 
       String host = request.getEndpoint().getHost();
-      if(request.getEndpoint().getPort() != -1) {
+      if (request.getEndpoint().getPort() != -1) {
          host += ":" + request.getEndpoint().getPort();
       }
       connection.setRequestProperty(HOST, host);
@@ -211,9 +209,11 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
             writePayloadToConnection(payload, "streaming", connection);
          } else {
             Long length = checkNotNull(md.getContentLength(), "payload.getContentLength");
-            // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6755625
-            checkArgument(length < Integer.MAX_VALUE,
-                  "JDK 1.6 does not support >2GB chunks. Use chunked encoding, if possible.");
+            // TODO: remove check after moving to JDK 7.
+            checkArgument(length <= Integer.MAX_VALUE,
+                  "Cannot transfer 2 GB or larger chunks due to JDK 1.6 limitations." +
+                  " Use chunked encoding or multi-part upload, if possible." +
+                  " For more information: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6755625");
             if (length > 0) {
                connection.setRequestProperty(CONTENT_LENGTH, length.toString());
                connection.setFixedLengthStreamingMode(length.intValue());

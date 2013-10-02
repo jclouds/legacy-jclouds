@@ -1,23 +1,20 @@
-package org.jclouds.json.internal;
-
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+package org.jclouds.json.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
@@ -26,6 +23,7 @@ import static org.testng.Assert.assertNull;
 
 import java.beans.ConstructorProperties;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
@@ -39,12 +37,14 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
 import com.google.gson.TypeAdapter;
 import com.google.gson.internal.ConstructorConstructor;
 import com.google.gson.internal.Excluder;
@@ -68,7 +68,7 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactoryTest
       NamingStrategies.AnnotationConstructorNamingStrategy deserializationPolicy = new NamingStrategies.AnnotationConstructorNamingStrategy(
             ImmutableSet.of(ConstructorProperties.class, Inject.class), ImmutableSet.of(new ExtractNamed()));
 
-      return new DeserializationConstructorAndReflectiveTypeAdapterFactory(new ConstructorConstructor(),
+      return new DeserializationConstructorAndReflectiveTypeAdapterFactory(new ConstructorConstructor(ImmutableMap.<Type, InstanceCreator<?>>of()),
             serializationPolicy, Excluder.DEFAULT, deserializationPolicy);
    }
 
@@ -116,7 +116,8 @@ public final class DeserializationConstructorAndReflectiveTypeAdapterFactoryTest
       }
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class, expectedExceptionsMessageRegExp = "duplicate key: foo")
+   @Test(expectedExceptions = IllegalArgumentException.class,
+         expectedExceptionsMessageRegExp = "Multiple entries with same key: foo.*")
    public void testNoDuplicateSerializedNamesRequiredOnAllParameters() {
       parameterizedCtorFactory.create(gson, TypeToken.get(DuplicateSerializedNames.class));
    }

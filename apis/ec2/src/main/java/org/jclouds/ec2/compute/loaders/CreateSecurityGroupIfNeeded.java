@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.ec2.compute.loaders;
 
@@ -26,13 +24,13 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
-import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.UserIdGroupPair;
-import org.jclouds.ec2.services.SecurityGroupClient;
+import org.jclouds.ec2.features.SecurityGroupApi;
 import org.jclouds.logging.Logger;
+import org.jclouds.net.domain.IpProtocol;
 
 import com.google.common.base.Predicate;
 import com.google.common.cache.CacheLoader;
@@ -47,16 +45,16 @@ public class CreateSecurityGroupIfNeeded extends CacheLoader<RegionAndName, Stri
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   protected final SecurityGroupClient securityClient;
+   protected final SecurityGroupApi securityClient;
    protected final Predicate<RegionAndName> securityGroupEventualConsistencyDelay;
 
    @Inject
-   public CreateSecurityGroupIfNeeded(EC2Client ec2Client,
+   public CreateSecurityGroupIfNeeded(EC2Api ec2Api,
          @Named("SECURITY") Predicate<RegionAndName> securityGroupEventualConsistencyDelay) {
-      this(checkNotNull(ec2Client, "ec2Client").getSecurityGroupServices(), securityGroupEventualConsistencyDelay);
+      this(checkNotNull(ec2Api, "ec2Api").getSecurityGroupApi().get(), securityGroupEventualConsistencyDelay);
    }
 
-   public CreateSecurityGroupIfNeeded(SecurityGroupClient securityClient,
+   public CreateSecurityGroupIfNeeded(SecurityGroupApi securityClient,
          @Named("SECURITY") Predicate<RegionAndName> securityGroupEventualConsistencyDelay) {
       this.securityClient = checkNotNull(securityClient, "securityClient");
       this.securityGroupEventualConsistencyDelay = checkNotNull(securityGroupEventualConsistencyDelay,

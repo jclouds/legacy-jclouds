@@ -1,26 +1,25 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.aws.ec2.compute;
 
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService.getInvokerOfRequestAtIndex;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,21 +27,21 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
+import org.jclouds.aws.ec2.AWSEC2Api;
 import org.jclouds.aws.ec2.reference.AWSEC2Constants;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.ec2.EC2ApiMetadata;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.EC2TemplateBuilderLiveTest;
 import org.jclouds.ec2.compute.predicates.EC2ImagePredicates;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.RootDeviceType;
+import org.jclouds.ec2.features.AvailabilityZoneAndRegionApi;
 import org.jclouds.ec2.options.DescribeAvailabilityZonesOptions;
 import org.jclouds.ec2.options.DescribeRegionsOptions;
 import org.jclouds.ec2.reference.EC2Constants;
-import org.jclouds.ec2.services.AvailabilityZoneAndRegionAsyncClient;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService;
 import org.jclouds.location.reference.LocationConstants;
@@ -151,7 +150,6 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
       Template template = view.getComputeService().templateBuilder().imageId("us-east-1/ami-ccb35ea5")
             .hardwareId(InstanceType.M2_2XLARGE).locationId("us-east-1a").build();
 
-      System.out.println(template.getHardware());
       assert (template.getImage().getProviderId().startsWith("ami-")) : template;
       assertEquals(template.getImage().getOperatingSystem().getVersion(), "5.4");
       assertEquals(template.getImage().getOperatingSystem().is64Bit(), true);
@@ -169,7 +167,9 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
    public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = view.getComputeService().templateBuilder().build();
       assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "pv-2012.09.rc-1");
+      assertTrue(defaultTemplate.getImage().getOperatingSystem().getVersion().contains("pv-201"),
+              "Default template version should include 'pv-201' but is "
+                      + defaultTemplate.getImage().getOperatingSystem().getVersion());
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
       assertEquals(defaultTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
@@ -184,7 +184,7 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
       Template defaultTemplate = view.getComputeService().templateBuilder().osFamily(OsFamily.AMZN_LINUX)
             .imageMatches(EC2ImagePredicates.rootDeviceType(RootDeviceType.INSTANCE_STORE)).build();
       assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "pv-2012.09.rc-1");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "pv-2013.09.rc-1");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
       assertEquals(defaultTemplate.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
@@ -238,7 +238,6 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
          assertEquals(context.getComputeService().listImages().size(), 0);
 
          Template template = context.getComputeService().templateBuilder().imageId("us-east-1/ami-ccb35ea5").build();
-         System.out.println(template.getHardware());
          assert (template.getImage().getProviderId().startsWith("ami-")) : template;
          assertEquals(template.getImage().getOperatingSystem().getVersion(), "5.4");
          assertEquals(template.getImage().getOperatingSystem().is64Bit(), true);
@@ -272,7 +271,6 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
          assertEquals(context.getComputeService().listImages().size(), 0);
 
          Template template = context.getComputeService().templateBuilder().imageId("us-east-1/ami-ccb35ea5").build();
-         System.out.println(template.getHardware());
          assert (template.getImage().getProviderId().startsWith("ami-")) : template;
          assertEquals(template.getImage().getOperatingSystem().getVersion(), "5.4");
          assertEquals(template.getImage().getOperatingSystem().is64Bit(), true);
@@ -338,9 +336,9 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
          throws NoSuchMethodException {
       assert commandsInvoked.size() == 2 : commandsInvoked;
       assertEquals(getInvokerOfRequestAtIndex(commandsInvoked, 0),
-            AvailabilityZoneAndRegionAsyncClient.class.getMethod("describeRegions", DescribeRegionsOptions[].class));
+            AvailabilityZoneAndRegionApi.class.getMethod("describeRegions", DescribeRegionsOptions[].class));
       assertEquals(getInvokerOfRequestAtIndex(commandsInvoked, 1),
-            AvailabilityZoneAndRegionAsyncClient.class.getMethod("describeAvailabilityZonesInRegion", String.class,
+            AvailabilityZoneAndRegionApi.class.getMethod("describeAvailabilityZonesInRegion", String.class,
                   DescribeAvailabilityZonesOptions[].class));
    }
 
@@ -357,8 +355,8 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
    
    @Test
    public void testAssignability() {
-      view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN);
-      view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN);
+      view.unwrapApi(EC2Api.class);
+      view.unwrapApi(AWSEC2Api.class);
    }
 
    @Override

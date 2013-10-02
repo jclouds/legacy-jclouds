@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.s3.config;
 import static org.jclouds.reflect.Reflection2.typeToken;
@@ -29,6 +27,7 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.aws.config.AWSRestClientModule;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
+import org.jclouds.aws.handlers.AWSServerErrorRetryHandler;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
@@ -163,7 +162,7 @@ public class S3RestClientModule<S extends S3Client, A extends S3AsyncClient> ext
       super.configure();
       install(new S3ObjectModule());
       install(new S3ParserModule());
-      bind(RequestAuthorizeSignature.class).in(Scopes.SINGLETON);
+      bindRequestSigner();
       bind(new TypeLiteral<Function<String, Optional<String>>>() {
       }).annotatedWith(Bucket.class).to(GetRegionForBucket.class);
       bind(new TypeLiteral<Function<Set<BucketMetadata>, PageSet<? extends StorageMetadata>>>() {
@@ -177,6 +176,10 @@ public class S3RestClientModule<S extends S3Client, A extends S3AsyncClient> ext
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ParseS3ErrorFromXmlContent.class);
    }
 
+   protected void bindRequestSigner() {
+      bind(RequestAuthorizeSignature.class).in(Scopes.SINGLETON);
+   }
+
    @Provides
    @Singleton
    protected RequestSigner provideRequestSigner(RequestAuthorizeSignature in) {
@@ -187,6 +190,7 @@ public class S3RestClientModule<S extends S3Client, A extends S3AsyncClient> ext
    protected void bindRetryHandlers() {
       bind(HttpRetryHandler.class).annotatedWith(Redirection.class).to(S3RedirectionRetryHandler.class);
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(AWSClientErrorRetryHandler.class);
+      bind(HttpRetryHandler.class).annotatedWith(ServerError.class).to(AWSServerErrorRetryHandler.class);
    }
 
    @Provides

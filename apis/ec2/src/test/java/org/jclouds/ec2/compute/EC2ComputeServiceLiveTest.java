@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.ec2.compute;
 
@@ -37,22 +35,21 @@ import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.ec2.EC2ApiMetadata;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.EC2Api;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.domain.BlockDevice;
-import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.PublicIpInstanceIdPair;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.domain.Snapshot;
 import org.jclouds.ec2.domain.Volume;
+import org.jclouds.ec2.features.ElasticBlockStoreApi;
+import org.jclouds.ec2.features.InstanceApi;
+import org.jclouds.ec2.features.KeyPairApi;
+import org.jclouds.ec2.features.SecurityGroupApi;
 import org.jclouds.ec2.reference.EC2Constants;
-import org.jclouds.ec2.services.ElasticBlockStoreClient;
-import org.jclouds.ec2.services.InstanceClient;
-import org.jclouds.ec2.services.KeyPairClient;
-import org.jclouds.ec2.services.SecurityGroupClient;
+import org.jclouds.net.domain.IpProtocol;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.util.InetAddresses2;
@@ -61,9 +58,9 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 import com.google.common.net.HostAndPort;
 import com.google.inject.Module;
 
@@ -87,12 +84,22 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    @Override
    protected void checkUserMetadataContains(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
-      if (view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getTagApi().isPresent()) {
+      if (view.unwrapApi(EC2Api.class).getTagApi().isPresent()) {
          super.checkUserMetadataContains(node, userMetadata);
       } else {
-         assertTrue(node.getUserMetadata().isEmpty(), "not expecting metadata when tag extension isn't present" + node);
+         assertTrue(node.getUserMetadata().isEmpty(), "not expecting metadata when tag extension isn't present: " + node);
       }
    }
+
+   @Override
+   protected void checkTagsInNodeEquals(NodeMetadata node, ImmutableSet<String> tags) {
+      if (view.unwrapApi(EC2Api.class).getTagApi().isPresent()) {
+         super.checkTagsInNodeEquals(node, tags);
+      } else {
+         assertTrue(node.getTags().isEmpty(), "not expecting tags when tag extension isn't present: " + node);
+      }
+   }
+
 
    @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
    public void testImagesResolveCorrectly() {
@@ -105,14 +112,14 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testCompareSizes")
    public void testExtendedOptionsAndLogin() throws Exception {
-      SecurityGroupClient securityGroupClient = EC2Client.class.cast(view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi())
-               .getSecurityGroupServices();
+      SecurityGroupApi securityGroupClient = view.unwrapApi(EC2Api.class)
+               .getSecurityGroupApi().get();
 
-      KeyPairClient keyPairClient = EC2Client.class.cast(view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi())
-               .getKeyPairServices();
+      KeyPairApi keyPairClient = view.unwrapApi(EC2Api.class)
+               .getKeyPairApi().get();
 
-      InstanceClient instanceClient = EC2Client.class.cast(view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi())
-               .getInstanceServices();
+      InstanceApi instanceClient = view.unwrapApi(EC2Api.class)
+               .getInstanceApi().get();
 
       String group = this.group + "o";
 
@@ -152,12 +159,11 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          assertEquals(instance.getKeyName(), group);
 
          // make sure we made our dummy group and also let in the user's group
-         assertEquals(Sets.newTreeSet(instance.getGroupNames()), ImmutableSortedSet.<String> of("jclouds#" + group + "#"
-                  + instance.getRegion(), group));
+         assertEquals(ImmutableSortedSet.copyOf(instance.getGroupNames()), ImmutableSortedSet.<String> of("jclouds#" + group, group));
 
          // make sure our dummy group has no rules
          SecurityGroup secgroup = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(null,
-                  "jclouds#" + group + "#" + instance.getRegion()));
+                  "jclouds#" + group));
          assert secgroup.size() == 0 : secgroup;
 
          // try to run a script with the original keyPair
@@ -186,9 +192,14 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
          context = createView(overrides, setupModules());
 
+         TemplateOptions options = client.templateOptions();
+
+         options.blockOnPort(22, 300);
+         options.inboundPorts(22);
+
          // create a node
          Set<? extends NodeMetadata> nodes =
-               context.getComputeService().createNodesInGroup(group, 1);
+               context.getComputeService().createNodesInGroup(group, 1, options);
          assertEquals(nodes.size(), 1, "One node should have been created");
 
          // Get public IPs (We should get 1)
@@ -205,9 +216,9 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          assertTrue(socketTester.apply(socket), String.format("failed to open socket %s on node %s", socket, node));
 
          // check that there is an elastic ip correlating to it
-         EC2Client ec2 = EC2Client.class.cast(context.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi());
+         EC2Api ec2 = context.unwrapApi(EC2Api.class);
          Set<PublicIpInstanceIdPair> ipidpairs =
-               ec2.getElasticIPAddressServices().describeAddressesInRegion(region, publicIps.toArray(new String[0]));
+               ec2.getElasticIPAddressApi().get().describeAddressesInRegion(region, publicIps.toArray(new String[0]));
          assertEquals(ipidpairs.size(), 1, String.format("there should only be one address pair (%s)",
                Iterables.toString(ipidpairs)));
 
@@ -220,7 +231,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
          // check that the ip is deallocated
          Set<PublicIpInstanceIdPair> ipidcheck =
-                 ec2.getElasticIPAddressServices().describeAddressesInRegion(region, ipidpair.getPublicIp());
+                 ec2.getElasticIPAddressApi().get().describeAddressesInRegion(region, ipidpair.getPublicIp());
          assertTrue(Iterables.isEmpty(ipidcheck), String.format("there should be no address pairs (%s)",
                Iterables.toString(ipidcheck)));
       } finally {
@@ -248,11 +259,11 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          throw new SkipException("Test cannot run without the parameter test." + provider
                + ".ebs-template; this property should be in the format defined in TemplateBuilderSpec");
       }
-      InstanceClient instanceClient = EC2Client.class.cast(view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi())
-               .getInstanceServices();
+      InstanceApi instanceClient = view.unwrapApi(EC2Api.class)
+               .getInstanceApi().get();
 
-      ElasticBlockStoreClient ebsClient = EC2Client.class.cast(view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi())
-               .getElasticBlockStoreServices();
+      ElasticBlockStoreApi ebsClient = view.unwrapApi(EC2Api.class)
+               .getElasticBlockStoreApi().get();
 
       String group = this.group + "e";
       int volumeSize = 8;
@@ -271,6 +282,9 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
       // create volume only to make a snapshot
       Volume volume = ebsClient.createVolumeInAvailabilityZone(zone.getId(), 4);
+      // Sleep for 5 seconds to make sure the volume creation finishes.
+      Thread.sleep(5000);
+
       Snapshot snapshot = ebsClient.createSnapshotInRegion(volume.getRegion(), volume.getId());
       ebsClient.deleteVolumeInRegion(volume.getRegion(), volume.getId());
 
@@ -319,14 +333,14 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
     * 
     * @throws NoSuchElementException If no instance with that id exists, or the instance is in a different region
     */
-   public static RunningInstance getInstance(InstanceClient instanceClient, String id) {
+   public static RunningInstance getInstance(InstanceApi instanceClient, String id) {
       RunningInstance instance = Iterables.getOnlyElement(Iterables.getOnlyElement(instanceClient
                .describeInstancesInRegion(null, id)));
       return instance;
    }
 
-   protected static void cleanupExtendedStuffInRegion(String region, SecurityGroupClient securityGroupClient,
-            KeyPairClient keyPairClient, String group) throws InterruptedException {
+   protected static void cleanupExtendedStuffInRegion(String region, SecurityGroupApi securityGroupClient,
+            KeyPairApi keyPairClient, String group) throws InterruptedException {
       try {
          for (SecurityGroup secgroup : securityGroupClient.describeSecurityGroupsInRegion(region))
             if (secgroup.getName().startsWith("jclouds#" + group) || secgroup.getName().equals(group)) {

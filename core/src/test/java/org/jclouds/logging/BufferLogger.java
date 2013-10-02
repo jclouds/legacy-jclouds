@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.logging;
 
@@ -68,14 +66,14 @@ public class BufferLogger extends BaseLogger {
     */
    public Record assertLogContains(String fragment) {
       for (Record r: messages) {
-         if (r.getMessage()!=null && r.getMessage().contains(fragment)) return r;
+         if (r.getMessage() != null && r.getMessage().contains(fragment)) return r;
       }
       throw new AssertionError("log did not contain expected '"+fragment+"'");
    }
    /** fails if log _does_ contain the indicated fragment */
    public void assertLogDoesntContain(String fragment) {
       for (Record r: messages) {
-         if (r.getMessage()!=null && r.getMessage().contains(fragment)) 
+         if (r.getMessage() != null && r.getMessage().contains(fragment))
             throw new AssertionError("log contained unexpected '"+fragment+"'");
       }
    }
@@ -85,7 +83,7 @@ public class BufferLogger extends BaseLogger {
     */
    public Record assertLogContains(Predicate<Record> test) {
       for (Record r: messages) {
-         if (r.getMessage()!=null && test.apply(r)) return r;
+         if (r.getMessage() != null && test.apply(r)) return r;
       }
       throw new AssertionError("log did not contain any records satisfying expected predicate");      
    }

@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.atmos;
 
@@ -58,6 +56,9 @@ import com.google.common.collect.Sets;
  */
 @Test(groups = "live", singleThreaded = true)
 public class AtmosClientLiveTest extends BaseBlobStoreIntegrationTest {
+   public AtmosClientLiveTest() {
+      provider = "atmos";
+   }
 
    public AtmosClient getApi() {
       return view.unwrap(AtmosApiMetadata.CONTEXT_TOKEN).getApi();
@@ -170,7 +171,7 @@ public class AtmosClientLiveTest extends BaseBlobStoreIntegrationTest {
       assertEventuallyObjectMatches("object", "here is my data?", "meta-value?");
 
       // loop to gather metrics
-      for (boolean stream : new Boolean[] { true, false }) {
+      for (boolean stream : new boolean[] { true, false }) {
          for (int i = 0; i < 10; i++) {
             System.err.printf("upload/delete/create attempt %d type %s%n", i + 1, stream ? "stream" : "string");
             // try updating

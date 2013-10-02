@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.compute.domain.internal;
 
@@ -117,6 +115,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    @VisibleForTesting
    protected Predicate<Image> imagePredicate;
    @VisibleForTesting
+   protected Ordering<Image> imageSorter;
+   @VisibleForTesting
    protected double minCores;
    @VisibleForTesting
    protected int minRam;
@@ -165,7 +165,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       };
    } 
 
-   final Predicate<ComputeMetadata> locationPredicate = new NullEqualToIsParentOrIsGrandparentOfCurrentLocation(new Supplier<Location>(){
+   final Predicate<ComputeMetadata> locationPredicate = new NullEqualToIsParentOrIsGrandparentOfCurrentLocation(new Supplier<Location>() {
 
       @Override
       public Location get() {
@@ -484,6 +484,13 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    };
    static final Ordering<Image> DEFAULT_IMAGE_ORDERING = new Ordering<Image>() {
       public int compare(Image left, Image right) {
+         /* This currently, and for some time, has *preferred* images whose fields are null,
+          * and prefers those which come last alphabetically.
+          * It seems preferable to take images whose fields are *not* null, ie nullsFirst;
+          * and to use something like the AlphaNum Algorithm then take the last
+          * (so "Ubuntu 13.04" would be preferred over "Ubuntu 9.10").
+          * However not changing it now as people may be surprised if the images they get back start changing.
+          */
          return ComparisonChain.start()
                .compare(left.getName(), right.getName(), Ordering.<String> natural().nullsLast())
                .compare(left.getVersion(), right.getVersion(), Ordering.<String> natural().nullsLast())
@@ -767,6 +774,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       return hardware;
    }
 
+   protected Ordering<Image> imageSorter() {
+      if (imageSorter != null) return imageSorter;
+      return DEFAULT_IMAGE_ORDERING;
+   }
+
    protected Ordering<Hardware> hardwareSorter() {
       Ordering<Hardware> hardwareOrdering = DEFAULT_SIZE_ORDERING;
       if (!biggest)
@@ -801,7 +813,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          Iterable<? extends Image> matchingImages = filter(supportedImages, imagePredicate);
          if (logger.isTraceEnabled())
             logger.trace("<<   matched images(%s)", transform(matchingImages, imageToId));
-         List<? extends Image> maxImages = multiMax(DEFAULT_IMAGE_ORDERING, matchingImages);
+         List<? extends Image> maxImages = multiMax(imageSorter(), matchingImages);
          if (logger.isTraceEnabled())
             logger.trace("<<   best images(%s)", transform(maxImages, imageToId));
          return maxImages.get(maxImages.size() - 1);
@@ -947,6 +959,15 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     * {@inheritDoc}
     */
    @Override
+   public TemplateBuilderImpl imageSorter(Ordering<Image> imageSorter) {
+       this.imageSorter = imageSorter;
+       return this;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public TemplateBuilder imageVersionMatches(String imageVersionRegex) {
       this.imageVersion = imageVersionRegex;
       return this;
@@ -1047,9 +1068,9 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    @VisibleForTesting
    boolean nothingChangedExceptOptions() {
       return osFamily == null && location == null && imageId == null && hardwareId == null && hypervisor == null
-            && osName == null && imagePredicate == null && osDescription == null && imageVersion == null
-            && osVersion == null && osArch == null && os64Bit == null && imageName == null && imageDescription == null
-            && minCores == 0 && minRam == 0 && minDisk == 0 && !biggest && !fastest;
+            && osName == null && imagePredicate == null && imageSorter == null && osDescription == null 
+            && imageVersion == null && osVersion == null && osArch == null && os64Bit == null && imageName == null 
+            && imageDescription == null && minCores == 0 && minRam == 0 && minDisk == 0 && !biggest && !fastest;
    }
 
    /**
@@ -1078,16 +1099,17 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       toString.add("imageDescription", imageDescription);
       toString.add("imageId", imageId);
       toString.add("imagePredicate", imagePredicate);
+      toString.add("imageSorter", imageSorter);
       toString.add("imageVersion", imageVersion);
       if (location != null)
          toString.add("locationId", location.getId());
-      if (minCores >0) //TODO: make non-primitive
+      if (minCores > 0) //TODO: make non-primitive
          toString.add("minCores", minCores);
-      if (minRam >0) //TODO: make non-primitive
+      if (minRam > 0) //TODO: make non-primitive
          toString.add("minRam", minRam);
-      if (minRam >0) //TODO: make non-primitive
+      if (minRam > 0) //TODO: make non-primitive
          toString.add("minRam", minRam);
-      if (minDisk >0) //TODO: make non-primitive
+      if (minDisk > 0) //TODO: make non-primitive
          toString.add("minDisk", minDisk);
       toString.add("osFamily", osFamily);
       toString.add("osName", osName);

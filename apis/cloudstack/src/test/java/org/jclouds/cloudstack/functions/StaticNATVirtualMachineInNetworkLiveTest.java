@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.cloudstack.functions;
 
@@ -30,8 +28,8 @@ import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.VirtualMachine;
-import org.jclouds.cloudstack.features.NATClientLiveTest;
-import org.jclouds.cloudstack.features.VirtualMachineClientLiveTest;
+import org.jclouds.cloudstack.features.NATApiLiveTest;
+import org.jclouds.cloudstack.features.VirtualMachineApiLiveTest;
 import org.jclouds.cloudstack.predicates.NetworkPredicates;
 import org.jclouds.cloudstack.strategy.BlockUntilJobCompletesAndReturnResult;
 import org.testng.annotations.AfterGroups;
@@ -49,7 +47,7 @@ import com.google.common.net.HostAndPort;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "StaticNATVirtualMachineInNetworkLiveTest")
-public class StaticNATVirtualMachineInNetworkLiveTest extends NATClientLiveTest {
+public class StaticNATVirtualMachineInNetworkLiveTest extends NATApiLiveTest {
    private PublicIPAddress ip = null;
    private VirtualMachine vm;
    private IPForwardingRule rule;
@@ -61,9 +59,9 @@ public class StaticNATVirtualMachineInNetworkLiveTest extends NATClientLiveTest 
       super.setupContext();
       prefix += "nat";
       try {
-         network = find(client.getNetworkClient().listNetworks(), NetworkPredicates.supportsStaticNAT());
+         network = find(client.getNetworkApi().listNetworks(), NetworkPredicates.supportsStaticNAT());
          String defaultTemplate = template != null ? template.getImageId() : null;
-         vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network,
+         vm = VirtualMachineApiLiveTest.createVirtualMachineInNetwork(network,
                defaultTemplateOrPreferredInZone(defaultTemplate, client, network.getZoneId()), client, jobComplete,
                virtualMachineRunning);
          if (vm.getPassword() != null && loginCredentials.getOptionalPassword() == null)
@@ -91,7 +89,7 @@ public class StaticNATVirtualMachineInNetworkLiveTest extends NATClientLiveTest 
 
       createPortForwardingRulesForIP.apply(ip, ImmutableSet.of(22));
 
-      rule = getOnlyElement(filter(client.getNATClient().getIPForwardingRulesForIPAddress(ip.getId()),
+      rule = getOnlyElement(filter(client.getNATApi().getIPForwardingRulesForIPAddress(ip.getId()),
             new Predicate<IPForwardingRule>() {
                @Override
                public boolean apply(IPForwardingRule rule) {
@@ -111,13 +109,13 @@ public class StaticNATVirtualMachineInNetworkLiveTest extends NATClientLiveTest 
    @Override
    protected void tearDownContext() {
       if (rule != null) {
-         client.getNATClient().deleteIPForwardingRule(rule.getId());
+         client.getNATApi().deleteIPForwardingRule(rule.getId());
       }
       if (vm != null) {
-         jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vm.getId()));
+         jobComplete.apply(client.getVirtualMachineApi().destroyVirtualMachine(vm.getId()));
       }
       if (ip != null) {
-         client.getAddressClient().disassociateIPAddress(ip.getId());
+         client.getAddressApi().disassociateIPAddress(ip.getId());
       }
       super.tearDownContext();
    }

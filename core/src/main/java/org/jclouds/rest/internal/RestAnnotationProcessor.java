@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.rest.internal;
 
@@ -52,7 +50,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
-
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.ws.rs.FormParam;
@@ -67,6 +64,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.Uris.UriBuilder;
+import org.jclouds.http.filters.StripExpectHeader;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.io.ContentMetadataCodec;
 import org.jclouds.io.Payload;
@@ -151,11 +149,20 @@ public class RestAnnotationProcessor implements Function<Invocation, HttpRequest
    private final InputParamValidator inputParamValidator;
    private final GetAcceptHeaders getAcceptHeaders;
    private final Invocation caller;
+   private final boolean stripExpectHeader;
+   private static final LoadingCache<Invokable<?, ?>, ImmutableList<Parameter>> invokableParamsCache =
+       CacheBuilder.newBuilder().maximumSize(100).build(new CacheLoader<Invokable<?, ?>, ImmutableList<Parameter>>() {
+               @Override
+               public ImmutableList<Parameter> load(Invokable<?, ?> invokable) {
+                   return invokable.getParameters();
+               }
+           });
 
    @Inject
    private RestAnnotationProcessor(Injector injector, @ApiVersion String apiVersion, @BuildVersion String buildVersion,
          HttpUtils utils, ContentMetadataCodec contentMetadataCodec, InputParamValidator inputParamValidator,
-         GetAcceptHeaders getAcceptHeaders, @Nullable @Named("caller") Invocation caller) {
+         GetAcceptHeaders getAcceptHeaders, @Nullable @Named("caller") Invocation caller,
+         @Named(Constants.PROPERTY_STRIP_EXPECT_HEADER) boolean stripExpectHeader) {
       this.injector = injector;
       this.utils = utils;
       this.contentMetadataCodec = contentMetadataCodec;
@@ -164,6 +171,7 @@ public class RestAnnotationProcessor implements Function<Invocation, HttpRequest
       this.inputParamValidator = inputParamValidator;
       this.getAcceptHeaders = getAcceptHeaders;
       this.caller = caller;
+      this.stripExpectHeader = stripExpectHeader;
    }
 
    /**
@@ -178,7 +186,7 @@ public class RestAnnotationProcessor implements Function<Invocation, HttpRequest
    @Override
    public GeneratedHttpRequest apply(Invocation invocation) {
       checkNotNull(invocation, "invocation");
-      inputParamValidator.validateMethodParametersOrThrow(invocation);
+      inputParamValidator.validateMethodParametersOrThrow(invocation, invokableParamsCache.getUnchecked(invocation.getInvokable()));
 
       Optional<URI> endpoint = Optional.absent();
       HttpRequest r = findOrNull(invocation.getArgs(), HttpRequest.class);
@@ -210,6 +218,9 @@ public class RestAnnotationProcessor implements Function<Invocation, HttpRequest
       }
 
       requestBuilder.filters(getFiltersIfAnnotated(invocation));
+      if (stripExpectHeader) {
+         requestBuilder.filter(new StripExpectHeader());
+      }
 
       Multimap<String, Object> tokenValues = LinkedHashMultimap.create();
 
@@ -495,7 +506,7 @@ public class RestAnnotationProcessor implements Function<Invocation, HttpRequest
 
    private static Collection<Parameter> parametersWithAnnotation(Invokable<?, ?> invokable,
          final Class<? extends Annotation> annotationType) {
-      return filter(invokable.getParameters(), new Predicate<Parameter>() {
+      return filter(invokableParamsCache.getUnchecked(invokable), new Predicate<Parameter>() {
          public boolean apply(Parameter in) {
             return in.isAnnotationPresent(annotationType);
          }

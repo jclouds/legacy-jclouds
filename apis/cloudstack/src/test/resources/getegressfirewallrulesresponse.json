@@ -1,0 +1,2 @@
+{ "listegressfirewallrulesresponse" : { "count":1 ,"firewallrule" : [
+    {"id":2017,"protocol":"tcp","startport":"30","endport":"35","ipaddressid":2,"ipaddress":"10.27.27.51","state":"Active","cidrlist":"0.0.0.0/0"} ] } }

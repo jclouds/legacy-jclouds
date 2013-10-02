@@ -1,20 +1,18 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jclouds.s3.filters;
 
@@ -22,6 +20,7 @@ import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.reflect.Reflection2.method;
 import static org.testng.Assert.assertEquals;
 
+import java.net.URI;
 import java.util.Properties;
 
 import javax.ws.rs.core.HttpHeaders;
@@ -50,6 +49,7 @@ import com.google.common.collect.TreeMultimap;
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "RequestAuthorizeSignatureTest")
 public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest<S3AsyncClient> {
+   String bucketName = "bucket";
 
    @DataProvider(parallel = true)
    public Object[][] dataProvider() throws NoSuchMethodException {
@@ -91,7 +91,7 @@ public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest<S3Async
             ImmutableList.<Object> of("bucket"));
       StringBuilder builder = new StringBuilder();
       filter.appendBucketName(request, builder);
-      assertEquals(builder.toString(), "/bucket");
+      assertEquals(builder.toString(), "");
    }
 
    @Test
@@ -99,7 +99,7 @@ public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest<S3Async
       HttpRequest request = putBucketAcl();
       StringBuilder builder = new StringBuilder();
       filter.appendUriPath(request, builder);
-      assertEquals(builder.toString(), "/?acl");
+      assertEquals(builder.toString(), "/" + bucketName + "?acl");
    }
 
    private GeneratedHttpRequest putBucketAcl() throws NoSuchMethodException {
@@ -142,11 +142,13 @@ public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest<S3Async
    }
 
    @Test
-   void testAppendBucketNameURIHost() throws SecurityException, NoSuchMethodException {
+   void testAppendBucketNameInURIPath() throws SecurityException, NoSuchMethodException {
       GeneratedHttpRequest request = processor.createRequest(
             method(S3AsyncClient.class, "getBucketLocation", String.class),
-            ImmutableList.<Object> of("bucket"));
-      assertEquals(request.getEndpoint().getHost(), "bucket.s3.amazonaws.com");
+            ImmutableList.<Object> of(bucketName));
+      URI uri = request.getEndpoint();
+      assertEquals(uri.getHost(), "s3.amazonaws.com");
+      assertEquals(uri.getPath(), "/" + bucketName);
    }
 
    @Override
