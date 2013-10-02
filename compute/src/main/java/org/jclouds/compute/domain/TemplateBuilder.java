@@ -21,6 +21,7 @@ import org.jclouds.compute.options.TemplateOptions;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Ordering;
 import com.google.inject.ImplementedBy;
 
 /**
@@ -157,7 +158,7 @@ public interface TemplateBuilder {
    TemplateBuilder imageDescriptionMatches(String imageDescriptionRegex);
 
    /**
-    * Configure this template to have an image description that matches the supplied condition
+    * Configure this template to have an image that matches the supplied condition
     * 
     * ex. 
     * 
@@ -167,6 +168,11 @@ public interface TemplateBuilder {
     */
    TemplateBuilder imageMatches(Predicate<Image> condition);
 
+   /**
+    * Configure this template to prefer images according to the supplied ordering, where later is better
+    */
+   TemplateBuilder imageSorter(Ordering<Image> imageSorter);
+       
    /**
     * Configure this template to require the minimum cores below
     */
