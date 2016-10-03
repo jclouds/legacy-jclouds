@@ -21,6 +21,7 @@ package org.jclouds.openstack.keystone.v1_1.config;
 import static org.jclouds.rest.config.BinderUtils.bindSyncToAsyncHttpApi;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -56,6 +57,10 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  * @author Adrian Cole
  */
 public class AuthenticationServiceModule extends AbstractModule {
+
+   /** Time between the expiry and when Keystone refreshes the authentication token. */
+   // TODO: this should be a property
+   private static final long AUTHENTICATION_RENEWAL_WINDOW_MILLIS = 60 * 60 * 1000;
 
    @Override
    protected void configure() {
@@ -114,11 +119,24 @@ public class AuthenticationServiceModule extends AbstractModule {
    @Provides
    @Singleton
    protected Supplier<Auth> provideAuthSupplier(final LoadingCache<Credentials, Auth> cache,
-         @Provider final Supplier<Credentials> creds) {
+         @Provider final Supplier<Credentials> credsSupplier) {
       return new Supplier<Auth>() {
          @Override
          public Auth get() {
-            return cache.getUnchecked(creds.get());
+            Credentials creds = credsSupplier.get();
+            Auth auth = cache.getUnchecked(creds);
+            Date expires = auth.getToken().getExpires();
+            Date renewal = new Date(System.currentTimeMillis() +
+                  AUTHENTICATION_RENEWAL_WINDOW_MILLIS);
+            // Guava Cache does not support expiry times per-object:
+            // https://code.google.com/p/guava-libraries/issues/detail?id=1203
+            // We fake it by checking expiry ourselves.  Other uses of the
+            // LoadingCache should use the RetryOnRenew handler.
+            if (renewal.after(expires)) {
+               cache.invalidateAll();
+               auth = cache.getUnchecked(creds);
+            }
+            return auth;
          }
       };
    }
