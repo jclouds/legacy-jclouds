@@ -151,29 +151,29 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
 
          // remove blobs and now-empty subdirectories
          Map<StorageMetadata, ListenableFuture<?>> responses = Maps.newHashMap();
-         for (StorageMetadata md : listing) {
-            String fullPath = parentIsFolder(options, md) ? options.getDir() + "/"
-                     + md.getName() : md.getName();
-            switch (md.getType()) {
-               case BLOB:
-                  responses.put(md, connection.removeBlob(containerName, fullPath));
-                  break;
-               case FOLDER:
-                  if (options.isRecursive()) {
-                     responses.put(md, connection.deleteDirectory(containerName, fullPath));
-                  }
-                  break;
-               case RELATIVE_PATH:
-                  if (options.isRecursive()) {
-                     responses.put(md, connection.deleteDirectory(containerName, md.getName()));
-                  }
-                  break;
-               case CONTAINER:
-                  throw new IllegalArgumentException("Container type not supported");
-            }
-         }
-
          try {
+            for (StorageMetadata md : listing) {
+               String fullPath = parentIsFolder(options, md) ? options.getDir() + "/"
+                        + md.getName() : md.getName();
+               switch (md.getType()) {
+                  case BLOB:
+                     responses.put(md, connection.removeBlob(containerName, fullPath));
+                     break;
+                  case FOLDER:
+                     if (options.isRecursive()) {
+                        responses.put(md, connection.deleteDirectory(containerName, fullPath));
+                     }
+                     break;
+                  case RELATIVE_PATH:
+                     if (options.isRecursive()) {
+                        responses.put(md, connection.deleteDirectory(containerName, md.getName()));
+                     }
+                     break;
+                  case CONTAINER:
+                     throw new IllegalArgumentException("Container type not supported");
+               }
+            }
+
             exceptions = awaitCompletion(responses, userExecutor, maxTime, logger, message);
          } catch (TimeoutException te) {
             ++numErrors;
