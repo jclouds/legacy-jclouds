@@ -52,24 +52,26 @@ public class ConcatenateContainerLists implements ListContainerStrategy {
 
    @Override
    public Iterable<? extends StorageMetadata> execute(String container, ListContainerOptions options) {
-      try {
-         boolean truncated = true;
-         List<PageSet<? extends StorageMetadata>> listings = Lists.newArrayList();
-         while (truncated) {
-            PageSet<? extends StorageMetadata> listing = connection.list(container, options);
-            truncated = listing.getNextMarker() != null;
-            if (truncated) {
-               options = options instanceof ImmutableListContainerOptions ? options.clone()
-                        .afterMarker(listing.getNextMarker()) : options.afterMarker(listing
-                        .getNextMarker());
-            }
-            listings.add(listing);
-         }
-         return Iterables.concat(listings);
-      } catch (Exception e) {
-         Throwables.propagateIfPossible(e, BlobRuntimeException.class);
-         throw new BlobRuntimeException("Error getting resource metadata in container: "
-                  + container, e);
+      if (options instanceof ImmutableListContainerOptions) {
+         options = options.clone();
       }
+      List<PageSet<? extends StorageMetadata>> listings = Lists.newArrayList();
+      while (true) {
+         PageSet<? extends StorageMetadata> listing;
+         try {
+            listing = connection.list(container, options);
+         } catch (Exception e) {
+            Throwables.propagateIfPossible(e, BlobRuntimeException.class);
+            throw new BlobRuntimeException("Error getting resource metadata in container: "
+                     + container, e);
+         }
+         listings.add(listing);
+         String marker = listing.getNextMarker();
+         if (marker == null) {
+             break;
+         }
+         options = options.afterMarker(marker);
+      }
+      return Iterables.concat(listings);
    }
 }
