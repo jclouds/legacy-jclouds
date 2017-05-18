@@ -31,6 +31,7 @@ import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.location.suppliers.ZoneIdToURISupplier;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.NovaAsyncApi;
 import org.jclouds.openstack.nova.v2_0.extensions.ExtensionNamespaces;
@@ -71,14 +72,17 @@ import org.jclouds.openstack.nova.v2_0.features.ImageAsyncApi;
 import org.jclouds.openstack.nova.v2_0.features.ServerApi;
 import org.jclouds.openstack.nova.v2_0.features.ServerAsyncApi;
 import org.jclouds.openstack.nova.v2_0.handlers.NovaErrorHandler;
+import org.jclouds.openstack.v2_0.ServiceType;
 import org.jclouds.openstack.v2_0.domain.Extension;
 import org.jclouds.openstack.v2_0.features.ExtensionApi;
 import org.jclouds.openstack.v2_0.features.ExtensionAsyncApi;
 import org.jclouds.openstack.v2_0.functions.PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.functions.ImplicitOptionalConverter;
 
+import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -86,6 +90,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
@@ -186,5 +191,18 @@ public class NovaRestClientModule<S extends NovaApi, A extends NovaAsyncApi> ext
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(NovaErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(NovaErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(NovaErrorHandler.class);
+   }
+
+   public static class ComputeEndpointModule extends AbstractModule {
+      @Provides
+      @Singleton
+      @ComputeEndpoint
+      protected Supplier<Map<String, Supplier<URI>>> provideComputeEndpoint(ZoneIdToURISupplier.Factory factory, @ApiVersion String apiVersion) {
+         return factory.createForApiTypeAndVersion(ServiceType.COMPUTE, apiVersion);
+      }
+
+      @Override
+      protected void configure() {
+      }
    }
 }
