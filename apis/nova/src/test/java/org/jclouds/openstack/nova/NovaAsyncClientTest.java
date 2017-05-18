@@ -32,6 +32,7 @@ import org.jclouds.openstack.filters.AddTimestampQuery;
 import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.config.NovaRestClientModule;
 import org.jclouds.openstack.nova.domain.RebootType;
+import org.jclouds.openstack.nova.functions.ParseImageCreationResponseFromHeaders;
 import org.jclouds.openstack.nova.options.CreateServerOptions;
 import org.jclouds.openstack.nova.options.ListOptions;
 import org.jclouds.openstack.nova.options.RebuildServerOptions;
@@ -545,12 +546,12 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("createImageFromServer", String.class, int.class);
       HttpRequest request = processor.createRequest(method, "ralphie", 2);
 
-      assertRequestLineEquals(request, "POST http://endpoint/vapi-version/images?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST http://endpoint/vapi-version/servers/2/action?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
-      assertPayloadEquals(request, "{\"image\":{\"serverId\":2,\"name\":\"ralphie\"}}", MediaType.APPLICATION_JSON,
+      assertPayloadEquals(request, "{\"createImage\":{\"name\":\"ralphie\"}}", MediaType.APPLICATION_JSON,
             false);
 
-      assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
+      assertResponseParserClassEquals(method, request, ParseImageCreationResponseFromHeaders.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 

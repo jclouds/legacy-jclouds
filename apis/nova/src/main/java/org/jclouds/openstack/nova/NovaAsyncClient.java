@@ -18,22 +18,46 @@
  */
 package org.jclouds.openstack.nova;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.openstack.filters.AddTimestampQuery;
 import org.jclouds.openstack.filters.AuthenticateRequest;
-import org.jclouds.openstack.nova.domain.*;
+import org.jclouds.openstack.nova.domain.Addresses;
+import org.jclouds.openstack.nova.domain.Flavor;
+import org.jclouds.openstack.nova.domain.FloatingIP;
+import org.jclouds.openstack.nova.domain.Image;
+import org.jclouds.openstack.nova.domain.RebootType;
+import org.jclouds.openstack.nova.domain.Server;
+import org.jclouds.openstack.nova.functions.ParseImageCreationResponseFromHeaders;
 import org.jclouds.openstack.nova.options.CreateServerOptions;
 import org.jclouds.openstack.nova.options.ListOptions;
 import org.jclouds.openstack.nova.options.RebuildServerOptions;
-import org.jclouds.rest.annotations.*;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.MapBinder;
+import org.jclouds.rest.annotations.Payload;
+import org.jclouds.rest.annotations.PayloadParam;
+import org.jclouds.rest.annotations.QueryParams;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides asynchronous access to OpenStack Nova via their REST API.
@@ -279,12 +303,13 @@ public interface NovaAsyncClient {
    @POST
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
+   @ResponseParser(ParseImageCreationResponseFromHeaders.class)
    @QueryParams(keys = "format", values = "json")
-   @Path("/images")
+   @Path("/servers/{id}/action")
    @Produces(MediaType.APPLICATION_JSON)
-   @Payload("%7B\"image\":%7B\"serverId\":{serverId},\"name\":\"{name}\"%7D%7D")
+   @Payload("%7B\"createImage\":%7B\"name\":\"{name}\"%7D%7D")
    ListenableFuture<Image> createImageFromServer(@PayloadParam("name") String imageName,
-                                                 @PayloadParam("serverId") int serverId);
+                                                 @PathParam("id") int serverId);
 
    /**
     * @see NovaClient#listAddresses
