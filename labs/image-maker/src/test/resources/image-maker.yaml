@@ -1,0 +1,8 @@
+images: 
+    - id: test
+      cached_packages: 
+        apt: 
+          - unzip
+      installed_packages: 
+        apt: 
+          - nginx
