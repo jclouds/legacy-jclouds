@@ -109,4 +109,22 @@ public class S3ClientMockTest {
 
       server.shutdown();
    }
+
+   public void testDirectorySeparator() throws IOException, InterruptedException {
+	      MockWebServer server = new MockWebServer();
+	      server.enqueue(new MockResponse().setBody("").addHeader(ETAG, "ABCDEF"));
+	      server.play();
+
+	      S3Client client = getContext(server.getUrl("/")).getApi();
+	      S3Object fileInDir = client.newS3Object();
+	      fileInDir.getMetadata().setKey("someDir/fileName");
+	      fileInDir.setPayload(new byte[] {});
+
+	      assertEquals(client.putObject("bucket", fileInDir), "ABCDEF");
+
+	      RecordedRequest request = server.takeRequest();
+	      assertEquals(request.getRequestLine(), "PUT /bucket/someDir/fileName HTTP/1.1");
+
+	      server.shutdown();
+	   }
 }
