@@ -58,15 +58,15 @@ public class CreateVolumeOptions implements MapBinder {
       Map<String, Object> image = Maps.newHashMap();
       image.putAll(postParams);
       if (name != null)
-         image.put("display_name", name);
+         image.put("displayName", name);
       if (description != null)
-         image.put("display_description", description);
+         image.put("displayDescription", description);
       if (volumeType != null)
-         image.put("volume_type", volumeType);
+         image.put("volumeType", volumeType);
       if (availabilityZone != null)
-         image.put("availability_zone", availabilityZone);
+         image.put("availabilityZone", availabilityZone);
       if (snapshotId != null)
-         image.put("snapshot_id", snapshotId);
+         image.put("snapshotId", snapshotId);
       if (!metadata.isEmpty())
          image.put("metadata", metadata);
       return jsonBinder.bindToRequest(request, ImmutableMap.of("volume", image));
